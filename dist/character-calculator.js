@@ -80,10 +80,32 @@
   const summary = document.getElementById("bonusSummary");
   const expanded = new Set();
   const hiddenKeys = new Set();
+  let highlightTimer = null;
 
   const formatValue = (value, unit) => {
     const number = Number(value).toLocaleString("zh-CN");
     return unit === "%" ? `+${number}%` : `+${number}`;
+  };
+
+  const normalizeSourceName = (value) => value
+    .replace(/^超越[·・]/, "")
+    .replace(/[\s（）()【】〖〗·・—–_-]/g, "")
+    .toLowerCase();
+
+  const findSourceTarget = (sourceName) => {
+    const isTranscend = /^超越[·・]/.test(sourceName);
+    const scope = isTranscend ? document.getElementById("transcend") : document.querySelector(".content");
+    if (!scope) return null;
+
+    const source = normalizeSourceName(sourceName);
+    const labels = [...scope.querySelectorAll(".skill-name, .trait h4, .equipment-card h4")];
+    const exact = labels.find((label) => normalizeSourceName(label.textContent) === source);
+    const partial = labels.find((label) => {
+      const candidate = normalizeSourceName(label.textContent);
+      return candidate.startsWith(source) || source.startsWith(candidate);
+    });
+    const label = exact || partial;
+    return label?.closest("tr, .trait, .equipment-card") || label || null;
   };
 
   const renderSummary = () => {
@@ -133,10 +155,29 @@
         metric.providers.forEach((provider) => {
           const item = document.createElement("li");
           item.className = "bonus-provider";
+          item.tabIndex = 0;
+          item.title = "双击返回原文并查看完整描述";
+          item.setAttribute("aria-label", `${provider.source}，双击返回原文并查看完整描述`);
           item.innerHTML = `
             <div class="bonus-provider-head"><span>${provider.source}</span><span>${formatValue(provider.value, provider.unit)}</span></div>
             <small>${provider.condition}</small>
           `;
+          const jumpToSource = () => {
+            const target = findSourceTarget(provider.source);
+            if (!target) return;
+            window.requestAnimationFrame(() => {
+              target.scrollIntoView({ behavior: "smooth", block: "center" });
+              target.classList.remove("source-highlight");
+              void target.offsetWidth;
+              target.classList.add("source-highlight");
+              window.clearTimeout(highlightTimer);
+              highlightTimer = window.setTimeout(() => target.classList.remove("source-highlight"), 2600);
+            });
+          };
+          item.addEventListener("dblclick", jumpToSource);
+          item.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") jumpToSource();
+          });
           list.appendChild(item);
         });
         row.appendChild(list);
@@ -155,8 +196,8 @@
   };
 
   openButton.addEventListener("click", open);
-  closeButton.addEventListener("click", close);
-  overlay.addEventListener("click", close);
+  closeButton.addEventListener("click", () => close());
+  overlay.addEventListener("click", () => close());
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !panel.hidden) close();
   });
