@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="最后的克劳迪娅被动技能分类表，按 Excel 工作表结构查询技能、SC、效果和可学习圣物。" />
+    <title>最后的克劳迪娅技能分类表</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand-mark" aria-hidden="true">LC</div>
+      <div>
+        <h1>最后的克劳迪娅技能分类表</h1>
+        <p>被动技能</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="workspace" aria-label="技能分类表">
+        <div class="toolbar">
+          <label class="search-box">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="searchInput" type="search" autocomplete="off" placeholder="搜索技能名称、技能效果或圣物" />
+            <button id="clearSearch" type="button" aria-label="清空搜索" hidden>清空</button>
+          </label>
+          <div class="result-summary" id="resultSummary" aria-live="polite"></div>
+        </div>
+
+        <nav class="sheet-tabs" id="sheetTabs" aria-label="Excel 工作表分类"></nav>
+
+        <div class="sheet-heading">
+          <div>
+            <span class="sheet-kicker">当前工作表</span>
+            <h2 id="sheetTitle"></h2>
+          </div>
+          <button class="back-top" id="backTop" type="button">回到顶部</button>
+        </div>
+
+        <div id="tableArea" class="table-area"></div>
+        <div id="emptyState" class="empty-state" hidden>
+          <strong>没有找到符合条件的技能</strong>
+          <span>可以换一个关键词，或切换到其他工作表。</span>
+        </div>
+      </section>
+    </main>
+
+    <script src="./data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
