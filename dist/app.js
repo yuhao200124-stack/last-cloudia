@@ -13,9 +13,9 @@
   const calculator = document.querySelector('#scCalculator');
   const calculatorLauncher = document.querySelector('#calculatorLauncher');
   const calculatorClose = document.querySelector('#calculatorClose');
+  const calculatorSort = document.querySelector('#calculatorSort');
+  const calculatorSortIcon = document.querySelector('#calculatorSortIcon');
   const calculatorBadge = document.querySelector('#calculatorBadge');
-  const calculatorCount = document.querySelector('#calculatorCount');
-  const calculatorRule = document.querySelector('#calculatorRule');
   const calculatorSkills = document.querySelector('#calculatorSkills');
   const calculatorTotal = document.querySelector('#calculatorTotal');
 
@@ -26,7 +26,7 @@
     edits = JSON.parse(localStorage.getItem(editStorageKey) || '{}');
   } catch { edits = {}; }
   const calculatorStorageKey = 'lc-sheet-table:sc-calculator-v1';
-  let calculatorState = { skillIds: [], activeBreaks: [7, 12, 20] };
+  let calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc' };
   try {
     const savedCalculator = JSON.parse(localStorage.getItem(calculatorStorageKey) || '{}');
     const savedBreaks = Array.isArray(savedCalculator.activeBreaks)
@@ -35,8 +35,9 @@
     calculatorState = {
       skillIds: Array.isArray(savedCalculator.skillIds) ? [...new Set(savedCalculator.skillIds.map(String))] : [],
       activeBreaks: [...new Set(savedBreaks)],
+      sortDirection: savedCalculator.sortDirection === 'asc' ? 'asc' : 'desc',
     };
-  } catch { calculatorState = { skillIds: [], activeBreaks: [7, 12, 20] }; }
+  } catch { calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc' }; }
   const hashSheet = decodeURIComponent(location.hash.slice(1));
   let activeSheet = data.sheetOrder.includes(hashSheet)
     ? hashSheet
@@ -154,10 +155,6 @@
     };
   }
 
-  function breakLabel(value) {
-    return ({ 7: '一破', 12: '二破', 20: '三破' })[value] || '';
-  }
-
   function renderCalculator() {
     const result = calculateSc();
     document.querySelectorAll('[data-break-level]').forEach(button => {
@@ -166,14 +163,14 @@
       button.classList.toggle('is-active', active);
       button.setAttribute('aria-pressed', String(active));
     });
-    calculatorCount.textContent = `${result.items.length}个技能`;
-    const enabled = [7, 12, 20].filter(level => calculatorState.activeBreaks.includes(level));
-    calculatorRule.textContent = enabled.length
-      ? `已开启：${enabled.map(breakLabel).join('、')}（各减免1个技能）`
-      : '突破减免均未开启';
-    calculatorSkills.innerHTML = result.items.length
-      ? result.items.map(item => `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
-          <div class="calculator-skill-name">${escapeHtml(rowValue(item.row, 'name'))}${item.freeBy ? `<span>${breakLabel(item.freeBy)}减免</span>` : ''}</div>
+    const descending = calculatorState.sortDirection === 'desc';
+    calculatorSortIcon.textContent = descending ? '▽' : '△';
+    calculatorSort.setAttribute('aria-label', descending ? '当前SC从大到小，点击改为从小到大' : '当前SC从小到大，点击改为从大到小');
+    calculatorSort.title = descending ? 'SC从大到小' : 'SC从小到大';
+    const displayItems = [...result.items].sort((a, b) => descending ? b.sc - a.sc : a.sc - b.sc);
+    calculatorSkills.innerHTML = displayItems.length
+      ? displayItems.map(item => `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
+          <div class="calculator-skill-name">${escapeHtml(rowValue(item.row, 'name'))}</div>
           <div class="calculator-skill-sc">${item.freeBy ? `<strong>0 SC</strong><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
           <button type="button" data-remove-skill="${escapeHtml(item.id)}" aria-label="移除${escapeHtml(rowValue(item.row, 'name'))}" title="从计算器移除">×</button>
         </div>`).join('')
@@ -398,6 +395,12 @@
   });
 
   calculatorClose.addEventListener('click', () => setCalculatorOpen(false));
+
+  calculatorSort.addEventListener('click', () => {
+    calculatorState.sortDirection = calculatorState.sortDirection === 'desc' ? 'asc' : 'desc';
+    saveCalculatorState();
+    renderCalculator();
+  });
 
   calculator.addEventListener('click', event => {
     const breakButton = event.target.closest('[data-break-level]');

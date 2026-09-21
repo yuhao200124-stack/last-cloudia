@@ -49,10 +49,9 @@
 
     <aside id="scCalculator" class="sc-calculator" hidden aria-label="SC计算器">
       <div class="calculator-header">
-        <div>
-          <strong>SC计算器</strong>
-          <span id="calculatorCount">0个技能</span>
-        </div>
+        <button id="calculatorSort" class="calculator-sort" type="button" aria-label="按SC从大到小排序" title="按SC从大到小排序">
+          <span id="calculatorSortIcon" aria-hidden="true">▽</span>
+        </button>
         <button id="calculatorClose" class="calculator-close" type="button" aria-label="收起计算器">×</button>
       </div>
       <div class="break-buttons" aria-label="突破等级">
@@ -60,7 +59,6 @@
         <button type="button" data-break-level="12">二破</button>
         <button type="button" data-break-level="20">三破</button>
       </div>
-      <div id="calculatorRule" class="calculator-rule">未选择突破减免</div>
       <div id="calculatorSkills" class="calculator-skills"></div>
       <div class="calculator-total">
         <span>合计</span>

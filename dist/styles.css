@@ -397,17 +397,30 @@ input.cell-editor { height: 40px; text-align: center; }
 }
 
 .calculator-header {
-  min-height: 62px;
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
+  padding: 7px 10px;
   background: var(--navy);
   color: #fff;
 }
 
-.calculator-header strong { display: block; font-size: 1.05rem; }
-.calculator-header span { display: block; margin-top: 2px; color: #dce9fb; font-size: .78rem; }
+.calculator-sort {
+  width: 38px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.calculator-sort:hover { background: rgba(255,255,255,.13); }
+.calculator-sort span { font-size: 1.75rem; line-height: 1; transform: translateY(-1px); }
 .calculator-close { width: 34px; height: 34px; border: 0; border-radius: 50%; background: rgba(255,255,255,.13); color: #fff; font-size: 1.35rem; cursor: pointer; }
 
 .break-buttons {
@@ -455,7 +468,6 @@ input.cell-editor { height: 40px; text-align: center; }
 
 .break-buttons button.is-active::before { right: calc(100% - 31px); border-color: #fff; }
 
-.calculator-rule { padding: 0 14px 10px; color: var(--muted); font-size: .78rem; }
 .calculator-skills { min-height: 86px; overflow-y: auto; border-top: 1px solid #dce4ef; }
 .calculator-empty { padding: 30px 16px; color: var(--muted); text-align: center; }
 
@@ -469,7 +481,6 @@ input.cell-editor { height: 40px; text-align: center; }
 }
 
 .calculator-skill-name { min-width: 0; font-weight: 700; overflow-wrap: anywhere; }
-.calculator-skill-name span { display: inline-block; margin-left: 6px; padding: 2px 5px; border-radius: 5px; background: #dceee2; color: #25623a; font-size: .7rem; }
 .calculator-skill-sc { text-align: right; white-space: nowrap; }
 .calculator-skill-sc strong, .calculator-skill-sc del { display: block; }
 .calculator-skill-sc del { margin-top: 1px; color: var(--muted); font-size: .7rem; }
