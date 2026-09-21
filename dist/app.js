@@ -12,6 +12,11 @@
   const backTop = document.querySelector('#backTop');
 
   const savedSheet = localStorage.getItem('lc-sheet-table:sheet');
+  const editStorageKey = 'lc-sheet-table:cell-edits-v1';
+  let edits = {};
+  try {
+    edits = JSON.parse(localStorage.getItem(editStorageKey) || '{}');
+  } catch { edits = {}; }
   const hashSheet = decodeURIComponent(location.hash.slice(1));
   let activeSheet = data.sheetOrder.includes(hashSheet)
     ? hashSheet
@@ -24,8 +29,26 @@
 
   const fold = (value = '') => String(value).toLocaleLowerCase('zh-CN').replace(/\s+/g, '');
 
+  function readEdit(key, field, fallback = '') {
+    const record = edits[key];
+    return record && Object.prototype.hasOwnProperty.call(record, field) ? record[field] : fallback;
+  }
+
+  function rowKey(row) {
+    return `skill:${row.id}`;
+  }
+
+  function rowValue(row, field) {
+    const fallback = field === 'sources' ? (row.sources || []).join('\n') : row[field] ?? '';
+    return String(readEdit(rowKey(row), field, fallback));
+  }
+
+  function editedSources(row) {
+    return rowValue(row, 'sources').split('\n').map(item => item.trim()).filter(Boolean);
+  }
+
   function rowText(row) {
-    return fold([row.type, row.name, row.sc, row.effect, ...(row.sources || [])].join(' '));
+    return fold([row.type, rowValue(row, 'name'), rowValue(row, 'sc'), rowValue(row, 'effect'), ...editedSources(row)].join(' '));
   }
 
   function matches(row) {
@@ -43,15 +66,19 @@
   }
 
   function sourceList(row) {
-    return `<ul class="source-list">${(row.sources || []).map(item => `<li>${highlight(item)}</li>`).join('')}</ul>`;
+    return `<ul class="source-list">${editedSources(row).map(item => `<li>${highlight(item)}</li>`).join('')}</ul>`;
   }
 
   function cell(content, extraClass = '') {
     return `<div class="cell-content ${extraClass}">${content}</div>`;
   }
 
+  function editableTd(key, field, value, content, className = '') {
+    return `<td class="editable-cell ${className}" data-edit-key="${escapeHtml(key)}" data-edit-field="${escapeHtml(field)}" data-edit-value="${escapeHtml(value)}" title="双击编辑">${content}</td>`;
+  }
+
   function skillName(row) {
-    const label = highlight(row.name);
+    const label = highlight(rowValue(row, 'name'));
     return row.url
       ? `<a href="${escapeHtml(row.url)}" target="_blank" rel="noreferrer">${label}</a>`
       : label;
@@ -72,15 +99,24 @@
     const groups = groupRows(rows);
     const body = groups.map(group => group.separator
       ? '<tr class="separator-row" aria-hidden="true"><td colspan="6"></td></tr>'
-      : group.rows.map((row, index) => `
-      <tr>
-        ${index === 0 ? `<td class="type-cell" rowspan="${group.rows.length}">${highlight(group.type)}</td>` : ''}
-        <td class="skill-name">${cell(skillName(row), 'cell-center')}</td>
-        <td class="sc-cell">${cell(escapeHtml(row.sc), 'cell-center')}</td>
-        <td>${cell(highlight(row.effect))}</td>
-        <td>${cell(sourceList(row), 'cell-center')}</td>
-        <td class="rating-cell">${cell(escapeHtml(row.mark), 'cell-center')}</td>
-      </tr>`).join('')).join('');
+      : group.rows.map((row, index) => {
+        const key = rowKey(row);
+        const typeKey = `type:${activeSheet}:${label}:${group.type}`;
+        const typeValue = String(readEdit(typeKey, 'type', group.type));
+        const name = rowValue(row, 'name');
+        const sc = rowValue(row, 'sc');
+        const effect = rowValue(row, 'effect');
+        const sources = rowValue(row, 'sources');
+        const markValue = rowValue(row, 'mark');
+        return `<tr>
+          ${index === 0 ? `<td class="type-cell editable-cell" rowspan="${group.rows.length}" data-edit-key="${escapeHtml(typeKey)}" data-edit-field="type" data-edit-value="${escapeHtml(typeValue)}" title="双击编辑">${cell(highlight(typeValue), 'cell-center')}</td>` : ''}
+          ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
+          ${editableTd(key, 'sc', sc, cell(escapeHtml(sc), 'cell-center'), 'sc-cell')}
+          ${editableTd(key, 'effect', effect, cell(highlight(effect)), '')}
+          ${editableTd(key, 'sources', sources, cell(sourceList(row), 'cell-center'), '')}
+          ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
+        </tr>`;
+      }).join('')).join('');
     return `<div class="table-scroll"><table class="excel-table" aria-label="${escapeHtml(label)}">
       <colgroup><col class="type"><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"></colgroup>
       <thead>
@@ -92,13 +128,21 @@
   }
 
   function allTable(rows) {
-    const body = rows.map(row => `<tr>
-      <td class="skill-name">${cell(skillName(row), 'cell-center')}</td>
-      <td class="sc-cell">${cell(escapeHtml(row.sc), 'cell-center')}</td>
-      <td>${cell(highlight(row.effect))}</td>
-      <td>${cell(sourceList(row), 'cell-center')}</td>
-      <td class="rating-cell">${cell(escapeHtml(row.mark), 'cell-center')}</td>
-    </tr>`).join('');
+    const body = rows.map(row => {
+      const key = rowKey(row);
+      const name = rowValue(row, 'name');
+      const sc = rowValue(row, 'sc');
+      const effect = rowValue(row, 'effect');
+      const sources = rowValue(row, 'sources');
+      const markValue = rowValue(row, 'mark');
+      return `<tr>
+        ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
+        ${editableTd(key, 'sc', sc, cell(escapeHtml(sc), 'cell-center'), 'sc-cell')}
+        ${editableTd(key, 'effect', effect, cell(highlight(effect)), '')}
+        ${editableTd(key, 'sources', sources, cell(sourceList(row), 'cell-center'), '')}
+        ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
+      </tr>`;
+    }).join('');
     return `<div class="table-scroll"><table class="excel-table all-skills" aria-label="全部技能">
       <colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"></colgroup>
       <thead>
@@ -170,6 +214,63 @@
   });
 
   backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  function saveCellEdit(key, field, value) {
+    edits[key] = { ...(edits[key] || {}), [field]: value };
+    localStorage.setItem(editStorageKey, JSON.stringify(edits));
+  }
+
+  function startCellEdit(target) {
+    if (!target || target.querySelector('.cell-editor')) return;
+    const { editKey: key, editField: field, editValue: value = '' } = target.dataset;
+    if (!key || !field) return;
+    const multiline = field === 'effect' || field === 'sources';
+    const editor = document.createElement(multiline ? 'textarea' : 'input');
+    editor.className = 'cell-editor';
+    editor.value = value;
+    if (!multiline) editor.type = 'text';
+    target.classList.add('is-editing');
+    target.replaceChildren(editor);
+    editor.focus();
+    editor.select();
+    let finished = false;
+    const finish = save => {
+      if (finished) return;
+      finished = true;
+      if (save) saveCellEdit(key, field, editor.value.trim());
+      render();
+    };
+    editor.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        finish(false);
+      } else if (event.key === 'Enter' && (!multiline || event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        finish(true);
+      }
+    });
+    editor.addEventListener('blur', () => finish(true));
+  }
+
+  let pendingLink = 0;
+  tableArea.addEventListener('click', event => {
+    const link = event.target.closest('.skill-name a');
+    if (!link) return;
+    event.preventDefault();
+    window.clearTimeout(pendingLink);
+    if (event.detail === 1) {
+      pendingLink = window.setTimeout(() => window.open(link.href, '_blank', 'noopener,noreferrer'), 260);
+    }
+  });
+
+  tableArea.addEventListener('dblclick', event => {
+    const target = event.target.closest('.editable-cell');
+    if (!target) return;
+    event.preventDefault();
+    window.clearTimeout(pendingLink);
+    startCellEdit(target);
+  });
+
   window.addEventListener('hashchange', () => {
     const name = decodeURIComponent(location.hash.slice(1));
     if (data.sheetOrder.includes(name) && name !== activeSheet) selectSheet(name);
