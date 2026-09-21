@@ -105,7 +105,6 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
 .skill-name { display: block; font-weight: 700; }
 .skill-name.exclusive { color: var(--red); }
 .skill-name.common { color: #0879a5; }
-.jp-name { display: block; margin-top: 2px; color: #7d8899; font-size: .74rem; font-weight: 400; }
 .effect-lines { margin: 0; padding: 0; list-style: none; }
 .effect-lines li + li { margin-top: 3px; }
 .effect-lines li::before { content: "・"; color: #6c7d94; }
