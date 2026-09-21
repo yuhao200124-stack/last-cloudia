@@ -92,6 +92,7 @@
   const savedBuildViewer = document.getElementById("savedBuildViewer");
   const savedBuildViewerClose = document.getElementById("savedBuildViewerClose");
   const savedBuildSort = document.getElementById("savedBuildSort");
+  const savedBuildRatingSort = document.getElementById("savedBuildRatingSort");
   const savedBuildSelect = document.getElementById("savedBuildSelect");
   const savedBuildNote = document.getElementById("savedBuildNote");
   const savedBuildBreaks = document.getElementById("savedBuildBreaks");
@@ -108,6 +109,8 @@
   let lastOpenedCalculator = "bonus";
   let highlightTimer = null;
   let savedBuildSortDirection = "desc";
+  let savedBuildSortMode = "sc";
+  let savedBuildRatingDirection = "desc";
   let savedBuildDetailsOpen = false;
   let savedBuildEffectsOpen = false;
   let expandedSavedBuildBonusKey = "";
@@ -147,6 +150,12 @@
   const readSavedBuildEdits = () => {
     try { return JSON.parse(localStorage.getItem(savedBuildEditsKey) || "{}"); }
     catch { return {}; }
+  };
+  const saveSkillRating = (row, value) => {
+    const edits = readSavedBuildEdits();
+    const key = `skill:${row.id}`;
+    edits[key] = { ...(edits[key] || {}), mark: value.trim() };
+    localStorage.setItem(savedBuildEditsKey, JSON.stringify(edits));
   };
   const savedBuildRowValue = (row, field, edits) => {
     const fallback = field === "sources" ? (row.sources || []).join("\n") : row[field] ?? "";
@@ -204,6 +213,13 @@
     return [...totals.values()];
   };
   const formatSavedBuildBonus = (value, unit) => `${value > 0 ? "+" : ""}${unit ? formatSavedBuildSc(value) : Math.round(value).toLocaleString("zh-CN")}${unit}`;
+  const savedBuildRatingWeight = (rating) => {
+    const value = String(rating || "").trim().toUpperCase();
+    const gradeWeights = { SSS: 900, SS: 800, "S+": 750, S: 700, "S-": 650, "A+": 600, A: 550, "A-": 500, "B+": 450, B: 400, "B-": 350, "C+": 300, C: 250, "C-": 200, D: 150 };
+    if (Object.prototype.hasOwnProperty.call(gradeWeights, value)) return gradeWeights[value];
+    const numeric = Number(value);
+    return Number.isFinite(numeric) && value !== "" ? numeric : null;
+  };
 
   const calculateSavedBuild = (plan, edits) => {
     const characterFreeIds = new Set(Array.isArray(plan.characterFreeIds) ? plan.characterFreeIds.map(String) : []);
@@ -267,9 +283,29 @@
     const result = calculateSavedBuild(plan, edits);
     savedBuildBreaks.innerHTML = [7, 12, 20].map((level) => `<span class="saved-build-break${result.activeBreaks.includes(level) ? " is-active" : ""}">${level} SC突破</span>`).join("");
     const descending = savedBuildSortDirection === "desc";
-    savedBuildSort.textContent = descending ? "▽" : "△";
+    savedBuildSort.textContent = descending ? "SC▽" : "SC△";
     savedBuildSort.setAttribute("aria-label", descending ? "当前SC从大到小，点击改为从小到大" : "当前SC从小到大，点击改为从大到小");
+    savedBuildSort.classList.toggle("is-active", savedBuildSortMode === "sc");
+    savedBuildSort.setAttribute("aria-pressed", String(savedBuildSortMode === "sc"));
+    savedBuildRatingSort.textContent = savedBuildRatingDirection === "desc" ? "评分▽" : "评分△";
+    savedBuildRatingSort.classList.toggle("is-active", savedBuildSortMode === "rating");
+    savedBuildRatingSort.setAttribute("aria-pressed", String(savedBuildSortMode === "rating"));
     const displayItems = [...result.items].sort((a, b) => {
+      if (savedBuildSortMode === "rating") {
+        const aRating = savedBuildRowValue(a.row, "mark", edits);
+        const bRating = savedBuildRowValue(b.row, "mark", edits);
+        const aHasRating = Boolean(aRating.trim());
+        const bHasRating = Boolean(bRating.trim());
+        if (!aHasRating && bHasRating) return 1;
+        if (aHasRating && !bHasRating) return -1;
+        const aWeight = savedBuildRatingWeight(aRating);
+        const bWeight = savedBuildRatingWeight(bRating);
+        if (aWeight === null && bWeight !== null) return 1;
+        if (aWeight !== null && bWeight === null) return -1;
+        if (aWeight !== null && bWeight !== null && aWeight !== bWeight) return savedBuildRatingDirection === "desc" ? bWeight - aWeight : aWeight - bWeight;
+        if (aRating !== bRating) return savedBuildRatingDirection === "desc" ? bRating.localeCompare(aRating, "zh-CN") : aRating.localeCompare(bRating, "zh-CN");
+        return b.sc - a.sc;
+      }
       const aCharacterFree = a.freeBy === "character";
       const bCharacterFree = b.freeBy === "character";
       if (aCharacterFree !== bCharacterFree) return aCharacterFree ? 1 : -1;
@@ -282,11 +318,15 @@
           return `<button class="saved-build-bonus-row${expanded ? " is-expanded" : ""}" type="button" data-saved-bonus-key="${escapeSavedBuildHtml(item.key)}" aria-expanded="${expanded}"><span>${escapeSavedBuildHtml(item.metric)}</span><strong>${escapeSavedBuildHtml(formatSavedBuildBonus(item.value, item.unit))}</strong></button>${expanded ? `<div class="saved-build-bonus-sources">${item.skills.map((skill) => `<article><strong>${escapeSavedBuildHtml(skill.name)}</strong><p>${escapeSavedBuildHtml(skill.effect)}</p></article>`).join("")}</div>` : ""}`;
         }).join("")}<p class="saved-build-bonus-note">仅合计所选技能描述中的明确数值，技能发动条件仍需满足。</p></div>` : '<div class="saved-build-empty">当前方案没有可合并的明确数值</div>')
       : displayItems.length
-      ? displayItems.map((item) => `<div class="saved-build-skill${item.freeBy ? " is-free" : ""}">
+      ? displayItems.map((item) => {
+        const rating = savedBuildRowValue(item.row, "mark", edits).trim();
+        return `<div class="saved-build-skill${item.freeBy ? " is-free" : ""}">
           <button class="saved-build-skill-name" type="button" data-saved-skill-effect="${escapeSavedBuildHtml(item.id)}" title="双击查看技能效果">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}</button>
+          <button class="saved-build-skill-rating${rating ? "" : " is-empty"}" type="button" data-edit-skill-rating="${escapeSavedBuildHtml(item.id)}" title="点击新增或修改评分">${rating ? escapeSavedBuildHtml(rating) : "+评分"}</button>
           <div class="saved-build-skill-sc">${item.freeBy === "character" ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : `<strong>${formatSavedBuildSc(item.sc)} SC</strong>`}</div>
           ${savedBuildEffectsOpen || expandedSavedBuildEffects.has(item.id) ? `<p class="saved-build-skill-effect">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "effect", edits))}</p>` : ""}
-        </div>`).join("")
+        </div>`;
+      }).join("")
       : '<div class="saved-build-empty">这个方案没有技能</div>';
     savedBuildTotal.textContent = `${formatSavedBuildSc(result.total)} SC`;
   };
@@ -646,7 +686,13 @@
     savedBuildViewerOpen.focus();
   });
   savedBuildSort.addEventListener("click", () => {
-    savedBuildSortDirection = savedBuildSortDirection === "desc" ? "asc" : "desc";
+    if (savedBuildSortMode === "sc") savedBuildSortDirection = savedBuildSortDirection === "desc" ? "asc" : "desc";
+    else savedBuildSortMode = "sc";
+    renderSavedBuildViewer();
+  });
+  savedBuildRatingSort.addEventListener("click", () => {
+    if (savedBuildSortMode === "rating") savedBuildRatingDirection = savedBuildRatingDirection === "desc" ? "asc" : "desc";
+    else savedBuildSortMode = "rating";
     renderSavedBuildViewer();
   });
   savedBuildDetails.addEventListener("click", () => {
@@ -670,6 +716,18 @@
     renderSavedBuildViewer();
   });
   savedBuildSkills.addEventListener("click", (event) => {
+    const ratingButton = event.target.closest("[data-edit-skill-rating]");
+    if (ratingButton) {
+      const row = savedBuildSkillIndex.get(String(ratingButton.dataset.editSkillRating));
+      if (!row) return;
+      const edits = readSavedBuildEdits();
+      const current = savedBuildRowValue(row, "mark", edits);
+      const next = window.prompt("输入技能评分（例如 S、S+、SS、SSS）；留空可清除评分。", current);
+      if (next === null) return;
+      saveSkillRating(row, next);
+      renderSavedBuildViewer();
+      return;
+    }
     const button = event.target.closest("[data-saved-bonus-key]");
     if (!button) return;
     const key = String(button.dataset.savedBonusKey);

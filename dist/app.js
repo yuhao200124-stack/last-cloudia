@@ -773,6 +773,13 @@
     }
   });
 
+  window.addEventListener('pageshow', event => {
+    if (!event.persisted) return;
+    try { edits = JSON.parse(localStorage.getItem(editStorageKey) || '{}'); }
+    catch { edits = {}; }
+    render();
+  });
+
   document.addEventListener('keydown', event => {
     if (saveLoadoutDialog.open || savedLoadoutsDialog.open) return;
     if (event.key === 'Escape') setCalculatorOpen(false);
