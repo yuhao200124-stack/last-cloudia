@@ -226,7 +226,16 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
 .cap-result strong { grid-row: span 2; font-size: 1.65rem; font-variant-numeric: tabular-nums; }
 .cap-result small { color: #dceaff; }
 .cap-tools { border-top: 0; }
-.cap-conditions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px; background: #fff; border-bottom: 1px solid #cad6e6; }
+.cap-tool-buttons { display: flex; gap: 6px; flex: 0 0 auto; }
+.cap-subheading { padding: 9px 12px 7px; color: #53647b; background: #edf3fa; border-bottom: 1px solid #cad6e6; font-size: .78rem; font-weight: 700; }
+.cap-attacks { display: grid; gap: 8px; padding: 12px; background: #fff; border-bottom: 1px solid #cad6e6; }
+.cap-attack { display: flex; gap: 9px; align-items: flex-start; padding: 10px; border: 1px solid #aebed2; color: #294462; background: #f7faff; cursor: pointer; }
+.cap-attack:has(input:checked) { border-color: #2c5f9f; box-shadow: inset 4px 0 #3972bf; background: #edf5ff; }
+.cap-attack input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: #3972bf; }
+.cap-attack span { display: grid; gap: 3px; }
+.cap-attack strong { font-size: .9rem; }
+.cap-attack small { color: #64758b; font-size: .75rem; line-height: 1.45; }
+.cap-conditions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px; background: #fff; border-bottom: 1px solid #cad6e6; }
 .cap-condition { position: relative; display: flex; align-items: center; gap: 8px; min-height: 42px; padding: 8px 9px; border: 1px solid #aebed2; color: #294462; background: #f7faff; cursor: pointer; user-select: none; }
 .cap-condition:hover { border-color: #5685c1; background: #edf5ff; }
 .cap-condition:has(input:checked) { color: #fff; background: #3972bf; border-color: #2c5f9f; }
@@ -234,6 +243,15 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
 .cap-condition span { font-size: .88rem; font-weight: 700; }
 .cap-breakdown-heading { padding: 10px 13px; color: #53647b; background: #edf3fa; border-bottom: 1px solid #cad6e6; font-size: .8rem; font-weight: 700; }
 .cap-breakdown { padding-bottom: 18px; }
+.cap-source-option { background: #fff; border-bottom: 1px solid #ccd7e6; }
+.cap-source-option label { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 9px; padding: 10px 12px; cursor: pointer; }
+.cap-source-option input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: #3972bf; }
+.cap-source-option span { display: grid; gap: 2px; min-width: 0; }
+.cap-source-option strong { color: #203f6d; font-size: .86rem; }
+.cap-source-option small { color: #65758b; font-size: .73rem; line-height: 1.4; }
+.cap-source-option b { color: #1f579f; font-size: .86rem; white-space: nowrap; }
+.cap-source-option.is-unavailable { opacity: .48; background: #eef2f7; }
+.cap-source-option.is-unavailable label { cursor: not-allowed; }
 .cap-breakdown-group { background: #fff; border-bottom: 1px solid #ccd7e6; }
 .cap-breakdown-title { display: flex; justify-content: space-between; gap: 10px; padding: 10px 13px; color: #203f6d; font-weight: 700; }
 .cap-breakdown-title strong { flex: 0 0 auto; color: #1f579f; }
@@ -282,5 +300,7 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
   .mobile-calculator-tabs button { min-height: 38px; border: 1px solid #9db0c9; color: #294462; background: #fff; font: inherit; font-weight: 700; cursor: pointer; }
   .mobile-calculator-tabs button + button { border-left: 0; }
   .mobile-calculator-tabs button.is-active { color: #fff; background: #3972bf; border-color: #3972bf; }
-  .cap-conditions { grid-template-columns: 1fr 1fr; }
+  .cap-conditions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cap-tool-buttons { width: 100%; }
+  .cap-tool-buttons button { flex: 1 1 auto; }
 }
