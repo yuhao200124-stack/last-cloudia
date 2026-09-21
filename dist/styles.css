@@ -267,6 +267,21 @@ main { padding: 18px clamp(10px, 2vw, 28px) 42px; }
 .excel-table tbody tr:nth-child(even) td:not(.type-cell) { background: var(--blue-pale); }
 .excel-table tbody tr:hover td:not(.type-cell) { background: #fff4cc; }
 
+.excel-table .separator-row,
+.excel-table .separator-row td {
+  height: 24px;
+  min-height: 24px;
+  padding: 0;
+  background: #fff;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.excel-table .separator-row td {
+  border-top: 2px solid #8fa7c6;
+  border-bottom: 2px solid #8fa7c6;
+}
+
 .type-cell {
   width: 11%;
   background: var(--blue-soft);

@@ -113,15 +113,21 @@ for sheet_name in sheet_order[1:]:
         type_col, name_col, sc_col, effect_col, source_col, mark_col = columns
         entries = []
         current_type = ''
+        pending_separator = False
         for row in range(3, ws.max_row + 1):
             raw_type = text(ws.cell(row, type_col).value)
             if raw_type:
                 current_type = raw_type
             name = ws.cell(row, name_col).value
             if not text(name):
+                if entries and not any(text(ws.cell(row, col).value) for col in columns):
+                    pending_separator = True
                 continue
             if text(name).startswith(('http://', 'https://')) and not any(text(ws.cell(row, col).value) for col in (sc_col, effect_col, source_col)):
                 continue
+            if pending_separator:
+                entries.append({'separator': True, 'sourceRow': row})
+                pending_separator = False
             entry = enrich(
                 sheet_name, row, side, name, ws.cell(row, sc_col).value,
                 ws.cell(row, effect_col).value, ws.cell(row, source_col).value,
@@ -135,7 +141,12 @@ for sheet_name in sheet_order[1:]:
 result['stats'] = {
     'allSkills': len(all_rows),
     'categoryEntries': sum(
-        len(lane['rows'])
+        sum(not row.get('separator', False) for row in lane['rows'])
+        for name, sheet in result['sheets'].items() if name != '全部技能'
+        for lane in sheet['lanes']
+    ),
+    'separators': sum(
+        sum(row.get('separator', False) for row in lane['rows'])
         for name, sheet in result['sheets'].items() if name != '全部技能'
         for lane in sheet['lanes']
     ),

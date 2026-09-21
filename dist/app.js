@@ -29,6 +29,7 @@
   }
 
   function matches(row) {
+    if (row.separator) return !query;
     return !query || rowText(row).includes(fold(query));
   }
 
@@ -60,7 +61,8 @@
     const groups = [];
     for (const row of rows) {
       const last = groups.at(-1);
-      if (last && last.type === row.type) last.rows.push(row);
+      if (row.separator) groups.push({ separator: true });
+      else if (last && !last.separator && last.type === row.type) last.rows.push(row);
       else groups.push({ type: row.type || '未分类', rows: [row] });
     }
     return groups;
@@ -68,7 +70,9 @@
 
   function splitTable(rows, label) {
     const groups = groupRows(rows);
-    const body = groups.map(group => group.rows.map((row, index) => `
+    const body = groups.map(group => group.separator
+      ? '<tr class="separator-row" aria-hidden="true"><td colspan="6"></td></tr>'
+      : group.rows.map((row, index) => `
       <tr>
         ${index === 0 ? `<td class="type-cell" rowspan="${group.rows.length}">${highlight(group.type)}</td>` : ''}
         <td class="skill-name">${cell(skillName(row), 'cell-center')}</td>
@@ -107,7 +111,9 @@
 
   function sheetCount(name) {
     const sheet = data.sheets[name];
-    return sheet.kind === 'all' ? sheet.rows.length : sheet.lanes.reduce((sum, lane) => sum + lane.rows.length, 0);
+    return sheet.kind === 'all'
+      ? sheet.rows.length
+      : sheet.lanes.reduce((sum, lane) => sum + lane.rows.filter(row => !row.separator).length, 0);
   }
 
   function renderTabs() {
@@ -124,7 +130,7 @@
       tableArea.innerHTML = rows.length ? allTable(rows) : '';
     } else {
       const lanes = sheet.lanes.map(lane => ({ ...lane, rows: lane.rows.filter(matches) }));
-      visible = lanes.reduce((sum, lane) => sum + lane.rows.length, 0);
+      visible = lanes.reduce((sum, lane) => sum + lane.rows.filter(row => !row.separator).length, 0);
       tableArea.innerHTML = visible
         ? `<div class="split-grid">${lanes.filter(lane => lane.rows.length).map((lane, index) => splitTable(lane.rows, `${activeSheet} 第${index + 1}栏`)).join('')}</div>`
         : '';
