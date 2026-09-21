@@ -43,6 +43,7 @@
   const characterLoadouts = {
     '260': {
       name: '洛琪希·米格路迪亚·格雷拉特',
+      page: './character-260.html',
       skillIds: [
         '3ab5e4ec857b4879', 'f201c9d8e9ee87ed', '全部技能:all:30', '9146eb2670c69122',
         'cc874bcc3159e258', 'ccfbbcc9f91d8332', '2901b40ce3f38847', '351f8b7c824ec758',
@@ -255,6 +256,11 @@
     localStorage.setItem(loadoutPlansStorageKey, JSON.stringify(loadoutPlans));
   }
 
+  function currentCharacterPlans() {
+    const characterId = calculatorState.characterId || '';
+    return loadoutPlans.filter(plan => (plan.characterId || '') === characterId);
+  }
+
   function createPlanId() {
     return `plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
@@ -284,9 +290,10 @@
   function renderCalculator() {
     const result = calculateSc();
     const characterLoadout = characterLoadouts[calculatorState.characterId];
-    const currentPlan = loadoutPlans.find(plan => plan.id === calculatorState.currentPlanId);
+    const matchingPlans = currentCharacterPlans();
+    const currentPlan = matchingPlans.find(plan => plan.id === calculatorState.currentPlanId);
     calculatorContextTitle.textContent = currentPlan?.name || (characterLoadout ? `配装 · ${characterLoadout.name}` : 'SC计算器');
-    savedLoadoutCount.textContent = String(loadoutPlans.length);
+    savedLoadoutCount.textContent = String(matchingPlans.length);
     document.querySelectorAll('[data-break-level]').forEach(button => {
       const level = Number(button.dataset.breakLevel);
       const active = calculatorState.activeBreaks.includes(level);
@@ -344,7 +351,7 @@
   }
 
   function openSaveDialog(planId = '', forceNew = false, metadataOnly = false) {
-    const plan = !forceNew && planId ? loadoutPlans.find(item => item.id === planId) : null;
+    const plan = !forceNew && planId ? currentCharacterPlans().find(item => item.id === planId) : null;
     editingPlanId = plan?.id || '';
     editingPlanMetadataOnly = Boolean(plan && metadataOnly);
     const characterName = characterLoadouts[calculatorState.characterId]?.name;
@@ -380,7 +387,7 @@
       createdAt: existing?.createdAt || now,
       updatedAt: now,
     };
-    const shouldReturnToCharacter = !editingPlanMetadataOnly && snapshot.characterId === '260';
+    const returnPage = !editingPlanMetadataOnly ? characterLoadouts[snapshot.characterId]?.page : '';
     if (existing) loadoutPlans = loadoutPlans.map(plan => plan.id === existing.id ? snapshot : plan);
     else loadoutPlans.unshift(snapshot);
     if (!editingPlanMetadataOnly || asNew) calculatorState.currentPlanId = snapshot.id;
@@ -389,13 +396,14 @@
     saveCalculatorState();
     saveLoadoutDialog.close();
     renderCalculator();
-    if (shouldReturnToCharacter) location.href = `./character-260.html?plan=${encodeURIComponent(snapshot.id)}`;
+    if (returnPage) location.href = `${returnPage}?plan=${encodeURIComponent(snapshot.id)}`;
   }
 
   function renderSavedLoadouts() {
-    savedLoadoutCount.textContent = String(loadoutPlans.length);
-    savedLoadoutsList.innerHTML = loadoutPlans.length
-      ? loadoutPlans.map(plan => {
+    const matchingPlans = currentCharacterPlans();
+    savedLoadoutCount.textContent = String(matchingPlans.length);
+    savedLoadoutsList.innerHTML = matchingPlans.length
+      ? matchingPlans.map(plan => {
         const characterName = characterLoadouts[plan.characterId]?.name;
         const skillCount = Array.isArray(plan.skillIds) ? plan.skillIds.filter(id => skillIndex.has(String(id))).length : 0;
         const updated = plan.updatedAt ? new Date(plan.updatedAt).toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'short' }) : '';
@@ -414,7 +422,7 @@
   }
 
   function loadSavedPlan(planId) {
-    const plan = loadoutPlans.find(item => item.id === planId);
+    const plan = currentCharacterPlans().find(item => item.id === planId);
     if (!plan) return;
     calculatorState.skillIds = [...new Set((plan.skillIds || []).map(String))].filter(id => skillIndex.has(id));
     calculatorState.characterFreeIds = [...new Set((plan.characterFreeIds || []).map(String))].filter(id => skillIndex.has(id));

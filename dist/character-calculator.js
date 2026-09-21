@@ -95,6 +95,7 @@
   const savedBuildSelect = document.getElementById("savedBuildSelect");
   const savedBuildNote = document.getElementById("savedBuildNote");
   const savedBuildBreaks = document.getElementById("savedBuildBreaks");
+  const savedBuildDetails = document.getElementById("savedBuildDetails");
   const savedBuildSkills = document.getElementById("savedBuildSkills");
   const savedBuildTotal = document.getElementById("savedBuildTotal");
   const expanded = new Set();
@@ -106,10 +107,13 @@
   let lastOpenedCalculator = "bonus";
   let highlightTimer = null;
   let savedBuildSortDirection = "desc";
+  let savedBuildDetailsOpen = false;
+  let expandedSavedBuildBonusKey = "";
   let selectedSavedBuildId = new URLSearchParams(location.search).get("plan") || "";
 
   const savedBuildStorageKey = "lc-sheet-table:loadout-plans-v1";
   const savedBuildEditsKey = "lc-sheet-table:cell-edits-v1";
+  const currentSavedBuildCharacterId = document.body.dataset.characterId || "";
   const skillData = window.SKILL_DATA;
   const savedBuildSkillIndex = new Map();
   if (skillData?.sheetOrder) {
@@ -134,7 +138,7 @@
   const readSavedBuildPlans = () => {
     try {
       const plans = JSON.parse(localStorage.getItem(savedBuildStorageKey) || "[]");
-      return Array.isArray(plans) ? plans.filter((plan) => plan?.characterId === "260" && typeof plan.id === "string") : [];
+      return Array.isArray(plans) ? plans.filter((plan) => plan?.characterId === currentSavedBuildCharacterId && typeof plan.id === "string") : [];
     } catch { return []; }
   };
   const readSavedBuildEdits = () => {
@@ -146,6 +150,57 @@
     const record = edits[`skill:${row.id}`];
     return String(record && Object.prototype.hasOwnProperty.call(record, field) ? record[field] : fallback);
   };
+
+  const savedBuildBonusPattern = /(受到的?(?:敌人)?(?:物理|魔法|火|炎|冰|树|雷|光|暗|无属性)?(?:攻击)?伤害|(?:火|炎|冰|树|雷|光|暗|无属性)属性物理攻击(?:与|和)必杀伤害上限|物理攻击(?:与|和)必杀伤害上限|特技(?:与|和)必杀伤害上限|物理攻击(?:与|和)魔法攻击伤害上限|(?:火|炎|冰|树|雷|光|暗|无属性)属性(?:物理攻击|魔法攻击|攻击)?伤害上限|不可叠加魔法(?:的)?伤害上限|物理(?:攻击)?伤害上限|魔法(?:攻击)?伤害上限|特技伤害上限|(?:超级|超)?必杀技?伤害上限|反击伤害上限|特攻伤害上限|暴击伤害上限|HP恢复上限|伤害上限|(?:火|炎|冰|树|雷|光|暗|无属性)属性物理攻击(?:与|和)必杀伤害|物理攻击(?:与|和)必杀伤害|特技(?:与|和)必杀伤害|物理攻击(?:与|和)魔法攻击伤害|(?:火|炎|冰|树|雷|光|暗|无属性)属性(?:物理攻击|魔法攻击|攻击)?伤害|不可叠加魔法伤害|物理(?:攻击)?伤害|魔法(?:攻击)?伤害|普通攻击伤害|特技伤害|(?:超级|超)?必杀技?伤害|反击伤害|特攻伤害|暴击伤害|弱点伤害|受到的伤害|造成的伤害|伤害|攻击力|防御力|魔力|魔抗|HP上限|MP上限|暴击率|SCT恢复速度|SCT回复速度|Break值|治疗魔法威力|HP恢复量)([^。；，,+＋-]{0,16})([+＋-])\s*([\d,]+(?:\.\d+)?)\s*(%)?/g;
+  const inferSavedBuildMetric = (effect, index, suffix) => {
+    const context = effect.slice(Math.max(0, index - 80), index);
+    const end = suffix.includes("上限") ? "伤害上限" : "伤害";
+    if (/物理攻击(?:与|和)必杀/.test(context)) return `物理/必杀${end}`;
+    if (/特技(?:与|和)必杀/.test(context)) return `特技/必杀${end}`;
+    if (/物理攻击(?:与|和)魔法攻击/.test(context)) return `物理/魔法${end}`;
+    const attribute = context.match(/(火|炎|冰|树|雷|光|暗|无)属性[^，。；]{0,18}$/)?.[1];
+    if (attribute) return `${attribute === "火" ? "炎" : attribute}属性${end}`;
+    if (/物理攻击[^，。；]{0,24}$/.test(context)) return `物理${end}`;
+    if (/魔法攻击[^，。；]{0,24}$/.test(context)) return `魔法${end}`;
+    if (/特技[^，。；]{0,24}$/.test(context)) return `特技${end}`;
+    if (/(?:超级|超)?必杀[^，。；]{0,24}$/.test(context)) return `必杀${end}`;
+    if (/反击[^，。；]{0,24}$/.test(context)) return `反击${end}`;
+    if (/特攻[^，。；]{0,24}$/.test(context)) return `特攻${end}`;
+    return suffix;
+  };
+  const normalizeSavedBuildMetric = (raw, effect, index) => {
+    let label = raw.replace(/^受到的?敌人?/, "受到的").replaceAll("攻击伤害", "伤害").replaceAll("火属性", "炎属性");
+    label = label.replace(/超级必杀技?|超必杀技?|必杀技/g, "必杀");
+    label = label.replace("物理攻击与必杀", "物理/必杀").replace("物理攻击和必杀", "物理/必杀");
+    label = label.replace("特技与必杀", "特技/必杀").replace("特技和必杀", "特技/必杀");
+    label = label.replace("物理攻击与魔法攻击", "物理/魔法").replace("物理攻击和魔法攻击", "物理/魔法");
+    label = label.replace(/^物理攻击/, "物理").replace(/^魔法攻击/, "魔法");
+    return label === "伤害" || label === "伤害上限" ? inferSavedBuildMetric(effect, index, label) : label;
+  };
+  const summarizeSavedBuildBonuses = (items, edits) => {
+    const totals = new Map();
+    items.forEach((item) => {
+      const effect = savedBuildRowValue(item.row, "effect", edits).replaceAll("＋", "+").replace(/\s+/g, " ");
+      savedBuildBonusPattern.lastIndex = 0;
+      for (const match of effect.matchAll(savedBuildBonusPattern)) {
+        const metric = normalizeSavedBuildMetric(match[1], effect, match.index || 0);
+        const unit = match[5] ? "%" : "";
+        const value = Number(match[4].replaceAll(",", "")) * (match[3] === "-" ? -1 : 1);
+        if (!Number.isFinite(value)) continue;
+        const key = `${metric}|${unit}`;
+        const current = totals.get(key) || { key, metric, unit, value: 0, skills: [] };
+        current.value += value;
+        if (!current.skills.some((skill) => skill.id === item.id)) current.skills.push({
+          id: item.id,
+          name: savedBuildRowValue(item.row, "name", edits),
+          effect: savedBuildRowValue(item.row, "effect", edits),
+        });
+        totals.set(key, current);
+      }
+    });
+    return [...totals.values()];
+  };
+  const formatSavedBuildBonus = (value, unit) => `${value > 0 ? "+" : ""}${unit ? formatSavedBuildSc(value) : Math.round(value).toLocaleString("zh-CN")}${unit}`;
 
   const calculateSavedBuild = (plan, edits) => {
     const characterFreeIds = new Set(Array.isArray(plan.characterFreeIds) ? plan.characterFreeIds.map(String) : []);
@@ -190,8 +245,14 @@
       savedBuildBreaks.innerHTML = "";
       savedBuildSkills.innerHTML = '<div class="saved-build-empty">还没有这个角色的已保存方案。<br>请先使用上方“配装计算器”选择技能并保存。</div>';
       savedBuildTotal.textContent = "0 SC";
+      savedBuildDetails.disabled = true;
+      savedBuildDetails.classList.remove("is-active");
+      savedBuildDetails.setAttribute("aria-pressed", "false");
       return;
     }
+    savedBuildDetails.disabled = false;
+    savedBuildDetails.classList.toggle("is-active", savedBuildDetailsOpen);
+    savedBuildDetails.setAttribute("aria-pressed", String(savedBuildDetailsOpen));
     savedBuildNote.hidden = !plan.note;
     savedBuildNote.textContent = plan.note || "";
     const result = calculateSavedBuild(plan, edits);
@@ -205,7 +266,13 @@
       if (aCharacterFree !== bCharacterFree) return aCharacterFree ? 1 : -1;
       return descending ? b.sc - a.sc : a.sc - b.sc;
     });
-    savedBuildSkills.innerHTML = displayItems.length
+    const bonuses = summarizeSavedBuildBonuses(result.items, edits);
+    savedBuildSkills.innerHTML = savedBuildDetailsOpen
+      ? (bonuses.length ? `<div class="saved-build-bonus-summary">${bonuses.map((item) => {
+          const expanded = expandedSavedBuildBonusKey === item.key;
+          return `<button class="saved-build-bonus-row${expanded ? " is-expanded" : ""}" type="button" data-saved-bonus-key="${escapeSavedBuildHtml(item.key)}" aria-expanded="${expanded}"><span>${escapeSavedBuildHtml(item.metric)}</span><strong>${escapeSavedBuildHtml(formatSavedBuildBonus(item.value, item.unit))}</strong></button>${expanded ? `<div class="saved-build-bonus-sources">${item.skills.map((skill) => `<article><strong>${escapeSavedBuildHtml(skill.name)}</strong><p>${escapeSavedBuildHtml(skill.effect)}</p></article>`).join("")}</div>` : ""}`;
+        }).join("")}<p class="saved-build-bonus-note">仅合计所选技能描述中的明确数值，技能发动条件仍需满足。</p></div>` : '<div class="saved-build-empty">当前方案没有可合并的明确数值</div>')
+      : displayItems.length
       ? displayItems.map((item) => `<div class="saved-build-skill${item.freeBy ? " is-free" : ""}">
           <div class="saved-build-skill-name">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}</div>
           <div class="saved-build-skill-sc">${item.freeBy === "character" ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : `<strong>${formatSavedBuildSc(item.sc)} SC</strong>`}</div>
@@ -572,8 +639,22 @@
     savedBuildSortDirection = savedBuildSortDirection === "desc" ? "asc" : "desc";
     renderSavedBuildViewer();
   });
+  savedBuildDetails.addEventListener("click", () => {
+    savedBuildDetailsOpen = !savedBuildDetailsOpen;
+    expandedSavedBuildBonusKey = "";
+    renderSavedBuildViewer();
+  });
   savedBuildSelect.addEventListener("change", () => {
     selectedSavedBuildId = savedBuildSelect.value;
+    savedBuildDetailsOpen = false;
+    expandedSavedBuildBonusKey = "";
+    renderSavedBuildViewer();
+  });
+  savedBuildSkills.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-saved-bonus-key]");
+    if (!button) return;
+    const key = String(button.dataset.savedBonusKey);
+    expandedSavedBuildBonusKey = expandedSavedBuildBonusKey === key ? "" : key;
     renderSavedBuildViewer();
   });
   overlay.addEventListener("click", () => closeCalculator("bonus"));

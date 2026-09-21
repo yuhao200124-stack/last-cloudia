@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="stylesheet" href="./character.css" />
   </head>
-  <body>
+  <body data-character-id="260">
     <header class="site-header">
       <div class="brand-mark" aria-hidden="true">LC</div>
       <div>
@@ -212,7 +212,10 @@
         <select id="savedBuildSelect" aria-label="选择已保存方案"></select>
       </div>
       <div id="savedBuildNote" class="saved-build-note" hidden></div>
-      <div id="savedBuildBreaks" class="saved-build-breaks" aria-label="方案突破状态"></div>
+      <div class="saved-build-controls">
+        <div id="savedBuildBreaks" class="saved-build-breaks" aria-label="方案突破状态"></div>
+        <button id="savedBuildDetails" class="saved-build-details" type="button" aria-pressed="false">详细</button>
+      </div>
       <div id="savedBuildSkills" class="saved-build-skills"></div>
       <div class="saved-build-total"><span>合计</span><strong id="savedBuildTotal">0 SC</strong></div>
     </aside>
