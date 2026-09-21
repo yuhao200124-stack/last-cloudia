@@ -46,7 +46,7 @@
   const loadoutPlansStorageKey = 'lc-sheet-table:loadout-plans-v1';
   const characterLoadouts = {
     '260': {
-      name: '洛琪希·米格路迪亚·格雷拉特',
+      name: '洛琪希',
       page: './character-260.html',
       skillIds: [
         '3ab5e4ec857b4879', 'f201c9d8e9ee87ed', '全部技能:all:30', '9146eb2670c69122',
@@ -135,7 +135,7 @@
     .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
 
   calculatorCharacterSelect.innerHTML = [
-    '<option value="">通用（不指定角色）</option>',
+    '<option value="">通用</option>',
     ...Object.entries(characterLoadouts).map(([id, character]) => `<option value="${escapeHtml(id)}">${escapeHtml(character.name)}</option>`),
   ].join('');
 
