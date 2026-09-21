@@ -45,6 +45,10 @@
     return `<ul class="source-list">${(row.sources || []).map(item => `<li>${highlight(item)}</li>`).join('')}</ul>`;
   }
 
+  function cell(content, extraClass = '') {
+    return `<div class="cell-content ${extraClass}">${content}</div>`;
+  }
+
   function skillName(row) {
     const label = highlight(row.name);
     return row.url
@@ -67,11 +71,11 @@
     const body = groups.map(group => group.rows.map((row, index) => `
       <tr>
         ${index === 0 ? `<td class="type-cell" rowspan="${group.rows.length}">${highlight(group.type)}</td>` : ''}
-        <td class="skill-name">${skillName(row)}</td>
-        <td class="sc-cell">${escapeHtml(row.sc)}</td>
-        <td>${highlight(row.effect)}</td>
-        <td>${sourceList(row)}</td>
-        <td class="rating-cell">${escapeHtml(row.mark)}</td>
+        <td class="skill-name">${cell(skillName(row), 'cell-center')}</td>
+        <td class="sc-cell">${cell(escapeHtml(row.sc), 'cell-center')}</td>
+        <td>${cell(highlight(row.effect))}</td>
+        <td>${cell(sourceList(row), 'cell-center')}</td>
+        <td class="rating-cell">${cell(escapeHtml(row.mark), 'cell-center')}</td>
       </tr>`).join('')).join('');
     return `<div class="table-scroll"><table class="excel-table" aria-label="${escapeHtml(label)}">
       <colgroup><col class="type"><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"></colgroup>
@@ -85,11 +89,11 @@
 
   function allTable(rows) {
     const body = rows.map(row => `<tr>
-      <td class="skill-name">${skillName(row)}</td>
-      <td class="sc-cell">${escapeHtml(row.sc)}</td>
-      <td>${highlight(row.effect)}</td>
-      <td>${sourceList(row)}</td>
-      <td class="rating-cell">${escapeHtml(row.mark)}</td>
+      <td class="skill-name">${cell(skillName(row), 'cell-center')}</td>
+      <td class="sc-cell">${cell(escapeHtml(row.sc), 'cell-center')}</td>
+      <td>${cell(highlight(row.effect))}</td>
+      <td>${cell(sourceList(row), 'cell-center')}</td>
+      <td class="rating-cell">${cell(escapeHtml(row.mark), 'cell-center')}</td>
     </tr>`).join('');
     return `<div class="table-scroll"><table class="excel-table all-skills" aria-label="全部技能">
       <colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"></colgroup>
