@@ -42,8 +42,9 @@
             <h3 class="section-title with-action">
               <span>最大阶段属性</span>
               <span class="section-actions">
-                <button id="bonusCalculatorOpen" class="section-action" type="button">Σ 加成计算器</button>
-                <button id="capCalculatorOpen" class="section-action" type="button">伤害上限计算器</button>
+                <button id="bonusCalculatorOpen" class="section-action" type="button">基础计算器</button>
+                <button id="capCalculatorOpen" class="section-action" type="button">基础伤害上限</button>
+                <button id="finalDamageCalculatorOpen" class="section-action" type="button">最终伤害计算器</button>
                 <button id="savedBuildViewerOpen" class="section-action" type="button">已保存配装</button>
               </span>
             </h3>
@@ -155,30 +156,31 @@
     </main>
 
     <div id="bonusCalculatorOverlay" class="calculator-overlay" hidden></div>
-    <aside id="bonusCalculator" class="bonus-calculator" hidden aria-label="角色加成计算器">
+    <aside id="bonusCalculator" class="bonus-calculator" hidden aria-label="基础计算器">
       <div class="bonus-calculator-header">
-        <strong>角色加成计算器</strong>
+        <strong>基础计算器</strong>
         <button id="bonusCalculatorClose" type="button" aria-label="关闭计算器">×</button>
       </div>
       <div class="mobile-calculator-tabs" aria-label="切换计算器">
-        <button class="is-active" type="button" data-calculator-target="bonus">加成</button>
-        <button type="button" data-calculator-target="cap">伤害上限</button>
+        <button class="is-active" type="button" data-calculator-target="bonus">基础</button>
+        <button type="button" data-calculator-target="cap">上限</button>
+        <button type="button" data-calculator-target="final">最终伤害</button>
       </div>
       <div class="calculator-tools">
-        <p>所有来源均按最大触发数值计算。点击属性查看来源；双击来源技能定位原文（计算器保持展开）；点击“×”隐藏不想看的词条。</p>
         <button id="bonusRestoreAll" type="button">恢复全部</button>
       </div>
       <div id="bonusSummary" class="bonus-summary"></div>
     </aside>
 
-    <aside id="capCalculator" class="bonus-calculator cap-calculator" hidden aria-label="伤害上限计算器">
+    <aside id="capCalculator" class="bonus-calculator cap-calculator" hidden aria-label="基础伤害上限">
       <div class="bonus-calculator-header">
-        <strong>伤害上限计算器</strong>
-        <button id="capCalculatorClose" type="button" aria-label="关闭伤害上限计算器">×</button>
+        <strong>基础伤害上限</strong>
+        <button id="capCalculatorClose" type="button" aria-label="关闭基础伤害上限">×</button>
       </div>
       <div class="mobile-calculator-tabs" aria-label="切换计算器">
-        <button type="button" data-calculator-target="bonus">加成</button>
-        <button class="is-active" type="button" data-calculator-target="cap">伤害上限</button>
+        <button type="button" data-calculator-target="bonus">基础</button>
+        <button class="is-active" type="button" data-calculator-target="cap">上限</button>
+        <button type="button" data-calculator-target="final">最终伤害</button>
       </div>
       <div class="cap-result" aria-live="polite">
         <span>当前单次伤害上限</span>
@@ -186,19 +188,38 @@
         <small id="capAdded">基础上限 9,999</small>
       </div>
       <div class="calculator-tools cap-tools">
-        <p>先选择要计算的上限分类，再补充战斗条件。符合条件的常驻来源会默认勾选；魔法提供的增益保留为可选项，默认不勾选。</p>
+        <p>选择本次攻击适用的伤害上限；BOSS、暴击、特攻与单武器已经合并为对应上限类型。符合条件的常驻来源会自动列出，主动魔法增益默认不计入。</p>
         <button id="capReset" type="button">清空</button>
       </div>
-      <div class="cap-subheading">选择攻击魔法</div>
+      <div id="capAttackHeading" class="cap-subheading">选择攻击方式</div>
       <div id="capAttacks" class="cap-attacks" aria-label="选择攻击魔法"></div>
-      <div class="cap-subheading">上限分类（可多选）</div>
+      <div class="cap-subheading">选择伤害上限（可多选）</div>
       <div id="capTypes" class="cap-types" aria-label="选择伤害上限分类"></div>
-      <div class="cap-subheading">附加条件</div>
-      <div id="capConditions" class="cap-conditions" aria-label="伤害条件"></div>
       <div class="cap-subheading">选择技能、个性、装备或超越</div>
       <div id="capSourcePicker" class="cap-source-picker" aria-label="选择伤害上限来源"></div>
       <div class="cap-breakdown-heading">已计入的加成（双击可返回原文）</div>
       <div id="capBreakdown" class="cap-breakdown"></div>
+    </aside>
+
+    <aside id="finalDamageCalculator" class="bonus-calculator final-damage-calculator" hidden aria-label="最终伤害计算器">
+      <div class="bonus-calculator-header">
+        <strong>最终伤害计算器</strong>
+        <button id="finalDamageCalculatorClose" type="button" aria-label="关闭最终伤害计算器">×</button>
+      </div>
+      <div class="mobile-calculator-tabs" aria-label="切换计算器">
+        <button type="button" data-calculator-target="bonus">基础</button>
+        <button type="button" data-calculator-target="cap">上限</button>
+        <button class="is-active" type="button" data-calculator-target="final">最终伤害</button>
+      </div>
+      <div class="final-damage-picker">
+        <label for="finalDamagePlanSelect">选择配装方案</label>
+        <select id="finalDamagePlanSelect"></select>
+      </div>
+      <div id="finalDamagePlanNote" class="final-damage-note" hidden></div>
+      <div class="calculator-tools final-damage-tools">
+        <p>将角色基础效果与所选配装中的额外技能合并。角色自带技能不会重复计算，所有有条件效果按最大触发值显示。</p>
+      </div>
+      <div id="finalDamageSummary" class="bonus-summary final-damage-summary"></div>
     </aside>
     <aside id="savedBuildViewer" class="bonus-calculator saved-build-calculator" hidden aria-label="已保存配装">
       <div class="bonus-calculator-header">
