@@ -91,6 +91,8 @@
   const savedBuildViewerOpen = document.getElementById("savedBuildViewerOpen");
   const savedBuildViewer = document.getElementById("savedBuildViewer");
   const savedBuildViewerClose = document.getElementById("savedBuildViewerClose");
+  const savedBuildAddSkills = document.getElementById("savedBuildAddSkills");
+  const savedBuildSaveChanges = document.getElementById("savedBuildSaveChanges");
   const savedBuildSort = document.getElementById("savedBuildSort");
   const savedBuildRatingSort = document.getElementById("savedBuildRatingSort");
   const savedBuildSelect = document.getElementById("savedBuildSelect");
@@ -116,6 +118,9 @@
   let expandedSavedBuildBonusKey = "";
   const expandedSavedBuildEffects = new Set();
   let selectedSavedBuildId = new URLSearchParams(location.search).get("plan") || "";
+  let savedBuildDraftPlanId = "";
+  let savedBuildDraftSkillIds = [];
+  let savedBuildDraftDirty = false;
 
   const savedBuildStorageKey = "lc-sheet-table:loadout-plans-v1";
   const savedBuildEditsKey = "lc-sheet-table:cell-edits-v1";
@@ -141,12 +146,13 @@
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
   };
   const formatSavedBuildSc = (value) => Number.isInteger(value) ? String(value) : String(Math.round(value * 100) / 100);
-  const readSavedBuildPlans = () => {
+  const readAllSavedBuildPlans = () => {
     try {
       const plans = JSON.parse(localStorage.getItem(savedBuildStorageKey) || "[]");
-      return Array.isArray(plans) ? plans.filter((plan) => plan?.characterId === currentSavedBuildCharacterId && typeof plan.id === "string") : [];
+      return Array.isArray(plans) ? plans.filter((plan) => plan && typeof plan.id === "string") : [];
     } catch { return []; }
   };
+  const readSavedBuildPlans = () => readAllSavedBuildPlans().filter((plan) => plan.characterId === currentSavedBuildCharacterId);
   const readSavedBuildEdits = () => {
     try { return JSON.parse(localStorage.getItem(savedBuildEditsKey) || "{}"); }
     catch { return {}; }
@@ -156,6 +162,25 @@
     const key = `skill:${row.id}`;
     edits[key] = { ...(edits[key] || {}), mark: value.trim() };
     localStorage.setItem(savedBuildEditsKey, JSON.stringify(edits));
+  };
+  const saveSavedBuildDraft = () => {
+    if (!savedBuildDraftPlanId) return null;
+    const skillIds = [...new Set(savedBuildDraftSkillIds.map(String))];
+    let savedPlan = null;
+    const plans = readAllSavedBuildPlans().map((plan) => {
+      if (plan.id !== savedBuildDraftPlanId || plan.characterId !== currentSavedBuildCharacterId) return plan;
+      savedPlan = {
+        ...plan,
+        skillIds,
+        characterFreeIds: Array.isArray(plan.characterFreeIds) ? plan.characterFreeIds.map(String).filter((id) => skillIds.includes(id)) : [],
+        updatedAt: new Date().toISOString(),
+      };
+      return savedPlan;
+    });
+    if (!savedPlan) return null;
+    localStorage.setItem(savedBuildStorageKey, JSON.stringify(plans));
+    savedBuildDraftDirty = false;
+    return savedPlan;
   };
   const savedBuildRowValue = (row, field, edits) => {
     const fallback = field === "sources" ? (row.sources || []).join("\n") : row[field] ?? "";
@@ -260,27 +285,40 @@
     savedBuildSelect.disabled = !plans.length;
     const plan = plans.find((item) => item.id === selectedSavedBuildId);
     if (!plan) {
+      savedBuildDraftPlanId = "";
+      savedBuildDraftSkillIds = [];
+      savedBuildDraftDirty = false;
       savedBuildNote.hidden = true;
       savedBuildBreaks.innerHTML = "";
       savedBuildSkills.innerHTML = '<div class="saved-build-empty">还没有这个角色的已保存方案。<br>请先使用上方“配装计算器”选择技能并保存。</div>';
       savedBuildTotal.textContent = "0 SC";
       savedBuildDetails.disabled = true;
       savedBuildEffects.disabled = true;
+      savedBuildAddSkills.disabled = true;
+      savedBuildSaveChanges.disabled = true;
       savedBuildDetails.classList.remove("is-active");
       savedBuildEffects.classList.remove("is-active");
       savedBuildDetails.setAttribute("aria-pressed", "false");
       savedBuildEffects.setAttribute("aria-pressed", "false");
       return;
     }
+    if (savedBuildDraftPlanId !== plan.id) {
+      savedBuildDraftPlanId = plan.id;
+      savedBuildDraftSkillIds = Array.isArray(plan.skillIds) ? [...new Set(plan.skillIds.map(String))] : [];
+      savedBuildDraftDirty = false;
+    }
+    const workingPlan = { ...plan, skillIds: [...savedBuildDraftSkillIds] };
     savedBuildDetails.disabled = false;
     savedBuildEffects.disabled = false;
+    savedBuildAddSkills.disabled = false;
+    savedBuildSaveChanges.disabled = !savedBuildDraftDirty;
     savedBuildDetails.classList.toggle("is-active", savedBuildDetailsOpen);
     savedBuildDetails.setAttribute("aria-pressed", String(savedBuildDetailsOpen));
     savedBuildEffects.classList.toggle("is-active", savedBuildEffectsOpen);
     savedBuildEffects.setAttribute("aria-pressed", String(savedBuildEffectsOpen));
     savedBuildNote.hidden = !plan.note;
     savedBuildNote.textContent = plan.note || "";
-    const result = calculateSavedBuild(plan, edits);
+    const result = calculateSavedBuild(workingPlan, edits);
     savedBuildBreaks.innerHTML = [7, 12, 20].map((level) => `<span class="saved-build-break${result.activeBreaks.includes(level) ? " is-active" : ""}">${level} SC突破</span>`).join("");
     const descending = savedBuildSortDirection === "desc";
     savedBuildSort.textContent = descending ? "SC▽" : "SC△";
@@ -324,6 +362,7 @@
           <button class="saved-build-skill-name" type="button" data-saved-skill-effect="${escapeSavedBuildHtml(item.id)}" title="双击查看技能效果">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}</button>
           <button class="saved-build-skill-rating${rating ? "" : " is-empty"}" type="button" data-edit-skill-rating="${escapeSavedBuildHtml(item.id)}" title="点击新增或修改评分">${rating ? escapeSavedBuildHtml(rating) : "+评分"}</button>
           <div class="saved-build-skill-sc">${item.freeBy === "character" ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : `<strong>${formatSavedBuildSc(item.sc)} SC</strong>`}</div>
+          <button class="saved-build-skill-remove" type="button" data-remove-saved-skill="${escapeSavedBuildHtml(item.id)}" aria-label="移除${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}" title="从方案移除">×</button>
           ${savedBuildEffectsOpen || expandedSavedBuildEffects.has(item.id) ? `<p class="saved-build-skill-effect">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "effect", edits))}</p>` : ""}
         </div>`;
       }).join("")
@@ -685,6 +724,15 @@
     savedBuildViewer.hidden = true;
     savedBuildViewerOpen.focus();
   });
+  savedBuildSaveChanges.addEventListener("click", () => {
+    if (!saveSavedBuildDraft()) return;
+    renderSavedBuildViewer();
+  });
+  savedBuildAddSkills.addEventListener("click", () => {
+    const plan = saveSavedBuildDraft() || readSavedBuildPlans().find((item) => item.id === selectedSavedBuildId);
+    if (!plan) return;
+    location.href = `./index.html?editPlan=${encodeURIComponent(plan.id)}#全部技能`;
+  });
   savedBuildSort.addEventListener("click", () => {
     if (savedBuildSortMode === "sc") savedBuildSortDirection = savedBuildSortDirection === "desc" ? "asc" : "desc";
     else savedBuildSortMode = "sc";
@@ -708,7 +756,12 @@
     renderSavedBuildViewer();
   });
   savedBuildSelect.addEventListener("change", () => {
+    if (savedBuildDraftDirty && !window.confirm("当前移除修改尚未保存，确定切换方案吗？")) {
+      savedBuildSelect.value = selectedSavedBuildId;
+      return;
+    }
     selectedSavedBuildId = savedBuildSelect.value;
+    savedBuildDraftPlanId = "";
     savedBuildDetailsOpen = false;
     savedBuildEffectsOpen = false;
     expandedSavedBuildBonusKey = "";
@@ -716,6 +769,15 @@
     renderSavedBuildViewer();
   });
   savedBuildSkills.addEventListener("click", (event) => {
+    const removeButton = event.target.closest("[data-remove-saved-skill]");
+    if (removeButton) {
+      const id = String(removeButton.dataset.removeSavedSkill);
+      savedBuildDraftSkillIds = savedBuildDraftSkillIds.filter((skillId) => skillId !== id);
+      expandedSavedBuildEffects.delete(id);
+      savedBuildDraftDirty = true;
+      renderSavedBuildViewer();
+      return;
+    }
     const ratingButton = event.target.closest("[data-edit-skill-rating]");
     if (ratingButton) {
       const row = savedBuildSkillIndex.get(String(ratingButton.dataset.editSkillRating));

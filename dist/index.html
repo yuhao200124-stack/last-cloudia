@@ -50,9 +50,10 @@
 
     <aside id="scCalculator" class="sc-calculator" hidden aria-label="SC计算器">
       <div class="calculator-header">
-        <button id="calculatorSort" class="calculator-sort" type="button" aria-label="按SC从大到小排序" title="按SC从大到小排序">
-          <span id="calculatorSortIcon" aria-hidden="true">▽</span>
-        </button>
+        <div class="calculator-sort-actions">
+          <button id="calculatorRatingSort" class="calculator-sort" type="button" aria-label="按评分排序" aria-pressed="false"><span id="calculatorRatingSortIcon" aria-hidden="true">评分▽</span></button>
+          <button id="calculatorSort" class="calculator-sort is-active" type="button" aria-label="按SC从大到小排序" aria-pressed="true" title="按SC从大到小排序"><span id="calculatorSortIcon" aria-hidden="true">SC▽</span></button>
+        </div>
         <strong id="calculatorContextTitle">SC计算器</strong>
         <button id="calculatorClose" class="calculator-close" type="button" aria-label="收起计算器">×</button>
       </div>

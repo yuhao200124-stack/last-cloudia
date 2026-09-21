@@ -414,18 +414,21 @@ input.cell-editor { height: 40px; text-align: center; }
 
 .calculator-header {
   min-height: 48px;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 34px;
   align-items: center;
-  justify-content: space-between;
+  gap: 7px;
   padding: 7px 10px;
   background: var(--navy);
   color: #fff;
 }
 
 .calculator-header > strong { min-width: 0; overflow: hidden; font-size: .92rem; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.calculator-sort-actions { display: flex; align-items: center; gap: 2px; }
 
 .calculator-sort {
-  width: 38px;
+  width: auto;
+  min-width: 42px;
   height: 34px;
   display: grid;
   place-items: center;
@@ -438,7 +441,8 @@ input.cell-editor { height: 40px; text-align: center; }
 }
 
 .calculator-sort:hover { background: rgba(255,255,255,.13); }
-.calculator-sort span { font-size: 1.75rem; line-height: 1; transform: translateY(-1px); }
+.calculator-sort.is-active { background: rgba(255,255,255,.18); }
+.calculator-sort span { font-size: .75rem; font-weight: 700; line-height: 1; white-space: nowrap; }
 .calculator-close { width: 34px; height: 34px; border: 0; border-radius: 50%; background: rgba(255,255,255,.13); color: #fff; font-size: 1.35rem; cursor: pointer; }
 
 .calculator-plan-actions {
@@ -528,15 +532,19 @@ input.cell-editor { height: 40px; text-align: center; }
 
 .calculator-skill {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto 30px;
+  grid-template-columns: minmax(0, 1fr) 60px 88px 30px;
   align-items: center;
-  gap: 10px;
+  column-gap: 10px;
+  row-gap: 8px;
   padding: 10px 12px;
   border-bottom: 1px solid #e2e8f1;
 }
 
 .calculator-skill-name { min-width: 0; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; font-weight: 700; text-align: left; overflow-wrap: anywhere; cursor: pointer; }
 .calculator-skill-name:hover { color: var(--blue-strong); }
+.calculator-skill-rating { width: 100%; min-height: 28px; padding: 3px 5px; border: 1px solid #b7c6da; border-radius: 5px; color: #7147a6; background: #f9f7ff; font: inherit; font-size: .74rem; font-weight: 700; text-align: center; cursor: pointer; }
+.calculator-skill-rating:hover { color: #fff; background: #7147a6; border-color: #7147a6; }
+.calculator-skill-rating.is-empty { color: #63738a; background: #fff; }
 .calculator-skill-sc { text-align: right; white-space: nowrap; }
 .calculator-skill-sc strong, .calculator-skill-sc del { display: block; }
 .calculator-skill-sc del { margin-top: 1px; color: var(--muted); font-size: .7rem; }

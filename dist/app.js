@@ -15,6 +15,8 @@
   const calculatorClose = document.querySelector('#calculatorClose');
   const calculatorSort = document.querySelector('#calculatorSort');
   const calculatorSortIcon = document.querySelector('#calculatorSortIcon');
+  const calculatorRatingSort = document.querySelector('#calculatorRatingSort');
+  const calculatorRatingSortIcon = document.querySelector('#calculatorRatingSortIcon');
   const calculatorEffects = document.querySelector('#calculatorEffects');
   const calculatorDetails = document.querySelector('#calculatorDetails');
   const calculatorContextTitle = document.querySelector('#calculatorContextTitle');
@@ -57,6 +59,8 @@
   let editingPlanId = '';
   let editingPlanMetadataOnly = false;
   let calculatorEffectsOpen = false;
+  let calculatorSortMode = 'sc';
+  let calculatorRatingDirection = 'desc';
   const expandedSkillEffects = new Set();
   try {
     const savedCalculator = JSON.parse(localStorage.getItem(calculatorStorageKey) || '{}');
@@ -96,9 +100,23 @@
   calculatorState.skillIds = calculatorState.skillIds.filter(id => skillIndex.has(id));
   calculatorState.characterFreeIds = calculatorState.characterFreeIds.filter(id => skillIndex.has(id));
 
-  const inboundCharacterId = new URLSearchParams(location.search).get('loadout');
+  const inboundParams = new URLSearchParams(location.search);
+  const inboundPlanId = inboundParams.get('editPlan');
+  const inboundPlan = loadoutPlans.find(plan => plan.id === inboundPlanId);
+  const inboundCharacterId = inboundParams.get('loadout');
   const inboundLoadout = characterLoadouts[inboundCharacterId];
-  if (inboundLoadout) {
+  if (inboundPlan) {
+    calculatorState.skillIds = [...new Set((inboundPlan.skillIds || []).map(String))].filter(id => skillIndex.has(id));
+    calculatorState.characterFreeIds = [...new Set((inboundPlan.characterFreeIds || []).map(String))].filter(id => skillIndex.has(id));
+    calculatorState.characterId = typeof inboundPlan.characterId === 'string' ? inboundPlan.characterId : '';
+    calculatorState.currentPlanId = inboundPlan.id;
+    calculatorState.activeBreaks = [...new Set((inboundPlan.activeBreaks || []).map(Number).filter(value => [7, 12, 20].includes(value)))];
+    calculatorState.detailsOpen = false;
+    calculatorState.expandedBonusKey = '';
+    openCalculatorOnLoad = true;
+    localStorage.setItem(calculatorStorageKey, JSON.stringify(calculatorState));
+    history.replaceState(null, '', `${location.pathname}${location.hash}`);
+  } else if (inboundLoadout) {
     const includedIds = inboundLoadout.skillIds.filter(id => skillIndex.has(id));
     calculatorState.skillIds = [...includedIds];
     calculatorState.characterFreeIds = [...includedIds];
@@ -143,6 +161,14 @@
 
   function formatSc(value) {
     return Number.isInteger(value) ? String(value) : String(Math.round(value * 100) / 100);
+  }
+
+  function ratingWeight(rating) {
+    const value = String(rating || '').trim().toUpperCase();
+    const gradeWeights = { SSS: 900, SS: 800, 'S+': 750, S: 700, 'S-': 650, 'A+': 600, A: 550, 'A-': 500, 'B+': 450, B: 400, 'B-': 350, 'C+': 300, C: 250, 'C-': 200, D: 150 };
+    if (Object.prototype.hasOwnProperty.call(gradeWeights, value)) return gradeWeights[value];
+    const numeric = Number(value);
+    return Number.isFinite(numeric) && value !== '' ? numeric : null;
   }
 
   const bonusMetricPattern = /(受到的?(?:敌人)?(?:物理|魔法|火|炎|冰|树|雷|光|暗|无属性)?(?:攻击)?伤害|(?:火|炎|冰|树|雷|光|暗|无属性)属性物理攻击(?:与|和)必杀伤害上限|物理攻击(?:与|和)必杀伤害上限|特技(?:与|和)必杀伤害上限|物理攻击(?:与|和)魔法攻击伤害上限|(?:火|炎|冰|树|雷|光|暗|无属性)属性(?:物理攻击|魔法攻击|攻击)?伤害上限|不可叠加魔法(?:的)?伤害上限|物理(?:攻击)?伤害上限|魔法(?:攻击)?伤害上限|特技伤害上限|(?:超级|超)?必杀技?伤害上限|反击伤害上限|特攻伤害上限|暴击伤害上限|HP恢复上限|伤害上限|(?:火|炎|冰|树|雷|光|暗|无属性)属性物理攻击(?:与|和)必杀伤害|物理攻击(?:与|和)必杀伤害|特技(?:与|和)必杀伤害|物理攻击(?:与|和)魔法攻击伤害|(?:火|炎|冰|树|雷|光|暗|无属性)属性(?:物理攻击|魔法攻击|攻击)?伤害|不可叠加魔法伤害|物理(?:攻击)?伤害|魔法(?:攻击)?伤害|普通攻击伤害|特技伤害|(?:超级|超)?必杀技?伤害|反击伤害|特攻伤害|暴击伤害|弱点伤害|受到的伤害|造成的伤害|伤害|攻击力|防御力|魔力|魔抗|HP上限|MP上限|暴击率|SCT恢复速度|SCT回复速度|Break值|治疗魔法威力|HP恢复量)([^。；，,+＋-]{0,16})([+＋-])\s*([\d,]+(?:\.\d+)?)\s*(%)?/g;
@@ -304,14 +330,34 @@
       button.setAttribute('aria-pressed', String(active));
     });
     const descending = calculatorState.sortDirection === 'desc';
-    calculatorSortIcon.textContent = descending ? '▽' : '△';
+    calculatorSortIcon.textContent = descending ? 'SC▽' : 'SC△';
     calculatorSort.setAttribute('aria-label', descending ? '当前SC从大到小，点击改为从小到大' : '当前SC从小到大，点击改为从大到小');
     calculatorSort.title = descending ? 'SC从大到小' : 'SC从小到大';
+    calculatorSort.classList.toggle('is-active', calculatorSortMode === 'sc');
+    calculatorSort.setAttribute('aria-pressed', String(calculatorSortMode === 'sc'));
+    calculatorRatingSortIcon.textContent = calculatorRatingDirection === 'desc' ? '评分▽' : '评分△';
+    calculatorRatingSort.classList.toggle('is-active', calculatorSortMode === 'rating');
+    calculatorRatingSort.setAttribute('aria-pressed', String(calculatorSortMode === 'rating'));
     calculatorDetails.classList.toggle('is-active', calculatorState.detailsOpen);
     calculatorDetails.setAttribute('aria-pressed', String(calculatorState.detailsOpen));
     calculatorEffects.classList.toggle('is-active', calculatorEffectsOpen);
     calculatorEffects.setAttribute('aria-pressed', String(calculatorEffectsOpen));
     const displayItems = [...result.items].sort((a, b) => {
+      if (calculatorSortMode === 'rating') {
+        const aRating = rowValue(a.row, 'mark');
+        const bRating = rowValue(b.row, 'mark');
+        const aHasRating = Boolean(aRating.trim());
+        const bHasRating = Boolean(bRating.trim());
+        if (!aHasRating && bHasRating) return 1;
+        if (aHasRating && !bHasRating) return -1;
+        const aWeight = ratingWeight(aRating);
+        const bWeight = ratingWeight(bRating);
+        if (aWeight === null && bWeight !== null) return 1;
+        if (aWeight !== null && bWeight === null) return -1;
+        if (aWeight !== null && bWeight !== null && aWeight !== bWeight) return calculatorRatingDirection === 'desc' ? bWeight - aWeight : aWeight - bWeight;
+        if (aRating !== bRating) return calculatorRatingDirection === 'desc' ? bRating.localeCompare(aRating, 'zh-CN') : aRating.localeCompare(bRating, 'zh-CN');
+        return b.sc - a.sc;
+      }
       const aCharacterFree = a.freeBy === 'character';
       const bCharacterFree = b.freeBy === 'character';
       if (aCharacterFree !== bCharacterFree) return aCharacterFree ? 1 : -1;
@@ -326,12 +372,16 @@
         }).join('')}<p class="bonus-note">仅合计技能描述中的明确数值，技能发动条件仍需满足。</p></div>`
         : '<div class="calculator-empty">当前技能没有可合并的明确数值</div>')
       : displayItems.length
-      ? displayItems.map(item => `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
+      ? displayItems.map(item => {
+        const rating = rowValue(item.row, 'mark').trim();
+        return `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
           <button class="calculator-skill-name" type="button" data-skill-effect="${escapeHtml(item.id)}" title="双击查看技能效果">${escapeHtml(rowValue(item.row, 'name'))}</button>
+          <button class="calculator-skill-rating${rating ? '' : ' is-empty'}" type="button" data-edit-calculator-rating="${escapeHtml(item.id)}" title="点击新增或修改评分">${rating ? escapeHtml(rating) : '+评分'}</button>
           <div class="calculator-skill-sc">${item.freeBy === 'character' ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
           <button type="button" data-remove-skill="${escapeHtml(item.id)}" aria-label="移除${escapeHtml(rowValue(item.row, 'name'))}" title="从计算器移除">×</button>
           ${calculatorEffectsOpen || expandedSkillEffects.has(item.id) ? `<p class="calculator-skill-effect">${escapeHtml(rowValue(item.row, 'effect'))}</p>` : ''}
-        </div>`).join('')
+        </div>`;
+      }).join('')
       : '<div class="calculator-empty">点击技能右侧的“＋”添加技能</div>';
     calculatorTotal.textContent = `${formatSc(result.total)} SC`;
     calculatorBadge.textContent = `${formatSc(result.total)} SC`;
@@ -671,8 +721,15 @@
   calculatorClose.addEventListener('click', () => setCalculatorOpen(false));
 
   calculatorSort.addEventListener('click', () => {
-    calculatorState.sortDirection = calculatorState.sortDirection === 'desc' ? 'asc' : 'desc';
+    if (calculatorSortMode === 'sc') calculatorState.sortDirection = calculatorState.sortDirection === 'desc' ? 'asc' : 'desc';
+    else calculatorSortMode = 'sc';
     saveCalculatorState();
+    renderCalculator();
+  });
+
+  calculatorRatingSort.addEventListener('click', () => {
+    if (calculatorSortMode === 'rating') calculatorRatingDirection = calculatorRatingDirection === 'desc' ? 'asc' : 'desc';
+    else calculatorSortMode = 'rating';
     renderCalculator();
   });
 
@@ -747,6 +804,17 @@
       calculatorState.expandedBonusKey = calculatorState.expandedBonusKey === key ? '' : key;
       saveCalculatorState();
       renderCalculator();
+      return;
+    }
+    const ratingButton = event.target.closest('[data-edit-calculator-rating]');
+    if (ratingButton) {
+      const row = skillIndex.get(String(ratingButton.dataset.editCalculatorRating));
+      if (!row) return;
+      const current = rowValue(row, 'mark');
+      const next = window.prompt('输入技能评分（例如 S、S+、SS、SSS）；留空可清除评分。', current);
+      if (next === null) return;
+      saveCellEdit(rowKey(row), 'mark', next.trim());
+      render();
       return;
     }
     const removeButton = event.target.closest('[data-remove-skill]');
