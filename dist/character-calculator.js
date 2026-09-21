@@ -158,6 +158,10 @@
     const added = applied.reduce((total, source) => total + getSourceValue(source, tags), 0);
     return { attack, tags, selected, applied, added, total: attack.baseCap + added };
   };
+  const selectAllCapSources = () => {
+    selectedCapSources.clear();
+    damageCapCharacter.sources.forEach((source) => selectedCapSources.add(source.id));
+  };
 
   const formatValue = (value, unit) => {
     const number = Number(value).toLocaleString("zh-CN");
@@ -275,6 +279,7 @@
       `;
       label.querySelector("input").addEventListener("change", () => {
         selectedCapAttack = attack.id;
+        selectAllCapSources();
         renderCapCalculator();
       });
       capAttackElement.appendChild(label);
@@ -288,6 +293,7 @@
       option.querySelector("input").addEventListener("change", (event) => {
         if (event.target.checked) selectedCapConditions.add(id);
         else selectedCapConditions.delete(id);
+        selectAllCapSources();
         renderCapCalculator();
       });
       capConditionsElement.appendChild(option);
@@ -300,11 +306,10 @@
     capAdded.textContent = `${result.attack.label}：基础 ${result.attack.baseCap.toLocaleString("zh-CN")} + 已叠加 ${result.added.toLocaleString("zh-CN")}${scenario}`;
 
     capSourcePicker.innerHTML = "";
-    damageCapCharacter.sources.forEach((source) => {
-      const applicable = sourceApplies(source, result.tags);
+    damageCapCharacter.sources.filter((source) => sourceApplies(source, result.tags)).forEach((source) => {
       const value = getSourceValue(source, result.tags);
       const option = document.createElement("label");
-      option.className = `cap-skill-option${selectedCapSources.has(source.id) ? " is-selected" : ""}${applicable ? "" : " is-unmet"}`;
+      option.className = `cap-skill-option${selectedCapSources.has(source.id) ? " is-selected" : ""}`;
       option.innerHTML = `
         <input type="checkbox" ${selectedCapSources.has(source.id) ? "checked" : ""}>
         <span>${source.label}</span>
@@ -319,20 +324,19 @@
     });
 
     capBreakdown.innerHTML = "";
-    if (!result.selected.length) {
-      capBreakdown.innerHTML = '<div class="cap-empty">勾选上面的技能、个性、装备或超越后，这里只显示你已选择的上限加成。</div>';
+    if (!result.applied.length) {
+      capBreakdown.innerHTML = '<div class="cap-empty">当前没有满足全部战斗条件并计入总数的上限加成。</div>';
       return;
     }
 
-    result.selected.forEach((source) => {
-      const applicable = sourceApplies(source, result.tags);
+    result.applied.forEach((source) => {
       const value = getSourceValue(source, result.tags);
       const item = document.createElement("section");
-      item.className = `cap-source-option${applicable ? "" : " is-unavailable"}`;
+      item.className = "cap-source-option";
       item.innerHTML = `
         <div class="cap-selected-source">
-          <span><strong>${source.label}</strong><small>${applicable ? source.condition : `暂未计入：条件不满足。${source.condition}`}</small></span>
-          <b>${applicable ? `+${value.toLocaleString("zh-CN")}` : "未计入"}</b>
+          <span><strong>${source.label}</strong><small>${source.condition}</small></span>
+          <b>+${value.toLocaleString("zh-CN")}</b>
           <button type="button" aria-label="取消选择${source.label}" title="取消选择">×</button>
         </div>
       `;
@@ -401,6 +405,7 @@
     selectedCapSources.clear();
     renderCapCalculator();
   });
+  selectAllCapSources();
   renderCapCalculator();
 
   const enableDragging = (targetPanel) => {
