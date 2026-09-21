@@ -126,7 +126,7 @@
 
   function addButton(row) {
     const added = calculatorState.skillIds.includes(String(row.id));
-    return `<button class="add-skill-button${added ? ' is-added' : ''}" type="button" data-add-skill="${escapeHtml(row.id)}" aria-label="${added ? '已添加到计算器' : '添加到SC计算器'}" title="${added ? '已添加' : '添加到SC计算器'}"><span aria-hidden="true">${added ? '✓' : '+'}</span></button>`;
+    return `<button class="add-skill-button${added ? ' is-added' : ''}" type="button" data-add-skill="${escapeHtml(row.id)}" aria-label="${added ? '从SC计算器取消' : '添加到SC计算器'}" title="${added ? '再次点击取消' : '添加到SC计算器'}"><span aria-hidden="true">${added ? '✓' : '+'}</span></button>`;
   }
 
   function saveCalculatorState() {
@@ -364,7 +364,11 @@
     if (add) {
       event.preventDefault();
       const id = String(add.dataset.addSkill);
-      if (!calculatorState.skillIds.includes(id) && skillIndex.has(id)) {
+      if (calculatorState.skillIds.includes(id)) {
+        calculatorState.skillIds = calculatorState.skillIds.filter(skillId => skillId !== id);
+        saveCalculatorState();
+        render();
+      } else if (skillIndex.has(id)) {
         calculatorState.skillIds.push(id);
         saveCalculatorState();
         render();
