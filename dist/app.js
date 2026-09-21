@@ -27,7 +27,7 @@
     edits = JSON.parse(localStorage.getItem(editStorageKey) || '{}');
   } catch { edits = {}; }
   const calculatorStorageKey = 'lc-sheet-table:sc-calculator-v1';
-  let calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false };
+  let calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, expandedBonusKey: '' };
   try {
     const savedCalculator = JSON.parse(localStorage.getItem(calculatorStorageKey) || '{}');
     const savedBreaks = Array.isArray(savedCalculator.activeBreaks)
@@ -38,8 +38,9 @@
       activeBreaks: [...new Set(savedBreaks)],
       sortDirection: savedCalculator.sortDirection === 'asc' ? 'asc' : 'desc',
       detailsOpen: Boolean(savedCalculator.detailsOpen),
+      expandedBonusKey: typeof savedCalculator.expandedBonusKey === 'string' ? savedCalculator.expandedBonusKey : '',
     };
-  } catch { calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false }; }
+  } catch { calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, expandedBonusKey: '' }; }
   const hashSheet = decodeURIComponent(location.hash.slice(1));
   let activeSheet = data.sheetOrder.includes(hashSheet)
     ? hashSheet
@@ -132,9 +133,16 @@
         const value = Number(match[4].replaceAll(',', '')) * (match[3] === '-' ? -1 : 1);
         if (!Number.isFinite(value)) continue;
         const key = `${metric}|${unit}`;
-        const current = totals.get(key) || { metric, unit, value: 0, count: 0 };
+        const current = totals.get(key) || { key, metric, unit, value: 0, count: 0, skills: [] };
         current.value += value;
         current.count += 1;
+        if (!current.skills.some(skill => skill.id === item.id)) {
+          current.skills.push({
+            id: item.id,
+            name: rowValue(item.row, 'name'),
+            effect: rowValue(item.row, 'effect'),
+          });
+        }
         totals.set(key, current);
       }
     }
@@ -232,7 +240,10 @@
     const bonuses = summarizeBonuses(result.items);
     calculatorSkills.innerHTML = calculatorState.detailsOpen
       ? (bonuses.length
-        ? `<div class="bonus-summary">${bonuses.map(item => `<div class="bonus-row"><span>${escapeHtml(item.metric)}</span><strong>${escapeHtml(formatBonus(item.value, item.unit))}</strong></div>`).join('')}<p>仅合计技能描述中的明确数值，技能发动条件仍需满足。</p></div>`
+        ? `<div class="bonus-summary">${bonuses.map(item => {
+          const expanded = calculatorState.expandedBonusKey === item.key;
+          return `<button class="bonus-row${expanded ? ' is-expanded' : ''}" type="button" data-bonus-key="${escapeHtml(item.key)}" aria-expanded="${expanded}" title="点击查看提供该效果的技能"><span>${escapeHtml(item.metric)}</span><strong>${escapeHtml(formatBonus(item.value, item.unit))}</strong></button>${expanded ? `<div class="bonus-sources">${item.skills.map(skill => `<article><strong>${escapeHtml(skill.name)}</strong><p>${escapeHtml(skill.effect)}</p></article>`).join('')}</div>` : ''}`;
+        }).join('')}<p class="bonus-note">仅合计技能描述中的明确数值，技能发动条件仍需满足。</p></div>`
         : '<div class="calculator-empty">当前技能没有可合并的明确数值</div>')
       : displayItems.length
       ? displayItems.map(item => `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
@@ -470,6 +481,7 @@
 
   calculatorDetails.addEventListener('click', () => {
     calculatorState.detailsOpen = !calculatorState.detailsOpen;
+    calculatorState.expandedBonusKey = '';
     saveCalculatorState();
     renderCalculator();
   });
@@ -481,6 +493,14 @@
       calculatorState.activeBreaks = calculatorState.activeBreaks.includes(level)
         ? calculatorState.activeBreaks.filter(item => item !== level)
         : [...calculatorState.activeBreaks, level].sort((a, b) => a - b);
+      saveCalculatorState();
+      renderCalculator();
+      return;
+    }
+    const bonusButton = event.target.closest('[data-bonus-key]');
+    if (bonusButton) {
+      const key = String(bonusButton.dataset.bonusKey);
+      calculatorState.expandedBonusKey = calculatorState.expandedBonusKey === key ? '' : key;
       saveCalculatorState();
       renderCalculator();
       return;
