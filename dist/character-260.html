@@ -162,8 +162,10 @@
         <strong>角色加成计算器</strong>
         <button id="bonusCalculatorClose" type="button" aria-label="关闭计算器">×</button>
       </div>
-      <p class="calculator-help">按开启的来源汇总最大触发数值。点击任意属性可查看由什么提供、提供多少及触发条件。</p>
-      <div id="bonusSourceFilters" class="bonus-source-filters" aria-label="加成来源开关"></div>
+      <div class="calculator-tools">
+        <p>所有来源均按最大触发数值计算。点击属性查看来源；点击“×”隐藏不想看的词条。</p>
+        <button id="bonusRestoreAll" type="button">恢复全部</button>
+      </div>
       <div id="bonusSummary" class="bonus-summary"></div>
     </aside>
     <script src="./character-calculator.js"></script>

@@ -1,13 +1,4 @@
 (() => {
-  const groups = [
-    { id: "traits", label: "个性", enabled: true },
-    { id: "exclusive", label: "专属技能", enabled: true },
-    { id: "equipment", label: "专属装备", enabled: true },
-    { id: "common", label: "通用技能", enabled: true },
-    { id: "transcend", label: "超越", enabled: true },
-    { id: "magic", label: "魔法增益", enabled: false }
-  ];
-
   const bonuses = [
     ["hp_pct", "HP", 20, "%", "超越·命导提升", "transcend", "常驻"],
     ["mp_pct", "MP", 15, "%", "魔导提升极", "exclusive", "常驻"],
@@ -85,64 +76,55 @@
   const openButton = document.getElementById("bonusCalculatorOpen");
   const closeButton = document.getElementById("bonusCalculatorClose");
   const dragHandle = panel.querySelector(".bonus-calculator-header");
-  const filters = document.getElementById("bonusSourceFilters");
+  const restoreAllButton = document.getElementById("bonusRestoreAll");
   const summary = document.getElementById("bonusSummary");
   const expanded = new Set();
+  const hiddenKeys = new Set();
 
   const formatValue = (value, unit) => {
     const number = Number(value).toLocaleString("zh-CN");
     return unit === "%" ? `+${number}%` : `+${number}`;
   };
 
-  const renderFilters = () => {
-    filters.innerHTML = "";
-    groups.forEach((group) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "bonus-source-toggle";
-      button.textContent = group.label;
-      button.setAttribute("aria-pressed", String(group.enabled));
-      button.addEventListener("click", () => {
-        group.enabled = !group.enabled;
-        button.setAttribute("aria-pressed", String(group.enabled));
-        renderSummary();
-      });
-      filters.appendChild(button);
-    });
-  };
-
   const renderSummary = () => {
-    const enabled = new Set(groups.filter((group) => group.enabled).map((group) => group.id));
-    const active = bonuses.filter((bonus) => enabled.has(bonus.group));
     const metrics = new Map();
-    active.forEach((bonus) => {
+    bonuses.forEach((bonus) => {
       if (!metrics.has(bonus.key)) metrics.set(bonus.key, { label: bonus.label, unit: bonus.unit, total: 0, providers: [] });
       const metric = metrics.get(bonus.key);
       metric.total += bonus.value;
       metric.providers.push(bonus);
     });
 
+    const visibleMetrics = [...metrics.entries()].filter(([key]) => !hiddenKeys.has(key));
     summary.innerHTML = "";
-    if (!metrics.size) {
-      summary.innerHTML = '<div class="bonus-empty">请至少打开一种加成来源。</div>';
+    if (!visibleMetrics.length) {
+      summary.innerHTML = '<div class="bonus-empty">全部词条都已隐藏，可点击“恢复全部”重新显示。</div>';
       return;
     }
 
-    metrics.forEach((metric, key) => {
+    visibleMetrics.forEach(([key, metric]) => {
       const row = document.createElement("section");
       row.className = "bonus-row";
       const isOpen = expanded.has(key);
       row.innerHTML = `
-        <button class="bonus-row-button" type="button" aria-expanded="${isOpen}">
-          <span>${metric.label}</span>
-          <strong>${formatValue(metric.total, metric.unit)}</strong>
-          <span class="bonus-chevron" aria-hidden="true">${isOpen ? "△" : "▽"}</span>
-        </button>
+        <div class="bonus-row-head">
+          <button class="bonus-row-button" type="button" aria-expanded="${isOpen}">
+            <span>${metric.label}</span>
+            <strong>${formatValue(metric.total, metric.unit)}</strong>
+            <span class="bonus-chevron" aria-hidden="true">${isOpen ? "△" : "▽"}</span>
+          </button>
+          <button class="bonus-row-remove" type="button" aria-label="隐藏${metric.label}" title="取消显示">×</button>
+        </div>
       `;
-      const button = row.querySelector("button");
+      const button = row.querySelector(".bonus-row-button");
       button.addEventListener("click", () => {
         if (expanded.has(key)) expanded.delete(key);
         else expanded.add(key);
+        renderSummary();
+      });
+      row.querySelector(".bonus-row-remove").addEventListener("click", () => {
+        hiddenKeys.add(key);
+        expanded.delete(key);
         renderSummary();
       });
       if (isOpen) {
@@ -179,7 +161,10 @@
     if (event.key === "Escape" && !panel.hidden) close();
   });
 
-  renderFilters();
+  restoreAllButton.addEventListener("click", () => {
+    hiddenKeys.clear();
+    renderSummary();
+  });
   renderSummary();
 
   let dragState = null;
