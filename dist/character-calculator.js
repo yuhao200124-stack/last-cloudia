@@ -75,12 +75,46 @@
   const overlay = document.getElementById("bonusCalculatorOverlay");
   const openButton = document.getElementById("bonusCalculatorOpen");
   const closeButton = document.getElementById("bonusCalculatorClose");
-  const dragHandle = panel.querySelector(".bonus-calculator-header");
   const restoreAllButton = document.getElementById("bonusRestoreAll");
   const summary = document.getElementById("bonusSummary");
+  const capPanel = document.getElementById("capCalculator");
+  const capOpenButton = document.getElementById("capCalculatorOpen");
+  const capCloseButton = document.getElementById("capCalculatorClose");
+  const capResetButton = document.getElementById("capReset");
+  const capConditionsElement = document.getElementById("capConditions");
+  const capBreakdown = document.getElementById("capBreakdown");
+  const capTotal = document.getElementById("capTotal");
+  const capAdded = document.getElementById("capAdded");
   const expanded = new Set();
   const hiddenKeys = new Set();
+  const selectedCapConditions = new Set();
+  let lastOpenedCalculator = "bonus";
   let highlightTimer = null;
+
+  const baseDamageCap = 9999;
+  const capConditionOptions = [
+    ["magic", "魔法"],
+    ["critical", "暴击"],
+    ["boss", "BOSS"],
+    ["ice", "冰属性"],
+    ["special", "特攻"],
+    ["physical", "物理"],
+    ["ultimate", "超必杀技"]
+  ];
+  const capRequirements = {
+    ice_cap: ["ice"],
+    ice_magic_cap: ["ice", "magic"],
+    boss_ice_magic_cap: ["ice", "magic", "boss"],
+    magic_cap: ["magic"],
+    boss_magic_cap: ["magic", "boss"],
+    critical_cap: ["critical"],
+    boss_critical_cap: ["critical", "boss"],
+    magic_critical_cap: ["magic", "critical"],
+    boss_magic_critical_cap: ["magic", "critical", "boss"],
+    special_cap: ["special"],
+    physical_cap: ["physical"],
+    ultimate_cap: ["ultimate"]
+  };
 
   const formatValue = (value, unit) => {
     const number = Number(value).toLocaleString("zh-CN");
@@ -106,6 +140,19 @@
     });
     const label = exact || partial;
     return label?.closest("tr, .trait, .equipment-card") || label || null;
+  };
+
+  const jumpToOriginal = (sourceName) => {
+    const target = findSourceTarget(sourceName);
+    if (!target) return;
+    window.requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      target.classList.remove("source-highlight");
+      void target.offsetWidth;
+      target.classList.add("source-highlight");
+      window.clearTimeout(highlightTimer);
+      highlightTimer = window.setTimeout(() => target.classList.remove("source-highlight"), 2600);
+    });
   };
 
   const renderSummary = () => {
@@ -162,21 +209,9 @@
             <div class="bonus-provider-head"><span>${provider.source}</span><span>${formatValue(provider.value, provider.unit)}</span></div>
             <small>${provider.condition}</small>
           `;
-          const jumpToSource = () => {
-            const target = findSourceTarget(provider.source);
-            if (!target) return;
-            window.requestAnimationFrame(() => {
-              target.scrollIntoView({ behavior: "smooth", block: "center" });
-              target.classList.remove("source-highlight");
-              void target.offsetWidth;
-              target.classList.add("source-highlight");
-              window.clearTimeout(highlightTimer);
-              highlightTimer = window.setTimeout(() => target.classList.remove("source-highlight"), 2600);
-            });
-          };
-          item.addEventListener("dblclick", jumpToSource);
+          item.addEventListener("dblclick", () => jumpToOriginal(provider.source));
           item.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") jumpToSource();
+            if (event.key === "Enter") jumpToOriginal(provider.source);
           });
           list.appendChild(item);
         });
@@ -186,20 +221,114 @@
     });
   };
 
-  const open = () => {
-    panel.hidden = false;
-    closeButton.focus();
-  };
-  const close = () => {
-    panel.hidden = true;
-    openButton.focus();
+  const renderCapCalculator = () => {
+    capConditionsElement.innerHTML = "";
+    capConditionOptions.forEach(([key, label]) => {
+      const option = document.createElement("label");
+      option.className = "cap-condition";
+      option.innerHTML = `<input type="checkbox" value="${key}" ${selectedCapConditions.has(key) ? "checked" : ""}><span>${label}</span>`;
+      option.querySelector("input").addEventListener("change", (event) => {
+        if (event.target.checked) selectedCapConditions.add(key);
+        else selectedCapConditions.delete(key);
+        renderCapCalculator();
+      });
+      capConditionsElement.appendChild(option);
+    });
+
+    const applied = bonuses.filter((bonus) => {
+      const requirements = capRequirements[bonus.key];
+      return requirements && requirements.every((condition) => selectedCapConditions.has(condition));
+    });
+    const addedValue = applied.reduce((total, bonus) => total + bonus.value, 0);
+    capTotal.textContent = (baseDamageCap + addedValue).toLocaleString("zh-CN");
+
+    const selectedLabels = capConditionOptions
+      .filter(([key]) => selectedCapConditions.has(key))
+      .map(([, label]) => label);
+    const scenario = selectedLabels.length ? `｜${selectedLabels.join(" + ")}` : "";
+    capAdded.textContent = `基础 9,999 + 已叠加 ${addedValue.toLocaleString("zh-CN")}${scenario}`;
+
+    capBreakdown.innerHTML = "";
+    if (!applied.length) {
+      capBreakdown.innerHTML = '<div class="cap-empty">勾选伤害条件后，这里会列出所有计入的角色技能、装备和通用技能。</div>';
+      return;
+    }
+
+    const groups = new Map();
+    applied.forEach((bonus) => {
+      if (!groups.has(bonus.key)) groups.set(bonus.key, { label: bonus.label, total: 0, providers: [] });
+      const group = groups.get(bonus.key);
+      group.total += bonus.value;
+      group.providers.push(bonus);
+    });
+
+    groups.forEach((group) => {
+      const section = document.createElement("section");
+      section.className = "cap-breakdown-group";
+      section.innerHTML = `<div class="cap-breakdown-title"><span>${group.label}</span><strong>+${group.total.toLocaleString("zh-CN")}</strong></div>`;
+      const list = document.createElement("ul");
+      list.className = "cap-source-list";
+      group.providers.forEach((provider) => {
+        const item = document.createElement("li");
+        item.className = "cap-source";
+        item.tabIndex = 0;
+        item.title = "双击定位原文并查看完整描述";
+        item.innerHTML = `
+          <div class="cap-source-head"><span>${provider.source}</span><strong>+${provider.value.toLocaleString("zh-CN")}</strong></div>
+          <small>${provider.condition}</small>
+        `;
+        item.addEventListener("dblclick", () => jumpToOriginal(provider.source));
+        item.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") jumpToOriginal(provider.source);
+        });
+        list.appendChild(item);
+      });
+      section.appendChild(list);
+      capBreakdown.appendChild(section);
+    });
   };
 
-  openButton.addEventListener("click", open);
-  closeButton.addEventListener("click", () => close());
-  overlay.addEventListener("click", () => close());
+  const isMobile = () => window.matchMedia("(max-width: 720px)").matches;
+  const resetPanelPosition = (targetPanel) => {
+    targetPanel.style.removeProperty("left");
+    targetPanel.style.removeProperty("right");
+    targetPanel.style.removeProperty("top");
+  };
+  const openCalculator = (calculator) => {
+    lastOpenedCalculator = calculator;
+    const targetPanel = calculator === "bonus" ? panel : capPanel;
+    const targetClose = calculator === "bonus" ? closeButton : capCloseButton;
+    const otherPanel = calculator === "bonus" ? capPanel : panel;
+    if (isMobile()) {
+      resetPanelPosition(targetPanel);
+      resetPanelPosition(otherPanel);
+      otherPanel.hidden = true;
+    }
+    targetPanel.hidden = false;
+    targetClose.focus();
+  };
+  const closeCalculator = (calculator) => {
+    if (calculator === "bonus") {
+      panel.hidden = true;
+      openButton.focus();
+    } else {
+      capPanel.hidden = true;
+      capOpenButton.focus();
+    }
+  };
+
+  openButton.addEventListener("click", () => openCalculator("bonus"));
+  capOpenButton.addEventListener("click", () => openCalculator("cap"));
+  closeButton.addEventListener("click", () => closeCalculator("bonus"));
+  capCloseButton.addEventListener("click", () => closeCalculator("cap"));
+  overlay.addEventListener("click", () => closeCalculator("bonus"));
+  document.querySelectorAll("[data-calculator-target]").forEach((button) => {
+    button.addEventListener("click", () => openCalculator(button.dataset.calculatorTarget));
+  });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !panel.hidden) close();
+    if (event.key !== "Escape") return;
+    const activePanel = lastOpenedCalculator === "bonus" ? panel : capPanel;
+    if (!activePanel.hidden) closeCalculator(lastOpenedCalculator);
   });
 
   restoreAllButton.addEventListener("click", () => {
@@ -207,25 +336,44 @@
     renderSummary();
   });
   renderSummary();
+  capResetButton.addEventListener("click", () => {
+    selectedCapConditions.clear();
+    renderCapCalculator();
+  });
+  renderCapCalculator();
 
-  let dragState = null;
-  dragHandle.addEventListener("pointerdown", (event) => {
-    if (event.target.closest("button") || window.matchMedia("(max-width: 720px)").matches) return;
-    const rect = panel.getBoundingClientRect();
-    dragState = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-    panel.style.left = `${rect.left}px`;
-    panel.style.top = `${rect.top}px`;
-    panel.style.right = "auto";
-    dragHandle.setPointerCapture(event.pointerId);
+  const enableDragging = (targetPanel) => {
+    const handle = targetPanel.querySelector(".bonus-calculator-header");
+    let dragState = null;
+    handle.addEventListener("pointerdown", (event) => {
+      if (event.target.closest("button") || isMobile()) return;
+      const rect = targetPanel.getBoundingClientRect();
+      dragState = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      targetPanel.style.left = `${rect.left}px`;
+      targetPanel.style.top = `${rect.top}px`;
+      targetPanel.style.right = "auto";
+      handle.setPointerCapture(event.pointerId);
+    });
+    handle.addEventListener("pointermove", (event) => {
+      if (!dragState) return;
+      const maxLeft = Math.max(8, window.innerWidth - targetPanel.offsetWidth - 8);
+      const maxTop = Math.max(8, window.innerHeight - targetPanel.offsetHeight - 8);
+      targetPanel.style.left = `${Math.min(Math.max(8, event.clientX - dragState.x), maxLeft)}px`;
+      targetPanel.style.top = `${Math.min(Math.max(8, event.clientY - dragState.y), maxTop)}px`;
+    });
+    const stopDragging = () => { dragState = null; };
+    handle.addEventListener("pointerup", stopDragging);
+    handle.addEventListener("pointercancel", stopDragging);
+  };
+  enableDragging(panel);
+  enableDragging(capPanel);
+
+  window.matchMedia("(max-width: 720px)").addEventListener("change", (event) => {
+    if (!event.matches) return;
+    resetPanelPosition(panel);
+    resetPanelPosition(capPanel);
+    if (panel.hidden || capPanel.hidden) return;
+    if (lastOpenedCalculator === "bonus") capPanel.hidden = true;
+    else panel.hidden = true;
   });
-  dragHandle.addEventListener("pointermove", (event) => {
-    if (!dragState) return;
-    const maxLeft = Math.max(8, window.innerWidth - panel.offsetWidth - 8);
-    const maxTop = Math.max(8, window.innerHeight - panel.offsetHeight - 8);
-    panel.style.left = `${Math.min(Math.max(8, event.clientX - dragState.x), maxLeft)}px`;
-    panel.style.top = `${Math.min(Math.max(8, event.clientY - dragState.y), maxTop)}px`;
-  });
-  const stopDragging = () => { dragState = null; };
-  dragHandle.addEventListener("pointerup", stopDragging);
-  dragHandle.addEventListener("pointercancel", stopDragging);
 })();

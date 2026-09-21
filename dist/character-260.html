@@ -40,7 +40,10 @@
           <section id="max-stats" class="data-section">
             <h3 class="section-title with-action">
               <span>最大阶段属性</span>
-              <button id="bonusCalculatorOpen" class="section-action" type="button">Σ 加成计算器</button>
+              <span class="section-actions">
+                <button id="bonusCalculatorOpen" class="section-action" type="button">Σ 加成计算器</button>
+                <button id="capCalculatorOpen" class="section-action" type="button">伤害上限计算器</button>
+              </span>
             </h3>
             <p class="section-note">仅显示角色全部成长项目合计后的最大数值。</p>
             <div class="stat-grid" aria-label="最大阶段属性">
@@ -162,11 +165,38 @@
         <strong>角色加成计算器</strong>
         <button id="bonusCalculatorClose" type="button" aria-label="关闭计算器">×</button>
       </div>
+      <div class="mobile-calculator-tabs" aria-label="切换计算器">
+        <button class="is-active" type="button" data-calculator-target="bonus">加成</button>
+        <button type="button" data-calculator-target="cap">伤害上限</button>
+      </div>
       <div class="calculator-tools">
         <p>所有来源均按最大触发数值计算。点击属性查看来源；双击来源技能定位原文（计算器保持展开）；点击“×”隐藏不想看的词条。</p>
         <button id="bonusRestoreAll" type="button">恢复全部</button>
       </div>
       <div id="bonusSummary" class="bonus-summary"></div>
+    </aside>
+
+    <aside id="capCalculator" class="bonus-calculator cap-calculator" hidden aria-label="伤害上限计算器">
+      <div class="bonus-calculator-header">
+        <strong>伤害上限计算器</strong>
+        <button id="capCalculatorClose" type="button" aria-label="关闭伤害上限计算器">×</button>
+      </div>
+      <div class="mobile-calculator-tabs" aria-label="切换计算器">
+        <button type="button" data-calculator-target="bonus">加成</button>
+        <button class="is-active" type="button" data-calculator-target="cap">伤害上限</button>
+      </div>
+      <div class="cap-result" aria-live="polite">
+        <span>当前单次伤害上限</span>
+        <strong id="capTotal">9,999</strong>
+        <small id="capAdded">基础上限 9,999</small>
+      </div>
+      <div class="calculator-tools cap-tools">
+        <p>勾选伤害条件后自动叠加对应上限。例：勾选“魔法”和“暴击”，就是魔法暴击的伤害上限。</p>
+        <button id="capReset" type="button">清空</button>
+      </div>
+      <div id="capConditions" class="cap-conditions" aria-label="伤害条件"></div>
+      <div class="cap-breakdown-heading">已计入的上限来源</div>
+      <div id="capBreakdown" class="cap-breakdown"></div>
     </aside>
     <script src="./character-calculator.js"></script>
   </body>
