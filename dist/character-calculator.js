@@ -139,7 +139,7 @@
       { id: "water_master", capType: "ice", label: "水王级魔术师", value: 60000, requires: ["ice", "single_weapon"], target: "水王级魔术师", condition: "仅装备1件武器时，冰属性伤害上限+60,000" },
       { id: "mentor_special", capType: "special", label: "指导者：特攻发生时", value: 30000, requires: ["special"], target: "指导者", condition: "指导者增益生效且触发特攻" },
       { id: "mentor_boss_wave", capType: "ice", label: "指导者：BOSS Wave", value: 20000, requires: ["ice", "boss"], target: "指导者", condition: "BOSS Wave开始后的冰属性上限增益" },
-      { id: "magic_guidance", capType: "magic", label: "魔术指导", value: 30000, requires: ["magic"], target: "魔术指导", condition: "魔法增益生效期间" },
+      { id: "magic_guidance", capType: "magic", label: "魔术指导（魔法增益）", value: 30000, requires: ["magic"], autoSelect: false, target: "魔术指导", condition: "需要主动施放；默认不计入，魔法增益生效期间可手动勾选" },
       { id: "short_cast", capType: "magic", label: "缩短咏唱：装备法杖", value: 30000, requires: ["magic"], target: "缩短咏唱", condition: "装备法杖时，魔法伤害上限+30,000" },
       { id: "magic_resonance", capType: "heavy_magic", label: "魔术共鸣：重魔法期间", value: 50000, requires: ["ice", "non_stackable_magic"], target: "魔术共鸣", condition: "我方发动不可叠加魔法期间" },
       { id: "special_limit_v", capType: "special", label: "特攻界限突破V", value: 7500, variants: [{ requires: ["single_weapon"], value: 15000 }], requires: ["special"], target: "特攻界限突破V", condition: "触发特攻时+7,500；单武器时变为+15,000" },
@@ -185,8 +185,12 @@
     return { attack, tags, types: profile.types, selected, applied, added, total: attack.baseCap + added };
   };
   const selectAllCapSources = () => {
+    const retainedOptionalSources = damageCapCharacter.sources
+      .filter((source) => source.autoSelect === false && selectedCapSources.has(source.id))
+      .map((source) => source.id);
     selectedCapSources.clear();
-    damageCapCharacter.sources.forEach((source) => selectedCapSources.add(source.id));
+    damageCapCharacter.sources.filter((source) => source.autoSelect !== false).forEach((source) => selectedCapSources.add(source.id));
+    retainedOptionalSources.forEach((sourceId) => selectedCapSources.add(sourceId));
   };
 
   const formatValue = (value, unit) => {
