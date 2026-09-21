@@ -10,6 +10,14 @@
   const clearSearch = document.querySelector('#clearSearch');
   const resultSummary = document.querySelector('#resultSummary');
   const backTop = document.querySelector('#backTop');
+  const calculator = document.querySelector('#scCalculator');
+  const calculatorLauncher = document.querySelector('#calculatorLauncher');
+  const calculatorClose = document.querySelector('#calculatorClose');
+  const calculatorBadge = document.querySelector('#calculatorBadge');
+  const calculatorCount = document.querySelector('#calculatorCount');
+  const calculatorRule = document.querySelector('#calculatorRule');
+  const calculatorSkills = document.querySelector('#calculatorSkills');
+  const calculatorTotal = document.querySelector('#calculatorTotal');
 
   const savedSheet = localStorage.getItem('lc-sheet-table:sheet');
   const editStorageKey = 'lc-sheet-table:cell-edits-v1';
@@ -17,11 +25,33 @@
   try {
     edits = JSON.parse(localStorage.getItem(editStorageKey) || '{}');
   } catch { edits = {}; }
+  const calculatorStorageKey = 'lc-sheet-table:sc-calculator-v1';
+  let calculatorState = { skillIds: [], activeBreaks: [7, 12, 20] };
+  try {
+    const savedCalculator = JSON.parse(localStorage.getItem(calculatorStorageKey) || '{}');
+    const savedBreaks = Array.isArray(savedCalculator.activeBreaks)
+      ? savedCalculator.activeBreaks.map(Number).filter(value => [7, 12, 20].includes(value))
+      : [7, 12, 20];
+    calculatorState = {
+      skillIds: Array.isArray(savedCalculator.skillIds) ? [...new Set(savedCalculator.skillIds.map(String))] : [],
+      activeBreaks: [...new Set(savedBreaks)],
+    };
+  } catch { calculatorState = { skillIds: [], activeBreaks: [7, 12, 20] }; }
   const hashSheet = decodeURIComponent(location.hash.slice(1));
   let activeSheet = data.sheetOrder.includes(hashSheet)
     ? hashSheet
     : data.sheetOrder.includes(savedSheet) ? savedSheet : data.sheetOrder[0];
   let query = '';
+
+  const skillIndex = new Map();
+  for (const sheetName of data.sheetOrder) {
+    const sheet = data.sheets[sheetName];
+    const rows = sheet.kind === 'all' ? sheet.rows : sheet.lanes.flatMap(lane => lane.rows);
+    for (const row of rows) {
+      if (!row.separator && !skillIndex.has(String(row.id))) skillIndex.set(String(row.id), row);
+    }
+  }
+  calculatorState.skillIds = calculatorState.skillIds.filter(id => skillIndex.has(id));
 
   const escapeHtml = (value = '') => String(value)
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -45,6 +75,16 @@
 
   function editedSources(row) {
     return rowValue(row, 'sources').split('\n').map(item => item.trim()).filter(Boolean);
+  }
+
+  function parseSc(value) {
+    const match = String(value ?? '').replace(',', '.').match(/-?\d+(?:\.\d+)?/);
+    const parsed = match ? Number(match[0]) : 0;
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+  }
+
+  function formatSc(value) {
+    return Number.isInteger(value) ? String(value) : String(Math.round(value * 100) / 100);
   }
 
   function rowText(row) {
@@ -84,6 +124,69 @@
       : label;
   }
 
+  function addButton(row) {
+    const added = calculatorState.skillIds.includes(String(row.id));
+    return `<button class="add-skill-button${added ? ' is-added' : ''}" type="button" data-add-skill="${escapeHtml(row.id)}" aria-label="${added ? '已添加到计算器' : '添加到SC计算器'}" title="${added ? '已添加' : '添加到SC计算器'}"><span aria-hidden="true">${added ? '✓' : '+'}</span></button>`;
+  }
+
+  function saveCalculatorState() {
+    localStorage.setItem(calculatorStorageKey, JSON.stringify(calculatorState));
+  }
+
+  function calculateSc() {
+    const items = calculatorState.skillIds
+      .map(id => skillIndex.get(id))
+      .filter(Boolean)
+      .map(row => ({ id: String(row.id), row, sc: parseSc(rowValue(row, 'sc')), freeBy: 0 }));
+    const used = new Set();
+    for (const threshold of [7, 12, 20]) {
+      if (!calculatorState.activeBreaks.includes(threshold)) continue;
+      const eligible = items.filter(item => !used.has(item.id) && item.sc > 0 && item.sc <= threshold);
+      if (!eligible.length) continue;
+      const bestSc = Math.max(...eligible.map(item => item.sc));
+      const chosen = eligible.find(item => item.sc === bestSc);
+      chosen.freeBy = threshold;
+      used.add(chosen.id);
+    }
+    return {
+      items,
+      total: items.reduce((sum, item) => sum + (item.freeBy ? 0 : item.sc), 0),
+    };
+  }
+
+  function breakLabel(value) {
+    return ({ 7: '一破', 12: '二破', 20: '三破' })[value] || '';
+  }
+
+  function renderCalculator() {
+    const result = calculateSc();
+    document.querySelectorAll('[data-break-level]').forEach(button => {
+      const level = Number(button.dataset.breakLevel);
+      const active = calculatorState.activeBreaks.includes(level);
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+    calculatorCount.textContent = `${result.items.length}个技能`;
+    const enabled = [7, 12, 20].filter(level => calculatorState.activeBreaks.includes(level));
+    calculatorRule.textContent = enabled.length
+      ? `已开启：${enabled.map(breakLabel).join('、')}（各减免1个技能）`
+      : '突破减免均未开启';
+    calculatorSkills.innerHTML = result.items.length
+      ? result.items.map(item => `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
+          <div class="calculator-skill-name">${escapeHtml(rowValue(item.row, 'name'))}${item.freeBy ? `<span>${breakLabel(item.freeBy)}减免</span>` : ''}</div>
+          <div class="calculator-skill-sc">${item.freeBy ? `<strong>0 SC</strong><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
+          <button type="button" data-remove-skill="${escapeHtml(item.id)}" aria-label="移除${escapeHtml(rowValue(item.row, 'name'))}" title="从计算器移除">×</button>
+        </div>`).join('')
+      : '<div class="calculator-empty">点击技能右侧的“＋”添加技能</div>';
+    calculatorTotal.textContent = `${formatSc(result.total)} SC`;
+    calculatorBadge.textContent = `${formatSc(result.total)} SC`;
+  }
+
+  function setCalculatorOpen(open) {
+    calculator.hidden = !open;
+    calculatorLauncher.setAttribute('aria-expanded', String(open));
+  }
+
   function groupRows(rows) {
     const groups = [];
     for (const row of rows) {
@@ -98,7 +201,7 @@
   function splitTable(rows, label) {
     const groups = groupRows(rows);
     const body = groups.map(group => group.separator
-      ? '<tr class="separator-row" aria-hidden="true"><td colspan="6"></td></tr>'
+      ? '<tr class="separator-row" aria-hidden="true"><td colspan="7"></td></tr>'
       : group.rows.map((row, index) => {
         const key = rowKey(row);
         const typeKey = `type:${activeSheet}:${label}:${group.type}`;
@@ -115,13 +218,14 @@
           ${editableTd(key, 'effect', effect, cell(highlight(effect)), '')}
           ${editableTd(key, 'sources', sources, cell(sourceList(row), 'cell-center'), '')}
           ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
+          <td class="action-cell">${addButton(row)}</td>
         </tr>`;
       }).join('')).join('');
     return `<div class="table-scroll"><table class="excel-table" aria-label="${escapeHtml(label)}">
-      <colgroup><col class="type"><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"></colgroup>
+      <colgroup><col class="type"><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"><col class="action"></colgroup>
       <thead>
-        <tr class="book-title"><th colspan="6">一、被动技能</th></tr>
-        <tr class="column-title"><th>技能类型</th><th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th></tr>
+        <tr class="book-title"><th colspan="7">一、被动技能</th></tr>
+        <tr class="column-title"><th>技能类型</th><th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th><th>添加</th></tr>
       </thead>
       <tbody>${body}</tbody>
     </table></div>`;
@@ -141,13 +245,14 @@
         ${editableTd(key, 'effect', effect, cell(highlight(effect)), '')}
         ${editableTd(key, 'sources', sources, cell(sourceList(row), 'cell-center'), '')}
         ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
+        <td class="action-cell">${addButton(row)}</td>
       </tr>`;
     }).join('');
     return `<div class="table-scroll"><table class="excel-table all-skills" aria-label="全部技能">
-      <colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"></colgroup>
+      <colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"><col class="action"></colgroup>
       <thead>
-        <tr class="book-title"><th colspan="5">一、被动技能</th></tr>
-        <tr class="column-title"><th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th></tr>
+        <tr class="book-title"><th colspan="6">一、被动技能</th></tr>
+        <tr class="column-title"><th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th><th>添加</th></tr>
       </thead>
       <tbody>${body}</tbody>
     </table></div>`;
@@ -185,6 +290,7 @@
       : `共 ${visible} 条`;
     clearSearch.hidden = !query;
     renderTabs();
+    renderCalculator();
   }
 
   function selectSheet(name) {
@@ -254,6 +360,17 @@
 
   let pendingLink = 0;
   tableArea.addEventListener('click', event => {
+    const add = event.target.closest('[data-add-skill]');
+    if (add) {
+      event.preventDefault();
+      const id = String(add.dataset.addSkill);
+      if (!calculatorState.skillIds.includes(id) && skillIndex.has(id)) {
+        calculatorState.skillIds.push(id);
+        saveCalculatorState();
+        render();
+      }
+      return;
+    }
     const link = event.target.closest('.skill-name a');
     if (!link) return;
     event.preventDefault();
@@ -269,6 +386,42 @@
     event.preventDefault();
     window.clearTimeout(pendingLink);
     startCellEdit(target);
+  });
+
+  calculatorLauncher.addEventListener('click', event => {
+    event.stopPropagation();
+    setCalculatorOpen(calculator.hidden);
+  });
+
+  calculatorClose.addEventListener('click', () => setCalculatorOpen(false));
+
+  calculator.addEventListener('click', event => {
+    const breakButton = event.target.closest('[data-break-level]');
+    if (breakButton) {
+      const level = Number(breakButton.dataset.breakLevel);
+      calculatorState.activeBreaks = calculatorState.activeBreaks.includes(level)
+        ? calculatorState.activeBreaks.filter(item => item !== level)
+        : [...calculatorState.activeBreaks, level].sort((a, b) => a - b);
+      saveCalculatorState();
+      renderCalculator();
+      return;
+    }
+    const removeButton = event.target.closest('[data-remove-skill]');
+    if (removeButton) {
+      calculatorState.skillIds = calculatorState.skillIds.filter(id => id !== String(removeButton.dataset.removeSkill));
+      saveCalculatorState();
+      render();
+    }
+  });
+
+  document.addEventListener('pointerdown', event => {
+    if (!calculator.hidden && !calculator.contains(event.target) && !calculatorLauncher.contains(event.target)) {
+      setCalculatorOpen(false);
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setCalculatorOpen(false);
   });
 
   window.addEventListener('hashchange', () => {
