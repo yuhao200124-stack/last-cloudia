@@ -37,8 +37,8 @@
       skillIds: Array.isArray(savedCalculator.skillIds) ? [...new Set(savedCalculator.skillIds.map(String))] : [],
       activeBreaks: [...new Set(savedBreaks)],
       sortDirection: savedCalculator.sortDirection === 'asc' ? 'asc' : 'desc',
-      detailsOpen: Boolean(savedCalculator.detailsOpen),
-      expandedBonusKey: typeof savedCalculator.expandedBonusKey === 'string' ? savedCalculator.expandedBonusKey : '',
+      detailsOpen: false,
+      expandedBonusKey: '',
     };
   } catch { calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, expandedBonusKey: '' }; }
   const hashSheet = decodeURIComponent(location.hash.slice(1));
@@ -257,6 +257,12 @@
   }
 
   function setCalculatorOpen(open) {
+    if (!open) {
+      calculatorState.detailsOpen = false;
+      calculatorState.expandedBonusKey = '';
+      saveCalculatorState();
+      renderCalculator();
+    }
     calculator.hidden = !open;
     calculatorLauncher.setAttribute('aria-expanded', String(open));
   }
