@@ -46,6 +46,15 @@
   const loadoutPlansStorageKey = 'lc-sheet-table:loadout-plans-v1';
   const loadoutDraftTransferKey = 'lc-sheet-table:loadout-draft-v1';
   const characterLoadouts = {
+    '245': {
+      name: '龙王阿尔克',
+      page: './character-245.html',
+      skillIds: [
+        'e73807e621f213b2', 'f201c9d8e9ee87ed', '全部技能:all:30', '9146eb2670c69122',
+        '478822878a23edb4', '97d948f5e3717d10', 'ea3727ee373b623b', '2a62c41d8d3fb3d0',
+        'f504f03347fe02ac', '28ccf85b5f31c394', '68bd1c7efd3638c0', 'b7297c3eb4e46bba',
+      ],
+    },
     '260': {
       name: '洛琪希',
       page: './character-260.html',

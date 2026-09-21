@@ -1,5 +1,5 @@
 (() => {
-  const bonuses = [
+  const roxyBonuses = [
     ["hp_pct", "HP", 20, "%", "超越·命导提升", "transcend", "常驻"],
     ["mp_pct", "MP", 15, "%", "魔导提升极", "exclusive", "常驻"],
     ["mp_pct", "MP", 15, "%", "魔常提升极", "exclusive", "常驻"],
@@ -70,6 +70,43 @@
     ["robe_mnd", "长袍魔抗属性", 50, "%", "超越·长袍精通II", "transcend", "装备长袍"],
     ["knowledge_wall", "法强转化为防御/魔抗", 10, "%", "知识之壁II", "exclusive", "战斗开始时，将法强的10%分别加算至防御力与魔抗"]
   ].map(([key, label, value, unit, source, group, condition]) => ({ key, label, value, unit, source, group, condition }));
+
+  const arkuBonuses = [
+    ["hp_pct", "HP", 10, "%", "斗志提升IV", "common", "常驻"],
+    ["hp_pct", "HP", 15, "%", "勇士提升极", "exclusive", "常驻"],
+    ["hp_pct", "HP", 20, "%", "不朽龙壳", "exclusive", "常驻"],
+    ["str_pct", "攻击力", 15, "%", "攻击提升极", "common", "常驻"],
+    ["str_pct", "攻击力", 10, "%", "斗志提升IV", "common", "常驻"],
+    ["str_pct", "攻击力", 15, "%", "勇士提升极", "exclusive", "常驻"],
+    ["str_pct", "攻击力", 30, "%", "堂堂II", "exclusive", "HP全满时"],
+    ["str_pct", "攻击力", 30, "%", "龙之咆哮", "exclusive", "龙类型限定"],
+    ["def_pct", "防御力", 15, "%", "勇士提升极", "exclusive", "常驻"],
+    ["int_pct", "法强", 30, "%", "龙之咆哮", "exclusive", "龙类型限定"],
+    ["crit_rate", "暴击率", 8, "%", "暴击提升III", "common", "常驻"],
+    ["crit_rate", "暴击率", 15, "%", "自动暴击", "common", "始终保持暴击魔法效果"],
+    ["crit_rate", "暴击率", 5, "%", "炎暴击提升", "common", "仅火属性攻击"],
+    ["crit_rate", "暴击率", 5, "%", "超越·暴击提升", "transcend", "常驻"],
+    ["crit_damage", "暴击伤害", 50, "%", "炎暴击提升", "common", "火属性攻击触发暴击时"],
+    ["fire_damage", "火属性伤害", 80, "%", "继承龙之意志者", "traits", "常驻"],
+    ["fire_damage", "火属性伤害", 20, "%", "炎攻击提升", "common", "常驻"],
+    ["fire_damage", "火属性伤害", 30, "%", "炎攻击提升V", "exclusive", "常驻"],
+    ["fire_damage", "火属性伤害", 20, "%", "炎攻击之魂", "exclusive", "常驻"],
+    ["fire_damage", "火属性伤害", 15, "%", "炎之强化", "common", "常驻"],
+    ["fire_damage", "火属性伤害", 20, "%", "超越·火焰武器II", "transcend", "装备火属性武器"],
+    ["fire_physical_damage", "火属性物理/超必杀技伤害", 30, "%", "炎究极驱动", "exclusive", "常驻"],
+    ["fire_physical_damage", "火属性物理/超必杀技伤害", 30, "%", "炎超阶驱动", "exclusive", "常驻"],
+    ["special_damage", "特攻伤害", 50, "%", "特攻增幅", "common", "触发特攻时"],
+    ["single_physical_damage", "单武器物理伤害", 30, "%", "一天真刃", "common", "仅装备1件武器"],
+    ["break_physical_damage", "Break中物理伤害", 30, "%", "Break增幅V", "exclusive", "敌人处于Break状态"],
+    ["boss_damage", "对BOSS伤害", 20, "%", "勇者之魂", "common", "攻击BOSS时"],
+    ["boss_skill_damage", "对BOSS特技/超必杀技伤害", 20, "%", "巨型杀戮V", "exclusive", "攻击BOSS时"],
+    ["ultimate_damage", "超必杀技伤害", 50, "%", "炎之强化", "common", "常驻"],
+    ["damage_reduction", "受到伤害减少", 35, "%", "不朽龙壳", "exclusive", "常驻"],
+    ["damage_reduction", "受到伤害减少", 20, "%", "超越·受到伤害减轻", "transcend", "常驻"],
+    ["boss_reduction", "受到BOSS伤害减少", 20, "%", "勇者之魂", "common", "受到BOSS攻击时"],
+    ["sct_speed", "SCT回复速度", 35, "%", "自动究极加速", "exclusive", "常驻"]
+  ].map(([key, label, value, unit, source, group, condition]) => ({ key, label, value, unit, source, group, condition }));
+  const bonuses = document.body.dataset.characterId === "245" ? arkuBonuses : roxyBonuses;
 
   const panel = document.getElementById("bonusCalculator");
   const overlay = document.getElementById("bonusCalculatorOverlay");
@@ -410,10 +447,13 @@
     const types = new Set();
     if (/冰属性.*魔法|魔法.*冰属性/.test(value)) types.add("ice_magic");
     if (/冰属性/.test(value)) types.add("ice");
+    if (/火属性/.test(value)) types.add("fire");
     if (/不可叠加魔法|重魔法/.test(value)) types.add("heavy_magic");
     if (/魔法/.test(value)) types.add("magic");
     if (/物理/.test(value)) types.add("physical");
+    if (/特技/.test(value)) types.add("skill");
     if (/必杀/.test(value)) types.add("ultimate");
+    if (/Break|破防/.test(value)) types.add("break");
     if (/暴击/.test(value)) types.add("critical");
     if (/特攻/.test(value)) types.add("special");
     if (!types.size) types.add("general");
@@ -489,24 +529,25 @@
     const tags = new Set([...attack.tags, ...profile.tags]);
     const available = sources.filter((source) => finalSourceApplies(source, tags, profile.types));
     const applied = available.filter((source) => selectedFinalCapSources.has(source.id));
-    const added = applied.reduce((total, source) => total + getSourceValue(source, tags), 0);
+    const added = applied.filter((source) => source.unit !== "%").reduce((total, source) => total + getSourceValue(source, tags), 0);
+    const percent = applied.filter((source) => source.unit === "%").reduce((total, source) => total + getSourceValue(source, tags), 0);
 
     finalDamageAttackHeading.textContent = damageCapCharacter.attackPickerLabel || "选择攻击方式";
     finalDamageAttacks.innerHTML = damageCapCharacter.attacks.map((item) => `<label class="cap-condition cap-attack"><input type="radio" name="finalCapAttack" value="${escapeSavedBuildHtml(item.id)}" ${item.id === selectedFinalCapAttack ? "checked" : ""}><span>${escapeSavedBuildHtml(item.label)}</span></label>`).join("");
     finalDamageCapTypes.innerHTML = damageCapCharacter.capTypes.map((type) => `<label class="cap-condition"><input type="checkbox" value="${escapeSavedBuildHtml(type.id)}" ${selectedFinalCapTypes.has(type.id) ? "checked" : ""}><span>${escapeSavedBuildHtml(type.label)}</span></label>`).join("");
-    finalDamageCapTotal.textContent = (attack.baseCap + added).toLocaleString("zh-CN");
+    finalDamageCapTotal.textContent = Math.round(attack.baseCap * (1 + percent / 100) + added).toLocaleString("zh-CN");
     const typeLabels = damageCapCharacter.capTypes.filter((type) => selectedFinalCapTypes.has(type.id)).map((type) => type.label);
-    finalDamageCapAdded.textContent = `${attack.label}：基础 ${attack.baseCap.toLocaleString("zh-CN")} + 已叠加 ${added.toLocaleString("zh-CN")}${typeLabels.length ? `｜${typeLabels.join(" + ")}` : "｜未选择上限分类"}`;
+    finalDamageCapAdded.textContent = `${attack.label}：基础 ${attack.baseCap.toLocaleString("zh-CN")}${percent ? ` × ${1 + percent / 100}` : ""} + 固定上限 ${added.toLocaleString("zh-CN")}${typeLabels.length ? `｜${typeLabels.join(" + ")}` : "｜未选择上限分类"}`;
 
     finalDamageCapSources.innerHTML = available.length ? available.map((source) => {
       const value = getSourceValue(source, tags);
       const selected = selectedFinalCapSources.has(source.id);
-      return `<label class="cap-skill-option${selected ? " is-selected" : ""}"><input type="checkbox" value="${escapeSavedBuildHtml(source.id)}" ${selected ? "checked" : ""}><span>${escapeSavedBuildHtml(source.label)}<small>${escapeSavedBuildHtml(source.origin)}</small></span><strong>+${value.toLocaleString("zh-CN")}</strong></label>`;
+      return `<label class="cap-skill-option${selected ? " is-selected" : ""}"><input type="checkbox" value="${escapeSavedBuildHtml(source.id)}" ${selected ? "checked" : ""}><span>${escapeSavedBuildHtml(source.label)}<small>${escapeSavedBuildHtml(source.origin)}</small></span><strong>+${value.toLocaleString("zh-CN")}${source.unit === "%" ? "%" : ""}</strong></label>`;
     }).join("") : '<div class="cap-empty cap-picker-empty">当前选择下没有可计入的伤害上限来源。</div>';
 
     finalDamageSummary.innerHTML = applied.length ? applied.map((source) => {
       const value = getSourceValue(source, tags);
-      return `<section class="cap-source-option"><div class="cap-selected-source"><span><strong>${escapeSavedBuildHtml(source.label)}</strong><small>${escapeSavedBuildHtml(source.condition)}</small></span><b>+${value.toLocaleString("zh-CN")}</b><button type="button" data-final-cap-remove="${escapeSavedBuildHtml(source.id)}" aria-label="取消选择${escapeSavedBuildHtml(source.label)}" title="取消选择">×</button></div></section>`;
+      return `<section class="cap-source-option"><div class="cap-selected-source"><span><strong>${escapeSavedBuildHtml(source.label)}</strong><small>${escapeSavedBuildHtml(source.condition)}</small></span><b>+${value.toLocaleString("zh-CN")}${source.unit === "%" ? "%" : ""}</b><button type="button" data-final-cap-remove="${escapeSavedBuildHtml(source.id)}" aria-label="取消选择${escapeSavedBuildHtml(source.label)}" title="取消选择">×</button></div></section>`;
     }).join("") : '<div class="cap-empty">当前没有满足条件并计入总数的伤害上限加成。</div>';
   };
 
@@ -532,6 +573,53 @@
   // 每个角色按编号独立配置攻击方式、基础上限、上限类型和来源。
   // attackPickerLabel 可按角色写成“选择攻击魔法”“选择特技”或“选择必杀技”。
   const damageCapProfiles = {
+    "245": {
+      id: "245",
+      attackPickerLabel: "选择特技或超必杀技",
+      attacks: [
+        { id: "blaze_hunt", label: "烈焰狩猎（特技1）", baseCap: 9999, tags: ["physical", "fire", "skill"], note: "火属性物理特技。" },
+        { id: "burn_stride", label: "燃烧突进（特技2）", baseCap: 9999, tags: ["physical", "fire", "skill"], note: "火属性物理特技。" },
+        { id: "atomic_dragon", label: "原子龙（特技3）", baseCap: 9999, tags: ["physical", "fire", "skill"], note: "火属性物理特技。" },
+        { id: "revenant_blazer", label: "亡魂烈焰（超必杀技）", baseCap: 9999, tags: ["physical", "fire", "ultimate"], note: "单体火属性超必杀技。" }
+      ],
+      capTypes: [
+        { id: "general", label: "通用伤害上限", includes: ["general"] },
+        { id: "physical", label: "物理伤害上限", includes: ["general", "physical"] },
+        { id: "skill", label: "特技伤害上限", includes: ["general", "skill"] },
+        { id: "ultimate", label: "超必杀技伤害上限", includes: ["general", "ultimate"] },
+        { id: "fire", label: "火属性伤害上限", includes: ["general", "fire"] },
+        { id: "boss", label: "对BOSS伤害上限", includes: ["general", "boss"], tags: ["boss"] },
+        { id: "break", label: "Break中伤害上限", includes: ["general", "break"], tags: ["break"] },
+        { id: "weak", label: "火属性弱点上限", includes: ["general", "weak"], tags: ["weak"] },
+        { id: "single_weapon", label: "单武器", includes: [], tags: ["single_weapon"] },
+        { id: "dual_red_buff", label: "双武器·红龙王Buff", includes: ["red_buff"], tags: ["dual_weapon", "red_buff"] },
+        { id: "fire_weapon", label: "装备火属性武器", includes: [], tags: ["fire_weapon"] },
+        { id: "self_break", label: "自身完成Break", includes: ["self_break"], tags: ["self_break"] },
+        { id: "elapsed_20", label: "经过20秒", includes: ["elapsed"], tags: ["elapsed_20"] },
+        { id: "elapsed_40", label: "经过40秒", includes: ["elapsed"], tags: ["elapsed_40"] },
+        { id: "elapsed_60", label: "经过60秒", includes: ["elapsed"], tags: ["elapsed_60"] }
+      ],
+      sources: [
+        { id: "dragon_will", capType: "fire", label: "继承龙之意志者", value: 80000, requires: ["fire"], target: "继承龙之意志者", condition: "火属性伤害上限+80,000" },
+        { id: "red_dragon_buff", capType: "red_buff", label: "红龙王Buff", value: 50, unit: "%", requires: ["skill", "dual_weapon", "red_buff"], target: "继承龙之意志者", condition: "双武器时的红龙王Buff：特技伤害上限+50%" },
+        { id: "primal_single", capTypes: ["physical", "ultimate"], label: "原始怒火：单武器", value: 100000, requires: ["single_weapon"], target: "原始怒火", condition: "仅装备1件武器时，物理与超必杀技上限+100,000" },
+        { id: "elapsed_skill", capType: "elapsed", label: "原始怒火：经过时间", value: 20000, variants: [{ requires: ["elapsed_60"], value: 100000 }, { requires: ["elapsed_40"], value: 50000 }], requires: ["skill"], target: "原始怒火", condition: "特技上限：20秒+20,000／40秒+50,000／60秒+100,000" },
+        { id: "fire_giga_drive", capTypes: ["physical", "ultimate"], label: "炎究极驱动", value: 5000, requires: ["fire"], target: "炎究极驱动", condition: "火属性物理与超必杀技上限+5,000" },
+        { id: "fire_tera_drive", capTypes: ["physical", "ultimate"], label: "炎超阶驱动", value: 10000, requires: ["fire"], target: "炎超阶驱动", condition: "火属性物理与超必杀技上限+10,000" },
+        { id: "fire_drive_limit", capTypes: ["physical", "ultimate"], label: "炎驱动界限突破IV", value: 10000, variants: [{ requires: ["single_weapon"], value: 20000 }], requires: ["fire"], target: "炎驱动界限突破IV", condition: "火属性物理与超必杀技上限+10,000；单武器为+20,000" },
+        { id: "fire_raise_v", capType: "fire", label: "炎攻击提升V", value: 10000, requires: ["fire"], target: "炎攻击提升V", condition: "火属性伤害上限+10,000" },
+        { id: "fire_soul", capType: "fire", label: "炎攻击之魂", value: 10000, requires: ["fire"], target: "炎攻击之魂", condition: "火属性伤害上限+10,000" },
+        { id: "fire_soul_weak", capType: "weak", label: "炎攻击之魂：命中弱点", value: 10000, requires: ["fire", "weak"], target: "炎攻击之魂", condition: "以火属性命中弱点时再+10,000" },
+        { id: "one_true_blade", capType: "physical", label: "一天真刃", value: 10000, requires: ["single_weapon"], target: "一天真刃", condition: "单武器时物理伤害上限+10,000" },
+        { id: "break_boost_v", capType: "break", label: "Break增幅V", value: 30000, requires: ["physical", "break"], target: "Break增幅V", condition: "对Break状态敌人的物理伤害上限+30,000" },
+        { id: "limit_breaker", capType: "physical", label: "界限破坏者II（3层）", value: 15000, requires: ["self_break"], target: "界限破坏者II", condition: "自身完成3次Break后，物理伤害上限合计+15,000" },
+        { id: "giant_killing", capTypes: ["skill", "ultimate"], label: "巨型杀戮V", value: 10000, requires: ["boss"], target: "巨型杀戮V", condition: "对BOSS的特技与超必杀技上限+10,000" },
+        { id: "crimson_jaw", capType: "ultimate", label: "红莲之颚", value: 100000, requires: ["self_break"], target: "红莲之颚", condition: "自身完成Break后，超必杀技伤害上限+100,000" },
+        { id: "mega_charisma", capTypes: ["skill", "ultimate"], label: "龙王巨型领袖魅力", value: 15000, variants: [{ requires: ["single_weapon"], value: 30000 }], requires: [], target: "龙王巨型领袖魅力", condition: "全体特技与超必杀技上限+15,000；单武器为+30,000" },
+        { id: "break_mastery", capType: "break", label: "【超越】Break精通II", value: 40000, variants: [{ requires: ["single_weapon"], value: 80000 }], requires: ["break"], target: "超越·Break精通II", condition: "对Break状态敌人+40,000；单武器为+80,000" },
+        { id: "fire_weapon_ii", capType: "fire", label: "【超越】火焰武器II", value: 15000, variants: [{ requires: ["single_weapon"], value: 30000 }], requires: ["fire", "fire_weapon"], target: "超越·火焰武器II", condition: "装备火属性武器时+15,000；单武器为+30,000" }
+      ]
+    },
     "260": {
     id: "260",
     attackPickerLabel: "选择攻击魔法",
@@ -598,6 +686,8 @@
     capTypes: [],
     sources: [],
   };
+  if (!damageCapCharacter.attacks.some((attack) => attack.id === selectedCapAttack)) selectedCapAttack = damageCapCharacter.attacks[0]?.id || "";
+  if (!damageCapCharacter.attacks.some((attack) => attack.id === selectedFinalCapAttack)) selectedFinalCapAttack = damageCapCharacter.attacks[0]?.id || "";
 
   const getCapAttack = () => damageCapCharacter.attacks.find((attack) => attack.id === selectedCapAttack) || damageCapCharacter.attacks[0];
   const getSelectedCapProfile = () => {
@@ -609,7 +699,7 @@
     });
     return { types, tags };
   };
-  const sourceApplies = (source, tags, types) => types.has(source.capType || "general") && source.requires.every((requirement) => tags.has(requirement));
+  const sourceApplies = (source, tags, types) => (source.capTypes || [source.capType || "general"]).some((type) => types.has(type)) && (source.requires || []).every((requirement) => tags.has(requirement));
   const getSourceValue = (source, tags) => {
     const variant = source.variants?.find((candidate) => candidate.requires.every((requirement) => tags.has(requirement)));
     return variant?.value ?? source.value;
@@ -620,8 +710,11 @@
     const tags = new Set([...attack.tags, ...profile.tags]);
     const selected = damageCapCharacter.sources.filter((source) => selectedCapSources.has(source.id));
     const applied = selected.filter((source) => sourceApplies(source, tags, profile.types));
-    const added = applied.reduce((total, source) => total + getSourceValue(source, tags), 0);
-    return { attack, tags, types: profile.types, selected, applied, added, total: attack.baseCap + added };
+    const flatSources = applied.filter((source) => source.unit !== "%");
+    const percentSources = applied.filter((source) => source.unit === "%");
+    const added = flatSources.reduce((total, source) => total + getSourceValue(source, tags), 0);
+    const percent = percentSources.reduce((total, source) => total + getSourceValue(source, tags), 0);
+    return { attack, tags, types: profile.types, selected, applied, added, percent, total: Math.round(attack.baseCap * (1 + percent / 100) + added) };
   };
   const selectAllCapSources = () => {
     const retainedOptionalSources = damageCapCharacter.sources
@@ -773,7 +866,7 @@
     capTotal.textContent = result.total.toLocaleString("zh-CN");
     const typeLabels = damageCapCharacter.capTypes.filter(({ id }) => selectedCapTypes.has(id)).map(({ label }) => label);
     const typeScenario = typeLabels.length ? `｜${typeLabels.join(" + ")}` : "｜未选择上限分类";
-    capAdded.textContent = `${result.attack.label}：基础 ${result.attack.baseCap.toLocaleString("zh-CN")} + 已叠加 ${result.added.toLocaleString("zh-CN")}${typeScenario}`;
+    capAdded.textContent = `${result.attack.label}：基础 ${result.attack.baseCap.toLocaleString("zh-CN")}${result.percent ? ` × ${1 + result.percent / 100}` : ""} + 固定上限 ${result.added.toLocaleString("zh-CN")}${typeScenario}`;
 
     capSourcePicker.innerHTML = "";
     const availableSources = damageCapCharacter.sources.filter((source) => sourceApplies(source, result.tags, result.types));
@@ -784,7 +877,7 @@
       option.innerHTML = `
         <input type="checkbox" ${selectedCapSources.has(source.id) ? "checked" : ""}>
         <span>${source.label}</span>
-        <strong>+${value.toLocaleString("zh-CN")}</strong>
+        <strong>+${value.toLocaleString("zh-CN")}${source.unit === "%" ? "%" : ""}</strong>
       `;
       option.querySelector("input").addEventListener("change", (event) => {
         if (event.target.checked) selectedCapSources.add(source.id);
@@ -810,7 +903,7 @@
       item.innerHTML = `
         <div class="cap-selected-source">
           <span><strong>${source.label}</strong><small>${source.condition}</small></span>
-          <b>+${value.toLocaleString("zh-CN")}</b>
+          <b>+${value.toLocaleString("zh-CN")}${source.unit === "%" ? "%" : ""}</b>
           <button type="button" aria-label="取消选择${source.label}" title="取消选择">×</button>
         </div>
       `;
