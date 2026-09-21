@@ -88,6 +88,15 @@
   const capTotal = document.getElementById("capTotal");
   const capAdded = document.getElementById("capAdded");
   const capAttackElement = document.getElementById("capAttacks");
+  const savedBuildViewerOpen = document.getElementById("savedBuildViewerOpen");
+  const savedBuildViewer = document.getElementById("savedBuildViewer");
+  const savedBuildViewerClose = document.getElementById("savedBuildViewerClose");
+  const savedBuildSort = document.getElementById("savedBuildSort");
+  const savedBuildSelect = document.getElementById("savedBuildSelect");
+  const savedBuildNote = document.getElementById("savedBuildNote");
+  const savedBuildBreaks = document.getElementById("savedBuildBreaks");
+  const savedBuildSkills = document.getElementById("savedBuildSkills");
+  const savedBuildTotal = document.getElementById("savedBuildTotal");
   const expanded = new Set();
   const hiddenKeys = new Set();
   const selectedCapTypes = new Set(["general", "magic", "ice", "ice_magic", "heavy_magic", "boss_magic", "boss_ice_magic", "critical", "special"]);
@@ -96,6 +105,125 @@
   let selectedCapAttack = "zeno_claion";
   let lastOpenedCalculator = "bonus";
   let highlightTimer = null;
+  let savedBuildSortDirection = "desc";
+  let selectedSavedBuildId = new URLSearchParams(location.search).get("plan") || "";
+
+  const savedBuildStorageKey = "lc-sheet-table:loadout-plans-v1";
+  const savedBuildEditsKey = "lc-sheet-table:cell-edits-v1";
+  const skillData = window.SKILL_DATA;
+  const savedBuildSkillIndex = new Map();
+  if (skillData?.sheetOrder) {
+    skillData.sheetOrder.forEach((sheetName) => {
+      const sheet = skillData.sheets[sheetName];
+      const rows = sheet.kind === "all" ? sheet.rows : sheet.lanes.flatMap((lane) => lane.rows);
+      rows.forEach((row) => {
+        if (!row.separator && !savedBuildSkillIndex.has(String(row.id))) savedBuildSkillIndex.set(String(row.id), row);
+      });
+    });
+  }
+
+  const escapeSavedBuildHtml = (value = "") => String(value)
+    .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+  const parseSavedBuildSc = (value) => {
+    const match = String(value ?? "").replace(",", ".").match(/-?\d+(?:\.\d+)?/);
+    const parsed = match ? Number(match[0]) : 0;
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+  };
+  const formatSavedBuildSc = (value) => Number.isInteger(value) ? String(value) : String(Math.round(value * 100) / 100);
+  const readSavedBuildPlans = () => {
+    try {
+      const plans = JSON.parse(localStorage.getItem(savedBuildStorageKey) || "[]");
+      return Array.isArray(plans) ? plans.filter((plan) => plan?.characterId === "260" && typeof plan.id === "string") : [];
+    } catch { return []; }
+  };
+  const readSavedBuildEdits = () => {
+    try { return JSON.parse(localStorage.getItem(savedBuildEditsKey) || "{}"); }
+    catch { return {}; }
+  };
+  const savedBuildRowValue = (row, field, edits) => {
+    const fallback = field === "sources" ? (row.sources || []).join("\n") : row[field] ?? "";
+    const record = edits[`skill:${row.id}`];
+    return String(record && Object.prototype.hasOwnProperty.call(record, field) ? record[field] : fallback);
+  };
+
+  const calculateSavedBuild = (plan, edits) => {
+    const characterFreeIds = new Set(Array.isArray(plan.characterFreeIds) ? plan.characterFreeIds.map(String) : []);
+    const items = (Array.isArray(plan.skillIds) ? plan.skillIds : [])
+      .map((id) => savedBuildSkillIndex.get(String(id)))
+      .filter(Boolean)
+      .map((row) => ({
+        id: String(row.id),
+        row,
+        sc: parseSavedBuildSc(savedBuildRowValue(row, "sc", edits)),
+        freeBy: characterFreeIds.has(String(row.id)) ? "character" : 0,
+      }));
+    const used = new Set(items.filter((item) => item.freeBy === "character").map((item) => item.id));
+    const activeBreaks = Array.isArray(plan.activeBreaks) ? plan.activeBreaks.map(Number) : [];
+    [7, 12, 20].forEach((threshold) => {
+      if (!activeBreaks.includes(threshold)) return;
+      const eligible = items.filter((item) => !used.has(item.id) && item.sc > 0 && item.sc <= threshold);
+      if (!eligible.length) return;
+      const bestSc = Math.max(...eligible.map((item) => item.sc));
+      const chosen = eligible.find((item) => item.sc === bestSc);
+      chosen.freeBy = threshold;
+      used.add(chosen.id);
+    });
+    return {
+      items,
+      total: items.reduce((sum, item) => sum + (item.freeBy ? 0 : item.sc), 0),
+      activeBreaks,
+    };
+  };
+
+  const renderSavedBuildViewer = () => {
+    const plans = readSavedBuildPlans();
+    const edits = readSavedBuildEdits();
+    if (!plans.some((plan) => plan.id === selectedSavedBuildId)) selectedSavedBuildId = plans[0]?.id || "";
+    savedBuildSelect.innerHTML = plans.length
+      ? plans.map((plan) => `<option value="${escapeSavedBuildHtml(plan.id)}"${plan.id === selectedSavedBuildId ? " selected" : ""}>${escapeSavedBuildHtml(plan.name || "未命名方案")}</option>`).join("")
+      : '<option value="">还没有保存的配装方案</option>';
+    savedBuildSelect.disabled = !plans.length;
+    const plan = plans.find((item) => item.id === selectedSavedBuildId);
+    if (!plan) {
+      savedBuildNote.hidden = true;
+      savedBuildBreaks.innerHTML = "";
+      savedBuildSkills.innerHTML = '<div class="saved-build-empty">还没有这个角色的已保存方案。<br>请先使用上方“配装计算器”选择技能并保存。</div>';
+      savedBuildTotal.textContent = "0 SC";
+      return;
+    }
+    savedBuildNote.hidden = !plan.note;
+    savedBuildNote.textContent = plan.note || "";
+    const result = calculateSavedBuild(plan, edits);
+    savedBuildBreaks.innerHTML = [7, 12, 20].map((level) => `<span class="saved-build-break${result.activeBreaks.includes(level) ? " is-active" : ""}">${level} SC突破</span>`).join("");
+    const descending = savedBuildSortDirection === "desc";
+    savedBuildSort.textContent = descending ? "▽" : "△";
+    savedBuildSort.setAttribute("aria-label", descending ? "当前SC从大到小，点击改为从小到大" : "当前SC从小到大，点击改为从大到小");
+    const displayItems = [...result.items].sort((a, b) => {
+      const aCharacterFree = a.freeBy === "character";
+      const bCharacterFree = b.freeBy === "character";
+      if (aCharacterFree !== bCharacterFree) return aCharacterFree ? 1 : -1;
+      return descending ? b.sc - a.sc : a.sc - b.sc;
+    });
+    savedBuildSkills.innerHTML = displayItems.length
+      ? displayItems.map((item) => `<div class="saved-build-skill${item.freeBy ? " is-free" : ""}">
+          <div class="saved-build-skill-name">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}</div>
+          <div class="saved-build-skill-sc">${item.freeBy === "character" ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : `<strong>${formatSavedBuildSc(item.sc)} SC</strong>`}</div>
+        </div>`).join("")
+      : '<div class="saved-build-empty">这个方案没有技能</div>';
+    savedBuildTotal.textContent = `${formatSavedBuildSc(result.total)} SC`;
+  };
+
+  const openSavedBuildViewer = () => {
+    renderSavedBuildViewer();
+    if (isMobile()) {
+      resetPanelPosition(savedBuildViewer);
+      panel.hidden = true;
+      capPanel.hidden = true;
+    }
+    savedBuildViewer.hidden = false;
+    savedBuildViewerClose.focus();
+  };
 
   // 新角色只需要提供攻击档案、条件和来源；通用计算逻辑不依赖角色名或技能名。
   const damageCapCharacter = {
@@ -416,6 +544,7 @@
       resetPanelPosition(targetPanel);
       resetPanelPosition(otherPanel);
       otherPanel.hidden = true;
+      savedBuildViewer.hidden = true;
     }
     targetPanel.hidden = false;
     targetClose.focus();
@@ -434,12 +563,30 @@
   capOpenButton.addEventListener("click", () => openCalculator("cap"));
   closeButton.addEventListener("click", () => closeCalculator("bonus"));
   capCloseButton.addEventListener("click", () => closeCalculator("cap"));
+  savedBuildViewerOpen.addEventListener("click", openSavedBuildViewer);
+  savedBuildViewerClose.addEventListener("click", () => {
+    savedBuildViewer.hidden = true;
+    savedBuildViewerOpen.focus();
+  });
+  savedBuildSort.addEventListener("click", () => {
+    savedBuildSortDirection = savedBuildSortDirection === "desc" ? "asc" : "desc";
+    renderSavedBuildViewer();
+  });
+  savedBuildSelect.addEventListener("change", () => {
+    selectedSavedBuildId = savedBuildSelect.value;
+    renderSavedBuildViewer();
+  });
   overlay.addEventListener("click", () => closeCalculator("bonus"));
   document.querySelectorAll("[data-calculator-target]").forEach((button) => {
     button.addEventListener("click", () => openCalculator(button.dataset.calculatorTarget));
   });
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
+    if (!savedBuildViewer.hidden) {
+      savedBuildViewer.hidden = true;
+      savedBuildViewerOpen.focus();
+      return;
+    }
     const activePanel = lastOpenedCalculator === "bonus" ? panel : capPanel;
     if (!activePanel.hidden) closeCalculator(lastOpenedCalculator);
   });
@@ -483,13 +630,25 @@
   };
   enableDragging(panel);
   enableDragging(capPanel);
+  enableDragging(savedBuildViewer);
 
   window.matchMedia("(max-width: 720px)").addEventListener("change", (event) => {
     if (!event.matches) return;
     resetPanelPosition(panel);
     resetPanelPosition(capPanel);
+    resetPanelPosition(savedBuildViewer);
+    if (!savedBuildViewer.hidden) {
+      panel.hidden = true;
+      capPanel.hidden = true;
+      return;
+    }
     if (panel.hidden || capPanel.hidden) return;
     if (lastOpenedCalculator === "bonus") capPanel.hidden = true;
     else panel.hidden = true;
   });
+
+  if (selectedSavedBuildId) {
+    openSavedBuildViewer();
+    history.replaceState(null, "", `${location.pathname}${location.hash}`);
+  }
 })();

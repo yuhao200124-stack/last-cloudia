@@ -29,6 +29,7 @@
           <div class="hero-meta">
             <span>冰属性</span><span>魔法输出</span><span>辅助</span>
             <a class="source-button" href="https://altema.jp/lastcloudia/chara/260" target="_blank" rel="noreferrer">Altema原资料 ↗</a>
+            <a class="source-button loadout-entry" href="./index.html?loadout=260#全部技能">配装计算器</a>
           </div>
         </section>
 
@@ -43,7 +44,7 @@
               <span class="section-actions">
                 <button id="bonusCalculatorOpen" class="section-action" type="button">Σ 加成计算器</button>
                 <button id="capCalculatorOpen" class="section-action" type="button">伤害上限计算器</button>
-                <a class="section-action" href="./index.html?loadout=260#全部技能">配装计算器</a>
+                <button id="savedBuildViewerOpen" class="section-action" type="button">已保存配装</button>
               </span>
             </h3>
             <p class="section-note">仅显示角色全部成长项目合计后的最大数值。</p>
@@ -199,6 +200,23 @@
       <div class="cap-breakdown-heading">已计入的加成（双击可返回原文）</div>
       <div id="capBreakdown" class="cap-breakdown"></div>
     </aside>
+    <aside id="savedBuildViewer" class="bonus-calculator saved-build-calculator" hidden aria-label="已保存配装">
+      <div class="bonus-calculator-header">
+        <strong>已保存配装</strong>
+        <div class="saved-build-header-actions">
+          <button id="savedBuildSort" class="saved-build-sort" type="button" aria-label="切换排序">▽</button>
+          <button id="savedBuildViewerClose" type="button" aria-label="关闭已保存配装">×</button>
+        </div>
+      </div>
+      <div class="saved-build-picker">
+        <select id="savedBuildSelect" aria-label="选择已保存方案"></select>
+      </div>
+      <div id="savedBuildNote" class="saved-build-note" hidden></div>
+      <div id="savedBuildBreaks" class="saved-build-breaks" aria-label="方案突破状态"></div>
+      <div id="savedBuildSkills" class="saved-build-skills"></div>
+      <div class="saved-build-total"><span>合计</span><strong id="savedBuildTotal">0 SC</strong></div>
+    </aside>
+    <script src="./data.js"></script>
     <script src="./character-calculator.js"></script>
   </body>
 </html>

@@ -299,7 +299,12 @@
     calculatorSort.title = descending ? 'SC从大到小' : 'SC从小到大';
     calculatorDetails.classList.toggle('is-active', calculatorState.detailsOpen);
     calculatorDetails.setAttribute('aria-pressed', String(calculatorState.detailsOpen));
-    const displayItems = [...result.items].sort((a, b) => descending ? b.sc - a.sc : a.sc - b.sc);
+    const displayItems = [...result.items].sort((a, b) => {
+      const aCharacterFree = a.freeBy === 'character';
+      const bCharacterFree = b.freeBy === 'character';
+      if (aCharacterFree !== bCharacterFree) return aCharacterFree ? 1 : -1;
+      return descending ? b.sc - a.sc : a.sc - b.sc;
+    });
     const bonuses = summarizeBonuses(result.items);
     calculatorSkills.innerHTML = calculatorState.detailsOpen
       ? (bonuses.length
@@ -375,6 +380,7 @@
       createdAt: existing?.createdAt || now,
       updatedAt: now,
     };
+    const shouldReturnToCharacter = !editingPlanMetadataOnly && snapshot.characterId === '260';
     if (existing) loadoutPlans = loadoutPlans.map(plan => plan.id === existing.id ? snapshot : plan);
     else loadoutPlans.unshift(snapshot);
     if (!editingPlanMetadataOnly || asNew) calculatorState.currentPlanId = snapshot.id;
@@ -383,6 +389,7 @@
     saveCalculatorState();
     saveLoadoutDialog.close();
     renderCalculator();
+    if (shouldReturnToCharacter) location.href = `./character-260.html?plan=${encodeURIComponent(snapshot.id)}`;
   }
 
   function renderSavedLoadouts() {
