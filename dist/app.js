@@ -15,6 +15,7 @@
   const calculatorClose = document.querySelector('#calculatorClose');
   const calculatorSort = document.querySelector('#calculatorSort');
   const calculatorSortIcon = document.querySelector('#calculatorSortIcon');
+  const calculatorDetails = document.querySelector('#calculatorDetails');
   const calculatorBadge = document.querySelector('#calculatorBadge');
   const calculatorSkills = document.querySelector('#calculatorSkills');
   const calculatorTotal = document.querySelector('#calculatorTotal');
@@ -26,7 +27,7 @@
     edits = JSON.parse(localStorage.getItem(editStorageKey) || '{}');
   } catch { edits = {}; }
   const calculatorStorageKey = 'lc-sheet-table:sc-calculator-v1';
-  let calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc' };
+  let calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false };
   try {
     const savedCalculator = JSON.parse(localStorage.getItem(calculatorStorageKey) || '{}');
     const savedBreaks = Array.isArray(savedCalculator.activeBreaks)
@@ -36,8 +37,9 @@
       skillIds: Array.isArray(savedCalculator.skillIds) ? [...new Set(savedCalculator.skillIds.map(String))] : [],
       activeBreaks: [...new Set(savedBreaks)],
       sortDirection: savedCalculator.sortDirection === 'asc' ? 'asc' : 'desc',
+      detailsOpen: Boolean(savedCalculator.detailsOpen),
     };
-  } catch { calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc' }; }
+  } catch { calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false }; }
   const hashSheet = decodeURIComponent(location.hash.slice(1));
   let activeSheet = data.sheetOrder.includes(hashSheet)
     ? hashSheet
@@ -86,6 +88,63 @@
 
   function formatSc(value) {
     return Number.isInteger(value) ? String(value) : String(Math.round(value * 100) / 100);
+  }
+
+  const bonusMetricPattern = /(受到的?(?:敌人)?(?:物理|魔法|火|炎|冰|树|雷|光|暗|无属性)?(?:攻击)?伤害|(?:火|炎|冰|树|雷|光|暗|无属性)属性物理攻击(?:与|和)必杀伤害上限|物理攻击(?:与|和)必杀伤害上限|特技(?:与|和)必杀伤害上限|物理攻击(?:与|和)魔法攻击伤害上限|(?:火|炎|冰|树|雷|光|暗|无属性)属性(?:物理攻击|魔法攻击|攻击)?伤害上限|不可叠加魔法(?:的)?伤害上限|物理(?:攻击)?伤害上限|魔法(?:攻击)?伤害上限|特技伤害上限|(?:超级|超)?必杀技?伤害上限|反击伤害上限|特攻伤害上限|暴击伤害上限|HP恢复上限|伤害上限|(?:火|炎|冰|树|雷|光|暗|无属性)属性物理攻击(?:与|和)必杀伤害|物理攻击(?:与|和)必杀伤害|特技(?:与|和)必杀伤害|物理攻击(?:与|和)魔法攻击伤害|(?:火|炎|冰|树|雷|光|暗|无属性)属性(?:物理攻击|魔法攻击|攻击)?伤害|不可叠加魔法伤害|物理(?:攻击)?伤害|魔法(?:攻击)?伤害|普通攻击伤害|特技伤害|(?:超级|超)?必杀技?伤害|反击伤害|特攻伤害|暴击伤害|弱点伤害|受到的伤害|造成的伤害|伤害|攻击力|防御力|魔力|魔抗|HP上限|MP上限|暴击率|SCT恢复速度|SCT回复速度|Break值|治疗魔法威力|HP恢复量)([^。；，,+＋-]{0,16})([+＋-])\s*([\d,]+(?:\.\d+)?)\s*(%)?/g;
+
+  function inferDamageMetric(effect, index, suffix) {
+    const context = effect.slice(Math.max(0, index - 80), index);
+    const isLimit = suffix.includes('上限');
+    const end = isLimit ? '伤害上限' : '伤害';
+    if (/物理攻击(?:与|和)必杀/.test(context)) return `物理/必杀${end}`;
+    if (/特技(?:与|和)必杀/.test(context)) return `特技/必杀${end}`;
+    if (/物理攻击(?:与|和)魔法攻击/.test(context)) return `物理/魔法${end}`;
+    const attribute = context.match(/(火|炎|冰|树|雷|光|暗|无)属性[^，。；]{0,18}$/)?.[1];
+    if (attribute) return `${attribute === '火' ? '炎' : attribute}属性${end}`;
+    if (/物理攻击[^，。；]{0,24}$/.test(context)) return `物理${end}`;
+    if (/魔法攻击[^，。；]{0,24}$/.test(context)) return `魔法${end}`;
+    if (/特技[^，。；]{0,24}$/.test(context)) return `特技${end}`;
+    if (/(?:超级|超)?必杀[^，。；]{0,24}$/.test(context)) return `必杀${end}`;
+    if (/反击[^，。；]{0,24}$/.test(context)) return `反击${end}`;
+    if (/特攻[^，。；]{0,24}$/.test(context)) return `特攻${end}`;
+    return suffix;
+  }
+
+  function normalizeBonusMetric(raw, effect, index) {
+    let label = raw.replace(/^受到的?敌人?/, '受到的').replaceAll('攻击伤害', '伤害').replaceAll('火属性', '炎属性');
+    label = label.replace(/超级必杀技?|超必杀技?|必杀技/g, '必杀');
+    label = label.replace('物理攻击与必杀', '物理/必杀').replace('物理攻击和必杀', '物理/必杀');
+    label = label.replace('特技与必杀', '特技/必杀').replace('特技和必杀', '特技/必杀');
+    label = label.replace('物理攻击与魔法攻击', '物理/魔法').replace('物理攻击和魔法攻击', '物理/魔法');
+    label = label.replace(/^物理攻击/, '物理').replace(/^魔法攻击/, '魔法');
+    if (label === '伤害' || label === '伤害上限') label = inferDamageMetric(effect, index, label);
+    return label;
+  }
+
+  function summarizeBonuses(items) {
+    const totals = new Map();
+    for (const item of items) {
+      const effect = rowValue(item.row, 'effect').replaceAll('＋', '+').replace(/\s+/g, ' ');
+      bonusMetricPattern.lastIndex = 0;
+      for (const match of effect.matchAll(bonusMetricPattern)) {
+        const metric = normalizeBonusMetric(match[1], effect, match.index || 0);
+        const unit = match[5] ? '%' : '';
+        const value = Number(match[4].replaceAll(',', '')) * (match[3] === '-' ? -1 : 1);
+        if (!Number.isFinite(value)) continue;
+        const key = `${metric}|${unit}`;
+        const current = totals.get(key) || { metric, unit, value: 0, count: 0 };
+        current.value += value;
+        current.count += 1;
+        totals.set(key, current);
+      }
+    }
+    return [...totals.values()];
+  }
+
+  function formatBonus(value, unit) {
+    const sign = value > 0 ? '+' : '';
+    const amount = unit ? formatSc(value) : Math.round(value).toLocaleString('zh-CN');
+    return `${sign}${amount}${unit}`;
   }
 
   function rowText(row) {
@@ -167,8 +226,15 @@
     calculatorSortIcon.textContent = descending ? '▽' : '△';
     calculatorSort.setAttribute('aria-label', descending ? '当前SC从大到小，点击改为从小到大' : '当前SC从小到大，点击改为从大到小');
     calculatorSort.title = descending ? 'SC从大到小' : 'SC从小到大';
+    calculatorDetails.classList.toggle('is-active', calculatorState.detailsOpen);
+    calculatorDetails.setAttribute('aria-pressed', String(calculatorState.detailsOpen));
     const displayItems = [...result.items].sort((a, b) => descending ? b.sc - a.sc : a.sc - b.sc);
-    calculatorSkills.innerHTML = displayItems.length
+    const bonuses = summarizeBonuses(result.items);
+    calculatorSkills.innerHTML = calculatorState.detailsOpen
+      ? (bonuses.length
+        ? `<div class="bonus-summary">${bonuses.map(item => `<div class="bonus-row"><span>${escapeHtml(item.metric)}</span><strong>${escapeHtml(formatBonus(item.value, item.unit))}</strong></div>`).join('')}<p>仅合计技能描述中的明确数值，技能发动条件仍需满足。</p></div>`
+        : '<div class="calculator-empty">当前技能没有可合并的明确数值</div>')
+      : displayItems.length
       ? displayItems.map(item => `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
           <div class="calculator-skill-name">${escapeHtml(rowValue(item.row, 'name'))}</div>
           <div class="calculator-skill-sc">${item.freeBy ? `<strong>0 SC</strong><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
@@ -398,6 +464,12 @@
 
   calculatorSort.addEventListener('click', () => {
     calculatorState.sortDirection = calculatorState.sortDirection === 'desc' ? 'asc' : 'desc';
+    saveCalculatorState();
+    renderCalculator();
+  });
+
+  calculatorDetails.addEventListener('click', () => {
+    calculatorState.detailsOpen = !calculatorState.detailsOpen;
     saveCalculatorState();
     renderCalculator();
   });
