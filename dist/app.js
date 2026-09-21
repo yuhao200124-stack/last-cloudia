@@ -44,6 +44,7 @@
   } catch { edits = {}; }
   const calculatorStorageKey = 'lc-sheet-table:sc-calculator-v1';
   const loadoutPlansStorageKey = 'lc-sheet-table:loadout-plans-v1';
+  const loadoutDraftTransferKey = 'lc-sheet-table:loadout-draft-v1';
   const characterLoadouts = {
     '260': {
       name: '洛琪希',
@@ -104,14 +105,23 @@
   const inboundParams = new URLSearchParams(location.search);
   const inboundPlanId = inboundParams.get('editPlan');
   const inboundPlan = loadoutPlans.find(plan => plan.id === inboundPlanId);
+  let inboundDraft = null;
+  if (inboundPlan && inboundParams.get('draft') === '1') {
+    try {
+      const draft = JSON.parse(sessionStorage.getItem(loadoutDraftTransferKey) || 'null');
+      if (draft?.planId === inboundPlan.id && draft?.characterId === inboundPlan.characterId) inboundDraft = draft;
+    } catch { inboundDraft = null; }
+    sessionStorage.removeItem(loadoutDraftTransferKey);
+  }
+  const inboundPlanState = inboundDraft ? { ...inboundPlan, ...inboundDraft } : inboundPlan;
   const inboundCharacterId = inboundParams.get('loadout');
   const inboundLoadout = characterLoadouts[inboundCharacterId];
-  if (inboundPlan) {
-    calculatorState.skillIds = [...new Set((inboundPlan.skillIds || []).map(String))].filter(id => skillIndex.has(id));
-    calculatorState.characterFreeIds = [...new Set((inboundPlan.characterFreeIds || []).map(String))].filter(id => skillIndex.has(id));
-    calculatorState.characterId = typeof inboundPlan.characterId === 'string' ? inboundPlan.characterId : '';
-    calculatorState.currentPlanId = inboundPlan.id;
-    calculatorState.activeBreaks = [...new Set((inboundPlan.activeBreaks || []).map(Number).filter(value => [7, 12, 20].includes(value)))];
+  if (inboundPlanState) {
+    calculatorState.skillIds = [...new Set((inboundPlanState.skillIds || []).map(String))].filter(id => skillIndex.has(id));
+    calculatorState.characterFreeIds = [...new Set((inboundPlanState.characterFreeIds || []).map(String))].filter(id => skillIndex.has(id));
+    calculatorState.characterId = typeof inboundPlanState.characterId === 'string' ? inboundPlanState.characterId : '';
+    calculatorState.currentPlanId = inboundPlanState.id;
+    calculatorState.activeBreaks = [...new Set((inboundPlanState.activeBreaks || []).map(Number).filter(value => [7, 12, 20].includes(value)))];
     calculatorState.detailsOpen = false;
     calculatorState.expandedBonusKey = '';
     openCalculatorOnLoad = true;
@@ -453,6 +463,7 @@
     if (!editingPlanMetadataOnly || asNew) calculatorState.currentPlanId = snapshot.id;
     editingPlanId = snapshot.id;
     saveLoadoutPlans();
+    sessionStorage.removeItem(loadoutDraftTransferKey);
     saveCalculatorState();
     saveLoadoutDialog.close();
     renderCalculator();

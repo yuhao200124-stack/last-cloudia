@@ -229,6 +229,10 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
 .saved-build-bonus-sources article p { margin: 0; color: #536177; font-size: .78rem; line-height: 1.55; }
 .saved-build-bonus-note { margin: 10px 3px 1px; color: #66748b; font-size: .75rem; line-height: 1.45; }
 .saved-build-total { position: sticky; bottom: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 13px 15px; color: #172033; background: #f7faff; border-top: 2px solid #9fb4d0; font-size: 1rem; }
+.saved-build-total > span { margin-right: auto; }
+.saved-build-total button { min-height: 32px; margin-right: 12px; padding: 5px 13px; border: 1px solid #9fb3cf; color: #254a7b; background: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.saved-build-total button:hover:not(:disabled) { background: #e5f0fd; }
+.saved-build-total button:disabled { color: #9aa6b5; background: #eef2f7; cursor: default; }
 .saved-build-total strong { color: #203864; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
 .mobile-calculator-tabs { display: none; }
 .calculator-tools { display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: #57677f; background: #edf4fb; border-bottom: 1px solid #cad6e6; }

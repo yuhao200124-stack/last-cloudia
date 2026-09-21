@@ -101,6 +101,7 @@
   const savedBuildEffects = document.getElementById("savedBuildEffects");
   const savedBuildDetails = document.getElementById("savedBuildDetails");
   const savedBuildSkills = document.getElementById("savedBuildSkills");
+  const savedBuildRestore = document.getElementById("savedBuildRestore");
   const savedBuildTotal = document.getElementById("savedBuildTotal");
   const expanded = new Set();
   const hiddenKeys = new Set();
@@ -123,6 +124,7 @@
   let savedBuildDraftDirty = false;
 
   const savedBuildStorageKey = "lc-sheet-table:loadout-plans-v1";
+  const savedBuildTransferKey = "lc-sheet-table:loadout-draft-v1";
   const savedBuildEditsKey = "lc-sheet-table:cell-edits-v1";
   const currentSavedBuildCharacterId = document.body.dataset.characterId || "";
   const skillData = window.SKILL_DATA;
@@ -181,6 +183,11 @@
     localStorage.setItem(savedBuildStorageKey, JSON.stringify(plans));
     savedBuildDraftDirty = false;
     return savedPlan;
+  };
+  const discardSavedBuildDraft = () => {
+    savedBuildDraftPlanId = "";
+    savedBuildDraftSkillIds = [];
+    savedBuildDraftDirty = false;
   };
   const savedBuildRowValue = (row, field, edits) => {
     const fallback = field === "sources" ? (row.sources || []).join("\n") : row[field] ?? "";
@@ -296,6 +303,7 @@
       savedBuildEffects.disabled = true;
       savedBuildAddSkills.disabled = true;
       savedBuildSaveChanges.disabled = true;
+      savedBuildRestore.disabled = true;
       savedBuildDetails.classList.remove("is-active");
       savedBuildEffects.classList.remove("is-active");
       savedBuildDetails.setAttribute("aria-pressed", "false");
@@ -312,6 +320,7 @@
     savedBuildEffects.disabled = false;
     savedBuildAddSkills.disabled = false;
     savedBuildSaveChanges.disabled = !savedBuildDraftDirty;
+    savedBuildRestore.disabled = !savedBuildDraftDirty;
     savedBuildDetails.classList.toggle("is-active", savedBuildDetailsOpen);
     savedBuildDetails.setAttribute("aria-pressed", String(savedBuildDetailsOpen));
     savedBuildEffects.classList.toggle("is-active", savedBuildEffectsOpen);
@@ -379,6 +388,13 @@
     }
     savedBuildViewer.hidden = false;
     savedBuildViewerClose.focus();
+  };
+  const closeSavedBuildViewer = () => {
+    if (savedBuildDraftDirty && !window.confirm("当前技能修改尚未保存，关闭后将放弃这些修改。确定关闭吗？")) return false;
+    discardSavedBuildDraft();
+    savedBuildViewer.hidden = true;
+    savedBuildViewerOpen.focus();
+    return true;
   };
 
   // 新角色只需要提供攻击档案、条件和来源；通用计算逻辑不依赖角色名或技能名。
@@ -697,10 +713,10 @@
     const targetClose = calculator === "bonus" ? closeButton : capCloseButton;
     const otherPanel = calculator === "bonus" ? capPanel : panel;
     if (isMobile()) {
+      if (!savedBuildViewer.hidden && !closeSavedBuildViewer()) return;
       resetPanelPosition(targetPanel);
       resetPanelPosition(otherPanel);
       otherPanel.hidden = true;
-      savedBuildViewer.hidden = true;
     }
     targetPanel.hidden = false;
     targetClose.focus();
@@ -720,18 +736,31 @@
   closeButton.addEventListener("click", () => closeCalculator("bonus"));
   capCloseButton.addEventListener("click", () => closeCalculator("cap"));
   savedBuildViewerOpen.addEventListener("click", openSavedBuildViewer);
-  savedBuildViewerClose.addEventListener("click", () => {
-    savedBuildViewer.hidden = true;
-    savedBuildViewerOpen.focus();
-  });
+  savedBuildViewerClose.addEventListener("click", closeSavedBuildViewer);
   savedBuildSaveChanges.addEventListener("click", () => {
     if (!saveSavedBuildDraft()) return;
     renderSavedBuildViewer();
   });
   savedBuildAddSkills.addEventListener("click", () => {
-    const plan = saveSavedBuildDraft() || readSavedBuildPlans().find((item) => item.id === selectedSavedBuildId);
+    const plan = readSavedBuildPlans().find((item) => item.id === selectedSavedBuildId);
     if (!plan) return;
-    location.href = `./index.html?editPlan=${encodeURIComponent(plan.id)}#全部技能`;
+    sessionStorage.setItem(savedBuildTransferKey, JSON.stringify({
+      planId: plan.id,
+      characterId: plan.characterId,
+      skillIds: [...savedBuildDraftSkillIds],
+      characterFreeIds: Array.isArray(plan.characterFreeIds) ? plan.characterFreeIds.map(String).filter((id) => savedBuildDraftSkillIds.includes(id)) : [],
+      activeBreaks: Array.isArray(plan.activeBreaks) ? [...plan.activeBreaks] : [],
+    }));
+    location.href = `./index.html?editPlan=${encodeURIComponent(plan.id)}&draft=1#全部技能`;
+  });
+  savedBuildRestore.addEventListener("click", () => {
+    const plan = readSavedBuildPlans().find((item) => item.id === selectedSavedBuildId);
+    if (!plan) return;
+    savedBuildDraftPlanId = plan.id;
+    savedBuildDraftSkillIds = Array.isArray(plan.skillIds) ? [...new Set(plan.skillIds.map(String))] : [];
+    savedBuildDraftDirty = false;
+    expandedSavedBuildEffects.clear();
+    renderSavedBuildViewer();
   });
   savedBuildSort.addEventListener("click", () => {
     if (savedBuildSortMode === "sc") savedBuildSortDirection = savedBuildSortDirection === "desc" ? "asc" : "desc";
@@ -830,8 +859,7 @@
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
     if (!savedBuildViewer.hidden) {
-      savedBuildViewer.hidden = true;
-      savedBuildViewerOpen.focus();
+      closeSavedBuildViewer();
       return;
     }
     const activePanel = lastOpenedCalculator === "bonus" ? panel : capPanel;
