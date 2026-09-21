@@ -15,7 +15,10 @@
         <h1>最后的克劳迪娅角色资料</h1>
         <p>第二部分 · 角色能力整理</p>
       </div>
-      <a class="header-nav-link" href="./characters.html">返回角色列表</a>
+      <nav class="header-actions" aria-label="页面导航">
+        <a class="header-nav-link" href="./index.html">返回技能页面</a>
+        <a class="header-nav-link" href="./characters.html">返回角色列表</a>
+      </nav>
     </header>
 
     <main>
@@ -35,7 +38,10 @@
 
         <div class="content">
           <section id="max-stats" class="data-section">
-            <h3 class="section-title">最大阶段属性</h3>
+            <h3 class="section-title with-action">
+              <span>最大阶段属性</span>
+              <button id="bonusCalculatorOpen" class="section-action" type="button">Σ 加成计算器</button>
+            </h3>
             <p class="section-note">仅显示角色全部成长项目合计后的最大数值。</p>
             <div class="stat-grid" aria-label="最大阶段属性">
               <div class="stat-box"><span>HP</span><strong>10,702</strong></div>
@@ -149,5 +155,17 @@
         </div>
       </article>
     </main>
+
+    <div id="bonusCalculatorOverlay" class="calculator-overlay" hidden></div>
+    <aside id="bonusCalculator" class="bonus-calculator" hidden aria-label="角色加成计算器">
+      <div class="bonus-calculator-header">
+        <strong>角色加成计算器</strong>
+        <button id="bonusCalculatorClose" type="button" aria-label="关闭计算器">×</button>
+      </div>
+      <p class="calculator-help">按开启的来源汇总最大触发数值。点击任意属性可查看由什么提供、提供多少及触发条件。</p>
+      <div id="bonusSourceFilters" class="bonus-source-filters" aria-label="加成来源开关"></div>
+      <div id="bonusSummary" class="bonus-summary"></div>
+    </aside>
+    <script src="./character-calculator.js"></script>
   </body>
 </html>
