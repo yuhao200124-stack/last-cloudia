@@ -154,7 +154,7 @@
             </tbody></table>
           </section>
 
-          <p class="source-note">整理依据：<a href="https://altema.jp/lastcloudia/chara/260" target="_blank" rel="noreferrer">Altema 角色资料页</a>、专属装备详情页及<a href="https://m.gamer.com.tw/forum/C.php?bsn=35735&amp;snA=10444&amp;bpage=1&amp;ltype=" target="_blank" rel="noreferrer">巴哈姆特角色整理帖</a>。页面仅整理最终效果；未收录成长过程与解锁耗材。资料更新时间：2026-09-21。</p>
+          <p class="source-note">数值依据：<a href="https://altema.jp/lastcloudia/chara/260" target="_blank" rel="noreferrer">Altema 角色资料页</a>及其技能、魔法与专属装备详情页。计算器以 Altema 当前数值为准；页面仅整理最终效果，不收录成长过程与解锁耗材。资料更新时间：2026-09-21。</p>
         </div>
       </article>
     </main>
@@ -191,14 +191,16 @@
         <small id="capAdded">基础上限 9,999</small>
       </div>
       <div class="calculator-tools cap-tools">
-        <p>先选择具体魔法，再勾选战斗条件与实际生效的来源。切换魔法时会自动排除不适用的来源。</p>
-        <div class="cap-tool-buttons"><button id="capPreset" type="button">帖子极限配置</button><button id="capReset" type="button">清空</button></div>
+        <p>选择具体魔法和战斗条件，再勾选实际使用的技能或装备。只计算并显示你勾选的来源。</p>
+        <button id="capReset" type="button">清空</button>
       </div>
       <div class="cap-subheading">选择攻击魔法</div>
       <div id="capAttacks" class="cap-attacks" aria-label="选择攻击魔法"></div>
       <div class="cap-subheading">战斗条件</div>
       <div id="capConditions" class="cap-conditions" aria-label="伤害条件"></div>
-      <div class="cap-breakdown-heading">上限来源（可逐项勾选；双击返回原文）</div>
+      <div class="cap-subheading">选择技能、个性、装备或超越</div>
+      <div id="capSourcePicker" class="cap-source-picker" aria-label="选择伤害上限来源"></div>
+      <div class="cap-breakdown-heading">已选择的加成（双击可返回原文）</div>
       <div id="capBreakdown" class="cap-breakdown"></div>
     </aside>
     <script src="./character-calculator.js"></script>
