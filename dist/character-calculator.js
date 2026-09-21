@@ -93,6 +93,13 @@
   const finalDamageCloseButton = document.getElementById("finalDamageCalculatorClose");
   const finalDamagePlanSelect = document.getElementById("finalDamagePlanSelect");
   const finalDamagePlanNote = document.getElementById("finalDamagePlanNote");
+  const finalDamageCapTotal = document.getElementById("finalDamageCapTotal");
+  const finalDamageCapAdded = document.getElementById("finalDamageCapAdded");
+  const finalDamageCapReset = document.getElementById("finalDamageCapReset");
+  const finalDamageAttackHeading = document.getElementById("finalDamageAttackHeading");
+  const finalDamageAttacks = document.getElementById("finalDamageAttacks");
+  const finalDamageCapTypes = document.getElementById("finalDamageCapTypes");
+  const finalDamageCapSources = document.getElementById("finalDamageCapSources");
   const finalDamageSummary = document.getElementById("finalDamageSummary");
   const savedBuildViewerOpen = document.getElementById("savedBuildViewerOpen");
   const savedBuildViewer = document.getElementById("savedBuildViewer");
@@ -123,7 +130,9 @@
   let savedBuildEffectsOpen = false;
   let expandedSavedBuildBonusKey = "";
   const expandedSavedBuildEffects = new Set();
-  const expandedFinalDamageKeys = new Set();
+  const selectedFinalCapTypes = new Set();
+  const selectedFinalCapSources = new Set();
+  let selectedFinalCapAttack = "zeno_claion";
   let selectedSavedBuildId = new URLSearchParams(location.search).get("plan") || "";
   let selectedFinalDamagePlanId = selectedSavedBuildId;
   let savedBuildDraftPlanId = "";
@@ -396,13 +405,63 @@
     savedBuildTotal.textContent = `${formatSavedBuildSc(result.total)} SC`;
   };
 
-  const canonicalFinalMetric = (label) => String(label)
-    .replace(/^HP上限$/, "HP")
-    .replace(/^MP上限$/, "MP")
-    .replace(/^魔力$/, "法强")
-    .replaceAll("火属性", "炎属性");
-  const isFinalDamageMetric = (label) => /攻击力|法强|暴击|伤害|上限|特攻|咏唱/.test(label)
-    && !/受到|减伤|防御|魔抗|HP|MP|治疗|回复|恢复|转化/.test(label);
+  const finalMetricCapTypes = (label) => {
+    const value = String(label);
+    const types = new Set();
+    if (/冰属性.*魔法|魔法.*冰属性/.test(value)) types.add("ice_magic");
+    if (/冰属性/.test(value)) types.add("ice");
+    if (/不可叠加魔法|重魔法/.test(value)) types.add("heavy_magic");
+    if (/魔法/.test(value)) types.add("magic");
+    if (/物理/.test(value)) types.add("physical");
+    if (/必杀/.test(value)) types.add("ultimate");
+    if (/暴击/.test(value)) types.add("critical");
+    if (/特攻/.test(value)) types.add("special");
+    if (!types.size) types.add("general");
+    return [...types];
+  };
+  const getFinalCapAttack = () => damageCapCharacter.attacks.find((attack) => attack.id === selectedFinalCapAttack) || damageCapCharacter.attacks[0];
+  const getSelectedFinalCapProfile = () => {
+    const types = new Set();
+    const tags = new Set();
+    damageCapCharacter.capTypes.filter((type) => selectedFinalCapTypes.has(type.id)).forEach((type) => {
+      type.includes.forEach((included) => types.add(included));
+      (type.tags || []).forEach((tag) => tags.add(tag));
+    });
+    return { types, tags };
+  };
+  const buildFinalCapSources = (plan) => {
+    if (!plan) return [];
+    const sources = damageCapCharacter.sources.map((source) => ({ ...source, origin: "角色/装备" }));
+    const edits = readSavedBuildEdits();
+    const result = calculateSavedBuild(plan, edits);
+    const characterOwnedIds = new Set(Array.isArray(plan.characterFreeIds) ? plan.characterFreeIds.map(String) : []);
+    const equippedItems = result.items.filter((item) => !characterOwnedIds.has(item.id));
+    summarizeSavedBuildBonuses(equippedItems, edits)
+      .filter((metric) => metric.unit === "" && /伤害上限/.test(metric.metric) && !/HP恢复上限/.test(metric.metric))
+      .forEach((metric) => metric.skills.forEach((skill, index) => {
+        sources.push({
+          id: `build:${skill.id}:${metric.key}:${index}`,
+          label: skill.name,
+          value: skill.value,
+          capTypes: finalMetricCapTypes(metric.metric),
+          requires: [],
+          target: skill.name,
+          condition: `${metric.metric}｜${skill.effect}`,
+          origin: "配装技能",
+        });
+      }));
+    return sources;
+  };
+  const finalSourceApplies = (source, tags, types) => {
+    const sourceTypes = source.capTypes || [source.capType || "general"];
+    return sourceTypes.some((type) => types.has(type)) && (source.requires || []).every((requirement) => tags.has(requirement));
+  };
+  const selectAllFinalCapSources = (sources) => {
+    const retainedOptional = sources.filter((source) => source.autoSelect === false && selectedFinalCapSources.has(source.id)).map((source) => source.id);
+    selectedFinalCapSources.clear();
+    sources.filter((source) => source.autoSelect !== false).forEach((source) => selectedFinalCapSources.add(source.id));
+    retainedOptional.forEach((id) => selectedFinalCapSources.add(id));
+  };
 
   const renderFinalDamageCalculator = () => {
     const plans = readSavedBuildPlans();
@@ -415,55 +474,40 @@
     finalDamagePlanNote.hidden = !plan?.note;
     finalDamagePlanNote.textContent = plan?.note || "";
     if (!plan) {
+      finalDamageCapTotal.textContent = "9,999";
+      finalDamageCapAdded.textContent = "基础上限 9,999";
+      finalDamageAttacks.innerHTML = "";
+      finalDamageCapTypes.innerHTML = "";
+      finalDamageCapSources.innerHTML = "";
       finalDamageSummary.innerHTML = '<div class="bonus-empty">请先使用“配装计算器”保存这个角色的方案。</div>';
       return;
     }
 
-    const totals = new Map();
-    const addMetric = (rawLabel, unit, value, provider) => {
-      const label = canonicalFinalMetric(rawLabel);
-      if (!isFinalDamageMetric(label) || !Number.isFinite(value)) return;
-      const key = `${label}|${unit}`;
-      const current = totals.get(key) || { key, label, unit, total: 0, providers: [] };
-      current.total += value;
-      current.providers.push(provider);
-      totals.set(key, current);
-    };
+    const sources = buildFinalCapSources(plan);
+    const attack = getFinalCapAttack();
+    const profile = getSelectedFinalCapProfile();
+    const tags = new Set([...attack.tags, ...profile.tags]);
+    const available = sources.filter((source) => finalSourceApplies(source, tags, profile.types));
+    const applied = available.filter((source) => selectedFinalCapSources.has(source.id));
+    const added = applied.reduce((total, source) => total + getSourceValue(source, tags), 0);
 
-    bonuses.forEach((bonus) => addMetric(bonus.label, bonus.unit, bonus.value, {
-      source: bonus.source,
-      value: bonus.value,
-      unit: bonus.unit,
-      detail: bonus.condition,
-      origin: "角色基础",
-    }));
+    finalDamageAttackHeading.textContent = damageCapCharacter.attackPickerLabel || "选择攻击方式";
+    finalDamageAttacks.innerHTML = damageCapCharacter.attacks.map((item) => `<label class="cap-condition cap-attack"><input type="radio" name="finalCapAttack" value="${escapeSavedBuildHtml(item.id)}" ${item.id === selectedFinalCapAttack ? "checked" : ""}><span>${escapeSavedBuildHtml(item.label)}</span></label>`).join("");
+    finalDamageCapTypes.innerHTML = damageCapCharacter.capTypes.map((type) => `<label class="cap-condition"><input type="checkbox" value="${escapeSavedBuildHtml(type.id)}" ${selectedFinalCapTypes.has(type.id) ? "checked" : ""}><span>${escapeSavedBuildHtml(type.label)}</span></label>`).join("");
+    finalDamageCapTotal.textContent = (attack.baseCap + added).toLocaleString("zh-CN");
+    const typeLabels = damageCapCharacter.capTypes.filter((type) => selectedFinalCapTypes.has(type.id)).map((type) => type.label);
+    finalDamageCapAdded.textContent = `${attack.label}：基础 ${attack.baseCap.toLocaleString("zh-CN")} + 已叠加 ${added.toLocaleString("zh-CN")}${typeLabels.length ? `｜${typeLabels.join(" + ")}` : "｜未选择上限分类"}`;
 
-    const edits = readSavedBuildEdits();
-    const result = calculateSavedBuild(plan, edits);
-    const characterOwnedIds = new Set(Array.isArray(plan.characterFreeIds) ? plan.characterFreeIds.map(String) : []);
-    const equippedItems = result.items.filter((item) => !characterOwnedIds.has(item.id));
-    summarizeSavedBuildBonuses(equippedItems, edits).forEach((metric) => {
-      metric.skills.forEach((skill) => addMetric(metric.metric, metric.unit, skill.value, {
-        source: skill.name,
-        value: skill.value,
-        unit: metric.unit,
-        detail: skill.effect,
-        origin: "配装技能",
-      }));
-    });
+    finalDamageCapSources.innerHTML = available.length ? available.map((source) => {
+      const value = getSourceValue(source, tags);
+      const selected = selectedFinalCapSources.has(source.id);
+      return `<label class="cap-skill-option${selected ? " is-selected" : ""}"><input type="checkbox" value="${escapeSavedBuildHtml(source.id)}" ${selected ? "checked" : ""}><span>${escapeSavedBuildHtml(source.label)}<small>${escapeSavedBuildHtml(source.origin)}</small></span><strong>+${value.toLocaleString("zh-CN")}</strong></label>`;
+    }).join("") : '<div class="cap-empty cap-picker-empty">当前选择下没有可计入的伤害上限来源。</div>';
 
-    const metrics = [...totals.values()];
-    finalDamageSummary.innerHTML = metrics.length ? metrics.map((metric) => {
-      const isOpen = expandedFinalDamageKeys.has(metric.key);
-      return `<section class="bonus-row final-damage-row">
-        <button class="bonus-row-button" type="button" data-final-damage-key="${escapeSavedBuildHtml(metric.key)}" aria-expanded="${isOpen}">
-          <span>${escapeSavedBuildHtml(metric.label)}</span>
-          <strong>${escapeSavedBuildHtml(formatSavedBuildBonus(metric.total, metric.unit))}</strong>
-          <span class="bonus-chevron" aria-hidden="true">${isOpen ? "△" : "▽"}</span>
-        </button>
-        ${isOpen ? `<ul class="bonus-providers">${metric.providers.map((provider) => `<li class="bonus-provider"><div class="bonus-provider-head"><span>${escapeSavedBuildHtml(provider.source)} <em>${escapeSavedBuildHtml(provider.origin)}</em></span><span>${escapeSavedBuildHtml(formatSavedBuildBonus(provider.value, provider.unit))}</span></div><small>${escapeSavedBuildHtml(provider.detail)}</small></li>`).join("")}</ul>` : ""}
-      </section>`;
-    }).join("") : '<div class="bonus-empty">这个方案没有可合并的攻击类数值。</div>';
+    finalDamageSummary.innerHTML = applied.length ? applied.map((source) => {
+      const value = getSourceValue(source, tags);
+      return `<section class="cap-source-option"><div class="cap-selected-source"><span><strong>${escapeSavedBuildHtml(source.label)}</strong><small>${escapeSavedBuildHtml(source.condition)}</small></span><b>+${value.toLocaleString("zh-CN")}</b><button type="button" data-final-cap-remove="${escapeSavedBuildHtml(source.id)}" aria-label="取消选择${escapeSavedBuildHtml(source.label)}" title="取消选择">×</button></div></section>`;
+    }).join("") : '<div class="cap-empty">当前没有满足条件并计入总数的伤害上限加成。</div>';
   };
 
   const openSavedBuildViewer = () => {
@@ -863,15 +907,42 @@
   });
   finalDamagePlanSelect.addEventListener("change", () => {
     selectedFinalDamagePlanId = finalDamagePlanSelect.value;
-    expandedFinalDamageKeys.clear();
+    selectedFinalCapSources.clear();
+    renderFinalDamageCalculator();
+  });
+  finalDamageAttacks.addEventListener("change", (event) => {
+    const input = event.target.closest('input[name="finalCapAttack"]');
+    if (!input) return;
+    selectedFinalCapAttack = input.value;
+    const plan = readSavedBuildPlans().find((item) => item.id === selectedFinalDamagePlanId);
+    selectAllFinalCapSources(buildFinalCapSources(plan));
+    renderFinalDamageCalculator();
+  });
+  finalDamageCapTypes.addEventListener("change", (event) => {
+    const input = event.target.closest('input[type="checkbox"]');
+    if (!input) return;
+    if (input.checked) selectedFinalCapTypes.add(input.value);
+    else selectedFinalCapTypes.delete(input.value);
+    const plan = readSavedBuildPlans().find((item) => item.id === selectedFinalDamagePlanId);
+    selectAllFinalCapSources(buildFinalCapSources(plan));
+    renderFinalDamageCalculator();
+  });
+  finalDamageCapSources.addEventListener("change", (event) => {
+    const input = event.target.closest('input[type="checkbox"]');
+    if (!input) return;
+    if (input.checked) selectedFinalCapSources.add(input.value);
+    else selectedFinalCapSources.delete(input.value);
     renderFinalDamageCalculator();
   });
   finalDamageSummary.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-final-damage-key]");
+    const button = event.target.closest("[data-final-cap-remove]");
     if (!button) return;
-    const key = String(button.dataset.finalDamageKey);
-    if (expandedFinalDamageKeys.has(key)) expandedFinalDamageKeys.delete(key);
-    else expandedFinalDamageKeys.add(key);
+    selectedFinalCapSources.delete(String(button.dataset.finalCapRemove));
+    renderFinalDamageCalculator();
+  });
+  finalDamageCapReset.addEventListener("click", () => {
+    selectedFinalCapTypes.clear();
+    selectedFinalCapSources.clear();
     renderFinalDamageCalculator();
   });
   savedBuildDetails.addEventListener("click", () => {

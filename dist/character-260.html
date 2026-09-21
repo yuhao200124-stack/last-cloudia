@@ -44,7 +44,7 @@
               <span class="section-actions">
                 <button id="bonusCalculatorOpen" class="section-action" type="button">基础计算器</button>
                 <button id="capCalculatorOpen" class="section-action" type="button">基础伤害上限</button>
-                <button id="finalDamageCalculatorOpen" class="section-action" type="button">最终伤害计算器</button>
+                <button id="finalDamageCalculatorOpen" class="section-action" type="button">最终伤害上限</button>
                 <button id="savedBuildViewerOpen" class="section-action" type="button">已保存配装</button>
               </span>
             </h3>
@@ -164,7 +164,7 @@
       <div class="mobile-calculator-tabs" aria-label="切换计算器">
         <button class="is-active" type="button" data-calculator-target="bonus">基础</button>
         <button type="button" data-calculator-target="cap">上限</button>
-        <button type="button" data-calculator-target="final">最终伤害</button>
+        <button type="button" data-calculator-target="final">最终上限</button>
       </div>
       <div class="calculator-tools">
         <button id="bonusRestoreAll" type="button">恢复全部</button>
@@ -180,7 +180,7 @@
       <div class="mobile-calculator-tabs" aria-label="切换计算器">
         <button type="button" data-calculator-target="bonus">基础</button>
         <button class="is-active" type="button" data-calculator-target="cap">上限</button>
-        <button type="button" data-calculator-target="final">最终伤害</button>
+        <button type="button" data-calculator-target="final">最终上限</button>
       </div>
       <div class="cap-result" aria-live="polite">
         <span>当前单次伤害上限</span>
@@ -201,25 +201,38 @@
       <div id="capBreakdown" class="cap-breakdown"></div>
     </aside>
 
-    <aside id="finalDamageCalculator" class="bonus-calculator final-damage-calculator" hidden aria-label="最终伤害计算器">
+    <aside id="finalDamageCalculator" class="bonus-calculator final-damage-calculator" hidden aria-label="最终伤害上限计算器">
       <div class="bonus-calculator-header">
-        <strong>最终伤害计算器</strong>
-        <button id="finalDamageCalculatorClose" type="button" aria-label="关闭最终伤害计算器">×</button>
+        <strong>最终伤害上限计算器</strong>
+        <button id="finalDamageCalculatorClose" type="button" aria-label="关闭最终伤害上限计算器">×</button>
       </div>
       <div class="mobile-calculator-tabs" aria-label="切换计算器">
         <button type="button" data-calculator-target="bonus">基础</button>
         <button type="button" data-calculator-target="cap">上限</button>
-        <button class="is-active" type="button" data-calculator-target="final">最终伤害</button>
+        <button class="is-active" type="button" data-calculator-target="final">最终上限</button>
       </div>
       <div class="final-damage-picker">
         <label for="finalDamagePlanSelect">选择配装方案</label>
         <select id="finalDamagePlanSelect"></select>
       </div>
       <div id="finalDamagePlanNote" class="final-damage-note" hidden></div>
-      <div class="calculator-tools final-damage-tools">
-        <p>将角色基础效果与所选配装中的额外技能合并。角色自带技能不会重复计算，所有有条件效果按最大触发值显示。</p>
+      <div class="cap-result" aria-live="polite">
+        <span>当前最终伤害上限</span>
+        <strong id="finalDamageCapTotal">9,999</strong>
+        <small id="finalDamageCapAdded">基础上限 9,999</small>
       </div>
-      <div id="finalDamageSummary" class="bonus-summary final-damage-summary"></div>
+      <div class="calculator-tools final-damage-tools">
+        <p>选择本次攻击适用的上限类型，再勾选角色、装备、超越及配装技能中的伤害上限来源；角色自带技能不会重复计算。</p>
+        <button id="finalDamageCapReset" type="button">清空</button>
+      </div>
+      <div id="finalDamageAttackHeading" class="cap-subheading">选择攻击方式</div>
+      <div id="finalDamageAttacks" class="cap-attacks" aria-label="选择最终伤害的攻击方式"></div>
+      <div class="cap-subheading">选择伤害上限（可多选）</div>
+      <div id="finalDamageCapTypes" class="cap-types" aria-label="选择最终伤害上限分类"></div>
+      <div class="cap-subheading">选择计入的伤害上限来源</div>
+      <div id="finalDamageCapSources" class="cap-source-picker" aria-label="选择最终伤害上限来源"></div>
+      <div class="cap-breakdown-heading">已计入的伤害上限</div>
+      <div id="finalDamageSummary" class="cap-breakdown final-damage-summary"></div>
     </aside>
     <aside id="savedBuildViewer" class="bonus-calculator saved-build-calculator" hidden aria-label="已保存配装">
       <div class="bonus-calculator-header">
