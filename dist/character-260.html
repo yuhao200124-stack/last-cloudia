@@ -33,7 +33,7 @@
         </section>
 
         <nav class="section-nav" aria-label="角色资料目录">
-          <a href="#max-stats">属性</a><a href="#traits">个性</a><a href="#exclusive-skills">专属技能</a><a href="#equipment">专属装备</a><a href="#common-skills">通用技能</a><a href="#magic">魔法</a><a href="#specials">特技</a><a href="#transcend">超越</a>
+          <a href="#max-stats">属性</a><a href="#traits">个性</a><a href="#exclusive-skills">专属技能</a><a href="#equipment">专属装备</a><a href="#common-skills">通用技能</a><a href="#magic">魔法</a><a href="#specials">特技</a>
         </nav>
 
         <div class="content">
@@ -101,7 +101,7 @@
 
           <section id="common-skills" class="data-section">
             <h3 class="section-title"><span class="number">04</span>通用技能</h3>
-            <p class="section-note">蓝色技能：拥有数字SC，可通过圣物学习。</p>
+            <p class="section-note">蓝色技能拥有数字SC，可通过圣物学习；紫色技能为超越能力，已合并在本列表内。</p>
             <table class="data-table"><thead><tr><th>技能</th><th class="sc">SC</th><th>效果</th></tr></thead><tbody>
               <tr><td><span class="skill-name common">MP提升极</span></td><td class="sc">4</td><td>MP+20%</td></tr>
               <tr><td><span class="skill-name common">暴击提升III</span></td><td class="sc">7</td><td>暴击率+8%</td></tr>
@@ -115,6 +115,13 @@
               <tr><td><span class="skill-name common">法术联结</span></td><td class="sc">5</td><td>连续使用相同攻击魔法时伤害提升（第1次+4%，最高+20%）</td></tr>
               <tr><td><span class="skill-name common">巨型净化III</span></td><td class="sc">10</td><td>对BOSS的魔法伤害+20%、伤害上限+4,000</td></tr>
               <tr><td><span class="skill-name common">巨型护盾II</span></td><td class="sc">14</td><td>受到BOSS的伤害-20%</td></tr>
+              <tr><td><span class="skill-name transcend">超必杀技增幅II</span></td><td class="sc">—</td><td>【超越】超必杀技伤害+50%、伤害上限+10,000</td></tr>
+              <tr><td><span class="skill-name transcend">受到伤害减轻-20%</span></td><td class="sc">—</td><td>【超越】受到敌人的伤害-20%</td></tr>
+              <tr><td><span class="skill-name transcend">命导提升</span></td><td class="sc">—</td><td>【超越】HP、INT+20%</td></tr>
+              <tr><td><span class="skill-name transcend">长袍精通II</span></td><td class="sc">—</td><td>【超越】装备长袍时，长袍的INT与MND+50%、受到的伤害-15%</td></tr>
+              <tr><td><span class="skill-name transcend">巨型护盾</span></td><td class="sc">—</td><td>【超越】受到BOSS的伤害-20%</td></tr>
+              <tr><td><span class="skill-name transcend">特攻界限突破</span></td><td class="sc">—</td><td>【超越】触发特攻时伤害上限+10,000；仅装备1件武器或未装备武器时提升为+20,000</td></tr>
+              <tr><td><span class="skill-name transcend">魔法弱点增幅</span></td><td class="sc">—</td><td>【超越】魔法攻击命中弱点属性时，伤害+30%</td></tr>
             </tbody></table>
           </section>
 
@@ -137,20 +144,6 @@
               <tr><td><span class="skill-name">冰柱破碎</span></td><td>对直线上的敌人发动远距离、连续的冰属性攻击</td></tr>
               <tr><td><span class="skill-name">暴风雪</span></td><td>以目标敌人为中心，对大范围发动远距离、连续的冰属性攻击</td></tr>
               <tr><td><span class="skill-name">积雨云</span></td><td>先对全体敌人发动连续冰属性攻击，再对目标单体发动强力连续冰属性攻击（伤害上限+150,000）</td></tr>
-            </tbody></table>
-          </section>
-
-          <section id="transcend" class="data-section">
-            <h3 class="section-title"><span class="number">07</span>超越列表</h3>
-            <p class="section-note">仅记录额外效果，不记录解锁材料。</p>
-            <table class="data-table"><thead><tr><th>超越能力</th><th>效果</th></tr></thead><tbody>
-              <tr><td><span class="skill-name">超必杀技增幅II</span></td><td>超必杀技伤害+50%、伤害上限+10,000</td></tr>
-              <tr><td><span class="skill-name">受到伤害减轻-20%</span></td><td>受到敌人的伤害-20%</td></tr>
-              <tr><td><span class="skill-name">命导提升</span></td><td>HP、INT+20%</td></tr>
-              <tr><td><span class="skill-name">长袍精通II</span></td><td>装备长袍时，长袍的INT与MND+50%、受到的伤害-15%</td></tr>
-              <tr><td><span class="skill-name">巨型护盾</span></td><td>受到BOSS的伤害-20%</td></tr>
-              <tr><td><span class="skill-name">特攻界限突破</span></td><td>触发特攻时伤害上限+10,000；仅装备1件武器或未装备武器时提升为+20,000</td></tr>
-              <tr><td><span class="skill-name">魔法弱点增幅</span></td><td>魔法攻击命中弱点属性时，伤害+30%</td></tr>
             </tbody></table>
           </section>
 
@@ -191,12 +184,14 @@
         <small id="capAdded">基础上限 9,999</small>
       </div>
       <div class="calculator-tools cap-tools">
-        <p>选择具体魔法和战斗条件，再勾选实际使用的技能或装备。只计算并显示你勾选的来源。</p>
+        <p>先选择要计算的上限分类，再补充战斗条件。符合分类与条件的来源会默认全部勾选。</p>
         <button id="capReset" type="button">清空</button>
       </div>
       <div class="cap-subheading">选择攻击魔法</div>
       <div id="capAttacks" class="cap-attacks" aria-label="选择攻击魔法"></div>
-      <div class="cap-subheading">战斗条件</div>
+      <div class="cap-subheading">上限分类（可多选）</div>
+      <div id="capTypes" class="cap-types" aria-label="选择伤害上限分类"></div>
+      <div class="cap-subheading">附加条件</div>
       <div id="capConditions" class="cap-conditions" aria-label="伤害条件"></div>
       <div class="cap-subheading">选择技能、个性、装备或超越</div>
       <div id="capSourcePicker" class="cap-source-picker" aria-label="选择伤害上限来源"></div>

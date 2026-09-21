@@ -81,6 +81,7 @@
   const capOpenButton = document.getElementById("capCalculatorOpen");
   const capCloseButton = document.getElementById("capCalculatorClose");
   const capResetButton = document.getElementById("capReset");
+  const capTypesElement = document.getElementById("capTypes");
   const capConditionsElement = document.getElementById("capConditions");
   const capBreakdown = document.getElementById("capBreakdown");
   const capSourcePicker = document.getElementById("capSourcePicker");
@@ -89,6 +90,7 @@
   const capAttackElement = document.getElementById("capAttacks");
   const expanded = new Set();
   const hiddenKeys = new Set();
+  const selectedCapTypes = new Set(["general", "magic", "ice", "ice_magic", "heavy_magic", "boss_magic", "boss_ice_magic", "critical", "special"]);
   const selectedCapConditions = new Set();
   const selectedCapSources = new Set();
   let selectedCapAttack = "zeno_claion";
@@ -120,43 +122,67 @@
       { id: "special", label: "特攻" },
       { id: "single_weapon", label: "单武器" }
     ],
+    capTypes: [
+      { id: "general", label: "通用伤害上限", includes: ["general"] },
+      { id: "physical", label: "物理伤害上限", includes: ["general", "physical"] },
+      { id: "magic", label: "魔法伤害上限", includes: ["general", "magic"] },
+      { id: "ice", label: "冰属性伤害上限", includes: ["general", "ice"] },
+      { id: "ice_magic", label: "冰属性魔法上限", includes: ["general", "ice", "magic", "ice_magic"] },
+      { id: "heavy_magic", label: "重魔法伤害上限", includes: ["general", "magic", "heavy_magic"] },
+      { id: "boss_magic", label: "对BOSS魔法上限", includes: ["general", "magic", "boss_magic"] },
+      { id: "boss_ice_magic", label: "对BOSS冰魔法上限", includes: ["general", "ice", "magic", "ice_magic", "boss_magic", "boss_ice_magic"] },
+      { id: "critical", label: "暴击伤害上限", includes: ["general", "critical"] },
+      { id: "special", label: "特攻伤害上限", includes: ["general", "special"] },
+      { id: "ultimate", label: "超必杀技伤害上限", includes: ["general", "ultimate"] }
+    ],
     sources: [
-      { id: "water_master", label: "水王级魔术师", value: 60000, requires: ["ice", "single_weapon"], target: "水王级魔术师", condition: "仅装备1件武器时，冰属性伤害上限+60,000" },
-      { id: "mentor_special", label: "指导者：特攻发生时", value: 30000, requires: ["special"], target: "指导者", condition: "指导者增益生效且触发特攻" },
-      { id: "mentor_boss_wave", label: "指导者：BOSS Wave", value: 20000, requires: ["ice", "boss"], target: "指导者", condition: "BOSS Wave开始后的冰属性上限增益" },
-      { id: "magic_guidance", label: "魔术指导", value: 30000, requires: ["magic"], target: "魔术指导", condition: "魔法增益生效期间" },
-      { id: "short_cast", label: "缩短咏唱：装备法杖", value: 30000, requires: ["magic"], target: "缩短咏唱", condition: "装备法杖时，魔法伤害上限+30,000" },
-      { id: "magic_resonance", label: "魔术共鸣：重魔法期间", value: 50000, requires: ["ice", "non_stackable_magic"], target: "魔术共鸣", condition: "我方发动不可叠加魔法期间" },
-      { id: "special_limit_v", label: "特攻界限突破V", value: 7500, variants: [{ requires: ["single_weapon"], value: 15000 }], requires: ["special"], target: "特攻界限突破V", condition: "触发特攻时+7,500；单武器时变为+15,000" },
-      { id: "giant_purge_v", label: "巨型净化V：BOSS", value: 10000, requires: ["magic", "boss"], target: "巨型净化V", condition: "对BOSS发动魔法攻击" },
-      { id: "ice_critical_mod", label: "冰属性暴击·改", value: 2000, requires: ["ice", "magic"], target: "冰属性暴击·改", condition: "使冰属性魔法可以暴击，并使冰属性魔法上限+2,000" },
-      { id: "staff_ultimate", label: "法杖究极增幅", value: 5000, requires: ["magic"], target: "法杖究极增幅", condition: "装备法杖时，魔法伤害上限+5,000" },
-      { id: "ice_super_boost", label: "冰系超级增幅", value: 2000, requires: ["ice", "magic"], target: "冰系超级增幅", condition: "冰属性魔法伤害上限+2,000" },
-      { id: "ice_billion_boost", label: "冰系究极增幅", value: 5000, requires: ["ice", "magic"], target: "冰系究极增幅", condition: "冰属性魔法伤害上限+5,000" },
-      { id: "ice_attack_iii", label: "冰属性攻击提升III", value: 2000, requires: ["ice"], target: "冰属性攻击提升III", condition: "冰属性攻击" },
-      { id: "giant_purge_iii", label: "巨型净化III：BOSS", value: 4000, requires: ["magic", "boss"], target: "巨型净化III", condition: "对BOSS发动魔法攻击时，伤害上限+4,000" },
-      { id: "special_limit_iii", label: "特攻界限突破III", value: 3000, variants: [{ requires: ["single_weapon"], value: 6000 }], requires: ["special"], target: "特攻界限突破III", condition: "触发特攻时+3,000；单武器时变为+6,000" },
-      { id: "transcend_special_limit", label: "【超越】特攻界限突破", value: 10000, variants: [{ requires: ["single_weapon"], value: 20000 }], requires: ["special"], target: "超越·特攻界限突破", condition: "触发特攻时+10,000；单武器或无武器时变为+20,000" },
-      { id: "roxy_staff_ice", label: "洛琪希之杖：冰魔法", value: 6000, requires: ["ice", "magic", "single_weapon"], target: "洛琪希之杖", condition: "仅装备1件武器时，冰属性魔法伤害上限+6,000" },
-      { id: "roxy_staff_special", label: "洛琪希之杖：特攻", value: 5000, requires: ["special"], target: "洛琪希之杖", condition: "触发特攻时，伤害上限+5,000" },
-      { id: "roxy_clothes_boss_ice", label: "洛琪希的衣服：对BOSS冰魔法", value: 5000, requires: ["boss", "ice", "magic"], target: "洛琪希的衣服", condition: "对BOSS的冰属性魔法伤害上限+5,000" },
-      { id: "roxy_clothes_party", label: "洛琪希的衣服：全体上限", value: 5000, requires: ["magic"], target: "洛琪希的衣服", condition: "自身存活时，我方全体魔法伤害上限+5,000" }
+      { id: "water_master", capType: "ice", label: "水王级魔术师", value: 60000, requires: ["ice", "single_weapon"], target: "水王级魔术师", condition: "仅装备1件武器时，冰属性伤害上限+60,000" },
+      { id: "mentor_special", capType: "special", label: "指导者：特攻发生时", value: 30000, requires: ["special"], target: "指导者", condition: "指导者增益生效且触发特攻" },
+      { id: "mentor_boss_wave", capType: "ice", label: "指导者：BOSS Wave", value: 20000, requires: ["ice", "boss"], target: "指导者", condition: "BOSS Wave开始后的冰属性上限增益" },
+      { id: "magic_guidance", capType: "magic", label: "魔术指导", value: 30000, requires: ["magic"], target: "魔术指导", condition: "魔法增益生效期间" },
+      { id: "short_cast", capType: "magic", label: "缩短咏唱：装备法杖", value: 30000, requires: ["magic"], target: "缩短咏唱", condition: "装备法杖时，魔法伤害上限+30,000" },
+      { id: "magic_resonance", capType: "heavy_magic", label: "魔术共鸣：重魔法期间", value: 50000, requires: ["ice", "non_stackable_magic"], target: "魔术共鸣", condition: "我方发动不可叠加魔法期间" },
+      { id: "special_limit_v", capType: "special", label: "特攻界限突破V", value: 7500, variants: [{ requires: ["single_weapon"], value: 15000 }], requires: ["special"], target: "特攻界限突破V", condition: "触发特攻时+7,500；单武器时变为+15,000" },
+      { id: "giant_purge_v", capType: "boss_magic", label: "巨型净化V：BOSS", value: 10000, requires: ["magic", "boss"], target: "巨型净化V", condition: "对BOSS发动魔法攻击" },
+      { id: "ice_critical_mod", capType: "ice_magic", label: "冰属性暴击·改", value: 2000, requires: ["ice", "magic"], target: "冰属性暴击·改", condition: "使冰属性魔法可以暴击，并使冰属性魔法上限+2,000" },
+      { id: "staff_ultimate", capType: "magic", label: "法杖究极增幅", value: 5000, requires: ["magic"], target: "法杖究极增幅", condition: "装备法杖时，魔法伤害上限+5,000" },
+      { id: "ice_super_boost", capType: "ice_magic", label: "冰系超级增幅", value: 2000, requires: ["ice", "magic"], target: "冰系超级增幅", condition: "冰属性魔法伤害上限+2,000" },
+      { id: "ice_billion_boost", capType: "ice_magic", label: "冰系究极增幅", value: 5000, requires: ["ice", "magic"], target: "冰系究极增幅", condition: "冰属性魔法伤害上限+5,000" },
+      { id: "ice_attack_iii", capType: "ice", label: "冰属性攻击提升III", value: 2000, requires: ["ice"], target: "冰属性攻击提升III", condition: "冰属性攻击" },
+      { id: "giant_purge_iii", capType: "boss_magic", label: "巨型净化III：BOSS", value: 4000, requires: ["magic", "boss"], target: "巨型净化III", condition: "对BOSS发动魔法攻击时，伤害上限+4,000" },
+      { id: "special_limit_iii", capType: "special", label: "特攻界限突破III", value: 3000, variants: [{ requires: ["single_weapon"], value: 6000 }], requires: ["special"], target: "特攻界限突破III", condition: "触发特攻时+3,000；单武器时变为+6,000" },
+      { id: "transcend_special_limit", capType: "special", label: "【超越】特攻界限突破", value: 10000, variants: [{ requires: ["single_weapon"], value: 20000 }], requires: ["special"], target: "超越·特攻界限突破", condition: "触发特攻时+10,000；单武器或无武器时变为+20,000" },
+      { id: "roxy_staff_ice", capType: "ice_magic", label: "洛琪希之杖：冰魔法", value: 6000, requires: ["ice", "magic", "single_weapon"], target: "洛琪希之杖", condition: "仅装备1件武器时，冰属性魔法伤害上限+6,000" },
+      { id: "roxy_staff_special", capType: "special", label: "洛琪希之杖：特攻", value: 5000, requires: ["special"], target: "洛琪希之杖", condition: "触发特攻时，伤害上限+5,000" },
+      { id: "roxy_clothes_boss_ice", capType: "boss_ice_magic", label: "洛琪希的衣服：对BOSS冰魔法", value: 5000, requires: ["boss", "ice", "magic"], target: "洛琪希的衣服", condition: "对BOSS的冰属性魔法伤害上限+5,000" },
+      { id: "roxy_clothes_party", capType: "magic", label: "洛琪希的衣服：全体魔法上限", value: 5000, requires: ["magic"], target: "洛琪希的衣服", condition: "自身存活时，我方全体魔法伤害上限+5,000" },
+      { id: "roxy_clothes_physical", capType: "physical", label: "洛琪希的衣服：全体物理上限", value: 5000, requires: [], target: "洛琪希的衣服", condition: "自身存活时，我方全体物理伤害上限+5,000" },
+      { id: "unusual_magician", capType: "ultimate", label: "规格外的魔术师", value: 200000, requires: [], target: "规格外的魔术师", condition: "超必杀技伤害上限+200,000" },
+      { id: "transcend_ultimate", capType: "ultimate", label: "【超越】超必杀技增幅II", value: 10000, requires: [], target: "超越·超必杀技增幅II", condition: "超必杀技伤害上限+10,000" }
     ]
   };
 
   const getCapAttack = () => damageCapCharacter.attacks.find((attack) => attack.id === selectedCapAttack) || damageCapCharacter.attacks[0];
-  const sourceApplies = (source, tags) => source.requires.every((requirement) => tags.has(requirement));
+  const getSelectedCapProfile = () => {
+    const types = new Set();
+    damageCapCharacter.capTypes.filter((type) => selectedCapTypes.has(type.id)).forEach((type) => {
+      type.includes.forEach((included) => types.add(included));
+    });
+    return { types };
+  };
+  const sourceApplies = (source, tags, types) => types.has(source.capType || "general") && source.requires.every((requirement) => tags.has(requirement));
   const getSourceValue = (source, tags) => {
     const variant = source.variants?.find((candidate) => candidate.requires.every((requirement) => tags.has(requirement)));
     return variant?.value ?? source.value;
   };
   const calculateDamageCap = () => {
     const attack = getCapAttack();
+    const profile = getSelectedCapProfile();
     const tags = new Set([...attack.tags, ...selectedCapConditions]);
     const selected = damageCapCharacter.sources.filter((source) => selectedCapSources.has(source.id));
-    const applied = selected.filter((source) => sourceApplies(source, tags));
+    const applied = selected.filter((source) => sourceApplies(source, tags, profile.types));
     const added = applied.reduce((total, source) => total + getSourceValue(source, tags), 0);
-    return { attack, tags, selected, applied, added, total: attack.baseCap + added };
+    return { attack, tags, types: profile.types, selected, applied, added, total: attack.baseCap + added };
   };
   const selectAllCapSources = () => {
     selectedCapSources.clear();
@@ -174,8 +200,7 @@
     .toLowerCase();
 
   const findSourceTarget = (sourceName) => {
-    const isTranscend = /^超越[·・]/.test(sourceName);
-    const scope = isTranscend ? document.getElementById("transcend") : document.querySelector(".content");
+    const scope = document.querySelector(".content");
     if (!scope) return null;
 
     const source = normalizeSourceName(sourceName);
@@ -285,6 +310,20 @@
       capAttackElement.appendChild(label);
     });
 
+    capTypesElement.innerHTML = "";
+    damageCapCharacter.capTypes.forEach(({ id, label }) => {
+      const option = document.createElement("label");
+      option.className = "cap-condition";
+      option.innerHTML = `<input type="checkbox" value="${id}" ${selectedCapTypes.has(id) ? "checked" : ""}><span>${label}</span>`;
+      option.querySelector("input").addEventListener("change", (event) => {
+        if (event.target.checked) selectedCapTypes.add(id);
+        else selectedCapTypes.delete(id);
+        selectAllCapSources();
+        renderCapCalculator();
+      });
+      capTypesElement.appendChild(option);
+    });
+
     capConditionsElement.innerHTML = "";
     damageCapCharacter.contexts.forEach(({ id, label }) => {
       const option = document.createElement("label");
@@ -301,12 +340,15 @@
 
     const result = calculateDamageCap();
     capTotal.textContent = result.total.toLocaleString("zh-CN");
+    const typeLabels = damageCapCharacter.capTypes.filter(({ id }) => selectedCapTypes.has(id)).map(({ label }) => label);
     const selectedLabels = damageCapCharacter.contexts.filter(({ id }) => selectedCapConditions.has(id)).map(({ label }) => label);
-    const scenario = selectedLabels.length ? `｜${selectedLabels.join(" + ")}` : "";
-    capAdded.textContent = `${result.attack.label}：基础 ${result.attack.baseCap.toLocaleString("zh-CN")} + 已叠加 ${result.added.toLocaleString("zh-CN")}${scenario}`;
+    const typeScenario = typeLabels.length ? `｜${typeLabels.join(" + ")}` : "｜未选择上限分类";
+    const conditionScenario = selectedLabels.length ? `｜${selectedLabels.join(" + ")}` : "";
+    capAdded.textContent = `${result.attack.label}：基础 ${result.attack.baseCap.toLocaleString("zh-CN")} + 已叠加 ${result.added.toLocaleString("zh-CN")}${typeScenario}${conditionScenario}`;
 
     capSourcePicker.innerHTML = "";
-    damageCapCharacter.sources.filter((source) => sourceApplies(source, result.tags)).forEach((source) => {
+    const availableSources = damageCapCharacter.sources.filter((source) => sourceApplies(source, result.tags, result.types));
+    availableSources.forEach((source) => {
       const value = getSourceValue(source, result.tags);
       const option = document.createElement("label");
       option.className = `cap-skill-option${selectedCapSources.has(source.id) ? " is-selected" : ""}`;
@@ -322,6 +364,9 @@
       });
       capSourcePicker.appendChild(option);
     });
+    if (!availableSources.length) {
+      capSourcePicker.innerHTML = '<div class="cap-empty cap-picker-empty">当前分类和附加条件下没有可计入的来源。</div>';
+    }
 
     capBreakdown.innerHTML = "";
     if (!result.applied.length) {
@@ -401,6 +446,7 @@
   });
   renderSummary();
   capResetButton.addEventListener("click", () => {
+    selectedCapTypes.clear();
     selectedCapConditions.clear();
     selectedCapSources.clear();
     renderCapCalculator();
