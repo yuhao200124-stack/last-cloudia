@@ -94,6 +94,7 @@
   const baseDamageCap = 9999;
   const capConditionOptions = [
     ["magic", "魔法"],
+    ["exclusive_magic", "专属魔法"],
     ["critical", "暴击"],
     ["boss", "BOSS"],
     ["ice", "冰属性"],
@@ -107,10 +108,14 @@
     boss_ice_magic_cap: ["ice", "magic", "boss"],
     magic_cap: ["magic"],
     boss_magic_cap: ["magic", "boss"],
+    exclusive_magic_cap: ["exclusive_magic"],
+    boss_exclusive_magic_cap: ["exclusive_magic", "boss"],
     critical_cap: ["critical"],
     boss_critical_cap: ["critical", "boss"],
     magic_critical_cap: ["magic", "critical"],
     boss_magic_critical_cap: ["magic", "critical", "boss"],
+    exclusive_magic_critical_cap: ["exclusive_magic", "critical"],
+    boss_exclusive_magic_critical_cap: ["exclusive_magic", "critical", "boss"],
     special_cap: ["special"],
     physical_cap: ["physical"],
     ultimate_cap: ["ultimate"]
@@ -235,9 +240,12 @@
       capConditionsElement.appendChild(option);
     });
 
+    const effectiveCapConditions = new Set(selectedCapConditions);
+    if (effectiveCapConditions.has("exclusive_magic")) effectiveCapConditions.add("magic");
+
     const applied = bonuses.filter((bonus) => {
       const requirements = capRequirements[bonus.key];
-      return requirements && requirements.every((condition) => selectedCapConditions.has(condition));
+      return requirements && requirements.every((condition) => effectiveCapConditions.has(condition));
     });
     const addedValue = applied.reduce((total, bonus) => total + bonus.value, 0);
     capTotal.textContent = (baseDamageCap + addedValue).toLocaleString("zh-CN");
