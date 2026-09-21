@@ -464,7 +464,7 @@ input.cell-editor { height: 40px; text-align: center; }
 
 .break-buttons {
   display: grid;
-  grid-template-columns: repeat(3, 74px) minmax(18px, 1fr) 96px;
+  grid-template-columns: repeat(3, 68px) minmax(62px, 1fr) 76px;
   gap: 5px;
   padding: 12px 14px 8px;
 }
@@ -508,18 +508,20 @@ input.cell-editor { height: 40px; text-align: center; }
 
 .break-buttons button.is-active::before { right: calc(100% - 28px); border-color: #fff; }
 
-.break-buttons .calculator-details {
-  grid-column: 5;
-  width: 96px;
+.break-buttons .calculator-details,
+.break-buttons .calculator-mode-button {
   padding: 5px 10px;
   border-radius: 9px;
   background: #fff;
   color: var(--blue-strong);
 }
 
-.break-buttons .calculator-details::before { display: none; }
-.break-buttons .calculator-details:hover { background: var(--blue-pale); }
-.break-buttons .calculator-details.is-active { padding: 5px 10px; background: var(--navy); color: #fff; }
+.break-buttons .calculator-details::before,
+.break-buttons .calculator-mode-button::before { display: none; }
+.break-buttons .calculator-details:hover,
+.break-buttons .calculator-mode-button:hover { background: var(--blue-pale); }
+.break-buttons .calculator-details.is-active,
+.break-buttons .calculator-mode-button.is-active { padding: 5px 10px; background: var(--navy); color: #fff; }
 
 .calculator-skills { min-height: 86px; overflow-y: auto; border-top: 1px solid #dce4ef; }
 .calculator-empty { padding: 30px 16px; color: var(--muted); text-align: center; }
@@ -533,14 +535,16 @@ input.cell-editor { height: 40px; text-align: center; }
   border-bottom: 1px solid #e2e8f1;
 }
 
-.calculator-skill-name { min-width: 0; font-weight: 700; overflow-wrap: anywhere; }
+.calculator-skill-name { min-width: 0; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; font-weight: 700; text-align: left; overflow-wrap: anywhere; cursor: pointer; }
+.calculator-skill-name:hover { color: var(--blue-strong); }
 .calculator-skill-sc { text-align: right; white-space: nowrap; }
 .calculator-skill-sc strong, .calculator-skill-sc del { display: block; }
 .calculator-skill-sc del { margin-top: 1px; color: var(--muted); font-size: .7rem; }
 .calculator-skill.is-free .calculator-skill-sc strong { color: #247042; }
 .calculator-skill-sc small { display: block; margin-top: 2px; color: #247042; font-size: .68rem; }
-.calculator-skill > button { width: 28px; height: 28px; padding: 0; border: 1px solid #bdc8d7; border-radius: 7px; background: #fff; color: #7b2e2e; cursor: pointer; }
-.calculator-skill > button:hover { background: #fff0f0; }
+.calculator-skill > [data-remove-skill] { width: 28px; height: 28px; padding: 0; border: 1px solid #bdc8d7; border-radius: 7px; background: #fff; color: #7b2e2e; cursor: pointer; }
+.calculator-skill > [data-remove-skill]:hover { background: #fff0f0; }
+.calculator-skill-effect { grid-column: 1 / -1; margin: 0; padding: 9px 10px; color: #536177; background: #f1f6fc; border-left: 3px solid #6f9bd2; font-size: .8rem; line-height: 1.55; }
 
 .bonus-summary { padding: 7px 12px 11px; }
 .bonus-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 40px; padding: 7px 3px; border: 0; border-bottom: 1px solid #e2e8f1; background: transparent; font: inherit; text-align: left; cursor: pointer; }
@@ -642,12 +646,13 @@ mark {
 }
 
 @media (max-width: 420px) {
-  .break-buttons { grid-template-columns: repeat(3, 58px) minmax(4px, 1fr) 72px; gap: 4px; padding-inline: 8px; }
+  .break-buttons { grid-template-columns: repeat(3, 52px) minmax(60px, 1fr) 64px; gap: 4px; padding-inline: 8px; }
   .break-buttons button { min-height: 34px; padding-right: 26px; padding-left: 4px; font-size: .8rem; }
   .break-buttons button::before { right: 3px; width: 21px; height: 21px; }
   .break-buttons button.is-active { padding-right: 4px; padding-left: 26px; }
   .break-buttons button.is-active::before { right: calc(100% - 24px); }
-  .break-buttons .calculator-details { width: 72px; padding-inline: 6px; }
+  .break-buttons .calculator-details,
+  .break-buttons .calculator-mode-button { padding-inline: 5px; }
 }
 
 @media print {

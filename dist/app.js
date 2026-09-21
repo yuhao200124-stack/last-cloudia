@@ -15,6 +15,7 @@
   const calculatorClose = document.querySelector('#calculatorClose');
   const calculatorSort = document.querySelector('#calculatorSort');
   const calculatorSortIcon = document.querySelector('#calculatorSortIcon');
+  const calculatorEffects = document.querySelector('#calculatorEffects');
   const calculatorDetails = document.querySelector('#calculatorDetails');
   const calculatorContextTitle = document.querySelector('#calculatorContextTitle');
   const calculatorBadge = document.querySelector('#calculatorBadge');
@@ -55,6 +56,8 @@
   let loadoutPlans = [];
   let editingPlanId = '';
   let editingPlanMetadataOnly = false;
+  let calculatorEffectsOpen = false;
+  const expandedSkillEffects = new Set();
   try {
     const savedCalculator = JSON.parse(localStorage.getItem(calculatorStorageKey) || '{}');
     const savedBreaks = Array.isArray(savedCalculator.activeBreaks)
@@ -306,6 +309,8 @@
     calculatorSort.title = descending ? 'SC从大到小' : 'SC从小到大';
     calculatorDetails.classList.toggle('is-active', calculatorState.detailsOpen);
     calculatorDetails.setAttribute('aria-pressed', String(calculatorState.detailsOpen));
+    calculatorEffects.classList.toggle('is-active', calculatorEffectsOpen);
+    calculatorEffects.setAttribute('aria-pressed', String(calculatorEffectsOpen));
     const displayItems = [...result.items].sort((a, b) => {
       const aCharacterFree = a.freeBy === 'character';
       const bCharacterFree = b.freeBy === 'character';
@@ -322,9 +327,10 @@
         : '<div class="calculator-empty">当前技能没有可合并的明确数值</div>')
       : displayItems.length
       ? displayItems.map(item => `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
-          <div class="calculator-skill-name">${escapeHtml(rowValue(item.row, 'name'))}</div>
+          <button class="calculator-skill-name" type="button" data-skill-effect="${escapeHtml(item.id)}" title="双击查看技能效果">${escapeHtml(rowValue(item.row, 'name'))}</button>
           <div class="calculator-skill-sc">${item.freeBy === 'character' ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
           <button type="button" data-remove-skill="${escapeHtml(item.id)}" aria-label="移除${escapeHtml(rowValue(item.row, 'name'))}" title="从计算器移除">×</button>
+          ${calculatorEffectsOpen || expandedSkillEffects.has(item.id) ? `<p class="calculator-skill-effect">${escapeHtml(rowValue(item.row, 'effect'))}</p>` : ''}
         </div>`).join('')
       : '<div class="calculator-empty">点击技能右侧的“＋”添加技能</div>';
     calculatorTotal.textContent = `${formatSc(result.total)} SC`;
@@ -430,6 +436,8 @@
     calculatorState.currentPlanId = plan.id;
     calculatorState.activeBreaks = [...new Set((plan.activeBreaks || []).map(Number).filter(value => [7, 12, 20].includes(value)))];
     calculatorState.detailsOpen = false;
+    calculatorEffectsOpen = false;
+    expandedSkillEffects.clear();
     calculatorState.expandedBonusKey = '';
     saveCalculatorState();
     savedLoadoutsDialog.close();
@@ -440,6 +448,8 @@
   function setCalculatorOpen(open) {
     if (!open) {
       calculatorState.detailsOpen = false;
+      calculatorEffectsOpen = false;
+      expandedSkillEffects.clear();
       calculatorState.expandedBonusKey = '';
       saveCalculatorState();
       renderCalculator();
@@ -668,6 +678,15 @@
 
   calculatorDetails.addEventListener('click', () => {
     calculatorState.detailsOpen = !calculatorState.detailsOpen;
+    calculatorEffectsOpen = false;
+    calculatorState.expandedBonusKey = '';
+    saveCalculatorState();
+    renderCalculator();
+  });
+
+  calculatorEffects.addEventListener('click', () => {
+    calculatorEffectsOpen = !calculatorEffectsOpen;
+    calculatorState.detailsOpen = false;
     calculatorState.expandedBonusKey = '';
     saveCalculatorState();
     renderCalculator();
@@ -736,6 +755,15 @@
       saveCalculatorState();
       render();
     }
+  });
+
+  calculator.addEventListener('dblclick', event => {
+    const nameButton = event.target.closest('[data-skill-effect]');
+    if (!nameButton || calculatorState.detailsOpen) return;
+    const id = String(nameButton.dataset.skillEffect);
+    if (expandedSkillEffects.has(id)) expandedSkillEffects.delete(id);
+    else expandedSkillEffects.add(id);
+    renderCalculator();
   });
 
   document.addEventListener('pointerdown', event => {

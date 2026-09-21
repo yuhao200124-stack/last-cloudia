@@ -95,6 +95,7 @@
   const savedBuildSelect = document.getElementById("savedBuildSelect");
   const savedBuildNote = document.getElementById("savedBuildNote");
   const savedBuildBreaks = document.getElementById("savedBuildBreaks");
+  const savedBuildEffects = document.getElementById("savedBuildEffects");
   const savedBuildDetails = document.getElementById("savedBuildDetails");
   const savedBuildSkills = document.getElementById("savedBuildSkills");
   const savedBuildTotal = document.getElementById("savedBuildTotal");
@@ -108,7 +109,9 @@
   let highlightTimer = null;
   let savedBuildSortDirection = "desc";
   let savedBuildDetailsOpen = false;
+  let savedBuildEffectsOpen = false;
   let expandedSavedBuildBonusKey = "";
+  const expandedSavedBuildEffects = new Set();
   let selectedSavedBuildId = new URLSearchParams(location.search).get("plan") || "";
 
   const savedBuildStorageKey = "lc-sheet-table:loadout-plans-v1";
@@ -246,13 +249,19 @@
       savedBuildSkills.innerHTML = '<div class="saved-build-empty">还没有这个角色的已保存方案。<br>请先使用上方“配装计算器”选择技能并保存。</div>';
       savedBuildTotal.textContent = "0 SC";
       savedBuildDetails.disabled = true;
+      savedBuildEffects.disabled = true;
       savedBuildDetails.classList.remove("is-active");
+      savedBuildEffects.classList.remove("is-active");
       savedBuildDetails.setAttribute("aria-pressed", "false");
+      savedBuildEffects.setAttribute("aria-pressed", "false");
       return;
     }
     savedBuildDetails.disabled = false;
+    savedBuildEffects.disabled = false;
     savedBuildDetails.classList.toggle("is-active", savedBuildDetailsOpen);
     savedBuildDetails.setAttribute("aria-pressed", String(savedBuildDetailsOpen));
+    savedBuildEffects.classList.toggle("is-active", savedBuildEffectsOpen);
+    savedBuildEffects.setAttribute("aria-pressed", String(savedBuildEffectsOpen));
     savedBuildNote.hidden = !plan.note;
     savedBuildNote.textContent = plan.note || "";
     const result = calculateSavedBuild(plan, edits);
@@ -274,8 +283,9 @@
         }).join("")}<p class="saved-build-bonus-note">仅合计所选技能描述中的明确数值，技能发动条件仍需满足。</p></div>` : '<div class="saved-build-empty">当前方案没有可合并的明确数值</div>')
       : displayItems.length
       ? displayItems.map((item) => `<div class="saved-build-skill${item.freeBy ? " is-free" : ""}">
-          <div class="saved-build-skill-name">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}</div>
+          <button class="saved-build-skill-name" type="button" data-saved-skill-effect="${escapeSavedBuildHtml(item.id)}" title="双击查看技能效果">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}</button>
           <div class="saved-build-skill-sc">${item.freeBy === "character" ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : `<strong>${formatSavedBuildSc(item.sc)} SC</strong>`}</div>
+          ${savedBuildEffectsOpen || expandedSavedBuildEffects.has(item.id) ? `<p class="saved-build-skill-effect">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "effect", edits))}</p>` : ""}
         </div>`).join("")
       : '<div class="saved-build-empty">这个方案没有技能</div>';
     savedBuildTotal.textContent = `${formatSavedBuildSc(result.total)} SC`;
@@ -641,13 +651,22 @@
   });
   savedBuildDetails.addEventListener("click", () => {
     savedBuildDetailsOpen = !savedBuildDetailsOpen;
+    savedBuildEffectsOpen = false;
+    expandedSavedBuildBonusKey = "";
+    renderSavedBuildViewer();
+  });
+  savedBuildEffects.addEventListener("click", () => {
+    savedBuildEffectsOpen = !savedBuildEffectsOpen;
+    savedBuildDetailsOpen = false;
     expandedSavedBuildBonusKey = "";
     renderSavedBuildViewer();
   });
   savedBuildSelect.addEventListener("change", () => {
     selectedSavedBuildId = savedBuildSelect.value;
     savedBuildDetailsOpen = false;
+    savedBuildEffectsOpen = false;
     expandedSavedBuildBonusKey = "";
+    expandedSavedBuildEffects.clear();
     renderSavedBuildViewer();
   });
   savedBuildSkills.addEventListener("click", (event) => {
@@ -655,6 +674,14 @@
     if (!button) return;
     const key = String(button.dataset.savedBonusKey);
     expandedSavedBuildBonusKey = expandedSavedBuildBonusKey === key ? "" : key;
+    renderSavedBuildViewer();
+  });
+  savedBuildSkills.addEventListener("dblclick", (event) => {
+    const nameButton = event.target.closest("[data-saved-skill-effect]");
+    if (!nameButton || savedBuildDetailsOpen) return;
+    const id = String(nameButton.dataset.savedSkillEffect);
+    if (expandedSavedBuildEffects.has(id)) expandedSavedBuildEffects.delete(id);
+    else expandedSavedBuildEffects.add(id);
     renderSavedBuildViewer();
   });
   overlay.addEventListener("click", () => closeCalculator("bonus"));

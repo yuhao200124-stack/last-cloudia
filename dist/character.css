@@ -190,17 +190,19 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
 .saved-build-breaks { min-width: 0; display: flex; flex: 1; flex-wrap: wrap; gap: 7px; }
 .saved-build-break { min-width: 64px; padding: 5px 8px; border: 1px solid #b7c6da; border-radius: 16px; color: #63738a; background: #fff; text-align: center; font-size: .76rem; font-weight: 700; }
 .saved-build-break.is-active { color: #fff; background: #3972bf; border-color: #3972bf; }
-.saved-build-details { flex: 0 0 auto; min-width: 66px; padding: 6px 10px; border: 1px solid #9eb1ca; color: #254a7b; background: #fff; font: inherit; font-size: .78rem; font-weight: 700; cursor: pointer; }
+.saved-build-details { flex: 0 0 auto; min-width: 62px; padding: 6px 8px; border: 1px solid #9eb1ca; color: #254a7b; background: #fff; font: inherit; font-size: .78rem; font-weight: 700; cursor: pointer; }
 .saved-build-details:hover { background: #e5f0fd; }
 .saved-build-details.is-active { color: #fff; background: #203864; border-color: #203864; }
 .saved-build-skills { padding-bottom: 62px; }
 .saved-build-skill { min-height: 58px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 9px 13px; border-bottom: 1px solid #ccd7e6; background: #fff; }
-.saved-build-skill-name { min-width: 0; font-weight: 700; overflow-wrap: anywhere; }
+.saved-build-skill-name { min-width: 0; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; font-weight: 700; text-align: left; overflow-wrap: anywhere; cursor: pointer; }
+.saved-build-skill-name:hover { color: #204f93; }
 .saved-build-skill-sc { display: grid; justify-items: end; color: #172033; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .saved-build-skill-sc strong { color: #203864; }
 .saved-build-skill.is-free .saved-build-skill-sc strong { color: #14733f; }
 .saved-build-skill-sc small { color: #258054; font-size: .68rem; }
 .saved-build-skill-sc del { color: #77869a; font-size: .66rem; }
+.saved-build-skill-effect { grid-column: 1 / -1; margin: 0; padding: 9px 10px; color: #536177; background: #f1f6fc; border-left: 3px solid #6f9bd2; font-size: .8rem; line-height: 1.55; }
 .saved-build-empty { padding: 34px 16px; color: #66748b; text-align: center; line-height: 1.65; }
 .saved-build-bonus-summary { padding: 7px 12px 72px; background: #fff; }
 .saved-build-bonus-row { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 4px; border: 0; border-bottom: 1px solid #d9e1ec; color: #26374f; background: transparent; text-align: left; font: inherit; cursor: pointer; }
