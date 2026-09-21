@@ -65,6 +65,8 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
 .section-title.with-action { justify-content: space-between; }
 .section-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
 .section-action {
+  display: inline-flex;
+  align-items: center;
   padding: 5px 10px;
   border: 1px solid #a9c5e9;
   color: #17365f;
@@ -72,6 +74,7 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
   font: inherit;
   font-size: .82rem;
   font-weight: 700;
+  text-decoration: none;
   cursor: pointer;
 }
 .section-action:hover { background: #dcecff; }

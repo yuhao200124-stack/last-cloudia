@@ -16,9 +16,21 @@
   const calculatorSort = document.querySelector('#calculatorSort');
   const calculatorSortIcon = document.querySelector('#calculatorSortIcon');
   const calculatorDetails = document.querySelector('#calculatorDetails');
+  const calculatorContextTitle = document.querySelector('#calculatorContextTitle');
   const calculatorBadge = document.querySelector('#calculatorBadge');
   const calculatorSkills = document.querySelector('#calculatorSkills');
   const calculatorTotal = document.querySelector('#calculatorTotal');
+  const saveLoadoutButton = document.querySelector('#saveLoadout');
+  const openSavedLoadoutsButton = document.querySelector('#openSavedLoadouts');
+  const savedLoadoutCount = document.querySelector('#savedLoadoutCount');
+  const saveLoadoutDialog = document.querySelector('#saveLoadoutDialog');
+  const savedLoadoutsDialog = document.querySelector('#savedLoadoutsDialog');
+  const loadoutNameInput = document.querySelector('#loadoutName');
+  const loadoutNoteInput = document.querySelector('#loadoutNote');
+  const confirmSaveLoadout = document.querySelector('#confirmSaveLoadout');
+  const saveAsNewLoadout = document.querySelector('#saveAsNewLoadout');
+  const closeSavedLoadouts = document.querySelector('#closeSavedLoadouts');
+  const savedLoadoutsList = document.querySelector('#savedLoadoutsList');
 
   const savedSheet = localStorage.getItem('lc-sheet-table:sheet');
   const editStorageKey = 'lc-sheet-table:cell-edits-v1';
@@ -27,7 +39,21 @@
     edits = JSON.parse(localStorage.getItem(editStorageKey) || '{}');
   } catch { edits = {}; }
   const calculatorStorageKey = 'lc-sheet-table:sc-calculator-v1';
-  let calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, expandedBonusKey: '' };
+  const loadoutPlansStorageKey = 'lc-sheet-table:loadout-plans-v1';
+  const characterLoadouts = {
+    '260': {
+      name: '洛琪希·米格路迪亚·格雷拉特',
+      skillIds: [
+        '3ab5e4ec857b4879', 'f201c9d8e9ee87ed', '全部技能:all:30', '9146eb2670c69122',
+        'cc874bcc3159e258', 'ccfbbcc9f91d8332', '2901b40ce3f38847', '351f8b7c824ec758',
+        '726408324afe28b6', '3a0b205292a15907', '42656c3afdc8103a', '920fb55fe5cd8123',
+      ],
+    },
+  };
+  let calculatorState = { skillIds: [], characterFreeIds: [], characterId: '', currentPlanId: '', activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, expandedBonusKey: '' };
+  let loadoutPlans = [];
+  let editingPlanId = '';
+  let editingPlanMetadataOnly = false;
   try {
     const savedCalculator = JSON.parse(localStorage.getItem(calculatorStorageKey) || '{}');
     const savedBreaks = Array.isArray(savedCalculator.activeBreaks)
@@ -35,17 +61,25 @@
       : [7, 12, 20];
     calculatorState = {
       skillIds: Array.isArray(savedCalculator.skillIds) ? [...new Set(savedCalculator.skillIds.map(String))] : [],
+      characterFreeIds: Array.isArray(savedCalculator.characterFreeIds) ? [...new Set(savedCalculator.characterFreeIds.map(String))] : [],
+      characterId: typeof savedCalculator.characterId === 'string' ? savedCalculator.characterId : '',
+      currentPlanId: typeof savedCalculator.currentPlanId === 'string' ? savedCalculator.currentPlanId : '',
       activeBreaks: [...new Set(savedBreaks)],
       sortDirection: savedCalculator.sortDirection === 'asc' ? 'asc' : 'desc',
       detailsOpen: false,
       expandedBonusKey: '',
     };
-  } catch { calculatorState = { skillIds: [], activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, expandedBonusKey: '' }; }
+  } catch { calculatorState = { skillIds: [], characterFreeIds: [], characterId: '', currentPlanId: '', activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, expandedBonusKey: '' }; }
+  try {
+    const storedPlans = JSON.parse(localStorage.getItem(loadoutPlansStorageKey) || '[]');
+    loadoutPlans = Array.isArray(storedPlans) ? storedPlans.filter(plan => plan && typeof plan.id === 'string') : [];
+  } catch { loadoutPlans = []; }
   const hashSheet = decodeURIComponent(location.hash.slice(1));
   let activeSheet = data.sheetOrder.includes(hashSheet)
     ? hashSheet
     : data.sheetOrder.includes(savedSheet) ? savedSheet : data.sheetOrder[0];
   let query = '';
+  let openCalculatorOnLoad = false;
 
   const skillIndex = new Map();
   for (const sheetName of data.sheetOrder) {
@@ -56,6 +90,22 @@
     }
   }
   calculatorState.skillIds = calculatorState.skillIds.filter(id => skillIndex.has(id));
+  calculatorState.characterFreeIds = calculatorState.characterFreeIds.filter(id => skillIndex.has(id));
+
+  const inboundCharacterId = new URLSearchParams(location.search).get('loadout');
+  const inboundLoadout = characterLoadouts[inboundCharacterId];
+  if (inboundLoadout) {
+    const includedIds = inboundLoadout.skillIds.filter(id => skillIndex.has(id));
+    calculatorState.skillIds = [...includedIds];
+    calculatorState.characterFreeIds = [...includedIds];
+    calculatorState.characterId = inboundCharacterId;
+    calculatorState.currentPlanId = '';
+    calculatorState.detailsOpen = false;
+    calculatorState.expandedBonusKey = '';
+    openCalculatorOnLoad = true;
+    localStorage.setItem(calculatorStorageKey, JSON.stringify(calculatorState));
+    history.replaceState(null, '', `${location.pathname}${location.hash}`);
+  }
 
   const escapeHtml = (value = '') => String(value)
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -201,12 +251,21 @@
     localStorage.setItem(calculatorStorageKey, JSON.stringify(calculatorState));
   }
 
+  function saveLoadoutPlans() {
+    localStorage.setItem(loadoutPlansStorageKey, JSON.stringify(loadoutPlans));
+  }
+
+  function createPlanId() {
+    return `plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
   function calculateSc() {
+    const characterFreeIds = new Set(calculatorState.characterFreeIds);
     const items = calculatorState.skillIds
       .map(id => skillIndex.get(id))
       .filter(Boolean)
-      .map(row => ({ id: String(row.id), row, sc: parseSc(rowValue(row, 'sc')), freeBy: 0 }));
-    const used = new Set();
+      .map(row => ({ id: String(row.id), row, sc: parseSc(rowValue(row, 'sc')), freeBy: characterFreeIds.has(String(row.id)) ? 'character' : 0 }));
+    const used = new Set(items.filter(item => item.freeBy === 'character').map(item => item.id));
     for (const threshold of [7, 12, 20]) {
       if (!calculatorState.activeBreaks.includes(threshold)) continue;
       const eligible = items.filter(item => !used.has(item.id) && item.sc > 0 && item.sc <= threshold);
@@ -224,6 +283,10 @@
 
   function renderCalculator() {
     const result = calculateSc();
+    const characterLoadout = characterLoadouts[calculatorState.characterId];
+    const currentPlan = loadoutPlans.find(plan => plan.id === calculatorState.currentPlanId);
+    calculatorContextTitle.textContent = currentPlan?.name || (characterLoadout ? `配装 · ${characterLoadout.name}` : 'SC计算器');
+    savedLoadoutCount.textContent = String(loadoutPlans.length);
     document.querySelectorAll('[data-break-level]').forEach(button => {
       const level = Number(button.dataset.breakLevel);
       const active = calculatorState.activeBreaks.includes(level);
@@ -248,12 +311,115 @@
       : displayItems.length
       ? displayItems.map(item => `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
           <div class="calculator-skill-name">${escapeHtml(rowValue(item.row, 'name'))}</div>
-          <div class="calculator-skill-sc">${item.freeBy ? `<strong>0 SC</strong><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
+          <div class="calculator-skill-sc">${item.freeBy === 'character' ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
           <button type="button" data-remove-skill="${escapeHtml(item.id)}" aria-label="移除${escapeHtml(rowValue(item.row, 'name'))}" title="从计算器移除">×</button>
         </div>`).join('')
       : '<div class="calculator-empty">点击技能右侧的“＋”添加技能</div>';
     calculatorTotal.textContent = `${formatSc(result.total)} SC`;
     calculatorBadge.textContent = `${formatSc(result.total)} SC`;
+  }
+
+  function calculatePlanTotal(plan) {
+    const freeIds = new Set(Array.isArray(plan.characterFreeIds) ? plan.characterFreeIds.map(String) : []);
+    const items = (Array.isArray(plan.skillIds) ? plan.skillIds : [])
+      .map(id => skillIndex.get(String(id)))
+      .filter(Boolean)
+      .map(row => ({ id: String(row.id), sc: parseSc(rowValue(row, 'sc')), free: freeIds.has(String(row.id)) }));
+    const used = new Set(items.filter(item => item.free).map(item => item.id));
+    const breaks = Array.isArray(plan.activeBreaks) ? plan.activeBreaks.map(Number) : [];
+    for (const threshold of [7, 12, 20]) {
+      if (!breaks.includes(threshold)) continue;
+      const eligible = items.filter(item => !used.has(item.id) && item.sc > 0 && item.sc <= threshold);
+      if (!eligible.length) continue;
+      const bestSc = Math.max(...eligible.map(item => item.sc));
+      const chosen = eligible.find(item => item.sc === bestSc);
+      used.add(chosen.id);
+    }
+    return items.reduce((sum, item) => sum + (used.has(item.id) ? 0 : item.sc), 0);
+  }
+
+  function openSaveDialog(planId = '', forceNew = false, metadataOnly = false) {
+    const plan = !forceNew && planId ? loadoutPlans.find(item => item.id === planId) : null;
+    editingPlanId = plan?.id || '';
+    editingPlanMetadataOnly = Boolean(plan && metadataOnly);
+    const characterName = characterLoadouts[calculatorState.characterId]?.name;
+    loadoutNameInput.value = plan?.name || `${characterName || '我的'}配装方案`;
+    loadoutNoteInput.value = plan?.note || '';
+    confirmSaveLoadout.textContent = plan ? '保存修改' : '保存';
+    saveAsNewLoadout.hidden = !plan || metadataOnly;
+    saveLoadoutDialog.showModal();
+    requestAnimationFrame(() => loadoutNameInput.select());
+  }
+
+  function persistCurrentPlan(asNew = false) {
+    const name = loadoutNameInput.value.trim();
+    if (!name) {
+      loadoutNameInput.focus();
+      return;
+    }
+    const now = new Date().toISOString();
+    const existing = !asNew && editingPlanId ? loadoutPlans.find(plan => plan.id === editingPlanId) : null;
+    const snapshot = editingPlanMetadataOnly && existing ? {
+      ...existing,
+      name,
+      note: loadoutNoteInput.value.trim(),
+      updatedAt: now,
+    } : {
+      id: existing?.id || createPlanId(),
+      name,
+      note: loadoutNoteInput.value.trim(),
+      characterId: calculatorState.characterId,
+      skillIds: [...calculatorState.skillIds],
+      characterFreeIds: [...calculatorState.characterFreeIds],
+      activeBreaks: [...calculatorState.activeBreaks],
+      createdAt: existing?.createdAt || now,
+      updatedAt: now,
+    };
+    if (existing) loadoutPlans = loadoutPlans.map(plan => plan.id === existing.id ? snapshot : plan);
+    else loadoutPlans.unshift(snapshot);
+    if (!editingPlanMetadataOnly || asNew) calculatorState.currentPlanId = snapshot.id;
+    editingPlanId = snapshot.id;
+    saveLoadoutPlans();
+    saveCalculatorState();
+    saveLoadoutDialog.close();
+    renderCalculator();
+  }
+
+  function renderSavedLoadouts() {
+    savedLoadoutCount.textContent = String(loadoutPlans.length);
+    savedLoadoutsList.innerHTML = loadoutPlans.length
+      ? loadoutPlans.map(plan => {
+        const characterName = characterLoadouts[plan.characterId]?.name;
+        const skillCount = Array.isArray(plan.skillIds) ? plan.skillIds.filter(id => skillIndex.has(String(id))).length : 0;
+        const updated = plan.updatedAt ? new Date(plan.updatedAt).toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'short' }) : '';
+        return `<article class="saved-loadout-card${plan.id === calculatorState.currentPlanId ? ' is-current' : ''}">
+          <h3>${escapeHtml(plan.name || '未命名方案')}</h3>
+          ${plan.note ? `<p>${escapeHtml(plan.note)}</p>` : ''}
+          <div class="saved-loadout-meta"><span>${characterName ? escapeHtml(characterName) : '通用方案'}</span><span>${skillCount}个技能</span><span>${formatSc(calculatePlanTotal(plan))} SC</span>${updated ? `<span>${escapeHtml(updated)}</span>` : ''}</div>
+          <div class="saved-loadout-actions">
+            <button class="primary" type="button" data-load-plan="${escapeHtml(plan.id)}">载入</button>
+            <button type="button" data-edit-plan="${escapeHtml(plan.id)}">改名与备注</button>
+            <button class="danger" type="button" data-delete-plan="${escapeHtml(plan.id)}">删除</button>
+          </div>
+        </article>`;
+      }).join('')
+      : '<div class="saved-loadout-empty">还没有保存的配装方案</div>';
+  }
+
+  function loadSavedPlan(planId) {
+    const plan = loadoutPlans.find(item => item.id === planId);
+    if (!plan) return;
+    calculatorState.skillIds = [...new Set((plan.skillIds || []).map(String))].filter(id => skillIndex.has(id));
+    calculatorState.characterFreeIds = [...new Set((plan.characterFreeIds || []).map(String))].filter(id => skillIndex.has(id));
+    calculatorState.characterId = typeof plan.characterId === 'string' ? plan.characterId : '';
+    calculatorState.currentPlanId = plan.id;
+    calculatorState.activeBreaks = [...new Set((plan.activeBreaks || []).map(Number).filter(value => [7, 12, 20].includes(value)))];
+    calculatorState.detailsOpen = false;
+    calculatorState.expandedBonusKey = '';
+    saveCalculatorState();
+    savedLoadoutsDialog.close();
+    render();
+    setCalculatorOpen(true);
   }
 
   function setCalculatorOpen(open) {
@@ -492,6 +658,44 @@
     renderCalculator();
   });
 
+  saveLoadoutButton.addEventListener('click', () => openSaveDialog(calculatorState.currentPlanId));
+
+  openSavedLoadoutsButton.addEventListener('click', () => {
+    renderSavedLoadouts();
+    savedLoadoutsDialog.showModal();
+  });
+
+  confirmSaveLoadout.addEventListener('click', () => persistCurrentPlan(false));
+  saveAsNewLoadout.addEventListener('click', () => persistCurrentPlan(true));
+  closeSavedLoadouts.addEventListener('click', () => savedLoadoutsDialog.close());
+
+  savedLoadoutsList.addEventListener('click', event => {
+    const loadButton = event.target.closest('[data-load-plan]');
+    if (loadButton) {
+      loadSavedPlan(String(loadButton.dataset.loadPlan));
+      return;
+    }
+    const editButton = event.target.closest('[data-edit-plan]');
+    if (editButton) {
+      const planId = String(editButton.dataset.editPlan);
+      savedLoadoutsDialog.close();
+      openSaveDialog(planId, false, true);
+      return;
+    }
+    const deleteButton = event.target.closest('[data-delete-plan]');
+    if (deleteButton) {
+      const planId = String(deleteButton.dataset.deletePlan);
+      const plan = loadoutPlans.find(item => item.id === planId);
+      if (!plan || !window.confirm(`删除方案“${plan.name}”？`)) return;
+      loadoutPlans = loadoutPlans.filter(item => item.id !== planId);
+      if (calculatorState.currentPlanId === planId) calculatorState.currentPlanId = '';
+      saveLoadoutPlans();
+      saveCalculatorState();
+      renderSavedLoadouts();
+      renderCalculator();
+    }
+  });
+
   calculator.addEventListener('click', event => {
     const breakButton = event.target.closest('[data-break-level]');
     if (breakButton) {
@@ -520,12 +724,14 @@
   });
 
   document.addEventListener('pointerdown', event => {
+    if (saveLoadoutDialog.open || savedLoadoutsDialog.open) return;
     if (!calculator.hidden && !calculator.contains(event.target) && !calculatorLauncher.contains(event.target)) {
       setCalculatorOpen(false);
     }
   });
 
   document.addEventListener('keydown', event => {
+    if (saveLoadoutDialog.open || savedLoadoutsDialog.open) return;
     if (event.key === 'Escape') setCalculatorOpen(false);
   });
 
@@ -568,5 +774,6 @@
   }
 
   render();
+  if (openCalculatorOnLoad) setCalculatorOpen(true);
   registerWebMcp();
 })();

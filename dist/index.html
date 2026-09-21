@@ -53,7 +53,12 @@
         <button id="calculatorSort" class="calculator-sort" type="button" aria-label="按SC从大到小排序" title="按SC从大到小排序">
           <span id="calculatorSortIcon" aria-hidden="true">▽</span>
         </button>
+        <strong id="calculatorContextTitle">SC计算器</strong>
         <button id="calculatorClose" class="calculator-close" type="button" aria-label="收起计算器">×</button>
+      </div>
+      <div class="calculator-plan-actions">
+        <button id="saveLoadout" type="button">保存方案</button>
+        <button id="openSavedLoadouts" type="button">已保存方案 <span id="savedLoadoutCount">0</span></button>
       </div>
       <div class="break-buttons" aria-label="突破等级">
         <button type="button" data-break-level="7">一破</button>
@@ -71,6 +76,33 @@
     <button id="calculatorLauncher" class="calculator-launcher" type="button" aria-label="打开SC计算器" aria-expanded="false">
       <strong id="calculatorBadge">0 SC</strong>
     </button>
+
+    <dialog id="saveLoadoutDialog" class="loadout-dialog" aria-labelledby="saveLoadoutTitle">
+      <form method="dialog">
+        <div class="loadout-dialog-header">
+          <strong id="saveLoadoutTitle">保存配装方案</strong>
+          <button type="submit" value="cancel" aria-label="关闭">×</button>
+        </div>
+        <div class="loadout-form">
+          <label>方案名称<input id="loadoutName" type="text" maxlength="40" required /></label>
+          <label>备注<textarea id="loadoutNote" maxlength="300" rows="4" placeholder="例如：单武器、BOSS战、冰魔法配装"></textarea></label>
+          <p>方案保存在当前浏览器中。</p>
+        </div>
+        <div class="loadout-dialog-actions">
+          <button type="submit" value="cancel">取消</button>
+          <button id="saveAsNewLoadout" type="button" hidden>另存为新方案</button>
+          <button id="confirmSaveLoadout" class="primary" type="button">保存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="savedLoadoutsDialog" class="loadout-dialog saved-loadouts-dialog" aria-labelledby="savedLoadoutsTitle">
+      <div class="loadout-dialog-header">
+        <strong id="savedLoadoutsTitle">已保存方案</strong>
+        <button id="closeSavedLoadouts" type="button" aria-label="关闭">×</button>
+      </div>
+      <div id="savedLoadoutsList" class="saved-loadouts-list"></div>
+    </dialog>
 
     <script src="./data.js"></script>
     <script src="./app.js"></script>
