@@ -360,7 +360,7 @@
         const rating = savedBuildRowValue(item.row, "mark", edits).trim();
         return `<div class="saved-build-skill${item.freeBy ? " is-free" : ""}">
           <button class="saved-build-skill-name" type="button" data-saved-skill-effect="${escapeSavedBuildHtml(item.id)}" title="双击查看技能效果">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}</button>
-          <button class="saved-build-skill-rating${rating ? "" : " is-empty"}" type="button" data-edit-skill-rating="${escapeSavedBuildHtml(item.id)}" title="点击新增或修改评分">${rating ? escapeSavedBuildHtml(rating) : "+评分"}</button>
+          <input class="saved-build-skill-rating${rating ? "" : " is-empty"}" type="text" value="${escapeSavedBuildHtml(rating)}" placeholder="+评分" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" data-edit-skill-rating="${escapeSavedBuildHtml(item.id)}" aria-label="${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}的评分" title="直接输入评分，回车或离开输入框保存">
           <div class="saved-build-skill-sc">${item.freeBy === "character" ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSavedBuildSc(item.sc)} SC</del>` : `<strong>${formatSavedBuildSc(item.sc)} SC</strong>`}</div>
           <button class="saved-build-skill-remove" type="button" data-remove-saved-skill="${escapeSavedBuildHtml(item.id)}" aria-label="移除${escapeSavedBuildHtml(savedBuildRowValue(item.row, "name", edits))}" title="从方案移除">×</button>
           ${savedBuildEffectsOpen || expandedSavedBuildEffects.has(item.id) ? `<p class="saved-build-skill-effect">${escapeSavedBuildHtml(savedBuildRowValue(item.row, "effect", edits))}</p>` : ""}
@@ -778,23 +778,42 @@
       renderSavedBuildViewer();
       return;
     }
-    const ratingButton = event.target.closest("[data-edit-skill-rating]");
-    if (ratingButton) {
-      const row = savedBuildSkillIndex.get(String(ratingButton.dataset.editSkillRating));
-      if (!row) return;
-      const edits = readSavedBuildEdits();
-      const current = savedBuildRowValue(row, "mark", edits);
-      const next = window.prompt("输入技能评分（例如 S、S+、SS、SSS）；留空可清除评分。", current);
-      if (next === null) return;
-      saveSkillRating(row, next);
-      renderSavedBuildViewer();
-      return;
-    }
     const button = event.target.closest("[data-saved-bonus-key]");
     if (!button) return;
     const key = String(button.dataset.savedBonusKey);
     expandedSavedBuildBonusKey = expandedSavedBuildBonusKey === key ? "" : key;
     renderSavedBuildViewer();
+  });
+  savedBuildSkills.addEventListener("input", (event) => {
+    const input = event.target.closest("[data-edit-skill-rating]");
+    if (!input) return;
+    const start = input.selectionStart;
+    input.value = input.value.toUpperCase();
+    input.classList.toggle("is-empty", !input.value.trim());
+    if (start !== null) input.setSelectionRange(start, start);
+  });
+  savedBuildSkills.addEventListener("focusout", (event) => {
+    const input = event.target.closest("[data-edit-skill-rating]");
+    if (!input) return;
+    const row = savedBuildSkillIndex.get(String(input.dataset.editSkillRating));
+    if (!row) return;
+    const edits = readSavedBuildEdits();
+    const value = input.value.trim().toUpperCase();
+    if (value === savedBuildRowValue(row, "mark", edits).trim().toUpperCase()) return;
+    saveSkillRating(row, value);
+    renderSavedBuildViewer();
+  });
+  savedBuildSkills.addEventListener("keydown", (event) => {
+    const input = event.target.closest("[data-edit-skill-rating]");
+    if (!input) return;
+    if (event.key === "Enter") {
+      event.preventDefault();
+      input.blur();
+    } else if (event.key === "Escape") {
+      const row = savedBuildSkillIndex.get(String(input.dataset.editSkillRating));
+      if (row) input.value = savedBuildRowValue(row, "mark", readSavedBuildEdits());
+      input.blur();
+    }
   });
   savedBuildSkills.addEventListener("dblclick", (event) => {
     const nameButton = event.target.closest("[data-saved-skill-effect]");

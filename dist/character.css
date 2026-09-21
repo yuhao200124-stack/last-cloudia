@@ -205,7 +205,8 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
 .saved-build-skill-name { min-width: 0; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; font-weight: 700; text-align: left; overflow-wrap: anywhere; cursor: pointer; }
 .saved-build-skill-name:hover { color: #204f93; }
 .saved-build-skill-rating { width: 100%; min-height: 30px; padding: 4px 6px; border: 1px solid #b7c6da; border-radius: 5px; color: #7147a6; background: #f9f7ff; font: inherit; font-size: .76rem; font-weight: 700; text-align: center; cursor: pointer; }
-.saved-build-skill-rating:hover { color: #fff; background: #7147a6; border-color: #7147a6; }
+.saved-build-skill-rating { text-transform: uppercase; cursor: text; }
+.saved-build-skill-rating:hover, .saved-build-skill-rating:focus { color: #7147a6; background: #fff; border-color: #7147a6; outline: 2px solid rgba(113,71,166,.18); }
 .saved-build-skill-rating.is-empty { color: #63738a; background: #fff; }
 .saved-build-skill-sc { display: grid; justify-items: end; color: #172033; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .saved-build-skill-sc strong { color: #203864; }

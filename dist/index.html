@@ -54,7 +54,7 @@
           <button id="calculatorRatingSort" class="calculator-sort" type="button" aria-label="按评分排序" aria-pressed="false"><span id="calculatorRatingSortIcon" aria-hidden="true">评分▽</span></button>
           <button id="calculatorSort" class="calculator-sort is-active" type="button" aria-label="按SC从大到小排序" aria-pressed="true" title="按SC从大到小排序"><span id="calculatorSortIcon" aria-hidden="true">SC▽</span></button>
         </div>
-        <strong id="calculatorContextTitle">SC计算器</strong>
+        <select id="calculatorCharacterSelect" class="calculator-character-select" aria-label="选择角色"></select>
         <button id="calculatorClose" class="calculator-close" type="button" aria-label="收起计算器">×</button>
       </div>
       <div class="calculator-plan-actions">
@@ -70,6 +70,7 @@
       </div>
       <div id="calculatorSkills" class="calculator-skills"></div>
       <div class="calculator-total">
+        <button id="calculatorClear" class="calculator-clear" type="button">清空</button>
         <span>合计</span>
         <strong id="calculatorTotal">0 SC</strong>
       </div>

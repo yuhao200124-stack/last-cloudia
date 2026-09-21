@@ -19,10 +19,11 @@
   const calculatorRatingSortIcon = document.querySelector('#calculatorRatingSortIcon');
   const calculatorEffects = document.querySelector('#calculatorEffects');
   const calculatorDetails = document.querySelector('#calculatorDetails');
-  const calculatorContextTitle = document.querySelector('#calculatorContextTitle');
+  const calculatorCharacterSelect = document.querySelector('#calculatorCharacterSelect');
   const calculatorBadge = document.querySelector('#calculatorBadge');
   const calculatorSkills = document.querySelector('#calculatorSkills');
   const calculatorTotal = document.querySelector('#calculatorTotal');
+  const calculatorClear = document.querySelector('#calculatorClear');
   const saveLoadoutButton = document.querySelector('#saveLoadout');
   const openSavedLoadoutsButton = document.querySelector('#openSavedLoadouts');
   const savedLoadoutCount = document.querySelector('#savedLoadoutCount');
@@ -132,6 +133,11 @@
   const escapeHtml = (value = '') => String(value)
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+
+  calculatorCharacterSelect.innerHTML = [
+    '<option value="">通用（不指定角色）</option>',
+    ...Object.entries(characterLoadouts).map(([id, character]) => `<option value="${escapeHtml(id)}">${escapeHtml(character.name)}</option>`),
+  ].join('');
 
   const fold = (value = '') => String(value).toLocaleLowerCase('zh-CN').replace(/\s+/g, '');
 
@@ -318,10 +324,8 @@
 
   function renderCalculator() {
     const result = calculateSc();
-    const characterLoadout = characterLoadouts[calculatorState.characterId];
     const matchingPlans = currentCharacterPlans();
-    const currentPlan = matchingPlans.find(plan => plan.id === calculatorState.currentPlanId);
-    calculatorContextTitle.textContent = currentPlan?.name || (characterLoadout ? `配装 · ${characterLoadout.name}` : 'SC计算器');
+    calculatorCharacterSelect.value = calculatorState.characterId || '';
     savedLoadoutCount.textContent = String(matchingPlans.length);
     document.querySelectorAll('[data-break-level]').forEach(button => {
       const level = Number(button.dataset.breakLevel);
@@ -376,7 +380,7 @@
         const rating = rowValue(item.row, 'mark').trim();
         return `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
           <button class="calculator-skill-name" type="button" data-skill-effect="${escapeHtml(item.id)}" title="双击查看技能效果">${escapeHtml(rowValue(item.row, 'name'))}</button>
-          <button class="calculator-skill-rating${rating ? '' : ' is-empty'}" type="button" data-edit-calculator-rating="${escapeHtml(item.id)}" title="点击新增或修改评分">${rating ? escapeHtml(rating) : '+评分'}</button>
+          <input class="calculator-skill-rating${rating ? '' : ' is-empty'}" type="text" value="${escapeHtml(rating)}" placeholder="+评分" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" data-edit-calculator-rating="${escapeHtml(item.id)}" aria-label="${escapeHtml(rowValue(item.row, 'name'))}的评分" title="直接输入评分，回车或离开输入框保存">
           <div class="calculator-skill-sc">${item.freeBy === 'character' ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
           <button type="button" data-remove-skill="${escapeHtml(item.id)}" aria-label="移除${escapeHtml(rowValue(item.row, 'name'))}" title="从计算器移除">×</button>
           ${calculatorEffectsOpen || expandedSkillEffects.has(item.id) ? `<p class="calculator-skill-effect">${escapeHtml(rowValue(item.row, 'effect'))}</p>` : ''}
@@ -733,6 +737,30 @@
     renderCalculator();
   });
 
+  calculatorCharacterSelect.addEventListener('change', () => {
+    const previous = characterLoadouts[calculatorState.characterId];
+    const nextId = calculatorCharacterSelect.value;
+    const next = characterLoadouts[nextId];
+    const previousOwned = new Set(previous?.skillIds || []);
+    const keptIds = calculatorState.skillIds.filter(id => !previousOwned.has(id));
+    const nextOwned = (next?.skillIds || []).filter(id => skillIndex.has(id));
+    calculatorState.skillIds = [...new Set([...keptIds, ...nextOwned])];
+    calculatorState.characterFreeIds = [...nextOwned];
+    calculatorState.characterId = nextId;
+    calculatorState.currentPlanId = '';
+    saveCalculatorState();
+    render();
+  });
+
+  calculatorClear.addEventListener('click', () => {
+    calculatorState.skillIds = [];
+    calculatorState.characterFreeIds = [];
+    calculatorState.currentPlanId = '';
+    expandedSkillEffects.clear();
+    saveCalculatorState();
+    render();
+  });
+
   calculatorDetails.addEventListener('click', () => {
     calculatorState.detailsOpen = !calculatorState.detailsOpen;
     calculatorEffectsOpen = false;
@@ -806,22 +834,44 @@
       renderCalculator();
       return;
     }
-    const ratingButton = event.target.closest('[data-edit-calculator-rating]');
-    if (ratingButton) {
-      const row = skillIndex.get(String(ratingButton.dataset.editCalculatorRating));
-      if (!row) return;
-      const current = rowValue(row, 'mark');
-      const next = window.prompt('输入技能评分（例如 S、S+、SS、SSS）；留空可清除评分。', current);
-      if (next === null) return;
-      saveCellEdit(rowKey(row), 'mark', next.trim());
-      render();
-      return;
-    }
     const removeButton = event.target.closest('[data-remove-skill]');
     if (removeButton) {
       calculatorState.skillIds = calculatorState.skillIds.filter(id => id !== String(removeButton.dataset.removeSkill));
       saveCalculatorState();
       render();
+    }
+  });
+
+  calculator.addEventListener('input', event => {
+    const input = event.target.closest('[data-edit-calculator-rating]');
+    if (!input) return;
+    const start = input.selectionStart;
+    input.value = input.value.toUpperCase();
+    input.classList.toggle('is-empty', !input.value.trim());
+    if (start !== null) input.setSelectionRange(start, start);
+  });
+
+  calculator.addEventListener('focusout', event => {
+    const input = event.target.closest('[data-edit-calculator-rating]');
+    if (!input) return;
+    const row = skillIndex.get(String(input.dataset.editCalculatorRating));
+    if (!row) return;
+    const value = input.value.trim().toUpperCase();
+    if (value === rowValue(row, 'mark').trim().toUpperCase()) return;
+    saveCellEdit(rowKey(row), 'mark', value);
+    render();
+  });
+
+  calculator.addEventListener('keydown', event => {
+    const input = event.target.closest('[data-edit-calculator-rating]');
+    if (!input) return;
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      input.blur();
+    } else if (event.key === 'Escape') {
+      const row = skillIndex.get(String(input.dataset.editCalculatorRating));
+      if (row) input.value = rowValue(row, 'mark');
+      input.blur();
     }
   });
 
