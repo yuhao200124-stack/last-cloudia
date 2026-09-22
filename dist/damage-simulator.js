@@ -488,7 +488,11 @@
     if (totals.robeFixed) equipmentParts.push(`长袍 ${format(totals.robeFixed)}×（1+${formatPrecise(totals.robeStatPct)}%）=${formatPrecise(totals.robeFixed * (1 + totals.robeStatPct / 100))}`);
     if (totals.otherFixed) equipmentParts.push(`其他装备 ${format(totals.otherFixed)}`);
     const equipmentText = equipmentParts.length ? equipmentParts.join("；") : "装备属性 0";
-    $("damagePanelFormula").textContent = `（基础${statName} ${format(baseStat)} + ${equipmentText}）×（1 + ${statName}加成 ${percent(totals.totalStat)}）=${format(effectiveStat)}（向下取整）`;
+    const panelFormula = `（基础${statName} ${format(baseStat)} + ${equipmentText}）×（1 + ${statName}加成 ${percent(totals.totalStat)}）=${format(effectiveStat)}（向下取整）`;
+    $("damagePanelFormula").textContent = panelFormula;
+    $("damageVerifiedStatLabel").textContent = `加成后${statName}${statName === "法强" ? "（魔力）" : ""}`;
+    $("damageVerifiedStat").textContent = format(effectiveStat);
+    $("damageVerifiedFormula").textContent = panelFormula;
     const effectiveRatio = skill.ratio * hitDamageMultiplier;
     const ratioText = hitDamageMultiplier === 1
       ? `${skill.name}单段倍率 ${(skill.ratio * 100).toFixed(2)}%`
