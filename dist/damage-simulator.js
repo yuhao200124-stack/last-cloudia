@@ -489,19 +489,24 @@
     const rawEffectiveStat = (baseStat + totals.effectiveFixed) * (1 + totals.totalStat / 100);
     const effectiveStat = Math.floor(rawEffectiveStat);
     const defense = current.type === "魔法" ? number("damageBossMnd") : number("damageBossDef");
+    const targetElementResistance = number("damageTargetElementResistance");
+    const resistanceMultiplier = Math.max(0, 1 - targetElementResistance / 100);
     const baseCap = Math.max(1, number("damageCap"));
     const effectiveCap = baseCap + totals.totalCap;
     const hitDamageMultiplier = active.reduce((value, item) => value * item.hitDamageMultiplier, 1);
-    const base = effectiveStat * effectiveStat / Math.max(1, effectiveStat + defense) * skill.ratio;
+    // 实测基础伤害：面板与防御换算后，还存在固定的核心系数 ×8。
+    // 属性抗性随后独立乘算：+50抗性=×0.5，+30=×0.7，-25=×1.25。
+    const coreDamageMultiplier = 8;
+    const base = effectiveStat * effectiveStat / Math.max(1, effectiveStat + defense) * skill.ratio * coreDamageMultiplier;
     // 实测确认：冰属性伤害与冰属性魔法伤害先在属性区内相加；
     // 魔法伤害、Boss伤害等其他类别再与属性区相乘。
     // 例如冰伤+20%、冰魔法+10%、魔法+35%、Boss魔法+40%
     // 应为 1.30 × 1.35 × 1.40，而不是 1.20 × 1.10 × 1.35 × 1.40。
-    const damageMultiplier = totals.groupedDamageMultiplier * hitDamageMultiplier;
+    const damageMultiplier = totals.groupedDamageMultiplier * hitDamageMultiplier * resistanceMultiplier;
     const rawMin = base * damageMultiplier;
     const rawAvg = rawMin * 1.05;
     const rawMax = rawMin * 1.1;
-    const baselineBase = baseStat * baseStat / Math.max(1, baseStat + defense) * skill.ratio;
+    const baselineBase = baseStat * baseStat / Math.max(1, baseStat + defense) * skill.ratio * coreDamageMultiplier * resistanceMultiplier;
     const baselineAvg = Math.min(baselineBase * 1.05, baseCap);
     const boostedAvg = Math.min(rawAvg, effectiveCap);
     const actualIncrease = baselineAvg > 0 ? (boostedAvg / baselineAvg - 1) * 100 : 0;
@@ -543,7 +548,7 @@
     const damageGroupText = totals.damageGroups.length
       ? totals.damageGroups.map(group => `${group.label}${percent(group.value)}`).join(" × ")
       : "无增伤";
-    $("damageFormula").textContent = `${ratioText}；计算后${statName} ${format(effectiveStat)}；增伤分组乘算 ×${totals.groupedDamageMultiplier.toFixed(4)}（${damageGroupText}）；有效单段上限 ${format(baseCap)} + ${format(totals.totalCap)} = ${format(effectiveCap)}`;
+    $("damageFormula").textContent = `${ratioText}；基础核心系数 ×${coreDamageMultiplier}；计算后${statName} ${format(effectiveStat)}；目标${current.element}抗 ${targetElementResistance >= 0 ? "+" : ""}${formatPrecise(targetElementResistance)}% = ×${resistanceMultiplier.toFixed(3)}；增伤分组乘算 ×${totals.groupedDamageMultiplier.toFixed(4)}（${damageGroupText}）；有效单段上限 ${format(baseCap)} + ${format(totals.totalCap)} = ${format(effectiveCap)}`;
     renderAudit();
   };
 
