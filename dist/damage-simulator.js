@@ -116,8 +116,18 @@
     };
   };
 
+  const bonusSourceGroupLabel = group => ({
+    traits: "个性",
+    exclusive: "专属技能",
+    equipment: "专属装备",
+    common: "通用技能",
+    transcend: "超越能力",
+    magic: "魔法",
+    blessing: "加护"
+  })[group] || group || "基础计算器";
+
   const emptyParsedBonus = record => ({
-    source: record.group || "基础计算器",
+    source: bonusSourceGroupLabel(record.group),
     name: record.source || record.label,
     effect: record.condition || "",
     statPct: 0,
