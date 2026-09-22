@@ -299,16 +299,37 @@
             <label>属性<select id="damageElement"><option>无</option><option>火</option><option selected>冰</option><option>树</option><option>雷</option><option>光</option><option>暗</option><option>武器属性</option></select></label>
           </div>
         </section>
+        <section class="damage-card damage-innate-card">
+          <div class="damage-card-title"><span>04</span><h3>角色自带技能加成</h3></div>
+          <div class="damage-innate-summary">
+            <article><span>面板属性</span><b id="damageInnateStat">+0%</b></article>
+            <article><span>直接增伤</span><b id="damageInnateBonus">+0%</b></article>
+            <article><span>伤害上限</span><b id="damageInnateCap">+0</b></article>
+            <article class="is-primary"><span>本次实际提升</span><b id="damageInnateActual">+0%</b></article>
+          </div>
+          <div class="damage-condition-title"><b>按当前战斗条件计算</b><span>取消勾选后，对应条件技能不会计入</span></div>
+          <div class="damage-condition-grid">
+            <label><input id="damageCondSingleWeapon" type="checkbox" checked />仅装备1件武器</label>
+            <label><input id="damageCondStaff" type="checkbox" checked />装备法杖</label>
+            <label><input id="damageCondRobe" type="checkbox" checked />装备长袍</label>
+            <label><input id="damageCondFullHp" type="checkbox" checked />HP全满</label>
+            <label><input id="damageCondMagicActive" type="checkbox" checked />不可叠加魔法发动中</label>
+            <label><input id="damageCondMagicChain" type="checkbox" checked />相同魔法连续使用至最高</label>
+          </div>
+          <div class="damage-innate-list-head"><b>本次生效明细</b><span id="damageInnateCount">0项</span></div>
+          <div id="damageInnateList" class="damage-innate-list"></div>
+          <p id="damageInnateNote" class="damage-innate-note"></p>
+        </section>
         <section class="damage-results" aria-live="polite">
-          <div class="damage-results-head"><div><span>04</span><h3>当前伤害</h3></div><strong id="damageCapState">未触顶</strong></div>
+          <div class="damage-results-head"><div><span>05</span><h3>当前伤害</h3></div><strong id="damageCapState">未触顶</strong></div>
           <div class="damage-result-grid">
             <article><span>单段最低</span><b id="damageHitMin">0</b></article>
             <article class="is-primary"><span>单段平均</span><b id="damageHitAvg">0</b></article>
             <article><span>单段最高</span><b id="damageHitMax">0</b></article>
             <article><span>整套平均</span><b id="damageCastAvg">0</b><small id="damageHitCount">0段</small></article>
           </div>
-          <div class="damage-cap-control"><label>单段伤害上限<input id="damageCap" type="number" min="1" value="9999" /></label><p id="damageFormula"></p></div>
-          <p class="damage-result-note">最低属性抗性和种族现在先记录；等下一步确认它们所在的伤害区间后，再自动接入最终计算。</p>
+          <div class="damage-cap-control"><label>基础单段伤害上限<input id="damageCap" type="number" min="1" value="9999" /></label><p id="damageFormula"></p></div>
+          <p class="damage-result-note">当前已计入角色自带技能的面板、直接增伤、伤害上限及Hit变化。暴击、贯导等概率效果暂不折算为固定伤害；Boss属性抗性与种族将在下一步接入。</p>
         </section>
       </div>
     </aside>
