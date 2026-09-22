@@ -297,8 +297,9 @@
         </section>
         <section class="damage-card damage-attack-card">
           <div class="damage-card-title"><span>03</span><h3>攻击方式</h3></div>
-          <div class="damage-fields damage-fields-three">
-            <label>攻击方式<select id="damageSkill"><option value="skill1" selected>特技1</option><option value="skill2">特技2</option><option value="skill3">特技3</option><option value="ultimate">必杀</option><option value="magic">魔法</option><option value="heavy_magic">重魔法</option></select></label>
+          <div class="damage-fields damage-fields-four">
+            <label>攻击方式<select id="damageSkill"><option value="skill1">特技1</option><option value="skill2">特技2</option><option value="skill3">特技3</option><option value="ultimate">必杀</option><option value="magic" selected>魔法</option><option value="heavy_magic">重魔法</option></select></label>
+            <label id="damageMagicField">具体魔法<select id="damageMagic"><option value="270090" selected>異度克里昂</option><option value="291020">冰霜新星</option></select></label>
             <label>伤害类型<select id="damageType"><option>物理</option><option selected>魔法</option></select></label>
             <label>属性<select id="damageElement"><option>无</option><option>火</option><option selected>冰</option><option>树</option><option>雷</option><option>光</option><option>暗</option><option>武器属性</option></select></label>
           </div>
@@ -328,10 +329,10 @@
             <article><span>单段最低</span><b id="damageHitMin">0</b></article>
             <article class="is-primary"><span>单段平均</span><b id="damageHitAvg">0</b></article>
             <article><span>单段最高</span><b id="damageHitMax">0</b></article>
-            <article><span>整套平均</span><b id="damageCastAvg">0</b><small id="damageHitCount">0段</small></article>
+            <article><span>距离稳定触顶</span><b id="damageCapGap">0</b><small id="damageRecommendation">继续提高输出</small></article>
           </div>
           <div class="damage-cap-control"><label>基础单段伤害上限<input id="damageCap" type="number" min="1" value="9999" /></label><p id="damageFormula"></p></div>
-          <p class="damage-result-note">当前已计入角色自带技能的面板、直接增伤、伤害上限及Hit变化。暴击、贯导等概率效果暂不折算为固定伤害；Boss属性抗性与种族将在下一步接入。</p>
+          <p class="damage-result-note">配装判断只看单段伤害：单段最低也达到上限后，才推荐提高伤害上限。技能段数、实际命中数和整套伤害不参与推荐；暴击、贯导等概率效果暂不折算为固定伤害。</p>
         </section>
       </div>
     </aside>

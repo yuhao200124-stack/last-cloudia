@@ -10,12 +10,16 @@
   const format = value => Math.max(0, Math.round(value)).toLocaleString("zh-CN");
   const percent = value => `${value >= 0 ? "+" : ""}${Number(value.toFixed(1))}%`;
   const presets = {
-    skill1: { ratio: .368, hits: 6 },
-    skill2: { ratio: .357, hits: 12 },
-    skill3: { ratio: .347, hits: 20 },
-    ultimate: { ratio: 1.101, hits: 54 },
-    magic: { ratio: 1, hits: 1 },
-    heavy_magic: { ratio: 1, hits: 1 }
+    skill1: { name: "特技1", ratio: .368 },
+    skill2: { name: "特技2", ratio: .357 },
+    skill3: { name: "特技3", ratio: .347 },
+    ultimate: { name: "必杀", ratio: 1.101 },
+    magic: { name: "魔法", ratio: 1 },
+    heavy_magic: { name: "重魔法", ratio: 1 }
+  };
+  const magicPresets = {
+    "270090": { name: "異度克里昂", ratio: .52 },
+    "291020": { name: "冰霜新星", ratio: .652 }
   };
   let innateSkills = [];
   let bonusLayout = "skill";
@@ -239,7 +243,9 @@
 
   const calculate = () => {
     const current = state();
-    const skill = presets[current.skill] || presets.skill1;
+    const selectedMagic = magicPresets[$("damageMagic").value] || magicPresets["270090"];
+    const skill = current.isMagicMode ? selectedMagic : (presets[current.skill] || presets.skill1);
+    $("damageMagicField").hidden = !current.isMagicMode;
     const parsed = innateSkills.filter(item => current.exclusiveWeapon || item.source !== "专武").map(item => parseSkill(item, current));
     const active = parsed.filter(item => item.parts.length);
     const totals = renderInnate(active);
@@ -248,32 +254,44 @@
     const defense = current.type === "魔法" ? number("damageBossMnd") : number("damageBossDef");
     const baseCap = Math.max(1, number("damageCap"));
     const effectiveCap = baseCap + totals.totalCap;
-    const hitMultiplier = active.reduce((value, item) => value * item.hitMultiplier, 1);
     const hitDamageMultiplier = active.reduce((value, item) => value * item.hitDamageMultiplier, 1);
     const base = effectiveStat * effectiveStat / Math.max(1, effectiveStat + defense) * skill.ratio;
     const damageMultiplier = (1 + totals.totalDamage / 100) * hitDamageMultiplier;
     const rawMin = base * damageMultiplier;
     const rawAvg = rawMin * 1.05;
     const rawMax = rawMin * 1.1;
-    const hits = Math.max(1, Math.round(skill.hits * hitMultiplier));
     const baselineBase = baseStat * baseStat / Math.max(1, baseStat + defense) * skill.ratio;
-    const baselineAvg = Math.min(baselineBase * 1.05, baseCap) * skill.hits;
-    const boostedAvg = Math.min(rawAvg, effectiveCap) * hits;
+    const baselineAvg = Math.min(baselineBase * 1.05, baseCap);
+    const boostedAvg = Math.min(rawAvg, effectiveCap);
     const actualIncrease = baselineAvg > 0 ? (boostedAvg / baselineAvg - 1) * 100 : 0;
+    const gapToStableCap = Math.max(0, effectiveCap - rawMin);
+    const statName = current.type === "魔法" ? "法强" : "攻击力";
+    let capState = "未触顶";
+    let recommendation = `继续提高${statName}或伤害`;
+    if (rawMin >= effectiveCap) {
+      capState = "稳定触顶";
+      recommendation = "优先提高伤害上限";
+    } else if (rawMax >= effectiveCap) {
+      capState = "部分触顶";
+      recommendation = `继续补少量${statName}或伤害`;
+    }
 
     $("damageHitMin").textContent = format(Math.min(rawMin, effectiveCap));
     $("damageHitAvg").textContent = format(Math.min(rawAvg, effectiveCap));
     $("damageHitMax").textContent = format(Math.min(rawMax, effectiveCap));
-    $("damageCastAvg").textContent = format(boostedAvg);
-    $("damageHitCount").textContent = `${hits}段全部命中`;
-    $("damageCapState").textContent = rawMin >= effectiveCap ? "稳定触顶" : rawMax >= effectiveCap ? "部分触顶" : "未触顶";
+    $("damageCapGap").textContent = format(gapToStableCap);
+    $("damageRecommendation").textContent = recommendation;
+    $("damageCapState").textContent = capState;
     $("damageInnateActual").textContent = percent(actualIncrease);
-    const statName = current.type === "魔法" ? "法强" : "攻击力";
     $("damagePanelStatLabel").textContent = `当前输出面板 · ${statName}`;
     $("damagePanelFinal").textContent = format(effectiveStat);
     const fixedText = totals.totalFixed ? `${format(totals.totalFixed)} ×（1 + 专武属性增幅 ${percent(totals.weaponStatPct)}）= ${format(totals.effectiveFixed)}` : "0";
     $("damagePanelFormula").textContent = `基础${statName} ${format(baseStat)} ×（1 + 技能加成 ${percent(totals.totalStat)}）+ 固定值 ${fixedText}`;
-    $("damageFormula").textContent = `计算后${statName} ${format(effectiveStat)}；直接增伤 ${percent(totals.totalDamage)}；有效单段上限 ${format(baseCap)} + ${format(totals.totalCap)} = ${format(effectiveCap)}`;
+    const effectiveRatio = skill.ratio * hitDamageMultiplier;
+    const ratioText = hitDamageMultiplier === 1
+      ? `${skill.name}单段倍率 ${(skill.ratio * 100).toFixed(2)}%`
+      : `${skill.name}基础单段倍率 ${(skill.ratio * 100).toFixed(2)}% × 特殊修正 ${(hitDamageMultiplier * 100).toFixed(0)}% = ${(effectiveRatio * 100).toFixed(2)}%`;
+    $("damageFormula").textContent = `${ratioText}；计算后${statName} ${format(effectiveStat)}；直接增伤 ${percent(totals.totalDamage)}；有效单段上限 ${format(baseCap)} + ${format(totals.totalCap)} = ${format(effectiveCap)}`;
   };
 
   const open = () => {
