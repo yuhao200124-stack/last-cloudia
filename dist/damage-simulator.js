@@ -416,6 +416,14 @@
     }).join("");
   };
 
+  // 实测分区：属性伤害与同属性、同攻击类型的限定伤害属于同一属性乘区。
+  // 目前已由“冰属性伤害 +20%”和“冰属性魔法伤害 +10%”的逐段实伤确认。
+  const damageMultiplierGroup = label => {
+    const normalized = String(label || "通用伤害").trim();
+    if (normalized === "冰属性伤害" || normalized === "冰属性魔法伤害") return "冰属性伤害区";
+    return normalized;
+  };
+
   const renderInnate = active => {
     const totalStat = active.reduce((sum, item) => sum + item.statPct, 0);
     const totalFixed = active.reduce((sum, item) => sum + item.fixedStat, 0);
@@ -433,7 +441,7 @@
     const damageGroupMap = new Map();
     active.forEach(item => item.contributions.forEach(part => {
       if (part.kind !== "damage" || part.unit !== "%") return;
-      const group = String(part.label || "通用伤害").trim();
+      const group = damageMultiplierGroup(part.label);
       damageGroupMap.set(group, (damageGroupMap.get(group) || 0) + Number(part.value || 0));
     }));
     const damageGroups = [...damageGroupMap.entries()].map(([label, value]) => ({ label, value }));
@@ -485,9 +493,10 @@
     const effectiveCap = baseCap + totals.totalCap;
     const hitDamageMultiplier = active.reduce((value, item) => value * item.hitDamageMultiplier, 1);
     const base = effectiveStat * effectiveStat / Math.max(1, effectiveStat + defense) * skill.ratio;
-    // 实测确认：相同类别先相加，不同伤害类别之间相乘。
-    // 例如冰伤+110%、冰魔法+95%、魔法+35%、Boss魔法+40%
-    // 应为 2.10 × 1.95 × 1.35 × 1.40，而不是 1 + 280%。
+    // 实测确认：冰属性伤害与冰属性魔法伤害先在属性区内相加；
+    // 魔法伤害、Boss伤害等其他类别再与属性区相乘。
+    // 例如冰伤+20%、冰魔法+10%、魔法+35%、Boss魔法+40%
+    // 应为 1.30 × 1.35 × 1.40，而不是 1.20 × 1.10 × 1.35 × 1.40。
     const damageMultiplier = totals.groupedDamageMultiplier * hitDamageMultiplier;
     const rawMin = base * damageMultiplier;
     const rawAvg = rawMin * 1.05;
