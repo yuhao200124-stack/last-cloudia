@@ -30,6 +30,7 @@
             <span>冰属性</span><span>魔法输出</span><span>辅助</span>
             <a class="source-button" href="https://altema.jp/lastcloudia/chara/260" target="_blank" rel="noreferrer">Altema原资料 ↗</a>
             <a class="source-button loadout-entry" href="./index.html?loadout=260#全部技能">配装计算器</a>
+            <button id="damageSimulatorOpen" class="source-button calculator-entry" type="button">伤害计算器</button>
           </div>
         </section>
 
@@ -259,7 +260,60 @@
       <div id="savedBuildSkills" class="saved-build-skills"></div>
       <div class="saved-build-total"><span>合计</span><button id="savedBuildRestore" type="button" disabled>还原</button><strong id="savedBuildTotal">0 SC</strong></div>
     </aside>
+
+    <div id="damageSimulatorBackdrop" class="damage-simulator-backdrop" hidden></div>
+    <aside id="damageSimulator" class="damage-simulator" hidden aria-label="角色伤害计算器">
+      <header class="damage-simulator-header">
+        <div><small>洛琪希 · 当前角色</small><strong>伤害计算器</strong></div>
+        <button id="damageSimulatorClose" type="button" aria-label="关闭伤害计算器">×</button>
+      </header>
+      <div class="damage-simulator-body">
+        <section class="damage-card damage-character-card">
+          <div class="damage-card-title"><span>01</span><h3>角色基础数值</h3></div>
+          <div class="damage-character-name"><b>洛琪希</b><span>自动读取角色页面</span></div>
+          <div class="damage-fields damage-fields-two">
+            <label>攻击力<input id="damageCharacterAtk" type="number" min="0" value="1222" /></label>
+            <label>法强<input id="damageCharacterInt" type="number" min="0" value="2512" /></label>
+          </div>
+        </section>
+        <section class="damage-card damage-boss-card">
+          <div class="damage-card-title"><span>02</span><h3>Boss 信息</h3></div>
+          <div class="damage-fields damage-fields-five">
+            <label class="damage-boss-name">Boss名称<input id="damageBossName" type="text" value="神獸帕帕拉納" /></label>
+            <label>攻击力<input id="damageBossAtk" type="number" min="0" value="5000" /></label>
+            <label>魔力<input id="damageBossInt" type="number" min="0" value="6000" /></label>
+            <label>防御力<input id="damageBossDef" type="number" min="0" value="5500" /></label>
+            <label>魔抗<input id="damageBossMnd" type="number" min="0" value="8000" /></label>
+          </div>
+          <div class="damage-fields damage-fields-three damage-boss-extra">
+            <label>最低属性抗性<select id="damageBossWeakElement"><option>火</option><option>冰</option><option>树</option><option selected>雷</option><option>光</option><option>暗</option></select></label>
+            <label>最低抗性数值<input id="damageBossWeakValue" type="number" value="-25" /></label>
+            <label>种族<select id="damageBossRace"><option selected>神</option><option>人类</option><option>兽</option><option>鱼</option><option>植物</option><option>昆虫</option><option>鸟</option><option>机械</option><option>不死</option><option>精灵</option><option>龙</option><option>矿石</option><option>魔法生物</option><option>未知</option></select></label>
+          </div>
+        </section>
+        <section class="damage-card damage-attack-card">
+          <div class="damage-card-title"><span>03</span><h3>攻击方式</h3></div>
+          <div class="damage-fields damage-fields-three">
+            <label>技能<select id="damageSkill"><option value="normal">普通攻击</option><option value="s1" selected>特技1 · 水球</option><option value="s2">特技2 · 冰柱破碎</option><option value="s3">特技3 · 暴风雪</option><option value="ultimate">超必杀 · 积雨云</option></select></label>
+            <label>伤害类型<select id="damageType"><option>物理</option><option selected>魔法</option></select></label>
+            <label>属性<select id="damageElement"><option>无</option><option>火</option><option selected>冰</option><option>树</option><option>雷</option><option>光</option><option>暗</option><option>武器属性</option></select></label>
+          </div>
+        </section>
+        <section class="damage-results" aria-live="polite">
+          <div class="damage-results-head"><div><span>04</span><h3>当前伤害</h3></div><strong id="damageCapState">未触顶</strong></div>
+          <div class="damage-result-grid">
+            <article><span>单段最低</span><b id="damageHitMin">0</b></article>
+            <article class="is-primary"><span>单段平均</span><b id="damageHitAvg">0</b></article>
+            <article><span>单段最高</span><b id="damageHitMax">0</b></article>
+            <article><span>整套平均</span><b id="damageCastAvg">0</b><small id="damageHitCount">0段</small></article>
+          </div>
+          <div class="damage-cap-control"><label>单段伤害上限<input id="damageCap" type="number" min="1" value="9999" /></label><p id="damageFormula"></p></div>
+          <p class="damage-result-note">最低属性抗性和种族现在先记录；等下一步确认它们所在的伤害区间后，再自动接入最终计算。</p>
+        </section>
+      </div>
+    </aside>
     <script src="./data.js"></script>
     <script src="./character-calculator.js"></script>
+    <script src="./damage-simulator.js"></script>
   </body>
 </html>
