@@ -18,7 +18,7 @@
     heavy_magic: { name: "重魔法", ratio: 1 }
   };
   const magicPresets = {
-    "270090": { name: "異度克里昂", ratio: .52 },
+    "270090": { name: "泽诺克莱昂", ratio: .52 },
     "291020": { name: "冰霜新星", ratio: .652 }
   };
   let innateSkills = [];
@@ -82,10 +82,10 @@
     const allText = innateSkills.map(item => item.effect).join("；");
     const isSpecial = ["skill1", "skill2", "skill3"].includes(skill);
     const isMagicMode = ["magic", "heavy_magic"].includes(skill);
-    const bossSpecial = (type === "魔法" && /魔法攻击时[^。；]*对BOSS触发特攻/.test(allText)) ||
-      ((isSpecial || skill === "ultimate") && /使用特技或超必杀技攻击时[^。；]*对BOSS触发特攻/.test(allText));
+    const bossRace = $("damageBossRace").value;
+    const bossSpecial = bossRace !== "未知" && Boolean($("damageBossName").value.trim());
     return {
-      skill, type, element, isSpecial, isMagicMode, bossSpecial,
+      skill, type, element, isSpecial, isMagicMode, bossSpecial, bossRace,
       weak: element === $("damageBossWeakElement").value,
       singleWeapon: true,
       staff: true,
@@ -95,6 +95,90 @@
       magicChain: true,
       exclusiveWeapon: $("damageUseExclusiveWeapon").checked
     };
+  };
+
+  const emptyParsedBonus = record => ({
+    source: record.group || "基础计算器",
+    name: record.source || record.label,
+    effect: record.condition || "",
+    statPct: 0,
+    fixedStat: 0,
+    weaponStatPct: 0,
+    damagePct: 0,
+    cap: 0,
+    hitMultiplier: 1,
+    hitDamageMultiplier: 1,
+    parts: [],
+    contributions: []
+  });
+
+  const addParsedContribution = (result, kind, label, value, unit, text) => {
+    result.parts.push(text);
+    result.contributions.push({ kind, key: `${kind}:${label}`, label, value, unit, text });
+  };
+
+  const baseBonusApplies = (bonus, current) => {
+    const key = bonus.key;
+    if (bonus.source === "洛琪希之杖" && !current.exclusiveWeapon) return false;
+    if (key === "int_pct") return current.type === "魔法";
+    if (key === "str_pct") return current.type === "物理";
+    if (key === "staff_int") return current.type === "魔法" && current.exclusiveWeapon;
+    if (key === "ice_damage" || key === "ice_cap") return current.element === "冰";
+    if (key === "ice_magic_damage" || key === "ice_magic_cap") return current.type === "魔法" && current.element === "冰";
+    if (key === "magic_damage" || key === "magic_cap") return current.type === "魔法";
+    if (key === "physical_damage" || key === "physical_cap") return current.type === "物理";
+    if (key === "special_damage" || key === "special_cap") return current.bossSpecial;
+    if (key === "boss_magic_damage" || key === "boss_magic_cap") return current.type === "魔法";
+    if (key === "boss_ice_magic_cap") return current.type === "魔法" && current.element === "冰";
+    if (key === "spell_link_damage") return current.type === "魔法" && current.magicChain;
+    if (key === "weak_magic_damage") return current.type === "魔法" && current.weak;
+    if (key === "ultimate_damage" || key === "ultimate_cap") return current.skill === "ultimate";
+    return false;
+  };
+
+  const parseBaseBonus = (bonus, current) => {
+    const result = emptyParsedBonus(bonus);
+    if (!baseBonusApplies(bonus, current)) return result;
+    const statLabel = current.type === "魔法" ? "法强" : "攻击力";
+    const value = Number(bonus.value) || 0;
+    const text = `${bonus.label} ${bonus.unit === "%" ? percent(value) : `+${value.toLocaleString("zh-CN")}`}`;
+    if (bonus.key === "int_pct" || bonus.key === "str_pct") {
+      result.statPct += value;
+      addParsedContribution(result, "stat", statLabel, value, "%", text);
+    } else if (bonus.key === "staff_int") {
+      result.weaponStatPct += value;
+      addParsedContribution(result, "weapon", "专武法强增幅", value, "%", text);
+    } else if (bonus.key.endsWith("_cap")) {
+      result.cap += value;
+      addParsedContribution(result, "cap", bonus.label, value, "number", text);
+    } else {
+      result.damagePct += value;
+      addParsedContribution(result, "damage", bonus.label, value, "%", text);
+    }
+    return result;
+  };
+
+  const parseExclusiveWeaponFixedStat = current => {
+    const weapon = innateSkills.find(item => item.source === "专武");
+    const result = emptyParsedBonus({ group: "专武", source: weapon?.name || "专属武器" });
+    if (!weapon || !current.exclusiveWeapon) return result;
+    const statLabel = current.type === "魔法" ? "法强" : "攻击力";
+    const fixed = current.type === "魔法" ? weapon.fixedInt : weapon.fixedAtk;
+    if (fixed) {
+      result.fixedStat = fixed;
+      addParsedContribution(result, "fixed", `${statLabel}固定值`, fixed, "number", `专武${statLabel}固定值 +${fixed.toLocaleString("zh-CN")}`);
+    }
+    return result;
+  };
+
+  const parseHitRule = current => {
+    const result = emptyParsedBonus({ group: "个性", source: "水王级魔术师" });
+    if (current.type === "魔法" && current.element === "冰") {
+      result.hitMultiplier = 2;
+      result.hitDamageMultiplier = .6;
+      addParsedContribution(result, "special", "冰属性魔法Hit规则", 1.2, "special", "Hit数×2、单段伤害×60%（整套×1.2）");
+    }
+    return result;
   };
 
   const clauseAt = (text, index) => {
@@ -233,9 +317,9 @@
     $("damageInnateList").innerHTML = active.length ? (bonusLayout === "skill" ? renderBySkill(active) : renderByBonus(active)) : '<p class="damage-innate-empty">当前攻击方式下，没有读取到可直接计算的输出加成。</p>';
     const current = state();
     const notes = [];
-    notes.push("条件型输出技能按可触发的最高效果展示");
+    notes.push("数值直接读取基础计算器当前保留项目");
     if (current.exclusiveWeapon) notes.push("已计入专武的输出效果");
-    if (current.bossSpecial) notes.push("当前攻击可由角色个性对BOSS触发特攻，特攻增幅已自动生效");
+    if (current.bossSpecial) notes.push(`已按${current.bossRace}系Boss触发特攻，特攻增伤与特攻上限已生效`);
     if (innateSkills.some(item => /暴击率|暴击伤害|有概率将敌方MND减半/.test(item.effect))) notes.push("暴击与概率减防保留为后续独立区间，未混入固定增伤");
     $("damageInnateNote").textContent = notes.join("；") + (notes.length ? "。" : "");
     return { totalStat, totalFixed, weaponStatPct, effectiveFixed, totalDamage, totalCap };
@@ -246,7 +330,9 @@
     const selectedMagic = magicPresets[$("damageMagic").value] || magicPresets["270090"];
     const skill = current.isMagicMode ? selectedMagic : (presets[current.skill] || presets.skill1);
     $("damageMagicField").hidden = !current.isMagicMode;
-    const parsed = innateSkills.filter(item => current.exclusiveWeapon || item.source !== "专武").map(item => parseSkill(item, current));
+    const importedBonuses = window.LC_BASE_CALCULATOR?.getVisibleBonuses?.() || [];
+    const parsed = importedBonuses.map(item => parseBaseBonus(item, current));
+    parsed.push(parseExclusiveWeaponFixedStat(current), parseHitRule(current));
     const active = parsed.filter(item => item.parts.length);
     const totals = renderInnate(active);
     const baseStat = current.type === "魔法" ? number("damageCharacterInt") : number("damageCharacterAtk");
@@ -316,6 +402,9 @@
   panel.addEventListener("change", event => {
     if (event.target.id === "damageSkill" && ["magic", "heavy_magic"].includes(event.target.value)) $("damageType").value = "魔法";
     calculate();
+  });
+  window.addEventListener("lc:base-calculator-change", () => {
+    if (!panel.hidden) calculate();
   });
   panel.querySelectorAll("[data-damage-layout]").forEach(button => button.addEventListener("click", () => {
     bonusLayout = button.dataset.damageLayout;

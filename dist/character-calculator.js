@@ -186,6 +186,18 @@
     if (Array.isArray(storedHiddenKeys)) storedHiddenKeys.forEach((key) => hiddenKeys.add(String(key)));
   } catch { /* Ignore malformed local data and start with all metrics visible. */ }
   const saveHiddenBonusKeys = () => localStorage.setItem(hiddenBonusStorageKey, JSON.stringify([...hiddenKeys]));
+  const publishBaseCalculatorState = () => {
+    window.dispatchEvent(new CustomEvent("lc:base-calculator-change", {
+      detail: { characterId: currentSavedBuildCharacterId }
+    }));
+  };
+  window.LC_BASE_CALCULATOR = {
+    getVisibleBonuses: () => bonuses
+      .filter((bonus) => !hiddenKeys.has(bonus.key))
+      .map((bonus) => ({ ...bonus })),
+    getHiddenKeys: () => [...hiddenKeys],
+    characterId: currentSavedBuildCharacterId
+  };
   const skillData = window.SKILL_DATA;
   const savedBuildSkillIndex = new Map();
   if (skillData?.sheetOrder) {
@@ -776,6 +788,7 @@
     summary.innerHTML = "";
     if (!visibleMetrics.length) {
       summary.innerHTML = '<div class="bonus-empty">全部词条都已隐藏，可点击“恢复全部”重新显示。</div>';
+      publishBaseCalculatorState();
       return;
     }
 
@@ -828,6 +841,7 @@
       }
       summary.appendChild(row);
     });
+    publishBaseCalculatorState();
   };
 
   const renderCapCalculator = () => {
