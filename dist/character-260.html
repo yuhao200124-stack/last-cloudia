@@ -264,13 +264,13 @@
     <div id="damageSimulatorBackdrop" class="damage-simulator-backdrop" hidden></div>
     <aside id="damageSimulator" class="damage-simulator" hidden aria-label="角色伤害计算器">
       <header class="damage-simulator-header">
-        <div><small>洛琪希 · 当前角色</small><strong>伤害计算器</strong></div>
+        <div><small id="damageSimulatorCharacterLabel">当前角色</small><strong>伤害计算器</strong></div>
         <button id="damageSimulatorClose" type="button" aria-label="关闭伤害计算器">×</button>
       </header>
       <div class="damage-simulator-body">
         <section class="damage-card damage-character-card">
           <div class="damage-card-title"><span>01</span><h3>角色基础数值</h3></div>
-          <div class="damage-character-name"><b>洛琪希</b><span>自动读取角色页面</span></div>
+          <div class="damage-character-name"><b id="damageSimulatorCharacterName">当前角色</b><span>自动读取角色页面</span></div>
           <div class="damage-fields damage-fields-two">
             <label>攻击力<input id="damageCharacterAtk" type="number" min="0" value="1222" /></label>
             <label>法强<input id="damageCharacterInt" type="number" min="0" value="2512" /></label>
@@ -294,7 +294,7 @@
         <section class="damage-card damage-attack-card">
           <div class="damage-card-title"><span>03</span><h3>攻击方式</h3></div>
           <div class="damage-fields damage-fields-three">
-            <label>技能<select id="damageSkill"><option value="normal">普通攻击</option><option value="s1" selected>特技1 · 水球</option><option value="s2">特技2 · 冰柱破碎</option><option value="s3">特技3 · 暴风雪</option><option value="ultimate">超必杀 · 积雨云</option></select></label>
+            <label>攻击方式<select id="damageSkill"><option value="skill1" selected>特技1</option><option value="skill2">特技2</option><option value="skill3">特技3</option><option value="ultimate">必杀</option><option value="magic">魔法</option><option value="heavy_magic">重魔法</option></select></label>
             <label>伤害类型<select id="damageType"><option>物理</option><option selected>魔法</option></select></label>
             <label>属性<select id="damageElement"><option>无</option><option>火</option><option selected>冰</option><option>树</option><option>雷</option><option>光</option><option>暗</option><option>武器属性</option></select></label>
           </div>
