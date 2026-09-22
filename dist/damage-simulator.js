@@ -194,6 +194,18 @@
     "冰属性伤害上限", "冰属性魔法上限", "魔法伤害上限", "物理伤害上限", "对Boss冰魔法上限", "对Boss魔法上限", "特攻伤害上限", "超必杀技伤害上限"
   ];
 
+  const normalizeSkillName = value => String(value || "")
+    .replace(/^【超越】/, "")
+    .replace(/^超越[·・]/, "")
+    .replace(/[\s·・]/g, "")
+    .toLowerCase();
+
+  const fullEffectFor = bonus => {
+    const target = normalizeSkillName(bonus.source);
+    const record = innateSkills.find(item => normalizeSkillName(item.name) === target);
+    return record?.effect || bonus.condition || "暂无完整效果说明";
+  };
+
   const renderAudit = () => {
     const auditPanel = $("damageAuditPanel");
     if (!auditPanel || auditPanel.hidden) return;
@@ -214,7 +226,7 @@
       return `<section class="damage-audit-group"><header><h4>${escapeHtml(group)}</h4><strong>当前 +${activeTotal.toLocaleString("zh-CN")}${unit}</strong></header>${items.map(item => {
         const removed = auditHiddenKeys.has(item.auditKey);
         const shownValue = item.unit === "%" ? `+${item.value}%` : `+${Number(item.value).toLocaleString("zh-CN")}`;
-        return `<article class="damage-audit-item${removed ? " is-removed" : ""}"><div><b>${escapeHtml(item.source)}</b><small>${escapeHtml(item.condition || "常驻")}</small></div><span>${escapeHtml(item.label)}</span><strong>${shownValue}</strong><button type="button" data-audit-key="${escapeHtml(item.auditKey)}">${removed ? "恢复" : "删除"}</button></article>`;
+        return `<article class="damage-audit-item${removed ? " is-removed" : ""}"><div><b>${escapeHtml(item.source)}</b><small>触发条件：${escapeHtml(item.condition || "常驻")}</small></div><span>${escapeHtml(item.label)}</span><strong>${shownValue}</strong><button type="button" data-audit-key="${escapeHtml(item.auditKey)}">${removed ? "恢复" : "删除"}</button><p class="damage-audit-effect"><em>完整效果</em>${escapeHtml(item.fullEffect)}</p></article>`;
       }).join("")}</section>`;
     }).join("") : '<p class="damage-audit-empty">当前攻击条件下没有这一类加成。</p>';
     const removedCount = entries.filter(entry => auditHiddenKeys.has(entry.auditKey)).length;
@@ -478,7 +490,8 @@
       ...item,
       auditKey: auditKeyFor(item),
       kind: bonusAuditKind(item),
-      group: bonusAuditGroup(item)
+      group: bonusAuditGroup(item),
+      fullEffect: fullEffectFor(item)
     }));
     const activeImportedBonuses = importedBonuses.filter(item => !auditHiddenKeys.has(auditKeyFor(item)));
     const parsed = activeImportedBonuses.map(item => parseBaseBonus(item, current));
