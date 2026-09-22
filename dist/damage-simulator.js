@@ -55,9 +55,18 @@
     document.querySelectorAll("#equipment .equipment-card").forEach(card => {
       const entries = [...card.querySelectorAll("dt")];
       const type = entries.find(item => item.textContent.trim() === "类型")?.nextElementSibling?.textContent.trim() || "";
+      const stats = entries.find(item => item.textContent.trim() === "最高属性")?.nextElementSibling?.textContent.trim() || "";
       const effect = entries.find(item => item.textContent.trim() === "最高效果")?.nextElementSibling?.textContent.trim() || "";
       if (!/[剑斧枪弓杖爪锤刀机器]/.test(type) || !effect) return;
-      records.push({ source: "专武", name: card.querySelector("h4")?.textContent.trim() || "专属武器", effect });
+      const atk = stats.match(/(?:STR|攻击力)\+([\d,]+)/);
+      const int = stats.match(/(?:INT|法强)\+([\d,]+)/);
+      records.push({
+        source: "专武",
+        name: card.querySelector("h4")?.textContent.trim() || "专属武器",
+        effect,
+        fixedAtk: atk ? Number(atk[1].replaceAll(",", "")) : 0,
+        fixedInt: int ? Number(int[1].replaceAll(",", "")) : 0
+      });
     });
     innateSkills = records;
   };
@@ -109,11 +118,27 @@
 
   const parseSkill = (record, current) => {
     const effect = record.effect;
-    const result = { ...record, statPct: 0, damagePct: 0, cap: 0, hitMultiplier: 1, hitDamageMultiplier: 1, parts: [], contributions: [] };
+    const result = { ...record, statPct: 0, fixedStat: 0, weaponStatPct: 0, damagePct: 0, cap: 0, hitMultiplier: 1, hitDamageMultiplier: 1, parts: [], contributions: [] };
     const add = (kind, label, value, unit, text) => {
       result.parts.push(text);
       result.contributions.push({ kind, key: `${kind}:${label}`, label, value, unit, text });
     };
+    const statLabel = current.type === "魔法" ? "法强" : "攻击力";
+    if (record.source === "专武") {
+      const fixed = current.type === "魔法" ? record.fixedInt : record.fixedAtk;
+      if (fixed) {
+        result.fixedStat += fixed;
+        add("fixed", `${statLabel}固定值`, fixed, "number", `专武${statLabel}固定值 +${fixed.toLocaleString("zh-CN")}`);
+      }
+    }
+    if (current.exclusiveWeapon) {
+      const weaponBoost = current.type === "魔法" ? effect.match(/法杖的INT[^+]*\+([\d.]+)%/) : effect.match(/(?:武器|剑|斧|枪|弓|爪|锤|刀)的(?:STR|攻击力)[^+]*\+([\d.]+)%/);
+      if (weaponBoost) {
+        const value = Number(weaponBoost[1]);
+        result.weaponStatPct += value;
+        add("weapon", `专武${statLabel}增幅`, value, "%", `专武${statLabel} ${percent(value)}`);
+      }
+    }
     const percentagePattern = /((?:(?:[火冰树雷光暗]、)*[火冰树雷光暗]属性)?(?:物理|魔法|超必杀技|特技)?伤害)\+([\d.]+)%/g;
     for (const match of effect.matchAll(percentagePattern)) {
       const prefix = effect.slice(Math.max(0, match.index - 8), match.index);
@@ -145,7 +170,6 @@
       if (!conditionsPass(clause, current)) continue;
       const value = Number(match[2]);
       result.statPct += value;
-      const statLabel = current.type === "魔法" ? "法强" : "攻击力";
       add("stat", statLabel, value, "%", `${statLabel} ${percent(value)}`);
     }
 
@@ -182,7 +206,7 @@
       if (part.unit !== "special") group.total += part.value;
       group.sources.push(`${item.source} · ${item.name}（${part.text}）`);
     }));
-    const order = { stat: 0, damage: 1, cap: 2, special: 3 };
+    const order = { stat: 0, fixed: 1, weapon: 2, damage: 3, cap: 4, special: 5 };
     return [...grouped.values()].sort((a, b) => order[a.kind] - order[b.kind] || a.label.localeCompare(b.label, "zh-CN")).map(group => {
       const total = group.unit === "%" ? percent(group.total) : group.unit === "number" ? `+${group.total.toLocaleString("zh-CN")}` : "特殊规则";
       return `<article class="damage-innate-item is-bonus-group"><b>${group.label}<em>${total}</em></b><span>${group.sources.join("；")}</span></article>`;
@@ -191,6 +215,9 @@
 
   const renderInnate = active => {
     const totalStat = active.reduce((sum, item) => sum + item.statPct, 0);
+    const totalFixed = active.reduce((sum, item) => sum + item.fixedStat, 0);
+    const weaponStatPct = active.reduce((sum, item) => sum + item.weaponStatPct, 0);
+    const effectiveFixed = totalFixed * (1 + weaponStatPct / 100);
     const totalDamage = active.reduce((sum, item) => sum + item.damagePct, 0);
     const totalCap = active.reduce((sum, item) => sum + item.cap, 0);
     $("damageInnateStat").textContent = percent(totalStat);
@@ -207,7 +234,7 @@
     if (current.bossSpecial) notes.push("当前攻击可由角色个性对BOSS触发特攻，特攻增幅已自动生效");
     if (innateSkills.some(item => /暴击率|暴击伤害|有概率将敌方MND减半/.test(item.effect))) notes.push("暴击与概率减防保留为后续独立区间，未混入固定增伤");
     $("damageInnateNote").textContent = notes.join("；") + (notes.length ? "。" : "");
-    return { totalStat, totalDamage, totalCap };
+    return { totalStat, totalFixed, weaponStatPct, effectiveFixed, totalDamage, totalCap };
   };
 
   const calculate = () => {
@@ -217,7 +244,7 @@
     const active = parsed.filter(item => item.parts.length);
     const totals = renderInnate(active);
     const baseStat = current.type === "魔法" ? number("damageCharacterInt") : number("damageCharacterAtk");
-    const effectiveStat = baseStat * (1 + totals.totalStat / 100);
+    const effectiveStat = baseStat * (1 + totals.totalStat / 100) + totals.effectiveFixed;
     const defense = current.type === "魔法" ? number("damageBossMnd") : number("damageBossDef");
     const baseCap = Math.max(1, number("damageCap"));
     const effectiveCap = baseCap + totals.totalCap;
@@ -241,7 +268,12 @@
     $("damageHitCount").textContent = `${hits}段全部命中`;
     $("damageCapState").textContent = rawMin >= effectiveCap ? "稳定触顶" : rawMax >= effectiveCap ? "部分触顶" : "未触顶";
     $("damageInnateActual").textContent = percent(actualIncrease);
-    $("damageFormula").textContent = `${current.type === "魔法" ? "法强" : "攻击力"} ${format(baseStat)} × 自带面板 ${percent(totals.totalStat)} = ${format(effectiveStat)}；直接增伤 ${percent(totals.totalDamage)}；有效单段上限 ${format(baseCap)} + ${format(totals.totalCap)} = ${format(effectiveCap)}`;
+    const statName = current.type === "魔法" ? "法强" : "攻击力";
+    $("damagePanelStatLabel").textContent = `当前输出面板 · ${statName}`;
+    $("damagePanelFinal").textContent = format(effectiveStat);
+    const fixedText = totals.totalFixed ? `${format(totals.totalFixed)} ×（1 + 专武属性增幅 ${percent(totals.weaponStatPct)}）= ${format(totals.effectiveFixed)}` : "0";
+    $("damagePanelFormula").textContent = `基础${statName} ${format(baseStat)} ×（1 + 技能加成 ${percent(totals.totalStat)}）+ 固定值 ${fixedText}`;
+    $("damageFormula").textContent = `计算后${statName} ${format(effectiveStat)}；直接增伤 ${percent(totals.totalDamage)}；有效单段上限 ${format(baseCap)} + ${format(totals.totalCap)} = ${format(effectiveCap)}`;
   };
 
   const open = () => {
