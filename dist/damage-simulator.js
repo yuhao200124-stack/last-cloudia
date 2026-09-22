@@ -23,6 +23,18 @@
   };
   let innateSkills = [];
   let bonusLayout = "skill";
+  let auditFilter = "all";
+  let latestAuditEntries = [];
+  const auditStorageKey = `lc-damage-audit-hidden:${document.body.dataset.characterId || "default"}`;
+  const auditHiddenKeys = new Set();
+  try {
+    const stored = JSON.parse(localStorage.getItem(auditStorageKey) || "[]");
+    if (Array.isArray(stored)) stored.forEach(key => auditHiddenKeys.add(String(key)));
+  } catch { /* Ignore malformed local audit data. */ }
+  const saveAuditHiddenKeys = () => localStorage.setItem(auditStorageKey, JSON.stringify([...auditHiddenKeys]));
+  const escapeHtml = value => String(value ?? "")
+    .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 
   const readPageStats = () => {
     const stats = [...document.querySelectorAll(".stat-box")];
@@ -134,6 +146,79 @@
     if (key === "weak_magic_damage") return current.type === "魔法" && current.weak;
     if (key === "ultimate_damage" || key === "ultimate_cap") return current.skill === "ultimate";
     return false;
+  };
+
+  const auditKeyFor = bonus => [bonus.key, bonus.source, bonus.value, bonus.condition].join("::");
+  const bonusAuditKind = bonus => {
+    if (["int_pct", "str_pct", "staff_int"].includes(bonus.key)) return "stat";
+    return bonus.key.endsWith("_cap") ? "cap" : "damage";
+  };
+  const bonusAuditGroup = bonus => ({
+    int_pct: "法强",
+    str_pct: "攻击力",
+    staff_int: "法杖法强属性",
+    ice_damage: "冰属性伤害",
+    ice_magic_damage: "冰属性魔法伤害",
+    magic_damage: "魔法伤害",
+    physical_damage: "物理伤害",
+    boss_magic_damage: "对Boss魔法伤害",
+    special_damage: "特攻伤害",
+    spell_link_damage: "同魔法连续伤害",
+    weak_magic_damage: "弱点魔法伤害",
+    ultimate_damage: "超必杀技伤害",
+    ice_cap: "冰属性伤害上限",
+    ice_magic_cap: "冰属性魔法上限",
+    magic_cap: "魔法伤害上限",
+    physical_cap: "物理伤害上限",
+    boss_ice_magic_cap: "对Boss冰魔法上限",
+    boss_magic_cap: "对Boss魔法上限",
+    special_cap: "特攻伤害上限",
+    ultimate_cap: "超必杀技伤害上限"
+  })[bonus.key] || bonus.label;
+  const auditGroupOrder = [
+    "法强", "攻击力", "法杖法强属性",
+    "冰属性伤害", "冰属性魔法伤害", "魔法伤害", "物理伤害", "对Boss魔法伤害", "特攻伤害", "同魔法连续伤害", "弱点魔法伤害", "超必杀技伤害",
+    "冰属性伤害上限", "冰属性魔法上限", "魔法伤害上限", "物理伤害上限", "对Boss冰魔法上限", "对Boss魔法上限", "特攻伤害上限", "超必杀技伤害上限"
+  ];
+
+  const renderAudit = () => {
+    const auditPanel = $("damageAuditPanel");
+    if (!auditPanel || auditPanel.hidden) return;
+    const entries = latestAuditEntries.filter(entry => auditFilter === "all" || entry.kind === auditFilter);
+    const groups = new Map();
+    entries.forEach(entry => {
+      if (!groups.has(entry.group)) groups.set(entry.group, []);
+      groups.get(entry.group).push(entry);
+    });
+    const sortedGroups = [...groups.entries()].sort((a, b) => {
+      const left = auditGroupOrder.indexOf(a[0]);
+      const right = auditGroupOrder.indexOf(b[0]);
+      return (left < 0 ? 999 : left) - (right < 0 ? 999 : right) || a[0].localeCompare(b[0], "zh-CN");
+    });
+    $("damageAuditList").innerHTML = sortedGroups.length ? sortedGroups.map(([group, items]) => {
+      const activeTotal = items.filter(item => !auditHiddenKeys.has(item.auditKey)).reduce((sum, item) => sum + Number(item.value || 0), 0);
+      const unit = items[0]?.unit === "%" ? "%" : "";
+      return `<section class="damage-audit-group"><header><h4>${escapeHtml(group)}</h4><strong>当前 +${activeTotal.toLocaleString("zh-CN")}${unit}</strong></header>${items.map(item => {
+        const removed = auditHiddenKeys.has(item.auditKey);
+        const shownValue = item.unit === "%" ? `+${item.value}%` : `+${Number(item.value).toLocaleString("zh-CN")}`;
+        return `<article class="damage-audit-item${removed ? " is-removed" : ""}"><div><b>${escapeHtml(item.source)}</b><small>${escapeHtml(item.condition || "常驻")}</small></div><span>${escapeHtml(item.label)}</span><strong>${shownValue}</strong><button type="button" data-audit-key="${escapeHtml(item.auditKey)}">${removed ? "恢复" : "删除"}</button></article>`;
+      }).join("")}</section>`;
+    }).join("") : '<p class="damage-audit-empty">当前攻击条件下没有这一类加成。</p>';
+    const removedCount = entries.filter(entry => auditHiddenKeys.has(entry.auditKey)).length;
+    $("damageAuditNote").textContent = `按同类加成分组，共 ${entries.length} 项；已删除 ${removedCount} 项。删除后会立即重新计算。`;
+    $("damageAuditRestoreAll").disabled = auditHiddenKeys.size === 0;
+  };
+
+  const openAudit = (kind = "all") => {
+    auditFilter = kind;
+    $("damageAuditPanel").hidden = false;
+    $("damageAuditBackdrop").hidden = false;
+    $("damageAuditPanel").querySelectorAll("[data-audit-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.auditFilter === auditFilter)));
+    renderAudit();
+  };
+  const closeAudit = () => {
+    $("damageAuditPanel").hidden = true;
+    $("damageAuditBackdrop").hidden = true;
   };
 
   const parseBaseBonus = (bonus, current) => {
@@ -331,7 +416,14 @@
     const skill = current.isMagicMode ? selectedMagic : (presets[current.skill] || presets.skill1);
     $("damageMagicField").hidden = !current.isMagicMode;
     const importedBonuses = window.LC_BASE_CALCULATOR?.getVisibleBonuses?.() || [];
-    const parsed = importedBonuses.map(item => parseBaseBonus(item, current));
+    latestAuditEntries = importedBonuses.filter(item => baseBonusApplies(item, current)).map(item => ({
+      ...item,
+      auditKey: auditKeyFor(item),
+      kind: bonusAuditKind(item),
+      group: bonusAuditGroup(item)
+    }));
+    const activeImportedBonuses = importedBonuses.filter(item => !auditHiddenKeys.has(auditKeyFor(item)));
+    const parsed = activeImportedBonuses.map(item => parseBaseBonus(item, current));
     parsed.push(parseExclusiveWeaponFixedStat(current), parseHitRule(current));
     const active = parsed.filter(item => item.parts.length);
     const totals = renderInnate(active);
@@ -378,6 +470,7 @@
       ? `${skill.name}单段倍率 ${(skill.ratio * 100).toFixed(2)}%`
       : `${skill.name}基础单段倍率 ${(skill.ratio * 100).toFixed(2)}% × 特殊修正 ${(hitDamageMultiplier * 100).toFixed(0)}% = ${(effectiveRatio * 100).toFixed(2)}%`;
     $("damageFormula").textContent = `${ratioText}；计算后${statName} ${format(effectiveStat)}；直接增伤 ${percent(totals.totalDamage)}；有效单段上限 ${format(baseCap)} + ${format(totals.totalCap)} = ${format(effectiveCap)}`;
+    renderAudit();
   };
 
   const open = () => {
@@ -389,6 +482,7 @@
     calculate();
   };
   const close = () => {
+    closeAudit();
     panel.hidden = true;
     backdrop.hidden = true;
     document.body.style.overflow = "";
@@ -397,7 +491,37 @@
   openButton.addEventListener("click", open);
   closeButton.addEventListener("click", close);
   backdrop.addEventListener("click", close);
-  document.addEventListener("keydown", event => { if (event.key === "Escape" && !panel.hidden) close(); });
+  $("damageAuditOpen").addEventListener("click", () => openAudit("all"));
+  $("damageAuditClose").addEventListener("click", closeAudit);
+  $("damageAuditBackdrop").addEventListener("click", closeAudit);
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape" || panel.hidden) return;
+    if (!$("damageAuditPanel").hidden) closeAudit();
+    else close();
+  });
+  panel.querySelectorAll("[data-damage-audit-kind]").forEach(card => {
+    card.addEventListener("dblclick", () => openAudit(card.dataset.damageAuditKind));
+    card.addEventListener("keydown", event => { if (event.key === "Enter") openAudit(card.dataset.damageAuditKind); });
+  });
+  $("damageAuditPanel").querySelectorAll("[data-audit-filter]").forEach(button => button.addEventListener("click", () => {
+    auditFilter = button.dataset.auditFilter;
+    $("damageAuditPanel").querySelectorAll("[data-audit-filter]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+    renderAudit();
+  }));
+  $("damageAuditList").addEventListener("click", event => {
+    const button = event.target.closest("[data-audit-key]");
+    if (!button) return;
+    const key = button.dataset.auditKey;
+    if (auditHiddenKeys.has(key)) auditHiddenKeys.delete(key);
+    else auditHiddenKeys.add(key);
+    saveAuditHiddenKeys();
+    calculate();
+  });
+  $("damageAuditRestoreAll").addEventListener("click", () => {
+    auditHiddenKeys.clear();
+    saveAuditHiddenKeys();
+    calculate();
+  });
   panel.addEventListener("input", calculate);
   panel.addEventListener("change", event => {
     if (event.target.id === "damageSkill" && ["magic", "heavy_magic"].includes(event.target.value)) $("damageType").value = "魔法";

@@ -307,16 +307,19 @@
         <section class="damage-card damage-innate-card">
           <div class="damage-card-title"><span>04</span><h3>基础计算器导入加成</h3></div>
           <div class="damage-innate-summary">
-            <article><span>面板属性</span><b id="damageInnateStat">+0%</b></article>
-            <article><span>直接增伤</span><b id="damageInnateBonus">+0%</b></article>
-            <article><span>伤害上限</span><b id="damageInnateCap">+0</b></article>
+            <article class="is-auditable" data-damage-audit-kind="stat" tabindex="0" title="双击核查来源"><span>面板属性</span><b id="damageInnateStat">+0%</b><small>双击核查</small></article>
+            <article class="is-auditable" data-damage-audit-kind="damage" tabindex="0" title="双击核查来源"><span>直接增伤</span><b id="damageInnateBonus">+0%</b><small>双击核查</small></article>
+            <article class="is-auditable" data-damage-audit-kind="cap" tabindex="0" title="双击核查来源"><span>伤害上限</span><b id="damageInnateCap">+0</b><small>双击核查</small></article>
             <article class="is-primary"><span>本次实际提升</span><b id="damageInnateActual">+0%</b></article>
           </div>
           <div class="damage-display-tools">
             <label class="damage-weapon-toggle"><input id="damageUseExclusiveWeapon" type="checkbox" />装备专武</label>
-            <div class="damage-layout-switch" role="group" aria-label="加成排列方式">
-              <button type="button" data-damage-layout="skill" aria-pressed="true">按技能排列</button>
-              <button type="button" data-damage-layout="bonus" aria-pressed="false">按相同加成</button>
+            <div class="damage-display-actions">
+              <button id="damageAuditOpen" class="damage-audit-open" type="button">核查明细</button>
+              <div class="damage-layout-switch" role="group" aria-label="加成排列方式">
+                <button type="button" data-damage-layout="skill" aria-pressed="true">按技能排列</button>
+                <button type="button" data-damage-layout="bonus" aria-pressed="false">按相同加成</button>
+              </div>
             </div>
           </div>
           <div class="damage-innate-list-head"><b id="damageInnateListTitle">按技能排列</b><span id="damageInnateCount">0项</span></div>
@@ -335,6 +338,19 @@
           <p class="damage-result-note">配装判断只看单段伤害：单段最低也达到上限后，才推荐提高伤害上限。技能段数、实际命中数和整套伤害不参与推荐；暴击、贯导等概率效果暂不折算为固定伤害。</p>
         </section>
       </div>
+      <div id="damageAuditBackdrop" class="damage-audit-backdrop" hidden></div>
+      <section id="damageAuditPanel" class="damage-audit-panel" hidden role="dialog" aria-modal="true" aria-labelledby="damageAuditTitle">
+        <header><div><small>逐项人工核查</small><h3 id="damageAuditTitle">加成来源明细</h3></div><button id="damageAuditClose" type="button" aria-label="关闭核查明细">×</button></header>
+        <div class="damage-audit-filters" role="group" aria-label="核查加成类型">
+          <button type="button" data-audit-filter="all" aria-pressed="true">全部</button>
+          <button type="button" data-audit-filter="stat" aria-pressed="false">面板属性</button>
+          <button type="button" data-audit-filter="damage" aria-pressed="false">直接增伤</button>
+          <button type="button" data-audit-filter="cap" aria-pressed="false">伤害上限</button>
+        </div>
+        <p id="damageAuditNote" class="damage-audit-note"></p>
+        <div id="damageAuditList" class="damage-audit-list"></div>
+        <footer><button id="damageAuditRestoreAll" type="button">恢复全部已删除项目</button><span>单项删除只影响伤害计算器，并会保存在当前浏览器。</span></footer>
+      </section>
     </aside>
     <script src="./data.js"></script>
     <script src="./character-calculator.js"></script>
