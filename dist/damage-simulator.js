@@ -27,11 +27,16 @@
   let auditFilter = "all";
   let latestAuditEntries = [];
   const auditStorageKey = `lc-damage-audit-hidden:${document.body.dataset.characterId || "default"}`;
+  const blessingStorageKey = `lc-damage-blessing-int:${document.body.dataset.characterId || "default"}`;
   const auditHiddenKeys = new Set();
   try {
     const stored = JSON.parse(localStorage.getItem(auditStorageKey) || "[]");
     if (Array.isArray(stored)) stored.forEach(key => auditHiddenKeys.add(String(key)));
   } catch { /* Ignore malformed local audit data. */ }
+  try {
+    const storedBlessing = localStorage.getItem(blessingStorageKey);
+    if (storedBlessing !== null && Number.isFinite(Number(storedBlessing))) $("damageBlessingInt").value = storedBlessing;
+  } catch { /* Ignore unavailable local storage. */ }
   const saveAuditHiddenKeys = () => localStorage.setItem(auditStorageKey, JSON.stringify([...auditHiddenKeys]));
   const escapeHtml = value => String(value ?? "")
     .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
@@ -254,6 +259,16 @@
     return result;
   };
 
+  const parseBlessingBonus = current => {
+    const result = emptyParsedBonus({ group: "加护", source: "加护法强" });
+    if (current.type !== "魔法") return result;
+    const value = Math.max(0, number("damageBlessingInt"));
+    if (!value) return result;
+    result.statPct = value;
+    addParsedContribution(result, "stat", "法强", value, "%", `加护法强 ${percent(value)}`);
+    return result;
+  };
+
   const parseExclusiveEquipmentFixedStats = current => innateSkills.filter(item => item.source === "专武").map(equipment => {
     const result = emptyParsedBonus({ group: "专属装备", source: equipment.name });
     if (!current.exclusiveWeapon) return result;
@@ -443,7 +458,7 @@
     }));
     const activeImportedBonuses = importedBonuses.filter(item => !auditHiddenKeys.has(auditKeyFor(item)));
     const parsed = activeImportedBonuses.map(item => parseBaseBonus(item, current));
-    parsed.push(...parseExclusiveEquipmentFixedStats(current), parseHitRule(current));
+    parsed.push(...parseExclusiveEquipmentFixedStats(current), parseBlessingBonus(current), parseHitRule(current));
     const active = parsed.filter(item => item.parts.length);
     const totals = renderInnate(active);
     const baseStat = current.type === "魔法" ? number("damageCharacterInt") : number("damageCharacterAtk");
@@ -551,6 +566,9 @@
     calculate();
   });
   panel.addEventListener("input", calculate);
+  $("damageBlessingInt").addEventListener("input", () => {
+    try { localStorage.setItem(blessingStorageKey, $("damageBlessingInt").value); } catch { /* Ignore unavailable local storage. */ }
+  });
   panel.addEventListener("change", event => {
     if (event.target.id === "damageSkill" && ["magic", "heavy_magic"].includes(event.target.value)) $("damageType").value = "魔法";
     calculate();
