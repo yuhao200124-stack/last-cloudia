@@ -7,6 +7,7 @@
     ["mp_pct", "MP", 20, "%", "MP提升极", "common", "常驻"],
     ["int_pct", "法强", 15, "%", "魔导提升极", "exclusive", "常驻"],
     ["int_pct", "法强", 15, "%", "魔常提升极", "exclusive", "常驻"],
+    ["int_pct", "法强", 50, "%", "超规格的魔术师", "exclusive", "常驻EX灵气"],
     ["int_pct", "法强", 30, "%", "月光II", "exclusive", "HP全满时"],
     ["int_pct", "法强", 20, "%", "魔术共鸣", "exclusive", "常驻"],
     ["int_pct", "法强", 15, "%", "洛琪希之杖", "equipment", "装备专属法杖"],
@@ -32,7 +33,7 @@
     ["boss_magic_damage", "对BOSS魔法伤害", 20, "%", "巨型净化III", "common", "攻击BOSS时"],
     ["spell_link_damage", "同魔法连续伤害", 20, "%", "法术联结", "common", "连续使用相同攻击魔法达到最大层数"],
     ["weak_magic_damage", "弱点魔法伤害", 30, "%", "超越·魔法弱点增幅", "transcend", "魔法命中弱点属性时"],
-    ["ultimate_damage", "超必杀技伤害", 100, "%", "规格外的魔术师", "exclusive", "常驻"],
+    ["ultimate_damage", "超必杀技伤害", 100, "%", "超规格的魔术师", "exclusive", "常驻"],
     ["ultimate_damage", "超必杀技伤害", 50, "%", "超越·超必杀技增幅II", "transcend", "常驻"],
     ["ice_cap", "冰属性伤害上限", 60000, "", "水王级魔术师", "traits", "仅装备1件武器"],
     ["ice_cap", "冰属性伤害上限", 20000, "", "指导者", "traits", "BOSS Wave中，作用于我方全体"],
@@ -55,7 +56,7 @@
     ["special_cap", "特攻伤害上限", 5000, "", "洛琪希之杖", "equipment", "触发特攻时"],
     ["special_cap", "特攻伤害上限", 20000, "", "超越·特攻界限突破", "transcend", "仅装备1件武器或未装备武器时的最大值"],
     ["physical_cap", "物理伤害上限", 5000, "", "洛琪希的衣服", "equipment", "自身存活时，作用于我方全体"],
-    ["ultimate_cap", "超必杀技伤害上限", 200000, "", "规格外的魔术师", "exclusive", "常驻"],
+    ["ultimate_cap", "超必杀技伤害上限", 200000, "", "超规格的魔术师", "exclusive", "常驻"],
     ["ultimate_cap", "超必杀技伤害上限", 10000, "", "超越·超必杀技增幅II", "transcend", "常驻"],
     ["damage_reduction", "受到伤害减少", 10, "%", "长袍究极增幅", "exclusive", "装备长袍"],
     ["damage_reduction", "受到伤害减少", 20, "%", "超越·受到伤害减轻", "transcend", "常驻"],
@@ -686,7 +687,7 @@
       { id: "roxy_clothes_boss_ice", capType: "boss_ice_magic", label: "洛琪希的衣服：对BOSS冰魔法", value: 5000, requires: ["boss", "ice", "magic"], target: "洛琪希的衣服", condition: "对BOSS的冰属性魔法伤害上限+5,000" },
       { id: "roxy_clothes_party", capType: "magic", label: "洛琪希的衣服：全体魔法上限", value: 5000, requires: ["magic"], target: "洛琪希的衣服", condition: "自身存活时，我方全体魔法伤害上限+5,000" },
       { id: "roxy_clothes_physical", capType: "physical", label: "洛琪希的衣服：全体物理上限", value: 5000, requires: [], target: "洛琪希的衣服", condition: "自身存活时，我方全体物理伤害上限+5,000" },
-      { id: "unusual_magician", capType: "ultimate", label: "规格外的魔术师", value: 200000, requires: [], target: "规格外的魔术师", condition: "超必杀技伤害上限+200,000" },
+      { id: "unusual_magician", capType: "ultimate", label: "超规格的魔术师", value: 200000, requires: [], target: "超规格的魔术师", condition: "超必杀技伤害上限+200,000" },
       { id: "transcend_ultimate", capType: "ultimate", label: "【超越】超必杀技增幅II", value: 10000, requires: [], target: "超越·超必杀技增幅II", condition: "超必杀技伤害上限+10,000" }
     ]
     }
