@@ -8,6 +8,7 @@
   const $ = id => document.getElementById(id);
   const number = id => Number($(id)?.value) || 0;
   const format = value => Math.max(0, Math.round(value)).toLocaleString("zh-CN");
+  const formatPrecise = value => Number(Number(value).toFixed(2)).toLocaleString("zh-CN");
   const percent = value => `${value >= 0 ? "+" : ""}${Number(value.toFixed(1))}%`;
   const presets = {
     skill1: { name: "特技1", ratio: .368 },
@@ -73,13 +74,14 @@
       const type = entries.find(item => item.textContent.trim() === "类型")?.nextElementSibling?.textContent.trim() || "";
       const stats = entries.find(item => item.textContent.trim() === "最高属性")?.nextElementSibling?.textContent.trim() || "";
       const effect = entries.find(item => item.textContent.trim() === "最高效果")?.nextElementSibling?.textContent.trim() || "";
-      if (!/[剑斧枪弓杖爪锤刀机器]/.test(type) || !effect) return;
+      if (!effect) return;
       const atk = stats.match(/(?:STR|攻击力)\+([\d,]+)/);
       const int = stats.match(/(?:INT|法强)\+([\d,]+)/);
       records.push({
         source: "专武",
         name: card.querySelector("h4")?.textContent.trim() || "专属武器",
         effect,
+        equipmentType: type,
         fixedAtk: atk ? Number(atk[1].replaceAll(",", "")) : 0,
         fixedInt: int ? Number(int[1].replaceAll(",", "")) : 0
       });
@@ -115,7 +117,11 @@
     effect: record.condition || "",
     statPct: 0,
     fixedStat: 0,
-    weaponStatPct: 0,
+    staffFixed: 0,
+    robeFixed: 0,
+    otherFixed: 0,
+    staffStatPct: 0,
+    robeStatPct: 0,
     damagePct: 0,
     cap: 0,
     hitMultiplier: 1,
@@ -131,10 +137,11 @@
 
   const baseBonusApplies = (bonus, current) => {
     const key = bonus.key;
-    if (bonus.source === "洛琪希之杖" && !current.exclusiveWeapon) return false;
+    if (bonus.group === "equipment" && !current.exclusiveWeapon) return false;
     if (key === "int_pct") return current.type === "魔法";
     if (key === "str_pct") return current.type === "物理";
     if (key === "staff_int") return current.type === "魔法" && current.exclusiveWeapon;
+    if (key === "robe_int") return current.type === "魔法" && current.exclusiveWeapon;
     if (key === "ice_damage" || key === "ice_cap") return current.element === "冰";
     if (key === "ice_magic_damage" || key === "ice_magic_cap") return current.type === "魔法" && current.element === "冰";
     if (key === "magic_damage" || key === "magic_cap") return current.type === "魔法";
@@ -150,13 +157,14 @@
 
   const auditKeyFor = bonus => [bonus.key, bonus.source, bonus.value, bonus.condition].join("::");
   const bonusAuditKind = bonus => {
-    if (["int_pct", "str_pct", "staff_int"].includes(bonus.key)) return "stat";
+    if (["int_pct", "str_pct", "staff_int", "robe_int"].includes(bonus.key)) return "stat";
     return bonus.key.endsWith("_cap") ? "cap" : "damage";
   };
   const bonusAuditGroup = bonus => ({
     int_pct: "法强",
     str_pct: "攻击力",
     staff_int: "法杖法强属性",
+    robe_int: "长袍法强属性",
     ice_damage: "冰属性伤害",
     ice_magic_damage: "冰属性魔法伤害",
     magic_damage: "魔法伤害",
@@ -176,7 +184,7 @@
     ultimate_cap: "超必杀技伤害上限"
   })[bonus.key] || bonus.label;
   const auditGroupOrder = [
-    "法强", "攻击力", "法杖法强属性",
+    "法强", "攻击力", "法杖法强属性", "长袍法强属性",
     "冰属性伤害", "冰属性魔法伤害", "魔法伤害", "物理伤害", "对Boss魔法伤害", "特攻伤害", "同魔法连续伤害", "弱点魔法伤害", "超必杀技伤害",
     "冰属性伤害上限", "冰属性魔法上限", "魔法伤害上限", "物理伤害上限", "对Boss冰魔法上限", "对Boss魔法上限", "特攻伤害上限", "超必杀技伤害上限"
   ];
@@ -231,8 +239,11 @@
       result.statPct += value;
       addParsedContribution(result, "stat", statLabel, value, "%", text);
     } else if (bonus.key === "staff_int") {
-      result.weaponStatPct += value;
-      addParsedContribution(result, "weapon", "专武法强增幅", value, "%", text);
+      result.staffStatPct += value;
+      addParsedContribution(result, "weapon", "法杖法强属性增幅", value, "%", text);
+    } else if (bonus.key === "robe_int") {
+      result.robeStatPct += value;
+      addParsedContribution(result, "weapon", "长袍法强属性增幅", value, "%", text);
     } else if (bonus.key.endsWith("_cap")) {
       result.cap += value;
       addParsedContribution(result, "cap", bonus.label, value, "number", text);
@@ -243,18 +254,19 @@
     return result;
   };
 
-  const parseExclusiveWeaponFixedStat = current => {
-    const weapon = innateSkills.find(item => item.source === "专武");
-    const result = emptyParsedBonus({ group: "专武", source: weapon?.name || "专属武器" });
-    if (!weapon || !current.exclusiveWeapon) return result;
+  const parseExclusiveEquipmentFixedStats = current => innateSkills.filter(item => item.source === "专武").map(equipment => {
+    const result = emptyParsedBonus({ group: "专属装备", source: equipment.name });
+    if (!current.exclusiveWeapon) return result;
     const statLabel = current.type === "魔法" ? "法强" : "攻击力";
-    const fixed = current.type === "魔法" ? weapon.fixedInt : weapon.fixedAtk;
-    if (fixed) {
-      result.fixedStat = fixed;
-      addParsedContribution(result, "fixed", `${statLabel}固定值`, fixed, "number", `专武${statLabel}固定值 +${fixed.toLocaleString("zh-CN")}`);
-    }
+    const fixed = current.type === "魔法" ? equipment.fixedInt : equipment.fixedAtk;
+    if (!fixed) return result;
+    if (/法杖/.test(equipment.equipmentType)) result.staffFixed = fixed;
+    else if (/长袍/.test(equipment.equipmentType)) result.robeFixed = fixed;
+    else result.otherFixed = fixed;
+    result.fixedStat = fixed;
+    addParsedContribution(result, "fixed", `${equipment.equipmentType}${statLabel}`, fixed, "number", `${equipment.name}${statLabel} +${fixed.toLocaleString("zh-CN")}`);
     return result;
-  };
+  });
 
   const parseHitRule = current => {
     const result = emptyParsedBonus({ group: "个性", source: "水王级魔术师" });
@@ -291,7 +303,7 @@
 
   const parseSkill = (record, current) => {
     const effect = record.effect;
-    const result = { ...record, statPct: 0, fixedStat: 0, weaponStatPct: 0, damagePct: 0, cap: 0, hitMultiplier: 1, hitDamageMultiplier: 1, parts: [], contributions: [] };
+    const result = emptyParsedBonus(record);
     const add = (kind, label, value, unit, text) => {
       result.parts.push(text);
       result.contributions.push({ kind, key: `${kind}:${label}`, label, value, unit, text });
@@ -301,6 +313,9 @@
       const fixed = current.type === "魔法" ? record.fixedInt : record.fixedAtk;
       if (fixed) {
         result.fixedStat += fixed;
+        if (/法杖/.test(record.equipmentType)) result.staffFixed += fixed;
+        else if (/长袍/.test(record.equipmentType)) result.robeFixed += fixed;
+        else result.otherFixed += fixed;
         add("fixed", `${statLabel}固定值`, fixed, "number", `专武${statLabel}固定值 +${fixed.toLocaleString("zh-CN")}`);
       }
     }
@@ -308,7 +323,7 @@
       const weaponBoost = current.type === "魔法" ? effect.match(/法杖的INT[^+]*\+([\d.]+)%/) : effect.match(/(?:武器|剑|斧|枪|弓|爪|锤|刀)的(?:STR|攻击力)[^+]*\+([\d.]+)%/);
       if (weaponBoost) {
         const value = Number(weaponBoost[1]);
-        result.weaponStatPct += value;
+        result.staffStatPct += value;
         add("weapon", `专武${statLabel}增幅`, value, "%", `专武${statLabel} ${percent(value)}`);
       }
     }
@@ -389,8 +404,12 @@
   const renderInnate = active => {
     const totalStat = active.reduce((sum, item) => sum + item.statPct, 0);
     const totalFixed = active.reduce((sum, item) => sum + item.fixedStat, 0);
-    const weaponStatPct = active.reduce((sum, item) => sum + item.weaponStatPct, 0);
-    const effectiveFixed = totalFixed * (1 + weaponStatPct / 100);
+    const staffFixed = active.reduce((sum, item) => sum + item.staffFixed, 0);
+    const robeFixed = active.reduce((sum, item) => sum + item.robeFixed, 0);
+    const otherFixed = active.reduce((sum, item) => sum + item.otherFixed, 0);
+    const staffStatPct = active.reduce((sum, item) => sum + item.staffStatPct, 0);
+    const robeStatPct = active.reduce((sum, item) => sum + item.robeStatPct, 0);
+    const effectiveFixed = staffFixed * (1 + staffStatPct / 100) + robeFixed * (1 + robeStatPct / 100) + otherFixed;
     const totalDamage = active.reduce((sum, item) => sum + item.damagePct, 0);
     const totalCap = active.reduce((sum, item) => sum + item.cap, 0);
     $("damageInnateStat").textContent = percent(totalStat);
@@ -403,11 +422,11 @@
     const current = state();
     const notes = [];
     notes.push("数值直接读取基础计算器当前保留项目");
-    if (current.exclusiveWeapon) notes.push("已计入专武的输出效果");
+    if (current.exclusiveWeapon) notes.push("已计入两件专属装备及法杖、长袍属性增幅");
     if (current.bossSpecial) notes.push(`已按${current.bossRace}系Boss触发特攻，特攻增伤与特攻上限已生效`);
     if (innateSkills.some(item => /暴击率|暴击伤害|有概率将敌方MND减半/.test(item.effect))) notes.push("暴击与概率减防保留为后续独立区间，未混入固定增伤");
     $("damageInnateNote").textContent = notes.join("；") + (notes.length ? "。" : "");
-    return { totalStat, totalFixed, weaponStatPct, effectiveFixed, totalDamage, totalCap };
+    return { totalStat, totalFixed, staffFixed, robeFixed, otherFixed, staffStatPct, robeStatPct, effectiveFixed, totalDamage, totalCap };
   };
 
   const calculate = () => {
@@ -424,11 +443,12 @@
     }));
     const activeImportedBonuses = importedBonuses.filter(item => !auditHiddenKeys.has(auditKeyFor(item)));
     const parsed = activeImportedBonuses.map(item => parseBaseBonus(item, current));
-    parsed.push(parseExclusiveWeaponFixedStat(current), parseHitRule(current));
+    parsed.push(...parseExclusiveEquipmentFixedStats(current), parseHitRule(current));
     const active = parsed.filter(item => item.parts.length);
     const totals = renderInnate(active);
     const baseStat = current.type === "魔法" ? number("damageCharacterInt") : number("damageCharacterAtk");
-    const effectiveStat = baseStat * (1 + totals.totalStat / 100) + totals.effectiveFixed;
+    const rawEffectiveStat = (baseStat + totals.effectiveFixed) * (1 + totals.totalStat / 100);
+    const effectiveStat = Math.floor(rawEffectiveStat);
     const defense = current.type === "魔法" ? number("damageBossMnd") : number("damageBossDef");
     const baseCap = Math.max(1, number("damageCap"));
     const effectiveCap = baseCap + totals.totalCap;
@@ -463,8 +483,12 @@
     $("damageInnateActual").textContent = percent(actualIncrease);
     $("damagePanelStatLabel").textContent = `当前输出面板 · ${statName}`;
     $("damagePanelFinal").textContent = format(effectiveStat);
-    const fixedText = totals.totalFixed ? `${format(totals.totalFixed)} ×（1 + 专武属性增幅 ${percent(totals.weaponStatPct)}）= ${format(totals.effectiveFixed)}` : "0";
-    $("damagePanelFormula").textContent = `基础${statName} ${format(baseStat)} ×（1 + 技能加成 ${percent(totals.totalStat)}）+ 固定值 ${fixedText}`;
+    const equipmentParts = [];
+    if (totals.staffFixed) equipmentParts.push(`法杖 ${format(totals.staffFixed)}×（1+${formatPrecise(totals.staffStatPct)}%）=${formatPrecise(totals.staffFixed * (1 + totals.staffStatPct / 100))}`);
+    if (totals.robeFixed) equipmentParts.push(`长袍 ${format(totals.robeFixed)}×（1+${formatPrecise(totals.robeStatPct)}%）=${formatPrecise(totals.robeFixed * (1 + totals.robeStatPct / 100))}`);
+    if (totals.otherFixed) equipmentParts.push(`其他装备 ${format(totals.otherFixed)}`);
+    const equipmentText = equipmentParts.length ? equipmentParts.join("；") : "装备属性 0";
+    $("damagePanelFormula").textContent = `（基础${statName} ${format(baseStat)} + ${equipmentText}）×（1 + ${statName}加成 ${percent(totals.totalStat)}）=${format(effectiveStat)}（向下取整）`;
     const effectiveRatio = skill.ratio * hitDamageMultiplier;
     const ratioText = hitDamageMultiplier === 1
       ? `${skill.name}单段倍率 ${(skill.ratio * 100).toFixed(2)}%`
