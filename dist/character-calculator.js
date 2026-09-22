@@ -5,6 +5,7 @@
     ["mp_pct", "MP", 15, "%", "魔常提升极", "exclusive", "常驻"],
     ["mp_pct", "MP", 20, "%", "魔术共鸣", "exclusive", "常驻"],
     ["mp_pct", "MP", 20, "%", "MP提升极", "common", "常驻"],
+    ["int_pct", "法强", 3, "%", "加护", "blessing", "常驻"],
     ["int_pct", "法强", 15, "%", "魔导提升极", "exclusive", "常驻"],
     ["int_pct", "法强", 15, "%", "魔常提升极", "exclusive", "常驻"],
     ["int_pct", "法强", 30, "%", "月光II", "exclusive", "HP全满时"],
