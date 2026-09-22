@@ -309,7 +309,7 @@
           <div class="damage-card-title"><span>04</span><h3>基础计算器导入加成</h3></div>
           <div class="damage-innate-summary">
             <article class="is-auditable" data-damage-audit-kind="stat" tabindex="0" title="双击核查来源"><span>面板属性</span><b id="damageInnateStat">+0%</b><small>双击核查</small></article>
-            <article class="is-auditable" data-damage-audit-kind="damage" tabindex="0" title="双击核查来源"><span>直接增伤</span><b id="damageInnateBonus">+0%</b><small>双击核查</small></article>
+            <article class="is-auditable" data-damage-audit-kind="damage" tabindex="0" title="双击核查来源"><span>增伤乘区</span><b id="damageInnateBonus">×1.000</b><small>双击核查</small></article>
             <article class="is-auditable" data-damage-audit-kind="cap" tabindex="0" title="双击核查来源"><span>伤害上限</span><b id="damageInnateCap">+0</b><small>双击核查</small></article>
             <article class="is-primary"><span>本次实际提升</span><b id="damageInnateActual">+0%</b></article>
           </div>
@@ -332,7 +332,7 @@
           <p id="damageInnateNote" class="damage-innate-note">与基础计算器当前保留的项目同步。</p>
         </section>
         <section class="damage-results" aria-live="polite">
-          <div class="damage-results-head"><div><span>05</span><h3>当前伤害</h3></div><strong id="damageCapState">未触顶</strong></div>
+          <div class="damage-results-head"><div><span>05</span><h3>当前伤害估算</h3></div><strong id="damageCapState">未触顶</strong></div>
           <div class="damage-result-grid">
             <article><span>单段最低</span><b id="damageHitMin">0</b></article>
             <article class="is-primary"><span>单段平均</span><b id="damageHitAvg">0</b></article>
@@ -340,7 +340,7 @@
             <article><span>距离稳定触顶</span><b id="damageCapGap">0</b><small id="damageRecommendation">继续提高输出</small></article>
           </div>
           <div class="damage-cap-control"><label>基础单段伤害上限<input id="damageCap" type="number" min="1" value="9999" /></label><p id="damageFormula"></p></div>
-          <p class="damage-result-note">配装判断只看单段伤害：单段最低也达到上限后，才推荐提高伤害上限。技能段数、实际命中数和整套伤害不参与推荐；暴击、贯导等概率效果暂不折算为固定伤害。</p>
+          <p class="damage-result-note">已按实测规则采用“同类增伤相加、不同增伤类别相乘”。基础伤害、魔抗与属性抗性的换算仍待继续校准，因此当前数值仅用于比较配装变化，不作为最终实伤。技能段数、实际命中数和整套伤害不参与推荐；暴击、贯导等概率效果暂不折算为固定伤害。</p>
         </section>
       </div>
       <div id="damageAuditBackdrop" class="damage-audit-backdrop" hidden></div>

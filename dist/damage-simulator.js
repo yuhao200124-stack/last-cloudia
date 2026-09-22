@@ -424,11 +424,23 @@
     const otherFixed = active.reduce((sum, item) => sum + item.otherFixed, 0);
     const staffStatPct = active.reduce((sum, item) => sum + item.staffStatPct, 0);
     const robeStatPct = active.reduce((sum, item) => sum + item.robeStatPct, 0);
-    const effectiveFixed = staffFixed * (1 + staffStatPct / 100) + robeFixed * (1 + robeStatPct / 100) + otherFixed;
+    // 游戏面板会先分别结算法杖、长袍的属性增幅，再进入角色百分比加成。
+    // 例如长袍 229 × 150% = 343.5，会先四舍五入为 344。
+    const effectiveStaffFixed = Math.round(staffFixed * (1 + staffStatPct / 100));
+    const effectiveRobeFixed = Math.round(robeFixed * (1 + robeStatPct / 100));
+    const effectiveFixed = effectiveStaffFixed + effectiveRobeFixed + otherFixed;
     const totalDamage = active.reduce((sum, item) => sum + item.damagePct, 0);
+    const damageGroupMap = new Map();
+    active.forEach(item => item.contributions.forEach(part => {
+      if (part.kind !== "damage" || part.unit !== "%") return;
+      const group = String(part.label || "通用伤害").trim();
+      damageGroupMap.set(group, (damageGroupMap.get(group) || 0) + Number(part.value || 0));
+    }));
+    const damageGroups = [...damageGroupMap.entries()].map(([label, value]) => ({ label, value }));
+    const groupedDamageMultiplier = damageGroups.reduce((multiplier, group) => multiplier * (1 + group.value / 100), 1);
     const totalCap = active.reduce((sum, item) => sum + item.cap, 0);
     $("damageInnateStat").textContent = percent(totalStat);
-    $("damageInnateBonus").textContent = percent(totalDamage);
+    $("damageInnateBonus").textContent = `×${groupedDamageMultiplier.toFixed(3)}`;
     $("damageInnateCap").textContent = `+${totalCap.toLocaleString("zh-CN")}`;
     const groupCount = new Set(active.flatMap(item => item.contributions.map(part => part.key))).size;
     $("damageInnateListTitle").textContent = bonusLayout === "skill" ? "按技能排列" : "按相同加成排列";
@@ -441,7 +453,11 @@
     if (current.bossSpecial) notes.push(`已按${current.bossRace}系Boss触发特攻，特攻增伤与特攻上限已生效`);
     if (innateSkills.some(item => /暴击率|暴击伤害|有概率将敌方MND减半/.test(item.effect))) notes.push("暴击与概率减防保留为后续独立区间，未混入固定增伤");
     $("damageInnateNote").textContent = notes.join("；") + (notes.length ? "。" : "");
-    return { totalStat, totalFixed, staffFixed, robeFixed, otherFixed, staffStatPct, robeStatPct, effectiveFixed, totalDamage, totalCap };
+    return {
+      totalStat, totalFixed, staffFixed, robeFixed, otherFixed,
+      staffStatPct, robeStatPct, effectiveStaffFixed, effectiveRobeFixed, effectiveFixed,
+      totalDamage, damageGroups, groupedDamageMultiplier, totalCap
+    };
   };
 
   const calculate = () => {
@@ -469,7 +485,10 @@
     const effectiveCap = baseCap + totals.totalCap;
     const hitDamageMultiplier = active.reduce((value, item) => value * item.hitDamageMultiplier, 1);
     const base = effectiveStat * effectiveStat / Math.max(1, effectiveStat + defense) * skill.ratio;
-    const damageMultiplier = (1 + totals.totalDamage / 100) * hitDamageMultiplier;
+    // 实测确认：相同类别先相加，不同伤害类别之间相乘。
+    // 例如冰伤+110%、冰魔法+95%、魔法+35%、Boss魔法+40%
+    // 应为 2.10 × 1.95 × 1.35 × 1.40，而不是 1 + 280%。
+    const damageMultiplier = totals.groupedDamageMultiplier * hitDamageMultiplier;
     const rawMin = base * damageMultiplier;
     const rawAvg = rawMin * 1.05;
     const rawMax = rawMin * 1.1;
@@ -499,8 +518,8 @@
     $("damagePanelStatLabel").textContent = `当前输出面板 · ${statName}`;
     $("damagePanelFinal").textContent = format(effectiveStat);
     const equipmentParts = [];
-    if (totals.staffFixed) equipmentParts.push(`法杖 ${format(totals.staffFixed)}×（1+${formatPrecise(totals.staffStatPct)}%）=${formatPrecise(totals.staffFixed * (1 + totals.staffStatPct / 100))}`);
-    if (totals.robeFixed) equipmentParts.push(`长袍 ${format(totals.robeFixed)}×（1+${formatPrecise(totals.robeStatPct)}%）=${formatPrecise(totals.robeFixed * (1 + totals.robeStatPct / 100))}`);
+    if (totals.staffFixed) equipmentParts.push(`法杖 ${format(totals.staffFixed)}×（1+${formatPrecise(totals.staffStatPct)}%）=${format(totals.effectiveStaffFixed)}（先取整）`);
+    if (totals.robeFixed) equipmentParts.push(`长袍 ${format(totals.robeFixed)}×（1+${formatPrecise(totals.robeStatPct)}%）=${format(totals.effectiveRobeFixed)}（先取整）`);
     if (totals.otherFixed) equipmentParts.push(`其他装备 ${format(totals.otherFixed)}`);
     const equipmentText = equipmentParts.length ? equipmentParts.join("；") : "装备属性 0";
     const panelFormula = `（基础${statName} ${format(baseStat)} + ${equipmentText}）×（1 + ${statName}加成 ${percent(totals.totalStat)}）=${format(effectiveStat)}（向下取整）`;
@@ -512,7 +531,10 @@
     const ratioText = hitDamageMultiplier === 1
       ? `${skill.name}单段倍率 ${(skill.ratio * 100).toFixed(2)}%`
       : `${skill.name}基础单段倍率 ${(skill.ratio * 100).toFixed(2)}% × 特殊修正 ${(hitDamageMultiplier * 100).toFixed(0)}% = ${(effectiveRatio * 100).toFixed(2)}%`;
-    $("damageFormula").textContent = `${ratioText}；计算后${statName} ${format(effectiveStat)}；直接增伤 ${percent(totals.totalDamage)}；有效单段上限 ${format(baseCap)} + ${format(totals.totalCap)} = ${format(effectiveCap)}`;
+    const damageGroupText = totals.damageGroups.length
+      ? totals.damageGroups.map(group => `${group.label}${percent(group.value)}`).join(" × ")
+      : "无增伤";
+    $("damageFormula").textContent = `${ratioText}；计算后${statName} ${format(effectiveStat)}；增伤分组乘算 ×${totals.groupedDamageMultiplier.toFixed(4)}（${damageGroupText}）；有效单段上限 ${format(baseCap)} + ${format(totals.totalCap)} = ${format(effectiveCap)}`;
     renderAudit();
   };
 
