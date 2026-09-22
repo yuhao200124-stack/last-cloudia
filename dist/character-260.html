@@ -307,16 +307,14 @@
             <article><span>伤害上限</span><b id="damageInnateCap">+0</b></article>
             <article class="is-primary"><span>本次实际提升</span><b id="damageInnateActual">+0%</b></article>
           </div>
-          <div class="damage-condition-title"><b>按当前战斗条件计算</b><span>取消勾选后，对应条件技能不会计入</span></div>
-          <div class="damage-condition-grid">
-            <label><input id="damageCondSingleWeapon" type="checkbox" checked />仅装备1件武器</label>
-            <label><input id="damageCondStaff" type="checkbox" checked />装备法杖</label>
-            <label><input id="damageCondRobe" type="checkbox" checked />装备长袍</label>
-            <label><input id="damageCondFullHp" type="checkbox" checked />HP全满</label>
-            <label><input id="damageCondMagicActive" type="checkbox" checked />不可叠加魔法发动中</label>
-            <label><input id="damageCondMagicChain" type="checkbox" checked />相同魔法连续使用至最高</label>
+          <div class="damage-display-tools">
+            <label class="damage-weapon-toggle"><input id="damageUseExclusiveWeapon" type="checkbox" />装备专武</label>
+            <div class="damage-layout-switch" role="group" aria-label="加成排列方式">
+              <button type="button" data-damage-layout="skill" aria-pressed="true">按技能排列</button>
+              <button type="button" data-damage-layout="bonus" aria-pressed="false">按相同加成</button>
+            </div>
           </div>
-          <div class="damage-innate-list-head"><b>本次生效明细</b><span id="damageInnateCount">0项</span></div>
+          <div class="damage-innate-list-head"><b id="damageInnateListTitle">按技能排列</b><span id="damageInnateCount">0项</span></div>
           <div id="damageInnateList" class="damage-innate-list"></div>
           <p id="damageInnateNote" class="damage-innate-note"></p>
         </section>

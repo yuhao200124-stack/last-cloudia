@@ -18,6 +18,7 @@
     heavy_magic: { ratio: 1, hits: 1 }
   };
   let innateSkills = [];
+  let bonusLayout = "skill";
 
   const readPageStats = () => {
     const stats = [...document.querySelectorAll(".stat-box")];
@@ -51,6 +52,13 @@
         effect: cells[cells.length - 1].textContent.trim()
       });
     }));
+    document.querySelectorAll("#equipment .equipment-card").forEach(card => {
+      const entries = [...card.querySelectorAll("dt")];
+      const type = entries.find(item => item.textContent.trim() === "类型")?.nextElementSibling?.textContent.trim() || "";
+      const effect = entries.find(item => item.textContent.trim() === "最高效果")?.nextElementSibling?.textContent.trim() || "";
+      if (!/[剑斧枪弓杖爪锤刀机器]/.test(type) || !effect) return;
+      records.push({ source: "专武", name: card.querySelector("h4")?.textContent.trim() || "专属武器", effect });
+    });
     innateSkills = records;
   };
 
@@ -66,12 +74,13 @@
     return {
       skill, type, element, isSpecial, isMagicMode, bossSpecial,
       weak: element === $("damageBossWeakElement").value,
-      singleWeapon: $("damageCondSingleWeapon").checked,
-      staff: $("damageCondStaff").checked,
-      robe: $("damageCondRobe").checked,
-      fullHp: $("damageCondFullHp").checked,
-      magicActive: $("damageCondMagicActive").checked,
-      magicChain: $("damageCondMagicChain").checked
+      singleWeapon: true,
+      staff: true,
+      robe: true,
+      fullHp: true,
+      magicActive: true,
+      magicChain: true,
+      exclusiveWeapon: $("damageUseExclusiveWeapon").checked
     };
   };
 
@@ -83,12 +92,6 @@
   };
 
   const conditionsPass = (text, current) => {
-    if (/仅装备1件武器|未装备武器/.test(text) && !current.singleWeapon) return false;
-    if (/装备法杖/.test(text) && !current.staff) return false;
-    if (/装备长袍/.test(text) && !current.robe) return false;
-    if (/HP全满/.test(text) && !current.fullHp) return false;
-    if (/不可叠加魔法/.test(text) && !current.magicActive) return false;
-    if (/连续使用相同攻击魔法/.test(text) && !current.magicChain) return false;
     if (/触发特攻/.test(text) && !current.bossSpecial) return false;
     if (/命中弱点属性/.test(text) && !(current.type === "魔法" && current.weak)) return false;
     return true;
@@ -106,7 +109,11 @@
 
   const parseSkill = (record, current) => {
     const effect = record.effect;
-    const result = { ...record, statPct: 0, damagePct: 0, cap: 0, hitMultiplier: 1, hitDamageMultiplier: 1, parts: [] };
+    const result = { ...record, statPct: 0, damagePct: 0, cap: 0, hitMultiplier: 1, hitDamageMultiplier: 1, parts: [], contributions: [] };
+    const add = (kind, label, value, unit, text) => {
+      result.parts.push(text);
+      result.contributions.push({ kind, key: `${kind}:${label}`, label, value, unit, text });
+    };
     const percentagePattern = /((?:(?:[火冰树雷光暗]、)*[火冰树雷光暗]属性)?(?:物理|魔法|超必杀技|特技)?伤害)\+([\d.]+)%/g;
     for (const match of effect.matchAll(percentagePattern)) {
       const prefix = effect.slice(Math.max(0, match.index - 8), match.index);
@@ -115,7 +122,7 @@
       if (!conditionsPass(clause, current) || !categoryPass(match[1], current)) continue;
       const value = Number(match[2]);
       result.damagePct += value;
-      result.parts.push(`${match[1]} ${percent(value)}`);
+      add("damage", match[1], value, "%", `${match[1]} ${percent(value)}`);
     }
 
     if (/连续使用相同攻击魔法时伤害提升/.test(effect) && current.type === "魔法" && current.magicChain) {
@@ -123,7 +130,7 @@
       if (maximum) {
         const value = Number(maximum[1]);
         result.damagePct += value;
-        result.parts.push(`连续魔法最高 ${percent(value)}`);
+        add("damage", "伤害", value, "%", `连续魔法最高 ${percent(value)}`);
       }
     }
 
@@ -138,7 +145,8 @@
       if (!conditionsPass(clause, current)) continue;
       const value = Number(match[2]);
       result.statPct += value;
-      result.parts.push(`${current.type === "魔法" ? "INT" : "攻击力"} ${percent(value)}`);
+      const statLabel = current.type === "魔法" ? "法强" : "攻击力";
+      add("stat", statLabel, value, "%", `${statLabel} ${percent(value)}`);
     }
 
     const capPattern = /((?:(?:[火冰树雷光暗]、)*[火冰树雷光暗]属性)?(?:魔法|物理|超必杀技|特技)?伤害上限)\+([\d,]+)/g;
@@ -151,15 +159,34 @@
       const upgraded = following.match(/仅装备1件武器(?:或未装备武器)?时(?:提升)?为\+([\d,]+)/);
       if (upgraded && current.singleWeapon) value = Number(upgraded[1].replaceAll(",", ""));
       result.cap += value;
-      result.parts.push(`${match[1]} +${value.toLocaleString("zh-CN")}`);
+      add("cap", match[1], value, "number", `${match[1]} +${value.toLocaleString("zh-CN")}`);
     }
 
     if (current.type === "魔法" && current.element === "冰" && /冰属性魔法Hit数变为2倍[^。；]*单次伤害降至60%/.test(effect)) {
       result.hitMultiplier = 2;
       result.hitDamageMultiplier = .6;
-      result.parts.push("Hit数×2、单段伤害×60%（整套×1.2）");
+      add("special", "冰属性魔法Hit规则", 1.2, "special", "Hit数×2、单段伤害×60%（整套×1.2）");
     }
     return result;
+  };
+
+  const renderBySkill = active => active.map(item =>
+    `<article class="damage-innate-item"><b>${item.source} · ${item.name}</b><span>${item.parts.join("；")}</span></article>`
+  ).join("");
+
+  const renderByBonus = active => {
+    const grouped = new Map();
+    active.forEach(item => item.contributions.forEach(part => {
+      if (!grouped.has(part.key)) grouped.set(part.key, { ...part, total: 0, sources: [] });
+      const group = grouped.get(part.key);
+      if (part.unit !== "special") group.total += part.value;
+      group.sources.push(`${item.source} · ${item.name}（${part.text}）`);
+    }));
+    const order = { stat: 0, damage: 1, cap: 2, special: 3 };
+    return [...grouped.values()].sort((a, b) => order[a.kind] - order[b.kind] || a.label.localeCompare(b.label, "zh-CN")).map(group => {
+      const total = group.unit === "%" ? percent(group.total) : group.unit === "number" ? `+${group.total.toLocaleString("zh-CN")}` : "特殊规则";
+      return `<article class="damage-innate-item is-bonus-group"><b>${group.label}<em>${total}</em></b><span>${group.sources.join("；")}</span></article>`;
+    }).join("");
   };
 
   const renderInnate = active => {
@@ -169,12 +196,14 @@
     $("damageInnateStat").textContent = percent(totalStat);
     $("damageInnateBonus").textContent = percent(totalDamage);
     $("damageInnateCap").textContent = `+${totalCap.toLocaleString("zh-CN")}`;
-    $("damageInnateCount").textContent = `${active.length}项`;
-    $("damageInnateList").innerHTML = active.length ? active.map(item =>
-      `<article class="damage-innate-item"><b>${item.source} · ${item.name}</b><span>${item.parts.join("；")}</span></article>`
-    ).join("") : '<p class="damage-innate-empty">当前攻击方式下，没有读取到可直接计算的自带增伤。</p>';
+    const groupCount = new Set(active.flatMap(item => item.contributions.map(part => part.key))).size;
+    $("damageInnateListTitle").textContent = bonusLayout === "skill" ? "按技能排列" : "按相同加成排列";
+    $("damageInnateCount").textContent = bonusLayout === "skill" ? `${active.length}项技能` : `${groupCount}类加成`;
+    $("damageInnateList").innerHTML = active.length ? (bonusLayout === "skill" ? renderBySkill(active) : renderByBonus(active)) : '<p class="damage-innate-empty">当前攻击方式下，没有读取到可直接计算的输出加成。</p>';
     const current = state();
     const notes = [];
+    notes.push("条件型输出技能按可触发的最高效果展示");
+    if (current.exclusiveWeapon) notes.push("已计入专武的输出效果");
     if (current.bossSpecial) notes.push("当前攻击可由角色个性对BOSS触发特攻，特攻增幅已自动生效");
     if (innateSkills.some(item => /暴击率|暴击伤害|有概率将敌方MND减半/.test(item.effect))) notes.push("暴击与概率减防保留为后续独立区间，未混入固定增伤");
     $("damageInnateNote").textContent = notes.join("；") + (notes.length ? "。" : "");
@@ -184,7 +213,7 @@
   const calculate = () => {
     const current = state();
     const skill = presets[current.skill] || presets.skill1;
-    const parsed = innateSkills.map(item => parseSkill(item, current));
+    const parsed = innateSkills.filter(item => current.exclusiveWeapon || item.source !== "专武").map(item => parseSkill(item, current));
     const active = parsed.filter(item => item.parts.length);
     const totals = renderInnate(active);
     const baseStat = current.type === "魔法" ? number("damageCharacterInt") : number("damageCharacterAtk");
@@ -238,4 +267,9 @@
     if (event.target.id === "damageSkill" && ["magic", "heavy_magic"].includes(event.target.value)) $("damageType").value = "魔法";
     calculate();
   });
+  panel.querySelectorAll("[data-damage-layout]").forEach(button => button.addEventListener("click", () => {
+    bonusLayout = button.dataset.damageLayout;
+    panel.querySelectorAll("[data-damage-layout]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+    calculate();
+  }));
 })();
