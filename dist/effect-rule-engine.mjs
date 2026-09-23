@@ -12,6 +12,8 @@ export const DEFAULT_CONTEXT = {
   fullHp: false, critical: false, weakness: false, resonance: false, chainStacks: 0,
   alive: true, killerBuff: true, bossWaveBuff: true, penetration: null,
   lowHp: null, firstLowHp: null, mpEnough: null, killer: false, equipmentIds: [],
+  sword: false, axe: false, spear: false, hammer: false, bow: false, machine: false, claw: false,
+  clothes: false, armor: false, incomingElement: null, incomingAttackKind: null,
 };
 export const CONDITION_FIELDS = {
   attack: { label: '攻击方式', options: ATTACKS.map(({ id, label }) => ({ value: id, label })) },
@@ -21,6 +23,13 @@ export const CONDITION_FIELDS = {
   weaponCount: { label: '武器数量', options: options([[null, '待确认'], [0, '未装备武器'], [1, '一件武器'], [2, '两件武器']]) },
   staff: { label: '装备法杖', options: yesNo }, robe: { label: '装备长袍', options: yesNo },
   iceStaff: { label: '装备冰属性法杖', options: yesNo },
+  sword: { label: '装备剑', options: yesNo }, axe: { label: '装备斧', options: yesNo },
+  spear: { label: '装备枪', options: yesNo }, bow: { label: '装备弓', options: yesNo },
+  hammer: { label: '装备槌', options: yesNo },
+  machine: { label: '装备机械', options: yesNo }, claw: { label: '装备爪', options: yesNo },
+  clothes: { label: '装备衣服', options: yesNo }, armor: { label: '装备铠甲', options: yesNo },
+  incomingElement: { label: '受到攻击的属性', options: options([[null, '待选择'], ['none', '无'], ['fire', '火'], ['ice', '冰'], ['earth', '树'], ['thunder', '雷'], ['light', '光'], ['dark', '暗']]) },
+  incomingAttackKind: { label: '受到攻击的类别', options: options([[null, '待选择'], ['physical', '物理'], ['magic', '魔法'], ['ultimate', '超必杀']]) },
   magicFamily: { label: '魔法类型', options: options([[null, '待确认'], ['normal', '普通魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊魔法']]) },
   boss: { label: '目标是 Boss', options: options([[true, '是（当前固定）']]) },
   fullHp: { label: '自身满生命', options: yesNo }, critical: { label: '本次暴击', options: yesNo },
@@ -50,6 +59,13 @@ export function normalizeContext(input = {}) {
   }
   if (ctx.iceStaff === true) ctx.staff = true;
   if (ctx.weaponCount === 0) { ctx.staff = false; ctx.iceStaff = false; }
+  for (const key of ['sword', 'axe', 'spear', 'hammer', 'bow', 'machine', 'claw']) {
+    ctx[key] = ctx.weaponCount === 0 ? false : ctx[key] === true;
+  }
+  for (const key of ['clothes', 'armor']) ctx[key] = ctx.weaponCount === 2 ? false : ctx[key] === true;
+  for (const key of ['incomingElement', 'incomingAttackKind']) {
+    if (!CONDITION_FIELDS[key].options.some(o => o.value === ctx[key])) ctx[key] = null;
+  }
   if (ctx.weaponCount === 2) ctx.robe = false;
   ctx.chainStacks = Number.isFinite(ctx.chainStacks) ? Math.max(0, Math.min(5, Math.floor(ctx.chainStacks))) : null;
   ctx.boss = true;

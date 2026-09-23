@@ -684,3 +684,5 @@ mark {
   .cell-content { height: auto; }
   .cell-content { overflow: visible; }
 }
+
+.stat-box small{display:block;font-size:11px;color:#607792;line-height:1.5;margin-top:6px}.account-blessings{margin-top:16px;color:#345477}.account-blessings>summary{cursor:pointer;font-weight:700}.account-blessings article{padding:12px;border-bottom:1px solid #dce5ef}.account-blessings h4{margin:0}.account-blessings article p{margin:6px 0}.account-blessings>div{max-height:420px;overflow:auto}
