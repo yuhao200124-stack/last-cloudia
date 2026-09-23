@@ -328,3 +328,5 @@ dialog.br-editor::backdrop { background: #172c4a82; }
 @media (prefers-reduced-motion: reduce) {
   :where(.br-app, .br-editor) * { scroll-behavior: auto !important; }
 }
+
+.br-magic-family, .br-source-adjustment { width: min(100%, 360px); margin: 12px 0; }

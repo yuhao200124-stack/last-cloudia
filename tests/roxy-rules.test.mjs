@@ -112,15 +112,15 @@ test('unknown conditions remain pending and cannot accidentally satisfy negative
   assert.equal(evaluateCatalog(custom, { invented: true }).rows[0].status, 'pending');
 });
 
-test('manual confirmation replaces a pending rule and disabling source disables all its parts', () => {
-  const overrides = { 'spell-link-later': { review: 'ready', manual: true, effects: [{type:'damage',target:'相同攻击魔法伤害',value:8,unit:'%'}] }, 'source:water-king': { disabled: true } };
+test('manual edits override a rule and disabling source disables all its parts', () => {
+  const overrides = { 'spell-link-2': { review: 'ready', manual: true, effects: [{type:'damage',target:'魔法伤害',value:9,unit:'%'}] }, 'source:water-king': { disabled: true } };
   const result = evaluate({ equipmentIds: ['roxy-staff'], weaponCount: 1, chainStacks: 2 }, overrides);
-  assert.equal(status(result, 'spell-link-later'), 'active');
-  assert.equal(find(result, 'spell-link-later').rule.manual, true);
+  assert.equal(status(result, 'spell-link-2'), 'active');
+  assert.equal(find(result, 'spell-link-2').rule.manual, true);
   assert.ok(result.rows.filter((row) => row.sourceId === 'water-king').every((row) => row.status === 'disabled'));
   assert.equal(result.killer, false);
   assert.equal(status(result, 'killer-cap-v-single'), 'inactive');
-  assert.equal(CATALOG.find((source) => source.id === 'spell-link').rules.find((rule) => rule.id === 'spell-link-later').review, 'pending');
+  assert.equal(CATALOG.find((source) => source.id === 'spell-link').rules.find((rule) => rule.id === 'spell-link-2').review, 'ready');
 });
 
 test('multiple killer sources remain one trigger and unrelated stats remain listed', () => {

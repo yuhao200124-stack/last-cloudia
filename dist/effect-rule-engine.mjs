@@ -25,7 +25,7 @@ export const CONDITION_FIELDS = {
   boss: { label: '目标是 Boss', options: options([[true, '是（当前固定）']]) },
   fullHp: { label: '自身满生命', options: yesNo }, critical: { label: '本次暴击', options: yesNo },
   weakness: { label: '命中弱点属性', options: yesNo }, resonance: { label: '我方正在发动不可叠加魔法', options: yesNo },
-  chainStacks: { label: '法术联结状态', options: options([[0, '未触发'], [1, '首次加成'], [2, '后续连用'], [3, '后续连用（旧记录）'], [4, '后续连用（旧记录）'], [5, '已确认达到最高加成']]) },
+  chainStacks: { label: '法术联结状态', options: options([[0, '不叠加 +0%'], [1, '第1次 +4%'], [2, '第2次 +8%'], [3, '第3次 +12%'], [4, '第4次 +16%'], [5, '第5次及以后 +20%']]) },
   alive: { label: '自身存活', options: yesNo }, killerBuff: { label: '指导者特攻上限增益存在', options: yesNo },
   bossWaveBuff: { label: '指导者 Boss Wave 增益存在', options: yesNo },
   penetration: { label: '贯导本次触发', options: yesNo }, killer: { label: '本次触发特攻', options: yesNo },

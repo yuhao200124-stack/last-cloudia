@@ -7,8 +7,10 @@ const totals = (context = {}, overrides = {}, catalog = CATALOG) => summarizeEff
 const get = (list,id) => list.find(m=>m.id===id);
 test('qualified totals keep damage scopes and stat buffs separate',()=>{
   const result=totals();
-  for(const [id,value] of Object.entries({'stat:攻击力':0,'stat:法强':70,'statBuff:法强':50,'damage:冰属性伤害':80,'damage:冰属性魔法伤害':60,'damage:对Boss的魔法伤害':40,'damage:特攻伤害':50,'castSpeed':30})) assert.equal(get(result,id).total,value,id);
+  for(const [id,value] of Object.entries({'stat:法强':70,'statBuff:法强':50,'damage:冰属性伤害':80,'damage:冰属性魔法伤害':60,'damage:对Boss的魔法伤害':40,'damage:特攻伤害':50,'castSpeed':30})) assert.equal(get(result,id).total,value,id);
   assert.deepEqual(get(result,'damage:冰属性伤害').contributions.map(c=>c.sourceId),['water-king','ice-attack-iii']);
+  assert.equal(get(result,'stat:攻击力'),undefined);
+  assert.ok(result.every(m=>m.contributions.length>0));
 });
 test('weapon, element, equipment and full HP changes alter both sum and eligible sources',()=>{
   const two=totals({weaponCount:2});
@@ -31,12 +33,26 @@ test('single weapon never admits a dual weapon contribution in the same damage m
   const double=get(totals({weaponCount:2},{},catalog),'damage:冰属性伤害');
   assert.equal(double.total,129);assert.ok(double.contributions.some(c=>c.sourceId==='dual'));
 });
-test('disabled and pending rules are absent from sums and source list',()=>{
-  const list=totals({chainStacks:2},{'water-single':{disabled:true}});
-  assert.equal(get(list,'damage:冰属性伤害').total,30);
-  assert.equal(get(list,'damage:相同攻击魔法伤害'),undefined);
-  const max=totals({chainStacks:5});
-  assert.equal(get(max,'damage:相同攻击魔法伤害').total,20);
+test('spell link adds 4 percent per step to magic damage and keeps a zero-step adjustment source',()=>{
+  for (const n of [0,1,2,3,4,5]) {
+    const list=totals({chainStacks:n,staff:true,robe:true});
+    const magic=get(list,'damage:魔法伤害');
+    assert.equal(magic.total,35+4*n);
+    assert.equal(magic.contributions.filter(p=>p.sourceId==='spell-link').length,1);
+    assert.equal(get(list,'damage:相同攻击魔法伤害'),undefined);
+  }
+  assert.equal(get(totals({chainStacks:99}),'damage:魔法伤害').total,20);
+  assert.equal(get(totals({attack:'s1',damageType:'physical',chainStacks:5}),'damage:魔法伤害'),undefined);
+  assert.equal(get(totals({chainStacks:5},{'source:spell-link':{disabled:true}}),'damage:魔法伤害'),undefined);
+  const pendingCatalog=structuredClone(CATALOG); pendingCatalog.find(s=>s.id==='spell-link').rules.forEach(r=>r.review='pending');
+  assert.equal(get(totals({chainStacks:3},{},pendingCatalog),'damage:魔法伤害'),undefined);
+});
+test('available critical bonus does not assume critical recovery or probabilistic defense reduction happened',()=>{
+  const list=totals({critical:false,penetration:false});
+  assert.equal(get(list,'damage:冰属性暴击伤害').total,50);
+  assert.equal(get(list,'damage:冰属性暴击伤害').section,'暴击与咏唱');
+  assert.equal(get(list,'other:defenseReference:敌方魔抗'),undefined);
+  assert.ok(list.flatMap(m=>m.contributions).every(p=>p.sourceId!=='proud-force'));
 });
 test('numeric weapon count restored from an older setting retains single weapon rules',()=>{
   assert.equal(get(totals({weaponCount:'1'}),'damage:冰属性伤害').total,80);

@@ -26,7 +26,7 @@ export function summarizeEffects(result) {
       let item;
       if (effect.type === 'stat' && number && effect.unit === '%') item = metric(`stat:${effect.target}`, '属性加成', STAT_LABELS[effect.target] || `${effect.target}加成`);
       else if (effect.type === 'statBuff' && number && effect.unit === '%') item = metric(`statBuff:${effect.target}`, '状态加成', `${effect.target}状态加成`);
-      else if (effect.type === 'damage' && number && effect.unit === '%') item = metric(`damage:${effect.target}`, '伤害加成', effect.target);
+      else if (effect.type === 'damage' && number && effect.unit === '%') item = metric(`damage:${effect.target}`, effect.target.includes('暴击伤害') ? '暴击与咏唱' : '伤害加成', effect.target);
       else if (effect.type === 'cap' && number && ['', '%'].includes(effect.unit)) item = metric(effect.unit === '%' ? 'cap-percent' : 'cap', '伤害上限', effect.unit === '%' ? '伤害上限百分比加成' : '本次攻击伤害上限加成', effect.unit);
       else if (effect.type === 'critRate' && number && effect.unit === '%') item = metric('critRate', '暴击与咏唱', '暴击率加成');
       else if (effect.type === 'castSpeed' && number && effect.unit === '%') item = metric('castSpeed', '暴击与咏唱', '咏唱速度加成');
@@ -41,5 +41,5 @@ export function summarizeEffects(result) {
       if (item.numeric) item.total += effect.value;
     }
   }
-  return [...metrics.values()].map(item => ({ ...item, total: Math.round(item.total * 1e8) / 1e8 }));
+  return [...metrics.values()].filter(item => item.contributions.length > 0).map(item => ({ ...item, total: Math.round(item.total * 1e8) / 1e8 }));
 }

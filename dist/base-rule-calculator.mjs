@@ -26,7 +26,7 @@ function mount() {
     disabledRules: Array.isArray(saved.disabledRules) ? saved.disabledRules : [],
     drafts: saved.drafts && typeof saved.drafts === 'object' ? saved.drafts : {},
     attackSettings: saved.attackSettings || {},
-    view: { page: 'totals', metricId: null, conditions: false },
+    view: { page: 'totals', metricId: null },
   };
   let templates = validateTemplates({ schemaVersion: 1, templates: read(LEARNING_STORAGE_KEY, {}) }).templates;
   const sources = collectSources();
@@ -86,8 +86,12 @@ function mount() {
     const c = state.context;
     if (typeof c.weaponCount === 'string' && /^[012]$/.test(c.weaponCount)) c.weaponCount = Number(c.weaponCount);
     if (![0, 1, 2].includes(c.weaponCount)) c.weaponCount = 1;
-    for (const field of ['penetration', 'lowHp', 'firstLowHp', 'mpEnough']) c[field] = c[field] === true;
-    if ([3, 4].includes(c.chainStacks)) c.chainStacks = 2;
+    c.lowHp = c.lowHp === true;
+    if (c.lowHp) c.fullHp = false;
+    // This view totals bonuses; it does not simulate individual random events.
+    for (const field of ['critical', 'penetration', 'firstLowHp', 'mpEnough']) c[field] = false;
+    c.alive = true;
+    if (characterId === '260') { c.killerBuff = true; c.bossWaveBuff = true; }
     if (c.attack === 'magic') c.damageType = 'magical';
     c.equipmentIds = Array.isArray(c.equipmentIds) ? c.equipmentIds : [];
     if (c.weaponCount === 2) { c.equipmentIds = c.equipmentIds.filter(id => id !== 'roxy-robe'); c.robe = false; }
@@ -113,8 +117,6 @@ function mount() {
   }
   function checkbox(field, label, disabled = false) { return `<label class="br-check"><input type="checkbox" data-context="${field}"${state.context[field] ? ' checked' : ''}${disabled ? ' disabled' : ''}>${esc(label)}</label>`; }
   function renderShell() {
-    const oldConditions = root.querySelector('#brMoreConditions');
-    if (oldConditions) state.view.conditions = oldConditions.open;
     prepareContext();
     const c = state.context;
     root.innerHTML = `
@@ -132,17 +134,11 @@ function mount() {
           ${checkbox('robe', '装备长袍', c.equipmentIds.includes('roxy-robe') || c.weaponCount === 2)}
           ${catalog.filter(s => s.group === 'equipment').map(s => `<label class="br-check"><input type="checkbox" data-equipment="${esc(s.id)}"${c.equipmentIds.includes(s.id) ? ' checked' : ''}${s.id === 'roxy-robe' && c.weaponCount === 2 ? ' disabled' : ''}>${esc(s.name)}（最高强化）</label>`).join('')}
         </fieldset>
-        <fieldset class="br-equipment"><legend>本次攻击条件</legend>
-          ${checkbox('fullHp', 'HP全满')}${checkbox('critical', '暴击')}${checkbox('weakness', '命中弱点属性')}
-          ${checkbox('resonance', '我方正在发动不可叠加魔法')}
+        <fieldset class="br-equipment"><legend>加成条件</legend>
+          ${checkbox('fullHp', 'HP全满')}${checkbox('weakness', '命中弱点')}
+          ${checkbox('resonance', '重魔法（我方正在发动不可叠加魔法）')}${checkbox('lowHp', '濒死')}
         </fieldset>
-        <details id="brMoreConditions" class="br-conditions"${state.view.conditions ? ' open' : ''}><summary>更多战斗条件</summary><div class="br-condition-grid">
-          ${select('magicFamily', '魔法类别', [['normal', '一般魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊类型'], [null, '待确认']], c.attack !== 'magic')}
-          ${select('chainStacks', '法术联结', [[0, '未触发'], [1, '首次加成 +4%'], [2, '后续连用 · 加成待确认'], [5, '已确认达到最高 +20%']])}
-          ${checkbox('penetration', '本次贯导触发（魔抗减半）')}
-          ${checkbox('alive', '自身存活')}${checkbox('killerBuff', '指导者：特攻上限增益')}${checkbox('bossWaveBuff', '指导者：Boss波次增益')}
-          ${checkbox('lowHp', '当前濒死')}${checkbox('firstLowHp', '首次进入濒死')}${checkbox('mpEnough', '魔力值至少30')}
-        </div></details>
+        ${c.attack === 'magic' ? `<div class="br-magic-family">${select('magicFamily', '魔法类别', [['normal', '一般魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊类型'], [null, '待确认']])}</div>` : ''}
       </div>
       <p id="brContextNote" class="br-context-note"></p>
       <div id="brWarnings"></div>
@@ -175,6 +171,21 @@ function mount() {
     if (first.type === 'statReference') return `${first.target} / ${first.value}`;
     return [...new Set(item.contributions.map(x => formatEffect(x.effect)))].join('；');
   }
+  function contributionCount(item) {
+    const included = item.contributions.filter(p => p.effect.value !== 0).length;
+    const adjustable = item.contributions.filter(p => p.effect.value === 0 && p.rule.conditions.some(c => c.field === 'chainStacks'));
+    return [included ? `${included}项计入` : '', ...adjustable.map(p => `${p.sourceName} · 未叠加，可调整`)].filter(Boolean).join(' · ');
+  }
+  function contributionControls(p, source) {
+    if (!p.rule.conditions.some(c => c.field === 'chainStacks')) return '';
+    const tiers = CONDITION_FIELDS.chainStacks.options.map(({value}) => {
+      const rule = source.rules.find(r => r.conditions.some(c => c.field === 'chainStacks' && c.op === 'eq' && c.value === value));
+      const effect = rule?.effects.find(e => e.type === p.effect.type && e.target === p.effect.target && e.unit === p.effect.unit);
+      const prefix = value === 0 ? '不叠加' : value === 5 ? '第5次及以后' : `第${value}次`;
+      return [value, `${prefix} · ${rule?.review === 'ready' && typeof effect?.value === 'number' ? numberText(effect.value, effect.unit) : '待确认'}`];
+    });
+    return `<div class="br-source-adjustment">${select('chainStacks', '连续使用相同攻击魔法', tiers)}</div>`;
+  }
   function sourceDescription(s) {
     return `<p class="br-full-effect"><span>完整技能效果</span>${esc(s.text)}</p>`;
   }
@@ -194,7 +205,6 @@ function mount() {
     root.querySelector('#brContextNote').textContent = chain.join(' · ');
     const pending = result.rows.filter(r => r.status === 'pending');
     const warnings = [];
-    if (characterId === '260' && ['s1', 's2', 's3', 'ultimate'].includes(c.attack)) warnings.push('此招式按描述参照法强／魔抗，特殊伤害结算尚未实测；这里先统计符合条件的加成。');
     if (c.damageType == null || c.damageType === 'mixed') warnings.push('请确认伤害类型，相关加成暂不计入。');
     if (storageWarning) warnings.push(storageWarning);
     root.querySelector('#brWarnings').innerHTML = warnings.map(w => `<p class="br-notice is-warning">${esc(w)}</p>`).join('');
@@ -207,11 +217,11 @@ function mount() {
         if (!items.length) return '';
         return `<section class="br-summary-group br-totals-group"><h3>${section === '伤害加成' ? '伤害增加' : section}</h3>
           ${section === '状态加成' ? '<p class="br-total-note">例如 EX灵气，与上面的普通法强加成分开保留。</p>' : ''}
-          <ul>${items.map(m => `<li><button type="button" class="br-total-row" data-open-metric="${esc(m.id)}" title="双击查看来源，键盘按回车；手机轻触"><span><b>${esc(m.label)}</b><small>${m.contributions.length}项计入</small></span><strong data-total-value="${esc(m.id)}">${esc(metricValue(m))}</strong><span class="br-row-chevron" aria-hidden="true">›</span></button></li>`).join('')}</ul></section>`;
+          <ul>${items.map(m => `<li><button type="button" class="br-total-row" data-open-metric="${esc(m.id)}" title="双击查看来源，键盘按回车；手机轻触"><span><b>${esc(m.label)}</b><small>${esc(contributionCount(m))}</small></span><strong data-total-value="${esc(m.id)}">${esc(metricValue(m))}</strong><span class="br-row-chevron" aria-hidden="true">›</span></button></li>`).join('')}</ul></section>`;
       };
-      target.innerHTML = `<p class="br-summary-hint">满强化 · 只合计符合勾选条件的词条。双击一项查看来源，手机可直接点开。</p>`
+      target.innerHTML = `<p class="br-summary-hint">满强化 · 只统计加成。双击一项查看来源，手机可直接点开。</p>`
         + sections.filter(s => !['装备属性', '其他效果'].includes(s)).map(sectionHtml).join('')
-        + `<details class="br-secondary-effects"><summary>装备属性与其他效果</summary>${sectionHtml('装备属性')}${sectionHtml('其他效果')}</details>`
+        + (metrics.some(m => ['装备属性', '其他效果'].includes(m.section)) ? `<details class="br-secondary-effects"><summary>装备属性与其他效果</summary>${sectionHtml('装备属性')}${sectionHtml('其他效果')}</details>` : '')
         + (pending.length ? `<button type="button" class="br-pending-link" data-action="pending">另有 ${pending.length} 项待确认，未计入合计 · 查看</button>` : '')
         + '<p class="br-total-note">冰伤、冰魔法、魔法、Boss增伤分别统计；这里显示词条合计，不把它们直接相加当作最终伤害倍率。</p>';
       return;
@@ -219,11 +229,11 @@ function mount() {
     if (state.view.page === 'metric') {
       const entries = currentMetric?.contributions || [];
       target.innerHTML = `<div class="br-detail-total"><span>${esc(currentMetric?.label || '当前项目')}</span><strong>${currentMetric ? esc(metricValue(currentMetric)) : '+0'}</strong></div>
-        <p class="br-muted">只列出本项当前实际计入的来源。</p>`
+        <p class="br-muted">只列出符合当前勾选条件的来源；可在对应技能下调整加成。</p>`
         + entries.map(p => {
           const s = catalog.find(x => x.id === p.sourceId);
           return `<article class="br-source" data-source="${esc(p.sourceId)}"><div class="br-source-header"><h3>${esc(p.sourceName)}</h3><strong class="br-contribution-value">${esc(p.effect.type === 'statBuff' ? formatEffect(p.effect) : p.effect.value === true ? '生效' : currentMetric.numeric ? numberText(p.effect.value,p.effect.unit) : formatEffect(p.effect))}</strong><button class="br-button" data-edit-source="${esc(p.sourceId)}" data-focus-rule="${esc(p.ruleId)}">修改</button></div>
-            ${sourceDescription(s)}<div class="br-contribution-body"><p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
+            ${sourceDescription(s)}<div class="br-contribution-body">${contributionControls(p, s)}<p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
             <button class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</div></article>`;
         }).join('')
         + (!entries.length ? '<p class="br-empty">当前条件下没有计入这项的加成。</p>' : '');
@@ -262,6 +272,8 @@ function mount() {
         Object.assign(state.context, state.attackSettings[value] || { damageType: value === 'magic' ? 'magical' : null, element: value === 'normal' ? null : characterId === '260' ? 'ice' : null });
       }
       state.context[field] = value;
+      if (field === 'fullHp' && value) state.context.lowHp = false;
+      if (field === 'lowHp' && value) state.context.fullHp = false;
       if (field === 'staff' && !value) state.context.iceStaff = false;
       if (state.context.attack === 'magic') state.context.damageType = 'magical';
       prepareContext(); persist(); renderShell();
