@@ -2,28 +2,31 @@ import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattle
 import {formatEffect} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
 import {calculateWebsitePanel} from './panel-calculator.mjs';
+import {readMoveParameters} from './battle-entry-data.mjs';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
 const option=(v,label,current)=>`<option value="${esc(v)}"${v===current?' selected':''}>${esc(label)}</option>`;
 const meaningful=report=>JSON.stringify({...report,createdAt:''});
-export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelection}) {
+export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelection,onRead=()=>{}}) {
  const storageKey=`lc-entry-review:${characterId}:v1`;
  let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey))||{};}catch{}
- let state={accountBlessings:saved.accountBlessings!==false,base:saved.base||{},selection:saved.selection||{},parameters:saved.parameters||{},decisions:saved.decisions||{},statDecisions:saved.statDecisions||{},mappings:saved.mappings||{}};
+ let state={parameterSchema:2,accountBlessings:true,base:{},selection:saved.selection||{},parameters:saved.parameterSchema===2?saved.parameters||{}:{},hitParameters:saved.hitParameters||{},decisions:saved.decisions||{},statDecisions:saved.statDecisions||{},mappings:saved.mappings||{}};
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
- let confirmed=false;
+ let confirmed=false,hasApproval=false;
  const parameterIds=['hits','coefficient','skillPercent','skillAdd','skillPostAdd','hitScaleStage'];
  const save=()=>{try{localStorage.setItem(storageKey,JSON.stringify(state));}catch{$('entryStatus').textContent='浏览器未能保存核对选择，请保持当前页面打开。';}};
- const selection=()=>({...state.selection});
+ const selection=()=>({...state.selection,hitMultiplier:state.hitParameters[hitKey()]?.hitMultiplier,hitDamageRatio:state.hitParameters[hitKey()]?.hitDamageRatio,hitScaleStage:state.hitParameters[hitKey()]?.hitScaleStage||state.parameters[paramKey()]?.hitScaleStage});
  const selectedMove=()=>[...(profile?.moves||[]),...(profile?.magic||[])].find(m=>m.id===state.selection.preset);
  const paramKey=()=>`${state.selection.attack}:${state.selection.preset||'unselected'}`;
+ const hitKey=()=>`${paramKey()}:${state.selection.dualWield?'dual':'single'}`;
  const websitePanel=(source=currentPanelReport())=>calculateWebsitePanel({...profile.baseStats,...state.base},source,{equipment:profile.equipment||[]});
- function invalidate(message='数据待核对，确认后才会用于伤害计算。') {confirmed=false;onInvalidate(message);$('entryStatus').textContent=message;}
- function saveParameters(){state.parameters[paramKey()]=Object.fromEntries(parameterIds.map(id=>[id,$(id).value]));save();}
+ function invalidate(message='数据待核对，确认后才会用于伤害计算。') {confirmed=false;onInvalidate(message);$('entryStatus').textContent=message;$('entryReviewSummary').textContent=message;}
+ function saveParameter(id){state.parameters[paramKey()]={...state.parameters[paramKey()],[id]:$(id).value};save();}
  function setParameters() {
-  const move=selectedMove(),p=state.parameters[paramKey()];
-  for(const id of parameterIds)$(id).value=p?.[id]??(id==='skillAdd'||id==='skillPostAdd'?0:move?.[id]??'');
+  const move=selectedMove(),p=state.parameters[paramKey()],read=readMoveParameters(unit,move);
+  for(const id of parameterIds)$(id).value=p?.[id]!==''&&p?.[id]!=null?p[id]:id==='hits'?'':read.parameters[id]??'';
+  $('parameterReadNote').textContent=read.source;
  }
  function renderPresets(reset=false) {
   const magic=['magic','heavy_magic'].includes(state.selection.attack);
@@ -51,9 +54,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function renderProfile() {
   $('entryProfileName').textContent=`${profile.name} · 最大成长基础资料`;
-  $('entryAccountBlessings').checked=state.accountBlessings;
   const current=currentBlessings(),base={...profile.baseStats,...state.base},adjusted=withAccountBlessings(base,current),percentages=blessingPercentages(current);
-  $('entrySixStats').innerHTML=Object.entries(SIX_STATS).map(([k,label])=>`<label>${label}（原始基础）<input type="number" data-entry-base="${k}" min="0" max="100000000" step="1" value="${esc(base[k]??'')}"><small>加护 +${esc(percentages[k])}% → <b>${esc(adjusted[k]??'未提供')}</b></small></label>`).join('');
+  $('entrySixStats').innerHTML=`<thead><tr>${Object.values(SIX_STATS).map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody><tr>${Object.keys(SIX_STATS).map(k=>`<td><strong>${esc(base[k]?.toLocaleString('en-US')??'未提供')}</strong><small>加护 +${esc(percentages[k])}%<br>→ ${esc(adjusted[k]?.toLocaleString('en-US')??'未提供')}</small></td>`).join('')}</tr></tbody>`;
  }
  function currentBlessings() {
   return {rows:currentPanelReport().rows.filter(r=>r.group==='blessings')};
@@ -71,7 +73,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function renderReview() {
   const move=selectedMove();
-  $('entryMoveNote').textContent=move?`${move.source}：${move.name}。${move.purpose==='support'?'这是辅助魔法，不按攻击伤害计算。':''}${move.hits==null?'原始命中数未提供；':''}${move.coefficient==null?'倍率未提供；':''}${state.selection.attack==='heavy_magic'?'是否属于重魔法由你选择确认；':''}未知参数留在备选阶段。`:'请先选择攻击方式和具体魔法。';
+  $('entryMoveNote').textContent=move?`${move.source}：${move.name}。${move.purpose==='support'?'这是辅助魔法，不按攻击伤害计算。':''}${state.selection.attack==='heavy_magic'?'按你选定的重魔法条件核对。':''}`:'请选择攻击方式和具体招式。';
   $('entryCandidateCount').textContent=`${compared.length} 项加成${state.accountBlessings?'（含账户加护）':''}`;
   const pending=candidate.rows.filter(r=>r.status==='pending');
   $('entryPendingCount').textContent=`网站待确认项（${pending.length}）`;
@@ -96,39 +98,44 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function initialize() {
   initialized=true;
-  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',...state.selection};
-  $('entryPreparation').hidden=false;$('entryReview').hidden=false;$('attackChoice').closest('label').hidden=false;$('statReference').closest('label').hidden=false;
+  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',dualWield:report.context.weaponCount===2,specialAttack:report.context.killer===true,break:report.context.break===true,...state.selection};
+  for(const id of ['dualWield','specialAttack','break'])$(id).checked=state.selection[id]===true;
+  $('characterPanel').hidden=false;$('entryPreparation').hidden=false;$('entryReview').hidden=false;$('attackChoice').closest('label').hidden=false;$('statReference').closest('label').hidden=false;
   $('skillType').closest('label').hidden=true;
   $('attackChoice').innerHTML=ATTACK_CHOICES.map(([v,l])=>option(v,l,state.selection.attack)).join('');
   if(!$('element').querySelector('option[value=""]'))$('element').insertAdjacentHTML('afterbegin','<option value="">待确认</option>');
   if(!$('type').querySelector('option[value=""]'))$('type').insertAdjacentHTML('afterbegin','<option value="">待确认</option>');
   renderProfile();renderPresets();
   for(const key of ['element','statReference','type']){$(key).value=state.selection[key]||'';$(key).disabled=false;}
-  setParameters();$('skillDetails').open=true;
+  setParameters();$('skillDetails').open=true;$('hitDetails').open=true;
  }
  function receive(next) {
   if(!next.profile)throw new Error('角色固定资料尚未带入，请刷新角色页面后重新打开。');
   if(next.profile.characterId!==characterId)throw new Error('角色固定资料与当前角色不一致。');
   const fingerprint=meaningful(next);if(fingerprint===signature)return;
-  signature=fingerprint;report=clone(next);profile=report.profile;
+  signature=fingerprint;report=clone(next);profile=report.profile;hasApproval=false;
   if(!initialized)initialize();
-  invalidate('固定资料已补齐；加成保留为候选，请导入入场报告后核对。');updateCandidate();
+  invalidate('固定资料已补齐；导入读取报告后可填写参数并核对面板。');updateCandidate();
  }
  async function importFile(file) {
   if(!file)return;if(file.size>25_000_000)throw new Error('报告超过25MB，请使用读取器生成的入场JSON报告。');
-  battle=validateBattleEntry(JSON.parse(await file.text()));unit=null;state.mappings={};state.statDecisions={};
+  battle=validateBattleEntry(JSON.parse(await file.text()));unit=null;hasApproval=false;state.mappings={};state.statDecisions={};
   $('entryUnit').innerHTML=option('','请选择本次测试角色','')+battle.units.map((u,i)=>option(String(i),`${u.name||'未命名'} · Unit ${u.unitId}`,'')).join('');
   $('entryFileNote').textContent=`${file.name} · ${battle.testFixture?'模拟示例，非实际战斗 · ':''}${battle.capturedAt||'时间未提供'} · ${battle.snapshotState==='partial'?'部分读取，缺项不代表没有效果':'入场报告'}。${battle.normalization?.mpThousandths?'MP已按游戏显示单位修正，原始值保留。':''}请选择正确角色；Buff清单本身不代表全部触发。`;
-  invalidate('报告已载入，先选择对应角色，再逐项核对。');updateCandidate();
+  if(battle.units.length===1){unit=battle.units[0];$('entryUnit').value='0';}
+  invalidate('报告已载入；已有资料已暂填，请在面板与加成核对页确认。');setParameters();updateCandidate();onRead({battle,unit});
  }
  $('entryReportFile').addEventListener('change',async e=>{try{await importFile(e.target.files[0]);}catch(err){invalidate(`新文件未导入：${err.message}`);}e.target.value='';});
- $('entryUnit').addEventListener('change',e=>{unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;state.mappings={};state.statDecisions={};invalidate('入场面板和读取候选已列出，数值差异由你决定。');updateCandidate();});
- $('entrySixStats').addEventListener('change',e=>{if(e.target.dataset.entryBase){state.base[e.target.dataset.entryBase]=e.target.valueAsNumber;invalidate();updateCandidate();}});
- $('entryAccountBlessings').addEventListener('change',e=>{state.accountBlessings=e.target.checked;invalidate('加护选项已更新；读取器的最终面板保持原值，不额外加算或反算。');updateCandidate();});
- $('attackChoice').addEventListener('change',()=>{saveParameters();state.selection.attack=$('attackChoice').value;renderPresets(true);applyMove();invalidate('攻击方式已改变，请核对这次攻击对应的加成。');updateCandidate();});
- $('preset').addEventListener('change',()=>{if(!initialized)return;saveParameters();state.selection.preset=$('preset').value;applyMove();invalidate('具体招式已改变，倍率与命中数按该招式单独保留。');updateCandidate();});
+ $('entryUnit').addEventListener('change',e=>{unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;hasApproval=false;state.mappings={};state.statDecisions={};invalidate('读取资料已暂填；数值差异由你决定。');setParameters();updateCandidate();onRead({battle,unit});});
+ for(const id of ['dualWield','specialAttack','break'])$(id).addEventListener('change',()=>{
+  state.selection[id]=$(id).checked;invalidate('战斗选项已改变，按本次条件重新核对加成。');updateCandidate();
+  if(hasApproval)$('entryConfirm').click();
+ });
+ $('attackChoice').addEventListener('change',()=>{state.selection.attack=$('attackChoice').value;renderPresets(true);applyMove();invalidate('攻击方式已改变，请核对这次攻击对应的加成。');updateCandidate();});
+ $('preset').addEventListener('change',()=>{if(!initialized)return;state.selection.preset=$('preset').value;applyMove();invalidate('具体招式已改变，倍率与命中数按该招式单独保留。');updateCandidate();});
  for(const id of ['element','statReference','type'])$(id).addEventListener('change',()=>{if(!initialized)return;state.selection[id]=$(id).value;invalidate();updateCandidate();});
- for(const id of parameterIds)$(id).addEventListener('change',()=>{if(initialized)saveParameters();});
+ for(const id of parameterIds)$(id).addEventListener('change',()=>{if(initialized)saveParameter(id);});
+ for(const id of ['hitMultiplier','hitDamageRatio','hitScaleStage'])$(id).addEventListener('change',()=>{state.hitParameters[hitKey()]={...state.hitParameters[hitKey()],[id]:$(id).value};save();});
  $('entryEffectsReview').addEventListener('change',e=>{
   const el=e.target;
   if(el.dataset.entryMap!=null){state.mappings[compared[Number(el.dataset.entryMap)].id]=el.value;invalidate();updateCandidate();return;}
@@ -160,11 +167,16 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    if(refs.some(e=>e.target==='法强')&&state.selection.statReference!=='int')throw new Error('已选规则要求以法强参照；请改选法强，或把该参照规则暂不计入。');
    const defenseRefs=reviewed.rows.filter(r=>r.status==='active').flatMap(r=>r.rule.effects).filter(e=>e.type==='defenseReference');
    if(defenseRefs.some(e=>e.target==='敌方魔抗')&&state.selection.statReference!=='int')throw new Error('已选魔抗修正要求以魔抗结算；请确认属性参照或暂不计入该修正。');
-   confirmed=true;
+   confirmed=true;hasApproval=true;
    onConfirm(reviewed,{panels,selection:selection(),profile:{...clone(profile),baseStats:{...profile.baseStats,...state.base}},unitId:unit.unitId,battleId:battle.battleId});
    $('entryStatus').textContent='已按你的选择生成计算数据；后续候选变化不会直接覆盖，需重新确认。';
+   $('entryReviewSummary').textContent='已确认面板与加成，可返回计算器试算。';
    save();
-  }catch(err){confirmed=false;$('entryStatus').textContent=err.message;onInvalidate(err.message);}
+  }catch(err){confirmed=false;$('entryStatus').textContent=err.message;$('entryReviewSummary').textContent=err.message;onInvalidate(err.message);}
  });
- return {receive,selection,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{state.parameters={};state.decisions={};state.statDecisions={};save();if(initialized){renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}}};
+ return {receive,selection,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
+  hasApproval=false;state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};
+  for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
+  if(initialized){state.selection={...state.selection,dualWield:report.context.weaponCount===2,specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
+ }};
 }

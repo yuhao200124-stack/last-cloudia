@@ -2,7 +2,7 @@
 export const reportStorageKey = id => `lc-damage-report:${id}:v1`;
 const elements = { none:'无', fire:'火', ice:'冰', earth:'树', thunder:'雷', light:'光', dark:'暗' };
 const attackNames = {normal:'普通攻击',s1:'特技1',s2:'特技2',s3:'特技3',magic:'魔法',ultimate:'超必杀技'};
-const kinds = { '伤害':'all', '所有伤害':'all', '魔法伤害':'magical', '物理伤害':'physical', '特技伤害':'skill', '超必杀技伤害':'ultimate', '普通攻击伤害':'normal', '特攻伤害':'killer', '命中弱点的魔法伤害':'weak', '对Boss的魔法伤害':'boss', '对Boss的伤害':'boss' };
+const kinds = { '伤害':'all', '所有伤害':'all', '魔法伤害':'magical', '物理伤害':'physical', '特技伤害':'skill', '超必杀技伤害':'ultimate', '普通攻击伤害':'normal', '特攻伤害':'killer', 'Break伤害':'break', 'Break时伤害':'break', '命中弱点的魔法伤害':'weak', '对Boss的魔法伤害':'boss', '对Boss的伤害':'boss' };
 export function buildDamageImport(report) {
   if (report?.kind !== 'last-cloudia-effect-report' || !Array.isArray(report.rows) || !report.context) throw new Error('基础加成报告格式不正确');
   const c=report.context;
@@ -50,5 +50,6 @@ export function buildDamageImport(report) {
     imported.hitMultiplier=hit[0].effect.value;imported.hitDamageRatio=hit[0].effect.secondary;
   } else if(hit.length) imported.blockers.push('存在未确认或多个分段效果，需先核对。');
   if(imported.effects.length) imported.warnings.push('增伤沿用当前引擎的后置逐条结算；导入顺序是来源顺序，尚未确认为游戏实际执行顺序，可在每条“更多”中调整。');
+  if(typeof c.killerOverride==='boolean')imported.bossKiller=c.killerOverride;
   return imported;
 }

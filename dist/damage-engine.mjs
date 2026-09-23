@@ -45,7 +45,7 @@ export function context(s) {
   const defense = f(s.defense * s.defenseRatio * (s.boss && s.break ? s.breakDefenseRatio : 1));
   const resistance = (s.element==='无' ? 0 : s.resistance)+s.resistCorrection;
   const element = f(1-clamp(f(resistance/100),-9.99,1));
-  const killer = (s.boss && s.bossKiller) || s.races.some(r=>s.killerRaces.includes(r));
+  const killer = typeof s.specialAttack==='boolean'?s.specialAttack:(s.boss && s.bossKiller) || s.races.some(r=>s.killerRaces.includes(r));
   return {attack,defense,resistance,element,killer,weak:resistance<0,
     killerFactor:killer ? f(f(1.5)*Math.max(f(1+f(s.killerCorrection/100)),0)) : 1};
 }

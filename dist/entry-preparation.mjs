@@ -40,7 +40,15 @@ export function retargetReport(report,selection) {
   if(row.status==='disabled')overrides[row.rule.id]={disabled:true};
  }
  const attack=selection.attack==='heavy_magic'?'magic':selection.attack;
- const evaluated=evaluateCatalog([...grouped.values()],{...report.context,killer:false,attack,damageType:selection.type,element:elementIds[selection.element]??null},overrides);
+ const context={...report.context,killer:false,attack,damageType:selection.type,element:elementIds[selection.element]??null};
+ if(typeof selection.specialAttack==='boolean')context.killerOverride=selection.specialAttack;
+ if(typeof selection.break==='boolean')context.break=selection.break;
+ if(typeof selection.dualWield==='boolean')context.weaponCount=selection.dualWield?2:(report.context.weaponCount===0?0:1);
+ if(context.weaponCount===2) {
+  const armorNames=new Set((report.profile?.equipment||[]).filter(e=>['长袍','衣服','铠甲'].includes(e.type)).map(e=>e.name));
+  context.equipmentIds=(context.equipmentIds||[]).filter(id=>!armorNames.has(grouped.get(id)?.name));
+ }
+ const evaluated=evaluateCatalog([...grouped.values()],context,overrides);
  return {...report,...evaluated};
 }
 export function websiteCandidates(report) {

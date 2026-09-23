@@ -11,7 +11,7 @@ export const DEFAULT_CONTEXT = {
   staff: false, robe: false, iceStaff: false, magicFamily: 'normal', boss: true,
   fullHp: false, critical: false, weakness: false, resonance: false, chainStacks: 0,
   alive: true, killerBuff: true, bossWaveBuff: true, penetration: null,
-  lowHp: null, firstLowHp: null, mpEnough: null, killer: false, equipmentIds: [],
+  lowHp: null, firstLowHp: null, mpEnough: null, killer: false, killerOverride:null, break:false, equipmentIds: [],
   sword: false, axe: false, spear: false, hammer: false, bow: false, machine: false, claw: false,
   clothes: false, armor: false, incomingElement: null, incomingAttackKind: null,
 };
@@ -36,6 +36,7 @@ export const CONDITION_FIELDS = {
   weakness: { label: '命中弱点属性', options: yesNo }, resonance: { label: '我方正在发动不可叠加魔法', options: yesNo },
   chainStacks: { label: '法术联结状态', options: options([[0, '不叠加 +0%'], [1, '第1次 +4%'], [2, '第2次 +8%'], [3, '第3次 +12%'], [4, '第4次 +16%'], [5, '第5次及以后 +20%']]) },
   alive: { label: '自身存活', options: yesNo }, killerBuff: { label: '指导者特攻上限增益存在', options: yesNo },
+  break: { label: 'Boss 正在 Break', options: yesNo },
   bossWaveBuff: { label: '指导者 Boss Wave 增益存在', options: yesNo },
   penetration: { label: '贯导本次触发', options: yesNo }, killer: { label: '本次触发特攻', options: yesNo },
   lowHp: { label: '自身濒死', options: yesNo }, firstLowHp: { label: '首次进入濒死', options: yesNo },
@@ -54,7 +55,7 @@ export function normalizeContext(input = {}) {
   for (const key of ['damageType', 'element', 'weaponCount', 'magicFamily']) {
     if (!CONDITION_FIELDS[key].options.some((o) => o.value === ctx[key])) ctx[key] = null;
   }
-  for (const key of ['staff', 'robe', 'iceStaff', 'fullHp', 'critical', 'weakness', 'resonance', 'alive', 'killerBuff', 'bossWaveBuff', 'penetration', 'killer', 'lowHp', 'firstLowHp', 'mpEnough']) {
+  for (const key of ['staff', 'robe', 'iceStaff', 'fullHp', 'critical', 'weakness', 'resonance', 'alive', 'killerBuff', 'bossWaveBuff', 'penetration', 'killer', 'lowHp', 'firstLowHp', 'mpEnough', 'break']) {
     if (ctx[key] !== true && ctx[key] !== false) ctx[key] = null;
   }
   if (ctx.iceStaff === true) ctx.staff = true;
@@ -144,12 +145,12 @@ export function evaluateCatalog(catalog, input = {}, overrides = {}) {
   const killerRows = initialRows.filter((row) => row.rule.effects?.some((effect) => effect.type === 'killer'));
   const killer = context.killer === true || killerRows.some((row) => row.status === 'active') ? true
     : context.killer === null || killerRows.some((row) => row.status === 'pending') ? null : false;
-  context.killer = killer;
+  context.killer = typeof context.killerOverride==='boolean'?context.killerOverride:killer;
   const rows = sources.flatMap((source) => (source.rules ?? []).map((rule) => makeRow(source, rule, context, overrides)));
   const warnings = [];
   if (rows.some((row) => row.status === 'active' && row.rule.verification === 'untested')) warnings.push('当前招式含尚未完成实测的特殊结算；本页只核对效果，不能保证最终伤害准确。');
   if (rows.some((row) => row.status === 'pending')) warnings.push('存在待确认效果或条件；待确认项目暂不计入。');
-  return { context, rows, killer, warnings };
+  return { context, rows, killer:context.killer, warnings };
 }
 
 export function formatEffect(effect) {

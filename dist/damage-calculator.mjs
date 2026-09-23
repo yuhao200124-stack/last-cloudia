@@ -2,6 +2,7 @@ import {defaultInput,calculate,context,applies,RACES,ELEMENTS,EFFECTS} from './d
 import {buildDamageImport,reportStorageKey} from './damage-import.mjs';
 import {formatEffect} from './effect-rule-engine.mjs';
 import {initEntryWorkflow} from './entry-workflow.mjs';
+import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -12,13 +13,39 @@ let effects=[],nextId=0,timer;
 const params=new URLSearchParams(location.search);
 const characterId=params.get('character');
 const embedded=params.get('embedded')==='1' && window.parent!==window;
-let imported=null,latestReport=null,workflow=null;
+let imported=null,latestReport=null,workflow=null,readUnit=null,bossRaces=[];
 document.body.classList.toggle('is-embedded',embedded);
 const newEffect=(kind='all')=>({id:++nextId,kind,percent:0,enabled:true,target:'无',stage:'post',name:''});
 const numericKeys=Object.keys(defaultInput()).filter(k=>typeof defaultInput()[k]==='number');
 const booleanKeys=Object.keys(defaultInput()).filter(k=>typeof defaultInput()[k]==='boolean');
 $('element').innerHTML=options(ELEMENTS,'无');
-for(const group of ['races','killerRaces']) $(''+group).innerHTML=RACES.map(r=>`<label><input type="checkbox" value="${r}">${r}</label>`).join('');
+$('bossResistances').innerHTML=Object.entries(BOSS_ELEMENTS).map(([key,label])=>`<label>${label}抗性 %<input data-boss-resistance="${key}" type="number" min="-999" max="1000" step="any"></label>`).join('');
+function showReview(open) {
+  $('reviewPage').hidden=!open;$('calculationPage').hidden=open;
+  if(open){$('reviewTitle').tabIndex=-1;$('reviewTitle').focus();}
+  else $('openReview').focus();
+}
+$('openReview').addEventListener('click',()=>showReview(true));
+$('closeReview').addEventListener('click',()=>showReview(false));
+function fillReaderPreview() {
+  if(workflow?.isConfirmed())return;
+  const mode=referenceMode(),key=mode==='int'?'intelligence':mode==='str'?'attack':null;
+  $('attack').value=key?readUnit?.stats?.[key]??'':'';
+  const crit=readUnit?.statsMeta?.criticalRate;
+  $('critRate').value=typeof crit==='number'&&Number.isFinite(crit)?crit:'';
+}
+function receiveEntryData({battle,unit}) {
+  readUnit=unit;
+  const old=$('bossPreset').value;
+  $('bossPreset').querySelectorAll('[data-reader-boss]').forEach(el=>el.remove());
+  for(const key of Object.keys(bosses))if(key.startsWith('reader-'))delete bosses[key];
+  (battle.bosses||[]).forEach((record,index)=>{
+    const key=`reader-${index}`,boss=readBossRecord(record);bosses[key]=boss;
+    const option=document.createElement('option');option.value=key;option.dataset.readerBoss='';option.textContent=`读取：${boss.name}`;$('bossPreset').append(option);
+  });
+  $('bossPreset').value=bosses[old]&&old.startsWith('reader-')?old:battle.bosses?.length?'reader-0':'custom';
+  applyBoss();fillReaderPreview();update();
+}
 function readEffects() {
   return [...document.querySelectorAll('.effect')].map(row=>({...effects.find(e=>e.id===Number(row.dataset.id)),id:Number(row.dataset.id),
     kind:row.querySelector('[data-field=kind]').value,
@@ -30,10 +57,10 @@ function readEffects() {
 }
 function read() {
   const s=defaultInput();
-  for(const k of numericKeys) s[k]=$(k).valueAsNumber;
-  for(const k of booleanKeys) s[k]=$(k).checked;
+  for(const k of numericKeys) if($(k))s[k]=$(k).valueAsNumber;
+  for(const k of booleanKeys) if($(k))s[k]=$(k).checked;
   for(const k of ['type','skillType','element','hitScaleStage']) s[k]=$(k).value;
-  for(const group of ['races','killerRaces']) s[group]=[...$(group).querySelectorAll('input:checked')].map(e=>e.value);
+  s.races=bossRaces;s.killerRaces=[];s.specialAttack=$('specialAttack').checked;
   s.effects=readEffects();return s;
 }
 function renderEffects() {
@@ -46,28 +73,29 @@ function renderEffects() {
   }).join('');
 }
 function referenceMode() {return workflow?.selection().statReference||imported?.statReference||(!characterId&&$('type').value==='magical'?'int':'str');}
+function syncBossReference() {
+  const mode=referenceMode(),keys=Object.keys(BOSS_ELEMENTS),index=Object.values(BOSS_ELEMENTS).indexOf($('element').value);
+  if(mode!=='mixed')$('defense').value=$(mode==='int'?'bossMind':'bossDefense').value;
+  $('resistance').value=$('element').value==='无'?0:index<0?'':document.querySelector(`[data-boss-resistance="${keys[index]}"]`).value;
+}
 function labels() {
   const mode=referenceMode(),magic=mode==='int';
   $('attackLabel').textContent=mode==='mixed'?'已确认的混合结算攻击值':magic?'当前战斗法强':'当前战斗攻击力';
-  $('defenseLabel').textContent=mode==='mixed'?'已确认的混合结算防御值':magic?'当前魔抗 MND':'当前防御力 DEF';
-  $('mixedReferenceNote').hidden=mode!=='mixed';
-  const neutral=$('element').value==='无';
-  $('resistance').disabled=neutral;
-  $('resistanceHint').textContent=neutral?'无属性默认不使用六属性抗性。':`填写目标对${$('element').value}属性的当前抗性；弱点通常为负值。`;
-  const p=bosses[$('bossPreset').value];
-  $('debuff').hidden=!p||magic||mode==='mixed';
-  if(p)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
+  $('mixedReferenceNote').hidden=mode!=='mixed';$('mixedDefenseControl').hidden=mode!=='mixed';
+  $('defenseLabel').textContent=mode==='mixed'?'混合结算防御值':magic?'当前魔抗 MND':'当前防御力 DEF';
+  const neutral=$('element').value==='无';$('resistance').disabled=neutral;
+  syncBossReference();
+  $('bossReference').textContent=`本次参照：${mode==='mixed'?'手填混合防御值':magic?'魔抗 MND':'防御力 DEF'}；${neutral?'无属性不使用六属性抗性':`使用${$('element').value||'所选'}抗性`}。`;
+  const p=bosses[$('bossPreset').value];$('debuff').hidden=!p?.debuff||magic||mode==='mixed';
+  if(p?.debuff)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
+  $('conditionStatus').textContent=$('dualWield').checked&&$('type').value==='physical'?'已按双武器筛选技能；双刀段数及单段倍率请在下方确认，其他增伤按最终核对结果计入。':'特攻、Break 与武器条件的技能加成按最终核对结果计入。';
 }
 function applyBoss() {
   const p=bosses[$('bossPreset').value];
-  if(p) {
-    $('defense').value=referenceMode()==='mixed'?'':referenceMode()==='int'?p.mnd:p.def;
-    $('resistance').value=$('element').value==='无'?0:p.res[ELEMENTS.indexOf($('element').value)-1];
-    $('boss').checked=true;
-    $('break').checked=false;
-    $('races').querySelectorAll('input').forEach(el=>el.checked=false);
-  }
-  labels();
+  $('bossDefense').value=p?.def??'';$('bossMind').value=p?.mnd??'';
+  document.querySelectorAll('[data-boss-resistance]').forEach((el,i)=>el.value=p?.res?.[i]??'');
+  bossRaces=p?.races||[];$('bossIdentity').textContent=`种族：${p?.raceLabel||'未读取'}`;
+  $('boss').checked=true;labels();
 }
 function update() {
   if(imported) {
@@ -92,7 +120,7 @@ function update() {
     $('normalTotal').textContent=r.normalTotal.map(fmt).join(' – ');
     $('effectiveAttack').textContent=fmt(c.attack);
     $('effectiveDefense').textContent=fmt(c.defense);
-    $('killerState').textContent=c.killer?`${s.boss&&s.bossKiller?'对Boss特攻':'种族匹配'} · ×${fmt(c.killerFactor)}`:s.races.length?'未触发':'种族未选，不计算特攻';
+    $('killerState').textContent=c.killer?`本次触发 · 基础 ×${fmt(c.killerFactor)}`:'未触发';
     $('skillSummary').textContent=`每段系数 ×${s.coefficient} · 技能内攻击修正 ${s.skillPercent>=0?'+':''}${s.skillPercent}% · ${r.totalHits} 段`;
     const count=r.active.filter(e=>e.percent!==0).length;
     $('activeNote').textContent=`已计入 ${count} 条非零加成${s.boss&&s.break?'；Boss Break 防御修正已生效':''}。`;
@@ -111,18 +139,18 @@ function update() {
 }
 function reset() {
   const s=defaultInput();
-  for(const k of numericKeys) $(k).value=s[k];
-  for(const k of booleanKeys) $(k).checked=s[k];
+  for(const k of numericKeys) if($(k))$(k).value=s[k];
+  for(const k of booleanKeys) if($(k))$(k).checked=s[k];
   for(const k of ['type','skillType','element']) $(k).value=s[k];
   $('preset').value='eris';$('bossPreset').value='bird';
   document.querySelectorAll('.choices input').forEach(e=>e.checked=false);
   effects=[newEffect('boss'),newEffect('element'),newEffect('skill')];
+  $('dualWield').checked=false;$('specialAttack').checked=false;applyBoss();
   renderEffects();labels();update();
   if(characterId) {
     imported=null;effects=[];renderEffects();
     $('baseCritRate').value=0;$('baseCap').value=9999;
-    $('autoImport').checked=true;
-    for(const id of ['attack','hits','coefficient','skillPercent'])$(id).value='';
+    for(const id of ['attack','hits','coefficient','skillPercent','skillAdd','skillPostAdd'])$(id).value='';
     $('preset').value='custom';$('hitScaleStage').value='';
     $('critRate').value=0;$('cap').value=9999;
     if(workflow)workflow.reset();
@@ -134,13 +162,11 @@ $('addEffect').addEventListener('click',()=>{effects=readEffects();effects.push(
 $('effects').addEventListener('click',event=>{
   const button=event.target.closest('[data-action]');if(!button)return;
   effects=readEffects();const i=effects.findIndex(e=>e.id===Number(button.closest('.effect').dataset.id));
-  if(imported)$('autoImport').checked=false;
   if(button.dataset.action==='remove')effects.splice(i,1);
   else {const j=i+(button.dataset.action==='up'?-1:1);[effects[i],effects[j]]=[effects[j],effects[i]];}
   renderEffects();update();
 });
 $('effects').addEventListener('change',event=>{
-  if(imported)$('autoImport').checked=false;
   if(event.target.dataset.field==='kind'){
     effects=readEffects();const id=Number(event.target.closest('.effect').dataset.id),e=effects.find(e=>e.id===id);
     e.target=e.kind==='race'?RACES[0]:$('element').value;renderEffects();
@@ -148,10 +174,10 @@ $('effects').addEventListener('change',event=>{
   update();
 });
 $('calculator').addEventListener('submit',e=>e.preventDefault());
-$('calculator').addEventListener('input',event=>{if(imported&&event.target.closest('.effect'))$('autoImport').checked=false;clearTimeout(timer);timer=setTimeout(update,70);});
+$('calculator').addEventListener('input',event=>{clearTimeout(timer);timer=setTimeout(update,70);});
 $('calculator').addEventListener('change',event=>{
   const id=event.target.id;
-  if(['defense','resistance'].includes(id))$('bossPreset').value='custom';
+  if(['bossDefense','bossMind'].includes(id)||event.target.dataset.bossResistance){$('bossPreset').value='custom';labels();}
   if(!characterId&&id==='preset') {
     if($('preset').value==='eris') {
       for(const [key,value] of Object.entries({coefficient:.334,skillPercent:51.8,skillAdd:0,skillPostAdd:0,hits:8,critRate:20,type:'physical',skillType:'skill',element:'无'}))$(key).value=value;
@@ -159,62 +185,59 @@ $('calculator').addEventListener('change',event=>{
     } else $('skillDetails').open=true;
   }
   if(!characterId&&['coefficient','skillPercent','skillAdd','skillPostAdd','type','skillType','element'].includes(id)){$('preset').value='custom';$('skillDetails').open=true;}
-  if((!characterId&&id==='type')||id==='bossPreset'||id==='statReference'||id==='attackChoice'||id==='preset')applyBoss();
-  if(id==='element'){
-    const p=bosses[$('bossPreset').value];
-    if(p)$('resistance').value=$('element').value==='无'?0:p.res[ELEMENTS.indexOf($('element').value)-1];
+  if(!characterId&&['dualWield','type'].includes(id)&&$('type').value==='physical') {
+    for(const key of ['hitMultiplier','hitDamageRatio'])$(key).value=$('dualWield').checked?'':1;
+    if($('dualWield').checked){$('hitScaleStage').value='';$('hitDetails').open=true;}
   }
+  if(id==='bossPreset')applyBoss();
   update();
 });
-$('debuff').addEventListener('click',()=>{const p=bosses[$('bossPreset').value];if(p)$('defense').value=p.debuff;update();});
+$('debuff').addEventListener('click',()=>{const p=bosses[$('bossPreset').value];if(p)$('bossDefense').value=p.debuff;update();});
 function applyImport(report,review) {
   const next=buildDamageImport(report);
   if(next.characterId!==characterId)throw new Error('导入报告与当前角色不一致');
   next.statReference=review.selection.statReference;
   effects=[...next.effects.map(e=>({...e,id:++nextId})),...readEffects().filter(e=>!e.importId)];
   imported=next;
-  for(const [id,value] of Object.entries({skillType:next.skillType,bossKiller:next.bossKiller,defenseRatio:next.defenseRatio,hitMultiplier:next.hitMultiplier,hitDamageRatio:next.hitDamageRatio})) {
+  for(const [id,value] of Object.entries({skillType:next.skillType,defenseRatio:next.defenseRatio,hitMultiplier:next.hitMultiplier,hitDamageRatio:next.hitDamageRatio})) {
     if(typeof value==='boolean')$(id).checked=value;else $(id).value=value??'';
   }
   $('attack').value=next.statReference==='int'?review.panels.intelligence:next.statReference==='str'?review.panels.attack:'';
-  if(next.statReference==='mixed')$('defense').value='';
-  else {
-    const p=bosses[$('bossPreset').value];
-    if(p)$('defense').value=next.statReference==='int'?p.mnd:p.def;
-  }
+  if(next.statReference==='mixed')$('defense').value='';else syncBossReference();
   $('boss').checked=true;
-  for(const id of ['boss','bossKiller','defenseRatio','hitMultiplier','hitDamageRatio'])$(id).disabled=true;
+  for(const id of ['boss','defenseRatio'])$(id).disabled=true;
+  for(const id of ['hitMultiplier','hitDamageRatio'])$(id).disabled=false;
+  if($('dualWield').checked&&$('type').value==='physical'&&next.hitMultiplier===1){
+    for(const id of ['hitMultiplier','hitDamageRatio'])$(id).value=review.selection[id]??'';
+    $('hitScaleStage').value=review.selection.hitScaleStage||'';
+  }
   $('critRate').readOnly=true;$('cap').readOnly=true;
-  $('baseImport').hidden=false;$('importStatControls').hidden=false;$('importCapControls').hidden=false;
+  $('importStatControls').hidden=false;$('importCapControls').hidden=false;
   $('skillDetails').open=true;
-  if(next.hitDamageRatio===1)$('hitScaleStage').value='core';
+  if(next.hitDamageRatio===1&&!($('dualWield').checked&&$('type').value==='physical'))$('hitScaleStage').value='core';
+  else $('hitScaleStage').value=review.selection.hitScaleStage||'';
   $('hitDetails').open=next.hitMultiplier!==1||next.hitDamageRatio!==1;
-  $('importSummary').textContent=`${next.characterName} · ${next.attackName} · ${next.element||'属性待确认'} · 已确认 ${next.effects.length} 条伤害加成`;
+  $('entryReviewSummary').textContent=`${next.characterName} · ${next.attackName} · ${next.element||'属性待确认'} · 已确认 ${next.effects.length} 条伤害加成`;
   $('critImportNote').textContent=`已确认 +${next.critAdded}% 暴击率${next.skillType==='magic'&&!next.magicCanCrit?'；当前魔法没有已确认的暴击资格，按0%计算。':'；最终值为左侧输入与确认加成之和，上限100%。'}`;
   $('capImportNote').textContent=`已确认固定上限 +${fmt(next.capAdded)}；最终值为左侧输入与确认加成之和。`;
   $('importReferences').innerHTML=`<ul>${next.reference.map(e=>`<li><b>${esc(e.source)}</b>：${esc(formatEffect(e.effect))}${['stat','statBuff','equipmentStat'].includes(e.effect.type)?'（面板核对，不重复乘算）':''}</li>`).join('')}</ul>`;
   const noLongerActive=report.rows.filter(r=>r.status!=='active').map(r=>`${r.sourceName}：确认后的前置条件不成立，相关效果未计入。`);
   $('importWarnings').innerHTML=[...next.blockers,...next.warnings,...noLongerActive].map(w=>`<p class="import-warning">${esc(w)}</p>`).join('');
-  renderEffects();labels();update();
+  renderEffects();labels();update();showReview(false);
 }
 function receiveReport(report,force=false) {
   try {
     if(String(report?.characterId)!==characterId)return;
     latestReport=report;
-    if(force||!workflow?.hasReport()||$('autoImport').checked) {
-      workflow.receive(report);
-      if(!workflow.isConfirmed())$('importSummary').textContent=`${report.characterName} · 固定资料已补齐；加成在下方等待核对。`;
-    } else $('importSummary').textContent=`${report.characterName} · 网站候选同步已暂停；点击“刷新候选”查看更新。`;
-  } catch(e){imported=null;$('baseImport').hidden=false;$('importSummary').textContent=`导入失败：${e.message}`;update();}
+    workflow.receive(report);
+    if(!workflow.isConfirmed())$('entryReviewSummary').textContent=`${report.characterName} · 固定资料已补齐；请核对采用的数据。`;
+  } catch(e){imported=null;$('entryReviewSummary').textContent=`导入失败：${e.message}`;update();}
 }
 function loadReport(force=false) {
   if(!characterId)return;
-  try {const report=JSON.parse(localStorage.getItem(reportStorageKey(characterId)));if(report)receiveReport(report,force);}catch(e){$('importSummary').textContent=`无法读取基础加成：${e.message}`;}
+  try {const report=JSON.parse(localStorage.getItem(reportStorageKey(characterId)));if(report)receiveReport(report,force);}catch(e){$('entryReviewSummary').textContent=`无法读取基础加成：${e.message}`;}
   if(embedded)window.parent.postMessage({type:'lc-damage-request'},location.origin);
 }
-$('importBase').addEventListener('click',()=>{if(latestReport)receiveReport(latestReport,true);loadReport(true);});
-$('autoImport').addEventListener('change',()=>{if($('autoImport').checked){if(latestReport)receiveReport(latestReport,true);loadReport(true);}});
-$('editBase').addEventListener('click',()=>{if(embedded)window.parent.postMessage({type:'lc-damage-edit-base'},location.origin);else location.href=`./character-${encodeURIComponent(characterId)}?calculator=base`;});
 window.addEventListener('message',e=>{if(embedded&&e.origin===location.origin&&e.source===window.parent&&e.data?.type==='lc-damage-report')receiveReport(e.data.report);});
 // Embedded frames receive direct messages; responding to storage by requesting
 // another report would cause a parent/child write-request feedback loop.
@@ -226,10 +249,11 @@ if(characterId)workflow=initEntryWorkflow({
     imported=null;effects=readEffects().filter(e=>!e.importId);renderEffects();
     $('importReferences').replaceChildren();$('importWarnings').replaceChildren();
     $('attack').value='';$('critRate').value=0;$('cap').value=$('baseCap').value;
-    $('importSummary').textContent=message;update();
+    $('entryReviewSummary').textContent=message;update();
   },
-  onSelection(){labels();update();},
+  onSelection(){fillReaderPreview();labels();update();},
+  onRead:receiveEntryData,
   onConfirm:applyImport
 });
 reset();
-if(characterId){$('baseImport').hidden=false;loadReport();if(embedded)window.parent.postMessage({type:'lc-damage-ready'},location.origin);}
+if(characterId){loadReport();if(embedded)window.parent.postMessage({type:'lc-damage-ready'},location.origin);}

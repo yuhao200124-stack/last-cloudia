@@ -75,7 +75,8 @@ test('invalid and unsupported overflow inputs fail explicitly',()=>{
 test('UI input contract covers all numeric/boolean model parameters and imported modules',()=>{
   const html=readFileSync(new URL('../dist/damage-calculator.html',import.meta.url),'utf8');
   const ids=[...html.matchAll(/id="([^"]+)"/g)].map(x=>x[1]);assert.equal(ids.length,new Set(ids).size);
-  for(const [key,value] of Object.entries(defaultInput())) if(['number','boolean'].includes(typeof value)) assert(ids.includes(key),`missing ${key}`);
+  for(const [key,value] of Object.entries(defaultInput())) if(['number','boolean'].includes(typeof value)&&!['killerCorrection','bossKiller'].includes(key)) assert(ids.includes(key),`missing ${key}`);
+  assert(ids.includes('specialAttack'));
   const js=readFileSync(new URL('../dist/damage-calculator.mjs',import.meta.url),'utf8');
   for(const m of js.matchAll(/\$\('([^']+)'\)/g)) assert(ids.includes(m[1]),`missing referenced element ${m[1]}`);
 });
