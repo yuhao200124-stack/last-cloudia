@@ -64,9 +64,9 @@
       <p class="help">保持基础配置进入一次战斗，运行v0.35读取器，然后选择 BattleEntryReport.json。网站条件推演和读取器候选都不自动当作已生效。</p>
       <label>读取报告<input id="entryReportFile" type="file" accept=".json,application/json"></label>
       <p id="entryFileNote" class="help"></p><label>本次角色<select id="entryUnit"><option value="">尚未导入</option></select></label>
-      <div class="section-heading entry-subheading"><h3>面板核对</h3><button id="entryUseStats" type="button">采用这份入场面板</button></div>
-      <p class="help">基础值与战斗最终值口径不同，只并列核对。采用入场面板后，下面的属性加成不会再乘一次。</p>
-      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>网站基础与候选加成</th><th>读取值</th><th>采用哪份数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
+      <div class="section-heading entry-subheading"><h3>面板核对</h3><div class="inline-options"><button id="entryUseWebsiteStats" type="button">采用网站计算面板</button><button id="entryUseStats" type="button">采用这份入场面板</button></div></div>
+      <p class="help">按当前勾选的开战配置自动合计六维，并与读取值比较；下方已作出的排除或数值修改也会计入，待决定项先按网站值预览。展开可看明细，采用最终面板后不会再次乘属性加成。</p>
+      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>网站计算结果与来源</th><th>读取值</th><th>采用哪份数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
       <div class="section-heading entry-subheading"><h3 id="entryCandidateCount">加成候选</h3><button id="entryUseWeb" type="button">本表全部沿用网站值</button></div>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>网站值</th><th>读取值／证据</th><th>比较</th><th>你的决定</th></tr></thead><tbody id="entryEffectsReview"></tbody></table></div>
       <details><summary id="entryPendingCount">网站待确认项</summary><p class="help">这些效果的条件或拆分仍未确定，不计入上表。可返回基础计算器补充，随后重新核对。</p><ul id="entryPending"></ul></details>

@@ -28,8 +28,9 @@ export function readCharacterProfile(doc) {
  const moves=[{id:'normal',name:'普通攻击',kind:'normal',element:null,hits:null,coefficient:null,skillPercent:null,statReference:null,purpose:'attack',source:'通用入口，参数待确认'}];
  [...doc.querySelectorAll('#specials tbody tr')].forEach((el,i)=>{if(i<4)moves.push(move(el,['s1','s2','s3','ultimate'][i],['s1','s2','s3','ultimate'][i]));});
  const magic=[...doc.querySelectorAll('#magic tbody tr')].map((el,i)=>move(el,'magic',`magic-${i+1}`));
+ const equipment=[...doc.querySelectorAll('#equipment .equipment-card')].map(el=>({name:clean(el.querySelector('h4')?.textContent),type:clean(el.querySelector('dd')?.textContent).split(/[｜|]/)[0]}));
  return {schemaVersion:1,characterId:String(doc.body.dataset.characterId),name:clean(doc.querySelector('.hero h2')?.textContent),
-  statsBasis:'max-growth-character-page',baseStats,moves,magic};
+  statsBasis:'max-growth-character-page',baseStats,moves,magic,equipment};
 }
 export function retargetReport(report,selection) {
  const grouped=new Map(),overrides={};

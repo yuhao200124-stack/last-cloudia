@@ -24,3 +24,4 @@ body.is-embedded main { padding-top:14px; }
 #entryUnmatched li { margin:12px 0; font-size:.875rem; }
 #entryUnmatched small { display:block; }
 #entryUnmatched pre { white-space:pre-wrap; word-break:break-word; max-height:230px; overflow:auto; }
+.entry-panel-total{display:block;font-size:1.2rem;font-variant-numeric:tabular-nums;color:#244f7f;margin-bottom:3px}.entry-panel-difference{font-weight:600;margin:5px 0}.entry-panel-difference.is-match{color:#247049}.entry-panel-difference.is-different,.entry-panel-missing{color:#9b6320}.entry-panel-steps{padding-left:19px;margin:8px 0;line-height:1.8}.entry-panel-steps li{margin:5px 0}.entry-subheading>.inline-options{justify-content:flex-end;flex-wrap:wrap}

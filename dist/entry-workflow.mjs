@@ -1,6 +1,7 @@
 import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs';
 import {formatEffect} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
+import {calculateWebsitePanel} from './panel-calculator.mjs';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -17,6 +18,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  const selection=()=>({...state.selection});
  const selectedMove=()=>[...(profile?.moves||[]),...(profile?.magic||[])].find(m=>m.id===state.selection.preset);
  const paramKey=()=>`${state.selection.attack}:${state.selection.preset||'unselected'}`;
+ const websitePanel=(source=currentPanelReport())=>calculateWebsitePanel({...profile.baseStats,...state.base},source,{equipment:profile.equipment||[]});
  function invalidate(message='数据待核对，确认后才会用于伤害计算。') {confirmed=false;onInvalidate(message);$('entryStatus').textContent=message;}
  function saveParameters(){state.parameters[paramKey()]=Object.fromEntries(parameterIds.map(id=>[id,$(id).value]));save();}
  function setParameters() {
@@ -54,13 +56,16 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   $('entrySixStats').innerHTML=Object.entries(SIX_STATS).map(([k,label])=>`<label>${label}（原始基础）<input type="number" data-entry-base="${k}" min="0" max="100000000" step="1" value="${esc(base[k]??'')}"><small>加护 +${esc(percentages[k])}% → <b>${esc(adjusted[k]??'未提供')}</b></small></label>`).join('');
  }
  function currentBlessings() {
-  const rows=(candidate||report)?.rows?.filter(r=>r.group==='blessings')||[];
-  return {rows:rows.map(r=>({...r,rule:{...r.rule,effects:r.rule.effects.flatMap((effect,index)=>{
+  return {rows:currentPanelReport().rows.filter(r=>r.group==='blessings')};
+ }
+ function currentPanelReport() {
+  const rows=(candidate||report)?.rows||[];
+  return {...(candidate||report),rows:rows.map(r=>({...r,rule:{...r.rule,effects:r.rule.effects.flatMap((effect,index)=>{
    const row=compared.find(w=>w.sourceId===r.sourceId&&w.ruleId===r.rule.id&&w.index===index);
    const decision=row&&state.decisions[decisionKey(row)];
    if(decision?.choice==='exclude')return [];
-   if(decision?.choice==='manual')return Number.isFinite(decision.value)?[{...effect,value:decision.value}]:[];
-   if(decision?.choice==='reader')return row.compatible?[{...effect,value:row.reader.value}]:[];
+   if(decision?.choice==='manual')return [{...effect,value:Number.isFinite(decision.value)?decision.value:NaN}];
+   if(decision?.choice==='reader')return [{...effect,value:row.compatible?row.reader.value:NaN}];
    return [effect];
   })}}))};
  }
@@ -76,11 +81,13 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    const d=state.decisions[decisionKey(r)]||{},numeric=typeof r.effect.value==='number';
    return `<tr><td><b>${esc(r.sourceName)}</b><small>${esc(formatEffect(r.effect))}</small></td><td>${esc(r.effect.value)}${esc(r.effect.unit||'')}<small>${esc(r.group==='blessings'?'账户加护默认值':'网站条件推演')}</small></td><td>${r.reader?`${esc(r.reader.value??'未解析')}${esc(r.reader.unit||'')}<small>${esc(r.reader.state==='observed'?'读取观测':'读取候选，未证明触发')}</small><details><summary>读取条件与原始字段</summary><small>Process ${esc(r.reader.processId??'—')} · Condition ${esc(r.reader.conditionId??'—')} · ${esc(r.reader.raw?.component||'阶段未解析')}</small><pre>${esc(JSON.stringify(r.reader.raw??r.reader,null,2))}</pre></details>`:'未对应'}<details><summary>选择读取来源</summary><select data-entry-map="${i}" aria-label="${esc(r.sourceName)}读取来源">${readerOptions(r)}</select></details></td><td>${esc(r.comparison)}${r.difference!=null?`<small>差值 ${r.difference>=0?'+':''}${esc(r.difference)}${esc(r.effect.unit||'')}</small>`:''}</td><td><select data-entry-choice="${i}" aria-label="${esc(r.sourceName)}核对决定">${option('pending','待决定',d.choice||'pending')}${option('web','采用网站值',d.choice)}${r.compatible&&r.reader?.value!=null&&!['hit','statReference'].includes(r.effect.type)?option('reader','采用读取值',d.choice):''}${numeric?option('manual','手动填写',d.choice):''}${option('exclude','暂不计入',d.choice)}</select>${numeric?`<input data-entry-value="${i}" type="number" step="any" value="${esc(d.value??'')}" placeholder="自填数值" aria-label="${esc(r.sourceName)}手动数值"${d.choice==='manual'?'':' hidden'}>`:''}</td></tr>`;
   }).join('');
+  const computed=websitePanel();
   $('entryStatReview').innerHTML=Object.entries(SIX_STATS).map(([k,label])=>{
    const d=state.statDecisions[k]||{},base=state.base[k]??profile.baseStats[k],observed=unit?.stats?.[k];
-   const blessed=withAccountBlessings({[k]:base},currentBlessings())[k];
-   const website=compared.filter(r=>['stat','statBuff','equipmentStat'].includes(r.effect.type)&&r.effect.target.includes(label));
-   return `<tr><td><b>${label}</b></td><td>${esc(base??'未提供')}<small>仅加护后：${esc(blessed??'未提供')}</small><small>${website.map(r=>`${esc(r.sourceName)}：${esc(formatEffect(r.effect))}`).join('<br>')||'无已识别属性词条'}</small></td><td>${esc(observed??'未读到')}<small>入场最终面板${k==='hp'||k==='mp'?'（上限）':''}</small></td><td><select data-entry-stat="${k}" aria-label="${label}面板来源">${option('pending','待决定',d.choice||'pending')}${observed!=null?option('reader','采用入场面板',d.choice):''}${option('manual','手动填写最终值',d.choice)}${option('blessed','基础＋已采用加护',d.choice)}${option('base','只用原始基础值（不含加护）',d.choice)}</select><input data-entry-stat-value="${k}" type="number" min="0" max="100000000" step="1" value="${esc(d.value??'')}" aria-label="${label}手动面板"${d.choice==='manual'?'':' hidden'}></td></tr>`;
+   const p=computed.stats[k],diff=typeof observed==='number'&&p.value!=null?p.value-observed:null;
+   const value=p.value==null?'待补齐':p.value.toLocaleString('en-US');
+   const difference=diff==null?'':`<small class="entry-panel-difference ${diff===0?'is-match':'is-different'}">${diff===0?'与读取值一致':`网站比读取${diff>0?'多':'少'} ${Math.abs(diff).toLocaleString('en-US')}`}</small>`;
+   return `<tr><td><b>${label}</b></td><td><strong class="entry-panel-total" data-website-panel="${k}">${esc(value)}</strong>${p.value==null?`<small>已算部分：${esc(p.subtotal??'—')}</small>`:'<small>本次勾选加成计算结果</small>'}${difference}${p.buffs.length?`<small>状态增益前：${esc(p.beforeBuff??'—')}</small>`:''}${p.issues.map(msg=>`<small class="entry-panel-missing">${esc(msg)}</small>`).join('')}<details><summary>计算明细与加成来源</summary><ol class="entry-panel-steps">${p.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><small>${p.sources.map(s=>`${esc(s.sourceName)}：${esc(formatEffect(s.effect))}`).join('<br>')||'无额外属性加成'}</small></details></td><td>${esc(observed??'未读到')}<small>入场最终面板${k==='hp'||k==='mp'?'（上限）':''}</small></td><td><select data-entry-stat="${k}" aria-label="${label}面板来源">${option('pending','待决定',d.choice||'pending')}${p.value!=null?option('website','采用网站计算结果',d.choice):''}${observed!=null?option('reader','采用入场面板',d.choice):''}${option('manual','手动填写最终值',d.choice)}${option('blessed','基础＋已采用加护',d.choice)}${option('base','只用原始基础值（不含加护）',d.choice)}</select><input data-entry-stat-value="${k}" type="number" min="0" max="100000000" step="1" value="${esc(d.value??'')}" aria-label="${label}手动面板"${d.choice==='manual'?'':' hidden'}></td></tr>`;
   }).join('');
   const mapped=new Set(compared.map(r=>r.reader?.id).filter(Boolean));
   const unmatched=(unit?.bonuses||[]).filter(b=>!mapped.has(b.id));
@@ -133,6 +140,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  $('entryStatReview').addEventListener('change',e=>{const el=e.target,key=el.dataset.entryStat??el.dataset.entryStatValue;if(!key)return;const d=state.statDecisions[key]||{};if(el.dataset.entryStat)d.choice=el.value;else d.value=el.valueAsNumber;state.statDecisions[key]=d;invalidate();save();renderReview();});
  $('entryUseWeb').addEventListener('click',()=>{for(const row of compared)state.decisions[decisionKey(row)]={choice:'web'};invalidate('已选择沿用网站候选；仍需核对面板并确认应用。');save();renderProfile();renderReview();});
  $('entryUseStats').addEventListener('click',()=>{if(!unit){$('entryStatus').textContent='请先选择读取报告中的角色。';return;}for(const k of Object.keys(SIX_STATS))if(unit.stats[k]!=null)state.statDecisions[k]={choice:'reader'};invalidate('已选择入场最终面板；属性加成不会再次乘入。');save();renderReview();});
+ $('entryUseWebsiteStats').addEventListener('click',()=>{if(!candidate)return;const computed=websitePanel();let count=0;for(const k of Object.keys(SIX_STATS))if(computed.values[k]!=null){state.statDecisions[k]={choice:'website'};count++;}invalidate(`已选择 ${count} 项网站计算结果；仍需确认后应用。`);save();renderReview();});
  $('entryConfirm').addEventListener('click',()=>{
   try {
    if(!unit)throw new Error('请导入一次基础状态战斗报告，并选择本次角色。');
@@ -140,11 +148,12 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    if(selectedMove().purpose==='support')throw new Error('当前是辅助魔法，请改选攻击招式。');
    if(!['str','int','mixed'].includes(state.selection.statReference))throw new Error('请选择攻击力、法强或混合参照。');
    if(!['physical','magical'].includes(state.selection.type)||!state.selection.element)throw new Error('请确认伤害分类和攻击属性。');
-   for(const k of Object.keys(SIX_STATS))if(!['reader','manual','blessed','base'].includes(state.statDecisions[k]?.choice))throw new Error(`请确认${SIX_STATS[k]}最终采用的数值。`);
+   for(const k of Object.keys(SIX_STATS))if(!['reader','manual','blessed','base','website'].includes(state.statDecisions[k]?.choice))throw new Error(`请确认${SIX_STATS[k]}最终采用的数值。`);
    const reviewed=resolveReview(candidate,compared,state.decisions);
    const blessed=withAccountBlessings({...profile.baseStats,...state.base},reviewed);
+   const computed=websitePanel({...reviewed,rows:[...reviewed.rows,...candidate.rows.filter(r=>r.status==='pending')]});
    const panels={};for(const k of Object.keys(SIX_STATS)){
-    const d=state.statDecisions[k]||{};panels[k]=d.choice==='reader'?unit.stats[k]:d.choice==='manual'?d.value:d.choice==='blessed'?blessed[k]:d.choice==='base'?state.base[k]??profile.baseStats[k]:null;
+    const d=state.statDecisions[k]||{};panels[k]=d.choice==='reader'?unit.stats[k]:d.choice==='website'?computed.values[k]:d.choice==='manual'?d.value:d.choice==='blessed'?blessed[k]:d.choice==='base'?state.base[k]??profile.baseStats[k]:null;
     if(!Number.isFinite(panels[k])||panels[k]<0)throw new Error(`请确认${SIX_STATS[k]}最终采用的数值。`);
    }
    const refs=reviewed.rows.flatMap(r=>r.rule.effects).filter(e=>e.type==='statReference');

@@ -7,7 +7,7 @@ export function blessingPercentages(report) {
   if(!report?.rows)return {...STAT_BLESSINGS};
   const result=Object.fromEntries(Object.keys(labels).map(k=>[k,0]));
   for(const row of report.rows)if(row.group==='blessings'&&row.status==='active') {
-    for(const effect of row.rule.effects)if(effect.type==='stat'&&effect.unit==='%'&&typeof effect.value==='number') {
+    for(const effect of row.rule.effects)if(effect.type==='stat'&&effect.unit==='%'&&typeof effect.value==='number'&&Number.isFinite(effect.value)) {
       const key=Object.keys(labels).find(k=>labels[k]===effect.target);if(key)result[key]+=effect.value;
     }
   }
