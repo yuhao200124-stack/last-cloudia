@@ -17,18 +17,21 @@ export function defaultInput() {
     integerRatio:0, type:'physical', skillType:'skill', element:'无', resistance:0,
     resistCorrection:0, boss:true, races:[], killerRaces:[], killerCorrection:0,
     break:false, breakDefenseRatio:0.5, back:false, air:false, ailment:false,
-    guarded:false, guardReduction:50, cap:9999, effects:[]};
+    guarded:false, guardReduction:50, cap:9999, bossKiller:false, defenseRatio:1,
+    hitMultiplier:1, hitDamageRatio:1, hitScaleStage:'core', effects:[]};
 }
 export function validate(s) {
   const bounds = {attack:[0,1e8],defense:[0,1e8],hits:[1,1000],critRate:[0,100],
     coefficient:[0,1e4],skillAdd:[-1e8,1e8],skillPercent:[-100,1e5],skillPostAdd:[-1e8,1e8],
     attackRatio:[-100,1e5],runtimeRatio:[0,1e4],integerRatio:[-100,1e5],
     resistance:[-999,1000],resistCorrection:[-999,1000],killerCorrection:[-100,1e4],
-    breakDefenseRatio:[0,1],guardReduction:[0,100],cap:[1,2e9]};
+    breakDefenseRatio:[0,1],guardReduction:[0,100],cap:[1,2e9],defenseRatio:[0,1],hitMultiplier:[1,100],hitDamageRatio:[0,100]};
   for (const [key,[lo,hi]] of Object.entries(bounds)) {
     if (!Number.isFinite(s[key]) || s[key]<lo || s[key]>hi) throw new Error(`参数 ${key} 超出可计算范围`);
   }
   if (!Number.isInteger(s.hits) || !Number.isInteger(s.cap)) throw new Error('段数和伤害上限必须是整数');
+  if (!Number.isInteger(s.hitMultiplier) || s.hits*s.hitMultiplier>10000) throw new Error('请检查原始段数与段数倍率');
+  if (s.hitDamageRatio!==1 && !['core','beforeCap','afterCap'].includes(s.hitScaleStage)) throw new Error('分段修正已导入；请选择单段伤害修正的试算位置，当前尚未确认实际执行顺序。');
   if (!['physical','magical'].includes(s.type) || !ELEMENTS.includes(s.element)) throw new Error('请选择有效的攻击类型与属性');
   for (const e of s.effects) {
     if (!(e.kind in EFFECTS) || !['post','offense','received','reduction'].includes(e.stage) ||
@@ -39,15 +42,16 @@ export function validate(s) {
 export function context(s) {
   const edited = Math.floor((s.attack+s.skillAdd)*(1+s.skillPercent/100)+s.skillPostAdd);
   const attack = Math.max(f(f(edited)*f(1+f(s.attackRatio/100))),0);
-  const defense = f(s.defense * (s.boss && s.break ? s.breakDefenseRatio : 1));
+  const defense = f(s.defense * s.defenseRatio * (s.boss && s.break ? s.breakDefenseRatio : 1));
   const resistance = (s.element==='无' ? 0 : s.resistance)+s.resistCorrection;
   const element = f(1-clamp(f(resistance/100),-9.99,1));
-  const killer = s.races.some(r=>s.killerRaces.includes(r));
+  const killer = (s.boss && s.bossKiller) || s.races.some(r=>s.killerRaces.includes(r));
   return {attack,defense,resistance,element,killer,weak:resistance<0,
     killerFactor:killer ? f(f(1.5)*Math.max(f(1+f(s.killerCorrection/100)),0)) : 1};
 }
 export function applies(e,s,c,critical) {
   if (!e.enabled) return false;
+  if (e.scope && Object.entries(e.scope).some(([key,value])=>s[key]!==value)) return false;
   switch(e.kind) {
     case 'boss': return s.boss;
     case 'element': return e.target===s.element;
@@ -74,6 +78,7 @@ export function prepare(s,critical=false) {
     if(e.stage==='reduction') reduction=f(reduction*f(1-p));
   }
   let q=f(f(s.coefficient)*f(s.runtimeRatio));
+  if(s.hitScaleStage==='core') q=f(q*f(s.hitDamageRatio));
   q=f(q*c.element); q=f(q*c.killerFactor); q=f(q*f(offense*received)); q=f(q*reduction);
   const exponent=c.attack>0 ? f(f(c.defense/c.attack)*(critical?6:10)) : 0;
   const base=c.attack>0 ? f(f(Math.pow(f(.9),exponent))*c.attack) : 0;
@@ -91,8 +96,10 @@ export function damageAt(prepared,random=.95,withTrace=false) {
     d=record(`${e.name||EFFECTS[e.kind]} ${e.percent>=0?'+':''}${e.percent}%`,Math.max(Math.floor(d*(1+e.percent/100)+.5),1));
   }
   if(s.guarded) d=record('格挡',Math.floor(d*(1-s.guardReduction/100)));
+  if(s.hitScaleStage==='beforeCap' && s.hitDamageRatio!==1) d=record('分段单段修正（上限前试算）',Math.trunc(d*s.hitDamageRatio));
   const uncapped=Math.max(d,1);
   d=record('每段伤害上限',clamp(uncapped,1,s.cap));
+  if(s.hitScaleStage==='afterCap' && s.hitDamageRatio!==1) d=record('分段单段修正（上限后试算）',Math.max(1,Math.trunc(d*s.hitDamageRatio)));
   return {value:d,uncapped,trace,attack:c.attack};
 }
 export function calculate(s) {
@@ -108,10 +115,11 @@ export function calculate(s) {
   }
   const n=branch(normal),cr=branch(critical),chance=s.critRate/100;
   const mean=n.mean*(1-chance)+cr.mean*chance;
-  return {normal:n,critical:cr,mean,totalMean:mean*s.hits,
-    normalTotal:[n.min*s.hits,n.max*s.hits],
-    possibleTotal:[(chance===1?cr.min:chance===0?n.min:Math.min(n.min,cr.min))*s.hits,
-      (chance===0?n.max:chance===1?cr.max:Math.max(n.max,cr.max))*s.hits],
+  const totalHits=s.hits*s.hitMultiplier;
+  return {normal:n,critical:cr,mean,totalHits,totalMean:mean*totalHits,
+    normalTotal:[n.min*totalHits,n.max*totalHits],
+    possibleTotal:[(chance===1?cr.min:chance===0?n.min:Math.min(n.min,cr.min))*totalHits,
+      (chance===0?n.max:chance===1?cr.max:Math.max(n.max,cr.max))*totalHits],
     context:normal.c,
     active:s.effects.filter(e=>applies(e,s,normal.c,false)||applies(e,s,normal.c,true))};
 }

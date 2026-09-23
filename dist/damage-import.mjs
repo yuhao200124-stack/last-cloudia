@@ -1,0 +1,54 @@
+// Transfer qualified effects, never reinterpret a stat bonus as a skill multiplier.
+export const reportStorageKey = id => `lc-damage-report:${id}:v1`;
+const elements = { none:'无', fire:'火', ice:'冰', earth:'树', thunder:'雷', light:'光', dark:'暗' };
+const attackNames = {normal:'普通攻击',s1:'特技1',s2:'特技2',s3:'特技3',magic:'魔法',ultimate:'超必杀技'};
+const kinds = { '伤害':'all', '所有伤害':'all', '魔法伤害':'magical', '物理伤害':'physical', '特技伤害':'skill', '超必杀技伤害':'ultimate', '普通攻击伤害':'normal', '特攻伤害':'killer', '命中弱点的魔法伤害':'weak', '对Boss的魔法伤害':'boss', '对Boss的伤害':'boss' };
+export function buildDamageImport(report) {
+  if (report?.kind !== 'last-cloudia-effect-report' || !Array.isArray(report.rows) || !report.context) throw new Error('基础加成报告格式不正确');
+  const c=report.context;
+  const imported={characterId:String(report.characterId),characterName:report.characterName,createdAt:report.createdAt,
+    attackName:attackNames[c.attack]||'未选择',attack:c.attack,magicFamily:c.magicFamily,type:c.damageType,skillType:c.attackKind,element:elements[c.element],
+    effects:[],reference:[],warnings:[],blockers:[],capAdded:0,critAdded:0,magicCanCrit:false,
+    bossKiller:false,defenseRatio:1,hitMultiplier:1,hitDamageRatio:1,statReference:null};
+  if (!['physical','magical'].includes(c.damageType) || !imported.element) imported.blockers.push('请在基础计算器确认伤害类型和攻击属性。');
+  const defense=[],hit=[],refs=[];
+  for (const row of report.rows) {
+    if(row.status!=='active') continue;
+    for (const [index,e] of row.rule.effects.entries()) {
+      const id=`${row.sourceId}:${row.rule.id}:${index}`;
+      const entry={id,source:row.sourceName,effect:e,group:row.group};
+      const number=typeof e.value==='number' && Number.isFinite(e.value);
+      if(e.type==='damage') {
+        let kind=kinds[e.target];let target=imported.element;
+        if(Object.values(elements).some(el=>e.target===`${el}属性伤害`)) kind='element';
+        if(Object.values(elements).some(el=>e.target===`${el}属性魔法伤害`)) kind='magical';
+        if(e.target.includes('暴击伤害')) kind='critical';
+        if(!kind || !number || e.unit!=='%') { imported.blockers.push(`${row.sourceName}：${e.target}尚无伤害字段映射，请先在基础计算器确认或停用。`);continue; }
+        imported.effects.push({importId:id,kind,target,percent:e.value,enabled:true,stage:'post',name:`${row.sourceName} · ${e.target}`,
+          scope:{type:c.damageType,skillType:c.attackKind,element:imported.element,boss:c.boss},sourceText:row.sourceText});
+      } else if(e.type==='cap') {
+        if(number && e.unit==='') imported.capAdded+=e.value;
+        else imported.blockers.push(`${row.sourceName}：上限修正${e.value}${e.unit}尚未确认计算顺序。`);
+        imported.reference.push(entry);
+      } else if(e.type==='critRate' && number && e.unit==='%') { imported.critAdded+=e.value;imported.reference.push(entry); }
+      else if(e.type==='critPermission') { if(e.value===true)imported.magicCanCrit=true; imported.reference.push(entry); }
+      else if(e.type==='killer') { if(e.target==='Boss' && e.value===true) imported.bossKiller=true; else imported.blockers.push(`${row.sourceName}：特攻目标尚未映射。`); imported.reference.push(entry); }
+      else if(e.type==='defenseReference') { defense.push(entry);imported.reference.push(entry); }
+      else if(e.type==='hit') {hit.push(entry);imported.reference.push(entry);}
+      else if(e.type==='statReference') {refs.push(entry);imported.reference.push(entry);}
+      else if(['stat','statBuff','equipmentStat'].includes(e.type)) imported.reference.push(entry);
+    }
+    if(row.rule.verification==='untested') imported.warnings.push(`${row.sourceName}：${row.rule.note||'特殊结算尚未实测，结果仅供试算。'}`);
+  }
+  if(refs.length===1 && refs[0].effect.target==='法强' && refs[0].effect.value==='魔抗') imported.statReference='int';
+  else if(refs.length) imported.blockers.push('存在未确认或多个攻击属性参照，需先核对。');
+  if(defense.length===1 && defense[0].effect.target==='敌方魔抗' && defense[0].effect.unit==='%' && typeof defense[0].effect.value==='number' && defense[0].effect.value>=0 && defense[0].effect.value<=100) {
+    if(c.attackKind==='magic' || imported.statReference==='int') imported.defenseRatio=defense[0].effect.value/100;
+    else imported.blockers.push('当前防御参照不是魔抗，不能应用魔抗修正。');
+  } else if(defense.length) imported.blockers.push('存在未确认或多个防御参照修正，需先核对。');
+  if(hit.length===1 && Number.isInteger(hit[0].effect.value) && hit[0].effect.value>0 && Number.isFinite(hit[0].effect.secondary) && hit[0].effect.secondary>=0) {
+    imported.hitMultiplier=hit[0].effect.value;imported.hitDamageRatio=hit[0].effect.secondary;
+  } else if(hit.length) imported.blockers.push('存在未确认或多个分段效果，需先核对。');
+  if(imported.effects.length) imported.warnings.push('增伤沿用当前引擎的后置逐条结算；导入顺序是来源顺序，尚未确认为游戏实际执行顺序，可在每条“更多”中调整。');
+  return imported;
+}

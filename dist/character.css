@@ -406,3 +406,8 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
   .saved-build-skill { grid-template-columns: minmax(0, 1fr) 54px 80px 28px; column-gap: 7px; padding-inline: 8px; }
   .saved-build-skill-remove { width: 28px; height: 28px; }
 }
+
+.damage-calculator-shell { overflow: hidden; display: flex; flex-direction: column; }
+.damage-calculator-shell[hidden] { display: none; }
+.damage-calculator-shell .damage-simulator-header { flex: 0 0 auto; }
+.damage-calculator-frame { display: block; width: 100%; flex: 1 1 auto; min-height: 0; border: 0; background: #e8eef6; }
