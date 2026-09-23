@@ -151,7 +151,8 @@ function mount() {
     c.lowHp = c.lowHp === true;
     if (c.lowHp) c.fullHp = false;
     // This view totals bonuses; it does not simulate individual random events.
-    for (const field of ['critical', 'penetration', 'firstLowHp', 'mpEnough']) c[field] = false;
+    for (const field of ['critical', 'firstLowHp', 'mpEnough']) c[field] = false;
+    c.penetration = c.penetration === true;
     c.alive = true;
     if (characterId === '260') { c.killerBuff = true; c.bossWaveBuff = true; }
     if (c.attack === 'magic') c.damageType = 'magical';
@@ -169,7 +170,19 @@ function mount() {
     state.disabledSources.forEach(id => { overrides[`source:${id}`] = { disabled: true }; });
     state.disabledRules.forEach(id => { overrides[id] = { disabled: true }; });
     result = evaluateCatalog(catalog, state.context, overrides);
-    metrics = summarizeEffects(result);
+    // Keep an eligible conditional defense effect discoverable without counting
+    // it as triggered. All other conditions, reviews and disabled flags still apply.
+    const availableRows = [];
+    if (!state.context.penetration) {
+      const triggered = evaluateCatalog(catalog, { ...state.context, penetration: true }, overrides);
+      for (const row of triggered.rows) {
+        if (row.status !== 'active' || !row.rule.conditions.some(c => c.field === 'penetration' && c.op === 'eq' && c.value === true)) continue;
+        const current = result.rows.find(r => r.sourceId === row.sourceId && r.rule.id === row.rule.id);
+        if (current?.status !== 'inactive') continue;
+        if (row.rule.effects.some(e => e.type === 'defenseReference')) availableRows.push(current);
+      }
+    }
+    metrics = summarizeEffects(result, { availableRows });
     window.LC_EFFECT_CALCULATOR = { getReport: makeReport, characterId };
     window.dispatchEvent(new CustomEvent('lc:effect-rules-change', { detail: { characterId } }));
   }
@@ -224,21 +237,26 @@ function mount() {
   }
   function metricValue(item) {
     if (item.numeric) return numberText(item.total, item.unit);
-    const first = item.contributions[0]?.effect;
-    if (!first) return '未生效';
-    if (item.contributions.length > 1 && !['killer', 'critPermission'].includes(first.type)) return `${item.contributions.length}项效果 · 查看来源`;
+    const included = item.contributions.filter(p => p.included !== false);
+    const first = included[0]?.effect;
+    if (!first) return '未触发 · 未计入';
+    if (included.length > 1 && !['killer', 'critPermission'].includes(first.type)) return `${included.length}项效果 · 查看来源`;
     if (first.type === 'hit') return `命中×${first.value} · 每段×${first.secondary}`;
     if (first.type === 'killer') return '已触发';
     if (first.type === 'critPermission') return '可暴击';
     if (first.type === 'statReference') return `${first.target} / ${first.value}`;
-    return [...new Set(item.contributions.map(x => formatEffect(x.effect)))].join('；');
+    return [...new Set(included.map(x => formatEffect(x.effect)))].join('；');
   }
   function contributionCount(item) {
-    const included = item.contributions.filter(p => p.effect.value !== 0).length;
+    const included = item.contributions.filter(p => p.included !== false && p.effect.value !== 0).length;
     const adjustable = item.contributions.filter(p => p.effect.value === 0 && p.rule.conditions.some(c => c.field === 'chainStacks'));
-    return [included ? `${included}项计入` : '', ...adjustable.map(p => `${p.sourceName} · 未叠加，可调整`)].filter(Boolean).join(' · ');
+    const conditional = item.contributions.filter(p => p.included === false);
+    return [included ? `${included}项计入` : '', ...adjustable.map(p => `${p.sourceName} · 未叠加，可调整`), ...conditional.map(p => `${p.sourceName} · 可勾选触发`)].filter(Boolean).join(' · ');
   }
   function contributionControls(p, source) {
+    if (p.effect.type === 'defenseReference' && p.rule.conditions.some(c => c.field === 'penetration' && c.op === 'eq' && c.value === true)) {
+      return `<div class="br-source-adjustment">${checkbox('penetration', '贯导触发')}<p class="br-muted">勾选后按触发时的效果统计；不勾选则不计入。触发概率未提供。</p></div>`;
+    }
     if (!p.rule.conditions.some(c => c.field === 'chainStacks')) return '';
     const tiers = CONDITION_FIELDS.chainStacks.options.map(({value}) => {
       const rule = source.rules.find(r => r.conditions.some(c => c.field === 'chainStacks' && c.op === 'eq' && c.value === value));
@@ -301,10 +319,10 @@ function mount() {
   function renderContributions(metric) {
     return metric.contributions.map(p => {
       const source = catalog.find(s => s.id === p.sourceId);
-      const value = metric.numeric ? numberText(p.effect.value, p.effect.unit) : formatEffect(p.effect);
+      const value = p.included === false ? '未触发 · 未计入' : metric.numeric ? numberText(p.effect.value, p.effect.unit) : formatEffect(p.effect);
       return `<article class="br-inline-source" data-source="${esc(p.sourceId)}"><div class="br-inline-source-header"><h4><button type="button" class="br-source-jump" data-jump-source="${esc(p.sourceId)}" title="双击定位到${esc(groups[p.group] || '原始出处')}：${esc(p.sourceName)}" aria-label="${esc(p.sourceName)}，双击或按回车定位原始出处">${esc(p.sourceName)}</button></h4><strong>${esc(value)}</strong><button type="button" class="br-button" data-edit-source="${esc(p.sourceId)}" data-focus-rule="${esc(p.ruleId)}">修改</button></div>
         ${contributionControls(p, source)}
-        <div class="br-inline-description">${sourceDescription(source)}<details class="br-contribution-details"><summary>显示完整</summary><p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
+        <div class="br-inline-description">${sourceDescription(source)}<details class="br-contribution-details"><summary>显示完整</summary><p><b>本项计入：</b>${esc(p.included === false ? '未触发，未计入' : formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
         <button type="button" class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</details></div></article>`;
     }).join('');
   }

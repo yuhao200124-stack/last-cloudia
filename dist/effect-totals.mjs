@@ -2,7 +2,7 @@
 const STAT_LABELS = { '攻击力': '攻击力加成', '法强': '法强加成', 'HP': '生命加成', 'MP': '魔力值加成', '防御力': '防御力加成', '魔抗': '魔抗加成' };
 const ELEMENT_LABELS = { none: '无', fire: '火', ice: '冰', earth: '树', thunder: '雷', light: '光', dark: '暗' };
 
-export function summarizeEffects(result) {
+export function summarizeEffects(result, { availableRows = [] } = {}) {
   const metrics = new Map();
   function metric(id, section, label, unit = '%', numeric = true) {
     if (!metrics.has(id)) metrics.set(id, { id, section, label, unit, numeric, total: 0, contributions: [] });
@@ -19,9 +19,9 @@ export function summarizeEffects(result) {
   metric('critRate', '暴击与咏唱', '暴击率加成');
   if (result.context.attackKind === 'magic') metric('castSpeed', '暴击与咏唱', '咏唱速度加成');
   metric('cap', '伤害上限', '本次攻击伤害上限加成', '');
-  for (const row of result.rows) {
-    if (row.status !== 'active') continue;
+  for (const row of [...result.rows.filter(row => row.status === 'active'), ...availableRows.filter(row => row.status === 'inactive')]) {
     for (const [index, effect] of row.rule.effects.entries()) {
+      if (row.status !== 'active' && effect.type !== 'defenseReference') continue;
       const number = typeof effect.value === 'number' && Number.isFinite(effect.value);
       let item;
       if (effect.type === 'stat' && number && effect.unit === '%') item = metric(`stat:${effect.target}`, '属性加成', STAT_LABELS[effect.target] || `${effect.target}加成`);
@@ -31,14 +31,15 @@ export function summarizeEffects(result) {
       else if (effect.type === 'critRate' && number && effect.unit === '%') item = metric('critRate', '暴击与咏唱', '暴击率加成');
       else if (effect.type === 'castSpeed' && number && effect.unit === '%') item = metric('castSpeed', '暴击与咏唱', '咏唱速度加成');
       else if (effect.type === 'equipmentStat' && number && ['', '%'].includes(effect.unit)) item = metric(`equipmentStat:${effect.target}:${effect.unit}`, '装备属性', effect.target, effect.unit);
+      else if (effect.type === 'defenseReference') item = metric(`other:defenseReference:${effect.target}`, '伤害加成', result.context.attackKind === 'magic' && effect.target === '敌方魔抗' ? '魔法魔抗修正' : `${effect.target}修正`, effect.unit, false);
       else {
         const section = ['hit', 'killer', 'statReference', 'defenseReference', 'critPermission'].includes(effect.type) ? '本次攻击效果' : '其他效果';
         item = metric(`other:${effect.type}:${effect.target}`, section, effect.target, effect.unit, false);
       }
       const contribution = { sourceId: row.sourceId, sourceName: row.sourceName, sourceText: row.sourceText,
-        group: row.group, ruleId: row.rule.id, rule: row.rule, effect, effectIndex: index, reasons: row.reasons };
+        group: row.group, ruleId: row.rule.id, rule: row.rule, effect, effectIndex: index, reasons: row.reasons, included: row.status === 'active' };
       item.contributions.push(contribution);
-      if (item.numeric) item.total += effect.value;
+      if (item.numeric && contribution.included) item.total += effect.value;
     }
   }
   return [...metrics.values()].filter(item => item.contributions.length > 0).map(item => ({ ...item, total: Math.round(item.total * 1e8) / 1e8 }));
