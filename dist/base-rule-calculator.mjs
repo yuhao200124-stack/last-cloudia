@@ -38,6 +38,8 @@ function mount() {
   let reuseDraft = true;
   let lastEditorButton;
   let lastEditorMetricId;
+  let highlightedSource;
+  let sourceHighlightTimer;
   let storageWarning = '';
   const editor = document.createElement('dialog');
   editor.id = 'brEditor'; editor.className = 'br-editor'; editor.setAttribute('aria-labelledby', 'brEditorTitle');
@@ -222,7 +224,7 @@ function mount() {
             return `<li><button type="button" class="br-total-row" data-toggle-metric="${esc(m.id)}" aria-expanded="${expanded}" aria-controls="${esc(metricPanelId(m.id))}" title="点击展开或收起来源"><span><b>${esc(m.label)}</b><small>${esc(contributionCount(m))}</small></span><strong data-total-value="${esc(m.id)}">${esc(metricValue(m))}</strong><span class="br-row-chevron" aria-hidden="true">›</span></button><div class="br-metric-sources" id="${esc(metricPanelId(m.id))}" data-metric-sources="${esc(m.id)}"${expanded ? '' : ' hidden'}>${expanded ? renderContributions(m) : ''}</div></li>`;
           }).join('')}</ul></section>`;
       };
-      target.innerHTML = `<p class="br-summary-hint">满强化 · 只统计加成。点击一项展开来源，再点一次收起。</p>`
+      target.innerHTML = `<p class="br-summary-hint">满强化 · 只统计加成。点击一项展开来源，再点一次收起；双击技能名定位原始出处。</p>`
         + sections.filter(s => !['装备属性', '其他效果'].includes(s)).map(sectionHtml).join('')
         + (metrics.some(m => ['装备属性', '其他效果'].includes(m.section)) ? `<details class="br-secondary-effects"><summary>装备属性与其他效果</summary>${sectionHtml('装备属性')}${sectionHtml('其他效果')}</details>` : '')
         + (pending.length ? `<button type="button" class="br-pending-link" data-action="pending">另有 ${pending.length} 项待确认，未计入合计 · 查看</button>` : '')
@@ -241,10 +243,10 @@ function mount() {
     return metric.contributions.map(p => {
       const source = catalog.find(s => s.id === p.sourceId);
       const value = metric.numeric ? numberText(p.effect.value, p.effect.unit) : formatEffect(p.effect);
-      return `<article class="br-inline-source" data-source="${esc(p.sourceId)}"><div class="br-inline-source-header"><h4>${esc(p.sourceName)}</h4><strong>${esc(value)}</strong><button type="button" class="br-button" data-edit-source="${esc(p.sourceId)}" data-focus-rule="${esc(p.ruleId)}">修改</button></div>
+      return `<article class="br-inline-source" data-source="${esc(p.sourceId)}"><div class="br-inline-source-header"><h4><button type="button" class="br-source-jump" data-jump-source="${esc(p.sourceId)}" title="双击定位到${esc(groups[p.group] || '原始出处')}：${esc(p.sourceName)}" aria-label="${esc(p.sourceName)}，双击或按回车定位原始出处">${esc(p.sourceName)}</button></h4><strong>${esc(value)}</strong><button type="button" class="br-button" data-edit-source="${esc(p.sourceId)}" data-focus-rule="${esc(p.ruleId)}">修改</button></div>
         ${contributionControls(p, source)}
-        <details class="br-inline-description"><summary>完整技能效果</summary>${sourceDescription(source)}<p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
-        <button type="button" class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</details></article>`;
+        <div class="br-inline-description">${sourceDescription(source)}<p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
+        <button type="button" class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</div></article>`;
     }).join('');
   }
   function toggleMetric(button) {
@@ -259,6 +261,32 @@ function mount() {
     } else state.view.expandedMetrics.delete(id);
     button.setAttribute('aria-expanded', String(expanded));
     body.hidden = !expanded;
+  }
+  function jumpToSource(id) {
+    const target = sources.find(source => source.id === id)?.originalElement;
+    if (!target?.isConnected) { notify('没有找到这项的原始出处。', true, false); return; }
+    for (let parent = target.parentElement; parent; parent = parent.parentElement) {
+      if (parent.tagName === 'DETAILS') parent.open = true;
+    }
+    // Reuse the panel close action; the catalog, selected conditions and expanded rows stay intact.
+    panel.querySelector('#bonusCalculatorClose').click();
+    window.requestAnimationFrame(() => {
+      highlightedSource?.classList.remove('source-highlight', 'br-located-source');
+      window.clearTimeout(sourceHighlightTimer);
+      if (!target.hasAttribute('tabindex')) {
+        target.tabIndex = -1;
+        target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+      }
+      target.focus({ preventScroll: true });
+      target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' });
+      void target.offsetWidth;
+      target.classList.add('source-highlight', 'br-located-source');
+      highlightedSource = target;
+      sourceHighlightTimer = window.setTimeout(() => {
+        target.classList.remove('source-highlight', 'br-located-source');
+        if (highlightedSource === target) highlightedSource = null;
+      }, 2600);
+    });
   }
   function metricButton(id) { return [...root.querySelectorAll('[data-toggle-metric]')].find(el => el.dataset.toggleMetric === id); }
   function notify(message, error = false, scroll = true) {
@@ -324,7 +352,10 @@ function mount() {
   });
   root.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.toggleMetric) toggleMetric(b);
+    if (b.dataset.jumpSource) {
+      if (e.detail === 0 || e.pointerType === 'touch' || window.matchMedia('(pointer: coarse)').matches) jumpToSource(b.dataset.jumpSource);
+    }
+    else if (b.dataset.toggleMetric) toggleMetric(b);
     else if (b.dataset.action === 'back-totals') { state.view.page = 'totals'; renderResults(); panel.scrollTop = 0; }
     else if (b.dataset.action === 'manage' || b.dataset.action === 'pending') { state.view.page = b.dataset.action === 'manage' ? 'skills' : 'pending'; renderResults(); panel.scrollTop = 0; }
     else if (b.dataset.editSource) openEditor(b.dataset.editSource, b);
@@ -336,6 +367,11 @@ function mount() {
     else if (b.dataset.action === 'export-rules') download('LastCloudia-LearnedRules.json', { schemaVersion: 1, templates });
     else if (b.dataset.action === 'import-rules') root.querySelector('#brImportFile').click();
     else if (b.dataset.action === 'restore-enabled') { state.disabledSources = []; state.disabledRules = []; persist(); renderResults(); }
+  });
+
+  root.addEventListener('dblclick', e => {
+    const name = e.target.closest('[data-jump-source]');
+    if (name) { e.preventDefault(); jumpToSource(name.dataset.jumpSource); }
   });
 
   function openEditor(id, button) {

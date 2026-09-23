@@ -340,11 +340,16 @@ dialog.br-editor::backdrop { background: #172c4a82; }
 .br-inline-source-header h4 { flex: 1 1 180px; margin: 0; color: #203864; font-size: 15px; }
 .br-inline-source-header > strong { color: #254e84; font-size: 16px; }
 .br-inline-description { margin-top: 6px; font-size: 14px; }
-.br-inline-description > summary { color: #60758f; cursor: pointer; width: fit-content; }
 .br-inline-description > .br-full-effect { padding: 9px 0; border: 0; background: transparent; }
-.br-inline-description > .br-full-effect > span { display: none; }
 .br-inline-description > p { margin: 6px 0; }
 @media (max-width: 720px) {
   .br-metric-sources { padding-inline: 10px; }
   .br-inline-source-header h4 { flex-basis: 130px; }
+}
+
+.br-source-jump { display: inline; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; font-weight: inherit; text-align: left; cursor: pointer; }
+.br-source-jump:hover { color: #245ca3; text-decoration: underline; text-underline-offset: 3px; }
+.br-located-source { scroll-margin-block: 76px 24px; }
+@media (prefers-reduced-motion: reduce) {
+  .br-located-source, .br-located-source > td { animation: none; background-color: #fff0a8; box-shadow: inset 4px 0 #e69623; }
 }
