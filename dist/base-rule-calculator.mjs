@@ -245,8 +245,8 @@ function mount() {
       const value = metric.numeric ? numberText(p.effect.value, p.effect.unit) : formatEffect(p.effect);
       return `<article class="br-inline-source" data-source="${esc(p.sourceId)}"><div class="br-inline-source-header"><h4><button type="button" class="br-source-jump" data-jump-source="${esc(p.sourceId)}" title="双击定位到${esc(groups[p.group] || '原始出处')}：${esc(p.sourceName)}" aria-label="${esc(p.sourceName)}，双击或按回车定位原始出处">${esc(p.sourceName)}</button></h4><strong>${esc(value)}</strong><button type="button" class="br-button" data-edit-source="${esc(p.sourceId)}" data-focus-rule="${esc(p.ruleId)}">修改</button></div>
         ${contributionControls(p, source)}
-        <div class="br-inline-description">${sourceDescription(source)}<p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
-        <button type="button" class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</div></article>`;
+        <div class="br-inline-description">${sourceDescription(source)}<details class="br-contribution-details"><summary>显示完整</summary><p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
+        <button type="button" class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</details></div></article>`;
     }).join('');
   }
   function toggleMetric(button) {
@@ -268,8 +268,7 @@ function mount() {
     for (let parent = target.parentElement; parent; parent = parent.parentElement) {
       if (parent.tagName === 'DETAILS') parent.open = true;
     }
-    // Reuse the panel close action; the catalog, selected conditions and expanded rows stay intact.
-    panel.querySelector('#bonusCalculatorClose').click();
+    // Locate the original while keeping the calculator open and its state intact.
     window.requestAnimationFrame(() => {
       highlightedSource?.classList.remove('source-highlight', 'br-located-source');
       window.clearTimeout(sourceHighlightTimer);

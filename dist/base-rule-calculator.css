@@ -353,3 +353,6 @@ dialog.br-editor::backdrop { background: #172c4a82; }
 @media (prefers-reduced-motion: reduce) {
   .br-located-source, .br-located-source > td { animation: none; background-color: #fff0a8; box-shadow: inset 4px 0 #e69623; }
 }
+
+.br-contribution-details > summary { width: fit-content; color: #60758f; cursor: pointer; }
+.br-contribution-details > p { margin: 6px 0; }
