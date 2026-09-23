@@ -107,7 +107,54 @@
     ["boss_reduction", "受到BOSS伤害减少", 20, "%", "勇者之魂", "common", "受到BOSS攻击时"],
     ["sct_speed", "SCT回复速度", 35, "%", "自动究极加速", "exclusive", "常驻"]
   ].map(([key, label, value, unit, source, group, condition]) => ({ key, label, value, unit, source, group, condition }));
-  const bonuses = document.body.dataset.characterId === "245" ? arkuBonuses : roxyBonuses;
+  const erisBonuses = [
+    ["hp_pct","HP",8,"%","HP提升2","common","常驻"],
+    ["hp_pct","HP",15,"%","斗志提升极","exclusive","常驻"],
+    ["hp_pct","HP",15,"%","勇士提升极","exclusive","常驻"],
+    ["hp_pct","HP",20,"%","超越·斗志提升","transcend","常驻"],
+    ["hp_pct","HP",10,"%","艾莉丝的服装","equipment","装备专属服装"],
+    ["str_pct","攻击力",15,"%","攻击提升极","common","常驻"],
+    ["str_pct","攻击力",15,"%","斗志提升极","exclusive","常驻"],
+    ["str_pct","攻击力",15,"%","勇士提升极","exclusive","常驻"],
+    ["str_pct","攻击力",20,"%","超越·斗志提升","transcend","常驻"],
+    ["str_pct","攻击力",50,"%","反杀","exclusive","常驻"],
+    ["str_pct","攻击力",100,"%","沉睡的狮子","exclusive","濒死触发后"],
+    ["str_pct","攻击力",15,"%","艾莉丝之剑","equipment","装备专属剑"],
+    ["str_pct","攻击力",10,"%","艾莉丝的服装","equipment","装备专属服装"],
+    ["def_pct","防御力",10,"%","刚坚提升4","exclusive","常驻"],
+    ["def_pct","防御力",15,"%","勇士提升极","exclusive","常驻"],
+    ["mnd_pct","魔抗",10,"%","刚坚提升4","exclusive","常驻"],
+    ["crit_rate","暴击率",20,"%","波瑞阿斯拳","specials","仅特技1"],
+    ["crit_rate","暴击率",5,"%","无属性暴击增幅","common","无属性攻击"],
+    ["crit_damage","暴击伤害",50,"%","要害攻击·改","common","暴击时"],
+    ["crit_damage","暴击伤害",50,"%","无属性暴击增幅","common","无属性暴击时"],
+    ["neutral_damage","无属性伤害",40,"%","我会保护你","traits","单武器"],
+    ["neutral_damage","无属性伤害",30,"%","剑神流","exclusive","单剑"],
+    ["neutral_damage","无属性伤害",30,"%","无属性攻击提升4","exclusive","常驻"],
+    ["neutral_damage","无属性伤害",30,"%","无属性攻击提升5","exclusive","常驻"],
+    ["physical_damage","物理伤害",30,"%","一天真刃·二之型","exclusive","单武器"],
+    ["physical_damage","物理伤害",30,"%","双手剑增幅4","exclusive","单剑"],
+    ["physical_damage","物理伤害",35,"%","艾莉丝之剑","equipment","单武器"],
+    ["physical_damage","物理伤害",20,"%","超越·剑精通2","transcend","装备剑"],
+    ["physical_damage","物理伤害",15,"%","服装究极增幅","exclusive","装备服装"],
+    ["special_damage","特攻伤害",50,"%","特攻增幅","common","触发特攻时"],
+    ["ultimate_damage","超必杀技伤害",30,"%","双手剑增幅4","exclusive","单剑"],
+    ["neutral_cap","无属性伤害上限",140000,"","我会保护你","traits","单武器"],
+    ["neutral_cap","无属性伤害上限",100000,"","剑神流","exclusive","单剑"],
+    ["neutral_cap","无属性伤害上限",5000,"","无属性攻击提升4","exclusive","常驻"],
+    ["neutral_cap","无属性伤害上限",10000,"","无属性攻击提升5","exclusive","常驻"],
+    ["physical_cap","物理伤害上限",30000,"","一天真刃·二之型","exclusive","单武器"],
+    ["physical_cap","物理伤害上限",60000,"","超越·一刀极致","transcend","单武器"],
+    ["physical_cap","物理伤害上限",15000,"","超越·剑精通2","transcend","单剑时；非单剑+7,500"],
+    ["physical_cap","物理伤害上限",7000,"","艾莉丝之剑","equipment","单武器"],
+    ["physical_cap","物理伤害上限",8000,"","艾莉丝之剑","equipment","异常状态中"],
+    ["ultimate_cap","超必杀技伤害上限",300000,"","无声之太刀","specials","超必杀技"],
+    ["ultimate_cap","超必杀技伤害上限",12000,"","双手剑增幅4","exclusive","单剑"],
+    ["damage_reduction","受到伤害减少",20,"%","超越·受到伤害减轻","transcend","常驻"],
+    ["damage_reduction","受到伤害减少",50,"%","守护的力量","exclusive","至少2名队友且全员存活"],
+    ["sct_speed","SCT回复速度",50,"%","沉睡的狮子","exclusive","濒死触发后"]
+  ].map(([key,label,value,unit,source,group,condition])=>({key,label,value,unit,source,group,condition}));
+  const bonuses = document.body.dataset.characterId === "259" ? erisBonuses : document.body.dataset.characterId === "245" ? arkuBonuses : roxyBonuses;
 
   const panel = document.getElementById("bonusCalculator");
   const overlay = document.getElementById("bonusCalculatorOverlay");
@@ -586,6 +633,46 @@
   // 每个角色按编号独立配置攻击方式、基础上限、上限类型和来源。
   // attackPickerLabel 可按角色写成“选择攻击魔法”“选择特技”或“选择必杀技”。
   const damageCapProfiles = {
+    "259": {
+      id: "259", attackPickerLabel: "选择特技或超必杀技",
+      attacks: [
+        {id:"boreas_punch",label:"波瑞阿斯拳（特技1）",baseCap:9999,tags:["physical","neutral","skill"],note:"无属性物理特技；暴击率另+20%。"},
+        {id:"boreas_dance",label:"波瑞阿斯之舞（特技2）",baseCap:9999,tags:["physical","neutral","skill"],note:"无属性物理特技。"},
+        {id:"one_slash",label:"一刀两断（特技3）",baseCap:9999,tags:["physical","neutral","skill"],note:"无属性物理特技。"},
+        {id:"silent_blade",label:"无声之太刀（超必杀技）",baseCap:9999,tags:["physical","neutral","ultimate"],note:"无属性超必杀技，固有上限+300,000。"}
+      ],
+      capTypes: [
+        {id:"general",label:"通用伤害上限",includes:["general"]},
+        {id:"physical",label:"物理伤害上限",includes:["general","physical"]},
+        {id:"skill",label:"特技伤害上限",includes:["general","skill"]},
+        {id:"ultimate",label:"超必杀技伤害上限",includes:["general","ultimate"]},
+        {id:"neutral",label:"无属性伤害上限",includes:["general","neutral"]},
+        {id:"single_weapon",label:"只装备1件武器",includes:[],tags:["single_weapon"]},
+        {id:"single_sword",label:"只装备1把剑",includes:[],tags:["single_weapon","single_sword","sword"]},
+        {id:"sword",label:"装备剑",includes:[],tags:["sword"]},
+        {id:"eris_sword_equip",label:"装备艾莉丝之剑",includes:[],tags:["exclusive_sword","sword"]},
+        {id:"critical",label:"触发暴击",includes:["critical"],tags:["critical"]},
+        {id:"angered",label:"激昂Buff生效",includes:["angered"],tags:["angered"]},
+        {id:"abnormal",label:"自身处于异常状态",includes:["abnormal"],tags:["abnormal"]},
+        {id:"nearest",label:"目标距离最近",includes:["nearest"],tags:["nearest"]}
+      ],
+      sources: [
+        {id:"eris_trait",capType:"neutral",label:"我会保护你",value:140000,requires:["single_weapon"],target:"我会保护你",condition:"单武器时无属性上限+140,000"},
+        {id:"sword_style",capType:"neutral",label:"剑神流",value:100000,requires:["single_sword"],target:"剑神流",condition:"单剑时无属性上限+100,000"},
+        {id:"neutral_raise4",capType:"neutral",label:"无属性攻击提升4",value:5000,requires:[],target:"无属性攻击提升4",condition:"无属性上限+5,000"},
+        {id:"neutral_raise5",capType:"neutral",label:"无属性攻击提升5",value:10000,requires:[],target:"无属性攻击提升5",condition:"无属性上限+10,000"},
+        {id:"single_blade2",capType:"physical",label:"一天真刃·二之型",value:30000,requires:["single_weapon"],target:"一天真刃·二之型",condition:"单武器物理上限+30,000"},
+        {id:"single_transcend",capType:"physical",label:"【超越】一刀极致",value:60000,requires:["single_weapon"],target:"超越·一刀极致",condition:"单武器物理上限+60,000"},
+        {id:"sword_mastery",capType:"physical",label:"【超越】剑精通2",value:7500,variants:[{requires:["single_sword"],value:15000}],requires:["sword"],target:"超越·剑精通2",condition:"装备剑时+7,500；单剑时变为+15,000"},
+        {id:"eris_sword",capType:"physical",label:"艾莉丝之剑",value:7000,requires:["single_weapon","exclusive_sword"],target:"艾莉丝之剑",condition:"装备专属剑且单武器时+7,000"},
+        {id:"eris_sword_abnormal",capType:"physical",label:"艾莉丝之剑：异常",value:8000,requires:["abnormal","exclusive_sword"],target:"艾莉丝之剑",condition:"装备专属剑且自身异常时+8,000"},
+        {id:"twohand_sword4",capTypes:["physical","ultimate"],label:"双手剑增幅4",value:12000,requires:["single_sword"],target:"双手剑增幅4",condition:"单剑时物理与超必杀技上限+12,000"},
+        {id:"near_combat",capType:"physical",label:"近身战斗2",value:5000,requires:["nearest"],target:"近身战斗2",condition:"攻击距离最近目标时+5,000"},
+        {id:"one_blade_art",capType:"physical",label:"一天真刃之极意",value:15000,requires:["single_weapon","critical"],autoSelect:false,target:"一天真刃之极意",condition:"单武器物理暴击时概率触发；确认触发后勾选"},
+        {id:"ultimate_base",capType:"ultimate",label:"无声之太刀",value:300000,requires:["ultimate"],target:"无声之太刀",condition:"该超必杀技自身上限+300,000"},
+        {id:"angered_cap",capTypes:["skill","ultimate"],label:"你要干什么！：激昂",value:3000,requires:["angered"],autoSelect:false,target:"你要干什么！",condition:"每1,000攻击力+3,000；在来源中按实际千位数调整；默认不计入"}
+      ]
+    },
     "245": {
       id: "245",
       attackPickerLabel: "选择特技或超必杀技",

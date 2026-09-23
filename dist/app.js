@@ -46,6 +46,11 @@
   const loadoutPlansStorageKey = 'lc-sheet-table:loadout-plans-v1';
   const loadoutDraftTransferKey = 'lc-sheet-table:loadout-draft-v1';
   const characterLoadouts = {
+    '259': {
+      name: '艾莉丝·格雷拉特',
+      page: './character-259.html',
+      skillIds: [],
+    },
     '245': {
       name: '龙王阿尔克',
       page: './character-245.html',
