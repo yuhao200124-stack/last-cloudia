@@ -1,6 +1,7 @@
 import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs';
 import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs';
 import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs';
+import { summarizeEffects } from './effect-totals.mjs';
 
 const panel = document.querySelector('#bonusCalculator[data-rule-calculator]');
 if (panel) mount();
@@ -15,7 +16,7 @@ function mount() {
   const read = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
   const groups = { traits: '个性', exclusive: '专属技能', common: '通用技能', transcend: '超越', equipment: '装备' };
   const statuses = { active: '生效', inactive: '未生效', pending: '待确认', disabled: '未启用' };
-  const types = { stat: '面板属性', equipmentStat: '装备属性', damage: '伤害增加', cap: '伤害上限', killer: '特攻触发', hit: '命中与分段', statReference: '攻击与防御参照', defenseReference: '防御参照修正', critRate: '暴击率', critPermission: '暴击资格', defense: '防御与减伤', recovery: '回复', castSpeed: '咏唱速度', utility: '其他效果' };
+  const types = { stat: '面板属性', statBuff: '属性状态增益', equipmentStat: '装备属性', damage: '伤害增加', cap: '伤害上限', killer: '特攻触发', hit: '命中与分段', statReference: '攻击与防御参照', defenseReference: '防御参照修正', critRate: '暴击率', critPermission: '暴击资格', defense: '防御与减伤', recovery: '回复', castSpeed: '咏唱速度', utility: '其他效果' };
   const attackNames = { normal: '普通攻击', s1: '特技1 · 水球', s2: '特技2 · 冰柱破碎', s3: '特技3 · 暴风雪', magic: '魔法', ultimate: '超必杀 · 积雨云' };
   const elements = [[null, '待确认'], ['none', '无'], ['fire', '火'], ['ice', '冰'], ['earth', '树'], ['thunder', '雷'], ['light', '光'], ['dark', '暗']];
   const saved = read(stateKey, {});
@@ -25,12 +26,13 @@ function mount() {
     disabledRules: Array.isArray(saved.disabledRules) ? saved.disabledRules : [],
     drafts: saved.drafts && typeof saved.drafts === 'object' ? saved.drafts : {},
     attackSettings: saved.attackSettings || {},
-    view: { tab: 'rules', group: 'all', status: 'all', query: '' },
+    view: { page: 'totals', metricId: null, conditions: false },
   };
   let templates = validateTemplates({ schemaVersion: 1, templates: read(LEARNING_STORAGE_KEY, {}) }).templates;
   const sources = collectSources();
   let catalog = [];
   let result;
+  let metrics = [];
   let editorSource;
   let draftRules = [];
   let reuseDraft = true;
@@ -82,6 +84,10 @@ function mount() {
   }
   function prepareContext() {
     const c = state.context;
+    if (typeof c.weaponCount === 'string' && /^[012]$/.test(c.weaponCount)) c.weaponCount = Number(c.weaponCount);
+    if (![0, 1, 2].includes(c.weaponCount)) c.weaponCount = 1;
+    for (const field of ['penetration', 'lowHp', 'firstLowHp', 'mpEnough']) c[field] = c[field] === true;
+    if ([3, 4].includes(c.chainStacks)) c.chainStacks = 2;
     if (c.attack === 'magic') c.damageType = 'magical';
     c.equipmentIds = Array.isArray(c.equipmentIds) ? c.equipmentIds : [];
     if (c.weaponCount === 2) { c.equipmentIds = c.equipmentIds.filter(id => id !== 'roxy-robe'); c.robe = false; }
@@ -97,6 +103,7 @@ function mount() {
     state.disabledSources.forEach(id => { overrides[`source:${id}`] = { disabled: true }; });
     state.disabledRules.forEach(id => { overrides[id] = { disabled: true }; });
     result = evaluateCatalog(catalog, state.context, overrides);
+    metrics = summarizeEffects(result);
     window.LC_EFFECT_CALCULATOR = { getReport: makeReport, characterId };
     window.dispatchEvent(new CustomEvent('lc:effect-rules-change', { detail: { characterId } }));
   }
@@ -106,112 +113,131 @@ function mount() {
   }
   function checkbox(field, label, disabled = false) { return `<label class="br-check"><input type="checkbox" data-context="${field}"${state.context[field] ? ' checked' : ''}${disabled ? ' disabled' : ''}>${esc(label)}</label>`; }
   function renderShell() {
+    const oldConditions = root.querySelector('#brMoreConditions');
+    if (oldConditions) state.view.conditions = oldConditions.open;
     prepareContext();
     const c = state.context;
     root.innerHTML = `
-      <p class="br-intro">满强化角色 · 默认目标为 Boss。先核对各条效果是否生效，再与战斗读取报告比较。</p>
-      <div class="br-context">
-        ${select('attack', '攻击方式', ATTACKS.map(a => [a.id, characterId === '260' ? attackNames[a.id] : a.label]))}
-        ${select('damageType', '伤害类型', [[null, '待确认'], ['physical', '物理'], ['magical', '魔法'], ['mixed', '混合 · 待确认']], c.attack === 'magic')}
-        ${select('element', '攻击属性', elements)}
-        ${select('weaponCount', '实际武器数量', [[null, '待确认'], [0, '未装备武器'], [1, '1件武器'], [2, '2件武器']])}
+      <div id="brPageNav" class="br-page-nav"></div>
+      <div id="brConditionsPanel">
+        <div class="br-context">
+          ${select('attack', '攻击方式', ATTACKS.map(a => [a.id, characterId === '260' ? attackNames[a.id] : a.label]))}
+          ${select('damageType', '伤害类型', [[null, '待确认'], ['physical', '物理'], ['magical', '魔法'], ['mixed', '混合 · 待确认']], c.attack === 'magic')}
+          ${select('element', '攻击属性', elements)}
+          ${select('weaponCount', '实际武器数量', [[1, '1件武器'], [2, '2件武器'], [0, '未装备武器']])}
+        </div>
+        <fieldset class="br-equipment"><legend>装备条件</legend>
+          ${checkbox('staff', '装备法杖', c.equipmentIds.includes('roxy-staff') || c.weaponCount === 0)}
+          ${checkbox('iceStaff', '装备冰属性法杖', c.equipmentIds.includes('roxy-staff') || c.weaponCount === 0)}
+          ${checkbox('robe', '装备长袍', c.equipmentIds.includes('roxy-robe') || c.weaponCount === 2)}
+          ${catalog.filter(s => s.group === 'equipment').map(s => `<label class="br-check"><input type="checkbox" data-equipment="${esc(s.id)}"${c.equipmentIds.includes(s.id) ? ' checked' : ''}${s.id === 'roxy-robe' && c.weaponCount === 2 ? ' disabled' : ''}>${esc(s.name)}（最高强化）</label>`).join('')}
+        </fieldset>
+        <fieldset class="br-equipment"><legend>本次攻击条件</legend>
+          ${checkbox('fullHp', 'HP全满')}${checkbox('critical', '暴击')}${checkbox('weakness', '命中弱点属性')}
+          ${checkbox('resonance', '我方正在发动不可叠加魔法')}
+        </fieldset>
+        <details id="brMoreConditions" class="br-conditions"${state.view.conditions ? ' open' : ''}><summary>更多战斗条件</summary><div class="br-condition-grid">
+          ${select('magicFamily', '魔法类别', [['normal', '一般魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊类型'], [null, '待确认']], c.attack !== 'magic')}
+          ${select('chainStacks', '法术联结', [[0, '未触发'], [1, '首次加成 +4%'], [2, '后续连用 · 加成待确认'], [5, '已确认达到最高 +20%']])}
+          ${checkbox('penetration', '本次贯导触发（魔抗减半）')}
+          ${checkbox('alive', '自身存活')}${checkbox('killerBuff', '指导者：特攻上限增益')}${checkbox('bossWaveBuff', '指导者：Boss波次增益')}
+          ${checkbox('lowHp', '当前濒死')}${checkbox('firstLowHp', '首次进入濒死')}${checkbox('mpEnough', '魔力值至少30')}
+        </div></details>
       </div>
-      <div id="brContextNote" class="br-context-note"></div>
-      <fieldset class="br-equipment"><legend>装备条件</legend>
-        ${checkbox('staff', '装备法杖', c.equipmentIds.includes('roxy-staff') || c.weaponCount === 0)}
-        ${checkbox('iceStaff', '装备冰属性法杖', c.equipmentIds.includes('roxy-staff') || c.weaponCount === 0)}
-        ${checkbox('robe', '装备长袍', c.equipmentIds.includes('roxy-robe') || c.weaponCount === 2)}
-        ${catalog.filter(s => s.group === 'equipment').map(s => `<label class="br-check"><input type="checkbox" data-equipment="${esc(s.id)}"${c.equipmentIds.includes(s.id) ? ' checked' : ''}${s.id === 'roxy-robe' && c.weaponCount === 2 ? ' disabled' : ''}>${esc(s.name)}（最高强化）</label>`).join('')}
-      </fieldset>
-      <p class="br-muted">专属装备分别勾选后才计入；双武器会取消自身长袍和专属衣服。装备条件不等于二刀流已生效。</p>
-      <details class="br-conditions"><summary>战斗条件与魔法类别</summary><div class="br-condition-grid">
-        ${select('magicFamily', '魔法类别', [['normal', '一般魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊类型'], [null, '待确认']], c.attack !== 'magic')}
-        ${select('chainStacks', '法术联结层数', [[0, '未叠加'], [1, '1层'], [2, '2层'], [3, '3层'], [4, '4层'], [5, '5层（最高）']])}
-        ${select('penetration', '本次贯导是否触发', [[null, '未知'], [false, '未触发'], [true, '已触发']])}
-        ${checkbox('fullHp', 'HP全满')}${checkbox('critical', '本次为暴击')}${checkbox('weakness', '命中弱点属性')}
-        ${checkbox('resonance', '我方正在发动不可叠加魔法')}${checkbox('alive', '自身存活')}
-        ${checkbox('killerBuff', '指导者：特攻上限增益生效')}${checkbox('bossWaveBuff', '指导者：Boss波次增益生效')}
-        ${select('lowHp', '当前是否濒死', [[null, '待确认'], [false, '否'], [true, '是']])}
-        ${select('firstLowHp', '本次是否首次进入濒死', [[null, '待确认'], [false, '否'], [true, '是']])}
-        ${select('mpEnough', '自动治疗所需MP是否足够', [[null, '待确认'], [false, '否'], [true, '是']])}
-      </div></details>
+      <p id="brContextNote" class="br-context-note"></p>
       <div id="brWarnings"></div>
-      <div id="brStats" class="br-stats" aria-live="polite"></div>
-      <div class="br-toolbar">
-        <button class="br-button" data-action="report">导出判定报告</button>
-        <button class="br-button" data-action="export-rules">导出学习规则</button>
-        <button class="br-button" data-action="import-rules">导入学习规则</button>
-        <button class="br-button" data-action="restore-enabled">恢复停用条目</button>
-      </div>
-      <p id="brLearnedNote" class="br-muted"></p>
-      <div class="br-tabs" role="group" aria-label="显示方式">
-        <button class="br-button" data-tab="rules" aria-pressed="${state.view.tab === 'rules'}">按技能查看拆分</button>
-        <button class="br-button" data-tab="effects" aria-pressed="${state.view.tab === 'effects'}">当前生效效果</button>
-      </div>
-      <div class="br-filterbar"><input id="brSearch" type="search" aria-label="搜索技能或词条" placeholder="搜索技能、效果或原文" value="${esc(state.view.query)}">
-        <select id="brGroupFilter" aria-label="来源筛选">${[['all', '全部来源'], ...Object.entries(groups)].map(([v, l]) => `<option value="${v}"${state.view.group === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
-        <select id="brStatusFilter" aria-label="生效状态筛选">${[['all', '全部状态'], ...Object.entries(statuses), ['untested', '结算待测试']].map(([v, l]) => `<option value="${v}"${state.view.status === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
-      </div>
-      <div id="brResults"></div><p id="brMessage" class="br-notice" role="status" hidden></p>
+      <div id="brResults" aria-live="polite"></div>
+      <details class="br-maintenance"><summary>更多操作</summary>
+        <div class="br-toolbar">
+          <button class="br-button" data-action="manage">查看全部技能</button>
+          <button class="br-button" data-action="restore-enabled">恢复停用加成</button>
+          <button class="br-button" data-action="report">导出当前加成</button>
+          <button class="br-button" data-action="export-rules">导出学习规则</button>
+          <button class="br-button" data-action="import-rules">导入学习规则</button>
+        </div><p id="brLearnedNote" class="br-muted"></p>
+      </details>
+      <p id="brMessage" class="br-notice" role="status" hidden></p>
       <input id="brImportFile" type="file" accept="application/json,.json" hidden>
     `;
     renderResults();
   }
-  function visibleRows() {
-    const v = state.view;
-    return result.rows.filter(r => (v.group === 'all' || v.group === r.group)
-      && (v.status === 'all' || (v.status === 'untested' ? r.rule.verification === 'untested' && r.status === 'active' : r.status === v.status))
-      && (!v.query || `${r.sourceName} ${r.sourceText} ${r.rule.part} ${r.rule.effects.map(formatEffect).join(' ')}`.toLowerCase().includes(v.query.toLowerCase())));
+  function numberText(value, unit = '%') {
+    return `${value >= 0 ? '+' : ''}${Number(value).toLocaleString('zh-CN', { maximumFractionDigits: 6 })}${unit}`;
+  }
+  function metricValue(item) {
+    if (item.numeric) return numberText(item.total, item.unit);
+    const first = item.contributions[0]?.effect;
+    if (!first) return '未生效';
+    if (item.contributions.length > 1 && !['killer', 'critPermission'].includes(first.type)) return `${item.contributions.length}项效果 · 查看来源`;
+    if (first.type === 'hit') return `命中×${first.value} · 每段×${first.secondary}`;
+    if (first.type === 'killer') return '已触发';
+    if (first.type === 'critPermission') return '可暴击';
+    if (first.type === 'statReference') return `${first.target} / ${first.value}`;
+    return [...new Set(item.contributions.map(x => formatEffect(x.effect)))].join('；');
+  }
+  function sourceDescription(s) {
+    return `<p class="br-full-effect"><span>完整技能效果</span>${esc(s.text)}</p>`;
   }
   function renderResults() {
     calculate();
-    const active = result.rows.filter(r => r.status === 'active');
-    const pending = result.rows.filter(r => r.status === 'pending');
-    const untested = active.filter(r => r.rule.verification === 'untested');
-    root.querySelector('#brStats').innerHTML = [['当前生效', active.length], ['待确认', pending.length], ['结算待测试', untested.length]].map(([l, n]) => `<div><span>${l}</span><strong>${n}</strong></div>`).join('');
     const c = result.context;
-    const chain = [characterId === '260' ? attackNames[c.attack] : ATTACKS.find(a => a.id === c.attack)?.label, c.element == null ? '属性待确认' : elements.find(e => e[0] === c.element)?.[1] + '属性', 'Boss'];
-    if (c.attack === 'magic' && c.element === 'ice') chain.push('同时满足「魔法」「冰属性」「冰魔法」条件');
-    chain.push(result.killer === true ? '对Boss特攻成立' : result.killer === null ? '特攻状态待确认' : '当前未触发特攻');
-    root.querySelector('#brContextNote').textContent = chain.filter(Boolean).join(' · ');
-    const warnings = [...new Set((result.warnings || []).map(w => typeof w === 'string' ? w : w.message || '存在待验证规则'))];
-    if (characterId === '260' && ['s1', 's2', 's3', 'ultimate'].includes(c.attack)) warnings.unshift('该招式的特殊结算尚未完成实测。参照法强与魔抗的规则单独列出，不能据此将伤害类型改为魔法。');
-    if (c.damageType == null || c.damageType === 'mixed') warnings.unshift('伤害类型尚未确认：依赖物理／魔法类型的词条会保留待确认。');
-    if (c.weaponCount === 2) warnings.push('已按两件武器检查装备条件；二刀流的适用攻击与每段倍率需另行确认，本页不会自动翻倍。');
+    const currentMetric = metrics.find(m => m.id === state.view.metricId);
+    const atHome = state.view.page === 'totals';
+    root.querySelector('#brConditionsPanel').hidden = !atHome;
+    root.querySelector('#brPageNav').innerHTML = atHome
+      ? '<strong>1 · 当前生效加成</strong><span>2 · 查看来源　›　3 · 修改</span>'
+      : `<button class="br-button" data-action="back-totals">← 返回加成合计</button><strong>2 · ${esc(state.view.page === 'metric' ? currentMetric?.label || '加成来源' : state.view.page === 'pending' ? '未确认的加成' : '全部技能')}</strong><span>3 · 修改</span>`;
+    const chain = [characterId === '260' ? attackNames[c.attack] : ATTACKS.find(a => a.id === c.attack)?.label,
+      c.element == null ? '属性待确认' : elements.find(e => e[0] === c.element)?.[1] + '属性',
+      `${c.weaponCount}件武器`, 'Boss'];
+    if (result.killer === true) chain.push('对Boss特攻');
+    root.querySelector('#brContextNote').textContent = chain.join(' · ');
+    const pending = result.rows.filter(r => r.status === 'pending');
+    const warnings = [];
+    if (characterId === '260' && ['s1', 's2', 's3', 'ultimate'].includes(c.attack)) warnings.push('此招式按描述参照法强／魔抗，特殊伤害结算尚未实测；这里先统计符合条件的加成。');
+    if (c.damageType == null || c.damageType === 'mixed') warnings.push('请确认伤害类型，相关加成暂不计入。');
     if (storageWarning) warnings.push(storageWarning);
-    root.querySelector('#brWarnings').innerHTML = [...new Set(warnings)].map(w => `<p class="br-notice is-warning">${esc(w)}</p>`).join('');
-    root.querySelector('#brLearnedNote').textContent = `已保存 ${Object.keys(templates).length} 条可复用拆分。修正保存在当前浏览器，导出规则可备份或迁移。`;
-    const rows = visibleRows();
+    root.querySelector('#brWarnings').innerHTML = warnings.map(w => `<p class="br-notice is-warning">${esc(w)}</p>`).join('');
+    root.querySelector('#brLearnedNote').textContent = `已保存 ${Object.keys(templates).length} 条可复用修正。修改保存在当前浏览器，可导出备份。`;
     const target = root.querySelector('#brResults');
-    if (state.view.tab === 'effects') {
-      const buckets = new Map();
-      rows.filter(r => r.status === 'active').forEach(r => r.rule.effects.forEach(e => {
-        if (!buckets.has(e.type)) buckets.set(e.type, []);
-        buckets.get(e.type).push({ r, e });
-      }));
-      target.innerHTML = '<p class="br-help">以下是匹配当前条件的效果条目。不同来源的百分比尚不直接合并；最终伤害与上限需按结算顺序计算。</p>' + [...buckets].map(([type, items]) => `<section class="br-summary-group"><h3>${esc(types[type] || type)}</h3><ul>${items.map(({r,e}) => `<li><strong>${esc(formatEffect(e))}</strong><span>${esc(r.sourceName)}${r.rule.verification === 'untested' ? ' · 结算待测试' : ''}</span></li>`).join('')}</ul></section>`).join('');
-      if (!buckets.size) target.innerHTML += '<p class="br-empty">当前筛选下没有已确认生效的效果。</p>';
+    if (atHome) {
+      const sections = ['属性加成', '伤害加成', '伤害上限', '状态加成', '暴击与咏唱', '本次攻击效果', '装备属性', '其他效果'];
+      const sectionHtml = section => {
+        const items = metrics.filter(m => m.section === section);
+        if (!items.length) return '';
+        return `<section class="br-summary-group br-totals-group"><h3>${section === '伤害加成' ? '伤害增加' : section}</h3>
+          ${section === '状态加成' ? '<p class="br-total-note">例如 EX灵气，与上面的普通法强加成分开保留。</p>' : ''}
+          <ul>${items.map(m => `<li><button type="button" class="br-total-row" data-open-metric="${esc(m.id)}" title="双击查看来源，键盘按回车；手机轻触"><span><b>${esc(m.label)}</b><small>${m.contributions.length}项计入</small></span><strong data-total-value="${esc(m.id)}">${esc(metricValue(m))}</strong><span class="br-row-chevron" aria-hidden="true">›</span></button></li>`).join('')}</ul></section>`;
+      };
+      target.innerHTML = `<p class="br-summary-hint">满强化 · 只合计符合勾选条件的词条。双击一项查看来源，手机可直接点开。</p>`
+        + sections.filter(s => !['装备属性', '其他效果'].includes(s)).map(sectionHtml).join('')
+        + `<details class="br-secondary-effects"><summary>装备属性与其他效果</summary>${sectionHtml('装备属性')}${sectionHtml('其他效果')}</details>`
+        + (pending.length ? `<button type="button" class="br-pending-link" data-action="pending">另有 ${pending.length} 项待确认，未计入合计 · 查看</button>` : '')
+        + '<p class="br-total-note">冰伤、冰魔法、魔法、Boss增伤分别统计；这里显示词条合计，不把它们直接相加当作最终伤害倍率。</p>';
       return;
     }
-    const bySource = new Map();
-    rows.forEach(r => { if (!bySource.has(r.sourceId)) bySource.set(r.sourceId, []); bySource.get(r.sourceId).push(r); });
-    target.innerHTML = [...bySource].map(([id, rs]) => {
-      const s = catalog.find(x => x.id === id);
-      const total = result.rows.filter(r => r.sourceId === id);
-      return `<article class="br-source" data-source="${esc(id)}"><div class="br-source-header">
-        <div><h3>${s.group !== 'equipment' ? `<label><input type="checkbox" data-source-enabled="${esc(id)}"${state.disabledSources.includes(id) ? '' : ' checked'}> ${esc(s.name)}</label>` : esc(s.name)}</h3><small>${groups[s.group]} · ${total.filter(r => r.status === 'active').length}/${total.length} 条生效${s.learned || s.manual ? ' · 已保存修正' : ''}</small></div>
-        <button class="br-button" data-edit-source="${esc(id)}">编辑拆分</button></div>
-        <details class="br-source-original"><summary>完整原文</summary><p>${esc(s.text)}</p></details>
-        ${rs.map(r => `<section class="br-rule" data-rule="${esc(r.rule.id)}"><div class="br-rule-head"><strong>${esc(r.rule.part || '独立效果')}</strong><span class="br-badge is-${r.status}">${statuses[r.status]}</span>${r.rule.verification === 'untested' ? '<span class="br-badge is-untested">结算待测试</span>' : ''}</div>
-          <ul class="br-effects">${r.rule.effects.map(e => `<li>${esc(formatEffect(e))}</li>`).join('') || '<li>尚未确定效果，请编辑拆分。</li>'}</ul>
-          <p class="br-reason">${esc(r.reasons.join('；'))}</p>
-          <p class="br-muted">条件：${esc(r.rule.conditions.length ? r.rule.conditions.map(describeCondition).join('；') : '无额外条件')}</p>
-          ${r.rule.note ? `<p class="br-help">${esc(r.rule.note)}</p>` : ''}
-          <details class="br-source-original"><summary>对应原句</summary><p>${esc(r.rule.text || s.text)}</p></details>
-          <div class="br-rule-actions"><button class="br-button" data-rule-toggle="${esc(r.rule.id)}">${state.disabledRules.includes(r.rule.id) ? '重新启用' : '暂不计入'}</button></div>
-        </section>`).join('')}
-      </article>`;
-    }).join('') || '<p class="br-empty">没有符合筛选条件的条目。</p>';
+    if (state.view.page === 'metric') {
+      const entries = currentMetric?.contributions || [];
+      target.innerHTML = `<div class="br-detail-total"><span>${esc(currentMetric?.label || '当前项目')}</span><strong>${currentMetric ? esc(metricValue(currentMetric)) : '+0'}</strong></div>
+        <p class="br-muted">只列出本项当前实际计入的来源。</p>`
+        + entries.map(p => {
+          const s = catalog.find(x => x.id === p.sourceId);
+          return `<article class="br-source" data-source="${esc(p.sourceId)}"><div class="br-source-header"><h3>${esc(p.sourceName)}</h3><strong class="br-contribution-value">${esc(p.effect.type === 'statBuff' ? formatEffect(p.effect) : p.effect.value === true ? '生效' : currentMetric.numeric ? numberText(p.effect.value,p.effect.unit) : formatEffect(p.effect))}</strong><button class="br-button" data-edit-source="${esc(p.sourceId)}" data-focus-rule="${esc(p.ruleId)}">修改</button></div>
+            ${sourceDescription(s)}<div class="br-contribution-body"><p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
+            <button class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</div></article>`;
+        }).join('')
+        + (!entries.length ? '<p class="br-empty">当前条件下没有计入这项的加成。</p>' : '');
+      return;
+    }
+    const pendingOnly = state.view.page === 'pending';
+    const shown = pendingOnly ? catalog.filter(s => pending.some(r => r.sourceId === s.id)) : catalog;
+    target.innerHTML = (pendingOnly ? '<p class="br-muted">这些内容没有混入已生效合计。可以进入修改补全。</p>' : '<p class="br-muted">这里用于管理技能。返回合计后只会计算已勾选且满足条件的效果。</p>') + shown.map(s => {
+      const rows = result.rows.filter(r => r.sourceId === s.id);
+      return `<article class="br-source" data-source="${esc(s.id)}"><div class="br-source-header"><h3>${s.group !== 'equipment' ? `<label><input type="checkbox" data-source-enabled="${esc(s.id)}"${state.disabledSources.includes(s.id) ? '' : ' checked'}>${esc(s.name)}</label>` : esc(s.name)}</h3><button class="br-button" data-edit-source="${esc(s.id)}">修改</button></div>${sourceDescription(s)}<div class="br-contribution-body">${rows.filter(r=>pendingOnly?r.status==='pending':r.status==='active').map(r=>`<p>${esc(r.rule.effects.map(formatEffect).join('；'))}</p>${pendingOnly?`<p class="br-muted">${esc(r.reasons.join('；'))}</p>`:''}`).join('') || '<p class="br-muted">当前未计入。</p>'}</div></article>`;
+    }).join('');
+  }
+  function openMetric(id) {
+    state.view.metricId = id; state.view.page = 'metric'; renderResults(); panel.scrollTop = 0;
   }
 
   function notify(message, error = false) {
@@ -219,16 +245,13 @@ function mount() {
     el.scrollIntoView({ block: 'nearest' });
   }
   function makeReport() {
-    return { schemaVersion: 1, kind: 'last-cloudia-effect-report', characterId, characterName, createdAt: new Date().toISOString(), scope: '技能效果与条件判定，非最终伤害', context: result.context, killer: result.killer, warnings: result.warnings,
+    return { schemaVersion: 1, kind: 'last-cloudia-effect-report', characterId, characterName, createdAt: new Date().toISOString(), scope: '当前条件下的加成合计，非最终伤害', totals: clone(metrics), context: result.context, killer: result.killer, warnings: result.warnings,
       rows: result.rows.map(r => ({ sourceId: r.sourceId, sourceName: r.sourceName, group: r.group, sourceText: r.sourceText, status: r.status, reasons: r.reasons, rule: clone(r.rule) })) };
   }
   function download(name, value) {
     const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json;charset=utf-8' }));
     const a = document.createElement('a'); a.href = url; a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
-  root.addEventListener('input', e => {
-    if (e.target.id === 'brSearch') { state.view.query = e.target.value; renderResults(); }
-  });
   root.addEventListener('change', async e => {
     const el = e.target;
     if (el.dataset.context) {
@@ -257,8 +280,6 @@ function mount() {
       state.disabledSources = state.disabledSources.filter(x => x !== el.dataset.sourceEnabled);
       if (!el.checked) state.disabledSources.push(el.dataset.sourceEnabled);
       persist(); renderResults();
-    } else if (el.id === 'brGroupFilter' || el.id === 'brStatusFilter') {
-      state.view[el.id === 'brGroupFilter' ? 'group' : 'status'] = el.value; renderResults();
     } else if (el.id === 'brImportFile' && el.files[0]) {
       try {
         if (el.files[0].size > 2_000_000) throw new Error('文件过大，请选择导出的规则文件。');
@@ -275,7 +296,9 @@ function mount() {
   });
   root.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.tab) { state.view.tab = b.dataset.tab; renderShell(); }
+    if (b.dataset.openMetric) { if (e.detail === 0 || e.pointerType === 'touch' || matchMedia('(pointer: coarse)').matches) openMetric(b.dataset.openMetric); }
+    else if (b.dataset.action === 'back-totals') { state.view.page = 'totals'; renderResults(); panel.scrollTop = 0; }
+    else if (b.dataset.action === 'manage' || b.dataset.action === 'pending') { state.view.page = b.dataset.action === 'manage' ? 'skills' : 'pending'; renderResults(); panel.scrollTop = 0; }
     else if (b.dataset.editSource) openEditor(b.dataset.editSource, b);
     else if (b.dataset.ruleToggle) {
       const id = b.dataset.ruleToggle;
@@ -287,10 +310,14 @@ function mount() {
     else if (b.dataset.action === 'restore-enabled') { state.disabledSources = []; state.disabledRules = []; persist(); renderResults(); }
   });
 
+  root.addEventListener('dblclick', e => { const b = e.target.closest('[data-open-metric]'); if (b) openMetric(b.dataset.openMetric); });
+
   function openEditor(id, button) {
     editorSource = catalog.find(s => s.id === id); if (!editorSource) return;
     draftRules = clone(editorSource.rules); lastEditorButton = button; reuseDraft = true;
     renderEditor(); editor.showModal();
+    const focusRule = button?.dataset.focusRule;
+    if (focusRule) { const i = draftRules.findIndex(r => r.id === focusRule); editor.querySelector(`[data-rule-edit="${i}:part"]`)?.scrollIntoView({block:'center'}); }
   }
   function editorOption(value, label, current) { return `<option value="${esc(value)}"${value === current ? ' selected' : ''}>${esc(label)}</option>`; }
   function renderCondition(c, ri, ci) {
@@ -309,7 +336,7 @@ function mount() {
     return `<div class="br-edit-effect"><label>效果类型<select data-effect="${ri}:${ei}:type">${Object.entries(types).map(([k,l]) => editorOption(k,l,e.type)).join('')}</select></label><label>作用对象<input data-effect="${ri}:${ei}:target" value="${esc(e.target)}" placeholder="如法强、冰属性伤害"></label><label>数值／参照<input data-effect="${ri}:${ei}:value" value="${esc(e.value)}" placeholder="如50或魔抗"></label><label>单位<select data-effect="${ri}:${ei}:unit">${[['%', '%'], ['', '无单位／固定值'], ['×', '倍率'], ['倍', '倍数']].map(([k,l]) => editorOption(k,l,e.unit || '')).join('')}</select></label>${e.type === 'hit' ? `<label>每段倍率<input data-effect="${ri}:${ei}:secondary" type="number" min="0" step="0.01" value="${esc(e.secondary ?? 0.6)}"></label>` : ''}<button class="br-button" type="button" data-remove-effect="${ri}:${ei}">删除效果</button><label class="br-effect-detail">补充说明<input data-effect="${ri}:${ei}:detail" value="${esc(e.detail || '')}"></label></div>`;
   }
   function renderEditor() {
-    editor.innerHTML = `<header><div><small>人工确认 · ${esc(groups[editorSource.group])}</small><h2 id="brEditorTitle">${esc(editorSource.name)} · 编辑拆分</h2></div><button class="br-button" type="button" data-editor-close aria-label="关闭编辑">×</button></header>
+    editor.innerHTML = `<header><div><small>1 · 当前生效加成　›　2 · 来源　›　3 · 修改</small><h2 id="brEditorTitle">${esc(editorSource.name)} · 修改加成</h2></div><button class="br-button" type="button" data-editor-close aria-label="关闭编辑">×</button></header>
       <div class="br-editor-body"><details open class="br-source-original"><summary>原始完整描述</summary><p>${esc(editorSource.text)}</p></details><p class="br-help">每部分独立判断；同一部分的条件必须同时满足。“符合任一种”可选多个值。无法确认的部分保留待确认，不会计入生效列表。</p>
       <div id="brEditRules">${draftRules.map((r, i) => `<fieldset class="br-edit-rule"><legend>第 ${i + 1} 部分</legend><div class="br-edit-grid">
         <label class="br-field">部分名称<input data-rule-edit="${i}:part" value="${esc(r.part)}"></label>
@@ -387,7 +414,7 @@ function mount() {
       if (reuseDraft) { templates[key] = template; delete state.drafts[key]; }
       else state.drafts[key] = { text: editorSource.text, rules: clone(template.rules) };
       state.disabledRules = state.disabledRules.filter(id => !editorSource.rules.some(r => r.id === id));
-      persist(); rebuildCatalog(); renderResults(); editor.close(); notify('拆分已保存。当前条件已重新判断，待确认部分继续保留。');
+      persist(); rebuildCatalog(); renderResults(); editor.close(); notify('修改已保存，当前加成合计已更新。');
     } catch (err) { const el = editor.querySelector('#brEditError'); el.hidden = false; el.textContent = err.message; }
   }
   editor.addEventListener('close', () => { if (lastEditorButton?.isConnected) lastEditorButton.focus(); else panel.querySelector('#bonusCalculatorClose').focus(); });

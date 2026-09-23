@@ -74,7 +74,7 @@ test('equipment is opt-in and independent from innate rules', () => {
   const on = evaluate({ weaponCount: 1, staff: true, iceStaff: true, equipmentIds: ['roxy-staff'] });
   assert.equal(status(on, 'roxy-staff-stats'), 'active');
   assert.equal(status(on, 'roxy-staff-ice'), 'active');
-  assert.equal(status(on, 'roxy-staff-killer'), 'pending');
+  assert.equal(status(on, 'roxy-staff-killer'), 'active');
   assert.equal(status(on, 'roxy-robe-stats'), 'disabled');
 });
 
@@ -113,14 +113,14 @@ test('unknown conditions remain pending and cannot accidentally satisfy negative
 });
 
 test('manual confirmation replaces a pending rule and disabling source disables all its parts', () => {
-  const overrides = { 'roxy-staff-int': { review: 'ready', manual: true, conditions: [] }, 'source:water-king': { disabled: true } };
-  const result = evaluate({ equipmentIds: ['roxy-staff'], weaponCount: 1 }, overrides);
-  assert.equal(status(result, 'roxy-staff-int'), 'active');
-  assert.equal(find(result, 'roxy-staff-int').rule.manual, true);
+  const overrides = { 'spell-link-later': { review: 'ready', manual: true, effects: [{type:'damage',target:'相同攻击魔法伤害',value:8,unit:'%'}] }, 'source:water-king': { disabled: true } };
+  const result = evaluate({ equipmentIds: ['roxy-staff'], weaponCount: 1, chainStacks: 2 }, overrides);
+  assert.equal(status(result, 'spell-link-later'), 'active');
+  assert.equal(find(result, 'spell-link-later').rule.manual, true);
   assert.ok(result.rows.filter((row) => row.sourceId === 'water-king').every((row) => row.status === 'disabled'));
   assert.equal(result.killer, false);
   assert.equal(status(result, 'killer-cap-v-single'), 'inactive');
-  assert.equal(CATALOG.find((source) => source.id === 'roxy-staff').rules.find((rule) => rule.id === 'roxy-staff-int').review, 'pending');
+  assert.equal(CATALOG.find((source) => source.id === 'spell-link').rules.find((rule) => rule.id === 'spell-link-later').review, 'pending');
 });
 
 test('multiple killer sources remain one trigger and unrelated stats remain listed', () => {

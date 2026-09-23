@@ -53,7 +53,7 @@ export const CATALOG = [
   simple('magic-steady-max', '魔常提升极', 'exclusive', 'INT、MND、MP+15%', [], [stat('法强', 15), stat('魔抗', 15), stat('MP', 15)]),
   killerCap('killer-cap-v', '特攻界限突破V', 'exclusive', '触发特攻时伤害上限+7,500；仅装备1件武器时提升为+15,000', 7500, 15000),
   simple('knowledge-wall-ii', '知识之壁II', 'exclusive', '战斗开始时，将INT的10%加算至DEF与MND', [], [effect('stat', '防御力与魔抗', '加算开战时法强的10%', '')], { note: '需使用开战时的法强取值，不是防御力与魔抗各自增加10%；不能从当前面板再次重复加算。' }),
-  simple('auto-recast', '自动再咏唱', 'exclusive', '始终保持魔法“再咏唱”的效果', [], [effect('castSpeed', '再咏唱', '常驻；具体数值待确认', '')], { review: 'pending', note: '本页没有再咏唱的具体效果与数值，需人工确认后参与计算。' }),
+  simple('auto-recast', '自动再咏唱', 'exclusive', '始终保持魔法“再咏唱”的效果：魔法咏唱速度+30%。', [magic], [effect('castSpeed', '魔法咏唱速度', 30)], { note: '自动技能为常驻效果。再咏唱的具体数值依据 Altema /maho/49；不属于伤害加成。' }),
   simple('auto-heal-ii', '自动治疗II', 'exclusive', 'HP首次进入濒死时，消耗30MP自动超回复HP（HP回复上限+5,000）', [eq('lowHp', true), eq('firstLowHp', true), eq('mpEnough', true)], [effect('recovery', '自身生命', '消耗30魔力值后超回复；回复上限+5,000', '')], { note: '濒死判定及具体回复量原文未列；条件由使用者或读取报告确认。' }),
   simple('moonlight-ii', '月光II', 'exclusive', 'HP全满时，INT+30%', [eq('fullHp', true)], [stat('法强', 30)]),
   simple('ice-ultimate-boost', '冰系究极增幅', 'exclusive', '冰属性魔法伤害+30%、冰属性魔法伤害上限+5,000', iceMagic, [damage('冰属性魔法伤害', 30), cap('冰属性魔法伤害上限', 5000)]),
@@ -79,7 +79,7 @@ export const CATALOG = [
     rule('incantation-speed', '冰杖攻击魔法咏唱', '装备冰属性法杖时，攻击魔法咏唱速度+50%', [eq('iceStaff', true), magic], [effect('castSpeed', '攻击魔法咏唱速度', 50)]),
   ]),
   source('extraordinary-magician', '超规格的魔术师', 'exclusive', '始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果；超必杀技伤害+100%、伤害上限+200,000', [
-    rule('extraordinary-aura', '常驻 EX 灵气', '始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果', [], [stat('法强', 50, 'EX灵气状态；已进入面板时不重复加算')]),
+    rule('extraordinary-aura', '常驻 EX 灵气', '始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果', [], [effect('statBuff', '法强', 50, '%', { detail: 'EX灵气；已计入战斗面板时不重复加算' })]),
     rule('extraordinary-mp', '常驻超级魔法阵', '始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果', [], [effect('recovery', 'MP', '持续大量恢复', '')], { note: '原文没有每次恢复数值和间隔，不猜测回复量。' }),
     rule('extraordinary-ultimate', '超必增伤与上限', '超必杀技伤害+100%、伤害上限+200,000', [ultimate], [damage('超必杀技伤害', 100), cap('超必杀技伤害上限', 200000)]),
   ]),
@@ -97,7 +97,8 @@ export const CATALOG = [
   ]),
   source('spell-link', '法术联结', 'common', '连续使用相同攻击魔法时伤害提升（第1次+4%，最高+20%）', [
     rule('spell-link-first', '连续魔法第1次', '连续使用相同攻击魔法时伤害提升（第1次+4%，最高+20%）', [magic, eq('chainStacks', 1)], [damage('相同攻击魔法伤害', 4)]),
-    rule('spell-link-later', '后续连续魔法', '连续使用相同攻击魔法时伤害提升（第1次+4%，最高+20%）', [magic, { field: 'chainStacks', op: 'gte', value: 2 }], [effect('damage', '相同攻击魔法伤害', '最高+20%', '')], { review: 'pending', note: '此页仅明确第1次+4%与最高+20%，未给中间各档和达到上限所需次数，待原始参数或人工确认。' }),
+    rule('spell-link-later', '后续连续魔法', '连续使用相同攻击魔法时伤害提升（第1次+4%，最高+20%）', [magic, inside('chainStacks', [2, 3, 4])], [effect('damage', '相同攻击魔法伤害', '最高+20%', '')], { review: 'pending', note: '原文未给中间各档数值，确认后可修改；不按次数猜测。' }),
+    rule('spell-link-max', '已达到最高加成', '连续使用相同攻击魔法时伤害提升（第1次+4%，最高+20%）', [magic, eq('chainStacks', 5)], [damage('相同攻击魔法伤害', 20)], { note: '仅在手动确认达到最高加成时计入；不代表连续使用5次必定满层。' }),
   ]),
   simple('giant-purge-iii', '巨型净化III', 'common', '对BOSS的魔法伤害+20%、伤害上限+4,000', [boss, magicDamage], [damage('对Boss的魔法伤害', 20), cap('对Boss的魔法伤害上限', 4000)]),
   simple('giant-shield-ii', '巨型护盾II', 'common', '受到BOSS的伤害-20%', [boss], [effect('defense', '受到Boss的伤害', -20)]),
@@ -108,11 +109,11 @@ export const CATALOG = [
   simple('trans-giant-shield', '巨型护盾', 'transcend', '【超越】受到BOSS的伤害-20%', [boss], [effect('defense', '受到Boss的伤害', -20)]),
   killerCap('trans-killer-cap', '特攻界限突破', 'transcend', '【超越】触发特攻时伤害上限+10,000；仅装备1件武器或未装备武器时提升为+20,000', 10000, 20000, true),
   simple('trans-magic-weakness', '魔法弱点增幅', 'transcend', '【超越】魔法攻击命中弱点属性时，伤害+30%', [magic, eq('weakness', true)], [damage('命中弱点的魔法伤害', 30)]),
-  source('roxy-staff', '洛琪希之杖', 'equipment', '最高属性：MP+50 / INT+365 / MND+97；最高效果：仅装备1件武器时，冰属性魔法伤害+35%、伤害上限+6,000；触发特攻时伤害上限+5,000；INT+15%', [
+  source('roxy-staff', '洛琪希之杖', 'equipment', '最高属性：MP+50 / INT+365 / MND+97；最高效果：仅装备1件武器时，冰属性魔法伤害+35%、伤害上限+6,000。触发特攻时伤害上限+5,000。INT+15%', [
     rule('roxy-staff-stats', '装备固定属性', 'MP+50 / INT+365 / MND+97', [], [effect('equipmentStat', '装备魔力值', 50, ''), effect('equipmentStat', '装备法强', 365, ''), effect('equipmentStat', '装备魔抗', 97, '')]),
     rule('roxy-staff-ice', '单武器冰魔法加成', '仅装备1件武器时，冰属性魔法伤害+35%、伤害上限+6,000', [eq('weaponCount', 1), ...iceMagic], [damage('冰属性魔法伤害', 35), cap('冰属性魔法伤害上限', 6000)]),
-    rule('roxy-staff-killer', '特攻上限', '触发特攻时伤害上限+5,000', [killer], [cap('特攻伤害上限', 5000)], { review: 'pending', note: '原文用分号分隔，但是否仍受前文单武器条件约束尚未确认；暂不自动套用条件范围。' }),
-    rule('roxy-staff-int', '法强加成', 'INT+15%', [], [stat('法强', 15)], { review: 'pending', note: '需确认该词条是否独立于前文单武器条件；确认前不参与统计。' }),
+    rule('roxy-staff-killer', '特攻上限', '触发特攻时伤害上限+5,000', [killer], [cap('特攻伤害上限', 5000)], { note: '装备原文以句号分隔；本句仅要求触发特攻。依据 Altema /soubi/1890。' }),
+    rule('roxy-staff-int', '法强加成', 'INT+15%', [], [stat('法强', 15)], { note: '装备原文以句号分隔；法强+15%是装备常驻属性。依据 Altema /soubi/1890。' }),
   ]),
   source('roxy-robe', '洛琪希的衣服', 'equipment', '最高属性：MP+80 / DEF+167 / INT+229 / MND+116；最高效果：受到的物理攻击、超必杀技伤害-15%；对BOSS的冰属性魔法伤害上限+5,000；自身存活时，我方全体物理与魔法伤害上限+5,000', [
     rule('roxy-robe-stats', '装备固定属性', 'MP+80 / DEF+167 / INT+229 / MND+116', [], [effect('equipmentStat', '装备魔力值', 80, ''), effect('equipmentStat', '装备防御力', 167, ''), effect('equipmentStat', '装备法强', 229, ''), effect('equipmentStat', '装备魔抗', 116, '')]),
