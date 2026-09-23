@@ -330,3 +330,21 @@ dialog.br-editor::backdrop { background: #172c4a82; }
 }
 
 .br-magic-family, .br-source-adjustment { width: min(100%, 360px); margin: 12px 0; }
+
+/* Sources expand directly beneath a total, with no navigation or recalculation. */
+.br-total-row[aria-expanded="true"] .br-row-chevron { transform: rotate(90deg); }
+.br-metric-sources { margin: 0 0 14px; padding: 0 14px; border-left: 3px solid #abc3e1; background: #f6f9fd; }
+.br-inline-source { padding: 12px 0; }
+.br-inline-source + .br-inline-source { border-top: 1px solid #dce5f0; }
+.br-inline-source-header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.br-inline-source-header h4 { flex: 1 1 180px; margin: 0; color: #203864; font-size: 15px; }
+.br-inline-source-header > strong { color: #254e84; font-size: 16px; }
+.br-inline-description { margin-top: 6px; font-size: 14px; }
+.br-inline-description > summary { color: #60758f; cursor: pointer; width: fit-content; }
+.br-inline-description > .br-full-effect { padding: 9px 0; border: 0; background: transparent; }
+.br-inline-description > .br-full-effect > span { display: none; }
+.br-inline-description > p { margin: 6px 0; }
+@media (max-width: 720px) {
+  .br-metric-sources { padding-inline: 10px; }
+  .br-inline-source-header h4 { flex-basis: 130px; }
+}

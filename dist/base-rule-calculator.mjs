@@ -26,7 +26,7 @@ function mount() {
     disabledRules: Array.isArray(saved.disabledRules) ? saved.disabledRules : [],
     drafts: saved.drafts && typeof saved.drafts === 'object' ? saved.drafts : {},
     attackSettings: saved.attackSettings || {},
-    view: { page: 'totals', metricId: null },
+    view: { page: 'totals', expandedMetrics: new Set() },
   };
   let templates = validateTemplates({ schemaVersion: 1, templates: read(LEARNING_STORAGE_KEY, {}) }).templates;
   const sources = collectSources();
@@ -37,6 +37,7 @@ function mount() {
   let draftRules = [];
   let reuseDraft = true;
   let lastEditorButton;
+  let lastEditorMetricId;
   let storageWarning = '';
   const editor = document.createElement('dialog');
   editor.id = 'brEditor'; editor.className = 'br-editor'; editor.setAttribute('aria-labelledby', 'brEditorTitle');
@@ -192,12 +193,11 @@ function mount() {
   function renderResults() {
     calculate();
     const c = result.context;
-    const currentMetric = metrics.find(m => m.id === state.view.metricId);
     const atHome = state.view.page === 'totals';
     root.querySelector('#brConditionsPanel').hidden = !atHome;
     root.querySelector('#brPageNav').innerHTML = atHome
-      ? '<strong>1 · 当前生效加成</strong><span>2 · 查看来源　›　3 · 修改</span>'
-      : `<button class="br-button" data-action="back-totals">← 返回加成合计</button><strong>2 · ${esc(state.view.page === 'metric' ? currentMetric?.label || '加成来源' : state.view.page === 'pending' ? '未确认的加成' : '全部技能')}</strong><span>3 · 修改</span>`;
+      ? '<strong>当前生效加成</strong>'
+      : `<button class="br-button" data-action="back-totals">← 返回加成合计</button><strong>${state.view.page === 'pending' ? '未确认的加成' : '全部技能'}</strong>`;
     const chain = [characterId === '260' ? attackNames[c.attack] : ATTACKS.find(a => a.id === c.attack)?.label,
       c.element == null ? '属性待确认' : elements.find(e => e[0] === c.element)?.[1] + '属性',
       `${c.weaponCount}件武器`, 'Boss'];
@@ -217,26 +217,16 @@ function mount() {
         if (!items.length) return '';
         return `<section class="br-summary-group br-totals-group"><h3>${section === '伤害加成' ? '伤害增加' : section}</h3>
           ${section === '状态加成' ? '<p class="br-total-note">例如 EX灵气，与上面的普通法强加成分开保留。</p>' : ''}
-          <ul>${items.map(m => `<li><button type="button" class="br-total-row" data-open-metric="${esc(m.id)}" title="双击查看来源，键盘按回车；手机轻触"><span><b>${esc(m.label)}</b><small>${esc(contributionCount(m))}</small></span><strong data-total-value="${esc(m.id)}">${esc(metricValue(m))}</strong><span class="br-row-chevron" aria-hidden="true">›</span></button></li>`).join('')}</ul></section>`;
+          <ul>${items.map(m => {
+            const expanded = state.view.expandedMetrics.has(m.id);
+            return `<li><button type="button" class="br-total-row" data-toggle-metric="${esc(m.id)}" aria-expanded="${expanded}" aria-controls="${esc(metricPanelId(m.id))}" title="点击展开或收起来源"><span><b>${esc(m.label)}</b><small>${esc(contributionCount(m))}</small></span><strong data-total-value="${esc(m.id)}">${esc(metricValue(m))}</strong><span class="br-row-chevron" aria-hidden="true">›</span></button><div class="br-metric-sources" id="${esc(metricPanelId(m.id))}" data-metric-sources="${esc(m.id)}"${expanded ? '' : ' hidden'}>${expanded ? renderContributions(m) : ''}</div></li>`;
+          }).join('')}</ul></section>`;
       };
-      target.innerHTML = `<p class="br-summary-hint">满强化 · 只统计加成。双击一项查看来源，手机可直接点开。</p>`
+      target.innerHTML = `<p class="br-summary-hint">满强化 · 只统计加成。点击一项展开来源，再点一次收起。</p>`
         + sections.filter(s => !['装备属性', '其他效果'].includes(s)).map(sectionHtml).join('')
         + (metrics.some(m => ['装备属性', '其他效果'].includes(m.section)) ? `<details class="br-secondary-effects"><summary>装备属性与其他效果</summary>${sectionHtml('装备属性')}${sectionHtml('其他效果')}</details>` : '')
         + (pending.length ? `<button type="button" class="br-pending-link" data-action="pending">另有 ${pending.length} 项待确认，未计入合计 · 查看</button>` : '')
         + '<p class="br-total-note">冰伤、冰魔法、魔法、Boss增伤分别统计；这里显示词条合计，不把它们直接相加当作最终伤害倍率。</p>';
-      return;
-    }
-    if (state.view.page === 'metric') {
-      const entries = currentMetric?.contributions || [];
-      target.innerHTML = `<div class="br-detail-total"><span>${esc(currentMetric?.label || '当前项目')}</span><strong>${currentMetric ? esc(metricValue(currentMetric)) : '+0'}</strong></div>
-        <p class="br-muted">只列出符合当前勾选条件的来源；可在对应技能下调整加成。</p>`
-        + entries.map(p => {
-          const s = catalog.find(x => x.id === p.sourceId);
-          return `<article class="br-source" data-source="${esc(p.sourceId)}"><div class="br-source-header"><h3>${esc(p.sourceName)}</h3><strong class="br-contribution-value">${esc(p.effect.type === 'statBuff' ? formatEffect(p.effect) : p.effect.value === true ? '生效' : currentMetric.numeric ? numberText(p.effect.value,p.effect.unit) : formatEffect(p.effect))}</strong><button class="br-button" data-edit-source="${esc(p.sourceId)}" data-focus-rule="${esc(p.ruleId)}">修改</button></div>
-            ${sourceDescription(s)}<div class="br-contribution-body">${contributionControls(p, s)}<p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
-            <button class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</div></article>`;
-        }).join('')
-        + (!entries.length ? '<p class="br-empty">当前条件下没有计入这项的加成。</p>' : '');
       return;
     }
     const pendingOnly = state.view.page === 'pending';
@@ -246,13 +236,34 @@ function mount() {
       return `<article class="br-source" data-source="${esc(s.id)}"><div class="br-source-header"><h3>${s.group !== 'equipment' ? `<label><input type="checkbox" data-source-enabled="${esc(s.id)}"${state.disabledSources.includes(s.id) ? '' : ' checked'}>${esc(s.name)}</label>` : esc(s.name)}</h3><button class="br-button" data-edit-source="${esc(s.id)}">修改</button></div>${sourceDescription(s)}<div class="br-contribution-body">${rows.filter(r=>pendingOnly?r.status==='pending':r.status==='active').map(r=>`<p>${esc(r.rule.effects.map(formatEffect).join('；'))}</p>${pendingOnly?`<p class="br-muted">${esc(r.reasons.join('；'))}</p>`:''}`).join('') || '<p class="br-muted">当前未计入。</p>'}</div></article>`;
     }).join('');
   }
-  function openMetric(id) {
-    state.view.metricId = id; state.view.page = 'metric'; renderResults(); panel.scrollTop = 0;
+  function metricPanelId(id) { return `brMetric-${encodeURIComponent(id)}`; }
+  function renderContributions(metric) {
+    return metric.contributions.map(p => {
+      const source = catalog.find(s => s.id === p.sourceId);
+      const value = metric.numeric ? numberText(p.effect.value, p.effect.unit) : formatEffect(p.effect);
+      return `<article class="br-inline-source" data-source="${esc(p.sourceId)}"><div class="br-inline-source-header"><h4>${esc(p.sourceName)}</h4><strong>${esc(value)}</strong><button type="button" class="br-button" data-edit-source="${esc(p.sourceId)}" data-focus-rule="${esc(p.ruleId)}">修改</button></div>
+        ${contributionControls(p, source)}
+        <details class="br-inline-description"><summary>完整技能效果</summary>${sourceDescription(source)}<p><b>本项计入：</b>${esc(formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
+        <button type="button" class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</details></article>`;
+    }).join('');
   }
-
-  function notify(message, error = false) {
+  function toggleMetric(button) {
+    const id = button.dataset.toggleMetric;
+    const body = document.getElementById(button.getAttribute('aria-controls'));
+    const metric = metrics.find(m => m.id === id);
+    if (!body || !metric) return;
+    const expanded = button.getAttribute('aria-expanded') !== 'true';
+    if (expanded) {
+      state.view.expandedMetrics.add(id);
+      if (!body.childElementCount) body.innerHTML = renderContributions(metric);
+    } else state.view.expandedMetrics.delete(id);
+    button.setAttribute('aria-expanded', String(expanded));
+    body.hidden = !expanded;
+  }
+  function metricButton(id) { return [...root.querySelectorAll('[data-toggle-metric]')].find(el => el.dataset.toggleMetric === id); }
+  function notify(message, error = false, scroll = true) {
     const el = root.querySelector('#brMessage'); el.hidden = false; el.textContent = message; el.classList.toggle('is-error', error);
-    el.scrollIntoView({ block: 'nearest' });
+    if (scroll) el.scrollIntoView({ block: 'nearest' });
   }
   function makeReport() {
     return { schemaVersion: 1, kind: 'last-cloudia-effect-report', characterId, characterName, createdAt: new Date().toISOString(), scope: '当前条件下的加成合计，非最终伤害', totals: clone(metrics), context: result.context, killer: result.killer, warnings: result.warnings,
@@ -265,6 +276,8 @@ function mount() {
   root.addEventListener('change', async e => {
     const el = e.target;
     if (el.dataset.context) {
+      const scrollTop = panel.scrollTop;
+      const metricId = el.closest('[data-metric-sources]')?.dataset.metricSources;
       const field = el.dataset.context;
       const value = el.type === 'checkbox' ? el.checked : JSON.parse(el.value);
       if (field === 'attack') {
@@ -277,6 +290,9 @@ function mount() {
       if (field === 'staff' && !value) state.context.iceStaff = false;
       if (state.context.attack === 'magic') state.context.damageType = 'magical';
       prepareContext(); persist(); renderShell();
+      const scope = metricId ? document.getElementById(metricPanelId(metricId)) : root;
+      const replacement = [...(scope?.querySelectorAll('[data-context]') || [])].find(input => input.dataset.context === field);
+      replacement?.focus({ preventScroll: true }); panel.scrollTop = scrollTop;
     } else if (el.dataset.equipment) {
       const id = el.dataset.equipment;
       state.context.equipmentIds = state.context.equipmentIds.filter(x => x !== id);
@@ -308,7 +324,7 @@ function mount() {
   });
   root.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.openMetric) { if (e.detail === 0 || e.pointerType === 'touch' || matchMedia('(pointer: coarse)').matches) openMetric(b.dataset.openMetric); }
+    if (b.dataset.toggleMetric) toggleMetric(b);
     else if (b.dataset.action === 'back-totals') { state.view.page = 'totals'; renderResults(); panel.scrollTop = 0; }
     else if (b.dataset.action === 'manage' || b.dataset.action === 'pending') { state.view.page = b.dataset.action === 'manage' ? 'skills' : 'pending'; renderResults(); panel.scrollTop = 0; }
     else if (b.dataset.editSource) openEditor(b.dataset.editSource, b);
@@ -322,11 +338,10 @@ function mount() {
     else if (b.dataset.action === 'restore-enabled') { state.disabledSources = []; state.disabledRules = []; persist(); renderResults(); }
   });
 
-  root.addEventListener('dblclick', e => { const b = e.target.closest('[data-open-metric]'); if (b) openMetric(b.dataset.openMetric); });
-
   function openEditor(id, button) {
     editorSource = catalog.find(s => s.id === id); if (!editorSource) return;
     draftRules = clone(editorSource.rules); lastEditorButton = button; reuseDraft = true;
+    lastEditorMetricId = button?.closest('[data-metric-sources]')?.dataset.metricSources;
     renderEditor(); editor.showModal();
     const focusRule = button?.dataset.focusRule;
     if (focusRule) { const i = draftRules.findIndex(r => r.id === focusRule); editor.querySelector(`[data-rule-edit="${i}:part"]`)?.scrollIntoView({block:'center'}); }
@@ -348,7 +363,7 @@ function mount() {
     return `<div class="br-edit-effect"><label>效果类型<select data-effect="${ri}:${ei}:type">${Object.entries(types).map(([k,l]) => editorOption(k,l,e.type)).join('')}</select></label><label>作用对象<input data-effect="${ri}:${ei}:target" value="${esc(e.target)}" placeholder="如法强、冰属性伤害"></label><label>数值／参照<input data-effect="${ri}:${ei}:value" value="${esc(e.value)}" placeholder="如50或魔抗"></label><label>单位<select data-effect="${ri}:${ei}:unit">${[['%', '%'], ['', '无单位／固定值'], ['×', '倍率'], ['倍', '倍数']].map(([k,l]) => editorOption(k,l,e.unit || '')).join('')}</select></label>${e.type === 'hit' ? `<label>每段倍率<input data-effect="${ri}:${ei}:secondary" type="number" min="0" step="0.01" value="${esc(e.secondary ?? 0.6)}"></label>` : ''}<button class="br-button" type="button" data-remove-effect="${ri}:${ei}">删除效果</button><label class="br-effect-detail">补充说明<input data-effect="${ri}:${ei}:detail" value="${esc(e.detail || '')}"></label></div>`;
   }
   function renderEditor() {
-    editor.innerHTML = `<header><div><small>1 · 当前生效加成　›　2 · 来源　›　3 · 修改</small><h2 id="brEditorTitle">${esc(editorSource.name)} · 修改加成</h2></div><button class="br-button" type="button" data-editor-close aria-label="关闭编辑">×</button></header>
+    editor.innerHTML = `<header><div><small>当前生效加成　›　修改来源</small><h2 id="brEditorTitle">${esc(editorSource.name)} · 修改加成</h2></div><button class="br-button" type="button" data-editor-close aria-label="关闭编辑">×</button></header>
       <div class="br-editor-body"><details open class="br-source-original"><summary>原始完整描述</summary><p>${esc(editorSource.text)}</p></details><p class="br-help">每部分独立判断；同一部分的条件必须同时满足。“符合任一种”可选多个值。无法确认的部分保留待确认，不会计入生效列表。</p>
       <div id="brEditRules">${draftRules.map((r, i) => `<fieldset class="br-edit-rule"><legend>第 ${i + 1} 部分</legend><div class="br-edit-grid">
         <label class="br-field">部分名称<input data-rule-edit="${i}:part" value="${esc(r.part)}"></label>
@@ -426,10 +441,16 @@ function mount() {
       if (reuseDraft) { templates[key] = template; delete state.drafts[key]; }
       else state.drafts[key] = { text: editorSource.text, rules: clone(template.rules) };
       state.disabledRules = state.disabledRules.filter(id => !editorSource.rules.some(r => r.id === id));
-      persist(); rebuildCatalog(); renderResults(); editor.close(); notify('修改已保存，当前加成合计已更新。');
+      const scrollTop = panel.scrollTop;
+      persist(); rebuildCatalog(); renderResults(); editor.close();
+      panel.scrollTop = scrollTop; notify('修改已保存，当前加成合计已更新。', false, false);
     } catch (err) { const el = editor.querySelector('#brEditError'); el.hidden = false; el.textContent = err.message; }
   }
-  editor.addEventListener('close', () => { if (lastEditorButton?.isConnected) lastEditorButton.focus(); else panel.querySelector('#bonusCalculatorClose').focus(); });
+  editor.addEventListener('close', () => {
+    const replacement = [...root.querySelectorAll('[data-edit-source]')].find(el => el.dataset.editSource === editorSource?.id && el.closest('[data-metric-sources]')?.dataset.metricSources === lastEditorMetricId);
+    const target = lastEditorButton?.isConnected ? lastEditorButton : replacement || metricButton(lastEditorMetricId) || root.querySelector('[data-toggle-metric]') || panel.querySelector('#bonusCalculatorClose');
+    target?.focus({ preventScroll: true });
+  });
   editor.addEventListener('keydown', e => { if (e.key === 'Escape') e.stopPropagation(); });
   window.addEventListener('storage', e => {
     if (e.key === LEARNING_STORAGE_KEY) { templates = validateTemplates({ schemaVersion: 1, templates: read(LEARNING_STORAGE_KEY, {}) }).templates; rebuildCatalog(); renderResults(); }
