@@ -864,6 +864,7 @@
   };
 
   const renderSummary = () => {
+    if (panel.hasAttribute('data-rule-calculator')) return;
     const metrics = new Map();
     bonuses.forEach((bonus) => {
       if (!metrics.has(bonus.key)) metrics.set(bonus.key, { label: bonus.label, unit: bonus.unit, total: 0, providers: [] });

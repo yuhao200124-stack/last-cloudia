@@ -7,6 +7,7 @@
     <title>洛琪希角色资料｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="stylesheet" href="./character.css" />
+    <link rel="stylesheet" href="./base-rule-calculator.css" />
   </head>
   <body data-character-id="260">
     <header class="site-header">
@@ -158,9 +159,9 @@
     </main>
 
     <div id="bonusCalculatorOverlay" class="calculator-overlay" hidden></div>
-    <aside id="bonusCalculator" class="bonus-calculator" hidden aria-label="基础计算器">
+    <aside id="bonusCalculator" class="bonus-calculator" data-rule-calculator hidden aria-label="基础计算器">
       <div class="bonus-calculator-header">
-        <strong>基础计算器</strong>
+        <strong>基础计算器 · 效果判定</strong>
         <button id="bonusCalculatorClose" type="button" aria-label="关闭计算器">×</button>
       </div>
       <div class="mobile-calculator-tabs" aria-label="切换计算器">
@@ -362,5 +363,6 @@
     <script src="./data.js"></script>
     <script src="./character-calculator.js"></script>
     <script src="./damage-simulator.js"></script>
+    <script type="module" src="./base-rule-calculator.mjs"></script>
   </body>
 </html>

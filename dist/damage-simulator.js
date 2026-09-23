@@ -478,7 +478,9 @@
     $("damageInnateList").innerHTML = active.length ? (bonusLayout === "skill" ? renderBySkill(active) : renderByBonus(active)) : '<p class="damage-innate-empty">当前攻击方式下，没有读取到可直接计算的输出加成。</p>';
     const current = state();
     const notes = [];
-    notes.push("数值直接读取基础计算器当前保留项目");
+    notes.push(document.querySelector('#bonusCalculator[data-rule-calculator]')
+      ? "旧版估算使用原先固定词条，尚未连接新版效果判定中的修改"
+      : "数值直接读取基础计算器当前保留项目");
     if (current.exclusiveWeapon) notes.push("已计入两件专属装备及法杖、长袍属性增幅");
     if (current.bossSpecial) notes.push(`已按${current.bossRace}系Boss触发特攻，特攻增伤与特攻上限已生效`);
     if (innateSkills.some(item => /暴击率|暴击伤害|有概率将敌方MND减半/.test(item.effect))) notes.push("暴击与概率减防保留为后续独立区间，未混入固定增伤");
