@@ -16,6 +16,7 @@
         <p>第二部分 · 角色能力整理</p>
       </div>
       <nav class="header-actions" aria-label="页面导航">
+        <a class="header-nav-link" href="./damage-calculator.html">伤害计算器</a>
         <a class="header-nav-link" href="./index.html">返回技能页面</a>
         <a class="header-nav-link" href="./characters.html">返回角色列表</a>
       </nav>
@@ -30,7 +31,7 @@
             <span>冰属性</span><span>魔法输出</span><span>辅助</span>
             <a class="source-button" href="https://altema.jp/lastcloudia/chara/260" target="_blank" rel="noreferrer">Altema原资料 ↗</a>
             <a class="source-button loadout-entry" href="./index.html?loadout=260#全部技能">配装计算器</a>
-            <button id="damageSimulatorOpen" class="source-button calculator-entry" type="button">伤害计算器</button>
+            <button id="damageSimulatorOpen" class="source-button calculator-entry" type="button">配装估算（旧版）</button>
           </div>
         </section>
 
@@ -264,7 +265,7 @@
     <div id="damageSimulatorBackdrop" class="damage-simulator-backdrop" hidden></div>
     <aside id="damageSimulator" class="damage-simulator" hidden aria-label="角色伤害计算器">
       <header class="damage-simulator-header">
-        <div><small id="damageSimulatorCharacterLabel">当前角色</small><strong>伤害计算器</strong></div>
+        <div><small id="damageSimulatorCharacterLabel">当前角色</small><strong>配装估算（旧版）</strong></div>
         <button id="damageSimulatorClose" type="button" aria-label="关闭伤害计算器">×</button>
       </header>
       <div class="damage-simulator-body">
@@ -341,7 +342,7 @@
             <article><span>距离稳定触顶</span><b id="damageCapGap">0</b><small id="damageRecommendation">继续提高输出</small></article>
           </div>
           <div class="damage-cap-control"><label>基础单段伤害上限<input id="damageCap" type="number" min="1" value="9999" /></label><p id="damageFormula"></p></div>
-          <p class="damage-result-note">已按实测规则采用“冰属性伤害与冰属性魔法伤害在属性区内相加，魔法伤害、Boss伤害等其他类别分别乘算”。基础伤害、魔抗与属性抗性的换算仍待继续校准，因此当前数值仅用于比较配装变化，不作为最终实伤。技能段数、实际命中数和整套伤害不参与推荐；暴击、贯导等概率效果暂不折算为固定伤害。</p>
+          <p class="damage-result-note">此处保留旧版配装估算，尚未使用已核对的伤害公式。请使用<a href="./damage-calculator.html">新版伤害计算器</a>输入当前战斗属性、技能参数及已确认生效的加成；旧版结果不作为最终实伤。</p>
         </section>
       </div>
       <div id="damageAuditBackdrop" class="damage-audit-backdrop" hidden></div>

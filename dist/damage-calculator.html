@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>伤害计算器｜最后的克劳迪娅</title>
+  <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css">
+</head>
+<body>
+<header class="site-header"><a class="brand" href="./index.html">LC</a><div><h1>伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./characters.html">角色列表</a><a href="./index.html">技能表</a></nav></header>
+<main>
+  <div class="page-intro"><p>输入当前战斗属性，查看每段与整次技能伤害。</p><span class="tag">PvE · 普通物理 / 魔法伤害</span></div>
+  <div class="calculator-layout">
+  <form id="calculator" novalidate>
+    <section class="card"><div class="section-heading"><h2><span>01</span>角色与技能</h2><button type="button" id="reset">重置</button></div>
+      <label class="wide">技能预设<select id="preset"><option value="eris">艾莉絲 · 伯雷亞斯拳 Lv.5</option><option value="custom">自定义技能</option></select></label>
+      <div class="fields three">
+        <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
+        <label>实际命中段数<input id="hits" type="number" min="1" max="1000" step="1" value="8" required></label>
+        <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
+      </div>
+      <p class="help">攻击力填写已包含面板加成的数值。攻击提升、装备攻击与加护不再重复计入。</p>
+      <div class="fields three">
+        <label>伤害类型<select id="type"><option value="physical">物理</option><option value="magical">魔法</option></select></label>
+        <label>攻击方式<select id="skillType"><option value="skill">特技</option><option value="normal">普通攻击</option><option value="magic">魔法</option><option value="ultimate">超必杀技</option></select></label>
+        <label>攻击属性<select id="element"></select></label>
+      </div>
+      <div class="skill-summary" id="skillSummary"></div>
+      <details id="skillDetails"><summary>技能参数</summary>
+        <p class="help">技能参数属于每段伤害结算。更换技能时必须使用该技能自己的参数，不能只换名称。</p>
+        <div class="fields two">
+          <label>每段基础系数 ×<input id="coefficient" type="number" min="0" max="10000" step="any" value="0.334" required></label>
+          <label>技能内攻击修正 %<input id="skillPercent" type="number" min="-100" max="100000" step="any" value="51.8" required></label>
+          <label>技能内攻击前加算<input id="skillAdd" type="number" min="-100000000" max="100000000" step="any" value="0" required></label>
+          <label>技能内攻击后加算<input id="skillPostAdd" type="number" min="-100000000" max="100000000" step="any" value="0" required></label>
+        </div>
+      </details>
+    </section>
+    <section class="card"><div class="section-heading"><h2><span>02</span>Boss 与战斗条件</h2></div>
+      <label class="wide">目标预设<select id="bossPreset"><option value="bird">轟鳥龍恩德爾羅納</option><option value="beast">神獸帕帕拉納</option><option value="custom">自定义目标</option></select></label>
+      <div class="fields two"><label><span id="defenseLabel">当前防御力 DEF</span><input id="defense" type="number" min="0" max="100000000" step="1" value="4000" required></label><label>对应属性抗性 %<input id="resistance" type="number" min="-999" max="1000" step="any" value="0" required><small id="resistanceHint">无属性默认不使用六属性抗性。</small></label></div>
+      <div class="inline-options"><label><input id="boss" type="checkbox" checked> Boss 目标</label><label><input id="break" type="checkbox"> 正在 Break</label><button type="button" id="debuff">填入实测降防值 2599</button></div>
+      <details><summary>种族与特攻</summary><p class="help">请选择游戏实际种族；名称不用于推断种族。只有目标种族与已生效的特攻匹配，才会加入基础特攻倍率。</p>
+        <fieldset><legend>目标种族（可多选）</legend><div class="choices" id="races"></div></fieldset>
+        <fieldset><legend>本次攻击已生效的种族特攻（可多选）</legend><div class="choices" id="killerRaces"></div></fieldset>
+        <label>特攻威力修正合计 %<input id="killerCorrection" type="number" min="-100" max="10000" step="any" value="0" required></label><p class="help">只填原生「特攻威力」的额外修正。其他「特攻时伤害增加」填在下方加成列表。</p>
+      </details>
+      <details><summary>其他战斗条件</summary><div class="inline-options"><label><input id="back" type="checkbox"> 背后攻击</label><label><input id="air" type="checkbox"> 对空条件满足</label><label><input id="ailment" type="checkbox"> 异常状态条件满足</label><label><input id="guarded" type="checkbox"> 本段被格挡</label></div><div class="fields two"><label>格挡减伤 %<input id="guardReduction" type="number" min="0" max="100" step="any" value="50" required></label><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="0.5" required></label></div><p class="help">降防填写在「当前防御力」；Boss 的 Break 防御修正在此基础上单独计算。</p></details>
+    </section>
+    <section class="card"><div class="section-heading"><h2><span>03</span>伤害加成</h2><button type="button" id="addEffect" class="primary">＋ 添加一条</button></div>
+      <p class="help">每条填写一个实际生效的效果。同名效果是否叠加须先确认；被覆盖的效果请取消勾选。装备、个性与其他条件由你确认。</p>
+      <div id="effects"></div>
+      <details><summary>加成如何计算</summary><p>常见 Boss、属性、物理、魔法、特技等增伤按所填顺序逐条结算，并逐步四舍五入。同类描述不自动合并。</p><p>若已确认某效果使用原生核心前入口，可在该条「更多」中更改。上移、下移用于对照实际生效顺序；未核对的顺序可能带来取整差异。</p></details>
+    </section>
+    <section class="card"><div class="fields two"><label>每段最终伤害上限<input id="cap" type="number" min="1" max="2000000000" step="1" value="9999" required></label><div class="help">填写包含装备、个性与技能上限加成后的最终值；上限逐段生效。</div></div>
+      <details><summary>运行时修正（通常保持默认）</summary><div class="fields two">
+        <label>攻击修正 AtkRatio %<input id="attackRatio" type="number" min="-100" max="100000" step="any" value="0" required></label>
+        <label>核心系数 DamageRatio ×<input id="runtimeRatio" type="number" min="0" max="10000" step="any" value="1" required></label>
+        <label>整数伤害修正 DmgRatio %<input id="integerRatio" type="number" min="-100" max="100000" step="any" value="0" required></label>
+        <label>本段抗性修正（百分点）<input id="resistCorrection" type="number" min="-999" max="1000" step="any" value="0" required></label>
+      </div></details>
+    </section>
+  </form>
+  <aside class="results" aria-label="伤害计算结果">
+    <div class="result-main"><div class="result-top"><h2>计算结果</h2><span id="resultState">实时计算</span></div>
+      <div id="error" role="alert" hidden></div>
+      <div id="resultValues" aria-live="polite" aria-atomic="true">
+        <article class="primary-result"><span>普通每段伤害</span><strong id="normalDamage">—</strong><small>含随机波动与每段上限</small></article>
+        <article class="critical-result"><span>暴击每段伤害</span><strong id="criticalDamage">—</strong></article>
+        <div class="total-result"><span id="totalLabel">整次技能期望伤害</span><strong id="totalMean">—</strong><small id="totalNote"></small></div>
+        <dl class="result-details"><div><dt>全为普通命中时</dt><dd id="normalTotal">—</dd></div><div><dt>本段结算攻击力</dt><dd id="effectiveAttack">—</dd></div><div><dt>本段结算防御力</dt><dd id="effectiveDefense">—</dd></div><div><dt>特攻匹配</dt><dd id="killerState">—</dd></div></dl>
+      </div>
+    </div>
+    <div class="result-notes"><p id="activeNote"></p><p>默认不自动加入装备或个性增伤。请将确认生效的效果逐条填入。</p><p>输出为所填条件下的伤害。护盾、保命、帧内无敌、Boss 专属减伤等未填入机制，可能让实际掉血更低。</p></div>
+    <details class="card trace-card"><summary>展开普通命中的计算过程</summary><p class="help">以随机系数 0.95 展示一次结算；不代表下一段实际随机值。</p><ol id="trace"></ol><p id="formulaText" class="formula"></p></details>
+    <details class="card"><summary>公式依据与适用范围</summary><p>普通核心：A × 0.9<sup>kF/A</sup> × 技能系数 × 核心前倍率 × 随机数。普通 k=10，暴击 k=6；随机数范围为 0.9～1.0。</p><p>取自所提供版本的游戏程序与技能脚本，核心使用单精度运算。伯雷亞斯拳的技能内攻击修正 +51.8%、每段系数 0.334 来自原始技能参数。</p><p>期望值以均匀随机的数值积分估算，先逐段处理暴击和上限；不等同于最大伤害。默认暴击率 20% 是测试起点，请改成实际总暴击率。</p><p>这页计算相同条件、相同系数的各段普通物理／魔法伤害。混合属性技能须先确定结算攻击；不同系数的段、固定伤害、追加伤害、FatalBlow 与竞技场需分开处理。</p></details>
+  </aside>
+  </div>
+</main>
+<script type="module" src="./damage-calculator.mjs"></script>
+</body></html>

@@ -32,7 +32,7 @@ a { color: inherit; }
 .site-header p { margin: 4px 0 0; color: #d9e8ff; font-size: .84rem; }
 .header-nav-link { margin-left: auto; padding: 9px 14px; border: 1px solid rgba(255,255,255,.62); color: #fff; text-decoration: none; font-size: .9rem; font-weight: 700; white-space: nowrap; background: rgba(255,255,255,.1); }
 .header-nav-link:hover { background: rgba(255,255,255,.2); }
-.header-actions { display: flex; gap: 8px; margin-left: auto; }
+.header-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
 .header-actions .header-nav-link { margin-left: 0; }
 
 main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
