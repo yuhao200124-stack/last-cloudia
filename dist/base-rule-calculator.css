@@ -356,3 +356,10 @@ dialog.br-editor::backdrop { background: #172c4a82; }
 
 .br-contribution-details > summary { width: fit-content; color: #60758f; cursor: pointer; }
 .br-contribution-details > p { margin: 6px 0; }
+
+/* Audit marks belong to the original character entries, independently of effect enablement. */
+.br-source-audit { width: 17px; height: 17px; margin: 0 8px 0 0; vertical-align: middle; accent-color: #245ca3; cursor: pointer; }
+.br-source-audit[hidden] { display: none !important; }
+#bonusCalculator[data-rule-calculator] .bonus-calculator-header { gap: 10px; }
+#bonusCalculator[data-rule-calculator] .bonus-calculator-header > strong { flex: 1; }
+#bonusCalculator[data-rule-calculator] .br-clear-audit { flex: 0 0 auto; width: auto; padding: 0 10px; border-radius: 5px; font-size: 14px; line-height: 1.4; }

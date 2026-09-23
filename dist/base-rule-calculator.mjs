@@ -30,6 +30,9 @@ function mount() {
   };
   let templates = validateTemplates({ schemaVersion: 1, templates: read(LEARNING_STORAGE_KEY, {}) }).templates;
   const sources = collectSources();
+  const auditStorageKey = `lc-effect-audit:character:${characterId}:v1`;
+  let auditedSources = readAuditMarks();
+  const auditInputs = new Map();
   let catalog = [];
   let result;
   let metrics = [];
@@ -66,6 +69,62 @@ function mount() {
       add(el.querySelector('h4').textContent.trim(), `最高属性：${dds[1].textContent.trim()}；最高效果：${dds[2].textContent.trim()}`, 'equipment', el);
     });
     return list;
+  }
+
+  function auditSourceKey(source) {
+    return JSON.stringify([source.group, source.name, sourceKey(source)]);
+  }
+  function readAuditMarks() {
+    const saved = read(auditStorageKey, []);
+    return new Set(Array.isArray(saved) ? saved.filter(key => typeof key === 'string') : []);
+  }
+  function saveAuditMarks() {
+    try { localStorage.setItem(auditStorageKey, JSON.stringify([...auditedSources])); }
+    catch { notify('核对标记未能保存到浏览器。', true, false); }
+  }
+  function syncAuditMarks() {
+    for (const source of sources) {
+      const input = auditInputs.get(source.id);
+      if (!input) continue;
+      input.hidden = panel.hidden;
+      input.checked = auditedSources.has(auditSourceKey(source));
+    }
+  }
+  function setAudited(source, checked) {
+    const key = auditSourceKey(source);
+    if (checked) auditedSources.add(key); else auditedSources.delete(key);
+    saveAuditMarks(); syncAuditMarks();
+  }
+  function installAuditControls() {
+    for (const source of sources) {
+      const target = source.originalElement;
+      const holder = target.matches('tr') ? target.querySelector('td') : target.querySelector('h4');
+      if (!holder) continue;
+      let input = holder.querySelector('.br-source-audit');
+      if (!input) {
+        input = document.createElement('input');
+        input.type = 'checkbox'; input.className = 'br-source-audit';
+        holder.prepend(input);
+      }
+      input.dataset.auditSource = source.id;
+      input.setAttribute('aria-label', `已核对收录：${source.name}`);
+      input.title = `标记“${source.name}”已核对收录`;
+      input.onchange = () => setAudited(source, input.checked);
+      auditInputs.set(source.id, input);
+    }
+    let clear = panel.querySelector('[data-clear-audit]');
+    if (!clear) {
+      clear = document.createElement('button');
+      clear.type = 'button'; clear.className = 'br-clear-audit'; clear.dataset.clearAudit = '';
+      clear.textContent = '清除核对'; clear.title = '清除本角色全部核对标记';
+      panel.querySelector('#bonusCalculatorClose').before(clear);
+    }
+    clear.onclick = () => { auditedSources.clear(); saveAuditMarks(); syncAuditMarks(); };
+    // Visibility follows every panel close path, including Escape and mobile tab switches.
+    panel.__lcAuditObserver?.disconnect();
+    panel.__lcAuditObserver = new window.MutationObserver(syncAuditMarks);
+    panel.__lcAuditObserver.observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+    syncAuditMarks();
   }
 
   function persist() {
@@ -190,7 +249,7 @@ function mount() {
     return `<div class="br-source-adjustment">${select('chainStacks', '连续使用相同攻击魔法', tiers)}</div>`;
   }
   function sourceDescription(s) {
-    return `<p class="br-full-effect"><span>完整技能效果</span>${esc(s.text)}</p>`;
+    return `<p class="br-full-effect">${esc(s.text)}</p>`;
   }
   function renderResults() {
     calculate();
@@ -263,8 +322,10 @@ function mount() {
     body.hidden = !expanded;
   }
   function jumpToSource(id) {
-    const target = sources.find(source => source.id === id)?.originalElement;
+    const source = sources.find(source => source.id === id);
+    const target = source?.originalElement;
     if (!target?.isConnected) { notify('没有找到这项的原始出处。', true, false); return; }
+    setAudited(source, true);
     for (let parent = target.parentElement; parent; parent = parent.parentElement) {
       if (parent.tagName === 'DETAILS') parent.open = true;
     }
@@ -488,8 +549,9 @@ function mount() {
   });
   editor.addEventListener('keydown', e => { if (e.key === 'Escape') e.stopPropagation(); });
   window.addEventListener('storage', e => {
+    if (e.key === auditStorageKey) { auditedSources = readAuditMarks(); syncAuditMarks(); }
     if (e.key === LEARNING_STORAGE_KEY) { templates = validateTemplates({ schemaVersion: 1, templates: read(LEARNING_STORAGE_KEY, {}) }).templates; rebuildCatalog(); renderResults(); }
   });
-  rebuildCatalog(); renderShell();
+  rebuildCatalog(); renderShell(); installAuditControls();
   if (new URLSearchParams(location.search).get('calculator') === 'base') document.getElementById('bonusCalculatorOpen').click();
 }
