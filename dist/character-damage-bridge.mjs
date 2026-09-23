@@ -1,4 +1,5 @@
 import {reportStorageKey} from './damage-import.mjs';
+import {readCharacterProfile} from './entry-preparation.mjs';
 const panel=document.getElementById('damageSimulator');
 const frame=document.getElementById('damageCalculatorFrame');
 const open=document.getElementById('damageSimulatorOpen');
@@ -8,7 +9,8 @@ const characterId=document.body.dataset.characterId;
 let ready=false;
 let lastStored='';
 function publish() {
-  const report=window.LC_EFFECT_CALCULATOR?.getReport();
+  const base=window.LC_EFFECT_CALCULATOR?.getReport();
+  const report=base?{...base,profile:readCharacterProfile(document)}:null;
   if(!report || String(report.characterId)!==characterId) return;
   const fingerprint=JSON.stringify({...report,createdAt:''});
   if(fingerprint!==lastStored) {

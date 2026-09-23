@@ -10,10 +10,10 @@
 <header class="site-header"><a class="brand" href="./index.html">LC</a><div><h1>伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./characters.html">角色列表</a><a href="./index.html">技能表</a></nav></header>
 <main>
   <section id="baseImport" class="card base-import" hidden>
-    <div class="section-heading"><h2>基础计算器加成</h2><button type="button" id="importBase">重新导入</button></div>
+    <div class="section-heading"><h2>基础计算器候选资料</h2><button type="button" id="importBase">刷新候选</button></div>
     <p id="importSummary" role="status"></p>
-    <div class="inline-options"><label><input id="autoImport" type="checkbox" checked>自动同步基础加成</label><button type="button" id="editBase">修改基础条件</button></div>
-    <p class="help">攻击方式与属性跟随基础计算器。手动填写当前战斗面板和招式原始参数；属性加成只作核对，不会重复乘到战斗面板上。</p>
+    <div class="inline-options"><label><input id="autoImport" type="checkbox" checked>同步网站候选（不自动采用）</label><button type="button" id="editBase">修改基础条件</button></div>
+    <p class="help">先补齐角色固定资料，再导入入场报告核对。新增资料只带入六维、招式名称和页面明确参数，不额外补伤害增加或伤害上限。</p>
     <details><summary>已导入的属性、上限与特殊效果</summary><div id="importReferences"></div></details>
     <div id="importWarnings" class="help"></div>
   </section>
@@ -21,7 +21,14 @@
   <div class="calculator-layout">
   <form id="calculator" novalidate>
     <section class="card"><div class="section-heading"><h2><span>01</span>角色与技能</h2><button type="button" id="reset">重置</button></div>
-      <label class="wide">技能预设<select id="preset"><option value="eris">艾莉絲 · 伯雷亞斯拳 Lv.5</option><option value="custom">自定义技能</option></select></label>
+      <div id="entryPreparation" hidden>
+        <h3 id="entryProfileName">角色基础六维</h3>
+        <div id="entrySixStats" class="fields three"></div>
+        <p class="help">角色首页的最大成长基础六维是计算起点；入场面板还包含装备与状态，二者差值不直接等于某项加成。这里可修正基础值。</p>
+      </div>
+      <div class="fields two"><label hidden>攻击方式<select id="attackChoice"></select></label><label hidden>伤害参照<select id="statReference"><option value="">待确认</option><option value="str">攻击力</option><option value="int">法强（魔力）</option><option value="mixed">攻击力＋法强（混合）</option></select></label></div>
+      <label class="wide">具体招式／魔法<select id="preset"><option value="eris">艾莉絲 · 伯雷亞斯拳 Lv.5</option><option value="custom">自定义技能</option></select></label>
+      <p id="entryMoveNote" class="help"></p>
       <div class="fields three">
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label><span id="hitsLabel">原始命中段数</span><input id="hits" type="number" min="1" max="1000" step="1" value="8" required></label>
@@ -30,11 +37,12 @@
       <p class="help">战斗属性填写已包含面板与状态加成的数值；攻击／法强提升、EX灵气、装备和加护不再重复计入。</p>
       <div id="importStatControls" class="fields two" hidden><label>基础及额外暴击率 %<input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help"></p></div>
       <div class="fields three">
-        <label>伤害类型<select id="type"><option value="physical">物理</option><option value="magical">魔法</option></select></label>
+        <label>伤害分类（词条适用类型）<select id="type"><option value="physical">物理</option><option value="magical">魔法</option></select></label>
         <label>攻击方式<select id="skillType"><option value="skill">特技</option><option value="normal">普通攻击</option><option value="magic">魔法</option><option value="ultimate">超必杀技</option></select></label>
         <label>攻击属性<select id="element"></select></label>
       </div>
       <div class="skill-summary" id="skillSummary"></div>
+      <p id="mixedReferenceNote" class="help" hidden>混合参照不自动按50/50分配。请填写已确认的混合结算攻击值与对应结算防御值，再进行试算。</p>
       <details id="skillDetails"><summary>技能参数</summary>
         <p class="help">技能参数属于每段伤害结算。更换技能时必须使用该技能自己的参数，不能只换名称。</p>
         <div class="fields two">
@@ -50,7 +58,22 @@
         <label>修正试算位置<select id="hitScaleStage"><option value="">待确认</option><option value="core" selected>核心系数中</option><option value="beforeCap">伤害上限前</option><option value="afterCap">伤害上限后</option></select></label>
       </div><p class="help">原始段数不含翻倍。特殊分段修正的执行位置未实测时需自行选择试算位置，结果不表示已验证。</p></details>
     </section>
-    <section class="card"><div class="section-heading"><h2><span>02</span>Boss 与战斗条件</h2></div>
+    <section id="entryReview" class="card" hidden>
+      <div class="section-heading"><h2>02 入场读取与差异核对</h2></div>
+      <p class="help">保持基础配置进入一次战斗，运行v0.35读取器，然后选择 BattleEntryReport.json。网站条件推演和读取器候选都不自动当作已生效。</p>
+      <label>读取报告<input id="entryReportFile" type="file" accept=".json,application/json"></label>
+      <p id="entryFileNote" class="help"></p><label>本次角色<select id="entryUnit"><option value="">尚未导入</option></select></label>
+      <div class="section-heading entry-subheading"><h3>面板核对</h3><button id="entryUseStats" type="button">采用这份入场面板</button></div>
+      <p class="help">基础值与战斗最终值口径不同，只并列核对。采用入场面板后，下面的属性加成不会再乘一次。</p>
+      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>网站基础与候选加成</th><th>读取值</th><th>采用哪份数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
+      <div class="section-heading entry-subheading"><h3 id="entryCandidateCount">加成候选</h3><button id="entryUseWeb" type="button">本表全部沿用网站值</button></div>
+      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>网站值</th><th>读取值／证据</th><th>比较</th><th>你的决定</th></tr></thead><tbody id="entryEffectsReview"></tbody></table></div>
+      <details><summary id="entryPendingCount">网站待确认项</summary><p class="help">这些效果的条件或拆分仍未确定，不计入上表。可返回基础计算器补充，随后重新核对。</p><ul id="entryPending"></ul></details>
+      <details><summary id="entryUnmatchedCount">读取器未对应项</summary><p class="help">未对应不代表不存在；可先查看原始证据，已明确的项目可在基础计算器补充后重新核对。</p><ul id="entryUnmatched"></ul></details>
+      <p id="entryStatus" role="status" class="entry-status">等待角色固定资料。</p>
+      <button id="entryConfirm" class="primary" type="button">确认采用的数据并用于计算</button>
+    </section>
+    <section class="card"><div class="section-heading"><h2><span>03</span>Boss 与战斗条件</h2></div>
       <label class="wide">目标预设<select id="bossPreset"><option value="bird">轟鳥龍恩德爾羅納</option><option value="beast">神獸帕帕拉納</option><option value="custom">自定义目标</option></select></label>
       <div class="fields two"><label><span id="defenseLabel">当前防御力 DEF</span><input id="defense" type="number" min="0" max="100000000" step="1" value="4000" required></label><label>对应属性抗性 %<input id="resistance" type="number" min="-999" max="1000" step="any" value="0" required><small id="resistanceHint">无属性默认不使用六属性抗性。</small></label></div>
       <div class="inline-options"><label><input id="boss" type="checkbox" checked> Boss 目标</label><label><input id="break" type="checkbox"> 正在 Break</label><button type="button" id="debuff">填入实测降防值 2599</button></div>
@@ -63,7 +86,7 @@
       </details>
       <details><summary>其他战斗条件</summary><div class="inline-options"><label><input id="back" type="checkbox"> 背后攻击</label><label><input id="air" type="checkbox"> 对空条件满足</label><label><input id="ailment" type="checkbox"> 异常状态条件满足</label><label><input id="guarded" type="checkbox"> 本段被格挡</label></div><div class="fields two"><label>格挡减伤 %<input id="guardReduction" type="number" min="0" max="100" step="any" value="50" required></label><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="0.5" required></label></div><p class="help">降防填写在「当前防御力」；Boss 的 Break 防御修正在此基础上单独计算。</p></details>
     </section>
-    <section class="card"><div class="section-heading"><h2><span>03</span>伤害加成</h2><button type="button" id="addEffect" class="primary">＋ 添加一条</button></div>
+    <section class="card"><div class="section-heading"><h2><span>04</span>已确认的伤害加成</h2><button type="button" id="addEffect" class="primary">＋ 添加一条</button></div>
       <p class="help">每条填写一个实际生效的效果。同名效果是否叠加须先确认；被覆盖的效果请取消勾选。装备、个性与其他条件由你确认。</p>
       <div id="effects"></div>
       <details><summary>加成如何计算</summary><p>常见 Boss、属性、物理、魔法、特技等增伤按所填顺序逐条结算，并逐步四舍五入。同类描述不自动合并。</p><p>若已确认某效果使用原生核心前入口，可在该条「更多」中更改。上移、下移用于对照实际生效顺序；未核对的顺序可能带来取整差异。</p></details>
@@ -87,7 +110,7 @@
         <dl class="result-details"><div><dt>全为普通命中时</dt><dd id="normalTotal">—</dd></div><div><dt>本段结算攻击力</dt><dd id="effectiveAttack">—</dd></div><div><dt>本段结算防御力</dt><dd id="effectiveDefense">—</dd></div><div><dt>特攻匹配</dt><dd id="killerState">—</dd></div></dl>
       </div>
     </div>
-    <div class="result-notes"><p id="activeNote"></p><p>从角色页面打开时会导入基础计算器的已生效加成；另行添加时请避免重复。</p><p>输出为所填条件下的伤害。护盾、保命、帧内无敌、Boss 专属减伤等未填入机制，可能让实际掉血更低。</p></div>
+    <div class="result-notes"><p id="activeNote"></p><p>角色资料先与入场报告核对，只有你确认采用的加成才进入计算；另行添加时请避免重复。</p><p>输出为所填条件下的伤害。护盾、保命、帧内无敌、Boss 专属减伤等未填入机制，可能让实际掉血更低。</p></div>
     <details class="card trace-card"><summary>展开普通命中的计算过程</summary><p class="help">以随机系数 0.95 展示一次结算；不代表下一段实际随机值。</p><ol id="trace"></ol><p id="formulaText" class="formula"></p></details>
     <details class="card"><summary>公式依据与适用范围</summary><p>普通核心：A × 0.9<sup>kF/A</sup> × 技能系数 × 核心前倍率 × 随机数。普通 k=10，暴击 k=6；随机数范围为 0.9～1.0。</p><p>取自所提供版本的游戏程序与技能脚本，核心使用单精度运算。伯雷亞斯拳的技能内攻击修正 +51.8%、每段系数 0.334 来自原始技能参数。</p><p>期望值以均匀随机的数值积分估算，先逐段处理暴击和上限；不等同于最大伤害。默认暴击率 20% 是测试起点，请改成实际总暴击率。</p><p>这页计算相同条件、相同系数的各段普通物理／魔法伤害。混合属性技能须先确定结算攻击；不同系数的段、固定伤害、追加伤害、FatalBlow 与竞技场需分开处理。</p></details>
   </aside>
