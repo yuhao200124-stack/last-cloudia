@@ -112,6 +112,9 @@ function makeRow(source, original, ctx, overrides) {
   if (overrides[`source:${source.id}`]?.disabled || rule.disabled) {
     row.status = 'disabled'; row.reasons.push('已手动停用'); return row;
   }
+  if (source.group === 'blessings' && ctx.accountBlessings === false) {
+    row.status = 'inactive'; row.reasons.push('账户加护总开关未开启'); return row;
+  }
   if (source.group === 'equipment' && !ctx.equipmentIds.includes(source.id)) {
     row.status = 'disabled'; row.reasons.push('未选择这件装备'); return row;
   }

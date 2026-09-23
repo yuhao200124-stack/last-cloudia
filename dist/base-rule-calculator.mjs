@@ -25,7 +25,7 @@ function mount() {
   const elements = [[null, '待确认'], ['none', '无'], ['fire', '火'], ['ice', '冰'], ['earth', '树'], ['thunder', '雷'], ['light', '光'], ['dark', '暗']];
   const saved = read(stateKey, {});
   const state = {
-    context: { ...DEFAULT_CONTEXT, ...(characterId === '260' ? {} : { element: null, magicFamily: null, killerBuff: false, bossWaveBuff: false }), ...(saved.context || {}) },
+    context: { ...DEFAULT_CONTEXT, accountBlessings: false, ...(characterId === '260' ? {} : { element: null, magicFamily: null, killerBuff: false, bossWaveBuff: false }), ...(saved.context || {}) },
     disabledSources: Array.isArray(saved.disabledSources) ? saved.disabledSources : [],
     disabledRules: Array.isArray(saved.disabledRules) ? saved.disabledRules : [],
     drafts: saved.drafts && typeof saved.drafts === 'object' ? saved.drafts : {},
@@ -224,6 +224,7 @@ function mount() {
           <div class="br-context">${select('incomingElement','受到攻击的属性',CONDITION_FIELDS.incomingElement.options.map(o=>[o.value,o.label]))}${select('incomingAttackKind','受到攻击的类别',CONDITION_FIELDS.incomingAttackKind.options.map(o=>[o.value,o.label]))}</div>
         </details>
         <fieldset class="br-equipment"><legend>加成条件</legend>
+          ${checkbox('accountBlessings', '计入账户加护')}
           ${checkbox('fullHp', 'HP全满')}${checkbox('weakness', '命中弱点')}
           ${checkbox('resonance', '重魔法（我方正在发动不可叠加魔法）')}${checkbox('lowHp', '濒死')}
         </fieldset>

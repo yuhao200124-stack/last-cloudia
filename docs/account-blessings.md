@@ -42,8 +42,11 @@ repeat division. Future reader versions must declare their MP unit independently
 
 ## Calculation boundaries
 
-The character page retains raw base in data-raw-base and displays default blessings
-once. readCharacterProfile always reads raw base. The entry workflow can choose
+The character page displays original six stats. The base bonus calculator's account
+switch defaults off; only the damage calculator's independent switch defaults on.
+Both retain later user choices. A group-level off state is inactive, distinct from
+an explicitly disabled source/rule, so the damage page cannot revive user-disabled
+effects. readCharacterProfile always reads raw base. The entry workflow can choose
 base plus adopted blessings, raw base, manual final stats, or reader final stats.
 Stat effects remain provenance/reference after a final panel is chosen, and are
 never passed as additional damage multipliers. All damage and cap choices remain

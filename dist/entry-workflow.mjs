@@ -9,7 +9,7 @@ const meaningful=report=>JSON.stringify({...report,createdAt:''});
 export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelection}) {
  const storageKey=`lc-entry-review:${characterId}:v1`;
  let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey))||{};}catch{}
- let state={base:saved.base||{},selection:saved.selection||{},parameters:saved.parameters||{},decisions:saved.decisions||{},statDecisions:saved.statDecisions||{},mappings:saved.mappings||{}};
+ let state={accountBlessings:saved.accountBlessings!==false,base:saved.base||{},selection:saved.selection||{},parameters:saved.parameters||{},decisions:saved.decisions||{},statDecisions:saved.statDecisions||{},mappings:saved.mappings||{}};
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
  let confirmed=false;
  const parameterIds=['hits','coefficient','skillPercent','skillAdd','skillPostAdd','hitScaleStage'];
@@ -41,7 +41,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function updateCandidate() {
   if(!report)return;
-  candidate=retargetReport(report,state.selection);
+  candidate=retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},state.selection);
   compared=compareCandidates(websiteCandidates(candidate),unit?.bonuses||[],state.mappings);
   for(const row of compared)if(row.group==='blessings'&&!state.decisions[decisionKey(row)]&&(!row.reader||(row.compatible&&row.difference===0)))state.decisions[decisionKey(row)]={choice:'web'};
   $('skillType').value=['magic','heavy_magic'].includes(state.selection.attack)?'magic':/^s[123]$/.test(state.selection.attack)?'skill':state.selection.attack;
@@ -49,6 +49,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function renderProfile() {
   $('entryProfileName').textContent=`${profile.name} · 最大成长基础资料`;
+  $('entryAccountBlessings').checked=state.accountBlessings;
   const current=currentBlessings(),base={...profile.baseStats,...state.base},adjusted=withAccountBlessings(base,current),percentages=blessingPercentages(current);
   $('entrySixStats').innerHTML=Object.entries(SIX_STATS).map(([k,label])=>`<label>${label}（原始基础）<input type="number" data-entry-base="${k}" min="0" max="100000000" step="1" value="${esc(base[k]??'')}"><small>加护 +${esc(percentages[k])}% → <b>${esc(adjusted[k]??'未提供')}</b></small></label>`).join('');
  }
@@ -66,7 +67,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  function renderReview() {
   const move=selectedMove();
   $('entryMoveNote').textContent=move?`${move.source}：${move.name}。${move.purpose==='support'?'这是辅助魔法，不按攻击伤害计算。':''}${move.hits==null?'原始命中数未提供；':''}${move.coefficient==null?'倍率未提供；':''}${state.selection.attack==='heavy_magic'?'是否属于重魔法由你选择确认；':''}未知参数留在备选阶段。`:'请先选择攻击方式和具体魔法。';
-  $('entryCandidateCount').textContent=`${compared.length} 项加成（含账户加护）`;
+  $('entryCandidateCount').textContent=`${compared.length} 项加成${state.accountBlessings?'（含账户加护）':''}`;
   const pending=candidate.rows.filter(r=>r.status==='pending');
   $('entryPendingCount').textContent=`网站待确认项（${pending.length}）`;
   $('entryPending').innerHTML=pending.map(r=>`<li><b>${esc(r.sourceName)}</b><small>${r.reasons.map(esc).join('；')}</small></li>`).join('')||'<li>没有待确认项。</li>';
@@ -116,6 +117,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  $('entryReportFile').addEventListener('change',async e=>{try{await importFile(e.target.files[0]);}catch(err){invalidate(`新文件未导入：${err.message}`);}e.target.value='';});
  $('entryUnit').addEventListener('change',e=>{unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;state.mappings={};state.statDecisions={};invalidate('入场面板和读取候选已列出，数值差异由你决定。');updateCandidate();});
  $('entrySixStats').addEventListener('change',e=>{if(e.target.dataset.entryBase){state.base[e.target.dataset.entryBase]=e.target.valueAsNumber;invalidate();updateCandidate();}});
+ $('entryAccountBlessings').addEventListener('change',e=>{state.accountBlessings=e.target.checked;invalidate('加护选项已更新；读取器的最终面板保持原值，不额外加算或反算。');updateCandidate();});
  $('attackChoice').addEventListener('change',()=>{saveParameters();state.selection.attack=$('attackChoice').value;renderPresets(true);applyMove();invalidate('攻击方式已改变，请核对这次攻击对应的加成。');updateCandidate();});
  $('preset').addEventListener('change',()=>{if(!initialized)return;saveParameters();state.selection.preset=$('preset').value;applyMove();invalidate('具体招式已改变，倍率与命中数按该招式单独保留。');updateCandidate();});
  for(const id of ['element','statReference','type'])$(id).addEventListener('change',()=>{if(!initialized)return;state.selection[id]=$(id).value;invalidate();updateCandidate();});

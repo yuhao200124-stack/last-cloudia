@@ -1,5 +1,4 @@
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {withAccountBlessings} from './account-blessings-panel.mjs';
 import {decodeKnownBlessingEntry} from './account-blessings.mjs';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
@@ -30,7 +29,7 @@ export function readCharacterProfile(doc) {
  [...doc.querySelectorAll('#specials tbody tr')].forEach((el,i)=>{if(i<4)moves.push(move(el,['s1','s2','s3','ultimate'][i],['s1','s2','s3','ultimate'][i]));});
  const magic=[...doc.querySelectorAll('#magic tbody tr')].map((el,i)=>move(el,'magic',`magic-${i+1}`));
  return {schemaVersion:1,characterId:String(doc.body.dataset.characterId),name:clean(doc.querySelector('.hero h2')?.textContent),
-  statsBasis:'max-growth-character-page',baseStats,defaultPanelStats:withAccountBlessings(baseStats),moves,magic};
+  statsBasis:'max-growth-character-page',baseStats,moves,magic};
 }
 export function retargetReport(report,selection) {
  const grouped=new Map(),overrides={};

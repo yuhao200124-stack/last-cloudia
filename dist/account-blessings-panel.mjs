@@ -22,25 +22,6 @@ export function mountAccountBlessings(doc=document) {
   const section=doc.querySelector('#max-stats');
   if(!section||section.querySelector('[data-account-blessings]'))return;
   const container=doc.createElement('details');container.dataset.accountBlessings='';container.className='account-blessings';
-  container.innerHTML=`<summary>账户加护 · 默认启用</summary><p>采用本次露西亚裸装报告的账户加护。六维默认计入；增伤、上限与减伤按装备和攻击条件计入。${doc.querySelector('#bonusCalculator[data-rule-calculator]')?'可在基础计算器修改或停用。':''}</p><div>${ACCOUNT_BLESSING_CATALOG.map(s=>`<article id="${escape(s.id)}"><h4>${escape(s.name)}</h4><p>${escape(s.text)}</p><small>${s.rules.flatMap(r=>r.conditions.map(describeCondition)).map(escape).join('；')||'常驻'} · 读取记录 ${escape(s.id.replace('account-blessing-',''))}</small></article>`).join('')}</div>`;
+  container.innerHTML=`<summary>账户加护资料</summary><p>角色首页保留原始六维。账户加护仅在伤害计算器中默认启用，可随时关闭。</p><div>${ACCOUNT_BLESSING_CATALOG.map(s=>`<article id="${escape(s.id)}"><h4>${escape(s.name)}</h4><p>${escape(s.text)}</p><small>${s.rules.flatMap(r=>r.conditions.map(describeCondition)).map(escape).join('；')||'常驻'} · 读取记录 ${escape(s.id.replace('account-blessing-',''))}</small></article>`).join('')}</div>`;
   section.append(container);
-  const boxes=[...section.querySelectorAll('.stat-box')];
-  const base={};
-  for(const box of boxes) {
-    const key=Object.keys(labels).find(k=>labels[k]===box.querySelector('span')?.textContent.trim());if(!key)continue;
-    const strong=box.querySelector('strong'),value=Number(strong.textContent.replaceAll(',',''));
-    if(!Number.isFinite(value))continue;base[key]=value;strong.dataset.rawBase=String(value);
-    const note=doc.createElement('small');note.dataset.blessingStat=key;box.append(note);
-  }
-  function refresh(report) {
-    const percentages=blessingPercentages(report),adjusted=withAccountBlessings(base,report);
-    for(const box of boxes) {
-      const note=box.querySelector('[data-blessing-stat]');if(!note)continue;const key=note.dataset.blessingStat;
-      box.querySelector('strong').textContent=adjusted[key].toLocaleString('en-US');
-      note.textContent=`原始 ${base[key].toLocaleString('en-US')} · 加护 +${percentages[key]}%`;
-    }
-  }
-  refresh();
-  const note=section.querySelector('.section-note');if(note)note.textContent='最大成长六维已默认计入账户加护；下方保留原始值。不包含装备或角色技能。';
-  window.addEventListener('lc:effect-rules-change',()=>refresh(window.LC_EFFECT_CALCULATOR?.getReport()));
 }
