@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "mp",
+  "activeView": "physical",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -977,15 +977,22 @@ export const SKILL_LABELING_CATALOG = {
             "basic:c9e5df1dd31f35cf:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备锤时，物理攻击伤害+7%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "物理攻击伤害+7%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备锤时生效"
       ]
@@ -1031,15 +1038,22 @@ export const SKILL_LABELING_CATALOG = {
             "basic:b6ba057e893e1be9:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备锤时，物理攻击伤害+25%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "物理攻击伤害+25%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备锤时生效"
       ]
@@ -3134,15 +3148,23 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "开场攻击力≥魔力时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "物理攻击伤害+20%",
         "魔法攻击伤害+20%"
       ],
       "remainingConditions": [
@@ -3278,14 +3300,22 @@ export const SKILL_LABELING_CATALOG = {
             "basic:efc2aa7f65146e56:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备锤时，物理攻击伤害+25%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "物理攻击伤害+25%",
         "物理攻击伤害上限+2,000"
       ],
       "remainingConditions": [
@@ -4533,7 +4563,7 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "effect-1",
           "kind": "effect",
-          "text": "同系列其他神秘之力对应的非攻击力效果"
+          "text": "从神秘之力【结界】获得受到的魔法攻击伤害-10%"
         },
         {
           "id": "condition-1",
@@ -4549,6 +4579,21 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-3",
           "kind": "condition",
           "text": "同名“神秘之力”效果不叠加"
+        },
+        {
+          "id": "faith-physical-mitigation",
+          "kind": "effect",
+          "text": "从神秘之力【守护】获得受到的物理攻击伤害-10%"
+        },
+        {
+          "id": "faith-light-damage",
+          "kind": "effect",
+          "text": "从神秘之力【轮光】获得光属性伤害+10%"
+        },
+        {
+          "id": "faith-physical-damage",
+          "kind": "effect",
+          "text": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加"
         }
       ],
       "tagDetails": {
@@ -4561,14 +4606,27 @@ export const SKILL_LABELING_CATALOG = {
           "relatedSkillIds": [
             "7bc369d4036dd098"
           ]
+        },
+        "物理伤害增加": {
+          "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+          "relation": "inherited-effect",
+          "target": "self",
+          "calculationNote": "与对应的信仰／神秘之力配套生效；同名效果只计一项，不能把提供者与接受者重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": [
+            "8c11c64768072670"
+          ]
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "同系列其他神秘之力对应的非攻击力效果"
+        "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+        "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+        "从神秘之力【轮光】获得光属性伤害+10%"
       ],
       "remainingConditions": [
         "效果来自自身以外的神类型友方",
@@ -5721,15 +5779,23 @@ export const SKILL_LABELING_CATALOG = {
             "basic:56cc2ba3fab2065f:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备衣服时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "魔抗+10%",
-        "物理攻击伤害+10%"
+        "魔抗+10%"
       ],
       "remainingConditions": [
         "装备衣服时生效"
@@ -5873,15 +5939,23 @@ export const SKILL_LABELING_CATALOG = {
             "basic:全部技能:all:314:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备衣服时，物理攻击伤害+5%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "魔抗+5%",
-        "物理攻击伤害+5%"
+        "魔抗+5%"
       ],
       "remainingConditions": [
         "装备衣服时生效"
@@ -5929,15 +6003,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "关联的是敌人的防御力，不是给自身增加防御力；本轮不注入伤害计算。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备机械时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "物理攻击伤害+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备机械时生效",
         "仅物理攻击使用该防御力修正",
@@ -6061,15 +6142,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "关联的是敌人的防御力，不是给自身增加防御力；本轮不注入伤害计算。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备机械时，物理攻击伤害+7%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "物理攻击伤害+7%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备机械时生效",
         "进行物理攻击时生效",
@@ -6356,14 +6444,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "关联的是敌人的防御力，不是给自身增加防御力；本轮不注入伤害计算。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备机械时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "物理攻击伤害+20%",
         "物理攻击伤害上限+2,000"
       ],
       "remainingConditions": [
@@ -6754,16 +6850,24 @@ export const SKILL_LABELING_CATALOG = {
             "basic:48d0bc39febccaaf:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备衣服时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "魔抗+10%",
-        "受到的物理伤害-10%",
-        "物理攻击伤害+10%"
+        "受到的物理伤害-10%"
       ],
       "remainingConditions": [
         "装备衣服时生效"
@@ -7418,15 +7522,22 @@ export const SKILL_LABELING_CATALOG = {
             "basic:704d27924f2c43d1:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备枪时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "物理攻击伤害+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备枪时生效"
       ]
@@ -8564,15 +8675,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "随自身魔力提高而提高物理攻击伤害；实际增幅待公式确认",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照数值变化；公式未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "随魔力提高而提升物理攻击伤害"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "魔力与伤害提升量的换算公式尚待判断"
       ]
@@ -8707,15 +8825,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "随自身魔力提高而大幅提高物理攻击伤害；实际增幅待公式确认",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照数值变化；公式未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "随魔力提高而大幅提升物理攻击伤害"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "魔力与伤害提升量的换算公式尚待判断"
       ]
@@ -9558,6 +9683,5663 @@ export const SKILL_LABELING_CATALOG = {
       "judgment": "ready",
       "remainingEffects": [],
       "remainingConditions": []
+    },
+    {
+      "id": "f4bf8f6c759cece0",
+      "name": "马格里昂",
+      "url": "https://altema.jp/lastcloudia/gino/125",
+      "text": "物理攻击时，与敌人的距离越远，伤害越高（最高+50%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "物理攻击时，距离敌人越远伤害越高，最高+50%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "根据与敌人的距离变化；距离与实际增幅的对应关系待确认"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "物理攻击时，距离敌人越远伤害越高，最高+50%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照数值变化；公式未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "根据与敌人的距离变化；距离与实际增幅的对应关系待确认"
+      ]
+    },
+    {
+      "id": "f05822ba3ef176e5",
+      "name": "斧高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/163",
+      "text": "装备斧时，物理攻击伤害+25%，Break值+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备斧时，物理攻击伤害+25%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "Break值+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备斧时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备斧时，物理攻击伤害+25%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "Break值+20%"
+      ],
+      "remainingConditions": [
+        "装备斧时生效"
+      ]
+    },
+    {
+      "id": "1d471a5639a273bc",
+      "name": "背闪击",
+      "url": "https://altema.jp/lastcloudia/gino/205",
+      "text": "从背后进行物理攻击时，伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "从背后进行物理攻击时，伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "从敌人背后进行攻击"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "从背后进行物理攻击时，伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "从敌人背后进行攻击"
+      ]
+    },
+    {
+      "id": "1032f88be503dbb8",
+      "name": "腐蚀之牙",
+      "url": "https://altema.jp/lastcloudia/gino/212",
+      "text": "普通攻击时，概率赋予敌人物理受到伤害+20%的减益效果，持续一定时间。",
+      "notes": "普通攻击每次命中有3%概率施加该减益，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "使敌人受到的物理伤害+20%；属于施加给敌人的物理易伤减益"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "普通攻击命中时，3%概率施加该减益"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "敌人物理易伤减益持续40秒；只在目标当前受此减益时生效"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "敌方易伤的叠加与计算阶段待对应机制确认"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "使敌人受到的物理伤害+20%；属于施加给敌人的物理易伤减益",
+          "relation": "enemy-physical-vulnerability",
+          "target": "enemy",
+          "calculationNote": "这是敌方受到物理伤害增加，不能混作自身物理增伤或提高自身攻击力；计算阶段待确认。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "普通攻击命中时，3%概率施加该减益",
+        "敌人物理易伤减益持续40秒；只在目标当前受此减益时生效",
+        "敌方易伤的叠加与计算阶段待对应机制确认"
+      ]
+    },
+    {
+      "id": "2c33c46964323f76",
+      "name": "剑高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/215",
+      "text": "装备剑时，物理攻击伤害+30%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备剑时，物理攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备剑时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备剑时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "装备剑时生效"
+      ]
+    },
+    {
+      "id": "9933f7bea186f541",
+      "name": "剑增幅",
+      "url": "https://altema.jp/lastcloudia/gino/222",
+      "text": "装备剑时，物理攻击伤害+10%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备剑时，物理攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备剑时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备剑时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "装备剑时生效"
+      ]
+    },
+    {
+      "id": "6da5c1728b9da6fb",
+      "name": "枪增幅",
+      "url": "https://altema.jp/lastcloudia/gino/236",
+      "text": "装备枪时，物理攻击伤害+5%，受到的物理伤害-5%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备枪时，物理攻击伤害+5%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的物理伤害-5%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备枪时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备枪时，物理攻击伤害+5%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "受到的物理伤害-5%"
+      ],
+      "remainingConditions": [
+        "装备枪时生效"
+      ]
+    },
+    {
+      "id": "fca23d2a13780d62",
+      "name": "杖高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/241",
+      "text": "装备法杖时，物理伤害+10%，魔法伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备法杖时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备法杖时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备法杖时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔法伤害+20%"
+      ],
+      "remainingConditions": [
+        "装备法杖时生效"
+      ]
+    },
+    {
+      "id": "2aa7d6992469786a",
+      "name": "爪高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/285",
+      "text": "装备爪子时，物理攻击伤害+20%，暴击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备爪时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暴击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备爪时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备爪时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暴击伤害+20%"
+      ],
+      "remainingConditions": [
+        "装备爪时生效"
+      ]
+    },
+    {
+      "id": "c18e2156cd295689",
+      "name": "破防增幅",
+      "url": "https://altema.jp/lastcloudia/gino/295",
+      "text": "对处于Break状态的敌人，物理攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对Break状态敌人的物理攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人处于Break状态"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对Break状态敌人的物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于Break状态"
+      ]
+    },
+    {
+      "id": "0c3458f75f95c9c1",
+      "name": "枪高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/326",
+      "text": "装备枪时，物理攻击伤害+15%，受到的物理伤害-15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备枪时，物理攻击伤害+15%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的物理伤害-15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备枪时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备枪时，物理攻击伤害+15%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "受到的物理伤害-15%"
+      ],
+      "remainingConditions": [
+        "装备枪时生效"
+      ]
+    },
+    {
+      "id": "28ccf85b5f31c394",
+      "name": "一天真刃",
+      "url": "https://altema.jp/lastcloudia/gino/327",
+      "text": "只装备一把武器时，物理攻击伤害+30%，物理攻击伤害上限+10,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把武器时，物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+10,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把武器时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+10,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器"
+      ]
+    },
+    {
+      "id": "a85d531b3bab38a1",
+      "name": "凭依（伊弗利特）",
+      "url": "https://altema.jp/lastcloudia/gino/346",
+      "text": "HP持续下降，但物理攻击伤害+20%，受到的炎属性攻击伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "自身当前HP持续下降"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "受到的火属性攻击伤害-20%"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身当前HP持续下降",
+        "受到的火属性攻击伤害-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:304",
+      "name": "两手枪",
+      "url": "https://altema.jp/lastcloudia/gino/365",
+      "text": "只装备一把枪类武器时，物理攻击伤害+20%，暴击率+10%，物理攻击伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把枪时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暴击率+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为枪"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把枪时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暴击率+10%",
+        "物理攻击伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为枪"
+      ]
+    },
+    {
+      "id": "0a0c2255a5f2eeeb",
+      "name": "天空之路",
+      "url": "https://altema.jp/lastcloudia/gino/366",
+      "text": "敌人在空中的高度越高，物理攻击伤害越高（最高+50%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "敌人在空中越高，物理攻击伤害越高，最高+50%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "根据敌人空中高度变化；高度与实际增幅的对应关系待确认"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "敌人在空中越高，物理攻击伤害越高，最高+50%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照数值变化；公式未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "根据敌人空中高度变化；高度与实际增幅的对应关系待确认"
+      ]
+    },
+    {
+      "id": "全部技能:all:317",
+      "name": "雷属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/391",
+      "text": "雷属性物理攻击和超级必杀技：伤害提升30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "雷属性必杀伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "雷属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "雷属性必杀伤害+30%"
+      ],
+      "remainingConditions": [
+        "攻击属性为雷属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "全部技能:all:320",
+      "name": "爪增幅",
+      "url": "https://altema.jp/lastcloudia/gino/396",
+      "text": "装备爪子时，物理攻击伤害+10%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备爪时，物理攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备爪时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备爪时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "装备爪时生效"
+      ]
+    },
+    {
+      "id": "5b5e2095fcd10064",
+      "name": "暗黑驱动",
+      "url": "https://altema.jp/lastcloudia/gino/403",
+      "text": "暗属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "暗属性物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暗属性必杀伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "暗属性物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暗属性必杀伤害+10%"
+      ],
+      "remainingConditions": [
+        "攻击属性为暗属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "全部技能:all:329",
+      "name": "两手锤",
+      "url": "https://altema.jp/lastcloudia/gino/410",
+      "text": "只装备一把锤类武器时，物理攻击伤害+20%，暴击率+10%，物理攻击伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把锤时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暴击率+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为锤"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把锤时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暴击率+10%",
+        "物理攻击伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为锤"
+      ]
+    },
+    {
+      "id": "1d410823abf67a0d",
+      "name": "物理弱点增幅",
+      "url": "https://altema.jp/lastcloudia/gino/439",
+      "text": "物理攻击命中弱点属性时，伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "物理攻击命中弱点属性时，伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "物理攻击命中敌人的属性弱点"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "物理攻击命中弱点属性时，伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "物理攻击命中敌人的属性弱点"
+      ]
+    },
+    {
+      "id": "44ab9538d448c7c5",
+      "name": "炎属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/450",
+      "text": "火属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "火属性必杀伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "火属性物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "火属性必杀伤害+10%"
+      ],
+      "remainingConditions": [
+        "攻击属性为火属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "7030177b28467440",
+      "name": "炎属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/451",
+      "text": "火属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "火属性必杀伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "火属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "火属性必杀伤害+30%"
+      ],
+      "remainingConditions": [
+        "攻击属性为火属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "c4cb3f5b1831b5f7",
+      "name": "恶魔王座",
+      "url": "https://altema.jp/lastcloudia/gino/456",
+      "text": "必杀槽满时，远程物理攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "必杀槽满时，远程物理攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "必杀槽处于满槽状态"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "仅限远程物理攻击"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "必杀槽满时，远程物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "必杀槽处于满槽状态",
+        "仅限远程物理攻击"
+      ]
+    },
+    {
+      "id": "ba02b8e71faa334b",
+      "name": "暗属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/457",
+      "text": "暗属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "暗属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暗属性必杀伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "暗属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暗属性必杀伤害+30%"
+      ],
+      "remainingConditions": [
+        "攻击属性为暗属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "f0a152f468c7e282",
+      "name": "贯流枪术",
+      "url": "https://altema.jp/lastcloudia/gino/482",
+      "text": "装备枪时，物理攻击伤害+15%，并有概率解除敌人的格挡。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备枪时，物理攻击伤害+15%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "有概率解除敌人格挡"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备枪时生效"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "解除格挡的概率与判定机制待确认"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备枪时，物理攻击伤害+15%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "有概率解除敌人格挡"
+      ],
+      "remainingConditions": [
+        "装备枪时生效",
+        "解除格挡的概率与判定机制待确认"
+      ]
+    },
+    {
+      "id": "85e41007552fa429",
+      "name": "狂战士",
+      "url": "https://altema.jp/lastcloudia/gino/499",
+      "text": "生命值持续下降，但物理攻击伤害+30%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "自身当前HP持续下降"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身当前HP持续下降"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "15ef9e047319adc5",
+      "name": "两手剑",
+      "url": "https://altema.jp/lastcloudia/gino/502",
+      "text": "只装备一把剑时，物理攻击伤害+20%，暴击率+10%，物理攻击伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把剑时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暴击率+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为剑"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把剑时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暴击率+10%",
+        "物理攻击伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为剑"
+      ]
+    },
+    {
+      "id": "109cb2b413148949",
+      "name": "光属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/509",
+      "text": "光属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "光属性必杀伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "光属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "光属性必杀伤害+30%"
+      ],
+      "remainingConditions": [
+        "攻击属性为光属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "afadc468674e5da8",
+      "name": "冰属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/527",
+      "text": "冰属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "冰属性必杀伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "冰属性物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "冰属性必杀伤害+10%"
+      ],
+      "remainingConditions": [
+        "攻击属性为冰属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "1f1e7d3449c0ce66",
+      "name": "冰属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/535",
+      "text": "冰属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "冰属性必杀伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "冰属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "冰属性必杀伤害+30%"
+      ],
+      "remainingConditions": [
+        "攻击属性为冰属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "4bdba285c5859d95",
+      "name": "剑超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/537",
+      "text": "装备剑时，物理攻击伤害+30%，物理攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备剑时，物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备剑时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备剑时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "装备剑时生效"
+      ]
+    },
+    {
+      "id": "7f8c3d21defe356f",
+      "name": "斧增幅",
+      "url": "https://altema.jp/lastcloudia/gino/555",
+      "text": "装备斧时，物理攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备斧时，物理攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备斧时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备斧时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "装备斧时生效"
+      ]
+    },
+    {
+      "id": "05dffc8daf9a5872",
+      "name": "两手斧",
+      "url": "https://altema.jp/lastcloudia/gino/556",
+      "text": "只装备一把斧时，物理攻击伤害+20%，暴击率+10%，物理攻击伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把斧时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暴击率+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为斧"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把斧时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暴击率+10%",
+        "物理攻击伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为斧"
+      ]
+    },
+    {
+      "id": "68d0f34cfdb9b61d",
+      "name": "树属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/563",
+      "text": "树属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "树属性必杀伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "树属性物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "树属性必杀伤害+10%"
+      ],
+      "remainingConditions": [
+        "攻击属性为树属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "db8d7f2fa2d9fc8c",
+      "name": "树属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/566",
+      "text": "树属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "树属性必杀伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "树属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "树属性必杀伤害+30%"
+      ],
+      "remainingConditions": [
+        "攻击属性为树属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "ed504f94c8b57e47",
+      "name": "机械铠甲装配",
+      "url": "https://altema.jp/lastcloudia/gino/577",
+      "text": "类型追加“机械”；物理攻击伤害+10%，受到的物理攻击伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "类型追加“机械”"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "受到的物理攻击伤害-10%"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "类型追加“机械”",
+        "受到的物理攻击伤害-10%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "16398266d34af6ff",
+      "name": "炎属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/582",
+      "text": "火属性物理攻击与必杀伤害+30%，火属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "火属性必杀伤害+30%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "火属性必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "火属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "火属性必杀伤害+30%",
+        "火属性物理攻击伤害上限+2,000",
+        "火属性必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为火属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "9d7ec20e8780822b",
+      "name": "两手爪",
+      "url": "https://altema.jp/lastcloudia/gino/594",
+      "text": "只装备一把爪时，物理攻击伤害+20%，暴击率+10%，物理攻击伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把爪时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暴击率+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为爪"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把爪时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暴击率+10%",
+        "物理攻击伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为爪"
+      ]
+    },
+    {
+      "id": "8f742ab683b2018e",
+      "name": "爪超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/600",
+      "text": "装备爪时，物理攻击伤害+30%，物理攻击伤害上限+2,000，物理攻击暴击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备爪时，物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击暴击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备爪时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备爪时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+2,000",
+        "物理攻击暴击伤害+20%"
+      ],
+      "remainingConditions": [
+        "装备爪时生效"
+      ]
+    },
+    {
+      "id": "4a7788e083ce9ea1",
+      "name": "狂烈一击",
+      "url": "https://altema.jp/lastcloudia/gino/603",
+      "text": "命中率略微降低，但物理攻击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "物理攻击伤害+50%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "命中率略微降低（降低量待确认）"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "物理攻击伤害+50%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "命中率略微降低（降低量待确认）"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "bde3ce8d694af2ab",
+      "name": "两手机械",
+      "url": "https://altema.jp/lastcloudia/gino/619",
+      "text": "只装备一把机械武器时，物理攻击伤害+20%，暴击率+10%，物理攻击伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把机械武器时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暴击率+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为机械武器"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把机械武器时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暴击率+10%",
+        "物理攻击伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为机械武器"
+      ]
+    },
+    {
+      "id": "523a8585fc9c836c",
+      "name": "光属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/625",
+      "text": "光属性物理攻击与必杀伤害+30%，光属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "光属性必杀伤害+30%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "光属性必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "光属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "光属性必杀伤害+30%",
+        "光属性物理攻击伤害上限+2,000",
+        "光属性必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为光属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "dcf1d5d6f7d50959",
+      "name": "枪超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/629",
+      "text": "装备枪时，物理攻击伤害+30%，物理攻击伤害上限+2,000，受到的物理伤害-15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备枪时，物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "受到的物理伤害-15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备枪时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备枪时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+2,000",
+        "受到的物理伤害-15%"
+      ],
+      "remainingConditions": [
+        "装备枪时生效"
+      ]
+    },
+    {
+      "id": "da60418e1d1102bc",
+      "name": "杖超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/658",
+      "text": "装备法杖时，物理攻击伤害+10%，魔法攻击伤害+20%，魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备法杖时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害+20%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备法杖时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备法杖时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔法攻击伤害+20%",
+        "魔法攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "装备法杖时生效"
+      ]
+    },
+    {
+      "id": "72fb68a7b16692e8",
+      "name": "元素驱动",
+      "url": "https://altema.jp/lastcloudia/gino/663",
+      "text": "炎、冰、树、雷属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "火、冰、树、雷属性物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "火、冰、树、雷属性必杀伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火、冰、树、雷属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "火、冰、树、雷属性物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "火、冰、树、雷属性必杀伤害+10%"
+      ],
+      "remainingConditions": [
+        "攻击属性为火、冰、树、雷属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "93834794e1dc5477",
+      "name": "雷属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/673",
+      "text": "雷属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "雷属性必杀伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "雷属性物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "雷属性必杀伤害+10%"
+      ],
+      "remainingConditions": [
+        "攻击属性为雷属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "63eeda796250122a",
+      "name": "逆境",
+      "url": "https://altema.jp/lastcloudia/gino/717",
+      "text": "自身处于异常状态时，物理攻击和必杀伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "自身处于异常状态时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "自身处于异常状态时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "自身处于异常状态时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+20%"
+      ],
+      "remainingConditions": [
+        "自身处于异常状态时生效"
+      ]
+    },
+    {
+      "id": "a17f779989645fb0",
+      "name": "调查兵团",
+      "url": "https://altema.jp/lastcloudia/gino/720",
+      "text": "根据装备“调查兵团”的我方单位数量，提高对BOSS的物理攻击伤害（1名：+6%；2名：+12%；3名：+18%；4名：+24%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "按队伍中装备调查兵团的单位数量计算"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "按队伍中装备调查兵团的单位数量计算",
+        "目标敌人为Boss"
+      ]
+    },
+    {
+      "id": "48ac370b49e1ba46",
+      "name": "雷属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/723",
+      "text": "雷属性物理攻击与必杀伤害+30%，雷属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "雷属性必杀伤害+30%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "雷属性必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "雷属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "雷属性必杀伤害+30%",
+        "雷属性物理攻击伤害上限+2,000",
+        "雷属性必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为雷属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "b99c6446a5ae4735",
+      "name": "树属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/728",
+      "text": "树属性物理攻击与必杀伤害+30%，树属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "树属性必杀伤害+30%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "树属性必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "树属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "树属性必杀伤害+30%",
+        "树属性物理攻击伤害上限+2,000",
+        "树属性必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为树属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "7aecbb8f146842de",
+      "name": "暗属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/752",
+      "text": "暗属性物理攻击与必杀伤害+30%，暗属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "暗属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暗属性必杀伤害+30%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "暗属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "暗属性必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "暗属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暗属性必杀伤害+30%",
+        "暗属性物理攻击伤害上限+2,000",
+        "暗属性必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为暗属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "9c0bd935e13111e8",
+      "name": "永远的挚友",
+      "url": "https://altema.jp/lastcloudia/gino/754",
+      "text": "若除自身外刚好只有1名友方单位也装备「永远的挚友」，则物理攻击和魔法攻击伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "满足永远的挚友配对条件时，物理攻击伤害+15%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "自身以外恰好只有1名友方也装备永远的挚友"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "满足永远的挚友配对条件时，物理攻击伤害+15%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔法攻击伤害+15%"
+      ],
+      "remainingConditions": [
+        "自身以外恰好只有1名友方也装备永远的挚友"
+      ]
+    },
+    {
+      "id": "3cc8a829b724bfe7",
+      "name": "光属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/755",
+      "text": "光属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "光属性必杀伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "光属性物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "光属性必杀伤害+10%"
+      ],
+      "remainingConditions": [
+        "攻击属性为光属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "3f364d1ae44f839e",
+      "name": "两手剑增幅2",
+      "url": "https://altema.jp/lastcloudia/gino/777",
+      "text": "当只装备一把剑时，物理攻击和必杀伤害+20%，伤害上限+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把剑时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+20%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+6,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+6,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为剑"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把剑时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+20%",
+        "物理攻击伤害上限+6,000",
+        "必杀伤害上限+6,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为剑"
+      ]
+    },
+    {
+      "id": "ce4c7604e001b0ed",
+      "name": "两手剑增幅",
+      "url": "https://altema.jp/lastcloudia/gino/829",
+      "text": "当只装备一把剑时，物理攻击和必杀伤害+10%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把剑时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+3,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为剑"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把剑时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+10%",
+        "物理攻击伤害上限+3,000",
+        "必杀伤害上限+3,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为剑"
+      ]
+    },
+    {
+      "id": "545567ba3bfb33f1",
+      "name": "冰属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/853",
+      "text": "冰属性物理攻击与必杀伤害+30%，冰属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "冰属性必杀伤害+30%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "冰属性必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "冰属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "冰属性必杀伤害+30%",
+        "冰属性物理攻击伤害上限+2,000",
+        "冰属性必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为冰属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "9e714945b3c31514",
+      "name": "因缘",
+      "url": "https://altema.jp/lastcloudia/gino/880",
+      "text": "对与自身类型相同的敌人，物理攻击伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对与自身类型相同的敌人，物理攻击伤害+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人类型与自身相同"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对与自身类型相同的敌人，物理攻击伤害+15%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人类型与自身相同"
+      ]
+    },
+    {
+      "id": "9808082700eee5b8",
+      "name": "先从清理垃圾开始吧",
+      "url": "https://altema.jp/lastcloudia/gino/886",
+      "text": "战斗开始时，获得物理攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "开场获得物理攻击伤害+20%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "物理增伤Buff持续40秒；同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "开场获得物理攻击伤害+20%的Buff，持续40秒",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "战斗开始时触发",
+        "物理增伤Buff持续40秒；同类型Buff同时只计一项"
+      ]
+    },
+    {
+      "id": "5837c3c5bd19cc83",
+      "name": "两手剑增幅3",
+      "url": "https://altema.jp/lastcloudia/gino/901",
+      "text": "当只装备一把剑时，物理攻击和必杀伤害+30%，伤害上限+9,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把剑时，物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+30%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+9,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+9,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为剑"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把剑时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+30%",
+        "物理攻击伤害上限+9,000",
+        "必杀伤害上限+9,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为剑"
+      ]
+    },
+    {
+      "id": "f0d4e2e81fd7c665",
+      "name": "堂堂正正",
+      "url": "https://altema.jp/lastcloudia/gino/902",
+      "text": "对未受异常状态影响的敌人造成物理攻击伤害+20%， 伤害上限+2000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对未受异常状态影响的敌人，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人未受异常状态影响"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对未受异常状态影响的敌人，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人未受异常状态影响"
+      ]
+    },
+    {
+      "id": "9c82b39e02ae7e14",
+      "name": "毒之力",
+      "url": "https://altema.jp/lastcloudia/gino/924",
+      "text": "对中毒状态敌人的物理攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对中毒敌人的物理攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人处于中毒状态"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对中毒敌人的物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于中毒状态"
+      ]
+    },
+    {
+      "id": "105171fcac173ed9",
+      "name": "两手枪增幅",
+      "url": "https://altema.jp/lastcloudia/gino/925",
+      "text": "当只装备一把枪武器时，物理攻击和必杀 伤害+10%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把枪时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+3,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为枪"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把枪时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+10%",
+        "物理攻击伤害上限+3,000",
+        "必杀伤害上限+3,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为枪"
+      ]
+    },
+    {
+      "id": "332d1d402c82343d",
+      "name": "无限驱动",
+      "url": "https://altema.jp/lastcloudia/gino/956",
+      "text": "光、暗属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "光、暗属性物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "光、暗属性必杀伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光、暗属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "光、暗属性物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "光、暗属性必杀伤害+10%"
+      ],
+      "remainingConditions": [
+        "攻击属性为光、暗属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "22db4d8dd8dbfd9c",
+      "name": "两手弓",
+      "url": "https://altema.jp/lastcloudia/gino/977",
+      "text": "只装备一把弓时，物理攻击伤害+20%，暴击率+10%，物理攻击伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把弓时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暴击率+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为弓"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把弓时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暴击率+10%",
+        "物理攻击伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为弓"
+      ]
+    },
+    {
+      "id": "8ee1d245f7b403bc",
+      "name": "两手机械增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1014",
+      "text": "只装备一把机械武器时，物理攻击和必杀伤害+10%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把机械武器时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+3,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为机械武器"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把机械武器时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+10%",
+        "物理攻击伤害上限+3,000",
+        "必杀伤害上限+3,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为机械武器"
+      ]
+    },
+    {
+      "id": "71ac299474a52c86",
+      "name": "我想成为完美的存在",
+      "url": "https://altema.jp/lastcloudia/gino/1021",
+      "text": "发动必杀时，赋予自身物理攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "发动必杀后获得物理攻击伤害+20%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "发动必杀时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "物理增伤Buff持续40秒；同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "发动必杀后获得物理攻击伤害+20%的Buff，持续40秒",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "发动必杀时触发",
+        "物理增伤Buff持续40秒；同类型Buff同时只计一项"
+      ]
+    },
+    {
+      "id": "bafb60af9aea2655",
+      "name": "剑极阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1034",
+      "text": "装备剑时，物理攻击伤害+30%，物理攻击伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备剑时，物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备剑时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备剑时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "装备剑时生效"
+      ]
+    },
+    {
+      "id": "563cffc7c5fa9c59",
+      "name": "英灵凭依",
+      "url": "https://altema.jp/lastcloudia/gino/1060",
+      "text": "复活时，获得物理攻击和魔法攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "复活后获得物理攻击伤害+20%的Buff，持续40秒"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "复活时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "增伤Buff持续40秒；各同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "复活后获得物理攻击伤害+20%的Buff，持续40秒",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔法攻击伤害+20%"
+      ],
+      "remainingConditions": [
+        "复活时触发",
+        "增伤Buff持续40秒；各同类型Buff同时只计一项"
+      ]
+    },
+    {
+      "id": "9187edab58fd1e6b",
+      "name": "同类二刀增幅2",
+      "url": "https://altema.jp/lastcloudia/gino/1073",
+      "text": "装备2把相同种类的武器时，物理攻击伤害+10%、伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备两把相同武器类型的武器时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备两把武器"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "两把武器的类型相同，不要求属性相同或是同一件物品"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备两把相同武器类型的武器时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "装备两把武器",
+        "两把武器的类型相同，不要求属性相同或是同一件物品"
+      ]
+    },
+    {
+      "id": "20486fa2dfba235e",
+      "name": "美食猎人",
+      "url": "https://altema.jp/lastcloudia/gino/1102",
+      "text": "对“看起来美味”的类型（野兽、鱼、鸟）敌人，物理攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对兽、鱼、鸟类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为兽、鱼或鸟类型"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对兽、鱼、鸟类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为兽、鱼或鸟类型"
+      ]
+    },
+    {
+      "id": "5e9e49987bc80109",
+      "name": "两手锤增幅2",
+      "url": "https://altema.jp/lastcloudia/gino/1109",
+      "text": "当只装备一把锤子武器时，物理攻击和必杀伤 害+20%，伤害上限+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把锤时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+20%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+6,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+6,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为锤"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把锤时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+20%",
+        "物理攻击伤害上限+6,000",
+        "必杀伤害上限+6,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为锤"
+      ]
+    },
+    {
+      "id": "9db66f54c49b4f7a",
+      "name": "夏日训练营",
+      "url": "https://altema.jp/lastcloudia/gino/1113",
+      "text": "每个Wave中，物理攻击伤害随时间逐渐提升（最高+20%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "每个Wave内，物理攻击伤害随时间提高，最高+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "每个Wave中根据经过时间变化"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "实际增幅与时间的对应关系待确认，不能直接取最高20%"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "每个Wave内，物理攻击伤害随时间提高，最高+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照数值变化；公式未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每个Wave中根据经过时间变化",
+        "实际增幅与时间的对应关系待确认，不能直接取最高20%"
+      ]
+    },
+    {
+      "id": "eca09257aafff0da",
+      "name": "精灵斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1180",
+      "text": "对精灵系敌人的物理攻击和必杀伤害+10%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对精灵类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为精灵类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对精灵类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为精灵类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "298a75e27246a317",
+      "name": "徒手空拳",
+      "url": "https://altema.jp/lastcloudia/gino/1206",
+      "text": "未装备武器时，物理攻击伤害+30%，伤害上限+10,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "未装备武器时，物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+10,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "空武器：未装备武器，不要求防具栏为空"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "未装备武器时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+10,000"
+      ],
+      "remainingConditions": [
+        "空武器：未装备武器，不要求防具栏为空"
+      ]
+    },
+    {
+      "id": "4a53a2ac6b74cd04",
+      "name": "爪极阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1211",
+      "text": "装备爪时，物理攻击伤害+20%，物理攻击伤害上限+5,000，物理攻击暴击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备爪时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击暴击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备爪时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备爪时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+5,000",
+        "物理攻击暴击伤害+20%"
+      ],
+      "remainingConditions": [
+        "装备爪时生效"
+      ]
+    },
+    {
+      "id": "全部技能:all:660",
+      "name": "魔法生物斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1213",
+      "text": "对魔法生物类型敌人的物理攻击和必杀伤害+10%、伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对魔法生物类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为魔法生物类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对魔法生物类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为魔法生物类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "e9a4eb9cb06ea2ad",
+      "name": "勇者",
+      "url": "https://altema.jp/lastcloudia/gino/1228",
+      "text": "物理攻击伤害+20%，受到来自敌人的伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "自身受到来自敌人的伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身受到来自敌人的伤害+10%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "fd400293f61ca404",
+      "name": "破魔弓",
+      "url": "https://altema.jp/lastcloudia/gino/1230",
+      "text": "装备弓箭时，物理攻击和必杀伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备弓时，物理攻击伤害+15%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备弓时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备弓时，物理攻击伤害+15%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+15%"
+      ],
+      "remainingConditions": [
+        "装备弓时生效"
+      ]
+    },
+    {
+      "id": "5aab3402039886d1",
+      "name": "光属性极阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1239",
+      "text": "光属性物理攻击与必杀伤害+30%，光属性物理攻击与必杀伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "光属性必杀伤害+30%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "光属性必杀伤害上限+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "光属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "光属性必杀伤害+30%",
+        "光属性物理攻击伤害上限+5,000",
+        "光属性必杀伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为光属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "282565f2d071ec9c",
+      "name": "两手爪增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1251",
+      "text": "当只装备一个爪状武器时，物理攻击和必杀 伤害+10%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把爪时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+3,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为爪"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把爪时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+10%",
+        "物理攻击伤害上限+3,000",
+        "必杀伤害上限+3,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为爪"
+      ]
+    },
+    {
+      "id": "fc3ee7900740acc8",
+      "name": "斧极阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1304",
+      "text": "装备斧时，物理攻击伤害+25%，物理攻击伤害上限+5,000，Break值+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备斧时，物理攻击伤害+25%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "Break值+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备斧时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备斧时，物理攻击伤害+25%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+5,000",
+        "Break值+20%"
+      ],
+      "remainingConditions": [
+        "装备斧时生效"
+      ]
+    },
+    {
+      "id": "7b6e96149fd8ff79",
+      "name": "神族斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1317",
+      "text": "对神系敌人的物理攻击和必杀伤害+10%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对神类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为神类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对神类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为神类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "1475f35e571d3e09",
+      "name": "空中增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1366",
+      "text": "对空中敌人的物理和魔法攻击伤害+10%；自身处于空中时，受到的物理和魔法攻击伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对空中敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对空中敌人的魔法攻击伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "自身在空中时，受到的物理攻击伤害-10%"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "自身在空中时，受到的魔法攻击伤害-10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "增伤要求目标敌人在空中"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "减伤要求自身在空中"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对空中敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对空中敌人的魔法攻击伤害+10%",
+        "自身在空中时，受到的物理攻击伤害-10%",
+        "自身在空中时，受到的魔法攻击伤害-10%"
+      ],
+      "remainingConditions": [
+        "增伤要求目标敌人在空中",
+        "减伤要求自身在空中"
+      ]
+    },
+    {
+      "id": "f88bb6ec201988e8",
+      "name": "两手锤增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1369",
+      "text": "当只装备一把锤子武器时，物理攻击和必杀伤 害+10%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把锤时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+3,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为锤"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把锤时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+10%",
+        "物理攻击伤害上限+3,000",
+        "必杀伤害上限+3,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为锤"
+      ]
+    },
+    {
+      "id": "ef62dd0cf4192724",
+      "name": "深度冲击",
+      "url": "https://altema.jp/lastcloudia/gino/1378",
+      "text": "战斗开始时，赋予自身“移动速度降低”减益效果（持续至战斗不能）；处于移动速度降低状态时，物理攻击伤害+20%（部分特殊减益效果不计入触发条件）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "处于符合要求的移动速度降低状态时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "开场赋予自身移动速度降低减益"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时施加减益，持续至战斗不能"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "自身处于移动速度降低状态；部分特殊减益不计入"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "处于符合要求的移动速度降低状态时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "开场赋予自身移动速度降低减益"
+      ],
+      "remainingConditions": [
+        "战斗开始时施加减益，持续至战斗不能",
+        "自身处于移动速度降低状态；部分特殊减益不计入"
+      ]
+    },
+    {
+      "id": "全部技能:all:728",
+      "name": "兽族斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1398",
+      "text": "对兽类型敌人的物理攻击和必杀伤害+10%、伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对兽类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为兽类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对兽类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为兽类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "980fc3c099f855ab",
+      "name": "拳高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1399",
+      "text": "未装备武器时，物理攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "未装备武器时，物理攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "空武器：未装备武器，不要求防具栏为空"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "未装备武器时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "空武器：未装备武器，不要求防具栏为空"
+      ]
+    },
+    {
+      "id": "f80a686243715fb5",
+      "name": "两手枪增幅2",
+      "url": "https://altema.jp/lastcloudia/gino/1410",
+      "text": "当仅装备一把枪武器时，物理攻击和必杀伤害+20%，伤害上限+6000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把枪时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+20%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+6,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+6,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为枪"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把枪时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+20%",
+        "物理攻击伤害上限+6,000",
+        "必杀伤害上限+6,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为枪"
+      ]
+    },
+    {
+      "id": "fe3ad93438c245be",
+      "name": "鱼类斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1416",
+      "text": "对鱼系敌人的物理攻击和必杀伤害+10%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对鱼类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为鱼类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对鱼类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为鱼类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "9d60989a10027525",
+      "name": "拳超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1460",
+      "text": "未装备武器时，物理攻击伤害+30%，物理攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "未装备武器时，物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "空武器：未装备武器，不要求防具栏为空"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "未装备武器时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "空武器：未装备武器，不要求防具栏为空"
+      ]
+    },
+    {
+      "id": "d291d901e1625ee2",
+      "name": "诡异行军",
+      "url": "https://altema.jp/lastcloudia/gino/1462",
+      "text": "战斗开始时，若我方全员均为恐怖系（魔法生物、不死生物、精灵），物理攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "开场我方全员均为恐怖系时，物理攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时判断"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "我方全员均为恐怖系（魔法生物、不死生物、精灵）"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "战斗开始时判断",
+        "我方全员均为恐怖系（魔法生物、不死生物、精灵）"
+      ]
+    },
+    {
+      "id": "835e1d7e70f4a6d3",
+      "name": "两手斧增幅2",
+      "url": "https://altema.jp/lastcloudia/gino/1484",
+      "text": "只装备一把斧时，物理攻击和必杀伤害+20%，伤害上限+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把斧时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+20%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+6,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+6,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为斧"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把斧时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+20%",
+        "物理攻击伤害上限+6,000",
+        "必杀伤害上限+6,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为斧"
+      ]
+    },
+    {
+      "id": "e14f43b83a6fcb01",
+      "name": "枪极阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1489",
+      "text": "装备枪时，物理攻击伤害+15%，物理攻击伤害上限+5,000，受到的物理伤害-15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备枪时，物理攻击伤害+15%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "受到的物理伤害-15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备枪时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备枪时，物理攻击伤害+15%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+5,000",
+        "受到的物理伤害-15%"
+      ],
+      "remainingConditions": [
+        "装备枪时生效"
+      ]
+    },
+    {
+      "id": "0e47720e7aaba94f",
+      "name": "真祖",
+      "url": "https://altema.jp/lastcloudia/gino/1491",
+      "text": "自身魔抗-20%，但随时间经过，物理攻击伤害和伤害上限逐渐提升（最高：伤害+50%、伤害上限+5,000）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "物理攻击伤害随时间提高，最高+50%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "自身魔抗-20%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限随时间提高，最高+5,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "根据经过时间逐渐提升"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "实际伤害增幅与上限的变化公式待确认"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "物理攻击伤害随时间提高，最高+50%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照数值变化；公式未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身魔抗-20%",
+        "物理攻击伤害上限随时间提高，最高+5,000"
+      ],
+      "remainingConditions": [
+        "根据经过时间逐渐提升",
+        "实际伤害增幅与上限的变化公式待确认"
+      ]
+    },
+    {
+      "id": "4810345440e1ca42",
+      "name": "圣诞夜的槲寄生",
+      "url": "https://altema.jp/lastcloudia/gino/1507",
+      "text": "除自身外，若刚好只有1名友方角色也装备“圣诞夜的槲寄生”，且两人性别为一男一女，则自身物理攻击和魔法攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "自身以外恰好只有1名友方也装备圣诞夜的槲寄生"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "两名配对角色为一男一女"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔法攻击伤害+20%"
+      ],
+      "remainingConditions": [
+        "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
+        "两名配对角色为一男一女"
+      ]
+    },
+    {
+      "id": "648c1a3414c1a27d",
+      "name": "无限高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1529",
+      "text": "光、暗属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "光、暗属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "光、暗属性必杀伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光、暗属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "光、暗属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "光、暗属性必杀伤害+30%"
+      ],
+      "remainingConditions": [
+        "攻击属性为光、暗属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "c8018a23d827d656",
+      "name": "刺突剑士的战斗术",
+      "url": "https://altema.jp/lastcloudia/gino/1538",
+      "text": "当同时装备剑和爪时，物理攻击伤害+20%，伤害上限+ 2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "同时装备剑和爪时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "同时装备剑和爪"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "同时装备剑和爪时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "同时装备剑和爪"
+      ]
+    },
+    {
+      "id": "f6bc920aeccd81d4",
+      "name": "炎之剑",
+      "url": "https://altema.jp/lastcloudia/gino/1548",
+      "text": "装备火属性剑时，HP持续下降，但物理攻击伤害+30%、伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备火属性剑时，物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "自身当前HP持续下降"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备剑"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "该剑为火属性"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备火属性剑时，物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身当前HP持续下降",
+        "物理攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "装备剑",
+        "该剑为火属性"
+      ]
+    },
+    {
+      "id": "fc654365c794bc7f",
+      "name": "元素高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1572",
+      "text": "炎、冰、树、雷属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "火、冰、树、雷属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "火、冰、树、雷属性必杀伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火、冰、树、雷属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "火、冰、树、雷属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "火、冰、树、雷属性必杀伤害+30%"
+      ],
+      "remainingConditions": [
+        "攻击属性为火、冰、树、雷属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "全部技能:all:802",
+      "name": "战士斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1592",
+      "text": "对士兵类型敌人的物理攻击和必杀伤害+10%、伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对士兵类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为士兵类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对士兵类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为士兵类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "6672d9d5b8e87e98",
+      "name": "英雄之血",
+      "url": "https://altema.jp/lastcloudia/gino/1605",
+      "text": "战斗开始时，获得物理攻击伤害+30%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "开场获得物理攻击伤害+30%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "物理增伤Buff持续40秒；同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "开场获得物理攻击伤害+30%的Buff，持续40秒",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "战斗开始时触发",
+        "物理增伤Buff持续40秒；同类型Buff同时只计一项"
+      ]
+    },
+    {
+      "id": "4c25a005372c0d24",
+      "name": "同类二刀增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1615",
+      "text": "装备两把相同武器类型的武器时，物理攻击伤害+5%，伤害上限+1,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备两把相同武器类型的武器时，物理攻击伤害+5%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+1,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备两把武器"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "两把武器的类型相同，不要求属性相同或是同一件物品"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备两把相同武器类型的武器时，物理攻击伤害+5%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+1,000"
+      ],
+      "remainingConditions": [
+        "装备两把武器",
+        "两把武器的类型相同，不要求属性相同或是同一件物品"
+      ]
+    },
+    {
+      "id": "011b1a6b3ec0b62f",
+      "name": "骑士斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1636",
+      "text": "对骑士系敌人的物理攻击和必杀伤害+10%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对骑士类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为骑士类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对骑士类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为骑士类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "ca339383e4f1f6f6",
+      "name": "两手斧增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1689",
+      "text": "只装备一把斧时，物理攻击和必杀伤害+10%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把斧时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+3,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器，且该武器为斧"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把斧时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "必杀伤害+10%",
+        "物理攻击伤害上限+3,000",
+        "必杀伤害上限+3,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器，且该武器为斧"
+      ]
+    },
+    {
+      "id": "9dabf82a19744e2a",
+      "name": "无属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1726",
+      "text": "无属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "无属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "无属性必杀伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为无属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "无属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "无属性必杀伤害+30%"
+      ],
+      "remainingConditions": [
+        "攻击属性为无属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "2832becd6721150f",
+      "name": "致命撕裂者",
+      "url": "https://altema.jp/lastcloudia/gino/1744",
+      "text": "当只装备一把武器时，对濒死敌人的物理攻击伤害增加 30%，伤害上限增加 15,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "只装备一把武器时，对濒死敌人的物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+15,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于濒死状态，不能用自身濒死代替"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "只装备一把武器时，对濒死敌人的物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "物理攻击伤害上限+15,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器",
+        "目标敌人处于濒死状态，不能用自身濒死代替"
+      ]
+    },
+    {
+      "id": "8c11c64768072670",
+      "name": "神秘之力【铁锤】",
+      "url": "https://altema.jp/lastcloudia/gino/1756",
+      "text": "自身为神类型时，使我方装备「信仰」的角色获得：物理攻击伤害+10%。同名「神秘之力」效果不会叠加。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "自身为神类型"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "受益的我方角色须装备信仰"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "同名神秘之力【铁锤】效果不叠加"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%",
+          "relation": "ally-damage-grant",
+          "target": "allies-with-faith",
+          "calculationNote": "与对应的信仰／神秘之力配套生效；同名效果只计一项，不能把提供者与接受者重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": [
+            "5dbd4f977800ad88"
+          ]
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "自身为神类型",
+        "受益的我方角色须装备信仰",
+        "同名神秘之力【铁锤】效果不叠加"
+      ]
+    },
+    {
+      "id": "d02a81c812dbec73",
+      "name": "昆虫斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1780",
+      "text": "对昆虫系敌人的物理攻击和必杀伤害+10%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对昆虫类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为昆虫类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对昆虫类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为昆虫类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "92a57a934fb2eb2f",
+      "name": "衣服增幅·改",
+      "url": "https://altema.jp/lastcloudia/gino/1797",
+      "text": "装备衣服时，物理攻击伤害+10%，受到的魔法攻击伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备衣服时，物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的魔法攻击伤害-10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备衣服时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备衣服时，物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "受到的魔法攻击伤害-10%"
+      ],
+      "remainingConditions": [
+        "装备衣服时生效"
+      ]
+    },
+    {
+      "id": "86363c375f9ea78e",
+      "name": "无属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1837",
+      "text": "无属性物理攻击与必杀伤害+30%，无属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "无属性物理攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "无属性必杀伤害+30%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "无属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "无属性必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为无属性时，对应伤害加成生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "无属性物理攻击伤害+30%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "无属性必杀伤害+30%",
+        "无属性物理攻击伤害上限+2,000",
+        "无属性必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为无属性时，对应伤害加成生效"
+      ]
+    },
+    {
+      "id": "251b1a2c2e5147f5",
+      "name": "植物斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1838",
+      "text": "对植物系敌人的物理攻击和必杀伤害+10%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对植物类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为植物类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对植物类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为植物类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "6df40a3227341ce3",
+      "name": "衣服高阶增幅·改",
+      "url": "https://altema.jp/lastcloudia/gino/1848",
+      "text": "装备衣服时，物理攻击伤害+20%，受到的魔法攻击伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "装备衣服时，物理攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的魔法攻击伤害-20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备衣服时生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "装备衣服时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "受到的魔法攻击伤害-20%"
+      ],
+      "remainingConditions": [
+        "装备衣服时生效"
+      ]
+    },
+    {
+      "id": "全部技能:all:910",
+      "name": "射手斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1930",
+      "text": "对狙击类型敌人的物理攻击和必杀伤害+10%、伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对狙击类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为狙击类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对狙击类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为狙击类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "全部技能:all:917",
+      "name": "不死生物斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1962",
+      "text": "对不死生物类型敌人的物理攻击和必杀伤害+10%、伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对不死生物类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为不死生物类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对不死生物类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为不死生物类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "f06cd362877374b9",
+      "name": "鸟类斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/1971",
+      "text": "对鸟系敌人的物理攻击和必杀伤害+10%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对鸟类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为鸟类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对鸟类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为鸟类型时，对应增伤和上限生效"
+      ]
+    },
+    {
+      "id": "af2b1b7f6ebbb498",
+      "name": "龙族斩灭者",
+      "url": "https://altema.jp/lastcloudia/gino/2026",
+      "text": "对龙系敌人的物理攻击和必杀伤害+10%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对龙类型敌人的物理攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对该类型敌人的必杀伤害+10%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "effect-3",
+          "kind": "effect",
+          "text": "必杀伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为龙类型时，对应增伤和上限生效"
+        }
+      ],
+      "tagDetails": {
+        "物理伤害增加": {
+          "summary": "对龙类型敌人的物理攻击伤害+10%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "物理伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对该类型敌人的必杀伤害+10%",
+        "物理攻击伤害上限+2,000",
+        "必杀伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为龙类型时，对应增伤和上限生效"
+      ]
     }
   ],
   "views": {
@@ -9877,6 +15659,149 @@ export const SKILL_LABELING_CATALOG = {
         "additionalRelatedUnique": 0
       }
     },
+    "physical": {
+      "label": "物理伤害增加",
+      "displayOrder": [
+        "f4bf8f6c759cece0",
+        "f05822ba3ef176e5",
+        "1d471a5639a273bc",
+        "1032f88be503dbb8",
+        "2c33c46964323f76",
+        "9933f7bea186f541",
+        "6da5c1728b9da6fb",
+        "fca23d2a13780d62",
+        "56cc2ba3fab2065f",
+        "c9e5df1dd31f35cf",
+        "b6ba057e893e1be9",
+        "2aa7d6992469786a",
+        "c18e2156cd295689",
+        "0c3458f75f95c9c1",
+        "28ccf85b5f31c394",
+        "a85d531b3bab38a1",
+        "762fb2ff5d9381f0",
+        "全部技能:all:304",
+        "0a0c2255a5f2eeeb",
+        "全部技能:all:314",
+        "全部技能:all:317",
+        "全部技能:all:320",
+        "全部技能:all:322",
+        "5b5e2095fcd10064",
+        "全部技能:all:329",
+        "a9beabdba2bb1ea3",
+        "1d410823abf67a0d",
+        "96db78d77cedf5cf",
+        "44ab9538d448c7c5",
+        "7030177b28467440",
+        "c4cb3f5b1831b5f7",
+        "ba02b8e71faa334b",
+        "f0a152f468c7e282",
+        "85e41007552fa429",
+        "15ef9e047319adc5",
+        "109cb2b413148949",
+        "afadc468674e5da8",
+        "1f1e7d3449c0ce66",
+        "4bdba285c5859d95",
+        "7f8c3d21defe356f",
+        "05dffc8daf9a5872",
+        "68d0f34cfdb9b61d",
+        "db8d7f2fa2d9fc8c",
+        "0d0b88d5b3be6bd3",
+        "ed504f94c8b57e47",
+        "16398266d34af6ff",
+        "9d7ec20e8780822b",
+        "8f742ab683b2018e",
+        "4a7788e083ce9ea1",
+        "bde3ce8d694af2ab",
+        "523a8585fc9c836c",
+        "dcf1d5d6f7d50959",
+        "da60418e1d1102bc",
+        "72fb68a7b16692e8",
+        "93834794e1dc5477",
+        "63eeda796250122a",
+        "a17f779989645fb0",
+        "48ac370b49e1ba46",
+        "b99c6446a5ae4735",
+        "7aecbb8f146842de",
+        "9c0bd935e13111e8",
+        "3cc8a829b724bfe7",
+        "3f364d1ae44f839e",
+        "ce4c7604e001b0ed",
+        "545567ba3bfb33f1",
+        "48d0bc39febccaaf",
+        "9e714945b3c31514",
+        "9808082700eee5b8",
+        "5837c3c5bd19cc83",
+        "f0d4e2e81fd7c665",
+        "9c82b39e02ae7e14",
+        "105171fcac173ed9",
+        "332d1d402c82343d",
+        "22db4d8dd8dbfd9c",
+        "8ee1d245f7b403bc",
+        "71ac299474a52c86",
+        "bafb60af9aea2655",
+        "563cffc7c5fa9c59",
+        "2d772214490c52ba",
+        "9187edab58fd1e6b",
+        "20486fa2dfba235e",
+        "efc2aa7f65146e56",
+        "5e9e49987bc80109",
+        "9db66f54c49b4f7a",
+        "eca09257aafff0da",
+        "298a75e27246a317",
+        "4a53a2ac6b74cd04",
+        "全部技能:all:660",
+        "e9a4eb9cb06ea2ad",
+        "fd400293f61ca404",
+        "5aab3402039886d1",
+        "282565f2d071ec9c",
+        "fc3ee7900740acc8",
+        "7b6e96149fd8ff79",
+        "1475f35e571d3e09",
+        "f88bb6ec201988e8",
+        "ef62dd0cf4192724",
+        "全部技能:all:728",
+        "980fc3c099f855ab",
+        "f80a686243715fb5",
+        "fe3ad93438c245be",
+        "9d60989a10027525",
+        "d291d901e1625ee2",
+        "835e1d7e70f4a6d3",
+        "e14f43b83a6fcb01",
+        "0e47720e7aaba94f",
+        "4810345440e1ca42",
+        "648c1a3414c1a27d",
+        "c8018a23d827d656",
+        "f6bc920aeccd81d4",
+        "fc654365c794bc7f",
+        "全部技能:all:802",
+        "6672d9d5b8e87e98",
+        "4c25a005372c0d24",
+        "011b1a6b3ec0b62f",
+        "ca339383e4f1f6f6",
+        "704d27924f2c43d1",
+        "9dabf82a19744e2a",
+        "2832becd6721150f",
+        "5dbd4f977800ad88",
+        "8c11c64768072670",
+        "d02a81c812dbec73",
+        "92a57a934fb2eb2f",
+        "86363c375f9ea78e",
+        "251b1a2c2e5147f5",
+        "6df40a3227341ce3",
+        "全部技能:all:910",
+        "全部技能:all:917",
+        "f06cd362877374b9",
+        "af2b1b7f6ebbb498"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 130,
+        "notRelatedUnique": 805,
+        "ready": 0,
+        "partial": 130,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -10062,14 +15987,130 @@ export const SKILL_LABELING_CATALOG = {
         "e090015d178e09d2",
         "e2bf25ca0a166200",
         "3ab5e4ec857b4879",
-        "5d075eee96d5531f"
+        "5d075eee96d5531f",
+        "f4bf8f6c759cece0",
+        "f05822ba3ef176e5",
+        "1d471a5639a273bc",
+        "1032f88be503dbb8",
+        "2c33c46964323f76",
+        "9933f7bea186f541",
+        "6da5c1728b9da6fb",
+        "fca23d2a13780d62",
+        "2aa7d6992469786a",
+        "c18e2156cd295689",
+        "0c3458f75f95c9c1",
+        "28ccf85b5f31c394",
+        "a85d531b3bab38a1",
+        "全部技能:all:304",
+        "0a0c2255a5f2eeeb",
+        "全部技能:all:317",
+        "全部技能:all:320",
+        "5b5e2095fcd10064",
+        "全部技能:all:329",
+        "1d410823abf67a0d",
+        "44ab9538d448c7c5",
+        "7030177b28467440",
+        "c4cb3f5b1831b5f7",
+        "ba02b8e71faa334b",
+        "f0a152f468c7e282",
+        "85e41007552fa429",
+        "15ef9e047319adc5",
+        "109cb2b413148949",
+        "afadc468674e5da8",
+        "1f1e7d3449c0ce66",
+        "4bdba285c5859d95",
+        "7f8c3d21defe356f",
+        "05dffc8daf9a5872",
+        "68d0f34cfdb9b61d",
+        "db8d7f2fa2d9fc8c",
+        "ed504f94c8b57e47",
+        "16398266d34af6ff",
+        "9d7ec20e8780822b",
+        "8f742ab683b2018e",
+        "4a7788e083ce9ea1",
+        "bde3ce8d694af2ab",
+        "523a8585fc9c836c",
+        "dcf1d5d6f7d50959",
+        "da60418e1d1102bc",
+        "72fb68a7b16692e8",
+        "93834794e1dc5477",
+        "63eeda796250122a",
+        "a17f779989645fb0",
+        "48ac370b49e1ba46",
+        "b99c6446a5ae4735",
+        "7aecbb8f146842de",
+        "9c0bd935e13111e8",
+        "3cc8a829b724bfe7",
+        "3f364d1ae44f839e",
+        "ce4c7604e001b0ed",
+        "545567ba3bfb33f1",
+        "9e714945b3c31514",
+        "9808082700eee5b8",
+        "5837c3c5bd19cc83",
+        "f0d4e2e81fd7c665",
+        "9c82b39e02ae7e14",
+        "105171fcac173ed9",
+        "332d1d402c82343d",
+        "22db4d8dd8dbfd9c",
+        "8ee1d245f7b403bc",
+        "71ac299474a52c86",
+        "bafb60af9aea2655",
+        "563cffc7c5fa9c59",
+        "9187edab58fd1e6b",
+        "20486fa2dfba235e",
+        "5e9e49987bc80109",
+        "9db66f54c49b4f7a",
+        "eca09257aafff0da",
+        "298a75e27246a317",
+        "4a53a2ac6b74cd04",
+        "全部技能:all:660",
+        "e9a4eb9cb06ea2ad",
+        "fd400293f61ca404",
+        "5aab3402039886d1",
+        "282565f2d071ec9c",
+        "fc3ee7900740acc8",
+        "7b6e96149fd8ff79",
+        "1475f35e571d3e09",
+        "f88bb6ec201988e8",
+        "ef62dd0cf4192724",
+        "全部技能:all:728",
+        "980fc3c099f855ab",
+        "f80a686243715fb5",
+        "fe3ad93438c245be",
+        "9d60989a10027525",
+        "d291d901e1625ee2",
+        "835e1d7e70f4a6d3",
+        "e14f43b83a6fcb01",
+        "0e47720e7aaba94f",
+        "4810345440e1ca42",
+        "648c1a3414c1a27d",
+        "c8018a23d827d656",
+        "f6bc920aeccd81d4",
+        "fc654365c794bc7f",
+        "全部技能:all:802",
+        "6672d9d5b8e87e98",
+        "4c25a005372c0d24",
+        "011b1a6b3ec0b62f",
+        "ca339383e4f1f6f6",
+        "9dabf82a19744e2a",
+        "2832becd6721150f",
+        "8c11c64768072670",
+        "d02a81c812dbec73",
+        "92a57a934fb2eb2f",
+        "86363c375f9ea78e",
+        "251b1a2c2e5147f5",
+        "6df40a3227341ce3",
+        "全部技能:all:910",
+        "全部技能:all:917",
+        "f06cd362877374b9",
+        "af2b1b7f6ebbb498"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 183,
-        "notRelatedUnique": 752,
+        "relatedUnique": 299,
+        "notRelatedUnique": 636,
         "ready": 44,
-        "partial": 139,
+        "partial": 255,
         "unknown": 0
       }
     }

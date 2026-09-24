@@ -1,0 +1,58 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {SKILL_LABELING_CATALOG as catalog} from '../dist/skill-labeling-catalog.mjs';
+import {canonicalSkillRows,labelingView,skillLabelRows,resolveSkillLabels} from '../dist/skill-labeling-model.mjs';
+const read=path=>fs.readFileSync(new URL(path,import.meta.url),'utf8');
+const box={window:{}};vm.runInNewContext(read('../dist/data.js'),box);
+const all=canonicalSkillRows(box.window.SKILL_DATA),physical=labelingView(catalog,'physical');
+const source=n=>all.find(r=>r.url.endsWith(`/gino/${n}`));
+const entry=n=>physical.entries.find(e=>e.id===source(n).id);
+const registry=JSON.parse(read('../docs/skill-labeling-registry.json'));
+
+test('physical damage pass audits all 935 skills including category-only dragon slayer and inherited faith',()=>{
+ const audit=JSON.parse(read('../docs/physical-tag-audit.json'));
+ assert.equal(audit.rows.length,935);assert.equal(new Set(audit.rows.map(r=>r.id)).size,935);
+ assert.equal(audit.rows.filter(r=>r.decision==='related').length,130);assert.equal(audit.rows.filter(r=>r.decision==='not-related').length,805);
+ assert(entry(2026));assert(!entry(2028));assert(entry(1754));assert(entry(1756));
+ const elemental=[391,403,450,451,457,509,527,535,563,566,582,625,663,673,723,728,752,755,853,956,1239,1529,1572,1726,1837];
+ const slayers=[1180,1213,1317,1398,1416,1592,1636,1780,1838,1930,1962,1971,2026];
+ for(const n of [...elemental,...slayers]){assert(entry(n),source(n).name);assert(entry(n).remainingEffects.some(t=>t.includes('必杀')));assert(entry(n).remainingConditions.length);}
+ for(const n of [365,410,502,556,594,619,977]){assert(entry(n).remainingEffects.includes('暴击率+10%'));assert(entry(n).remainingConditions.some(t=>/仅装备一把武器/.test(t)));}
+ assert.equal(catalog.numericEffectInjection,false);
+});
+
+test('physical bonuses remain distinct from caps, crits, killers, stat changes, generic bonuses and received damage',()=>{
+ for(const n of [9,28,40,42,74,122,123,124,169,175,181,186,202,206,210,268,339,772,850,1103,1121,1176,1220,1270,1316,1519,1651,1692,1706,1727,1811,1830,1858,1955])assert(!entry(n),source(n).name);
+ const vulnerability=entry(212).tagDetails['物理伤害增加'];
+ assert.equal(vulnerability.target,'enemy');assert.equal(vulnerability.relation,'enemy-physical-vulnerability');
+ assert.match(vulnerability.calculationNote,/不能混作自身物理增伤/);
+ assert.equal(entry(1756).tagDetails['物理伤害增加'].target,'allies-with-faith');
+ assert.deepEqual(entry(1754).tagDetails['物理伤害增加'].relatedSkillIds,[source(1756).id]);
+ assert(!entry(1754).remainingEffects.some(t=>t.includes('铁锤')||t.includes('非攻击力效果')));
+ assert.equal(entry(1754).remainingEffects.length,3);
+ for(const n of [357,441]){assert.deepEqual(entry(n).assignedTags,['魔力','物理伤害增加']);assert.deepEqual(entry(n).remainingEffects,[]);assert(entry(n).remainingConditions.some(t=>t.includes('公式')));}
+ for(const n of [125,366,1113,1491])assert.match(entry(n).tagDetails['物理伤害增加'].calculationNote,/不直接填入最高值/);
+ assert(entry(1744).remainingConditions.some(t=>t.includes('目标敌人')&&t.includes('自身')));
+ for(const n of [1073,1615])assert(entry(n).remainingConditions.some(t=>t.includes('类型相同')&&t.includes('不要求属性相同')));
+ assert.deepEqual(entry(1548).remainingConditions,['装备剑','该剑为火属性']);
+});
+
+test('physical tags accumulate and leave each unfinished effect/condition pending until its own pass',()=>{
+ assert.equal(physical.counts.ready,0);assert.equal(physical.counts.partial,130);assert.equal(physical.counts.unknown,0);
+ assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,14);
+ for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
+ assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,['装备锤时生效']);
+ assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
+ assert.equal(catalog.entries.length,299);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,299);
+ const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
+ assert(allRows.slice(0,44).every(r=>r.judgment==='ready'));assert(allRows.slice(44).every(r=>r.judgment==='partial'));
+ // A later equipment pass should complete a compound only after both its
+ // attack and physical-damage fragments were already covered.
+ const future=structuredClone(registry);
+ future.tagPasses.push({tag:'装备锤',assignments:[{skillId:source(273).id,partIds:['condition-1']}]});
+ const updated=resolveSkillLabels(future).find(e=>e.id===source(273).id);
+ assert.equal(updated.judgment,'ready');assert.deepEqual(updated.assignedTags,['攻击力','物理伤害增加','装备锤']);
+ assert.equal(entry(273).judgment,'partial');
+});

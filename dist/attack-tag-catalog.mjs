@@ -1068,15 +1068,22 @@ export const ATTACK_TAG_CATALOG = {
             "basic:c9e5df1dd31f35cf:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备锤时，物理攻击伤害+7%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "物理攻击伤害+7%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备锤时生效"
       ]
@@ -1122,15 +1129,22 @@ export const ATTACK_TAG_CATALOG = {
             "basic:b6ba057e893e1be9:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备锤时，物理攻击伤害+25%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "物理攻击伤害+25%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备锤时生效"
       ]
@@ -3225,15 +3239,23 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "开场攻击力≥魔力时，物理攻击伤害+20%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "物理攻击伤害+20%",
         "魔法攻击伤害+20%"
       ],
       "remainingConditions": [
@@ -3369,14 +3391,22 @@ export const ATTACK_TAG_CATALOG = {
             "basic:efc2aa7f65146e56:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理伤害增加": {
+          "summary": "装备锤时，物理攻击伤害+25%",
+          "relation": "physical-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "物理攻击伤害+25%",
         "物理攻击伤害上限+2,000"
       ],
       "remainingConditions": [
@@ -4624,7 +4654,7 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "effect-1",
           "kind": "effect",
-          "text": "同系列其他神秘之力对应的非攻击力效果"
+          "text": "从神秘之力【结界】获得受到的魔法攻击伤害-10%"
         },
         {
           "id": "condition-1",
@@ -4640,6 +4670,21 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-3",
           "kind": "condition",
           "text": "同名“神秘之力”效果不叠加"
+        },
+        {
+          "id": "faith-physical-mitigation",
+          "kind": "effect",
+          "text": "从神秘之力【守护】获得受到的物理攻击伤害-10%"
+        },
+        {
+          "id": "faith-light-damage",
+          "kind": "effect",
+          "text": "从神秘之力【轮光】获得光属性伤害+10%"
+        },
+        {
+          "id": "faith-physical-damage",
+          "kind": "effect",
+          "text": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加"
         }
       ],
       "tagDetails": {
@@ -4652,14 +4697,27 @@ export const ATTACK_TAG_CATALOG = {
           "relatedSkillIds": [
             "7bc369d4036dd098"
           ]
+        },
+        "物理伤害增加": {
+          "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+          "relation": "inherited-effect",
+          "target": "self",
+          "calculationNote": "与对应的信仰／神秘之力配套生效；同名效果只计一项，不能把提供者与接受者重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": [
+            "8c11c64768072670"
+          ]
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "同系列其他神秘之力对应的非攻击力效果"
+        "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+        "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+        "从神秘之力【轮光】获得光属性伤害+10%"
       ],
       "remainingConditions": [
         "效果来自自身以外的神类型友方",
