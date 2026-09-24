@@ -11,6 +11,7 @@ export function normalizeRuntimeBuff(buff,stat) {
  if(buff.flatValue!=null&&!Number.isFinite(buff.flatValue))return null;
  const known=RUNTIME_FAMILIES[buff.family];
  const runtime=buff.runtime||(known?.value===buff.value&&known.stat===stat?known:null);
+ if(runtime?.kind==='conditional-passive'&&(runtime.stackPolicy!=='add'||runtime.lifetime!=='condition'||runtime.resolution!=null))return null;
  if(!runtime||runtime.layer!=='runtime-stat'||!['exclusive','add'].includes(runtime.stackPolicy)||typeof runtime.stackGroup!=='string'||!runtime.stackGroup||!runtime.evidence||!Number.isFinite(buff.value))return null;
  return {...buff,stat,runtime};
 }

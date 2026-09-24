@@ -1,7 +1,7 @@
 import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-fullpage';
-import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-buff-conditions';
+import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-trigger-conditions';
 /** Reusable, description-matched rule templates. No imported content is executable. */
-import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260924-buff-conditions';
+import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260924-trigger-conditions';
 
 export const LEARNING_STORAGE_KEY = 'lc-effect-rules:learned:v1';
 
@@ -77,8 +77,10 @@ function validateRule(rule, path, errors, sourceText) {
         const r=effect.runtime;
         if(!record(r))errors.push(`${p}：Buff定义无效`);
         else {
-          unknownKeys(r,['layer','stackGroup','stackPolicy','resolution','evidence','lifetime'],p+'.runtime',errors);
-          if(hasOwn(r,'lifetime')&&!['permanent','opening-40s','triggered-40s'].includes(r.lifetime))errors.push(`${p}：Buff持续方式无效`);
+          unknownKeys(r,['layer','stackGroup','stackPolicy','resolution','evidence','lifetime','kind'],p+'.runtime',errors);
+          if(hasOwn(r,'lifetime')&&!['permanent','opening-40s','triggered-40s','condition'].includes(r.lifetime))errors.push(`${p}：Buff持续方式无效`);
+          if(hasOwn(r,'kind')&&!['buff','conditional-passive'].includes(r.kind))errors.push(`${p}：实时属性类型无效`);
+          if(r.kind==='conditional-passive'&&(r.stackPolicy!=='add'||r.lifetime!=='condition'||hasOwn(r,'resolution')))errors.push(`${p}：条件属性不能按互斥Buff处理`);
           if(r.layer!=='runtime-stat'||!['exclusive','add'].includes(r.stackPolicy)||!shortString(r.stackGroup,128)||!r.stackGroup||!shortString(r.evidence,512)||!r.evidence||hasOwn(r,'resolution')&&r.resolution!=='highest')errors.push(`${p}：Buff分组无效`);
         }
       }

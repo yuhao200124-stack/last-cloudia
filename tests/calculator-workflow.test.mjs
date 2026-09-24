@@ -282,9 +282,12 @@ test('near-death and opening/awaken controls retain separate states across saved
  toggle('awakeningBuffActive',true);toggle('fullHp',true);
  assert.equal(w.selection().lowHp,false);assert.equal(ui.get('lowHp').checked,false);assert.equal(w.selection().awakeningBuffActive,true);
  toggle('openingBuffActive',true);
+ for(const id of ['ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','realSunday','ultimateGaugeFull'])toggle(id,true);
+ assert.equal(w.selection().ultimateGaugeFull,true,'a past special-use buff does not imply the gauge is currently empty');
  const saved=w.exportSession(),nextUI=controls();
  const next=initEntryWorkflow({characterId:'generic',onConfirm(){},onInvalidate(){},onSelection(){}});
  assert(next.restoreSession(saved));
  assert.equal(nextUI.get('fullHp').checked,true);assert.equal(nextUI.get('lowHp').checked,false);
  assert.equal(nextUI.get('openingBuffActive').checked,true);assert.equal(nextUI.get('awakeningBuffActive').checked,true);
+ for(const id of ['ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','realSunday','ultimateGaugeFull'])assert.equal(nextUI.get(id).checked,true);
 });

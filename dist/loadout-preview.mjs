@@ -1,11 +1,11 @@
-import {buildCatalog} from './effect-rule-learning.mjs?v=20260924-buff-conditions';
-import {retargetReport} from './entry-preparation.mjs?v=20260924-buff-conditions';
-import {buildDamageImport} from './damage-import.mjs?v=20260924-buff-conditions';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-buff-conditions';
-import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-buff-conditions';
-import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-buff-conditions';
-import {magicBuffCap} from './magic-buffs.mjs?v=20260924-buff-conditions';
-import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-buff-conditions';
+import {buildCatalog} from './effect-rule-learning.mjs?v=20260924-trigger-conditions';
+import {retargetReport} from './entry-preparation.mjs?v=20260924-trigger-conditions';
+import {buildDamageImport} from './damage-import.mjs?v=20260924-trigger-conditions';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-trigger-conditions';
+import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-trigger-conditions';
+import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-trigger-conditions';
+import {magicBuffCap} from './magic-buffs.mjs?v=20260924-trigger-conditions';
+import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-trigger-conditions';
 
 const eq=(field,value)=>({field,op:'eq',value});
 const elements={火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark',无:'none'};

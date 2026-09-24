@@ -1,16 +1,17 @@
-import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-buff-conditions';
+import {STAT_CONDITION_FIELDS,STAT_CONDITION_ACTIVE,pickStatConditions} from './stat-condition-fields.mjs?v=20260924-trigger-conditions';
+import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-trigger-conditions';
 import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-fullpage';
-import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260924-buff-conditions';
+import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260924-trigger-conditions';
 import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullpage';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-buff-conditions';
-import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260924-buff-conditions';
-import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs?v=20260924-buff-conditions';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-buff-conditions';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-trigger-conditions';
+import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260924-trigger-conditions';
+import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs?v=20260924-trigger-conditions';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-trigger-conditions';
 import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-fullpage';
-import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-buff-conditions';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-buff-conditions';
-import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260924-buff-conditions';
-import {MODE_LABELS} from './combat-modes.mjs?v=20260924-buff-conditions';
+import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-trigger-conditions';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-trigger-conditions';
+import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260924-trigger-conditions';
+import {MODE_LABELS} from './combat-modes.mjs?v=20260924-trigger-conditions';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -80,7 +81,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   const computed=calculateWebsitePanel(base,{...source,excludedEquipmentStats:currentPanelReport().excludedEquipmentStats},equipment);
   // Potential condition states explain a past reader snapshot; current
   // selection is applied separately, never treating not-full as near-death.
-  const fields=['fullHp','lowHp','openingBuffActive','awakeningBuffActive','magicAwakeningBuffActive'];
+  const fields=['fullHp','lowHp',...STAT_CONDITION_FIELDS];
   const potentials=fields.map(field=>{
    const selected={...state.selection,[field]:true};
    if(field==='fullHp')selected.lowHp=false;if(field==='lowHp')selected.fullHp=false;
@@ -128,7 +129,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   compared=compareCandidates(websiteCandidates(candidate),readerBonuses,state.mappings,candidate.context);
   // The mode switches activate configured skills. Approve their known scopes
   // together with a group selection, so toggling a mode can add its sources.
-  const modeReports=[false,true].map(lowHp=>retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},{...state.selection,criticalEnabled:true,specialAttack:true,fullHp:!lowHp,lowHp,openingBuffActive:true,awakeningBuffActive:true,magicAwakeningBuffActive:true,break:true}));
+  const modeReports=[false,true].map(lowHp=>retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},{...state.selection,criticalEnabled:true,specialAttack:true,fullHp:!lowHp,lowHp,...STAT_CONDITION_ACTIVE,break:true}));
   const modePairs=modeReports.map(r=>{const bonuses=selectReaderCriticalBonuses(evaluateReaderBonuses(unit?.bonuses||[],r.context),r);return {bonuses,compared:compareCandidates(websiteCandidates(r),bonuses,state.mappings,r.context)};});
   const modesBonuses=[...new Map(modePairs.flatMap(p=>p.bonuses).map(b=>[b.id,b])).values()];
   const modesCompared=[...new Map(modePairs.flatMap(p=>p.compared).map(r=>[r.id,r])).values()];
@@ -273,9 +274,9 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function initialize() {
   initialized=true;
-  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,openingBuffActive:false,awakeningBuffActive:false,magicAwakeningBuffActive:false,specialAttack:report.context.killer===true,break:report.context.break===true,...state.selection};
+  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),specialAttack:report.context.killer===true,break:report.context.break===true,...state.selection};
   if(state.selection.fullHp&&state.selection.lowHp){state.selection.fullHp=false;state.selection.lowHp=false;}
-  for(const id of ['dualWield','specialAttack','break','fullHp','lowHp','openingBuffActive','awakeningBuffActive','magicAwakeningBuffActive','criticalEnabled'])$(id).checked=state.selection[id]===true;
+  for(const id of ['dualWield','specialAttack','break','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id]===true;
   $('characterPanel').hidden=false;$('entryPreparation').hidden=false;$('entryReview').hidden=false;$('attackChoice').closest('label').hidden=false;$('statReference').closest('label').hidden=false;
   $('skillType').closest('label').hidden=true;
   $('attackChoice').innerHTML=ATTACK_CHOICES.map(([v,l])=>option(v,l,state.selection.attack)).join('');
@@ -314,7 +315,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  $('entryUnit').addEventListener('change',e=>{rememberReaderDraft();unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;restoreReaderDraft();invalidate('读取资料已暂填；数值差异由你决定。');setParameters();onRead({battle,unit:selectedUnit()});updateCandidate();});
  $('entrySupplementReview').addEventListener('change',e=>{const b=supplements[Number(e.target.dataset.readerSupplement)];if(!b||adoptedGroupReaderIds(bonusGroups).has(b.id))return;supplementChoices[supplementKey(b)]=e.target.value;invalidate('读取器补充加成已更新。');save();renderReview();});
  for(const id of ['dualWield'])$(id).addEventListener('change',()=>{state.selection[id]=$(id).checked;save();renderReview();onSelection(selection());});
- for(const id of ['specialAttack','break','fullHp','lowHp','openingBuffActive','awakeningBuffActive','magicAwakeningBuffActive','criticalEnabled'])$(id).addEventListener('change',()=>{
+ for(const id of ['specialAttack','break','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).addEventListener('change',()=>{
   state.selection[id]=$(id).checked;
   if(['fullHp','lowHp'].includes(id)&&state.selection[id]){const other=id==='fullHp'?'lowHp':'fullHp';state.selection[other]=false;$(other).checked=false;}
   invalidate('战斗选项已改变，按本次条件重新核对加成。');updateCandidate();
@@ -455,6 +456,6 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  return {receive,selection,panelsPreview,planningBase,exportSession,restoreSession,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
   state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};groupReaderChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
-  if(initialized){state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,openingBuffActive:false,awakeningBuffActive:false,magicAwakeningBuffActive:false,specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break','fullHp','lowHp','openingBuffActive','awakeningBuffActive','magicAwakeningBuffActive','criticalEnabled'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
+  if(initialized){state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
  }};
 }

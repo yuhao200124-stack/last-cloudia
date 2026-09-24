@@ -1348,36 +1348,44 @@
         {
           "part": 1,
           "text": "受到伤害时，有概率提升攻击力。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "damageTakenBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "kind": "buff",
+                "lifetime": "triggered-40s",
+                "evidence": "Goldmine effectCodes Apply Buff IDs + buff categories; user condition classification 2026-09-24",
+                "resolution": "highest"
+              },
+              "detail": "受到伤害时的40秒Buff"
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "受伤Buff：攻击力+20%，持续40秒；勾选“受到伤害时”计入当前有效状态，与鼓舞类同组只计一项。",
           "id": "basic:b480695aa2840e5c:1"
-        },
-        {
-          "id": "basic:b480695aa2840e5c:other",
-          "part": "other",
-          "text": "受到伤害时，有概率提升攻击力。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
-      "summary": "攻击力+20%"
+      "note": "受伤Buff：攻击力+20%，持续40秒；勾选“受到伤害时”计入当前有效状态，与鼓舞类同组只计一项。",
+      "remaining": false,
+      "status": "ready",
+      "summary": "攻击力+20%",
+      "classification": "buff",
+      "trigger": "受到伤害时"
     },
     {
       "id": "6c8bc1de0d7802c2",
@@ -1609,36 +1617,43 @@
         {
           "part": 1,
           "text": "必杀槽满时，攻击力+30%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "ultimateGaugeFull",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 30,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "condition-passive:7305afeb3e366f19:攻击力",
+                "stackPolicy": "add",
+                "kind": "conditional-passive",
+                "lifetime": "condition",
+                "evidence": "Goldmine effectCodes Update stat isBase=false, no Apply Buff; user condition classification 2026-09-24"
+              },
+              "detail": "条件属性加成，非Buff"
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "条件属性加成（非Buff）：必杀槽满时攻击力+30%；槽不满即失效，可与鼓舞等属性Buff并存。与“使用必杀后Buff”分别判断。",
           "id": "basic:7305afeb3e366f19:1"
-        },
-        {
-          "id": "basic:7305afeb3e366f19:other",
-          "part": "other",
-          "text": "必杀槽满时，攻击力+30%。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
-      "summary": "攻击力+30%"
+      "note": "条件属性加成（非Buff）：必杀槽满时攻击力+30%；槽不满即失效，可与鼓舞等属性Buff并存。与“使用必杀后Buff”分别判断。",
+      "remaining": false,
+      "status": "ready",
+      "summary": "攻击力+30%",
+      "classification": "conditional-passive",
+      "trigger": "必杀槽满"
     },
     {
       "id": "90951140c1d42641",
@@ -1655,54 +1670,88 @@
         {
           "part": 1,
           "text": "周日（现实时间）攻击力、防御力、魔力、魔抗+5%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "realSunday",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 5,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "condition-passive:90951140c1d42641:攻击力",
+                "stackPolicy": "add",
+                "kind": "conditional-passive",
+                "lifetime": "condition",
+                "evidence": "Goldmine effectCodes Update stat isBase=false, no Apply Buff; user condition classification 2026-09-24"
+              },
+              "detail": "条件属性加成，非Buff"
             },
             {
               "type": "statBuff",
               "target": "法强",
               "value": 5,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "condition-passive:90951140c1d42641:法强",
+                "stackPolicy": "add",
+                "kind": "conditional-passive",
+                "lifetime": "condition",
+                "evidence": "Goldmine effectCodes Update stat isBase=false, no Apply Buff; user condition classification 2026-09-24"
+              },
+              "detail": "条件属性加成，非Buff"
             },
             {
               "type": "statBuff",
               "target": "防御力",
               "value": 5,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "condition-passive:90951140c1d42641:防御力",
+                "stackPolicy": "add",
+                "kind": "conditional-passive",
+                "lifetime": "condition",
+                "evidence": "Goldmine effectCodes Update stat isBase=false, no Apply Buff; user condition classification 2026-09-24"
+              },
+              "detail": "条件属性加成，非Buff"
             },
             {
               "type": "statBuff",
               "target": "魔抗",
               "value": 5,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "condition-passive:90951140c1d42641:魔抗",
+                "stackPolicy": "add",
+                "kind": "conditional-passive",
+                "lifetime": "condition",
+                "evidence": "Goldmine effectCodes Update stat isBase=false, no Apply Buff; user condition classification 2026-09-24"
+              },
+              "detail": "条件属性加成，非Buff"
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "条件属性加成（非Buff）：现实周日攻击力、法强、防御力、魔抗+5%；按游戏设备时间手动勾选，可与属性Buff并存，不套40秒时限。",
           "id": "basic:90951140c1d42641:1"
-        },
-        {
-          "id": "basic:90951140c1d42641:other",
-          "part": "other",
-          "text": "周日（现实时间）攻击力、防御力、魔力、魔抗+5%。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
-      "summary": "攻击力+5%；法强+5%；防御力+5%；魔抗+5%"
+      "note": "条件属性加成（非Buff）：现实周日攻击力、法强、防御力、魔抗+5%；按游戏设备时间手动勾选，可与属性Buff并存，不套40秒时限。",
+      "remaining": false,
+      "status": "ready",
+      "summary": "攻击力+5%；法强+5%；防御力+5%；魔抗+5%",
+      "classification": "conditional-passive",
+      "trigger": "现实时间为周日"
     },
     {
       "id": "全部技能:all:235",
@@ -2056,42 +2105,76 @@
         {
           "part": 1,
           "text": "复活时，攻击力和魔力+30%，暴击率+15%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "reviveBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 30,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "kind": "buff",
+                "lifetime": "triggered-40s",
+                "evidence": "Goldmine effectCodes Apply Buff IDs + buff categories; user condition classification 2026-09-24",
+                "resolution": "highest"
+              },
+              "detail": "复活后的40秒Buff"
             },
             {
               "type": "statBuff",
               "target": "法强",
               "value": 30,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "int-magic-buff",
+                "stackPolicy": "exclusive",
+                "kind": "buff",
+                "lifetime": "triggered-40s",
+                "evidence": "Goldmine effectCodes Apply Buff IDs + buff categories; user condition classification 2026-09-24",
+                "resolution": "highest"
+              },
+              "detail": "复活后的40秒Buff"
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "复活Buff：攻击力、法强+30%，持续40秒；分别与鼓舞、增魔同组只计一项。",
           "id": "basic:ee6342cbdb0251e7:1"
         },
         {
           "id": "basic:ee6342cbdb0251e7:other",
           "part": "other",
           "text": "复活时，攻击力和魔力+30%，暴击率+15%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "reviveBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [],
           "review": "pending",
           "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
+          "note": "复活后暴击率+15%，持续40秒；暴击Buff分组尚未接入，本轮只计基础属性。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "note": "复活Buff：攻击力、法强+30%，持续40秒；分别与鼓舞、增魔同组只计一项。",
       "remaining": true,
-      "status": "pending",
-      "summary": "攻击力+30%；法强+30%"
+      "status": "ready",
+      "summary": "攻击力+30%；法强+30%",
+      "classification": "buff",
+      "trigger": "复活后"
     },
     {
       "id": "c9e5df1dd31f35cf",
@@ -4105,48 +4188,92 @@
         {
           "part": 1,
           "text": "发动必杀时，自身获得「堡垒」「梅蒂斯」「活力」「加速」效果。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "ultimateUsedBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "防御力",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "def-magic-buff",
+                "stackPolicy": "exclusive",
+                "kind": "buff",
+                "lifetime": "triggered-40s",
+                "evidence": "Goldmine effectCodes Apply Buff IDs + buff categories; user condition classification 2026-09-24",
+                "resolution": "highest"
+              },
+              "detail": "使用必杀后的40秒Buff"
             },
             {
               "type": "statBuff",
               "target": "魔抗",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "mnd-magic-buff",
+                "stackPolicy": "exclusive",
+                "kind": "buff",
+                "lifetime": "triggered-40s",
+                "evidence": "Goldmine effectCodes Apply Buff IDs + buff categories; user condition classification 2026-09-24",
+                "resolution": "highest"
+              },
+              "detail": "使用必杀后的40秒Buff"
             },
             {
               "type": "statBuff",
               "target": "HP",
               "value": 1000,
-              "unit": ""
+              "unit": "",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "hp-vitality-buff",
+                "stackPolicy": "exclusive",
+                "kind": "buff",
+                "lifetime": "triggered-40s",
+                "evidence": "Goldmine effectCodes Apply Buff IDs + buff categories; user condition classification 2026-09-24",
+                "resolution": "highest"
+              },
+              "detail": "使用必杀后的40秒Buff"
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "使用必杀后Buff：防御力+20%、魔抗+20%、HP上限+1,000，持续40秒；分别与堡垒、梅蒂斯、活力同组只计一项。",
           "id": "basic:1c1fef3cdbb3164c:1"
         },
         {
           "id": "basic:1c1fef3cdbb3164c:other",
           "part": "other",
           "text": "发动必杀时，自身获得「堡垒」「梅蒂斯」「活力」「加速」效果。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "ultimateUsedBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [],
           "review": "pending",
           "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
+          "note": "加速：SCT恢复速度+25%，持续40秒；SCT分类尚未接入，不计入单次伤害增幅。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "note": "使用必杀后Buff：防御力+20%、魔抗+20%、HP上限+1,000，持续40秒；分别与堡垒、梅蒂斯、活力同组只计一项。",
       "remaining": true,
-      "status": "pending",
-      "summary": "防御力+20%；魔抗+20%；HP+1000"
+      "status": "ready",
+      "summary": "防御力+20%；魔抗+20%；HP+1000",
+      "classification": "buff",
+      "trigger": "使用必杀后"
     },
     {
       "id": "ef761252451c1b55",

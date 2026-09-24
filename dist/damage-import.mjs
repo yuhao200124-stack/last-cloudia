@@ -1,6 +1,6 @@
 import {characterHitStage,characterSourceAllowed} from './character-combat-rules.mjs?v=20260924-fullpage';
-import {criticalDamageEffect} from './critical-options.mjs?v=20260924-buff-conditions';
-import {blockedCombatModes} from './combat-modes.mjs?v=20260924-buff-conditions';
+import {criticalDamageEffect} from './critical-options.mjs?v=20260924-trigger-conditions';
+import {blockedCombatModes} from './combat-modes.mjs?v=20260924-trigger-conditions';
 // Transfer qualified effects, never reinterpret a stat bonus as a skill multiplier.
 export const reportStorageKey = id => `lc-damage-report:${id}:v1`;
 const elements = { none:'无', fire:'火', ice:'冰', earth:'树', thunder:'雷', light:'光', dark:'暗' };

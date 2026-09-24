@@ -143,9 +143,58 @@ test('same-group observations remain interpretable; selected permanent buff surv
 
 test('known runtime metadata survives learned-rule save and validation',async()=>{
  const {makeTemplate,validateTemplates,sourceKey}=await import('../dist/effect-rule-learning.mjs');
- for(const name of ['快速鼓舞','自动鼓舞','觉醒']){
+ for(const name of ['快速鼓舞','自动鼓舞','觉醒','玛娜的节日','强力反击','黄泉之理','万圣节派对','复仇鼓舞']){
   const source=item(name),rules=basicStatRules(source),t=makeTemplate(source,rules);
   const result=validateTemplates({schemaVersion:1,templates:{[sourceKey(source)]:t}});
-  assert.deepEqual(result.errors,[]);assert.equal(t.rules[0].effects[0].runtime.stackPolicy,'exclusive');
+  assert.deepEqual(result.errors,[]);assert.equal(t.rules[0].effects[0].runtime.stackPolicy,['玛娜的节日','强力反击'].includes(name)?'add':'exclusive');
  }
+});
+
+test('Sunday and full special gauge are independent conditional attributes, not exclusive spell buffs',()=>{
+ const names=['玛娜的节日','强力反击','自动鼓舞'];
+ const run=flags=>prepareLoadoutPreview({baseReport,snapshot:snapshot(names),selection:{...selection,...flags},input:{...defaultInput(),attack:1000,defense:1000}});
+ assert.equal(run({}).input.attack,1200);
+ assert.equal(run({realSunday:true}).input.attack,1250);
+ assert.equal(run({ultimateGaugeFull:true}).input.attack,1500);
+ const both=run({realSunday:true,ultimateGaugeFull:true});
+ assert.equal(both.input.attackBase,1000);assert.equal(both.input.runtimeStatPercent,55);assert.equal(both.input.attack,1550);
+ assert.equal(both.panel.values.intelligence,1050);assert.equal(both.imported.effects.length,0);
+ const passive=both.panel.stats.attack.buffs.filter(b=>b.runtime.kind==='conditional-passive');
+ assert.equal(passive.length,2);assert(passive.every(b=>b.runtime.stackPolicy==='add'&&b.runtime.lifetime==='condition'));
+ const unknown=buildLoadoutReport({...baseReport,context:{...baseReport.context,realSunday:null}},snapshot(['玛娜的节日']),selection);
+ assert(unknown.rows.some(r=>r.status==='pending'));
+});
+
+test('damage, revival and special-use buffs share existing spell groups and expire independently',()=>{
+ const run=(names,flags={})=>calculateWebsitePanel(base,buildLoadoutReport(baseReport,snapshot(names),{...selection,...flags}));
+ assert.equal(run(['复仇鼓舞']).values.attack,1000);
+ assert.equal(run(['复仇鼓舞'],{damageTakenBuffActive:true}).values.attack,1200);
+ assert.equal(run(['自动鼓舞','复仇鼓舞'],{damageTakenBuffActive:true}).values.attack,1200);
+ const names=['自动鼓舞','复仇鼓舞','黄泉之理','玛娜的节日','强力反击'];
+ const flags={damageTakenBuffActive:true,reviveBuffActive:true,realSunday:true,ultimateGaugeFull:true};
+ assert.equal(run(names,flags).values.attack,1650);assert.equal(run(names,flags).values.intelligence,1350);
+ assert.equal(run(names,{...flags,reviveBuffActive:false}).values.attack,1550);
+ const party=['万圣节派对','自动堡垒','自动梅蒂斯','自动活力','体力提升极'];
+ const p=run(party,{ultimateUsedBuffActive:true});
+ assert.equal(p.values.defense,1200);assert.equal(p.values.mind,1200);assert.equal(p.values.hp,2200);
+ assert.equal(run(['万圣节派对'],{ultimateUsedBuffActive:true}).values.hp,2000);
+ assert.equal(run(['万圣节派对'],{ultimateUsedBuffActive:false}).values.hp,1000);
+ assert.equal(run([],{...flags,ultimateUsedBuffActive:true}).values.attack,1000);
+});
+
+test('new condition switches project a past observation without reviving expired buffs or discarded skills',async()=>{
+ const {projectAttackLayers}=await import('../dist/attack-layers.mjs');
+ const names=['复仇鼓舞','黄泉之理','玛娜的节日','强力反击'];
+ const flags={damageTakenBuffActive:true,reviveBuffActive:true,realSunday:true,ultimateGaugeFull:true};
+ const active=buildLoadoutReport(baseReport,snapshot(names),{...selection,...flags});
+ const stat=calculateWebsitePanel(base,active).stats.attack;
+ stat.runtimeCandidates=stat.buffs;
+ stat.runtimeConditions={damageTakenBuffActive:false,reviveBuffActive:false,realSunday:true,ultimateGaugeFull:false};
+ const projected=projectAttackLayers(stat,1650);
+ assert(projected.ok,projected.reason);assert.equal(projected.panel,1050);
+ const input={...defaultInput(),attack:1650,defense:1000};
+ const off=prepareLoadoutPreview({baseReport,snapshot:snapshot(names),selection,input,runtimeAnchor:stat.buffs});
+ assert.equal(off.input.attack,1000);
+ const removed=prepareLoadoutPreview({baseReport,snapshot:snapshot([]),selection:{...selection,...flags},input,runtimeAnchor:stat.buffs});
+ assert.equal(removed.input.attack,1000);
 });

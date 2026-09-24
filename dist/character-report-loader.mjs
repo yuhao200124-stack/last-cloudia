@@ -1,8 +1,8 @@
-import {DEFAULT_CONTEXT,evaluateCatalog} from './effect-rule-engine.mjs?v=20260924-buff-conditions';
-import {buildCatalog,LEARNING_STORAGE_KEY,sourceKey,makeTemplate} from './effect-rule-learning.mjs?v=20260924-buff-conditions';
-import {CATALOG} from './roxy-rules.mjs?v=20260924-buff-conditions';
+import {DEFAULT_CONTEXT,evaluateCatalog} from './effect-rule-engine.mjs?v=20260924-trigger-conditions';
+import {buildCatalog,LEARNING_STORAGE_KEY,sourceKey,makeTemplate} from './effect-rule-learning.mjs?v=20260924-trigger-conditions';
+import {CATALOG} from './roxy-rules.mjs?v=20260924-trigger-conditions';
 import {ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-fullpage';
-import {readCharacterProfile} from './entry-preparation.mjs?v=20260924-buff-conditions';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260924-trigger-conditions';
 export function characterReportFromDocument(doc,saved={},templates={}){
  const profile=readCharacterProfile(doc),id=profile.characterId,sources=[];
  const add=(name,text,group)=>{const seed=id==='260'&&CATALOG.find(s=>s.group===group&&s.name===name);sources.push({id:seed?.id||`${id}-${group}-${sources.length+1}`,name,text,group});};

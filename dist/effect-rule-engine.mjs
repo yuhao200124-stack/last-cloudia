@@ -1,3 +1,4 @@
+import {STAT_CONDITIONS,STAT_CONDITION_FIELDS,STAT_CONDITION_DEFAULTS} from './stat-condition-fields.mjs?v=20260924-trigger-conditions';
 import {upgradeStatRule, STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullpage';
 /* Declarative effect conditions. This module does not compute final damage. */
 const options = (entries) => entries.map(([value, label]) => ({ value, label }));
@@ -11,7 +12,7 @@ export const DEFAULT_CONTEXT = {
   attack: 'magic', damageType: 'magical', element: 'ice', weaponCount: null,
   staff: false, robe: false, iceStaff: false, magicFamily: 'normal', boss: true,
   fullHp: false, critical: false, weakness: false, resonance: false, chainStacks: 0,
-  openingBuffActive:false,awakeningBuffActive:false,magicAwakeningBuffActive:false,
+  ...STAT_CONDITION_DEFAULTS,
   alive: true, killerBuff: true, bossWaveBuff: true, penetration: null,
   lowHp: null, firstLowHp: null, mpEnough: null, killer: false, killerOverride:null, break:false, equipmentIds: [],
   sword: false, axe: false, spear: false, hammer: false, bow: false, machine: false, claw: false,
@@ -43,9 +44,7 @@ export const CONDITION_FIELDS = {
   bossWaveBuff: { label: '指导者 Boss Wave 增益存在', options: yesNo },
   penetration: { label: '贯导本次触发', options: yesNo }, killer: { label: '本次触发特攻', options: yesNo },
   lowHp: { label: '自身濒死', options: yesNo }, firstLowHp: { label: '首次进入濒死', options: yesNo },
-  openingBuffActive:{label:'开场Buff仍有效（40秒内）',options:yesNo},
-  awakeningBuffActive:{label:'觉醒Buff仍有效（触发后40秒）',options:yesNo},
-  magicAwakeningBuffActive:{label:'魔导觉醒Buff仍有效（触发后40秒）',options:yesNo},
+  ...Object.fromEntries(Object.entries(STAT_CONDITIONS).map(([field,{label}])=>[field,{label,options:yesNo}])),
   mpEnough: { label: '至少持有30魔力值', options: yesNo },
 };
 
@@ -67,7 +66,7 @@ export function normalizeContext(input = {}) {
   if(ctx.fullHp===true&&ctx.lowHp===true){ctx.fullHp=null;ctx.lowHp=null;}
   else if(ctx.fullHp===true)ctx.lowHp=false;
   else if(ctx.lowHp===true)ctx.fullHp=false;
-  for(const field of ['openingBuffActive','awakeningBuffActive','magicAwakeningBuffActive'])if(typeof ctx[field]!=='boolean')ctx[field]=null;
+  for(const field of STAT_CONDITION_FIELDS)if(typeof ctx[field]!=='boolean')ctx[field]=null;
   if (ctx.iceStaff === true) ctx.staff = true;
   if (ctx.weaponCount === 0) { ctx.staff = false; ctx.iceStaff = false; }
   for (const key of ['sword', 'axe', 'spear', 'hammer', 'bow', 'machine', 'claw']) {

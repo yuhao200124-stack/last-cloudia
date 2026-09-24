@@ -1,6 +1,6 @@
-import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260924-buff-conditions';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260924-buff-conditions';
-import {requiresCritical} from './critical-options.mjs?v=20260924-buff-conditions';
+import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260924-trigger-conditions';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260924-trigger-conditions';
+import {requiresCritical} from './critical-options.mjs?v=20260924-trigger-conditions';
 
 // A supplement is a reader source, never a fabricated website/account value.
 // Only fully decoded, scoped outgoing percentages are supported here.

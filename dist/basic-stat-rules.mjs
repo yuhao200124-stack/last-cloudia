@@ -1,4 +1,4 @@
-import {BASIC_STAT_CATALOG,BASIC_STAT_ALIASES} from './basic-stat-catalog.mjs?v=20260924-buff-conditions';
+import {BASIC_STAT_CATALOG,BASIC_STAT_ALIASES} from './basic-stat-catalog.mjs?v=20260924-trigger-conditions';
 const clean=t=>String(t||'').replace(/＋/g,'+').replace(/％/g,'%').replace(/\s+/g,' ').trim();
 export function basicStatIdentity(source){
  const id=source?.catalogId||String(source?.id||'').replace(/^loadout:/,'');

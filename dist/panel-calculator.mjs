@@ -1,5 +1,6 @@
-import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-buff-conditions';
-import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-buff-conditions';
+import {statActivationCondition} from './stat-condition-fields.mjs?v=20260924-trigger-conditions';
+import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-trigger-conditions';
+import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-trigger-conditions';
 import {upgradeStatRule, verifiedRuntimeFamily,verifiedHpRuntime} from './stat-mechanics.mjs?v=20260924-fullpage';
 // Character-panel arithmetic only. Damage/cap/defense-reference effects never enter it.
 export const PANEL_LABELS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
@@ -45,10 +46,10 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
   const keys=targetKeys(e.target);
   for(const key of keys)out[key].sources.push(source);
   if(n(e.value)&&e.unit==='%') {
-   for(const key of keys)if(e.type==='stat')out[key].percent+=e.value;else out[key].buffs.push({id:`${row.sourceId}:${row.rule.id}:${index}`,value:e.value,source:row.sourceName,family:verifiedRuntimeFamily(row.rule,e),...verifiedHpRuntime(row.rule,e),...(e.runtime?{runtime:e.runtime}:{}),activationCondition:row.rule.conditions?.find(c=>['openingBuffActive','awakeningBuffActive','magicAwakeningBuffActive'].includes(c.field))||(e.runtime?.lifetime==='permanent'?{field:'permanentBuffActive',op:'eq',value:true}:undefined)});
+   for(const key of keys)if(e.type==='stat')out[key].percent+=e.value;else out[key].buffs.push({id:`${row.sourceId}:${row.rule.id}:${index}`,value:e.value,source:row.sourceName,family:verifiedRuntimeFamily(row.rule,e),...verifiedHpRuntime(row.rule,e),...(e.runtime?{runtime:e.runtime}:{}),activationCondition:statActivationCondition(row.rule)||(e.runtime?.lifetime==='permanent'?{field:'permanentBuffActive',op:'eq',value:true}:undefined)});
    if(!keys.length)issue(Object.keys(out),`${row.sourceName}：属性目标尚未解析`);
   } else if(e.type==='statBuff'&&n(e.value)&&e.unit===''&&e.runtime) {
-   for(const key of keys)out[key].buffs.push({id:`${row.sourceId}:${row.rule.id}:${index}`,value:0,flatValue:e.value,source:row.sourceName,runtime:e.runtime,activationCondition:row.rule.conditions?.find(c=>c.field==='openingBuffActive')||(e.runtime?.lifetime==='permanent'?{field:'permanentBuffActive',op:'eq',value:true}:undefined)});
+   for(const key of keys)out[key].buffs.push({id:`${row.sourceId}:${row.rule.id}:${index}`,value:0,flatValue:e.value,source:row.sourceName,runtime:e.runtime,activationCondition:statActivationCondition(row.rule)||(e.runtime?.lifetime==='permanent'?{field:'permanentBuffActive',op:'eq',value:true}:undefined)});
   } else if(e.type==='stat'&&n(e.value)&&e.unit==='') {
    for(const key of keys)out[key].flat+=e.value;
    if(!keys.length)issue(Object.keys(out),`${row.sourceName}：固定属性目标尚未解析`);

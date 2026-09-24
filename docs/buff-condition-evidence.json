@@ -772,6 +772,370 @@
           }
         ]
       }
+    },
+    {
+      "id": "130000013500",
+      "name": "Revenge Brave",
+      "effect": {
+        "origEffect": {
+          "description": "Chance to increase STR upon taking\ndamage.",
+          "note": "5% chance.\n+20% STR for 40.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "When receiving Damage,  {~}5%{~} chance to apply {BUFF:30000:40}{~}+{STR:20%}{~} STR{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update STR"
+            ],
+            "conditions": [
+              "When Receiving Damage"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "5%",
+            "extraParams": {
+              "buffId": "30000",
+              "buffDuration": "40"
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000050800",
+      "name": "Power Counter",
+      "effect": {
+        "origEffect": {
+          "description": "When Special gauge is full, STR +30%.",
+          "note": "",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "While Special Charge is at 100%, {~}+{STR:30%}{~} STR.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Update STR"
+            ],
+            "conditions": [
+              "While Special Charge 100%"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "30%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "isBase": false,
+              "stats": [
+                "STR"
+              ]
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000051100",
+      "name": "Holiday of Mana",
+      "effect": {
+        "origEffect": {
+          "description": "STR, DEF, INT, and MND +5%\nwhen it is Sunday in the real world.",
+          "note": "",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "While it is Sunday--Day in the Real World,  activate the following to self:{:}{#}{~}+{STR:5%}{~} STR.{##}{#}{~}+{DEF:5%}{~} DEF.{##}{#}{~}+{INT:5%}{~} INT.{##}{#}{~}+{MND:5%}{~} MND.{##}{::}",
+          "note": "{=}Lake:{=} This uses your device's local time.{!}In other words, although I don't suggest it, it is possible to always have this effect active by changing the device time.",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Update STR"
+            ],
+            "conditions": [
+              "Is Sunday"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "5%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "isBase": false,
+              "stats": [
+                "STR"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Update DEF"
+            ],
+            "conditions": [
+              "Is Sunday"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "5%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "isBase": false,
+              "stats": [
+                "DEF"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Update INT"
+            ],
+            "conditions": [
+              "Is Sunday"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "5%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "isBase": false,
+              "stats": [
+                "INT"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Update MND"
+            ],
+            "conditions": [
+              "Is Sunday"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "5%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "isBase": false,
+              "stats": [
+                "MND"
+              ]
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000026701",
+      "name": "Halloween Party",
+      "effect": {
+        "origEffect": {
+          "description": "When Special activates, apply Fort, Metis, Vitality, and Haste to unit.",
+          "note": "Fort: +20% DEF for 40s.\nMetis: +20% MND for 40s.\nVitality: +1000 HP for 40s.\nHaste: +25% Skill Charging Speed for 40s.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "When using the Special,  apply the following buffs to self:{:}{#}{BUFF:30500:40}{~}+1000{~} HP{<}{##}{#}{BUFF:30100:40}{~}+{DEF:20%}{~} DEF{<}{##}{#}{BUFF:30300:40}{~}+{MND:20%}{~} MND{<}{##}{#}{BUFF:21000:40}{~}+25%{~} Skill Charging Speed{<}{##}{::}",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update HP"
+            ],
+            "conditions": [
+              "Using Special"
+            ],
+            "values": {
+              "flat": "1000",
+              "modifier": ""
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30500",
+              "buffDuration": "40",
+              "waveInfo": null,
+              "stats": [
+                "HP"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update DEF"
+            ],
+            "conditions": [
+              "Using Special"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30100",
+              "buffDuration": "40",
+              "waveInfo": null,
+              "stats": [
+                "DEF"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update MND"
+            ],
+            "conditions": [
+              "Using Special"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30300",
+              "buffDuration": "40",
+              "waveInfo": null,
+              "stats": [
+                "MND"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Update Skill Charging Speed",
+              "Apply Buff"
+            ],
+            "conditions": [
+              "Using Special"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "25%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "21000",
+              "buffDuration": "40",
+              "waveInfo": null
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000021200",
+      "name": "Netherworld Nature",
+      "effect": {
+        "origEffect": {
+          "description": "When revived, +30% STR and INT,\n+15% critical rate.",
+          "note": "Buff Durations: 40s.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "When revived,  apply the following buffs to self:{:}{#}{BUFF:30000:40}{~}+{STR:30%}{~} STR{<}{##}{#}{BUFF:30200:40}{~}+{INT:30%}{~} INT{<}{##}{#}{BUFF:30400:40}{~}+15%{~} Critical Hit Rate{<}{##}{::}",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update STR"
+            ],
+            "conditions": [
+              "When Revived"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "30%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30000",
+              "buffDuration": "40",
+              "waveInfo": null,
+              "stats": [
+                "STR"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update INT"
+            ],
+            "conditions": [
+              "When Revived"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "30%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30200",
+              "buffDuration": "40",
+              "waveInfo": null,
+              "stats": [
+                "INT"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Update Critical Hit Rate",
+              "Apply Buff"
+            ],
+            "conditions": [
+              "When Revived"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "15%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30400",
+              "buffDuration": "40",
+              "waveInfo": null
+            },
+            "isBoost": true
+          }
+        ]
+      }
     }
   ],
   "buffs": [
