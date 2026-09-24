@@ -123,7 +123,10 @@
   function installCharacterSources(id, sources) {
     const bindings = {};
     for (const source of sources) {
-      const matches = [...skillIndex.values()].filter(row => !row.unifiedCharacter && sourceNameKey(row.name) === sourceNameKey(source.name));
+      const candidates = [...skillIndex.values()].filter(row => !row.unifiedCharacter);
+      // Keep existing character/source IDs stable across translated-name corrections.
+      let matches = candidates.filter(row => sourceNameKey(row.bindingName || row.name) === sourceNameKey(source.name));
+      if (!matches.length) matches = candidates.filter(row => [row.name, ...(row.aliases || [])].some(name => sourceNameKey(name) === sourceNameKey(source.name)));
       const row = matches.length === 1 ? matches[0] : { id: `character:${id}:${source.sourceId}`, name: source.name, effect: source.text, sc: '0', sources: [], type: '角色技能', unifiedCharacter: id };
       skillIndex.set(String(row.id), row);
       (bindings[row.id] ||= []).push(source.sourceId);
@@ -195,6 +198,16 @@
   function rowValue(row, field) {
     const fallback = field === 'sources' ? (row.sources || []).join('\n') : row[field] ?? '';
     return String(readEdit(rowKey(row), field, fallback));
+  }
+
+  function effectNotes(row) {
+    // A custom description takes precedence over the standard supplementary text.
+    return rowValue(row, 'effect') === String(row.effect || '') ? String(row.notes || '') : '';
+  }
+
+  function effectContent(row) {
+    const notes = effectNotes(row);
+    return highlight(rowValue(row, 'effect')) + (notes ? `<div class="skill-effect-notes"><span>补充说明</span>${highlight(notes)}</div>` : '');
   }
 
   function editedSources(row) {
@@ -284,7 +297,7 @@
   }
 
   function rowText(row) {
-    return fold([row.type, rowValue(row, 'name'), rowValue(row, 'sc'), rowValue(row, 'effect'), ...editedSources(row)].join(' '));
+    return fold([row.type, rowValue(row, 'name'), ...(row.aliases || []), rowValue(row, 'sc'), rowValue(row, 'effect'), effectNotes(row), ...editedSources(row)].join(' '));
   }
 
   function matches(row) {
@@ -425,7 +438,7 @@
           <input class="calculator-skill-rating${rating ? '' : ' is-empty'}" type="text" value="${escapeHtml(rating)}" placeholder="+评分" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" data-edit-calculator-rating="${escapeHtml(item.id)}" aria-label="${escapeHtml(rowValue(item.row, 'name'))}的评分" title="直接输入评分，回车或离开输入框保存">
           <div class="calculator-skill-sc">${item.freeBy === 'character' ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
           <button type="button" data-remove-skill="${escapeHtml(item.id)}" aria-label="移除${escapeHtml(rowValue(item.row, 'name'))}" title="从计算器移除">×</button>
-          ${calculatorEffectsOpen || expandedSkillEffects.has(item.id) ? `<p class="calculator-skill-effect">${escapeHtml(rowValue(item.row, 'effect'))}</p>` : ''}
+          ${calculatorEffectsOpen || expandedSkillEffects.has(item.id) ? `<div class="calculator-skill-effect">${effectContent(item.row)}</div>` : ''}
         </div>`;
       }).join('')
       : '<div class="calculator-empty">点击技能右侧的“＋”添加技能</div>';
@@ -595,7 +608,7 @@
           ${index === 0 ? `<td class="type-cell editable-cell" rowspan="${group.rows.length}" data-edit-key="${escapeHtml(typeKey)}" data-edit-field="type" data-edit-value="${escapeHtml(typeValue)}" title="双击编辑">${cell(highlight(typeValue), 'cell-center')}</td>` : ''}
           ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
           ${editableTd(key, 'sc', sc, cell(escapeHtml(sc), 'cell-center'), 'sc-cell')}
-          ${editableTd(key, 'effect', effect, cell(highlight(effect)), '')}
+          ${editableTd(key, 'effect', effect, cell(effectContent(row)), '')}
           ${editableTd(key, 'sources', sources, cell(sourceList(row), 'cell-center'), '')}
           ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
           <td class="action-cell">${addButton(row)}</td>
@@ -622,7 +635,7 @@
       return `<tr>
         ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
         ${editableTd(key, 'sc', sc, cell(escapeHtml(sc), 'cell-center'), 'sc-cell')}
-        ${editableTd(key, 'effect', effect, cell(highlight(effect)), '')}
+        ${editableTd(key, 'effect', effect, cell(effectContent(row)), '')}
         ${editableTd(key, 'sources', sources, cell(sourceList(row), 'cell-center'), '')}
         ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
         <td class="action-cell">${addButton(row)}</td>

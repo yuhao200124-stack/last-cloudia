@@ -556,6 +556,8 @@ input.cell-editor { height: 40px; text-align: center; }
 .calculator-skill > [data-remove-skill] { width: 28px; height: 28px; padding: 0; border: 1px solid #bdc8d7; border-radius: 7px; background: #fff; color: #7b2e2e; cursor: pointer; }
 .calculator-skill > [data-remove-skill]:hover { background: #fff0f0; }
 .calculator-skill-effect { grid-column: 1 / -1; margin: 0; padding: 9px 10px; color: #536177; background: #f1f6fc; border-left: 3px solid #6f9bd2; font-size: .8rem; line-height: 1.55; }
+.skill-effect-notes { margin-top: 7px; padding-top: 7px; border-top: 1px solid #dce5ef; color: #425b73; font-size: .92em; line-height: 1.65; }
+.skill-effect-notes > span { display: inline-block; margin-right: 7px; color: #375c82; font-size: .88em; font-weight: 600; }
 
 .bonus-summary { padding: 7px 12px 11px; }
 .bonus-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 40px; padding: 7px 3px; border: 0; border-bottom: 1px solid #e2e8f1; background: transparent; font: inherit; text-align: left; cursor: pointer; }
