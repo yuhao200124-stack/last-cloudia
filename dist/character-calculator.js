@@ -257,6 +257,15 @@
       });
     });
   }
+  const installUnifiedSavedSkills = () => {
+    try {
+      const catalog = JSON.parse(localStorage.getItem('lc-sheet-table:unified-character-skills-v1') || '{}');
+      for (const [characterId, record] of Object.entries(catalog)) for (const source of record.sources || []) {
+        const id = `character:${characterId}:${source.sourceId}`;
+        savedBuildSkillIndex.set(id, {id, name: source.name, effect: source.text, sc: '0', sources: [], type: '角色技能'});
+      }
+    } catch {}
+  };
 
   const escapeSavedBuildHtml = (value = "") => String(value)
     .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
@@ -268,6 +277,7 @@
   };
   const formatSavedBuildSc = (value) => Number.isInteger(value) ? String(value) : String(Math.round(value * 100) / 100);
   const readAllSavedBuildPlans = () => {
+    installUnifiedSavedSkills();
     try {
       const plans = JSON.parse(localStorage.getItem(savedBuildStorageKey) || "[]");
       return Array.isArray(plans) ? plans.filter((plan) => plan && typeof plan.id === "string") : [];

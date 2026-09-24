@@ -1,5 +1,5 @@
 // Read only explicit report fields. Missing fields stay unknown, never inherit a preset.
-import {RACES} from './damage-engine.mjs?v=20260924-combat-modes';
+import {RACES} from './damage-engine.mjs?v=20260924-unified';
 const valid=v=>typeof v==='number'&&Number.isFinite(v);
 const panelKeys=['hp','mp','attack','defense','intelligence','mind'];
 export function readerPanelSnapshots(unit) {

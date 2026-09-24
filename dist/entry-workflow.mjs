@@ -1,16 +1,16 @@
-import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-combat-modes';
-import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-combat-modes';
-import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260924-combat-modes';
-import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-combat-modes';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-combat-modes';
+import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-unified';
+import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-unified';
+import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260924-unified';
+import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-unified';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-unified';
 import {formatEffect,describeCondition} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-combat-modes';
-import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-combat-modes';
-import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-combat-modes';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-combat-modes';
-import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260924-combat-modes';
-import {MODE_LABELS} from './combat-modes.mjs?v=20260924-combat-modes';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-unified';
+import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-unified';
+import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-unified';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-unified';
+import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260924-unified';
+import {MODE_LABELS} from './combat-modes.mjs?v=20260924-unified';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -414,7 +414,22 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(!unit||!Object.hasOwn(SIX_STATS,key)||!Number.isFinite(value)||value<0)return;
   state.statDecisions[key]={choice:'manual',value};save();invalidate('已保存手填战斗面板。');renderReview();
  }
- return {receive,selection,panelsPreview,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
+ function planningBase(){
+  if(!report)return null;
+  const explicit=state.decisions;
+  const rows=report.rows.map(r=>{
+   const effects=[],effectIndices=[];
+   r.rule.effects.forEach((effect,i)=>{
+    const index=r.effectIndices?.[i]??i,identity={id:`${r.sourceId}:${r.rule.id}:${index}`,effect,condition:r.rule.conditions};
+    const related=compared.find(w=>w.sourceId===r.sourceId&&w.ruleId===r.rule.id&&w.index===index);
+    if(state.removedEffects[effectSelectionKey(identity)]||related&&explicit[decisionKey(related)]?.choice==='exclude')return;
+    effects.push(effect);effectIndices.push(index);
+   });
+   return {...r,rule:{...r.rule,effects},effectIndices};
+  });
+  return {...report,profile:{...profile,baseStats:{...profile.baseStats,...state.base}},context:{...report.context,accountBlessings:state.accountBlessings},rows};
+ }
+ return {receive,selection,panelsPreview,planningBase,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
   state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};groupReaderChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
   if(initialized){state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break','fullHp','criticalEnabled'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();

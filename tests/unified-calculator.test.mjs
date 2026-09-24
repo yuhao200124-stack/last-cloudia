@@ -1,0 +1,113 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {prepareLoadoutPreview,loadoutSources,simpleLoadoutRules} from '../dist/loadout-preview.mjs';
+import {recommendDamage,damageGauge} from '../dist/damage-recommendations.mjs';
+import {defaultInput,calculate} from '../dist/damage-engine.mjs';
+import {CATALOG} from '../dist/roxy-rules.mjs';
+import {ACCOUNT_BLESSING_CATALOG} from '../dist/account-blessings.mjs';
+import {evaluateCatalog} from '../dist/effect-rule-engine.mjs';
+import {SUPPORT_BUFFS} from '../dist/runtime-buff-definitions.mjs';
+const context={accountBlessings:true,weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],chainStacks:1,fullHp:false};
+const baseReport={kind:'last-cloudia-effect-report',characterId:'260',profile:{baseStats:{hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619},equipment:[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}]},...evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG],context)};
+const sources=loadoutSources(baseReport),snapshot={characterId:'260',sourceIds:sources.map(s=>s.sourceId),items:sources.map(s=>({...s,id:s.sourceId,sourceIds:[s.sourceId]}))};
+const selection={attack:'magic',type:'magical',element:'冰',statReference:'int',criticalEnabled:false,specialAttack:true,fullHp:false,dualWield:true};
+const input={...defaultInput(),type:'magical',skillType:'magic',element:'冰',defense:8000,resistance:50,coefficient:.52,skillPercent:67,hits:35,hitMultiplier:2,hitDamageRatio:.6,hitScaleStage:'core',effects:[]};
+const preview=(options={})=>prepareLoadoutPreview({baseReport,snapshot,selection,input,...options});
+test('live loadout recomputes real stat layers without doubling blessings or selected original skills',()=>{
+ const p=preview();assert.equal(p.input.attackBase,6741);assert.equal(p.input.runtimeStatPercent,50);assert.equal(p.input.attack,10111);
+ assert.equal(calculate(p.input).context.attack,14627);
+ assert.equal(p.imported.effects.filter(e=>e.name.startsWith('冰属性攻击提升III')).length,1);
+ const more=preview({snapshot:{...snapshot,items:[...snapshot.items,{id:'int10',name:'法强测试',text:'法强+10%。'}]}});
+ assert.equal(more.input.attackBase,7100);assert.equal(calculate(more.input).context.attack,15407);
+ const removed=preview({snapshot:{...snapshot,items:snapshot.items.filter(s=>s.sourceId!=='ice-attack-iii')}});
+ assert.equal(removed.input.cap,p.input.cap-2000);assert(!removed.imported.effects.some(e=>e.name.startsWith('冰属性攻击提升III')));
+ assert.equal(preview().input.cap,p.input.cap);
+});
+test('guidance replaces EX 50 with 65 and full HP adds only its own layer',()=>{
+ const guidance=SUPPORT_BUFFS.find(b=>b.statPercent===65);assert(guidance);
+ const p=preview({selectedBuffs:[guidance]});assert.equal(p.input.runtimeStatPercent,65);assert.equal(p.input.cap,preview().input.cap+30000);
+ const hp=preview({selectedBuffs:[guidance],selection:{...selection,fullHp:true}});assert.equal(hp.input.runtimeStatPercent,95);
+ assert.equal(preview({selection:{...selection,fullHp:true}}).input.runtimeStatPercent,80);
+});
+test('unknown effects remain visible and recognized selected damage still computes',()=>{
+ const items=[...snapshot.items,{id:'known',name:'测试冰伤',text:'冰属性伤害+10%。'},{id:'unknown',name:'未知机制',text:'冰属性伤害+70%；触发某种未知机制。'},{id:'cap-percent',name:'比例上限',text:'伤害上限+10%。'}];
+ const p=preview({snapshot:{...snapshot,items}});
+ assert(p.unresolved.some(x=>x.name==='未知机制'));assert(p.unresolved.some(x=>x.name==='比例上限'));
+ assert(p.imported.effects.some(e=>e.name.startsWith('测试冰伤')));assert(!p.imported.effects.some(e=>e.name.startsWith('未知机制')));
+ assert(calculate(p.input).mean>calculate(preview().input).mean);
+ assert.equal(simpleLoadoutRules({id:'x',text:'冰属性伤害+10%，如果敌人是龙。'}),null);
+ assert.throws(()=>preview({snapshot:{...snapshot,characterId:'245'}}),/不一致/);
+});
+test('critical and killer mode effects stay conditional in the combined calculator',()=>{
+ const off=preview(),on=preview({selection:{...selection,criticalEnabled:true}}),noKiller=preview({selection:{...selection,specialAttack:false}});
+ assert(on.imported.magicCanCrit);assert.equal(off.input.critRate,0);assert(on.input.critRate>0);
+ assert(on.input.cap>off.input.cap);assert(noKiller.input.cap<off.input.cap);
+ const physical=preview({selection:{...selection,attack:'s1',type:'physical',element:'火',statReference:'str',dualWield:false},input:{...input,type:'physical',skillType:'skill',element:'火'}});
+ assert(!physical.imported.effects.some(e=>e.target==='冰'));assert.equal(physical.input.hitMultiplier,1);
+});
+test('SC ranking compares expected damage and groups equivalent applicable damage bonuses',()=>{
+ const p=preview(),r=recommendDamage({input:p.input,criticalEnabled:false,statReference:'int',projectStatPercent:p.projectStatPercent});
+ const damage=r.tiers.find(t=>t.items.some(i=>i.id==='element')),stat=r.tiers.find(t=>t.items.some(i=>i.id==='stat'));
+ assert(damage.items.some(i=>i.id==='magical'));assert(damage.percent>stat.percent);
+ assert(!r.tiers.flatMap(t=>t.items).some(i=>i.id.startsWith('critical')));
+ assert(Math.abs(stat.percent-8.4519)<.01);
+});
+test('critical expected value honors eligibility, SC exchange, caps, and 100 percent probability',()=>{
+ const base={...defaultInput(),cap:1000000,attack:10000,defense:8000,critRate:98};
+ const r=recommendDamage({input:base,criticalEnabled:true});
+ const rate=r.tiers.flatMap(t=>t.items).find(i=>i.id==='criticalRate');assert.equal(rate.amount,4.5);
+ assert.equal(rate.expected,calculate({...base,critRate:100}).mean);
+ const crit=r.tiers.flatMap(t=>t.items).find(i=>i.id==='criticalDamage');assert.equal(crit.amount,24);
+ const disabled=recommendDamage({input:{...base,skillType:'magic'},criticalEnabled:true,magicCanCrit:false});
+ assert(!disabled.tiers.flatMap(t=>t.items).some(i=>i.id.startsWith('critical')));
+ const capped=recommendDamage({input:{...base,cap:1,criticalCapAdded:0},criticalEnabled:true});assert.equal(capped.tiers.length,0);
+});
+test('damage gauge uses effective per-hit cap and does not overflow',()=>{
+ assert.deepEqual(damageGauge({min:90,max:100,mean:95,cap:200}),{min:90,max:100,cap:200,fill:47.5});
+ assert.equal(damageGauge({min:100,max:100,mean:100,cap:200},.5).fill,100);
+ assert.equal(damageGauge({min:120,max:130,mean:125,cap:100}).fill,100);
+});
+test('independent numeric clauses preserve their own applicability and grouping separators',()=>{
+ const mixed={id:'split',name:'双属性',text:'火属性伤害+10%、冰属性伤害+10%'};
+ const p=preview({snapshot:{...snapshot,items:[...snapshot.items,mixed,{id:'stat-magic',name:'独立条件',text:'攻击力+10%、魔法伤害+10%'}]}});
+ assert.equal(p.imported.effects.filter(e=>e.name.startsWith('双属性')).length,1);
+ const physical=preview({selection:{...selection,attack:'normal',type:'physical',element:'火',statReference:'str'},input:{...input,type:'physical',skillType:'normal',element:'火'},snapshot:{...snapshot,items:[...snapshot.items,{id:'stat-magic',name:'独立条件',text:'攻击力+10%、魔法伤害+10%'}]}});
+ assert(physical.report.rows.some(r=>r.sourceName==='独立条件'&&r.rule.effects.some(e=>e.type==='stat')));
+ assert(!physical.imported.effects.some(e=>e.name.startsWith('独立条件')));
+ assert.equal(simpleLoadoutRules({id:'cap',text:'伤害上限+3,000。'})[0].effects[0].value,3000);
+});
+test('removing a defense-reference source restores the default and preserves explicit manual overrides',()=>{
+ const source={id:'defense-test',name:'测试减抗',group:'common',rules:[{id:'defense-r',review:'ready',conditions:[],effects:[{type:'defenseReference',target:'敌方魔抗',value:50,unit:'%'}]}]};
+ const report={...baseReport,rows:[...baseReport.rows,...evaluateCatalog([source],baseReport.context).rows]},extra={id:'defense-test',sourceIds:['defense-test'],name:source.name,text:'测试'};
+ const selected={...snapshot,sourceIds:[...snapshot.sourceIds,'defense-test'],items:[...snapshot.items,extra]};
+ assert.equal(preview({baseReport:report,snapshot:selected}).input.defenseRatio,.5);
+ const removed={...selected,items:snapshot.items};
+ assert.equal(preview({baseReport:report,snapshot:removed,input:{...input,defenseRatio:.5}}).input.defenseRatio,1);
+ assert.equal(preview({baseReport:report,snapshot:removed,manualDefenseRatio:.8}).input.defenseRatio,.8);
+});
+test('critical observation is retained and identified skill changes apply as deltas',()=>{
+ const selected={...selection,criticalEnabled:true},original=preview({selection:selected});
+ const anchor={rate:21,contribution:original.imported.critAdded};
+ assert.equal(preview({selection:selected,criticalAnchor:anchor}).input.critRate,21);
+ const added=preview({selection:selected,criticalAnchor:anchor,snapshot:{...snapshot,items:[...snapshot.items,{id:'new-rate',name:'新暴击率',text:'暴击率+10%'}]}});
+ assert.equal(added.input.critRate,31);
+ assert.equal(preview({criticalAnchor:anchor}).input.critRate,0);
+});
+test('explicit character waits for its report before accepting any previous iframe state',async()=>{
+ const {mountUnifiedCalculator}=await import('../dist/unified-calculator.mjs');
+ const controls=new Map(),messages=[],listeners={};
+ const make=()=>({hidden:false,src:'',textContent:'',handlers:{},addEventListener(type,fn){this.handlers[type]=fn;}});
+ for(const id of ['unifiedLoadoutFrame','unifiedWorkspace','unifiedStart','unifiedSummary','unifiedSettings','unifiedExit','unifiedUnresolved'])controls.set(id,make());
+ const child={postMessage(message){messages.push(message);}};controls.get('unifiedLoadoutFrame').contentWindow=child;
+ globalThis.document={getElementById:id=>controls.get(id),body:{classList:{toggle(){}}}};
+ globalThis.localStorage={getItem(){return null;}};
+ globalThis.location={origin:'https://example.test'};
+ globalThis.window={addEventListener(type,fn){listeners[type]=fn;}};
+ let report=null;
+ const ui=mountUnifiedCalculator({getContext:()=>({characterId:'260',baseReport:report,selection}),onChange(){}});
+ ui.open();listeners.message({origin:location.origin,source:child,data:{type:'lc-loadout-ready'}});
+ assert.deepEqual(messages,[],'do not request the old character while the requested report is loading');
+ report=baseReport;ui.refreshSources();assert.equal(messages.at(-1).type,'lc-loadout-init');assert.equal(messages.at(-1).characterId,'260');
+ listeners.message({origin:'https://other.test',source:child,data:{type:'lc-loadout-ready'}});assert.equal(messages.length,1);
+ for(const key of ['document','localStorage','location','window'])delete globalThis[key];
+});

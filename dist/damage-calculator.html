@@ -4,13 +4,17 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-combat-modes">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-unified">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html">LC</a><div><h1>伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./characters.html">角色列表</a><a href="./index.html">技能表</a></nav></header>
 <main>
   <div class="page-intro"><p>输入当前战斗属性，查看每段与整次技能伤害。</p><span class="tag">PvE · 普通物理 / 魔法伤害</span></div>
   <div class="calculator-layout" id="calculationPage">
+  <section id="unifiedWorkspace" class="unified-workspace" hidden aria-label="实时配装">
+    <div class="unified-toolbar"><strong>配装与伤害</strong><button id="unifiedSettings" type="button">战斗设置</button><button id="unifiedExit" type="button">返回伤害核对</button></div>
+    <iframe id="unifiedLoadoutFrame" title="技能配装与 SC 方案"></iframe>
+  </section>
   <form id="calculator" novalidate>
     <section class="card" id="characterPanel" hidden><div class="section-heading"><h2><span>01</span>角色基础资料</h2></div>
       <div id="entryPreparation" hidden><h3 id="entryProfileName">角色基础六维</h3><div class="entry-table-wrap"><table id="entrySixStats" class="base-stats-table"></table></div></div>
@@ -100,12 +104,19 @@
       <div id="error" role="alert" hidden></div><button id="resolveReview" type="button" hidden>查看尚未选择的项目</button>
       <div id="resultValues" aria-live="polite" aria-atomic="true">
         <article class="primary-result"><span>普通每段伤害</span><strong id="normalDamage">—</strong><small>含随机波动与每段上限</small></article>
+        <section class="damage-gauges" aria-label="伤害与上限">
+          <div class="damage-gauge"><div class="gauge-label"><span>普通每段 <b id="normalGaugeDamage">—</b></span><span>上限 <b id="normalGaugeCap">—</b></span></div><div id="normalGauge" class="gauge-track" role="progressbar" aria-label="普通每段伤害占上限"><span></span></div></div>
+          <div id="criticalGaugeRow" class="damage-gauge"><div class="gauge-label"><span>暴击每段 <b id="criticalGaugeDamage">—</b></span><span>上限 <b id="criticalGaugeCap">—</b></span></div><div id="criticalGauge" class="gauge-track critical" role="progressbar" aria-label="暴击每段伤害占上限"><span></span></div></div>
+        </section>
         <article class="critical-result"><span title="触发暴击时的伤害对照；整次期望仍按最终暴击率计算">暴击每段伤害</span><strong id="criticalDamage">—</strong></article>
         <div class="total-result"><span id="totalLabel">整次技能期望伤害</span><strong id="totalMean">—</strong><small id="totalNote"></small></div>
         <dl class="result-details"><div class="result-cap"><dt id="damageCapLabel">每段伤害上限</dt><dd id="damageCap">—</dd></div><div id="criticalCapResult" class="result-cap" hidden><dt>暴击每段上限</dt><dd id="criticalCap">—</dd></div><div><dt>全为普通命中时</dt><dd id="normalTotal">—</dd></div><div><dt>本段结算攻击力</dt><dd id="effectiveAttack">—</dd></div><div><dt>本段结算防御力</dt><dd id="effectiveDefense">—</dd></div><div><dt>特攻匹配</dt><dd id="killerState">—</dd></div></dl>
         <p id="resultCapNote" class="result-cap-note" hidden></p>
       </div>
     </div>
+    <button id="unifiedStart" class="primary unified-start" type="button">边配装边计算</button>
+    <section id="unifiedSummary" class="card unified-summary" hidden><h3>当前配装加成</h3><div id="unifiedStats"></div><div id="unifiedBonuses"></div><p id="unifiedStatus" class="help"></p></section>
+    <details id="unifiedUnresolved" class="card unified-unresolved" hidden open><summary>未计入／待研究 <span id="unifiedUnresolvedCount"></span></summary><ul id="unifiedUnresolvedList"></ul></details>
     <div class="result-notes"><p id="activeNote"></p><p>角色资料先与入场报告核对，只有你确认采用的加成才进入计算；另行添加时请避免重复。</p><p>输出为所填条件下的伤害。护盾、保命、帧内无敌、Boss 专属减伤等未填入机制，可能让实际掉血更低。</p></div>
     <details class="card trace-card"><summary>展开普通命中的计算过程</summary><p class="help">以随机系数 0.95 展示一次结算；不代表下一段实际随机值。</p><ol id="trace"></ol><p id="formulaText" class="formula"></p></details>
     <details class="card"><summary>公式依据与适用范围</summary><p>普通核心：A × 0.9<sup>kF/A</sup> × 技能系数 × 核心前倍率 × 随机数。普通 k=10，暴击 k=6；随机数范围为 0.9～1.0。</p><p>取自所提供版本的游戏程序与技能脚本，核心使用单精度运算。伯雷亞斯拳的技能内攻击修正 +51.8%、每段系数 0.334 来自原始技能参数。</p><p>期望值以均匀随机的数值积分估算，先逐段处理暴击和上限；不等同于最大伤害。默认暴击率 20% 是测试起点，请改成实际总暴击率。</p><p>这页计算相同条件、相同系数的各段普通物理／魔法伤害。混合属性技能须先确定结算攻击；不同系数的段、固定伤害、追加伤害、FatalBlow 与竞技场需分开处理。</p></details>
@@ -136,5 +147,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260924-combat-modes"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260924-unified"></script>
 </body></html>

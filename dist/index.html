@@ -6,7 +6,7 @@
     <meta name="description" content="最后的克劳迪娅被动技能分类表，按 Excel 工作表结构查询技能、SC、效果和可学习圣物。" />
     <title>最后的克劳迪娅技能分类表</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260924-unified" />
   </head>
   <body>
     <header class="site-header">
@@ -40,6 +40,7 @@
           <button class="back-top" id="backTop" type="button">回到顶部</button>
         </div>
 
+        <details id="unifiedCharacterPicker" hidden><summary>角色自带技能</summary><div id="unifiedCharacterSkills"></div></details>
         <div id="tableArea" class="table-area"></div>
         <div id="emptyState" class="empty-state" hidden>
           <strong>没有找到符合条件的技能</strong>
@@ -49,6 +50,7 @@
     </main>
 
     <aside id="scCalculator" class="sc-calculator" hidden aria-label="SC计算器">
+      <section id="loadoutRecommendations" class="loadout-recommendations" hidden aria-label="加成收益推荐"></section>
       <div class="calculator-header">
         <div class="calculator-sort-actions">
           <button id="calculatorRatingSort" class="calculator-sort" type="button" aria-label="按评分排序" aria-pressed="false"><span id="calculatorRatingSortIcon" aria-hidden="true">评分▽</span></button>
@@ -108,6 +110,7 @@
     </dialog>
 
     <script src="./data.js"></script>
-    <script src="./app.js"></script>
+    <script src="./app.js?v=20260924-unified"></script>
+    <script type="module" src="./loadout-frame.mjs?v=20260924-unified"></script>
   </body>
 </html>

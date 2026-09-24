@@ -1,12 +1,14 @@
-import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260924-combat-modes';
-import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-combat-modes';
+import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260924-unified';
+import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-unified';
 import {formatEffect} from './effect-rule-engine.mjs';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-combat-modes';
-import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-combat-modes';
-import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-combat-modes';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-unified';
+import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-unified';
+import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-unified';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
-import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-combat-modes';
-import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-combat-modes';
+import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-unified';
+import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-unified';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260924-unified';
+import {loadCharacterReport} from './character-report-loader.mjs?v=20260924-unified';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -24,6 +26,7 @@ let formulaCapture=null,captureOptions=[],captureApplication=null;
 let panelLayers=null,layerSourceKey='',attackBasisTouched=false,autoLayer=null;
 let magicOptions=[],magicSelection={};
 let defenseRatioTouched=false;
+let unified=null;
 try {magicSelection=JSON.parse(localStorage.getItem(`lc-magic-buffs:${characterId}`))||{};}catch{}
 const activeMagicBuffs=()=>selectedMagicBuffs(magicOptions,magicSelection);
 const criticalDisabled=()=>!$('criticalEnabled').checked||imported?.skillType==='magic'&&!imported.magicCanCrit;
@@ -269,16 +272,21 @@ function update() {
   labels();
   const invalid=[...$('calculator').querySelectorAll('input[type=number]')].find(e=>!e.disabled&&!e.checkValidity());
   try {
-    if(characterId&&(!imported||!workflow?.isConfirmed()))throw new Error(reviewBlocker);
-    if(imported&&!criticalDisabled()&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
-    if(imported?.blockers.length)throw new Error(imported.blockers.join('；'));
-    if(activeMagicBuffs().some(b=>b.stat===attackStat()?.key)&&$('attackBasis').value==='panel')throw new Error('已勾选属性增益，请使用自动属性分层。');
-    if($('attackBasis').value==='auto'&&!autoLayer?.ok)throw new Error(autoLayer?.reason||'请先核对属性层来源。');
-    if(invalid) throw new Error(`请检查「${invalid.closest('label')?.textContent.trim()||'数值'}」的输入范围，必填数值不能留空。`);
-    const s=read(),r=calculate(s),c=r.context;
+    if(!unified?.active){
+      if(characterId&&(!imported||!workflow?.isConfirmed()))throw new Error(reviewBlocker);
+      if(imported&&!criticalDisabled()&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
+      if(imported?.blockers.length)throw new Error(imported.blockers.join('；'));
+      if(activeMagicBuffs().some(b=>b.stat===attackStat()?.key)&&$('attackBasis').value==='panel')throw new Error('已勾选属性增益，请使用自动属性分层。');
+      if($('attackBasis').value==='auto'&&!autoLayer?.ok)throw new Error(autoLayer?.reason||'请先核对属性层来源。');
+      if(invalid) throw new Error(`请检查「${invalid.closest('label')?.textContent.trim()||'数值'}」的输入范围，必填数值不能留空。`);
+    }
+    const preview=unified?.active?unified.prepare(read()):null;
+    const s=preview?.input||read(),r=calculate(s),c=r.context;
     $('error').hidden=true;$('resolveReview').hidden=true;$('resultValues').hidden=false;
     $('resultState').textContent=c.element<=0?'属性免疫':r.normal.uncappedMax>s.cap?'普通伤害触及上限':imported?'导入条件下试算':'实时计算';
-    if(captureApplication?.formulaValidation&&$('attackBasis').value!=='settlement'){
+    if(preview)$('resultState').textContent=preview.unresolved.length?'配装预览 · 有待研究项':'实时配装';
+    renderDamageGauges(r,s);
+    if(!preview&&captureApplication?.formulaValidation&&$('attackBasis').value!=='settlement'){
       const e=captureApplication,q=prepare(s).q,match=c.attack===e.expectedAttack&&Math.abs(c.defense-e.expectedDefense)<1e-6&&Math.abs(q-e.expectedRatio)<1e-6;
       $('formulaCaptureNote').textContent=`公式／读取器：结算攻击 ${fmt(c.attack)}／${fmt(e.expectedAttack)}；结算防御 ${fmt(c.defense)}／${fmt(e.expectedDefense)}；核心倍率 ${Number(q.toPrecision(6))}／${Number(e.expectedRatio.toPrecision(6))}。${match?'三项一致；后置加成仍按已采用来源计算，逐条执行顺序尚未完全核对。':'存在差异，请继续核对所选面板、技能及战斗条件。'}读取值没有代替属性公式输入。`;
       if(!match)$('resultState').textContent='与读取结算有差异';
@@ -304,14 +312,15 @@ function update() {
     $('activeNote').textContent=`已计入 ${count} 条非零加成${s.boss&&s.break?'；Boss Break 防御修正已生效':''}。${autoLayer?.projected&&$('attackBasis').value==='auto'?`当前条件下预估面板 ${fmt(autoLayer.panel)}；同类型 Buff 只保留本次启用的一份。`:''}`;
     $('trace').innerHTML=r.normal.trace.map(t=>`<li><span>${esc(t.label)}</span><b>${fmt(t.value)}</b></li>`).join('');
     $('formulaText').textContent=`${attackFormula(s,c)} A=${fmt(c.attack)}，F=${fmt(c.defense)}，C=${s.coefficient}。先算普通核心，再按生效列表逐条修正，最后格挡与限额。`;
-    document.querySelectorAll('.effect').forEach((el,i)=>{
+    if(!preview)document.querySelectorAll('.effect').forEach((el,i)=>{
       const e=s.effects[i],normal=applies(e,s,c,false),crit=applies(e,s,c,true);
       el.classList.toggle('is-inactive',!normal&&!crit);
       el.querySelector('.effect-state').textContent=!e.enabled?'已关闭':!normal&&!crit?'条件不匹配，不计入':e.percent===0?'当前为 0%，不改变伤害':normal?'条件匹配，已计入':'仅暴击命中时计入';
     });
   } catch(e) {
+    unified?.error(e.message);
     $('error').hidden=false;$('error').textContent=e.message;$('resultValues').hidden=true;$('resultState').textContent=characterId&&!workflow?.isConfirmed()?'等待核对':'请检查输入';
-    $('resolveReview').hidden=!characterId||workflow?.isConfirmed();
+    $('resolveReview').hidden=unified?.active||!characterId||workflow?.isConfirmed();
     $('trace').replaceChildren();$('formulaText').textContent='';$('activeNote').textContent='输入有效数值后会自动重新计算。';
     $('skillSummary').textContent=imported?`${imported.attackName} · 请填写该招式自己的原始系数、攻击修正及段数。`:'请检查技能参数。';
   }
@@ -465,3 +474,12 @@ if(characterId)workflow=initEntryWorkflow({
 });
 reset(false);
 if(characterId){loadReport();if(embedded)window.parent.postMessage({type:'lc-damage-ready'},location.origin);}
+unified=mountUnifiedCalculator({
+ getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,break:$('break').checked,dualWield:$('dualWield').checked},
+  baseCap:$('baseCap').valueAsNumber,baseCritRate:$('critBasis').value==='reader'?Number(manualCriticalBase)||0:$('baseCritRate').valueAsNumber||0,
+  selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],manualDefenseRatio:defenseRatioTouched?$('defenseRatio').valueAsNumber:null,
+  criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),
+ onChange:update
+});
+if(characterId&&!latestReport)loadCharacterReport(characterId).then(report=>{if(!latestReport){receiveReport(report);unified.refreshSources();}}).catch(e=>unified.error(e.message));
+if(params.get('unified')==='1')unified.open();

@@ -1,9 +1,9 @@
-import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-combat-modes';
-import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260924-combat-modes';
-import {effectCombatModes} from './combat-modes.mjs?v=20260924-combat-modes';
-import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-combat-modes';
+import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-unified';
+import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260924-unified';
+import {effectCombatModes} from './combat-modes.mjs?v=20260924-unified';
+import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-unified';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-combat-modes';
+import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-unified';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
 const elementIds={无:'none',火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark'};

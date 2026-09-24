@@ -1,6 +1,6 @@
-import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260924-combat-modes';
+import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260924-unified';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {requiresCritical} from './critical-options.mjs?v=20260924-combat-modes';
+import {requiresCritical} from './critical-options.mjs?v=20260924-unified';
 
 // A supplement is a reader source, never a fabricated website/account value.
 // Only fully decoded, scoped outgoing percentages are supported here.

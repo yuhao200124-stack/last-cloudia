@@ -113,6 +113,24 @@
       if (!row.separator && !skillIndex.has(String(row.id))) skillIndex.set(String(row.id), row);
     }
   }
+  const embeddedLoadout = new URLSearchParams(location.search).get('embeddedLoadout') === '1' && window.parent !== window;
+  const unifiedCatalogKey = 'lc-sheet-table:unified-character-skills-v1';
+  let unifiedCatalog = {}, sourceBindings = {};
+  try { unifiedCatalog = JSON.parse(localStorage.getItem(unifiedCatalogKey) || '{}'); } catch {}
+  const sourceNameKey = name => String(name || '').replace(/[\s·・]/g, '').replace(/III$|Ⅲ$/g,'3').replace(/II$|Ⅱ$/g,'2').replace(/IV$|Ⅳ$/g,'4').replace(/V$|Ⅴ$/g,'5').replace(/I$|Ⅰ$/g,'1')
+    .replace('MP提升','法力提升').replace('特攻界限突破','特攻极限突破').replace('冰系超级增幅','冰魔法超阶增幅')
+    .replace('冰属性暴击提升','冰霜暴击提升').replace('法术联结','魔法连锁').replace('巨型护盾','巨型护罩').replace(/([火冰树雷光暗无])属性攻击提升/,'$1攻击提升');
+  function installCharacterSources(id, sources) {
+    const bindings = {};
+    for (const source of sources) {
+      const matches = [...skillIndex.values()].filter(row => !row.unifiedCharacter && sourceNameKey(row.name) === sourceNameKey(source.name));
+      const row = matches.length === 1 ? matches[0] : { id: `character:${id}:${source.sourceId}`, name: source.name, effect: source.text, sc: '0', sources: [], type: '角色技能', unifiedCharacter: id };
+      skillIndex.set(String(row.id), row);
+      (bindings[row.id] ||= []).push(source.sourceId);
+    }
+    sourceBindings[id] = bindings;
+  }
+  for (const [id, record] of Object.entries(unifiedCatalog)) if (Array.isArray(record.sources)) installCharacterSources(id, record.sources);
   calculatorState.skillIds = calculatorState.skillIds.filter(id => skillIndex.has(id));
   calculatorState.characterFreeIds = calculatorState.characterFreeIds.filter(id => skillIndex.has(id));
 
@@ -413,6 +431,10 @@
       : '<div class="calculator-empty">点击技能右侧的“＋”添加技能</div>';
     calculatorTotal.textContent = `${formatSc(result.total)} SC`;
     calculatorBadge.textContent = `${formatSc(result.total)} SC`;
+    if (embeddedLoadout && window.LC_LOADOUT_CALCULATOR) {
+      window.dispatchEvent(new CustomEvent('lc:loadout-change', { detail: window.LC_LOADOUT_CALCULATOR.snapshot() }));
+      renderCharacterSkillPicker();
+    }
   }
 
   function calculatePlanTotal(plan) {
@@ -481,7 +503,7 @@
     saveCalculatorState();
     saveLoadoutDialog.close();
     renderCalculator();
-    if (returnPage) location.href = `${returnPage}?plan=${encodeURIComponent(snapshot.id)}`;
+    if (returnPage && !embeddedLoadout) location.href = `${returnPage}?plan=${encodeURIComponent(snapshot.id)}`;
   }
 
   function renderSavedLoadouts() {
@@ -525,6 +547,7 @@
   }
 
   function setCalculatorOpen(open) {
+    if (embeddedLoadout) open = true;
     if (!open) {
       calculatorState.detailsOpen = false;
       calculatorEffectsOpen = false;
@@ -766,9 +789,9 @@
     const previous = characterLoadouts[calculatorState.characterId];
     const nextId = calculatorCharacterSelect.value;
     const next = characterLoadouts[nextId];
-    const previousOwned = new Set(previous?.skillIds || []);
+    const previousOwned = new Set([...(previous?.skillIds || []), ...calculatorState.characterFreeIds]);
     const keptIds = calculatorState.skillIds.filter(id => !previousOwned.has(id));
-    const nextOwned = (next?.skillIds || []).filter(id => skillIndex.has(id));
+    const nextOwned = [...new Set([...(next?.skillIds || []), ...Object.keys(sourceBindings[nextId] || {})])].filter(id => skillIndex.has(id));
     calculatorState.skillIds = [...new Set([...keptIds, ...nextOwned])];
     calculatorState.characterFreeIds = [...nextOwned];
     calculatorState.characterId = nextId;
@@ -966,6 +989,46 @@
     });
   }
 
+  function renderCharacterSkillPicker() {
+    const picker = document.getElementById('unifiedCharacterSkills'); if (!picker) return;
+    const bindings = sourceBindings[calculatorState.characterId] || {};
+    picker.innerHTML = Object.keys(bindings).map(id => {
+      const row = skillIndex.get(id), checked = calculatorState.skillIds.includes(id);
+      return `<label><input type="checkbox" data-unified-skill="${escapeHtml(id)}" ${checked ? 'checked' : ''}>${escapeHtml(rowValue(row, 'name'))}</label>`;
+    }).join('');
+  }
+  window.LC_LOADOUT_CALCULATOR = {
+    snapshot() {
+      const bindings = sourceBindings[calculatorState.characterId] || {};
+      return { characterId: calculatorState.characterId, characterName: characterLoadouts[calculatorState.characterId]?.name || '通用', characterPage: characterLoadouts[calculatorState.characterId]?.page,
+        sourceIds: Object.values(bindings).flat(), activeBreaks: [...calculatorState.activeBreaks], totalSc: calculateSc().total,
+        items: calculateSc().items.map(item => ({ id: item.id, name: rowValue(item.row, 'name'), text: rowValue(item.row, 'effect'), sc: item.freeBy ? 0 : item.sc,
+          sourceIds: bindings[item.id] || [], edited: rowValue(item.row, 'effect') !== String(item.row.effect || '') })) };
+    },
+    initialize({characterId, sources}) {
+      const id = String(characterId), wasSame = calculatorState.characterId === id, oldOwned = new Set(characterLoadouts[id]?.skillIds || []);
+      installCharacterSources(id, sources);
+      if (!wasSame) {
+        const previousOwned = new Set(calculatorState.characterFreeIds);
+        calculatorState.skillIds = calculatorState.skillIds.filter(skill => !previousOwned.has(skill));
+        calculatorState.characterId = id; calculatorState.currentPlanId = '';
+      }
+      const bindings = sourceBindings[id], enabled = new Set(sources.filter(s => s.enabled).map(s => s.sourceId));
+      if (!unifiedCatalog[id]?.initialized || !wasSame) for (const [skill, ids] of Object.entries(bindings)) {
+        if (ids.some(source => enabled.has(source)) && (!wasSame || !oldOwned.has(skill)) && !calculatorState.skillIds.includes(skill)) calculatorState.skillIds.push(skill);
+      }
+      calculatorState.characterFreeIds = [...new Set([...(characterLoadouts[id]?.skillIds || []), ...Object.keys(bindings)])];
+      unifiedCatalog[id] = {sources, initialized: true};
+      localStorage.setItem(unifiedCatalogKey, JSON.stringify(unifiedCatalog));
+      saveCalculatorState(); render(); setCalculatorOpen(true);
+    }
+  };
+  document.getElementById('unifiedCharacterSkills')?.addEventListener('change', event => {
+    const id = event.target.dataset.unifiedSkill; if (!id || !skillIndex.has(id)) return;
+    calculatorState.skillIds = calculatorState.skillIds.filter(skill => skill !== id);
+    if (event.target.checked) calculatorState.skillIds.push(id);
+    saveCalculatorState(); render();
+  });
   render();
   if (openCalculatorOnLoad) setCalculatorOpen(true);
   registerWebMcp();
