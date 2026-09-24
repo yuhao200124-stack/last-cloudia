@@ -41,11 +41,11 @@ test('physical bonuses remain distinct from caps, crits, killers, stat changes, 
 
 test('physical tags accumulate and leave each unfinished effect/condition pending until its own pass',()=>{
  assert.equal(physical.counts.ready,0);assert.equal(physical.counts.partial,130);assert.equal(physical.counts.unknown,0);
- assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,14);
+ assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,20);
  for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,['装备锤时生效']);
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
- assert.equal(catalog.entries.length,299);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,299);
+ assert.equal(catalog.entries.length,349);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,349);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
  assert(allRows.slice(0,44).every(r=>r.judgment==='ready'));assert(allRows.slice(44).every(r=>r.judgment==='partial'));
  // A later equipment pass should complete a compound only after both its

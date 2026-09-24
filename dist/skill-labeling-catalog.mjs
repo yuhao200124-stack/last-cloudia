@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "physical",
+  "activeView": "magic-damage",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -1342,6 +1342,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "按Wave累计，最多叠加10次"
+        },
+        {
+          "id": "science-magic-condition",
+          "kind": "condition",
+          "text": "威力加成仅限科学类攻击魔法"
         }
       ],
       "tagDetails": {
@@ -1374,21 +1379,30 @@ export const SKILL_LABELING_CATALOG = {
             "basic:5f6efbf8b35453d2:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "每个Wave开始时，科学类攻击魔法威力+5%，最多叠加10次",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力"
+        "魔力",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "魔抗提升",
-        "科学类攻击魔法威力提升"
+        "魔抗提升"
       ],
       "remainingConditions": [
         "每个Wave开始时触发",
-        "按Wave累计，最多叠加10次"
+        "按Wave累计，最多叠加10次",
+        "威力加成仅限科学类攻击魔法"
       ]
     },
     {
@@ -1917,15 +1931,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "随自身攻击力提高而提高魔法攻击伤害；实际增幅待公式确认",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害提高的效果"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "攻击力作为魔法伤害的参照量；具体换算关系待确认"
       ]
@@ -3156,17 +3177,24 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "战斗开始时，攻击力＜魔力则魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "物理伤害增加"
+        "物理伤害增加",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "战斗开始时判断",
         "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
@@ -10008,15 +10036,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "装备法杖时，魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法伤害+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备法杖时生效"
       ]
@@ -11659,14 +11694,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "装备法杖时，魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "魔法攻击伤害+20%",
         "魔法攻击伤害上限+2,000"
       ],
       "remainingConditions": [
@@ -12055,15 +12098,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "满足永远的挚友配对条件时，魔法攻击伤害+15%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害+15%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "自身以外恰好只有1名友方也装备永远的挚友"
       ]
@@ -12842,15 +12892,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "复活后获得魔法攻击伤害+20%的Buff，持续40秒",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "复活时触发",
         "增伤Buff持续40秒；各同类型Buff同时只计一项"
@@ -13608,14 +13665,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "对空中敌人的魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "对空中敌人的魔法攻击伤害+10%",
         "自身在空中时，受到的物理攻击伤害-10%",
         "自身在空中时，受到的魔法攻击伤害-10%"
       ],
@@ -14232,15 +14297,22 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "满足圣诞夜的槲寄生技能配对与性别条件时，魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
         "两名配对角色为一男一女"
@@ -15340,6 +15412,2130 @@ export const SKILL_LABELING_CATALOG = {
       "remainingConditions": [
         "目标敌人为龙类型时，对应增伤和上限生效"
       ]
+    },
+    {
+      "id": "f871fed73e6326c3",
+      "name": "炎魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/127",
+      "text": "火属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "火属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为火属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "ccd9494e616a344d",
+      "name": "冰魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/128",
+      "text": "冰属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "冰属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为冰属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "2201afc0db4a340e",
+      "name": "树魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/129",
+      "text": "树属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "树属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为树属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "b9a13a0572f16699",
+      "name": "雷魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/130",
+      "text": "雷属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "雷属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为雷属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "02ddf87727d6b287",
+      "name": "光魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/131",
+      "text": "光属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "光属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "光属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为光属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "1a1043cd31293850",
+      "name": "暗魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/132",
+      "text": "暗属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "暗属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "暗属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为暗属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "f38969900a97ccd0",
+      "name": "炎魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/134",
+      "text": "火属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "火属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为火属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "b6b66290a2c0176e",
+      "name": "冰魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/135",
+      "text": "冰属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "冰属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为冰属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "c334b7ddf4d78b15",
+      "name": "树魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/136",
+      "text": "树属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "树属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为树属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "fc921ccf05929ad6",
+      "name": "雷魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/137",
+      "text": "雷属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "雷属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为雷属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "dc3451f4b7d2a45b",
+      "name": "光魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/138",
+      "text": "光属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "光属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "光属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为光属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "0c21dbbed7678df5",
+      "name": "暗魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/139",
+      "text": "暗属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "暗属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "暗属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为暗属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "ddccca9cf069a9ea",
+      "name": "魔导光环",
+      "url": "https://altema.jp/lastcloudia/gino/185",
+      "text": "攻击魔法的MP消耗+50%，该魔法伤害+75%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "攻击魔法伤害+75%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "攻击魔法的MP消耗+50%"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "攻击魔法伤害+75%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "攻击魔法的MP消耗+50%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "b63054ad34e97c0d",
+      "name": "威斯普之刻",
+      "url": "https://altema.jp/lastcloudia/gino/227",
+      "text": "白天（现实时间6:00～17:59），光属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "现实时间为白天时，光属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "现实时间为6:00～17:59，不是战斗内经过时间或Buff倒计时"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "现实时间为白天时，光属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "现实时间条件为独立待判断项，不是限时Buff；不按浏览器当前时间自动假定生效。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "现实时间为6:00～17:59，不是战斗内经过时间或Buff倒计时",
+        "攻击属性为光属性"
+      ]
+    },
+    {
+      "id": "713403dd798c7836",
+      "name": "阴影之刻",
+      "url": "https://altema.jp/lastcloudia/gino/228",
+      "text": "夜间（现实时间18:00～5:59），暗属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "现实时间为夜间时，暗属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "现实时间为18:00至次日5:59，不是战斗内经过时间或Buff倒计时"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "攻击属性为暗属性"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "现实时间为夜间时，暗属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "现实时间条件为独立待判断项，不是限时Buff；不按浏览器当前时间自动假定生效。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "现实时间为18:00至次日5:59，不是战斗内经过时间或Buff倒计时",
+        "攻击属性为暗属性"
+      ]
+    },
+    {
+      "id": "e0f6942b8d0b10f7",
+      "name": "光降圣夜",
+      "url": "https://altema.jp/lastcloudia/gino/242",
+      "text": "现实时间为夜晚时，光属性魔法伤害+10%。",
+      "notes": "判定使用游戏所读的本地时间，夜间范围为18:00至次日5:59。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "现实时间为夜间时，光属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "游戏所读的本地时间为18:00至次日5:59，不是战斗内经过时间或Buff倒计时"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "现实时间为夜间时，光属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "现实时间条件为独立待判断项，不是限时Buff；不按浏览器当前时间自动假定生效。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "游戏所读的本地时间为18:00至次日5:59，不是战斗内经过时间或Buff倒计时",
+        "攻击属性为光属性"
+      ]
+    },
+    {
+      "id": "bf684afd6ed9b3e1",
+      "name": "法袍高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/258",
+      "text": "装备长袍时，魔抗+20%，魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "装备长袍时，魔法攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔抗+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备长袍时生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "装备长袍时，魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔抗+20%"
+      ],
+      "remainingConditions": [
+        "装备长袍时生效"
+      ]
+    },
+    {
+      "id": "ce7eb01498391d2c",
+      "name": "杖增幅",
+      "url": "https://altema.jp/lastcloudia/gino/354",
+      "text": "装备法杖时，魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "装备法杖时，魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备法杖时生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "装备法杖时，魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "装备法杖时生效"
+      ]
+    },
+    {
+      "id": "全部技能:all:302",
+      "name": "雷魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/363",
+      "text": "雷属性魔法攻击伤害+30%， 雷属性魔法攻击伤害上限+2000",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "雷属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "雷属性魔法攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为雷属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "1a004726593e801a",
+      "name": "与帕克的契约",
+      "url": "https://altema.jp/lastcloudia/gino/380",
+      "text": "冰属性攻击魔法的MP消耗量+25%，伤害+40%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "冰属性攻击魔法伤害+40%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "冰属性攻击魔法的MP消耗+25%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅限冰属性攻击魔法"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "冰属性攻击魔法伤害+40%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "冰属性攻击魔法的MP消耗+25%"
+      ],
+      "remainingConditions": [
+        "仅限冰属性攻击魔法"
+      ]
+    },
+    {
+      "id": "6e424e4ea062edd4",
+      "name": "光魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/415",
+      "text": "光属性魔法攻击伤害+30%，光属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "光属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "光属性魔法攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "光属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "光属性魔法攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为光属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "eb948e43fefb658b",
+      "name": "暗魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/416",
+      "text": "暗属性魔法攻击伤害+30%，暗属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "暗属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暗属性魔法攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "暗属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暗属性魔法攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为暗属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "ea2269dc8dbcfa74",
+      "name": "法袍增幅",
+      "url": "https://altema.jp/lastcloudia/gino/428",
+      "text": "装备长袍时，魔抗+7%，魔法攻击伤害+5%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "装备长袍时，魔法攻击伤害+5%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔抗+7%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备长袍时生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "装备长袍时，魔法攻击伤害+5%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔抗+7%"
+      ],
+      "remainingConditions": [
+        "装备长袍时生效"
+      ]
+    },
+    {
+      "id": "3a0b205292a15907",
+      "name": "魔法连锁",
+      "url": "https://altema.jp/lastcloudia/gino/429",
+      "text": "连续使用相同的攻击魔法时，每次伤害提升（第一次+4%，最高+20%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "连续使用相同的攻击魔法时，伤害逐次提高（原文：第一次+4%，最高+20%）"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "连续使用相同的攻击魔法"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "叠加次数与重置机制待确认，不能直接取最高20%"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "连续使用相同的攻击魔法时，伤害逐次提高（原文：第一次+4%，最高+20%）",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续使用相同的攻击魔法",
+        "叠加次数与重置机制待确认，不能直接取最高20%"
+      ]
+    },
+    {
+      "id": "0a92e3a07ca76013",
+      "name": "树魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/544",
+      "text": "树属性魔法攻击伤害+30%，树属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "树属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "树属性魔法攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为树属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "bf0d04fe54be3b33",
+      "name": "神式",
+      "url": "https://altema.jp/lastcloudia/gino/560",
+      "text": "战斗开始后的前30秒无法使用魔法，但魔法攻击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "魔法攻击伤害+50%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "战斗开始后的前30秒无法使用魔法"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "无法使用魔法的限制发生在战斗开始后的前30秒"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "魔法攻击伤害+50%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "前30秒限制的是魔法使用；原文没有说明50%魔法增伤只持续30秒，不按开场40秒Buff处理。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "战斗开始后的前30秒无法使用魔法"
+      ],
+      "remainingConditions": [
+        "无法使用魔法的限制发生在战斗开始后的前30秒"
+      ]
+    },
+    {
+      "id": "25b961ea21f3b629",
+      "name": "炎魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/643",
+      "text": "火属性魔法攻击伤害+30%，火属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "火属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "火属性魔法攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为火属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "71d9f5a3ea0a9660",
+      "name": "元素增幅",
+      "url": "https://altema.jp/lastcloudia/gino/662",
+      "text": "炎、冰、树、雷属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "火、冰、树、雷属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火、冰、树、雷属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "火、冰、树、雷属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为火、冰、树、雷属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "1773fd0e181f0d48",
+      "name": "灵魂狩猎",
+      "url": "https://altema.jp/lastcloudia/gino/690",
+      "text": "我方角色陷入战斗不能时，自身获得魔法攻击伤害+30%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "我方角色陷入战斗不能时，自身获得魔法攻击伤害+30%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "我方角色陷入战斗不能时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "魔法增伤Buff持续40秒；同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "我方角色陷入战斗不能时，自身获得魔法攻击伤害+30%的Buff，持续40秒",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "我方角色陷入战斗不能时触发",
+        "魔法增伤Buff持续40秒；同类型Buff同时只计一项"
+      ]
+    },
+    {
+      "id": "cf6437fca36082d9",
+      "name": "元素连击",
+      "url": "https://altema.jp/lastcloudia/gino/691",
+      "text": "连续使用相同属性的攻击魔法时，伤害逐渐提升（首次+5%，最高+20%）。效果在10秒后或使用不同属性的攻击魔法时重置。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "连续使用相同属性的攻击魔法时，伤害逐次提高（首次+5%，最高+20%）"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "连续使用相同属性的攻击魔法"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "按连续施法叠加，最多+20%；实际层数仍需判断"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "效果在10秒后或使用不同属性的攻击魔法时重置"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "连续使用相同属性的攻击魔法时，伤害逐次提高（首次+5%，最高+20%）",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续使用相同属性的攻击魔法",
+        "按连续施法叠加，最多+20%；实际层数仍需判断",
+        "效果在10秒后或使用不同属性的攻击魔法时重置"
+      ]
+    },
+    {
+      "id": "2901b40ce3f38847",
+      "name": "冰魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/701",
+      "text": "冰属性魔法攻击伤害+30%，冰属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "冰属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "冰属性魔法攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "攻击属性为冰属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "ef761252451c1b55",
+      "name": "法袍超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/706",
+      "text": "装备长袍时，魔抗+20%，魔法攻击伤害+10%，受到的物理攻击伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "装备长袍时，魔法攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔抗+20%"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "受到的物理攻击伤害-10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备长袍时生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "装备长袍时，魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔抗+20%",
+        "受到的物理攻击伤害-10%"
+      ],
+      "remainingConditions": [
+        "装备长袍时生效"
+      ]
+    },
+    {
+      "id": "12feb359b0670804",
+      "name": "魔法弱点增幅",
+      "url": "https://altema.jp/lastcloudia/gino/836",
+      "text": "使用魔法攻击命中弱点属性时，伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "魔法攻击命中弱点属性时，伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "魔法攻击命中敌人的属性弱点"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "魔法攻击命中弱点属性时，伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "魔法攻击命中敌人的属性弱点"
+      ]
+    },
+    {
+      "id": "79a377bec526c2d4",
+      "name": "巨型净化",
+      "url": "https://altema.jp/lastcloudia/gino/837",
+      "text": "对BOSS的魔法攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "对Boss的魔法攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为Boss"
+      ]
+    },
+    {
+      "id": "5f13abe1484bc2c7",
+      "name": "魔法狙击",
+      "url": "https://altema.jp/lastcloudia/gino/895",
+      "text": "攻击魔法触发特攻时，伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "攻击魔法触发特攻时，伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击魔法已触发特攻；该技能本身不赋予特攻资格"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "特攻相关增伤的计算阶段待确认，不能直接并入普通魔法增伤池"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "攻击魔法触发特攻时，伤害+20%",
+          "relation": "magic-killer-damage-increase",
+          "target": "self",
+          "calculationNote": "这是魔法触发特攻时的增伤，不赋予特攻资格；计算阶段待确认，不能直接并入普通魔法增伤池。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击魔法已触发特攻；该技能本身不赋予特攻资格",
+        "特攻相关增伤的计算阶段待确认，不能直接并入普通魔法增伤池"
+      ]
+    },
+    {
+      "id": "41e5f848b9d300e9",
+      "name": "无限增幅",
+      "url": "https://altema.jp/lastcloudia/gino/957",
+      "text": "光、暗属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "光、暗属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光、暗属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "光、暗属性魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为光、暗属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "8e6716f96c389e1d",
+      "name": "法袍增幅·改",
+      "url": "https://altema.jp/lastcloudia/gino/1093",
+      "text": "装备长袍时，魔法攻击伤害+10%，受到的物理攻击伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "装备长袍时，魔法攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的物理攻击伤害-10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备长袍时生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "装备长袍时，魔法攻击伤害+10%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "受到的物理攻击伤害-10%"
+      ],
+      "remainingConditions": [
+        "装备长袍时生效"
+      ]
+    },
+    {
+      "id": "a97531c83b0073e7",
+      "name": "巨型净化2",
+      "url": "https://altema.jp/lastcloudia/gino/1159",
+      "text": "对BOSS的魔法攻击伤害+20%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "对Boss的魔法攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔法攻击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为Boss"
+      ]
+    },
+    {
+      "id": "911c90d5593ecf69",
+      "name": "十二支之力「魔」",
+      "url": "https://altema.jp/lastcloudia/gino/1233",
+      "text": "类型追加“龙”。魔法攻击伤害+12%，伤害上限+1,200。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "魔法攻击伤害+12%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "类型追加“龙”"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+1,200"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "魔法攻击伤害+12%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "类型追加“龙”",
+        "魔法攻击伤害上限+1,200"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "82bfa575b36bca5b",
+      "name": "暗影强化",
+      "url": "https://altema.jp/lastcloudia/gino/1479",
+      "text": "暗属性攻击伤害+10%，魔法攻击伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "魔法攻击伤害+15%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暗属性攻击伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "暗属性伤害+10%仅限暗属性攻击；魔法伤害+15%不限定暗属性"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "魔法攻击伤害+15%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "暗属性通用伤害+10%与不限属性的魔法伤害+15%是两个效果；本轮只覆盖后者。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暗属性攻击伤害+10%"
+      ],
+      "remainingConditions": [
+        "暗属性伤害+10%仅限暗属性攻击；魔法伤害+15%不限定暗属性"
+      ]
+    },
+    {
+      "id": "348f27fb6f68e198",
+      "name": "无限高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1528",
+      "text": "光、暗属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "光、暗属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光、暗属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "光、暗属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为光、暗属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "58197bb69bad678a",
+      "name": "法袍高阶增幅·改",
+      "url": "https://altema.jp/lastcloudia/gino/1562",
+      "text": "装备长袍时，魔法攻击伤害+20%，受到的物理攻击伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "装备长袍时，魔法攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的物理攻击伤害-20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备长袍时生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "装备长袍时，魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "受到的物理攻击伤害-20%"
+      ],
+      "remainingConditions": [
+        "装备长袍时生效"
+      ]
+    },
+    {
+      "id": "88325a3c478ed329",
+      "name": "泽布尔·法尔 左脸",
+      "url": "https://altema.jp/lastcloudia/gino/1581",
+      "text": "暗属性魔法伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "暗属性魔法攻击伤害+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "暗属性魔法攻击伤害+15%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为暗属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "789bffd5f1b5782a",
+      "name": "元素高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1640",
+      "text": "炎、冰、树、雷属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "火、冰、树、雷属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火、冰、树、雷属性时，对应效果生效"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "火、冰、树、雷属性魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "攻击属性为火、冰、树、雷属性时，对应效果生效"
+      ]
+    },
+    {
+      "id": "f49f17d3da2551a8",
+      "name": "巨型净化4",
+      "url": "https://altema.jp/lastcloudia/gino/1644",
+      "text": "对BOSS的魔法攻击伤害+20%，伤害上限+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "对Boss的魔法攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+6,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔法攻击伤害上限+6,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为Boss"
+      ]
+    },
+    {
+      "id": "869205f984d49c10",
+      "name": "圣诞派对！",
+      "url": "https://altema.jp/lastcloudia/gino/1799",
+      "text": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "按相同人数条件提高特技伤害，最高+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时判断"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "统计我方士兵、骑士、狙击手、魔法师、精灵类型的单位，最多4名"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "各人数对应的增幅待确认，不能无条件取最高20%"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "按相同人数条件提高特技伤害，最高+20%"
+      ],
+      "remainingConditions": [
+        "战斗开始时判断",
+        "统计我方士兵、骑士、狙击手、魔法师、精灵类型的单位，最多4名",
+        "各人数对应的增幅待确认，不能无条件取最高20%"
+      ]
+    },
+    {
+      "id": "e2016a861d776638",
+      "name": "艾奇德娜的试炼",
+      "url": "https://altema.jp/lastcloudia/gino/1812",
+      "text": "战斗开始时，自身获得“受到伤害+20%”的减益效果，持续20秒；战斗开始20秒后，魔法攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "战斗开始20秒后，魔法攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "开场获得自身受到伤害+20%的减益效果，持续20秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时触发自身易伤减益，减益持续20秒"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "魔法增伤在战斗开始20秒后生效；该20秒不是魔法增伤的持续时间"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "战斗开始20秒后，魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "自身易伤持续20秒；魔法增伤在开场20秒后生效，两者计时含义不同。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "开场获得自身受到伤害+20%的减益效果，持续20秒"
+      ],
+      "remainingConditions": [
+        "战斗开始时触发自身易伤减益，减益持续20秒",
+        "魔法增伤在战斗开始20秒后生效；该20秒不是魔法增伤的持续时间"
+      ]
+    },
+    {
+      "id": "42656c3afdc8103a",
+      "name": "巨型净化3",
+      "url": "https://altema.jp/lastcloudia/gino/1814",
+      "text": "对BOSS的魔法攻击伤害+20%，伤害上限+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "对Boss的魔法攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+4,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔法攻击伤害上限+4,000"
+      ],
+      "remainingConditions": [
+        "目标敌人为Boss"
+      ]
+    },
+    {
+      "id": "0b4cbcd7bc326038",
+      "name": "疯狂魔法师",
+      "url": "https://altema.jp/lastcloudia/gino/1839",
+      "text": "HP持续减少，但魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "魔法攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "自身当前HP持续下降"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "魔法攻击伤害+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身当前HP持续下降"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "29da106c453e0234",
+      "name": "男人的自信",
+      "url": "https://altema.jp/lastcloudia/gino/2016",
+      "text": "战斗开始时，自身获得魔抗-20%的减益效果；随后魔法攻击伤害随时间逐渐提升，40秒时最高+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "魔法攻击伤害随战斗经过时间逐渐提高，40秒时最高+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "战斗开始时，自身获得魔抗-20%的减益效果"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时施加魔抗降低减益；原文未给出持续时间"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "魔法增伤随时间变化，40秒达到最高30%；此前的具体换算关系待确认"
+        }
+      ],
+      "tagDetails": {
+        "魔法伤害增加": {
+          "summary": "魔法攻击伤害随战斗经过时间逐渐提高，40秒时最高+30%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "魔法伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "战斗开始时，自身获得魔抗-20%的减益效果"
+      ],
+      "remainingConditions": [
+        "战斗开始时施加魔抗降低减益；原文未给出持续时间",
+        "魔法增伤随时间变化，40秒达到最高30%；此前的具体换算关系待确认"
+      ]
     }
   ],
   "views": {
@@ -15802,6 +17998,78 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "magic-damage": {
+      "label": "魔法伤害增加",
+      "displayOrder": [
+        "f871fed73e6326c3",
+        "ccd9494e616a344d",
+        "2201afc0db4a340e",
+        "b9a13a0572f16699",
+        "02ddf87727d6b287",
+        "1a1043cd31293850",
+        "f38969900a97ccd0",
+        "b6b66290a2c0176e",
+        "c334b7ddf4d78b15",
+        "fc921ccf05929ad6",
+        "dc3451f4b7d2a45b",
+        "0c21dbbed7678df5",
+        "ddccca9cf069a9ea",
+        "b63054ad34e97c0d",
+        "713403dd798c7836",
+        "fca23d2a13780d62",
+        "e0f6942b8d0b10f7",
+        "bf684afd6ed9b3e1",
+        "5f6efbf8b35453d2",
+        "ce7eb01498391d2c",
+        "全部技能:all:302",
+        "1a004726593e801a",
+        "6e424e4ea062edd4",
+        "eb948e43fefb658b",
+        "ea2269dc8dbcfa74",
+        "3a0b205292a15907",
+        "0a92e3a07ca76013",
+        "bf0d04fe54be3b33",
+        "86ad4fdedf4c3869",
+        "25b961ea21f3b629",
+        "da60418e1d1102bc",
+        "71d9f5a3ea0a9660",
+        "1773fd0e181f0d48",
+        "cf6437fca36082d9",
+        "2901b40ce3f38847",
+        "ef761252451c1b55",
+        "9c0bd935e13111e8",
+        "12feb359b0670804",
+        "79a377bec526c2d4",
+        "5f13abe1484bc2c7",
+        "41e5f848b9d300e9",
+        "563cffc7c5fa9c59",
+        "2d772214490c52ba",
+        "8e6716f96c389e1d",
+        "a97531c83b0073e7",
+        "911c90d5593ecf69",
+        "1475f35e571d3e09",
+        "82bfa575b36bca5b",
+        "4810345440e1ca42",
+        "348f27fb6f68e198",
+        "58197bb69bad678a",
+        "88325a3c478ed329",
+        "789bffd5f1b5782a",
+        "f49f17d3da2551a8",
+        "869205f984d49c10",
+        "e2016a861d776638",
+        "42656c3afdc8103a",
+        "0b4cbcd7bc326038",
+        "29da106c453e0234"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 59,
+        "notRelatedUnique": 876,
+        "ready": 0,
+        "partial": 59,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -16103,14 +18371,64 @@ export const SKILL_LABELING_CATALOG = {
         "全部技能:all:910",
         "全部技能:all:917",
         "f06cd362877374b9",
-        "af2b1b7f6ebbb498"
+        "af2b1b7f6ebbb498",
+        "f871fed73e6326c3",
+        "ccd9494e616a344d",
+        "2201afc0db4a340e",
+        "b9a13a0572f16699",
+        "02ddf87727d6b287",
+        "1a1043cd31293850",
+        "f38969900a97ccd0",
+        "b6b66290a2c0176e",
+        "c334b7ddf4d78b15",
+        "fc921ccf05929ad6",
+        "dc3451f4b7d2a45b",
+        "0c21dbbed7678df5",
+        "ddccca9cf069a9ea",
+        "b63054ad34e97c0d",
+        "713403dd798c7836",
+        "e0f6942b8d0b10f7",
+        "bf684afd6ed9b3e1",
+        "ce7eb01498391d2c",
+        "全部技能:all:302",
+        "1a004726593e801a",
+        "6e424e4ea062edd4",
+        "eb948e43fefb658b",
+        "ea2269dc8dbcfa74",
+        "3a0b205292a15907",
+        "0a92e3a07ca76013",
+        "bf0d04fe54be3b33",
+        "25b961ea21f3b629",
+        "71d9f5a3ea0a9660",
+        "1773fd0e181f0d48",
+        "cf6437fca36082d9",
+        "2901b40ce3f38847",
+        "ef761252451c1b55",
+        "12feb359b0670804",
+        "79a377bec526c2d4",
+        "5f13abe1484bc2c7",
+        "41e5f848b9d300e9",
+        "8e6716f96c389e1d",
+        "a97531c83b0073e7",
+        "911c90d5593ecf69",
+        "82bfa575b36bca5b",
+        "348f27fb6f68e198",
+        "58197bb69bad678a",
+        "88325a3c478ed329",
+        "789bffd5f1b5782a",
+        "f49f17d3da2551a8",
+        "869205f984d49c10",
+        "e2016a861d776638",
+        "42656c3afdc8103a",
+        "0b4cbcd7bc326038",
+        "29da106c453e0234"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 299,
-        "notRelatedUnique": 636,
+        "relatedUnique": 349,
+        "notRelatedUnique": 586,
         "ready": 44,
-        "partial": 255,
+        "partial": 305,
         "unknown": 0
       }
     }

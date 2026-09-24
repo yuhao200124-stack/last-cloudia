@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="按技能的具体效果逐类贴标签，本轮核对物理伤害增加相关技能。" />
+    <meta name="description" content="按技能的具体效果逐类贴标签，本轮核对魔法伤害增加相关技能。" />
     <title>技能列表打标签用的｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260924-physical-labels" />
-    <link rel="stylesheet" href="./skill-labeling.css?v=20260924-physical-labels" />
+    <link rel="stylesheet" href="./styles.css?v=20260924-magic-damage-labels" />
+    <link rel="stylesheet" href="./skill-labeling.css?v=20260924-magic-damage-labels" />
   </head>
   <body>
     <header class="site-header">
@@ -22,17 +22,17 @@
     <main>
       <section class="workspace labeling-workspace" aria-label="技能标签核对列表">
         <nav class="sheet-tabs label-tabs" id="labelTabs" role="tablist" aria-label="技能标签分类" aria-orientation="horizontal"></nav>
-        <div id="labelPanel" role="tabpanel" aria-labelledby="label-tab-physical">
-        <div class="sheet-heading"><div><span class="sheet-kicker">本轮：物理伤害增加</span><h2 id="activeTagTitle">物理伤害增加</h2></div></div>
+        <div id="labelPanel" role="tabpanel" aria-labelledby="label-tab-magic-damage">
+        <div class="sheet-heading"><div><span class="sheet-kicker">本轮：魔法伤害增加</span><h2 id="activeTagTitle">魔法伤害增加</h2></div></div>
         <div class="labeling-overview">
           <p id="labelCoverage">正在读取全库核对结果…</p>
           <p id="judgmentSummary" aria-live="polite"></p>
           <p id="cumulativeCoverage"></p>
-          <p>本轮处理明确的物理增伤；通用伤害、属性通用伤害，以及仅限普攻、特技、必杀或反击的增伤，留待对应标签。敌方物理易伤会单独注明作用对象。</p>
-          <p>所有效果和条件都贴完标签，才算已完整判断。已处理攻击力、防御力、生命力（HP上限属性）、魔力（INT）、MP上限属性、物理伤害增加；其余效果和条件继续留待判断。按已完整判断、判断部分、没办法判断排序。</p>
+          <p>本轮处理明确的魔法增伤；属性、装备、Boss、时间、复活等条件仍分别待判断。未限定魔法的通用／属性伤害，以及魔法暴击、特攻资格、伤害上限、咏唱和治疗，留待对应标签。</p>
+          <p>所有效果和条件都贴完标签，才算已完整判断。已处理攻击力、防御力、生命力（HP上限属性）、魔力（INT）、MP上限属性、物理伤害增加、魔法伤害增加；其余效果和条件继续留待判断。按已完整判断、判断部分、没办法判断排序。</p>
         </div>
         <div class="toolbar">
-          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索物理伤害增加相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
+          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索魔法伤害增加相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
           <div id="labelResultCount" class="result-summary" aria-live="polite"></div>
         </div>
         <div id="labelTable" class="table-area"></div>
@@ -42,6 +42,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260924-physical-labels"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260924-magic-damage-labels"></script>
   </body>
 </html>

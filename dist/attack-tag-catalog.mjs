@@ -1433,6 +1433,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "按Wave累计，最多叠加10次"
+        },
+        {
+          "id": "science-magic-condition",
+          "kind": "condition",
+          "text": "威力加成仅限科学类攻击魔法"
         }
       ],
       "tagDetails": {
@@ -1465,21 +1470,30 @@ export const ATTACK_TAG_CATALOG = {
             "basic:5f6efbf8b35453d2:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "每个Wave开始时，科学类攻击魔法威力+5%，最多叠加10次",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力"
+        "魔力",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "魔抗提升",
-        "科学类攻击魔法威力提升"
+        "魔抗提升"
       ],
       "remainingConditions": [
         "每个Wave开始时触发",
-        "按Wave累计，最多叠加10次"
+        "按Wave累计，最多叠加10次",
+        "威力加成仅限科学类攻击魔法"
       ]
     },
     {
@@ -2008,15 +2022,22 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "随自身攻击力提高而提高魔法攻击伤害；实际增幅待公式确认",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害提高的效果"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "攻击力作为魔法伤害的参照量；具体换算关系待确认"
       ]
@@ -3247,17 +3268,24 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法伤害增加": {
+          "summary": "战斗开始时，攻击力＜魔力则魔法攻击伤害+20%",
+          "relation": "magic-damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "物理伤害增加"
+        "物理伤害增加",
+        "魔法伤害增加"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "战斗开始时判断",
         "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
