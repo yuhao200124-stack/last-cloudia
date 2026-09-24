@@ -1,6 +1,6 @@
-import {reportStorageKey} from './damage-import.mjs?v=20260924-trigger-conditions';
-import {readCharacterProfile} from './entry-preparation.mjs?v=20260924-trigger-conditions';
-import {unifiedPageUrl} from './calculator-navigation.mjs?v=20260924-trigger-conditions';
+import {reportStorageKey} from './damage-import.mjs?v=20260924-condition-tags';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260924-condition-tags';
+import {unifiedPageUrl} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const panel=document.getElementById('damageSimulator');
 const frame=document.getElementById('damageCalculatorFrame');
 const open=document.getElementById('damageSimulatorOpen');

@@ -1,10 +1,10 @@
-import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260924-trigger-conditions';
-import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs?v=20260924-trigger-conditions';
-import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260924-trigger-conditions';
-import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260924-trigger-conditions';
+import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
+import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs?v=20260924-condition-tags';
+import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260924-condition-tags';
+import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260924-condition-tags';
 import { summarizeEffects } from './effect-totals.mjs';
 import { ACCOUNT_BLESSING_CATALOG, ACCOUNT_BLESSING_META } from './account-blessings.mjs?v=20260924-fullpage';
-import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260924-trigger-conditions';
+import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260924-condition-tags';
 
 mountAccountBlessings();
 
@@ -228,7 +228,7 @@ function mount() {
           ${checkbox('accountBlessings', '计入账户加护')}
           ${checkbox('fullHp', 'HP全满')}${checkbox('weakness', '命中弱点')}
           ${checkbox('resonance', '重魔法（我方正在发动不可叠加魔法）')}${checkbox('lowHp', '濒死')}
-          ${Object.entries(STAT_CONDITIONS).map(([field,{label}])=>checkbox(field,label)).join('')}
+          ${Object.entries(STAT_CONDITIONS).filter(([,condition])=>!condition.deferred).map(([field,{label}])=>checkbox(field,label)).join('')}
         </fieldset>
         ${c.attack === 'magic' ? `<div class="br-magic-family">${select('magicFamily', '魔法类别', [['normal', '一般魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊类型'], [null, '待确认']])}</div>` : ''}
       </div>

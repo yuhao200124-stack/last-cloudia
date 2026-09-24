@@ -1,4 +1,4 @@
-import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260924-trigger-conditions';
+import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
 // Generic combat modes. Character ownership and attack/equipment conditions
 // remain in the configured rules; a mode never grants an unconfigured skill.
 export const MODE_LABELS={critical:'暴击',killer:'特攻',fullHp:'满血',lowHp:'濒死',...Object.fromEntries(Object.entries(STAT_CONDITIONS).map(([field,{label}])=>[field,label])),break:'break'};

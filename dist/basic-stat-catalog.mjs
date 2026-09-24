@@ -2223,7 +2223,7 @@ export const BASIC_STAT_CATALOG = {
         "review": "pending",
         "verification": "description",
         "mechanicsRevision": 1,
-        "note": "已标注最高加成；需确认当前数值及变化公式，不能直接按最大值计入。",
+        "note": "濒死类 / HP越低加成越高 / 属性提高（非Buff）。分类不等于低于30%才生效；需按当前HP计算，不能勾选濒死就直接按最高50%计入。",
         "id": "basic:a805be70edade9bf:1"
       },
       {
@@ -2237,10 +2237,11 @@ export const BASIC_STAT_CATALOG = {
         "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
       }
     ],
-    "note": "已标注最高加成；需确认当前数值及变化公式，不能直接按最大值计入。",
+    "note": "濒死类 / HP越低加成越高 / 属性提高（非Buff）。分类不等于低于30%才生效；需按当前HP计算，不能勾选濒死就直接按最高50%计入。",
     "remaining": true,
     "status": "pending",
-    "summary": "攻击力+50%",
+    "summary": "攻击力随HP降低而提高（最高+50%，非固定50%）",
+    "classification": "conditional-passive",
     "names": [
       "生命鼓舞"
     ]
@@ -2517,7 +2518,7 @@ export const BASIC_STAT_CATALOG = {
         "review": "pending",
         "verification": "description",
         "mechanicsRevision": 1,
-        "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+        "note": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。",
         "id": "basic:3e86dffa826956a7:1"
       },
       {
@@ -2531,10 +2532,11 @@ export const BASIC_STAT_CATALOG = {
         "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
       }
     ],
-    "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+    "note": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。",
     "remaining": true,
     "status": "pending",
-    "summary": "攻击力待确认%；法强待确认%；防御力待确认%；魔抗待确认%",
+    "summary": "攻击力、法强、防御力、魔抗：2人+5% / 3人+10% / 4人+15%",
+    "classification": "conditional-passive",
     "names": [
       "魔兽同盟"
     ]
@@ -2748,14 +2750,15 @@ export const BASIC_STAT_CATALOG = {
         "review": "ready",
         "verification": "description",
         "mechanicsRevision": 1,
-        "note": "",
+        "note": "空手 / 都空：武器栏与防具栏同时为空。只空武器或只空防具均不满足；饰品栏不受此条件限制。",
         "id": "basic:4633d985390976cc:1"
       }
     ],
-    "note": "满足装备条件时生效",
+    "note": "空手 / 都空：武器栏与防具栏同时为空。只空武器或只空防具均不满足；饰品栏不受此条件限制。",
     "remaining": false,
     "status": "ready",
     "summary": "攻击力+10%；法强+10%；防御力+10%；魔抗+10%",
+    "classification": "conditional-passive",
     "names": [
       "光头猴"
     ]
@@ -5042,7 +5045,7 @@ export const BASIC_STAT_CATALOG = {
         "review": "pending",
         "verification": "description",
         "mechanicsRevision": 1,
-        "note": "已标注最高加成；需确认当前数值及变化公式，不能直接按最大值计入。",
+        "note": "濒死类 / HP越低加成越高 / 属性提高（非Buff）。分类不等于低于30%才生效；需按当前HP计算，不能勾选濒死就直接按最高50%计入。",
         "id": "basic:6edebfe26dbf6ef3:1"
       },
       {
@@ -5056,10 +5059,11 @@ export const BASIC_STAT_CATALOG = {
         "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
       }
     ],
-    "note": "已标注最高加成；需确认当前数值及变化公式，不能直接按最大值计入。",
+    "note": "濒死类 / HP越低加成越高 / 属性提高（非Buff）。分类不等于低于30%才生效；需按当前HP计算，不能勾选濒死就直接按最高50%计入。",
     "remaining": true,
     "status": "pending",
-    "summary": "防御力+50%",
+    "summary": "防御力随HP降低而提高（最高+50%，非固定50%）",
+    "classification": "conditional-passive",
     "names": [
       "生命堡垒"
     ]
@@ -6527,11 +6531,11 @@ export const BASIC_STAT_CATALOG = {
         "review": "ready",
         "verification": "description",
         "mechanicsRevision": 1,
-        "note": "",
+        "note": "空手 / 空防具：未装备防具时生效，不要求武器栏为空。",
         "id": "basic:f1b5060bde17e0e8:1"
       }
     ],
-    "note": "满足装备条件时生效",
+    "note": "空手 / 空防具：未装备防具时生效，不要求武器栏为空。",
     "remaining": false,
     "status": "ready",
     "summary": "防御力+20%",
@@ -6924,11 +6928,11 @@ export const BASIC_STAT_CATALOG = {
         "review": "ready",
         "verification": "description",
         "mechanicsRevision": 1,
-        "note": "",
+        "note": "空手 / 空防具：未装备防具时生效，不要求武器栏为空。",
         "id": "basic:1bb6b460e8a6c297:1"
       }
     ],
-    "note": "满足装备条件时生效",
+    "note": "空手 / 空防具：未装备防具时生效，不要求武器栏为空。",
     "remaining": false,
     "status": "ready",
     "summary": "魔抗+20%",
@@ -6976,11 +6980,11 @@ export const BASIC_STAT_CATALOG = {
         "review": "ready",
         "verification": "description",
         "mechanicsRevision": 1,
-        "note": "",
+        "note": "空手 / 空防具：未装备防具时生效，不要求武器栏为空。",
         "id": "basic:f5c157dab48c38c7:1"
       }
     ],
-    "note": "满足装备条件时生效",
+    "note": "空手 / 空防具：未装备防具时生效，不要求武器栏为空。",
     "remaining": false,
     "status": "ready",
     "summary": "攻击力+20%",
@@ -7274,11 +7278,11 @@ export const BASIC_STAT_CATALOG = {
         "review": "ready",
         "verification": "description",
         "mechanicsRevision": 1,
-        "note": "",
+        "note": "空手 / 空防具：未装备防具时生效，不要求武器栏为空。",
         "id": "basic:b01d5a17adf13b59:1"
       }
     ],
-    "note": "满足装备条件时生效",
+    "note": "空手 / 空防具：未装备防具时生效，不要求武器栏为空。",
     "remaining": false,
     "status": "ready",
     "summary": "法强+20%",
@@ -7987,7 +7991,7 @@ export const BASIC_STAT_CATALOG = {
         "review": "ready",
         "verification": "description",
         "mechanicsRevision": 1,
-        "note": "",
+        "note": "单手 / 剑：仅装备一把武器，且该武器为剑。",
         "id": "basic:a92f6001f2419fda:1"
       },
       {
@@ -8001,7 +8005,7 @@ export const BASIC_STAT_CATALOG = {
         "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
       }
     ],
-    "note": "满足装备条件时生效",
+    "note": "单手 / 剑：仅装备一把武器，且该武器为剑。",
     "remaining": true,
     "status": "ready",
     "summary": "攻击力+20%",

@@ -1,6 +1,6 @@
-import {statActivationCondition} from './stat-condition-fields.mjs?v=20260924-trigger-conditions';
-import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-trigger-conditions';
-import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-trigger-conditions';
+import {statActivationCondition} from './stat-condition-fields.mjs?v=20260924-condition-tags';
+import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
+import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-condition-tags';
 import {upgradeStatRule, verifiedRuntimeFamily,verifiedHpRuntime} from './stat-mechanics.mjs?v=20260924-fullpage';
 // Character-panel arithmetic only. Damage/cap/defense-reference effects never enter it.
 export const PANEL_LABELS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};

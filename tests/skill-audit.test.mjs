@@ -70,3 +70,17 @@ test('translated names preserve the original character binding identity',()=>{
  const page=boot({'lc-sheet-table:unified-character-skills-v1':{'260':{sources:[{sourceId:'test-recast',name:oldName,text:renamed.effect}],initialized:true}},'lc-sheet-table:sc-calculator-v1':{characterId:'260',skillIds:[selected],characterFreeIds:[selected],activeBreaks:[]}});
  const snapshot=page.window.LC_LOADOUT_CALCULATOR.snapshot();assert.equal(snapshot.items.length,1);assert.equal(snapshot.items[0].id,selected);assert.equal(snapshot.items[0].sourceIds[0],'test-recast');assert.equal(snapshot.totalSc,0);
 });
+
+test('condition tags display and search; edited effects drop stale tags from loadout snapshots',()=>{
+ const monkey=skill(304),life=skill(267),alliance=skill(284);
+ const state={skillIds:[monkey.id,life.id,alliance.id],characterId:'',activeBreaks:[]};
+ const page=boot({'lc-sheet-table:sc-calculator-v1':state});
+ assert.match(page.search('都空'),/光头猴/);
+ assert.match(page.search('濒死'),/生命鼓舞/);
+ assert.match(page.search('多人'),/魔兽同盟/);
+ const snapshot=page.window.LC_LOADOUT_CALCULATOR.snapshot();
+ assert(snapshot.items.find(r=>r.id===monkey.id).skillTags.labels.includes('空手 / 都空'));
+ const edited=boot({'lc-sheet-table:sc-calculator-v1':state,'lc-sheet-table:cell-edits-v1':{[`skill:${monkey.id}`]:{effect:'我的新效果'}}});
+ assert.equal(edited.window.LC_LOADOUT_CALCULATOR.snapshot().items.find(r=>r.id===monkey.id).skillTags,null);
+ assert(!edited.search('光头猴').includes('条件标签'));
+});

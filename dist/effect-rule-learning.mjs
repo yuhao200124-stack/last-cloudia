@@ -1,7 +1,7 @@
 import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-fullpage';
-import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-trigger-conditions';
+import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-condition-tags';
 /** Reusable, description-matched rule templates. No imported content is executable. */
-import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260924-trigger-conditions';
+import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260924-condition-tags';
 
 export const LEARNING_STORAGE_KEY = 'lc-effect-rules:learned:v1';
 

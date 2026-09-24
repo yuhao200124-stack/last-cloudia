@@ -1,6 +1,6 @@
 /* Roxy's source descriptions are preserved from character-260.html.
  * Rules declare applicability, not an invented damage stacking formula. */
-export { DEFAULT_CONTEXT, CONDITION_FIELDS, normalizeContext, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260924-trigger-conditions';
+export { DEFAULT_CONTEXT, CONDITION_FIELDS, normalizeContext, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260924-condition-tags';
 export const ATTACKS = [
   { id: 'normal', label: '普通攻击' }, { id: 's1', label: '特技1 · 水球' },
   { id: 's2', label: '特技2 · 冰柱破碎' }, { id: 's3', label: '特技3 · 暴风雪' },

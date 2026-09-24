@@ -1,4 +1,4 @@
-import {effectCombatModes,blockedCombatModes,MODE_LABELS,requiresTrue} from './combat-modes.mjs?v=20260924-trigger-conditions';
+import {effectCombatModes,blockedCombatModes,MODE_LABELS,requiresTrue} from './combat-modes.mjs?v=20260924-condition-tags';
 // A combat-selection switch, not a claim that every hit is a critical hit.
 // A permission rule is one skill bundle: its fixed cap is removed with that
 // bundle when disabled, but remains a BOTH-branch cap while enabled.

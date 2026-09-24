@@ -205,11 +205,16 @@
     return rowValue(row, 'effect') === String(row.effect || '') ? String(row.notes || '') : '';
   }
 
+  function skillTagLabels(row) {
+    return rowValue(row, 'effect') === String(row.effect || '') ? row.skillTags?.labels || [] : [];
+  }
+
   function effectContent(row) {
     const notes = effectNotes(row);
     const basic=row.basicStats,original=rowValue(row,'effect')===String(row.effect||'');
     const annotation=basic?`<div class="skill-stat-metadata"><b>${original?({ready:'基础属性已接入',partial:'基础属性部分接入',pending:'基础属性待确认'}[basic.status]):'已自定义效果，重新识别'}${original&&basic.status!=='ready'?' · 暂不计入待确认项':''}</b>${original?`<span>${escapeHtml(basic.summary)}</span><small>${escapeHtml(basic.note)}</small>`:''}</div>`:'';
-    return highlight(rowValue(row, 'effect')) + (notes ? `<div class="skill-effect-notes"><span>补充说明</span>${highlight(notes)}</div>` : '') + annotation;
+    const tags=skillTagLabels(row);
+    return highlight(rowValue(row, 'effect')) + (tags.length ? `<div class="skill-condition-tags"><b>条件标签</b>${tags.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div>` : '') + (notes ? `<div class="skill-effect-notes"><span>补充说明</span>${highlight(notes)}</div>` : '') + annotation;
   }
 
   function editedSources(row) {
@@ -299,7 +304,7 @@
   }
 
   function rowText(row) {
-    return fold([row.type, rowValue(row, 'name'), ...(row.aliases || []), rowValue(row, 'sc'), rowValue(row, 'effect'), effectNotes(row), ...(rowValue(row,'effect')===String(row.effect||'')?row.basicStats?.targets||[]:[]), ...editedSources(row)].join(' '));
+    return fold([row.type, rowValue(row, 'name'), ...(row.aliases || []), rowValue(row, 'sc'), rowValue(row, 'effect'), effectNotes(row), ...skillTagLabels(row), ...(rowValue(row,'effect')===String(row.effect||'')?row.basicStats?.targets||[]:[]), ...editedSources(row)].join(' '));
   }
 
   function matches(row) {
@@ -1035,7 +1040,7 @@
       return { characterId: calculatorState.characterId, characterName: characterLoadouts[calculatorState.characterId]?.name || '通用', characterPage: characterLoadouts[calculatorState.characterId]?.page,
         sourceIds: Object.values(bindings).flat(), activeBreaks: [...calculatorState.activeBreaks], totalSc: calculateSc().total,
         items: calculateSc().items.map(item => ({ id: item.id, catalogId:item.row.basicStats?.catalogId, name: rowValue(item.row, 'name'), text: rowValue(item.row, 'effect'), sc: item.freeBy ? 0 : item.sc,
-          sourceIds: bindings[item.id] || [], edited: rowValue(item.row, 'effect') !== String(item.row.effect || '') })) };
+          sourceIds: bindings[item.id] || [], skillTags:skillTagLabels(item.row).length?item.row.skillTags:null, edited: rowValue(item.row, 'effect') !== String(item.row.effect || '') })) };
     },
     initialize({characterId, sources}) {
       const id = String(characterId), wasSame = calculatorState.characterId === id, oldOwned = new Set(characterLoadouts[id]?.skillIds || []);

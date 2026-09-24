@@ -4,11 +4,11 @@ export const STAT_CONDITIONS = Object.freeze({
  openingBuffActive:{label:'开场Buff（40秒内）',kind:'buff'},
  awakeningBuffActive:{label:'觉醒Buff（触发后40秒）',kind:'buff'},
  magicAwakeningBuffActive:{label:'魔导觉醒Buff（触发后40秒）',kind:'buff'},
- ultimateUsedBuffActive:{label:'使用必杀后Buff（40秒内）',kind:'buff'},
- damageTakenBuffActive:{label:'受到伤害时',kind:'buff'},
- reviveBuffActive:{label:'复活Buff（40秒内）',kind:'buff'},
- realSunday:{label:'现实时间为周日',kind:'conditional-passive'},
- ultimateGaugeFull:{label:'必杀槽满',kind:'conditional-passive'},
+ ultimateUsedBuffActive:{label:'使用必杀后Buff（40秒内）',kind:'buff',deferred:true},
+ damageTakenBuffActive:{label:'受到伤害时',kind:'buff',deferred:true},
+ reviveBuffActive:{label:'复活Buff（40秒内）',kind:'buff',deferred:true},
+ realSunday:{label:'现实时间为周日',kind:'conditional-passive',deferred:true},
+ ultimateGaugeFull:{label:'必杀槽满',kind:'conditional-passive',deferred:true},
 });
 export const STAT_CONDITION_FIELDS = Object.freeze(Object.keys(STAT_CONDITIONS));
 export const STAT_CONDITION_DEFAULTS = Object.freeze(Object.fromEntries(STAT_CONDITION_FIELDS.map(f=>[f,false])));

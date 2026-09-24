@@ -1,10 +1,10 @@
-import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260924-trigger-conditions';
+import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260924-condition-tags';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
-import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260924-trigger-conditions';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260924-trigger-conditions';
-import {retargetReport} from './entry-preparation.mjs?v=20260924-trigger-conditions';
-import {buildDamageImport} from './damage-import.mjs?v=20260924-trigger-conditions';
-import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-trigger-conditions';
+import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260924-condition-tags';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260924-condition-tags';
+import {retargetReport} from './entry-preparation.mjs?v=20260924-condition-tags';
+import {buildDamageImport} from './damage-import.mjs?v=20260924-condition-tags';
+import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const saved=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))||fallback;}catch{return fallback;}};

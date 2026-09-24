@@ -1,4 +1,4 @@
-import {STAT_CONDITIONS,STAT_CONDITION_FIELDS,STAT_CONDITION_DEFAULTS} from './stat-condition-fields.mjs?v=20260924-trigger-conditions';
+import {STAT_CONDITIONS,STAT_CONDITION_FIELDS,STAT_CONDITION_DEFAULTS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
 import {upgradeStatRule, STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullpage';
 /* Declarative effect conditions. This module does not compute final damage. */
 const options = (entries) => entries.map(([value, label]) => ({ value, label }));

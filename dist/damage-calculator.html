@@ -7,7 +7,7 @@
   <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-table-layout">
 </head>
 <body>
-<header class="site-header"><a class="brand" href="./index.html?v=20260924-trigger-conditions">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a id="calculatorCharacterBack" href="./characters.html?v=20260924-trigger-conditions">角色列表</a><a href="./index.html?v=20260924-trigger-conditions">技能表</a></nav></header>
+<header class="site-header"><a class="brand" href="./index.html?v=20260924-condition-tags">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a id="calculatorCharacterBack" href="./characters.html?v=20260924-condition-tags">角色列表</a><a href="./index.html?v=20260924-condition-tags">技能表</a></nav></header>
 <main>
   <div class="page-intro"><p>输入当前战斗属性，查看每段与整次技能伤害。</p><span class="tag">PvE · 普通物理 / 魔法伤害</span></div>
   <div class="calculator-layout" id="calculationPage">
@@ -35,7 +35,7 @@
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
-      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">break</label><label><input id="fullHp" type="checkbox">满血</label><label><input id="lowHp" type="checkbox">濒死（HP≤30%）</label><label><input id="criticalEnabled" type="checkbox">暴击</label><label><input id="openingBuffActive" type="checkbox">开场Buff（40秒内）</label><label><input id="awakeningBuffActive" type="checkbox">觉醒Buff（触发后40秒）</label><label><input id="magicAwakeningBuffActive" type="checkbox">魔导觉醒Buff（触发后40秒）</label><label><input id="ultimateUsedBuffActive" type="checkbox">使用必杀后Buff（40秒内）</label><label><input id="damageTakenBuffActive" type="checkbox">受到伤害时</label><label><input id="reviveBuffActive" type="checkbox">复活Buff（40秒内）</label><label><input id="realSunday" type="checkbox">现实时间为周日</label><label><input id="ultimateGaugeFull" type="checkbox">必杀槽满</label></div>
+      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">break</label><label><input id="fullHp" type="checkbox">满血</label><label><input id="lowHp" type="checkbox">濒死（HP≤30%）</label><label><input id="criticalEnabled" type="checkbox">暴击</label><label><input id="openingBuffActive" type="checkbox">开场Buff（40秒内）</label><label><input id="awakeningBuffActive" type="checkbox">觉醒Buff（触发后40秒）</label><label><input id="magicAwakeningBuffActive" type="checkbox">魔导觉醒Buff（触发后40秒）</label><span hidden data-deferred-condition-controls><label><input id="ultimateUsedBuffActive" type="checkbox">使用必杀后Buff（40秒内）</label><label><input id="damageTakenBuffActive" type="checkbox">受到伤害时</label><label><input id="reviveBuffActive" type="checkbox">复活Buff（40秒内）</label><label><input id="realSunday" type="checkbox">现实时间为周日</label><label><input id="ultimateGaugeFull" type="checkbox">必杀槽满</label></span></div>
       <p class="help">暴击：控制相关技能、暴伤及附带上限；关闭后这些加成不计入。结果仍显示暴击伤害对照。</p>
       <div id="magicBuffOptions" class="magic-buff-options" hidden><div id="magicBuffChoices"></div><div id="magicBuffRelationControl" hidden><small>同类型 Buff 只保留一个：指导的法强 +65% 替换原来的 +50%。满血等独立被动仍按各自条件计算；已读到指导后面板时不重复添加。魔法上限只加一次。</small></div></div>
       <p id="conditionStatus" class="help"></p>
@@ -147,5 +147,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260924-trigger-conditions"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260924-condition-tags"></script>
 </body></html>

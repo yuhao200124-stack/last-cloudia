@@ -1,16 +1,16 @@
-import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260924-trigger-conditions';
+import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260924-fullpage';
-import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-trigger-conditions';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260924-trigger-conditions';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-trigger-conditions';
+import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-condition-tags';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260924-condition-tags';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-condition-tags';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
-import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-trigger-conditions';
+import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-condition-tags';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
-import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-trigger-conditions';
-import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-trigger-conditions';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260924-trigger-conditions';
-import {loadCharacterReport} from './character-report-loader.mjs?v=20260924-trigger-conditions';
-import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-trigger-conditions';
+import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
+import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-condition-tags';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260924-condition-tags';
+import {loadCharacterReport} from './character-report-loader.mjs?v=20260924-condition-tags';
+import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -255,7 +255,7 @@ function labels() {
   $('bossReference').textContent=`本次参照：${mode==='mixed'?'手填混合防御值':magic?'魔抗 MND':'防御力 DEF'}；${neutral?'无属性不使用六属性抗性':`使用${$('element').value||'所选'}抗性`}。`;
   const p=bosses[$('bossPreset').value];$('debuff').hidden=!p?.debuff||magic||mode==='mixed';
   if(p?.debuff)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
-  $('conditionStatus').textContent=($('dualWield').checked?'双刀按下方命中与单段倍率计算；':'')+'满血与濒死互斥。受伤、复活、使用必杀及觉醒的勾选表示对应Buff当前有效，持续40秒；永久Buff随已选技能生效，同组只计一项。周日与必杀槽满是条件属性加成，可与Buff并存；周日按游戏设备的时间手动选择。';
+  $('conditionStatus').textContent=($('dualWield').checked?'双刀按下方命中与单段倍率计算；':'')+'满血与濒死互斥；开场Buff仅在40秒内勾选。觉醒类勾选表示已经触发且仍有效，回血后可继续保持；永久Buff随已选技能生效。';
   hitSourceNote();
 }
 function applyBoss() {

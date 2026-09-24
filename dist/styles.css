@@ -716,3 +716,6 @@ mark {
 .skill-stat-metadata { display: grid; gap: .25rem; margin-top: .55rem; padding-top: .45rem; border-top: 1px dotted #b9c6d6; font-size: .875rem; line-height: 1.5; }
 .skill-stat-metadata b { color: #27528a; font-weight: 600; }
 .skill-stat-metadata small { font-size: .875rem; color: #535e6e; }
+.skill-condition-tags { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem .5rem; margin-top:.55rem; font-size:.875rem; line-height:1.5; }
+.skill-condition-tags b { color:#27528a; font-weight:600; }
+.skill-condition-tags span { border:1px solid #b9c6d6; border-radius:3px; padding:.1rem .35rem; color:#274b75; }
