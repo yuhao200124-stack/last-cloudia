@@ -6,7 +6,7 @@
     <meta name="description" content="最后的克劳迪娅被动技能分类表，按 Excel 工作表结构查询技能、SC、效果和可学习圣物。" />
     <title>最后的克劳迪娅技能分类表</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260924-condition-tags" />
+    <link rel="stylesheet" href="./styles.css?v=20260924-table-review" />
   </head>
   <body>
     <header class="site-header">
@@ -41,6 +41,7 @@
         </div>
 
         <details id="unifiedCharacterPicker" hidden><summary>角色自带技能</summary><div id="unifiedCharacterSkills"></div></details>
+        <p class="judgment-legend" aria-label="技能判断进度"><span class="judgment-ready">黑色：已完整判断</span><span class="judgment-partial">蓝色：部分判断</span><span class="judgment-unknown">红色：尚未判断／未识别</span></p>
         <div id="tableArea" class="table-area"></div>
         <div id="emptyState" class="empty-state" hidden>
           <strong>没有找到符合条件的技能</strong>
@@ -109,8 +110,8 @@
       <div id="savedLoadoutsList" class="saved-loadouts-list"></div>
     </dialog>
 
-    <script src="./data.js?v=20260924-condition-tags"></script>
-    <script src="./app.js?v=20260924-condition-tags"></script>
+    <script src="./data.js?v=20260924-table-review"></script>
+    <script src="./app.js?v=20260924-table-review"></script>
     <script type="module" src="./loadout-frame.mjs?v=20260924-table-layout"></script>
   </body>
 </html>

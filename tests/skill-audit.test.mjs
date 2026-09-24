@@ -84,3 +84,25 @@ test('condition tags display and search; edited effects drop stale tags from loa
  assert.equal(edited.window.LC_LOADOUT_CALCULATOR.snapshot().items.find(r=>r.id===monkey.id).skillTags,null);
  assert(!edited.search('光头猴').includes('条件标签'));
 });
+
+test('review status covers remaining effects and metadata stays outside editable descriptions and sources',()=>{
+ const complete=primary.find(r=>r.basicStats?.status==='ready'&&r.basicStats.remaining===false);
+ const partial=primary.find(r=>r.basicStats?.status==='ready'&&r.basicStats.remaining===true);
+ const unknown=primary.find(r=>!r.basicStats&&!r.skillTags);
+ const page=boot(),html=page.elements.get('#tableArea').innerHTML;
+ const rowHtml=(markup,row)=>[...markup.matchAll(/<tr class="judgment-[\s\S]*?<\/tr>/g)].find(m=>m[0].includes(`data-edit-key="skill:${row.id}"`))?.[0];
+ assert.match(rowHtml(html,complete),/data-judgment="ready"/);
+ assert.match(rowHtml(html,partial),/data-judgment="partial"/);
+ assert.match(rowHtml(html,unknown),/data-judgment="unknown"/);
+ for(const sheet of data.sheetOrder){
+  const markup=boot({},sheet).elements.get('#tableArea').innerHTML;
+  for(const match of markup.matchAll(/<td[^>]*data-edit-field="effect"[^>]*>([\s\S]*?)<\/td>/g))assert(!/skill-stat-metadata|skill-condition-tags|skill-judgment-label/.test(match[1]));
+ }
+ const sourceCell=rowHtml(html,complete).match(/<td[^>]*data-edit-field="sources"[^>]*>([\s\S]*?)<\/td>/)[0];
+ assert.match(sourceCell,/skill-stat-metadata/);
+ assert(!sourceCell.match(/data-edit-value="([^"]*)"/)[1].includes('已完整判断'));
+ const edited=boot({'lc-sheet-table:cell-edits-v1':{[`skill:${complete.id}`]:{effect:'自定义效果'}}});
+ const editedRow=rowHtml(edited.elements.get('#tableArea').innerHTML,complete);
+ assert.match(editedRow,/data-judgment="unknown"/);
+ assert(!editedRow.includes('skill-stat-metadata'));
+});

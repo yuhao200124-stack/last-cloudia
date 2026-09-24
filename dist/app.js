@@ -211,10 +211,23 @@
 
   function effectContent(row) {
     const notes = effectNotes(row);
+    return highlight(rowValue(row, 'effect')) + (notes ? `<div class="skill-effect-notes"><span>补充说明</span>${highlight(notes)}</div>` : '');
+  }
+
+  function skillJudgment(row) {
+    if (rowValue(row, 'effect') !== String(row.effect || '')) return 'unknown';
+    const basic = row.basicStats;
+    if (basic) return basic.status === 'ready' && basic.remaining === false ? 'ready' : 'partial';
+    return skillTagLabels(row).length ? 'partial' : 'unknown';
+  }
+
+  function sourceContent(row) {
     const basic=row.basicStats,original=rowValue(row,'effect')===String(row.effect||'');
-    const annotation=basic?`<div class="skill-stat-metadata"><b>${original?({ready:'基础属性已接入',partial:'基础属性部分接入',pending:'基础属性待确认'}[basic.status]):'已自定义效果，重新识别'}${original&&basic.status!=='ready'?' · 暂不计入待确认项':''}</b>${original?`<span>${escapeHtml(basic.summary)}</span><small>${escapeHtml(basic.note)}</small>`:''}</div>`:'';
+    const judgment=skillJudgment(row);
+    const statusLabel=original?{ready:'已完整判断',partial:'部分判断，仍有待确认项',unknown:'尚未判断／未识别'}[judgment]:'已自定义效果，待重新判断';
+    const annotation=basic&&original?`<div class="skill-stat-metadata"><b>${{ready:'基础属性已接入',partial:'基础属性部分接入',pending:'基础属性待确认'}[basic.status]}${basic.status!=='ready'?' · 暂不计入待确认项':''}</b><span>${escapeHtml(basic.summary)}</span><small>${escapeHtml(basic.note)}</small>${basic.remaining&&basic.status==='ready'?'<small>其他效果尚未全部判断。</small>':''}</div>`:'';
     const tags=skillTagLabels(row);
-    return highlight(rowValue(row, 'effect')) + (tags.length ? `<div class="skill-condition-tags"><b>条件标签</b>${tags.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div>` : '') + (notes ? `<div class="skill-effect-notes"><span>补充说明</span>${highlight(notes)}</div>` : '') + annotation;
+    return sourceList(row) + `<div class="skill-judgment-label">${statusLabel}</div>` + annotation + (tags.length ? `<div class="skill-condition-tags"><b>条件标签</b>${tags.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div>` : '');
   }
 
   function editedSources(row) {
@@ -611,12 +624,12 @@
         const effect = rowValue(row, 'effect');
         const sources = rowValue(row, 'sources');
         const markValue = rowValue(row, 'mark');
-        return `<tr>
+        return `<tr class="judgment-${skillJudgment(row)}" data-judgment="${skillJudgment(row)}">
           ${index === 0 ? `<td class="type-cell editable-cell" rowspan="${group.rows.length}" data-edit-key="${escapeHtml(typeKey)}" data-edit-field="type" data-edit-value="${escapeHtml(typeValue)}" title="双击编辑">${cell(highlight(typeValue), 'cell-center')}</td>` : ''}
           ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
           ${editableTd(key, 'sc', sc, cell(escapeHtml(sc), 'cell-center'), 'sc-cell')}
           ${editableTd(key, 'effect', effect, cell(effectContent(row)), '')}
-          ${editableTd(key, 'sources', sources, cell(sourceList(row), 'cell-center'), '')}
+          ${editableTd(key, 'sources', sources, cell(sourceContent(row)), 'sources-cell')}
           ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
           <td class="action-cell">${addButton(row)}</td>
         </tr>`;
@@ -625,7 +638,7 @@
       <colgroup><col class="type"><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"><col class="action"></colgroup>
       <thead>
         <tr class="book-title"><th colspan="7">一、被动技能</th></tr>
-        <tr class="column-title"><th>技能类型</th><th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th><th>添加</th></tr>
+        <tr class="column-title"><th>技能类型</th><th>技能名称</th><th class="sc-heading">SC</th><th>技能效果／说明</th><th>获得方式</th><th>评价</th><th>添加</th></tr>
       </thead>
       <tbody>${body}</tbody>
     </table></div>`;
@@ -639,11 +652,11 @@
       const effect = rowValue(row, 'effect');
       const sources = rowValue(row, 'sources');
       const markValue = rowValue(row, 'mark');
-      return `<tr>
+      return `<tr class="judgment-${skillJudgment(row)}" data-judgment="${skillJudgment(row)}">
         ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
         ${editableTd(key, 'sc', sc, cell(escapeHtml(sc), 'cell-center'), 'sc-cell')}
         ${editableTd(key, 'effect', effect, cell(effectContent(row)), '')}
-        ${editableTd(key, 'sources', sources, cell(sourceList(row), 'cell-center'), '')}
+        ${editableTd(key, 'sources', sources, cell(sourceContent(row)), 'sources-cell')}
         ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
         <td class="action-cell">${addButton(row)}</td>
       </tr>`;
@@ -652,7 +665,7 @@
       <colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"><col class="action"></colgroup>
       <thead>
         <tr class="book-title"><th colspan="6">${activeSheet==='基础属性'?escapeHtml(label):'一、被动技能'}</th></tr>
-        <tr class="column-title"><th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th><th>添加</th></tr>
+        <tr class="column-title"><th>技能名称</th><th class="sc-heading">SC</th><th>技能效果／说明</th><th>获得方式</th><th>评价</th><th>添加</th></tr>
       </thead>
       <tbody>${body}</tbody>
     </table></div>`;

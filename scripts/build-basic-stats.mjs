@@ -9,7 +9,7 @@ const primary=data.sheets['全部技能'].rows,byId=new Map(primary.map(r=>[r.id
 const entries=Object.fromEntries(source.entries.map(e=>[e.id,e]));
 for(const e of source.entries){const row=byId.get(e.id);if(!row||row.effect!==e.text)throw new Error(`Registry text drift: ${e.id}`);e.names=[...new Set([row.name,row.bindingName,...(row.aliases||[])].filter(Boolean))];}
 const byUrl=new Map(source.entries.filter(e=>e.url).map(e=>[e.url,e])),aliases={};
-for(const row of all){const entry=entries[row.id]||byUrl.get(row.url);if(entry){aliases[row.id]=entry.id;row.basicStats={catalogId:entry.id,targets:entry.targets,status:entry.status,summary:entry.summary,note:entry.note};}}
+for(const row of all){const entry=entries[row.id]||byUrl.get(row.url);if(entry){aliases[row.id]=entry.id;row.basicStats={catalogId:entry.id,targets:entry.targets,status:entry.status,remaining:entry.remaining,summary:entry.summary,note:entry.note};}}
 const targets=['HP','MP','攻击力','法强','防御力','魔抗'];
 data.sheets['基础属性']={kind:'basicStats',lanes:targets.map(target=>({label:target,rows:source.entries.filter(e=>e.targets.includes(target)).map(e=>byId.get(e.id))}))};
 data.sheetOrder=data.sheetOrder.filter(n=>n!=='基础属性');data.sheetOrder.splice(1,0,'基础属性');
