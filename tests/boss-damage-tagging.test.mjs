@@ -41,20 +41,13 @@ test('Hero Soul covers only outgoing Boss damage and remains partial for incomin
  assert.deepEqual(skillLabelRows(box.window.SKILL_DATA,boss).map(r=>r.id),[hero.id]);
 });
 
-test('revoking wrong Boss labels restores prior judgments without deleting source skills or earlier tags',()=>{
- for(const [n,key,tag] of [[720,'physical','物理伤害增加'],[837,'magic-damage','魔法伤害增加'],[1159,'magic-damage','魔法伤害增加'],[1644,'magic-damage','魔法伤害增加'],[1814,'magic-damage','魔法伤害增加']]){
-  const e=labelingView(catalog,key).entries.find(e=>e.id===source(n).id);
-  assert.deepEqual(e.assignedTags,[tag]);
-  assert.equal(e.judgment,'partial');
-  assert(e.remainingConditions.includes('目标敌人为Boss'));
-  assert(!e.tagDetails['Boss伤害增加']);
- }
- for(const n of [411,624,985,1041,1289,1311]){
+test('specific Boss bonuses enter neither broad damage view while source skills remain available',()=>{
+ for(const n of [411,624,720,837,985,1041,1159,1289,1311,1644,1814]){
   assert(source(n));assert(!catalog.entries.some(e=>e.id===source(n).id));
  }
  assert.equal(catalog.views['magic-damage'].counts.ready,0);
- assert.equal(catalog.views['magic-damage'].counts.partial,59);
+ assert.equal(catalog.views['magic-damage'].counts.partial,22);
  assert.equal(catalog.views.damage.counts.relatedUnique,7);
- assert.equal(catalog.entries.length,357);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,357);
- assert.equal(catalog.views.all.counts.ready,44);assert.equal(catalog.views.all.counts.partial,313);
+ assert.equal(catalog.entries.length,270);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,270);
+ assert.equal(catalog.views.all.counts.ready,44);assert.equal(catalog.views.all.counts.partial,226);
 });

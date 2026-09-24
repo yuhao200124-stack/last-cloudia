@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "label": "魔法伤害增加",
   "reviewedUnique": 935,
-  "matchedUnique": 59,
-  "sharedWithPreviousUnique": 9,
-  "reviewScope": "从全库935个唯一技能筛查，复核163条魔法／法术／科学／咏唱／信仰相关项，并以增幅、威力、伤害等扩展检索597条；全库指纹与此前完整阅读的原文一致。纳入明确魔法增伤、科学攻击魔法增幅及条件性魔法特攻增伤；未限定魔法的通用／属性通用伤害、魔力属性、咏唱、治疗、魔法暴击资格、赋予特攻、上限和减伤留待各自标签。",
+  "matchedUnique": 22,
+  "sharedWithPreviousUnique": 7,
+  "reviewScope": "按用户“其它类别也有同样错误”重新核对全库935条来源以及已有九类标签。魔法伤害增加只纳入该攻击类型的整体输出增伤；不剥离攻击属性、特定目标、敌人状态、方位距离、弱点、特攻、科学子类型或连续指定魔法等限定。装备、队伍、自身状态、时间与Buff触发等启用条件仍独立待判断；并列的另一条增伤不互相污染。易伤、上限、减伤、属性数值与防御修正分别处理。",
   "rows": [
     {
       "id": "f6b3f0aa974f4913",
@@ -885,43 +885,43 @@
       "id": "f871fed73e6326c3",
       "url": "https://altema.jp/lastcloudia/gino/127",
       "sourceHash": "10056870f861cc4d16faa99bdd8c45269276e44641f23b672c14bb40a308aade",
-      "decision": "related",
-      "reason": "火属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "ccd9494e616a344d",
       "url": "https://altema.jp/lastcloudia/gino/128",
       "sourceHash": "9efb1b4593c0d6b670786198e85aaba16053a9c1b26f649038d691cb7ce3d855",
-      "decision": "related",
-      "reason": "冰属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "2201afc0db4a340e",
       "url": "https://altema.jp/lastcloudia/gino/129",
       "sourceHash": "ec53c592edbb66e61fecc6f004d9d2a8f3af2718b68f5be124f0b004bd6adb50",
-      "decision": "related",
-      "reason": "树属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "b9a13a0572f16699",
       "url": "https://altema.jp/lastcloudia/gino/130",
       "sourceHash": "2da96c245026edd86d92044b01eb280854c941fdbdbc94626d111691d0970a67",
-      "decision": "related",
-      "reason": "雷属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "02ddf87727d6b287",
       "url": "https://altema.jp/lastcloudia/gino/131",
       "sourceHash": "33ec54947dede3ebfc78d6aab616f3f70f70384fe951373ebf81c18631423cd2",
-      "decision": "related",
-      "reason": "光属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "1a1043cd31293850",
       "url": "https://altema.jp/lastcloudia/gino/132",
       "sourceHash": "b1152010a483d9684f29f838924642c20b35ab00d7789f4577ce7d35e3fe84f0",
-      "decision": "related",
-      "reason": "暗属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "01f5167831d7b556",
@@ -934,43 +934,43 @@
       "id": "f38969900a97ccd0",
       "url": "https://altema.jp/lastcloudia/gino/134",
       "sourceHash": "9f72bfb85e4504bd49c3dc0c8c50f92ec491f94483195cda4f61a467b7088b91",
-      "decision": "related",
-      "reason": "火属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "b6b66290a2c0176e",
       "url": "https://altema.jp/lastcloudia/gino/135",
       "sourceHash": "8f87504a0b67b78a074795ead3e5c365bdb211c9b96ce83817a435049f0eff09",
-      "decision": "related",
-      "reason": "冰属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "c334b7ddf4d78b15",
       "url": "https://altema.jp/lastcloudia/gino/136",
       "sourceHash": "66ae56cb714970bfd224127d9db1848d04e0e8f06042742667daeafc67e01054",
-      "decision": "related",
-      "reason": "树属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "fc921ccf05929ad6",
       "url": "https://altema.jp/lastcloudia/gino/137",
       "sourceHash": "e9c3d7a7003037d41806a0f258893d8be3723fe1e7b2482da95b5f0cbf52bf6a",
-      "decision": "related",
-      "reason": "雷属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "dc3451f4b7d2a45b",
       "url": "https://altema.jp/lastcloudia/gino/138",
       "sourceHash": "41e723bd059c45657d7c74432573b15019dd76a540d820eafba062d1da7b629f",
-      "decision": "related",
-      "reason": "光属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "0c21dbbed7678df5",
       "url": "https://altema.jp/lastcloudia/gino/139",
       "sourceHash": "fb4802c63d58f8a0b32a454d224cde1c319629cf7297aa992ed8a70213f3e414",
-      "decision": "related",
-      "reason": "暗属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "1c52dcb1735c073a",
@@ -1536,15 +1536,15 @@
       "id": "b63054ad34e97c0d",
       "url": "https://altema.jp/lastcloudia/gino/227",
       "sourceHash": "930bcd5da77f85f67e0638c054731e9a3266561e7a6f35e80bb8b2562f3d74c1",
-      "decision": "related",
-      "reason": "现实时间为白天时，光属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "713403dd798c7836",
       "url": "https://altema.jp/lastcloudia/gino/228",
       "sourceHash": "4fb579ef2e4878585f83c1b74a04254004e88d7097e51b39d925f7def6bcb408",
-      "decision": "related",
-      "reason": "现实时间为夜间时，暗属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "f52898e0e4d6fcb3",
@@ -1620,8 +1620,8 @@
       "id": "e0f6942b8d0b10f7",
       "url": "https://altema.jp/lastcloudia/gino/242",
       "sourceHash": "79539eac703d3fc38bba6063394d9dffa0c89ac03e7b619e6ee5bb746b80817c",
-      "decision": "related",
-      "reason": "现实时间为夜间时，光属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "4f8a8b3359a2206f",
@@ -1914,8 +1914,8 @@
       "id": "5f6efbf8b35453d2",
       "url": "https://altema.jp/lastcloudia/gino/305",
       "sourceHash": "eacd7cd5c9919616eece68d073b3ac7ac74f0d4c193b56b9e734175e44ac4915",
-      "decision": "related",
-      "reason": "每个Wave开始时，科学类攻击魔法威力+5%，最多叠加10次"
+      "decision": "not-related",
+      "reason": "完整词条纠正：只提高科学类攻击魔法威力，属于科学魔法这一专门词条，不是宽泛魔法伤害增加；该技能的真实基础属性标签保留。"
     },
     {
       "id": "94cdc5cc53c80e9b",
@@ -2110,8 +2110,8 @@
       "id": "全部技能:all:302",
       "url": "https://altema.jp/lastcloudia/gino/363",
       "sourceHash": "02bb56f00b7f6cb0938420d3266906bd4e62300e921c89360688f47e38d2699a",
-      "decision": "related",
-      "reason": "雷属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "全部技能:all:303",
@@ -2166,8 +2166,8 @@
       "id": "1a004726593e801a",
       "url": "https://altema.jp/lastcloudia/gino/380",
       "sourceHash": "fc085c96d776b5944ddb289fb5917227027be4cc287a0cc639ee20026db29eb0",
-      "decision": "related",
-      "reason": "冰属性攻击魔法伤害+40%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "6133882f233d82ce",
@@ -2320,15 +2320,15 @@
       "id": "6e424e4ea062edd4",
       "url": "https://altema.jp/lastcloudia/gino/415",
       "sourceHash": "45b4b90434b5a54e5b3e8ecf28408a02e4e0d945eef01bf569f54abaf91f0d82",
-      "decision": "related",
-      "reason": "光属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "eb948e43fefb658b",
       "url": "https://altema.jp/lastcloudia/gino/416",
       "sourceHash": "dc2b5ca458224e61edc28e9ac2b26e984a6307ed9df5352b61aefe9204ccc4f3",
-      "decision": "related",
-      "reason": "暗属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "a9beabdba2bb1ea3",
@@ -2369,8 +2369,8 @@
       "id": "3a0b205292a15907",
       "url": "https://altema.jp/lastcloudia/gino/429",
       "sourceHash": "ec355f36e64bf285a06783db1802dfc1408b32fbfe8060dd1348d37d21e0aa0c",
-      "decision": "related",
-      "reason": "连续使用相同的攻击魔法时，伤害逐次提高（原文：第一次+4%，最高+20%）"
+      "decision": "not-related",
+      "reason": "完整词条纠正：只随连续使用同一魔法／同一属性魔法提高该次魔法伤害，属于连续施法的专门增伤，不是给全部魔法的通用增伤。"
     },
     {
       "id": "全部技能:all:340",
@@ -2691,8 +2691,8 @@
       "id": "0a92e3a07ca76013",
       "url": "https://altema.jp/lastcloudia/gino/544",
       "sourceHash": "01e030befdbfc717fd46b745204cfd92c5a01ce0ea5e971582c671c765a60480",
-      "decision": "related",
-      "reason": "树属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "b25e8f7c8b0f317e",
@@ -3020,8 +3020,8 @@
       "id": "25b961ea21f3b629",
       "url": "https://altema.jp/lastcloudia/gino/643",
       "sourceHash": "280b61f567703b6c070934c993af3a1ea6e7abe88e7b649f27c7ac2decfe4943",
-      "decision": "related",
-      "reason": "火属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "d2278025c02f3498",
@@ -3076,8 +3076,8 @@
       "id": "71d9f5a3ea0a9660",
       "url": "https://altema.jp/lastcloudia/gino/662",
       "sourceHash": "099ca1787dc4cad9f868af84cb86b782f1714d22bde21cf68c03170fe15e38c6",
-      "decision": "related",
-      "reason": "火、冰、树、雷属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "72fb68a7b16692e8",
@@ -3153,8 +3153,8 @@
       "id": "cf6437fca36082d9",
       "url": "https://altema.jp/lastcloudia/gino/691",
       "sourceHash": "4b2254b0262a28664b28b2549d389c078f43fb7240c58853ad8251601378af67",
-      "decision": "related",
-      "reason": "连续使用相同属性的攻击魔法时，伤害逐次提高（首次+5%，最高+20%）"
+      "decision": "not-related",
+      "reason": "完整词条纠正：只随连续使用同一魔法／同一属性魔法提高该次魔法伤害，属于连续施法的专门增伤，不是给全部魔法的通用增伤。"
     },
     {
       "id": "2fe14ee0a98be7af",
@@ -3195,8 +3195,8 @@
       "id": "2901b40ce3f38847",
       "url": "https://altema.jp/lastcloudia/gino/701",
       "sourceHash": "4408d91927a80665814139ed28daaef442fdca200f614b1704b0d937e81b9cbe",
-      "decision": "related",
-      "reason": "冰属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "ef761252451c1b55",
@@ -3594,15 +3594,15 @@
       "id": "12feb359b0670804",
       "url": "https://altema.jp/lastcloudia/gino/836",
       "sourceHash": "b2b85b5a91f5317141776c0e8e2ada044f982ab6bb08643b273f69ff19b4bf06",
-      "decision": "related",
-      "reason": "魔法攻击命中弱点属性时，伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果是魔法命中属性弱点时增伤，属于魔法弱点增伤。"
     },
     {
       "id": "79a377bec526c2d4",
       "url": "https://altema.jp/lastcloudia/gino/837",
       "sourceHash": "d32e42300528da1f29b90704fe6f7a0393746d95cf9ebdc729872e7f911c6945",
-      "decision": "related",
-      "reason": "对Boss的魔法攻击伤害+20%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果是对Boss的魔法增伤，不能去掉Boss目标后贴宽泛魔法伤害增加，也不能去掉魔法限制后贴Boss伤害增加。"
     },
     {
       "id": "e2376f83dc028e0f",
@@ -3776,8 +3776,8 @@
       "id": "5f13abe1484bc2c7",
       "url": "https://altema.jp/lastcloudia/gino/895",
       "sourceHash": "9223d2ab2b94c7581eb67f544cfcf4cbadcc058c7581a4c47a09f960b2fe67b6",
-      "decision": "related",
-      "reason": "攻击魔法触发特攻时，伤害+20%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果是攻击魔法触发特攻时的增伤，属于魔法特攻增伤，不是宽泛魔法伤害增加。"
     },
     {
       "id": "7652b90251d97956",
@@ -3951,8 +3951,8 @@
       "id": "41e5f848b9d300e9",
       "url": "https://altema.jp/lastcloudia/gino/957",
       "sourceHash": "e71c4c69e63531c8540b3aff8448662faf03df87c2dbb7ea1ebf22e7d42b53b5",
-      "decision": "related",
-      "reason": "光、暗属性魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "8c2b1825c169cf3b",
@@ -4483,8 +4483,8 @@
       "id": "a97531c83b0073e7",
       "url": "https://altema.jp/lastcloudia/gino/1159",
       "sourceHash": "9aadbde384ef76e22c9f92aea3d1abebe39825a080e8df4da65740f31efd7b0c",
-      "decision": "related",
-      "reason": "对Boss的魔法攻击伤害+20%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果是对Boss的魔法增伤，不能去掉Boss目标后贴宽泛魔法伤害增加，也不能去掉魔法限制后贴Boss伤害增加。"
     },
     {
       "id": "0e15301820186e27",
@@ -4980,8 +4980,8 @@
       "id": "1475f35e571d3e09",
       "url": "https://altema.jp/lastcloudia/gino/1366",
       "sourceHash": "de0886f211f6723c2d4b8b6007c62be3bd51dc8833f4065e547cee5a17ca5547",
-      "decision": "related",
-      "reason": "对空中敌人的魔法攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果是对空中敌人的魔法增伤，不抽掉空中目标限定后贴宽泛魔法伤害增加。"
     },
     {
       "id": "4598f48797c2c478",
@@ -5463,8 +5463,8 @@
       "id": "348f27fb6f68e198",
       "url": "https://altema.jp/lastcloudia/gino/1528",
       "sourceHash": "247d9ff8db74d090091ffce450024b0a6c48e3e4b96f2c702f2d38e2f5906dd3",
-      "decision": "related",
-      "reason": "光、暗属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "648c1a3414c1a27d",
@@ -5575,8 +5575,8 @@
       "id": "88325a3c478ed329",
       "url": "https://altema.jp/lastcloudia/gino/1581",
       "sourceHash": "fbffd55be7bda263f54acbc1650853688c59ad9122c76f745878df371874c4f2",
-      "decision": "related",
-      "reason": "暗属性魔法攻击伤害+15%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "efdc0583f2618634",
@@ -5708,15 +5708,15 @@
       "id": "789bffd5f1b5782a",
       "url": "https://altema.jp/lastcloudia/gino/1640",
       "sourceHash": "968233744cc7ea7b51aabfb2ea19fec66086a6b3a553ee5daeb57e6b51b16dfe",
-      "decision": "related",
-      "reason": "火、冰、树、雷属性魔法攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定火、冰、树、雷、光或暗等属性的魔法增伤是完整专门词条，不能去掉属性后贴宽泛魔法伤害增加；现实时间条件不改变这一范围。"
     },
     {
       "id": "f49f17d3da2551a8",
       "url": "https://altema.jp/lastcloudia/gino/1644",
       "sourceHash": "0193511b3e8f75880c26a601a809bd1b30e1d38f746e7e875150d2e6e2e5b015",
-      "decision": "related",
-      "reason": "对Boss的魔法攻击伤害+20%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果是对Boss的魔法增伤，不能去掉Boss目标后贴宽泛魔法伤害增加，也不能去掉魔法限制后贴Boss伤害增加。"
     },
     {
       "id": "d268368f04c8f840",
@@ -6114,8 +6114,8 @@
       "id": "42656c3afdc8103a",
       "url": "https://altema.jp/lastcloudia/gino/1814",
       "sourceHash": "9081520a819ea2b1635a5103dcf3c3e63b6b1430b82cf76123bcb7298a33beec",
-      "decision": "related",
-      "reason": "对Boss的魔法攻击伤害+20%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果是对Boss的魔法增伤，不能去掉Boss目标后贴宽泛魔法伤害增加，也不能去掉魔法限制后贴Boss伤害增加。"
     },
     {
       "id": "全部技能:all:876",

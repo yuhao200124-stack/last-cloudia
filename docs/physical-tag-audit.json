@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "label": "物理伤害增加",
   "reviewedUnique": 935,
-  "matchedUnique": 130,
+  "matchedUnique": 78,
   "sharedWithPreviousUnique": 14,
-  "reviewScope": "从全库935个唯一技能筛查。复核229条明确物理相关条目、497条增伤／威力／增幅／信仰等扩展条目；全库指纹与本会话已逐条阅读的原文一致。纳入明确物理增伤、敌人物理易伤与信仰继承；通用伤害、属性通用伤害、只限普攻／特技／必杀／反击、暴击、特攻、上限、减伤、基础属性和防御修正留到各自标签。",
+  "reviewScope": "按用户“其它类别也有同样错误”重新核对全库935条来源以及已有九类标签。物理伤害增加只纳入该攻击类型的整体输出增伤；不剥离攻击属性、特定目标、敌人状态、方位距离、弱点、特攻、科学子类型或连续指定魔法等限定。装备、队伍、自身状态、时间与Buff触发等启用条件仍独立待判断；并列的另一条增伤不互相污染。易伤、上限、减伤、属性数值与防御修正分别处理。",
   "rows": [
     {
       "id": "f6b3f0aa974f4913",
@@ -871,8 +871,8 @@
       "id": "f4bf8f6c759cece0",
       "url": "https://altema.jp/lastcloudia/gino/125",
       "sourceHash": "3efb17c4dabd6f55eba37430105e677881651835ad59516e64bcb7924b9d4a67",
-      "decision": "related",
-      "reason": "物理攻击时，距离敌人越远伤害越高，最高+50%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果限定距离、方位或远程攻击，留待对应专门增伤标签，不能作为宽泛物理伤害增加。"
     },
     {
       "id": "全部技能:all:126",
@@ -1382,8 +1382,8 @@
       "id": "1d471a5639a273bc",
       "url": "https://altema.jp/lastcloudia/gino/205",
       "sourceHash": "589913280833b2106a6e8a30d394f779fcf43d890ade874b8a2021ee9dbe9dcb",
-      "decision": "related",
-      "reason": "从背后进行物理攻击时，伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果限定距离、方位或远程攻击，留待对应专门增伤标签，不能作为宽泛物理伤害增加。"
     },
     {
       "id": "9146eb2670c69122",
@@ -1431,8 +1431,8 @@
       "id": "1032f88be503dbb8",
       "url": "https://altema.jp/lastcloudia/gino/212",
       "sourceHash": "6a01377420d6f0c88ccf2fbc3b4eb341179bae1761ba588dda5a679046a0a631",
-      "decision": "related",
-      "reason": "使敌人受到的物理伤害+20%；属于施加给敌人的物理易伤减益"
+      "decision": "not-related",
+      "reason": "完整词条纠正：对敌人施加物理易伤减益，改变的是敌人受到的伤害，不是自身／友方物理伤害增加。"
     },
     {
       "id": "398ea3fcd696c86a",
@@ -1893,8 +1893,8 @@
       "id": "c18e2156cd295689",
       "url": "https://altema.jp/lastcloudia/gino/295",
       "sourceHash": "239bb589c0edfda5a35273396fb2d6185d90c5c06f3d14c81dec98b2c70e094f",
-      "decision": "related",
-      "reason": "对Break状态敌人的物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果限定敌人的Break、空中、异常或濒死状态，不抽掉敌人状态后贴宽泛物理伤害增加。"
     },
     {
       "id": "454a237836d960b0",
@@ -2131,8 +2131,8 @@
       "id": "0a0c2255a5f2eeeb",
       "url": "https://altema.jp/lastcloudia/gino/366",
       "sourceHash": "ca01743729c5f33555f96951813c7a198fd76bfee378f9eb9a936f7f6512acd2",
-      "decision": "related",
-      "reason": "敌人在空中越高，物理攻击伤害越高，最高+50%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果限定敌人的Break、空中、异常或濒死状态，不抽掉敌人状态后贴宽泛物理伤害增加。"
     },
     {
       "id": "全部技能:all:306",
@@ -2215,8 +2215,8 @@
       "id": "全部技能:all:317",
       "url": "https://altema.jp/lastcloudia/gino/391",
       "sourceHash": "9c06ef23ed03f623c5944f06435199d9251d23a1df31c6dde45874634b343671",
-      "decision": "related",
-      "reason": "雷属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "全部技能:all:318",
@@ -2285,8 +2285,8 @@
       "id": "5b5e2095fcd10064",
       "url": "https://altema.jp/lastcloudia/gino/403",
       "sourceHash": "8872e60e0c20d0b0fb2886f29be488f5e29bdea4a8f5770d722bd6f4c287a3c2",
-      "decision": "related",
-      "reason": "暗属性物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "23372f853389c00f",
@@ -2411,8 +2411,8 @@
       "id": "1d410823abf67a0d",
       "url": "https://altema.jp/lastcloudia/gino/439",
       "sourceHash": "1306ce892f67147440292a95d97717115d04bd68b03e9dda46e0910c6f4656de",
-      "decision": "related",
-      "reason": "物理攻击命中弱点属性时，伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果是物理攻击命中属性弱点时增伤，属于弱点相关专门增伤。"
     },
     {
       "id": "全部技能:all:346",
@@ -2432,29 +2432,29 @@
       "id": "44ab9538d448c7c5",
       "url": "https://altema.jp/lastcloudia/gino/450",
       "sourceHash": "b72a6d6b33e0d3a0a1a166699ae024066b86ac775a15fedf6b8da09b0eb16c56",
-      "decision": "related",
-      "reason": "火属性物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "7030177b28467440",
       "url": "https://altema.jp/lastcloudia/gino/451",
       "sourceHash": "c1ff2bff68c4822d23247eeecc1081d92e18efff4b068e58eb8f904040b0e902",
-      "decision": "related",
-      "reason": "火属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "c4cb3f5b1831b5f7",
       "url": "https://altema.jp/lastcloudia/gino/456",
       "sourceHash": "0dabdff8951c86a26f2e8c8c87462759e2a928949e0073b91ea6a24b4d3d7c6c",
-      "decision": "related",
-      "reason": "必杀槽满时，远程物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果限定距离、方位或远程攻击，留待对应专门增伤标签，不能作为宽泛物理伤害增加。"
     },
     {
       "id": "ba02b8e71faa334b",
       "url": "https://altema.jp/lastcloudia/gino/457",
       "sourceHash": "1e4b0420aead8b091729770d3345943a3aa3419fc14d6a6df6afcef27b04e232",
-      "decision": "related",
-      "reason": "暗属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "43675d5d0ba943ae",
@@ -2586,8 +2586,8 @@
       "id": "109cb2b413148949",
       "url": "https://altema.jp/lastcloudia/gino/509",
       "sourceHash": "5bf7fce1154435c85d56c5fab875875d453065ce279e056029d300ae90c760dd",
-      "decision": "related",
-      "reason": "光属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "e61761228b58bde4",
@@ -2656,8 +2656,8 @@
       "id": "afadc468674e5da8",
       "url": "https://altema.jp/lastcloudia/gino/527",
       "sourceHash": "75c6bd3a0425b064a93dd1b374676e2ef1b9b74a9af7c9301d204ebe5108ba08",
-      "decision": "related",
-      "reason": "冰属性物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "dece5d91ef6eddbb",
@@ -2677,8 +2677,8 @@
       "id": "1f1e7d3449c0ce66",
       "url": "https://altema.jp/lastcloudia/gino/535",
       "sourceHash": "a647cbcc8238aa59082b2e4ac05819771f7814a1387764918389739deb7d44ca",
-      "decision": "related",
-      "reason": "冰属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "4bdba285c5859d95",
@@ -2761,15 +2761,15 @@
       "id": "68d0f34cfdb9b61d",
       "url": "https://altema.jp/lastcloudia/gino/563",
       "sourceHash": "522c0376a7a0bc67efcfd082ca97878a7779a8c180de8bc123d4ab22e809353b",
-      "decision": "related",
-      "reason": "树属性物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "db8d7f2fa2d9fc8c",
       "url": "https://altema.jp/lastcloudia/gino/566",
       "sourceHash": "0db55189cde71d3a18f4c90cc4ac205fe6a3526795257fa8cc8ab5f28021dd2a",
-      "decision": "related",
-      "reason": "树属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "0d0b88d5b3be6bd3",
@@ -2796,8 +2796,8 @@
       "id": "16398266d34af6ff",
       "url": "https://altema.jp/lastcloudia/gino/582",
       "sourceHash": "8adfb5325fef5c3ad7d26b6bf5209be8651b083df2164677ef910969cada6f36",
-      "decision": "related",
-      "reason": "火属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "9dffb7f0d9297302",
@@ -2936,8 +2936,8 @@
       "id": "523a8585fc9c836c",
       "url": "https://altema.jp/lastcloudia/gino/625",
       "sourceHash": "549f9f9194926733d14a525ac19e2debb465095c0dab26678392d84c5df472e9",
-      "decision": "related",
-      "reason": "光属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "763e0e91176c648b",
@@ -3083,8 +3083,8 @@
       "id": "72fb68a7b16692e8",
       "url": "https://altema.jp/lastcloudia/gino/663",
       "sourceHash": "492bc1b3da2fda3f8f8dfff14d1d3189acf2586eb1ae5318d4df781c13e4d6c7",
-      "decision": "related",
-      "reason": "火、冰、树、雷属性物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "全部技能:all:442",
@@ -3111,8 +3111,8 @@
       "id": "93834794e1dc5477",
       "url": "https://altema.jp/lastcloudia/gino/673",
       "sourceHash": "651b1c0d4ddad22c1f05d3cfdc85905668ba869b308324e33e56cdc1455c26ed",
-      "decision": "related",
-      "reason": "雷属性物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "ba33274d257a0877",
@@ -3251,8 +3251,8 @@
       "id": "a17f779989645fb0",
       "url": "https://altema.jp/lastcloudia/gino/720",
       "sourceHash": "3d3c30a416fcf563bbdd57bf501c6ab31e050f6099e239b53749567692de8366",
-      "decision": "related",
-      "reason": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果是对Boss的物理增伤，属于该专门词条；既不是宽泛物理伤害增加，也不是不限攻击类型的Boss伤害增加。"
     },
     {
       "id": "4e8a749504d3799f",
@@ -3265,8 +3265,8 @@
       "id": "48ac370b49e1ba46",
       "url": "https://altema.jp/lastcloudia/gino/723",
       "sourceHash": "579ba548deb7eaa9ed000e7277c423dcbf44253e0116bc908dfabea1451c9b96",
-      "decision": "related",
-      "reason": "雷属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "386eb4063fb25415",
@@ -3286,8 +3286,8 @@
       "id": "b99c6446a5ae4735",
       "url": "https://altema.jp/lastcloudia/gino/728",
       "sourceHash": "4cf30a43db278c388dd5491b6726929770a6fc923ee4e41f7f53cb3939998b86",
-      "decision": "related",
-      "reason": "树属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "5950c82ca13345b0",
@@ -3363,8 +3363,8 @@
       "id": "7aecbb8f146842de",
       "url": "https://altema.jp/lastcloudia/gino/752",
       "sourceHash": "35762ecbbf112124dd96ac4c54de72302deb5dba2960829737ccc34e6e9f5af2",
-      "decision": "related",
-      "reason": "暗属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "4170fcd45f772a61",
@@ -3384,8 +3384,8 @@
       "id": "3cc8a829b724bfe7",
       "url": "https://altema.jp/lastcloudia/gino/755",
       "sourceHash": "0334ccc4cd16a5329c6047ee082fd7bd8e1ba8033cd78a2d05ea9c264987906b",
-      "decision": "related",
-      "reason": "光属性物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "a0e9ad8c974ebca1",
@@ -3657,8 +3657,8 @@
       "id": "545567ba3bfb33f1",
       "url": "https://altema.jp/lastcloudia/gino/853",
       "sourceHash": "148cef503bfed32f38cc156d972dc5b67564fd63d5c2400da21c06654461cdff",
-      "decision": "related",
-      "reason": "冰属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "a4f12207dfb9a3df",
@@ -3727,8 +3727,8 @@
       "id": "9e714945b3c31514",
       "url": "https://altema.jp/lastcloudia/gino/880",
       "sourceHash": "ea26ffa6413e7d578267a54e0904872882ed86c419616e686650716f30ff6e97",
-      "decision": "related",
-      "reason": "对与自身类型相同的敌人，物理攻击伤害+15%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "ea3727ee373b623b",
@@ -3804,8 +3804,8 @@
       "id": "f0d4e2e81fd7c665",
       "url": "https://altema.jp/lastcloudia/gino/902",
       "sourceHash": "784a3775af8692aaf2b423506b54aa5f3414f1de76e4bb79a91d8630af1eae93",
-      "decision": "related",
-      "reason": "对未受异常状态影响的敌人，物理攻击伤害+20%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果限定敌人的Break、空中、异常或濒死状态，不抽掉敌人状态后贴宽泛物理伤害增加。"
     },
     {
       "id": "全部技能:all:545",
@@ -3867,8 +3867,8 @@
       "id": "9c82b39e02ae7e14",
       "url": "https://altema.jp/lastcloudia/gino/924",
       "sourceHash": "98db0581e0f4218de9540b8726ed5be20465ec75ea471ce5e5f13f136b59c634",
-      "decision": "related",
-      "reason": "对中毒敌人的物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果限定敌人的Break、空中、异常或濒死状态，不抽掉敌人状态后贴宽泛物理伤害增加。"
     },
     {
       "id": "105171fcac173ed9",
@@ -3944,8 +3944,8 @@
       "id": "332d1d402c82343d",
       "url": "https://altema.jp/lastcloudia/gino/956",
       "sourceHash": "de010f5a23c29afb016db56e0c9582d778a35032e3dff5e440304e74d7820936",
-      "decision": "related",
-      "reason": "光、暗属性物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "41e5f848b9d300e9",
@@ -4336,8 +4336,8 @@
       "id": "20486fa2dfba235e",
       "url": "https://altema.jp/lastcloudia/gino/1102",
       "sourceHash": "9e4e21c4be55082f40afdc5fc84499252c9ab7895aaf2d39e7779ceca717f451",
-      "decision": "related",
-      "reason": "对兽、鱼、鸟类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "7b7b9f7c806bbd9e",
@@ -4539,8 +4539,8 @@
       "id": "eca09257aafff0da",
       "url": "https://altema.jp/lastcloudia/gino/1180",
       "sourceHash": "758fd389ce29af24166b54a78cf1d66687c3f7164b5d36adfaa81c8ba41476c9",
-      "decision": "related",
-      "reason": "对精灵类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "19e3a03542e896a2",
@@ -4609,8 +4609,8 @@
       "id": "全部技能:all:660",
       "url": "https://altema.jp/lastcloudia/gino/1213",
       "sourceHash": "bdfe635effb4d6448935feb20978349e99a38dd3d66cdc9fec4f18cbffb98077",
-      "decision": "related",
-      "reason": "对魔法生物类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "f16297127305bf04",
@@ -4686,8 +4686,8 @@
       "id": "5aab3402039886d1",
       "url": "https://altema.jp/lastcloudia/gino/1239",
       "sourceHash": "7a2e0799738c6dc6eec245515401e8d7a588fe786b5ca0ca0f280f0668cf94de",
-      "decision": "related",
-      "reason": "光属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "b9086cf11c0cf674",
@@ -4875,8 +4875,8 @@
       "id": "7b6e96149fd8ff79",
       "url": "https://altema.jp/lastcloudia/gino/1317",
       "sourceHash": "45c0376416d7f2b54788371a43a7ff68eebe0838c65cb65ae40ffc9a84de1e8a",
-      "decision": "related",
-      "reason": "对神类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "f5c157dab48c38c7",
@@ -4980,8 +4980,8 @@
       "id": "1475f35e571d3e09",
       "url": "https://altema.jp/lastcloudia/gino/1366",
       "sourceHash": "de0886f211f6723c2d4b8b6007c62be3bd51dc8833f4065e547cee5a17ca5547",
-      "decision": "related",
-      "reason": "对空中敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果限定敌人的Break、空中、异常或濒死状态，不抽掉敌人状态后贴宽泛物理伤害增加。"
     },
     {
       "id": "4598f48797c2c478",
@@ -5085,8 +5085,8 @@
       "id": "全部技能:all:728",
       "url": "https://altema.jp/lastcloudia/gino/1398",
       "sourceHash": "959da64414364a11f9ab8ddc0cb03c610097104849d6fb802d8b8b7c65b8c32f",
-      "decision": "related",
-      "reason": "对兽类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "980fc3c099f855ab",
@@ -5120,8 +5120,8 @@
       "id": "fe3ad93438c245be",
       "url": "https://altema.jp/lastcloudia/gino/1416",
       "sourceHash": "f7c8dfffc93136471e07936d9771ada91fcffb2a52a70b39085358a306138450",
-      "decision": "related",
-      "reason": "对鱼类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "46213cf7e16bd862",
@@ -5470,8 +5470,8 @@
       "id": "648c1a3414c1a27d",
       "url": "https://altema.jp/lastcloudia/gino/1529",
       "sourceHash": "d4d3c9e289dc2df1283b294a4e83d19d099a45c6fb6715fad375a9fdae7af05b",
-      "decision": "related",
-      "reason": "光、暗属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "254ff4e20e2b8d20",
@@ -5561,8 +5561,8 @@
       "id": "fc654365c794bc7f",
       "url": "https://altema.jp/lastcloudia/gino/1572",
       "sourceHash": "929600897d4243607b664a73a0eea13d46e4c6dd2be83bb4dce1d9d90d97bef8",
-      "decision": "related",
-      "reason": "火、冰、树、雷属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "810e5630e720f446",
@@ -5603,8 +5603,8 @@
       "id": "全部技能:all:802",
       "url": "https://altema.jp/lastcloudia/gino/1592",
       "sourceHash": "da31556ea409a92f4313cd97222e86275ad06c0b6c53e53fc7f058174b6090ca",
-      "decision": "related",
-      "reason": "对士兵类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "492069f33fad559b",
@@ -5694,8 +5694,8 @@
       "id": "011b1a6b3ec0b62f",
       "url": "https://altema.jp/lastcloudia/gino/1636",
       "sourceHash": "ba5f88cf29f32304d86d756609a2911bdce518771929cd72ca3846307c026f8c",
-      "decision": "related",
-      "reason": "对骑士类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "2ae3c62f62930431",
@@ -5876,8 +5876,8 @@
       "id": "9dabf82a19744e2a",
       "url": "https://altema.jp/lastcloudia/gino/1726",
       "sourceHash": "b1bbc264fae69ed9ad36ee17db2fe2bf956f073ef655948d683b63e1887c9a5f",
-      "decision": "related",
-      "reason": "无属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "a92f6001f2419fda",
@@ -5918,8 +5918,8 @@
       "id": "2832becd6721150f",
       "url": "https://altema.jp/lastcloudia/gino/1744",
       "sourceHash": "7e66b6ae5469aa3773f65df0fcb8dec8c30ef43328df987d97aceedc021eb736",
-      "decision": "related",
-      "reason": "只装备一把武器时，对濒死敌人的物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：完整效果限定敌人的Break、空中、异常或濒死状态，不抽掉敌人状态后贴宽泛物理伤害增加。"
     },
     {
       "id": "7fa993c76e14f621",
@@ -6044,8 +6044,8 @@
       "id": "d02a81c812dbec73",
       "url": "https://altema.jp/lastcloudia/gino/1780",
       "sourceHash": "b96a79c2563d7eac9466bcab7446e484de957202db3f8da3cac8efa78821e022",
-      "decision": "related",
-      "reason": "对昆虫类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "92a57a934fb2eb2f",
@@ -6163,15 +6163,15 @@
       "id": "86363c375f9ea78e",
       "url": "https://altema.jp/lastcloudia/gino/1837",
       "sourceHash": "b96e7850f7390c5ddcdbc3abf8c6f5dace2852b456587f2594d8cfd4c4da4bdc",
-      "decision": "related",
-      "reason": "无属性物理攻击伤害+30%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定攻击属性的物理增伤是完整专门词条，不能去掉属性后贴宽泛物理伤害增加。"
     },
     {
       "id": "251b1a2c2e5147f5",
       "url": "https://altema.jp/lastcloudia/gino/1838",
       "sourceHash": "f30ee351e76295797ace79ddbd6c199096c562ff5d09e3ddd958b91355f27b07",
-      "decision": "related",
-      "reason": "对植物类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "0b4cbcd7bc326038",
@@ -6359,8 +6359,8 @@
       "id": "全部技能:all:910",
       "url": "https://altema.jp/lastcloudia/gino/1930",
       "sourceHash": "0231775387e5becba3fe3d299927db09f20034ff945d52c69509f4d0496a580f",
-      "decision": "related",
-      "reason": "对狙击类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "6d4f5f8de8ab47d2",
@@ -6408,8 +6408,8 @@
       "id": "全部技能:all:917",
       "url": "https://altema.jp/lastcloudia/gino/1962",
       "sourceHash": "9022c4c109be54ffe4226c5a92f3ce73de442ba9a30cd2bb6dda38fab2da07d6",
-      "decision": "related",
-      "reason": "对不死生物类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "9a9df999dd518e22",
@@ -6436,8 +6436,8 @@
       "id": "f06cd362877374b9",
       "url": "https://altema.jp/lastcloudia/gino/1971",
       "sourceHash": "86983be94fbd0cc34c0dbd52500c7f722817c59244bd1318e4973bb9866c4d22",
-      "decision": "related",
-      "reason": "对鸟类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     },
     {
       "id": "全部技能:all:922",
@@ -6548,8 +6548,8 @@
       "id": "af2b1b7f6ebbb498",
       "url": "https://altema.jp/lastcloudia/gino/2026",
       "sourceHash": "8964ef647a341933138cfe8960e30b65cae1389f35a92153d171825bf3de47fa",
-      "decision": "related",
-      "reason": "对龙类型敌人的物理攻击伤害+10%"
+      "decision": "not-related",
+      "reason": "完整词条纠正：限定敌人种族／类型的物理增伤是完整专门词条，不能抽掉目标类型后贴宽泛物理伤害增加。"
     }
   ]
 }

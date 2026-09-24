@@ -1470,25 +1470,17 @@ export const ATTACK_TAG_CATALOG = {
             "basic:5f6efbf8b35453d2:1"
           ],
           "relatedSkillIds": []
-        },
-        "魔法伤害增加": {
-          "summary": "每个Wave开始时，科学类攻击魔法威力+5%，最多叠加10次",
-          "relation": "magic-damage-increase",
-          "target": "self",
-          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
-          "existingRuleIds": [],
-          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力",
-        "魔法伤害增加"
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "魔抗提升"
+        "魔抗提升",
+        "科学类攻击魔法威力提升"
       ],
       "remainingConditions": [
         "每个Wave开始时触发",

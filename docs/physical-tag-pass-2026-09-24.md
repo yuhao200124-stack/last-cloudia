@@ -1,53 +1,92 @@
-# 物理伤害增加标签：第六轮
+# 物理伤害增加标签（按用户完整词条规则修正）
 
-## 本轮范围
+本轮原先将限定词拆掉后归入宽泛增伤，范围错误。用户要求其它类别同步纠正后，130项修正为78项。当前有效规则及全部撤销明细见[完整词条复核记录](skill-label-scope-correction-2026-09-24.md)。
 
-用户指定“下一个物理伤害增加的”。继续一次一个标签，从全部935个唯一技能查找，以现有技能原文、补充说明和已经核对的关联效果为依据。
+只处理完整的整体物理输出增伤；装备、队伍、自身状态、时间等启用条件未完成时仍保持部分判断。属性、目标类型、Boss、敌人状态、方位距离、远程、弱点、易伤等专门词条不纳入。
 
-本轮覆盖明确的物理攻击增伤部分，包括与必杀／魔法增伤并列、指定属性的物理增伤、根据魔力／距离／高度／时间变化的物理增伤，以及神秘之力【铁锤】和信仰的继承关系。腐蚀之牙的敌人物理易伤纳入相关记录，但明确标记为enemy-physical-vulnerability和enemy对象，不按自身物理增伤处理。
+全库935个唯一技能，本类78个，排除857个；完整0、部分78、无法判断0。
 
-未限定物理的通用伤害、属性通用伤害，以及只限普通攻击、特技、必杀、反击的增伤，留到对应标签。这一范围已在工作更新和页面中说明。暴击、特攻、上限、减伤、提高攻击力／魔力、无视防御、双持命中等也不在本轮完成。
+## 当前保留成员
 
-## 全库核对与数量
+| 技能 | 已覆盖效果 |
+| --- | --- |
+| [锤增幅](https://altema.jp/lastcloudia/gino/273) | 装备锤时，物理攻击伤害+7% |
+| [锤高阶增幅](https://altema.jp/lastcloudia/gino/281) | 装备锤时，物理攻击伤害+25% |
+| [作战行动](https://altema.jp/lastcloudia/gino/1066) | 开场攻击力≥魔力时，物理攻击伤害+20% |
+| [锤超阶增幅](https://altema.jp/lastcloudia/gino/1107) | 装备锤时，物理攻击伤害+25% |
+| [信仰](https://altema.jp/lastcloudia/gino/1754) | 从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加 |
+| [衣服高阶增幅](https://altema.jp/lastcloudia/gino/265) | 装备衣服时，物理攻击伤害+10% |
+| [衣服增幅](https://altema.jp/lastcloudia/gino/388) | 装备衣服时，物理攻击伤害+5% |
+| [机械高阶增幅](https://altema.jp/lastcloudia/gino/398) | 装备机械时，物理攻击伤害+20% |
+| [机械增幅](https://altema.jp/lastcloudia/gino/418) | 装备机械时，物理攻击伤害+7% |
+| [机械超阶增幅](https://altema.jp/lastcloudia/gino/570) | 装备机械时，物理攻击伤害+20% |
+| [衣服超阶增幅](https://altema.jp/lastcloudia/gino/875) | 装备衣服时，物理攻击伤害+10% |
+| [攻防一体的棒术](https://altema.jp/lastcloudia/gino/1704) | 装备枪时，物理攻击伤害+20% |
+| [魔武转轮](https://altema.jp/lastcloudia/gino/357) | 随自身魔力提高而提高物理攻击伤害；实际增幅待公式确认 |
+| [魔武转轮·改](https://altema.jp/lastcloudia/gino/441) | 随自身魔力提高而大幅提高物理攻击伤害；实际增幅待公式确认 |
+| [斧高阶增幅](https://altema.jp/lastcloudia/gino/163) | 装备斧时，物理攻击伤害+25% |
+| [剑高阶增幅](https://altema.jp/lastcloudia/gino/215) | 装备剑时，物理攻击伤害+30% |
+| [剑增幅](https://altema.jp/lastcloudia/gino/222) | 装备剑时，物理攻击伤害+10% |
+| [枪增幅](https://altema.jp/lastcloudia/gino/236) | 装备枪时，物理攻击伤害+5% |
+| [杖高阶增幅](https://altema.jp/lastcloudia/gino/241) | 装备法杖时，物理攻击伤害+10% |
+| [爪高阶增幅](https://altema.jp/lastcloudia/gino/285) | 装备爪时，物理攻击伤害+20% |
+| [枪高阶增幅](https://altema.jp/lastcloudia/gino/326) | 装备枪时，物理攻击伤害+15% |
+| [一天真刃](https://altema.jp/lastcloudia/gino/327) | 只装备一把武器时，物理攻击伤害+30% |
+| [凭依（伊弗利特）](https://altema.jp/lastcloudia/gino/346) | 物理攻击伤害+20% |
+| [两手枪](https://altema.jp/lastcloudia/gino/365) | 只装备一把枪时，物理攻击伤害+20% |
+| [爪增幅](https://altema.jp/lastcloudia/gino/396) | 装备爪时，物理攻击伤害+10% |
+| [两手锤](https://altema.jp/lastcloudia/gino/410) | 只装备一把锤时，物理攻击伤害+20% |
+| [贯流枪术](https://altema.jp/lastcloudia/gino/482) | 装备枪时，物理攻击伤害+15% |
+| [狂战士](https://altema.jp/lastcloudia/gino/499) | 物理攻击伤害+30% |
+| [两手剑](https://altema.jp/lastcloudia/gino/502) | 只装备一把剑时，物理攻击伤害+20% |
+| [剑超阶增幅](https://altema.jp/lastcloudia/gino/537) | 装备剑时，物理攻击伤害+30% |
+| [斧增幅](https://altema.jp/lastcloudia/gino/555) | 装备斧时，物理攻击伤害+10% |
+| [两手斧](https://altema.jp/lastcloudia/gino/556) | 只装备一把斧时，物理攻击伤害+20% |
+| [机械铠甲装配](https://altema.jp/lastcloudia/gino/577) | 物理攻击伤害+10% |
+| [两手爪](https://altema.jp/lastcloudia/gino/594) | 只装备一把爪时，物理攻击伤害+20% |
+| [爪超阶增幅](https://altema.jp/lastcloudia/gino/600) | 装备爪时，物理攻击伤害+30% |
+| [狂烈一击](https://altema.jp/lastcloudia/gino/603) | 物理攻击伤害+50% |
+| [两手机械](https://altema.jp/lastcloudia/gino/619) | 只装备一把机械武器时，物理攻击伤害+20% |
+| [枪超阶增幅](https://altema.jp/lastcloudia/gino/629) | 装备枪时，物理攻击伤害+30% |
+| [杖超阶增幅](https://altema.jp/lastcloudia/gino/658) | 装备法杖时，物理攻击伤害+10% |
+| [逆境](https://altema.jp/lastcloudia/gino/717) | 自身处于异常状态时，物理攻击伤害+20% |
+| [永远的挚友](https://altema.jp/lastcloudia/gino/754) | 满足永远的挚友配对条件时，物理攻击伤害+15% |
+| [两手剑增幅2](https://altema.jp/lastcloudia/gino/777) | 只装备一把剑时，物理攻击伤害+20% |
+| [两手剑增幅](https://altema.jp/lastcloudia/gino/829) | 只装备一把剑时，物理攻击伤害+10% |
+| [先从清理垃圾开始吧](https://altema.jp/lastcloudia/gino/886) | 开场获得物理攻击伤害+20%的Buff，持续40秒 |
+| [两手剑增幅3](https://altema.jp/lastcloudia/gino/901) | 只装备一把剑时，物理攻击伤害+30% |
+| [两手枪增幅](https://altema.jp/lastcloudia/gino/925) | 只装备一把枪时，物理攻击伤害+10% |
+| [两手弓](https://altema.jp/lastcloudia/gino/977) | 只装备一把弓时，物理攻击伤害+20% |
+| [两手机械增幅](https://altema.jp/lastcloudia/gino/1014) | 只装备一把机械武器时，物理攻击伤害+10% |
+| [我想成为完美的存在](https://altema.jp/lastcloudia/gino/1021) | 发动必杀后获得物理攻击伤害+20%的Buff，持续40秒 |
+| [剑极阶增幅](https://altema.jp/lastcloudia/gino/1034) | 装备剑时，物理攻击伤害+30% |
+| [英灵凭依](https://altema.jp/lastcloudia/gino/1060) | 复活后获得物理攻击伤害+20%的Buff，持续40秒 |
+| [同类二刀增幅2](https://altema.jp/lastcloudia/gino/1073) | 装备两把相同武器类型的武器时，物理攻击伤害+10% |
+| [两手锤增幅2](https://altema.jp/lastcloudia/gino/1109) | 只装备一把锤时，物理攻击伤害+20% |
+| [夏日训练营](https://altema.jp/lastcloudia/gino/1113) | 每个Wave内，物理攻击伤害随时间提高，最高+20% |
+| [徒手空拳](https://altema.jp/lastcloudia/gino/1206) | 未装备武器时，物理攻击伤害+30% |
+| [爪极阶增幅](https://altema.jp/lastcloudia/gino/1211) | 装备爪时，物理攻击伤害+20% |
+| [勇者](https://altema.jp/lastcloudia/gino/1228) | 物理攻击伤害+20% |
+| [破魔弓](https://altema.jp/lastcloudia/gino/1230) | 装备弓时，物理攻击伤害+15% |
+| [两手爪增幅](https://altema.jp/lastcloudia/gino/1251) | 只装备一把爪时，物理攻击伤害+10% |
+| [斧极阶增幅](https://altema.jp/lastcloudia/gino/1304) | 装备斧时，物理攻击伤害+25% |
+| [两手锤增幅](https://altema.jp/lastcloudia/gino/1369) | 只装备一把锤时，物理攻击伤害+10% |
+| [深度冲击](https://altema.jp/lastcloudia/gino/1378) | 处于符合要求的移动速度降低状态时，物理攻击伤害+20% |
+| [拳高阶增幅](https://altema.jp/lastcloudia/gino/1399) | 未装备武器时，物理攻击伤害+30% |
+| [两手枪增幅2](https://altema.jp/lastcloudia/gino/1410) | 只装备一把枪时，物理攻击伤害+20% |
+| [拳超阶增幅](https://altema.jp/lastcloudia/gino/1460) | 未装备武器时，物理攻击伤害+30% |
+| [诡异行军](https://altema.jp/lastcloudia/gino/1462) | 开场我方全员均为恐怖系时，物理攻击伤害+10% |
+| [两手斧增幅2](https://altema.jp/lastcloudia/gino/1484) | 只装备一把斧时，物理攻击伤害+20% |
+| [枪极阶增幅](https://altema.jp/lastcloudia/gino/1489) | 装备枪时，物理攻击伤害+15% |
+| [真祖](https://altema.jp/lastcloudia/gino/1491) | 物理攻击伤害随时间提高，最高+50% |
+| [圣诞夜的槲寄生](https://altema.jp/lastcloudia/gino/1507) | 满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20% |
+| [刺突剑士的战斗术](https://altema.jp/lastcloudia/gino/1538) | 同时装备剑和爪时，物理攻击伤害+20% |
+| [炎之剑](https://altema.jp/lastcloudia/gino/1548) | 装备火属性剑时，物理攻击伤害+30% |
+| [英雄之血](https://altema.jp/lastcloudia/gino/1605) | 开场获得物理攻击伤害+30%的Buff，持续40秒 |
+| [同类二刀增幅](https://altema.jp/lastcloudia/gino/1615) | 装备两把相同武器类型的武器时，物理攻击伤害+5% |
+| [两手斧增幅](https://altema.jp/lastcloudia/gino/1689) | 只装备一把斧时，物理攻击伤害+10% |
+| [神秘之力【铁锤】](https://altema.jp/lastcloudia/gino/1756) | 自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10% |
+| [衣服增幅·改](https://altema.jp/lastcloudia/gino/1797) | 装备衣服时，物理攻击伤害+10% |
+| [衣服高阶增幅·改](https://altema.jp/lastcloudia/gino/1848) | 装备衣服时，物理攻击伤害+20% |
 
-从935个技能中复核229条明确物理相关项及497条增伤／威力／增幅／信仰等扩展项，并核对全库指纹与本会话此前完整阅读的原文一致。不是从旧攻击力或防御力分类中筛选。
-
-- 纳入130个：129个原文明确的物理增伤／物理易伤，另加信仰1754的已确认继承关系；805个本轮不纳入。
-- 包含主列表之外的分类独有技能“龙族斩灭者”2026，不漏分类独有条目。
-- 14条复用既有记录：273、281、1066、1107、1754、265、388、398、418、570、875、1704、357、441。
-- 新增116条共享记录，累计299个唯一技能：完整44、部分255、无法判断0。
-- 物理伤害增加列表130条全部为部分判断：它们均有未处理条件或其它效果，没有人为把它们标成完整。
-- 原列表数量与完成数保持：攻击力87（14／73），防御力70（9／61），生命力25（15／10），魔力51（12／39），MP8（8／0）。括号为完整／部分。
-
-## 拆分与关键边界
-
-物理与必杀伤害并列时，本轮仅覆盖物理增伤；必杀增伤和各伤害上限保留独立片段。25种元素驱动与13种指定类型的斩灭者系列均按此处理，其属性／目标类型条件仍待判断，不因技能名含斩灭者就直接标成“赋予特攻”。
-
-装备、单武器、双武器、同武器类型、空武器、攻击属性、敌人类型、背后、远程、Break、敌人中毒、敌方濒死、自身异常、队伍人数／配对／性别等均保留为独立条件。
-
-- 两手枪等单武器技能仍要求“仅装备一把武器且类型符合”，不是双武器。
-- 同类二刀增幅要求两把武器类型相同，不等同于属性相同或同一物品。
-- 徒手空拳、拳高阶／超阶增幅只要求空武器，不要求防具为空。
-- 炎之剑保留“装备剑”和“该剑为火属性”两个要求。
-- 致命撕裂者判断敌人濒死，不能用自身濒死开关代替。
-- 开场、必杀触发、复活触发的物理增伤Buff仍保留触发与40秒持续、同类型互斥机制，未标为完整。
-- 马格里昂、天空之路、魔武转轮／改、夏日训练营、真祖的实际加成公式仍待处理，不能直接使用最高值。
-- 腐蚀之牙212为敌方受到物理伤害+20%的减益；施加触发、持续时间、叠加和计算阶段仍待处理。
-- 邪龙鳞1692、女巫的瘴气1811增加的是自身受伤，不是我方打出的物理伤害，本轮排除。
-- 勇者前线1955提高的是当次计算使用的攻击力及伤害上限，不是物理伤害直接+30%；贯通175是敌防御修正，也不混入。
-
-## 信仰的旧片段细化
-
-保留信仰1754原有攻击力标签及其稳定ID。原effect-1是未覆盖的“同系列其他神秘之力对应的非攻击力效果”，本轮细化为魔法减伤，并追加物理减伤、光属性伤害、铁锤物理增伤三个稳定片段。只覆盖铁锤物理增伤，其余三个效果继续待处理，原三个神类型／配套技能／同名互斥条件保留。
-
-此处仅细化尚未贴标签的模糊片段，前五轮assignments不改。其它182条旧记录的片段全部保持不变。物理标签的relatedSkillIds互相连接1754与1756，且作用对象分别为自身接受继承和装备信仰的我方角色，不重复计入提供者与接受者。
-
-## 页面与验证
-
-新增横向“物理伤害增加（130）”页签，默认打开physical，链接?tag=physical；全部已贴标签页签为299。保留四列、白底黑字、仅判断栏着色、完整→部分→无法判断排序及旧技能ID。
-
-维护文件为docs/physical-tag-registry.json、docs/physical-tag-audit.json、docs/skill-labeling-registry.json。通用构建器增加非基础属性标签分支，保留935条来源审计与成员检查；原五个基础属性的覆盖基准仍检查，不给物理标签虚构旧基础属性数量。
-
-33项相关检查通过，覆盖分类独有技能、继承、属性／种族系列、增伤与其它计算层边界、累计标签、条件未完成、后续条件补齐可自动完成、横向分类、排序和原数据与配装保留。未进行真实浏览器视觉测试。
-
-numericEffectInjection=false；本轮只改标签，原技能文字、SC、获得方式、旧分类、配装存储与计算器数值规则均不改。下一轮继续等用户指定一个标签。
+原始描述、SC、来源与计算器保持原样。标签仅作元数据，额外条件与其它效果留待后续指定类别；默认页保持Boss标签，可通过横向标签切换。
