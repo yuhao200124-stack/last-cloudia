@@ -1,13 +1,13 @@
 // The full-page calculator and its internal skill picker share one route/state.
 export function unifiedPageUrl(href,characterId,{session='',editPlan='',draft=''}={}) {
- const url=new URL('./damage-calculator.html',href);
+ const url=new URL('./damage-calculator.html?v=20260924-basic-stats',href);
  if(characterId)url.searchParams.set('character',characterId);
  url.searchParams.set('unified','1');
  for(const [key,value] of Object.entries({session,editPlan,draft}))if(value)url.searchParams.set(key,value);
  return url.href;
 }
 export function loadoutFrameUrl(href) {
- const current=new URL(href),url=new URL('./index.html',current);
+ const current=new URL(href),url=new URL('./index.html?v=20260924-basic-stats',current);
  url.searchParams.set('embeddedLoadout','1');url.searchParams.set('v','20260924-table-layout');
  for(const key of ['editPlan','draft'])if(current.searchParams.has(key))url.searchParams.set(key,current.searchParams.get(key));
  return url.href;

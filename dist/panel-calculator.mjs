@@ -16,7 +16,7 @@ export function equipmentRound(value) {
 const targetKeys=target=>String(target).split(/与|、|及|\/|／/).map(s=>aliases[s]).filter(Boolean);
 export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStats={}}={}) {
  report={...report,rows:(report?.rows||[]).map(row=>{const rule=upgradeStatRule(row.rule,row.sourceText);return {...row,rule,status:row.status==='active'&&rule.review==='pending'?'pending':row.status};})};
- const out=Object.fromEntries(Object.entries(PANEL_LABELS).map(([key,label])=>[key,{key,label,base:baseStats[key],precision:key==='mp'?1000:1,value:null,subtotal:null,beforeBuff:null,beforeBuffRaw:null,crossAdd:0,percent:0,buffs:[],equipment:[],steps:[],issues:[],sources:[]}])) ;
+ const out=Object.fromEntries(Object.entries(PANEL_LABELS).map(([key,label])=>[key,{key,label,base:baseStats[key],precision:key==='mp'?1000:1,value:null,subtotal:null,beforeBuff:null,beforeBuffRaw:null,crossAdd:0,flat:0,percent:0,buffs:[],equipment:[],steps:[],issues:[],sources:[]}])) ;
  const equipped=new Map(),boosts=[],cross=[];
  const flat=(report?.rows||[]).filter(r=>r.status==='active').flatMap(row=>row.rule.effects.map((effect,index)=>({row,effect,index:row.effectIndices?.[index]??index})));
  const issue=(keys,text)=>{for(const key of keys)out[key].issues.push(text);};
@@ -35,7 +35,7 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
     if(!equipped.has(row.sourceId))equipped.set(row.sourceId,{name:row.sourceName,type:identity.length===1?identity[0].type:null,stats:{}});
     const item=equipped.get(row.sourceId);item.stats[key]=(item.stats[key]||0)+e.value;out[key].sources.push(source);
    } else {
-    const type=types.find(t=>e.target.startsWith(t));
+    const type=['武器',...types].find(t=>e.target.startsWith(t));
     const key=type&&aliases[e.target.slice(type.length).replace(/^自身/,'')];
     if(type&&key&&n(e.value)&&e.unit==='%'){boosts.push({type,key,value:e.value,source});out[key].sources.push(source);}
     else issue(Object.keys(out),`${row.sourceName}：装备自身加成尚未解析`);
@@ -47,6 +47,9 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
   if(n(e.value)&&e.unit==='%') {
    for(const key of keys)if(e.type==='stat')out[key].percent+=e.value;else out[key].buffs.push({id:`${row.sourceId}:${row.rule.id}:${index}`,value:e.value,source:row.sourceName,family:verifiedRuntimeFamily(row.rule,e),...verifiedHpRuntime(row.rule,e),...(e.runtime?{runtime:e.runtime}:{})});
    if(!keys.length)issue(Object.keys(out),`${row.sourceName}：属性目标尚未解析`);
+  } else if(e.type==='stat'&&n(e.value)&&e.unit==='') {
+   for(const key of keys)out[key].flat+=e.value;
+   if(!keys.length)issue(Object.keys(out),`${row.sourceName}：固定属性目标尚未解析`);
   } else if(e.type==='stat'&&typeof e.value==='string') {
    const match=e.value.match(/^加算开战时(法强|魔力|攻击力|防御力|魔抗|HP|MP)的(\d+(?:\.\d+)?)%$/);
    if(match&&keys.length)cross.push({keys,from:aliases[match[1]],percent:Number(match[2]),source:row.sourceName});
@@ -65,12 +68,12 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
  const weaponItems=[...equipped.values()].filter(item=>item.type&&!['长袍','衣服','铠甲'].includes(item.type));
  if(typeof report?.context?.weaponCount==='number'&&report.context.weaponCount>weaponItems.length)issue(Object.keys(out),'已选武器数量多于已提供固定属性的武器，需补齐装备资料');
  for(const item of equipped.values())for(const [key,value] of Object.entries(item.stats)) {
-  const relevant=boosts.filter(b=>b.key===key&&b.type===item.type),percent=relevant.reduce((s,b)=>s+b.value,0);
+  const relevant=boosts.filter(b=>b.key===key&&(b.type===item.type||b.type==='武器'&&types.includes(item.type)&&!['长袍','衣服','铠甲'].includes(item.type))),percent=relevant.reduce((s,b)=>s+b.value,0);
   if(!item.type&&boosts.some(b=>b.key===key))issue([key],`${item.name}的装备类型未提供，无法应用装备自身加成`);
   const effective=equipmentRound(Math.fround(value*Math.fround((100+percent)/100)));
   out[key].equipment.push({name:item.name,base:value,percent,value:effective});
  }
- for(const boost of boosts)if(![...equipped.values()].some(item=>item.type===boost.type&&Object.hasOwn(item.stats,boost.key))) {
+ for(const boost of boosts)if(boost.type!=='武器'&&![...equipped.values()].some(item=>item.type===boost.type&&Object.hasOwn(item.stats,boost.key))) {
   issue([boost.key],`已选择${boost.type}自身加成，但缺少该装备的${PANEL_LABELS[boost.key]}数值`);
  }
  for(const [key,p] of Object.entries(out)) {
@@ -78,9 +81,9 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
   const equipTotal=p.equipment.reduce((s,e)=>s+e.value,0);
   p.steps.push(`原始基础 ${fmt(p.base)}`);
   for(const item of p.equipment)p.steps.push(`${item.name}：${fmt(item.base)}${item.percent?` × (1 + ${fmt(item.percent)}%) → ${item.value}`:''}`);
-  p.beforeBuffRaw=Math.floor(scale((p.base+equipTotal)*p.precision,p.percent));
+  p.beforeBuffRaw=Math.floor(scale((p.base+equipTotal+p.flat)*p.precision,p.percent));
   p.beforeBuff=Math.floor(p.beforeBuffRaw/p.precision);
-  p.steps.push(`(${fmt(p.base)} + 装备 ${fmt(equipTotal)}) × (1 + ${fmt(p.percent)}%) → ${p.beforeBuff}`);
+  p.steps.push(`(${fmt(p.base)} + 装备 ${fmt(equipTotal)}${p.flat?` + 固定加成 ${fmt(p.flat)}`:''}) × (1 + ${fmt(p.percent)}%) → ${p.beforeBuff}`);
   p.subtotal=p.beforeBuffRaw/p.precision;
  }
  for(const c of cross) {

@@ -11,11 +11,11 @@ const rows=Object.values(data.sheets).flatMap(s=>s.kind==='all'?s.rows:s.lanes.f
 const primary=data.sheets['全部技能'].rows;
 const skill=n=>primary.find(r=>r.url?.endsWith(`/gino/${n}`));
 
-function boot(storage={}){
+function boot(storage={},sheet=''){
  const elements=new Map(),saved=new Map(Object.entries(storage).map(([k,v])=>[k,JSON.stringify(v)]));
  const element=id=>{if(!elements.has(id))elements.set(id,{value:'',innerHTML:'',textContent:'',hidden:true,dataset:{},listeners:{},classList:{toggle(){},add(){},remove(){}},setAttribute(){},addEventListener(k,f){this.listeners[k]=f;},querySelector(){return null;},querySelectorAll(){return [];},focus(){},scrollIntoView(){}});return elements.get(id);};
  const window={SKILL_DATA:data,addEventListener(){},dispatchEvent(){},scrollTo(){}};window.parent=window;
- const context={window,document:{querySelector:element,querySelectorAll:()=>[],getElementById:id=>element('#'+id),addEventListener(){}},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)},sessionStorage:{getItem:()=>null,removeItem(){}},location:{hash:'',search:'',pathname:'/index.html',href:'https://example.test/index.html'},history:{replaceState(){}},URLSearchParams,URL,console};
+ const context={window,document:{querySelector:element,querySelectorAll:()=>[],getElementById:id=>element('#'+id),addEventListener(){}},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)},sessionStorage:{getItem:()=>null,removeItem(){}},location:{hash:sheet?'#'+encodeURIComponent(sheet):'',search:'',pathname:'/index.html',href:'https://example.test/index.html'},history:{replaceState(){}},URLSearchParams,URL,console};
  vm.runInNewContext(app,context);
  return {window,elements,saved,search(q){const el=element('#searchInput');el.value=q;el.listeners.input();return element('#tableArea').innerHTML;}};
 }
@@ -26,6 +26,19 @@ test('category copies agree on audited fields and stable IDs are retained',()=>{
  assert.equal(primary.filter(r=>r.id==='4aafd29a15ad98c4').length,1);
  assert.equal(primary.length,933);
  for(const [n,sc] of [[186,'5'],[253,'7'],[372,'5'],[821,'2'],[1191,'4'],[1398,'4'],[1640,'9'],[1963,'7']])assert.equal(skill(n).sc,sc);
+});
+
+test('basic attribute page renders six sections and searches compound skills with a unique total',()=>{
+ const row=primary.find(r=>r.name==='勇士提升2');
+ const page=boot({'lc-sheet-table:sc-calculator-v1':{skillIds:[row.id],characterId:'',activeBreaks:[]}},'基础属性');
+ assert.match(page.elements.get('#sheetTabs').innerHTML,/基础属性/);
+ const html=page.elements.get('#tableArea').innerHTML;
+ assert.equal((html.match(/class="basic-stat-section"/g)||[]).length,6);
+ assert.match(page.elements.get('#resultSummary').textContent,/181.*935/);
+ const filtered=page.search('勇士提升2');
+ assert.match(page.elements.get('#resultSummary').textContent,/找到 1 个技能/);
+ assert.equal((filtered.match(/data-add-skill=/g)||[]).length,3);
+ const snapshot=page.window.LC_LOADOUT_CALCULATOR.snapshot();assert.equal(snapshot.items.length,1);assert.equal(snapshot.items[0].catalogId,row.id);
 });
 
 test('recast aliases and supplementary effects are searchable in the actual page',()=>{

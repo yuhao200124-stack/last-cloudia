@@ -207,7 +207,9 @@
 
   function effectContent(row) {
     const notes = effectNotes(row);
-    return highlight(rowValue(row, 'effect')) + (notes ? `<div class="skill-effect-notes"><span>补充说明</span>${highlight(notes)}</div>` : '');
+    const basic=row.basicStats,original=rowValue(row,'effect')===String(row.effect||'');
+    const annotation=basic?`<div class="skill-stat-metadata"><b>${original?({ready:'基础属性已接入',partial:'基础属性部分接入',pending:'基础属性待确认'}[basic.status]):'已自定义效果，重新识别'}${original&&basic.status!=='ready'?' · 暂不计入待确认项':''}</b>${original?`<span>${escapeHtml(basic.summary)}</span><small>${escapeHtml(basic.note)}</small>`:''}</div>`:'';
+    return highlight(rowValue(row, 'effect')) + (notes ? `<div class="skill-effect-notes"><span>补充说明</span>${highlight(notes)}</div>` : '') + annotation;
   }
 
   function editedSources(row) {
@@ -297,7 +299,7 @@
   }
 
   function rowText(row) {
-    return fold([row.type, rowValue(row, 'name'), ...(row.aliases || []), rowValue(row, 'sc'), rowValue(row, 'effect'), effectNotes(row), ...editedSources(row)].join(' '));
+    return fold([row.type, rowValue(row, 'name'), ...(row.aliases || []), rowValue(row, 'sc'), rowValue(row, 'effect'), effectNotes(row), ...(rowValue(row,'effect')===String(row.effect||'')?row.basicStats?.targets||[]:[]), ...editedSources(row)].join(' '));
   }
 
   function matches(row) {
@@ -624,7 +626,7 @@
     </table></div>`;
   }
 
-  function allTable(rows) {
+  function allTable(rows, label='全部技能') {
     const body = rows.map(row => {
       const key = rowKey(row);
       const name = rowValue(row, 'name');
@@ -641,10 +643,10 @@
         <td class="action-cell">${addButton(row)}</td>
       </tr>`;
     }).join('');
-    return `<div class="table-scroll"><table class="excel-table all-skills" aria-label="全部技能">
+    return `<div class="table-scroll"><table class="excel-table all-skills" aria-label="${escapeHtml(label)}">
       <colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"><col class="action"></colgroup>
       <thead>
-        <tr class="book-title"><th colspan="6">一、被动技能</th></tr>
+        <tr class="book-title"><th colspan="6">${activeSheet==='基础属性'?escapeHtml(label):'一、被动技能'}</th></tr>
         <tr class="column-title"><th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th><th>添加</th></tr>
       </thead>
       <tbody>${body}</tbody>
@@ -653,9 +655,8 @@
 
   function sheetCount(name) {
     const sheet = data.sheets[name];
-    return sheet.kind === 'all'
-      ? sheet.rows.length
-      : sheet.lanes.reduce((sum, lane) => sum + lane.rows.filter(row => !row.separator).length, 0);
+    const rows=sheet.kind==='all'?sheet.rows:sheet.lanes.flatMap(lane=>lane.rows);
+    return new Set(rows.filter(row=>!row.separator).map(row=>row.url||row.id)).size;
   }
 
   function renderTabs() {
@@ -666,21 +667,27 @@
     title.textContent = activeSheet;
     const sheet = data.sheets[activeSheet];
     let visible = 0;
-    if (sheet.kind === 'all') {
+    if (sheet.kind === 'basicStats') {
+      const lanes=sheet.lanes.map(lane=>({...lane,rows:lane.rows.filter(matches)}));
+      visible=new Set(lanes.flatMap(l=>l.rows.map(r=>r.url||r.id))).size;
+      const census=data.skillCensus;
+      tableArea.innerHTML=`<div class="basic-stat-overview"><p>本类共 <strong>${census.basicTotal}</strong> 个技能（去重）。同一技能可归入多个属性项目，添加到配装后只计一次。</p><p>属性已接入 ${census.basicReady} 个 · 部分接入 ${census.basicPartial} 个 · 待确认 ${census.basicPending} 个。已接入只表示本轮的基础属性效果；其他效果会在计算器中单独提示。</p><nav aria-label="基础属性项目">${lanes.map((l,i)=>`<a href="#basic-stat-${i}" data-basic-stat-jump="${i}">${escapeHtml(l.label)} <b>${l.rows.length}</b></a>`).join('')}</nav></div>`+
+        lanes.map((lane,i)=>`<section class="basic-stat-section" id="basic-stat-${i}" aria-label="${escapeHtml(lane.label)}"><h3>${escapeHtml(lane.label)} <span>${lane.rows.length} 个技能${query?` / 全部 ${sheet.lanes[i].rows.length} 个`:''}</span></h3>${lane.rows.length?allTable(lane.rows,lane.label):'<p>没有符合搜索条件的技能。</p>'}</section>`).join('');
+    } else if (sheet.kind === 'all') {
       const rows = sheet.rows.filter(matches);
       visible = rows.length;
       tableArea.innerHTML = rows.length ? allTable(rows) : '';
     } else {
       const lanes = sheet.lanes.map(lane => ({ ...lane, rows: lane.rows.filter(matches) }));
-      visible = lanes.reduce((sum, lane) => sum + lane.rows.filter(row => !row.separator).length, 0);
+      visible = new Set(lanes.flatMap(lane => lane.rows.filter(row => !row.separator).map(row=>row.url||row.id))).size;
       tableArea.innerHTML = visible
         ? `<div class="split-grid">${lanes.filter(lane => lane.rows.length).map((lane, index) => splitTable(lane.rows, `${activeSheet} 第${index + 1}栏`)).join('')}</div>`
         : '';
     }
     emptyState.hidden = visible !== 0;
     resultSummary.textContent = query
-      ? `找到 ${visible} 条（本页共 ${sheetCount(activeSheet)} 条）`
-      : `共 ${visible} 条`;
+      ? `找到 ${visible} 个技能（去重，本页共 ${sheetCount(activeSheet)} 个）`
+      : `本页 ${visible} 个技能（去重） · 全库 ${data.skillCensus?.uniqueTotal||sheetCount('全部技能')} 个（去重）`;
     clearSearch.hidden = !query;
     renderTabs();
     renderCalculator();
@@ -698,6 +705,11 @@
   tabs.addEventListener('click', event => {
     const button = event.target.closest('[data-sheet]');
     if (button) selectSheet(button.dataset.sheet);
+  });
+
+  tableArea.addEventListener('click',event=>{
+    const link=event.target.closest('[data-basic-stat-jump]');
+    if(link){event.preventDefault();document.getElementById(`basic-stat-${link.dataset.basicStatJump}`)?.scrollIntoView({behavior:'smooth',block:'start'});}
   });
 
   searchInput.addEventListener('input', () => {
@@ -1022,7 +1034,7 @@
       const bindings = sourceBindings[calculatorState.characterId] || {};
       return { characterId: calculatorState.characterId, characterName: characterLoadouts[calculatorState.characterId]?.name || '通用', characterPage: characterLoadouts[calculatorState.characterId]?.page,
         sourceIds: Object.values(bindings).flat(), activeBreaks: [...calculatorState.activeBreaks], totalSc: calculateSc().total,
-        items: calculateSc().items.map(item => ({ id: item.id, name: rowValue(item.row, 'name'), text: rowValue(item.row, 'effect'), sc: item.freeBy ? 0 : item.sc,
+        items: calculateSc().items.map(item => ({ id: item.id, catalogId:item.row.basicStats?.catalogId, name: rowValue(item.row, 'name'), text: rowValue(item.row, 'effect'), sc: item.freeBy ? 0 : item.sc,
           sourceIds: bindings[item.id] || [], edited: rowValue(item.row, 'effect') !== String(item.row.effect || '') })) };
     },
     initialize({characterId, sources}) {

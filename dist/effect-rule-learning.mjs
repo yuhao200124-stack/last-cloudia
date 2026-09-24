@@ -1,6 +1,7 @@
 import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-fullpage';
+import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-basic-stats';
 /** Reusable, description-matched rule templates. No imported content is executable. */
-import { CONDITION_FIELDS } from './effect-rule-engine.mjs';
+import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260924-basic-stats';
 
 export const LEARNING_STORAGE_KEY = 'lc-effect-rules:learned:v1';
 
@@ -198,6 +199,8 @@ export function buildCatalog(sources, seedCatalog = [], learnedTemplates = {}) {
     }
     const seed = seedIndex.get(key);
     if (seed) return { ...source, rules: rebaseRules(seed.rules, source), learned: false, seeded: true, unknown: false };
+    const registered = basicStatRules(source);
+    if (registered) return { ...source, rules: registered, learned: false, seeded: false, unknown: false, registered: true };
     const parsed = hpStatRule(source) || simpleStatRule(source);
     if (parsed) return { ...source, rules: [parsed], learned: false, seeded: false, unknown: false, parsed: true };
     return {

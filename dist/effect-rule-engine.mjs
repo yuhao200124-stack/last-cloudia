@@ -29,6 +29,7 @@ export const CONDITION_FIELDS = {
   hammer: { label: '装备槌', options: yesNo },
   machine: { label: '装备机械', options: yesNo }, claw: { label: '装备爪', options: yesNo },
   clothes: { label: '装备衣服', options: yesNo }, armor: { label: '装备铠甲', options: yesNo },
+  bodyArmor: { label: '装备任意防具', options: yesNo },
   incomingElement: { label: '受到攻击的属性', options: options([[null, '待选择'], ['none', '无'], ['fire', '火'], ['ice', '冰'], ['earth', '树'], ['thunder', '雷'], ['light', '光'], ['dark', '暗']]) },
   incomingAttackKind: { label: '受到攻击的类别', options: options([[null, '待选择'], ['physical', '物理'], ['magic', '魔法'], ['ultimate', '超必杀']]) },
   magicFamily: { label: '魔法类型', options: options([[null, '待确认'], ['normal', '普通魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊魔法']]) },
@@ -72,6 +73,7 @@ export function normalizeContext(input = {}) {
     if (!CONDITION_FIELDS[key].options.some(o => o.value === ctx[key])) ctx[key] = null;
   }
   if (ctx.weaponCount === 2) ctx.robe = false;
+  ctx.bodyArmor = ctx.robe === true || ctx.clothes === true || ctx.armor === true;
   ctx.chainStacks = Number.isFinite(ctx.chainStacks) ? Math.max(0, Math.min(5, Math.floor(ctx.chainStacks))) : null;
   ctx.boss = true;
   return ctx;

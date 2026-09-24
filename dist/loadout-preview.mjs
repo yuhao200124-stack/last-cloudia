@@ -1,10 +1,11 @@
-import {buildCatalog} from './effect-rule-learning.mjs?v=20260924-fullpage';
-import {retargetReport} from './entry-preparation.mjs?v=20260924-fullpage';
+import {buildCatalog} from './effect-rule-learning.mjs?v=20260924-basic-stats';
+import {retargetReport} from './entry-preparation.mjs?v=20260924-basic-stats';
 import {buildDamageImport} from './damage-import.mjs?v=20260924-fullpage';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-fullpage';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-basic-stats';
 import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-fullpage';
 import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-fullpage';
 import {magicBuffCap} from './magic-buffs.mjs?v=20260924-fullpage';
+import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-basic-stats';
 
 const eq=(field,value)=>({field,op:'eq',value});
 const elements={火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark',无:'none'};
@@ -48,9 +49,23 @@ export function loadoutSources(report){
 
 export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
  if(String(snapshot.characterId)!==String(baseReport.characterId))throw new Error('配装角色与伤害资料不一致');
+ // Category copies share their catalog identity. Native character rules retain
+ // their source IDs, including exclusions and confirmed reader replacements.
+ const native=new Map();
+ for(const row of baseReport.rows||[])if(['common','exclusive','transcend'].includes(row.group)){
+  const id=basicStatNameIdentity(row.sourceName);if(id){const set=native.get(id)||new Set();set.add(row.sourceId);native.set(id,set);}
+ }
+ const items=new Map();
+ for(const original of snapshot.items){
+  const catalogId=basicStatIdentity(original)||basicStatNameIdentity(original.name);
+  const sourceIds=original.sourceIds?.length?original.sourceIds:!original.edited&&catalogId&&native.has(catalogId)?[...native.get(catalogId)]:[];
+  const item={...original,catalogId,sourceIds},key=catalogId||original.id;
+  if(!items.has(key)||sourceIds.length&&!items.get(key).sourceIds.length)items.set(key,item);
+ }
+ snapshot={...snapshot,items:[...items.values()]};
  const represented=new Set(snapshot.sourceIds||[]),selected=new Set(snapshot.items.flatMap(s=>s.sourceIds||[]));
  const rows=baseReport.rows.filter(r=>!represented.has(r.sourceId)||selected.has(r.sourceId));
- const extra=snapshot.items.filter(s=>!s.sourceIds?.length||s.edited).map(s=>({id:`loadout:${s.id}`,name:s.name,text:s.text,group:'common'}));
+ const extra=snapshot.items.filter(s=>!s.sourceIds?.length||s.edited).map(s=>({id:`loadout:${s.id}`,catalogId:s.catalogId,edited:s.edited,name:s.name,text:s.text,group:'common'}));
  const editedIds=new Set(snapshot.items.filter(s=>s.edited).flatMap(s=>s.sourceIds||[]));
  const seeds=Object.values(Object.groupBy(baseReport.rows,r=>r.sourceId)).map(rs=>({id:rs[0].sourceId,name:rs[0].sourceName,text:rs[0].sourceText,rules:rs.map(r=>r.rule)}));
  const catalog=buildCatalog(extra,seeds,templates).map(s=>s.unknown&&simpleLoadoutRules(s)?{...s,unknown:false,rules:simpleLoadoutRules(s)}:s);
