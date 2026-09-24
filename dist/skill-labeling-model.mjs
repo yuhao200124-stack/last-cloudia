@@ -50,7 +50,13 @@ export function canonicalSkillRows(data) {
   return [...unique.values()];
 }
 
-export function attackLabelRows(data, catalog, edits = {}) {
+export function labelingView(catalog, key) {
+  const view = catalog.views[key];
+  if (!view) throw Error('Unknown tag view.');
+  return {...view, entries: key === 'all' ? catalog.entries : catalog.entries.filter(entry => entry.assignedTags.includes(view.label))};
+}
+
+export function skillLabelRows(data, catalog, edits = {}) {
   const all = canonicalSkillRows(data);
   const reviewed = new Map(catalog.entries.map(entry => [entry.url || entry.id, entry]));
   // Freeze the existing display positions. Later passes can change labels and
@@ -62,7 +68,7 @@ export function attackLabelRows(data, catalog, edits = {}) {
     const effect = typeof edit.effect === 'string' ? edit.effect : row.effect;
     const changed = effect !== row.effect;
     // Changed excluded skills must return for review as well: an old exclusion
-    // cannot prove that a user's new description is unrelated to attack.
+    // cannot prove that a user's new description is unrelated to this tag.
     if (!entry && !changed) return [];
     const valid = entry && !changed && entry.text === row.effect && entry.notes === (row.notes || '');
     return [{
@@ -72,6 +78,10 @@ export function attackLabelRows(data, catalog, edits = {}) {
       judgment: valid ? entry.judgment : 'unknown',
       assignedTags: valid ? entry.assignedTags : [],
       attackSummary: valid ? entry.attackSummary : '',
+      tagSummaries: valid ? entry.assignedTags.map(tag => ({tag,
+        summary: entry.tagDetails?.[tag]?.summary || (tag === '攻击力' ? entry.attackSummary : ''),
+        calculationNote: entry.tagDetails?.[tag]?.calculationNote || '',
+      })) : [],
       remainingEffects: valid ? entry.remainingEffects : [],
       remainingConditions: valid ? entry.remainingConditions : [],
       calculationNote: valid ? entry.calculationNote : '',
@@ -80,7 +90,9 @@ export function attackLabelRows(data, catalog, edits = {}) {
   }).sort((left, right) => (displayOrder.get(left.id) ?? Infinity) - (displayOrder.get(right.id) ?? Infinity));
 }
 
+export const attackLabelRows = skillLabelRows;
+
 export function filterLabelRows(rows, query) {
   const folded = query.trim().toLocaleLowerCase('zh-CN');
-  return folded ? rows.filter(row => [row.name, row.effect, row.notes, row.attackSummary, ...row.assignedTags, ...row.remainingEffects, ...row.remainingConditions].join(' ').toLocaleLowerCase('zh-CN').includes(folded)) : rows;
+  return folded ? rows.filter(row => [row.name, row.effect, row.notes, row.attackSummary, ...(row.tagSummaries || []).map(item => item.summary), ...row.assignedTags, ...row.remainingEffects, ...row.remainingConditions].join(' ').toLocaleLowerCase('zh-CN').includes(folded)) : rows;
 }

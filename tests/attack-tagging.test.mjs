@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {ATTACK_TAG_CATALOG as catalog} from '../dist/attack-tag-catalog.mjs';
-import {canonicalSkillRows, attackLabelRows, filterLabelRows, resolveSkillLabels} from '../dist/skill-labeling-model.mjs';
+import {SKILL_LABELING_CATALOG as sharedCatalog} from '../dist/skill-labeling-catalog.mjs';
+import {canonicalSkillRows, attackLabelRows, skillLabelRows, labelingView, filterLabelRows, resolveSkillLabels} from '../dist/skill-labeling-model.mjs';
 import {renderLabelTable} from '../dist/skill-labeling.mjs';
 const read = path => fs.readFileSync(new URL(path, import.meta.url), 'utf8');
 const box = {window:{}};
@@ -28,11 +29,12 @@ test('the attack pass audits all unique skills including category-only rows and 
   assert.equal(audit.rows.filter(row=>row.decision==='not-related').length,848);
 });
 
-test('one tag is assigned and unrelated fragments remain pending even when old basic stats were complete', () => {
-  for(const row of catalog.entries)assert.deepEqual(row.assignedTags,['攻击力']);
-  assert.equal(catalog.counts.ready,5);
-  assert.equal(catalog.counts.partial,82);
-  assert.deepEqual(catalog.entries.filter(row=>row.judgment==='ready').map(row=>Number(row.url.split('/').pop())),[9,10,11,12,251]);
+test('the previous attack tag is retained while only reviewed defense fragments are added', () => {
+  for(const row of catalog.entries){assert.equal(row.assignedTags[0],'攻击力');assert(row.assignedTags.every(tag=>['攻击力','防御力'].includes(tag)));}
+  assert.equal(catalog.entries.filter(row=>row.assignedTags.includes('防御力')).length,26);
+  assert.equal(catalog.counts.ready,6);
+  assert.equal(catalog.counts.partial,81);
+  assert.deepEqual(catalog.entries.filter(row=>row.judgment==='ready').map(row=>Number(row.url.split('/').pop())),[9,10,11,12,251,1571]);
   assert.equal(skill(387).basicStats.status,'ready');
   assert.equal(entry(387).judgment,'partial');
   assert.deepEqual(entry(387).remainingEffects,['HP+10%']);
@@ -57,7 +59,7 @@ test('later passes accumulate on the same skill, require every fragment, and lea
   shared.tagPasses.push({tag:'满HP',assignments:[{skillId:skill(119).id,partIds:['full-hp']}]});
   shared.tagPasses.push({tag:'HP',assignments:[{skillId:skill(387).id,partIds:['effect-1']}]});
   shared.tagPasses.push({tag:'神类型条件',assignments:[{skillId:skill(2001).id,partIds:['condition-1']}]});
-  const updated={...catalog,entries:resolveSkillLabels(shared)};
+  const updated={...catalog,entries:resolveSkillLabels(shared).filter(row=>row.assignedTags.includes('攻击力'))};
   const rows=attackLabelRows(data,updated);
   const full=rows.find(row=>row.id===skill(119).id);
   assert.deepEqual(full.assignedTags,['攻击力','满HP']);
@@ -120,16 +122,22 @@ test('the new table exposes only the agreed columns and scopes color classes to 
   assert(!escaped.includes('<img'));assert(!escaped.includes('<script>'));
 });
 
-test('the page boots, filters and clears without writing existing browser storage', () => {
+test('the page defaults to defense, switches cumulative views, filters and clears without writing saved data', () => {
   const elements=new Map();
-  const get=selector=>{if(!elements.has(selector))elements.set(selector,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(name,fn){this.listeners[name]=fn;},focus(){}});return elements.get(selector);};
+  const get=selector=>{if(!elements.has(selector))elements.set(selector,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(name,fn){this.listeners[name]=fn;},setAttribute(){},focus(){}});return elements.get(selector);};
   const code=read('../dist/skill-labeling.mjs').replace(/^import .*;\n/gm,'').replace('export function renderLabelTable','function renderLabelTable');
-  const context={catalog,attackLabelRows,filterLabelRows,document:{querySelector:get},window:{SKILL_DATA:data,addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Review page must not overwrite saved data.');}}};
+  const context={catalog:sharedCatalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Review page must not overwrite saved data.');}}};
   vm.runInNewContext(code,context);
+  assert.match(get('#labelCoverage').textContent,/935.*70.*865/);
+  assert.match(get('#judgmentSummary').textContent,/7.*63.*0/);
+  const select=get('#labelTagFilter');select.value='attack';select.listeners.change();
   assert.match(get('#labelCoverage').textContent,/935.*87.*848/);
-  assert.match(get('#judgmentSummary').textContent,/5.*82.*0/);
+  assert.match(get('#judgmentSummary').textContent,/6.*81.*0/);
+  select.value='all';select.listeners.change();
+  assert.match(get('#labelCoverage').textContent,/935.*131.*804/);
+  assert.match(get('#judgmentSummary').textContent,/12.*119.*0/);
   const search=get('#labelSearch');search.value='没有这个技能123';search.listeners.input();
   assert.equal(get('#labelEmpty').hidden,false);assert.equal(get('#labelTable').innerHTML,'');
   get('#clearLabelSearch').listeners.click();assert.equal(get('#labelEmpty').hidden,true);
-  assert.match(get('#labelResultCount').textContent,/87 \/ 87/);
+  assert.match(get('#labelResultCount').textContent,/131 \/ 131/);
 });
