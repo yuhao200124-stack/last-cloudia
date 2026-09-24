@@ -14,7 +14,7 @@ const rule = (id, part, text, conditions, effects, extra = {}) => ({ id, part, t
 const source = (id, name, group, text, rules) => ({ id, name, group, text, rules });
 const ice = eq('element', 'ice');
 const magic = eq('attackKind', 'magic');
-const magicDamage = eq('damageType', 'magical');
+const magicDamage = magic;
 const boss = eq('boss', true);
 const killer = eq('killer', true);
 const staff = eq('staff', true);
@@ -60,7 +60,7 @@ export const CATALOG = [
   simple('ice-critical-revised', '冰属性暴击·改', 'exclusive', '冰属性魔法可触发暴击；冰属性魔法伤害上限+2,000', iceMagic, [effect('critPermission', '冰属性魔法', true, ''), cap('冰属性魔法伤害上限', 2000)]),
   simple('mage-mindset-ii', '魔导士心得II', 'exclusive', '同时装备法杖与长袍时，法杖的INT和长袍的MND+100%', [staff, robe], [effect('equipmentStat', '法杖自身法强', 100), effect('equipmentStat', '长袍自身魔抗', 100)], { note: '提升装备提供的对应属性，不是角色总法强／魔抗翻倍。' }),
   source('staff-ultimate-boost', '法杖究极增幅', 'exclusive', '装备法杖时，物理伤害+10%、魔法伤害+20%、魔法伤害上限+5,000', [
-    rule('staff-physical', '法杖物理增伤', '装备法杖时，物理伤害+10%', [staff, eq('damageType', 'physical')], [damage('物理伤害', 10)]),
+    rule('staff-physical', '法杖物理增伤', '装备法杖时，物理伤害+10%', [staff, inside('attackKind', ['normal','skill'])], [damage('物理伤害', 10)]),
     rule('staff-magical', '法杖魔法增伤及上限', '装备法杖时，物理伤害+10%、魔法伤害+20%、魔法伤害上限+5,000', [staff, magicDamage], [damage('魔法伤害', 20), cap('魔法伤害上限', 5000)]),
   ]),
   source('robe-ultimate-boost', '长袍究极增幅', 'exclusive', '装备长袍时，MND+20%、魔法伤害+15%、受到的伤害-10%', [
@@ -86,7 +86,7 @@ export const CATALOG = [
   simple('mp-up-max', 'MP提升极', 'common', 'MP+20%', [], [stat('MP', 20)]),
   simple('critical-up-iii', '暴击提升III', 'common', '暴击率+8%', [], [effect('critRate', '暴击率', 8)], { note: '提高暴击率不会自行赋予魔法暴击资格。' }),
   simple('proud-force', '骄傲之力', 'common', '触发暴击时回复HP', [eq('critical', true)], [effect('recovery', '自身生命', '回复，数值未列', '')]),
-  simple('special-boost', '特攻增幅', 'common', '触发特攻时伤害+50%', [killer], [damage('特攻伤害', 50)], { note: '记录特攻伤害修正，不能当作触发特攻的能力；与其他增伤的结算层级需另行验证。' }),
+  simple('special-boost', '特攻增幅', 'common', '触发特攻时伤害+50%', [killer], [effect('killerPower','特攻威力修正',50)], { note: '已核对原生KillerPower操作，修正特攻倍率；不重复作为普通伤害增加。' }),
   killerCap('killer-cap-iii', '特攻界限突破III', 'common', '触发特攻时伤害上限+3,000；仅装备1件武器时提升为+6,000', 3000, 6000),
   simple('ardor', '锐气', 'common', 'HP全满时，暴击率+10%', [eq('fullHp', true)], [effect('critRate', '暴击率', 10)]),
   simple('ice-high-boost', '冰系超级增幅', 'common', '冰属性魔法伤害+30%、冰属性魔法伤害上限+2,000', iceMagic, [damage('冰属性魔法伤害', 30), cap('冰属性魔法伤害上限', 2000)]),
@@ -119,6 +119,6 @@ export const CATALOG = [
     rule('roxy-robe-stats', '装备固定属性', 'MP+80 / DEF+167 / INT+229 / MND+116', [], [effect('equipmentStat', '装备魔力值', 80, ''), effect('equipmentStat', '装备防御力', 167, ''), effect('equipmentStat', '装备法强', 229, ''), effect('equipmentStat', '装备魔抗', 116, '')]),
     rule('roxy-robe-reduction', '物理与超必减伤', '受到的物理攻击、超必杀技伤害-15%', [], [effect('defense', '受到的物理攻击／超必杀技伤害', -15)]),
     rule('roxy-robe-boss-cap', '对Boss冰魔法上限', '对BOSS的冰属性魔法伤害上限+5,000', [boss, ...iceMagic], [cap('对Boss的冰属性魔法伤害上限', 5000)]),
-    rule('roxy-robe-team-cap', '存活时全体上限', '自身存活时，我方全体物理与魔法伤害上限+5,000', [eq('alive', true), inside('damageType', ['physical', 'magical'])], [cap('物理／魔法伤害上限', 5000)], { note: '适用于自身及其他我方单位；同一来源不因团队人数重复计入自身。' }),
+    rule('roxy-robe-team-cap', '存活时全体上限', '自身存活时，我方全体物理与魔法伤害上限+5,000', [eq('alive', true), inside('attackKind', ['normal','skill','magic'])], [cap('物理／魔法伤害上限', 5000)], { note: '适用于自身及其他我方单位；普通攻击、特技和魔法适用，超必杀不属于此处物理技能分类。' }),
   ]),
 ];

@@ -17,7 +17,7 @@
     </section>
     <section id="entryReview" class="card" hidden>
       <div class="section-heading"><h2><span>02</span>导入读取资料</h2></div>
-      <p class="help">保持基础配置进入一次战斗，运行v0.35读取器，然后选择 BattleEntryReport.json。网站条件推演和读取器候选都不自动当作已生效。</p>
+      <p class="help">保持基础配置进入一次战斗，运行v0.36读取器（兼容旧版报告），然后选择 BattleEntryReport.json。网站条件推演和读取器候选都不自动当作已生效。</p>
       <label>读取报告<input id="entryReportFile" type="file" accept=".json,application/json"></label>
       <p id="entryFileNote" class="help"></p><label>本次角色<select id="entryUnit"><option value="">尚未导入</option></select></label>
       <div class="inline-options"><button id="openReview" type="button" class="primary">面板与加成核对</button><span id="entryReviewSummary" class="help">导入后选择要采用的面板与加成。</span></div>
@@ -33,7 +33,7 @@
       <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">本次触发特攻</label><label><input id="break" type="checkbox">Boss 正在 Break</label></div>
       <p id="conditionStatus" class="help"></p>
       <p class="help">战斗属性填写已包含面板与状态加成的数值；攻击／法强提升、EX灵气、装备和加护不再重复计入。</p>
-      <div id="importStatControls" class="fields two" hidden><label>基础及额外暴击率 %<input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help"></p></div>
+      <div id="importStatControls" class="fields two" hidden><label>暴击率基准<select id="critBasis"><option value="reader">读取器面板</option><option value="website">网站加成＋手填基础</option></select></label><label><span id="baseCritLabel">基础及额外暴击率 %</span><input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help"></p></div>
       <div class="fields three">
         <label>伤害分类（词条适用类型）<select id="type"><option value="physical">物理</option><option value="magical">魔法</option></select></label>
         <label>攻击方式<select id="skillType"><option value="skill">特技</option><option value="normal">普通攻击</option><option value="magic">魔法</option><option value="ultimate">超必杀技</option></select></label>
@@ -41,7 +41,8 @@
       </div>
       <div class="skill-summary" id="skillSummary"></div>
       <p id="mixedReferenceNote" class="help" hidden>混合参照不自动按50/50分配。请填写已确认的混合结算攻击值与对应结算防御值，再进行试算。</p>
-      <details id="skillDetails"><summary>技能参数</summary><p id="parameterReadNote" class="help"></p>
+      <details id="skillDetails"><summary>技能参数</summary><label id="readerSkillControl" hidden>对应读取器招式<select id="readerSkillPick"></select></label>
+        <p id="parameterReadNote" class="help"></p>
         <p class="help">技能参数属于每段伤害结算。更换技能时必须使用该技能自己的参数，不能只换名称。</p>
         <div class="fields two">
           <label>每段基础系数 ×<input id="coefficient" type="number" min="0" max="10000" step="any" value="0.334" required></label>
@@ -104,6 +105,7 @@
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
       <div class="section-heading entry-subheading"><h3>增伤与伤害上限</h3><button id="entryUseWeb" type="button">加成全部用网站</button></div>
       <p class="help">按当前攻击条件分别统计，展开查看来源并删除。读取器仅合计已识别项目；候选小计不代表已确认生效的完整加成。</p>
+      <p class="help" id="entryReadCoverage"></p><p class="help" id="entryObservedCritical"></p>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>项目</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryBonusReview"></tbody></table></div>
       <details id="entryIndividualReview"><summary>逐条核对与修改 · <span id="entryCandidateCount">加成候选</span></summary>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>网站</th><th>读取器</th><th>比较</th><th>采用数据</th></tr></thead><tbody id="entryEffectsReview"></tbody></table></div>

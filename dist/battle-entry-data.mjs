@@ -3,7 +3,7 @@ import {RACES} from './damage-engine.mjs';
 const valid=v=>typeof v==='number'&&Number.isFinite(v);
 export const BOSS_ELEMENTS={fire:'火',ice:'冰',earth:'树',thunder:'雷',light:'光',dark:'暗'};
 export function readBossRecord(record={}) {
- const raw=Array.isArray(record.race)?record.race:record.race==null?[]:[record.race];
+ const raw=Array.isArray(record.races)?record.races:Array.isArray(record.race)?record.race:record.race==null?[]:[record.race];
  const races=raw.filter(v=>typeof v==='string'&&RACES.includes(v));
  return {name:record.name||'未命名 Boss',def:valid(record.stats?.defense)?record.stats.defense:null,
   mnd:valid(record.stats?.mind)?record.stats.mind:null,races,
@@ -14,9 +14,10 @@ export const SKILL_PARAMETER_KEYS=['coefficient','skillPercent','skillAdd','skil
 export function readMoveParameters(unit,move) {
  const empty={parameters:{},source:'读取报告未包含此招式的技能参数，未读到的项目请手动填写。'};
  if(!unit||!move||!Array.isArray(unit.skills))return empty;
- const matches=unit.skills.filter(s=>move.skillId!=null?String(s.skillId)===String(move.skillId):s.name===move.name||(move.kind==='normal'&&s.kind==='normal'));
+ const matches=unit.skills.filter(s=>move.skillId!=null?String(s.skillId)===String(move.skillId):s.name===move.name||(move.kind==='normal'&&s.kind==='normal')||(s.slot&&s.slot===move.kind));
  if(matches.length!==1)return {...empty,source:matches.length>1?'读取到多份同名招式，参数待确认。':empty.source};
  const skill=matches[0],parameters={};
+ if(skill.statReference==='mixed'||skill.parameterState==='mixed_reference_requires_runtime_value')return {...empty,source:'读取到混合攻击计算；原始参数已保留，尚需另一项战斗属性，不能当作单一攻击力或法强计算。'};
  // Optional structured reader extension. Never use maxima or candidate bonus values.
  for(const key of SKILL_PARAMETER_KEYS)if(valid(skill.parameters?.[key]))parameters[key]=skill.parameters[key];
  if(!Object.keys(parameters).length&&Array.isArray(skill.processes)) {

@@ -112,7 +112,17 @@ function conditionMatch(condition, ctx) {
 }
 
 function makeRow(source, original, ctx, overrides) {
-  const rule = { ...original, ...(overrides[original.id] ?? {}) };
+  let rule = { ...original, ...(overrides[original.id] ?? {}) };
+  // Migrate previously cached Roxy scopes only where the old condition is known.
+  // Native physical skill classification excludes the ultimate, regardless of stat reference.
+  const magicScope=['staff-ultimate-boost','robe-ultimate-boost','giant-purge-v','giant-purge-iii','short-incantation'];
+  if(magicScope.includes(source.id))rule={...rule,conditions:rule.conditions?.map(c=>c.field==='damageType'&&c.op==='eq'&&c.value==='magical'?{field:'attackKind',op:'eq',value:'magic'}:c)};
+  if(source.id==='staff-ultimate-boost'&&rule.id==='staff-physical')rule={...rule,conditions:rule.conditions?.map(c=>c.field==='damageType'&&c.op==='eq'&&c.value==='physical'?{field:'attackKind',op:'in',value:['normal','skill']}:c)};
+  if(source.id==='roxy-robe'&&rule.id==='roxy-robe-team-cap')rule={...rule,conditions:rule.conditions?.map(c=>c.field==='damageType'&&c.op==='in'&&JSON.stringify(c.value)==='["physical","magical"]'?{field:'attackKind',op:'in',value:['normal','skill','magic']}:c)};
+  if(source.id==='special-boost'&&source.name==='特攻增幅'&&rule.effects?.some(e=>e.type==='damage'&&e.target==='特攻伤害')){
+    const exact=source.text==='触发特攻时伤害+50%'&&rule.effects.length===1&&rule.effects[0].value===50&&rule.effects[0].unit==='%'&&JSON.stringify(rule.conditions)==='[{"field":"killer","op":"eq","value":true}]';
+    rule=exact?{...rule,effects:[{...rule.effects[0],type:'killerPower',target:'特攻威力修正'}]}:{...rule,review:'pending',note:'特攻增幅的自定义拆分需要核对原生特攻威力作用，暂不作为普通增伤。'};
+  }
   const row = { sourceId: source.id, sourceName: source.name, group: source.group, sourceText: source.text, rule, status: 'active', reasons: [] };
   if (overrides[`source:${source.id}`]?.disabled || rule.disabled) {
     row.status = 'disabled'; row.reasons.push('已手动停用'); return row;

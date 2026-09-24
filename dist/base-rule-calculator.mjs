@@ -20,7 +20,7 @@ function mount() {
   const read = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
   const groups = { traits: '个性', exclusive: '专属技能', common: '通用技能', transcend: '超越', equipment: '装备', blessings: '账户加护' };
   const statuses = { active: '生效', inactive: '未生效', pending: '待确认', disabled: '未启用' };
-  const types = { stat: '面板属性', statBuff: '属性状态增益', equipmentStat: '装备属性', damage: '伤害增加', cap: '伤害上限', killer: '特攻触发', hit: '命中与分段', statReference: '攻击与防御参照', defenseReference: '防御参照修正', critRate: '暴击率', critPermission: '暴击资格', defense: '防御与减伤', recovery: '回复', castSpeed: '咏唱速度', utility: '其他效果' };
+  const types = { stat: '面板属性', statBuff: '属性状态增益', equipmentStat: '装备属性', damage: '伤害增加', cap: '伤害上限', killer: '特攻触发', killerPower:'特攻威力修正', hit: '命中与分段', statReference: '攻击与防御参照', defenseReference: '防御参照修正', critRate: '暴击率', critPermission: '暴击资格', defense: '防御与减伤', recovery: '回复', castSpeed: '咏唱速度', utility: '其他效果' };
   const attackNames = { normal: '普通攻击', s1: '特技1 · 水球', s2: '特技2 · 冰柱破碎', s3: '特技3 · 暴风雪', magic: '魔法', ultimate: '超必杀 · 积雨云' };
   const elements = [[null, '待确认'], ['none', '无'], ['fire', '火'], ['ice', '冰'], ['earth', '树'], ['thunder', '雷'], ['light', '光'], ['dark', '暗']];
   const saved = read(stateKey, {});

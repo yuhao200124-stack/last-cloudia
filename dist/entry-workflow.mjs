@@ -5,6 +5,7 @@ import {formatEffect} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
 import {calculateWebsitePanel} from './panel-calculator.mjs';
 import {readMoveParameters} from './battle-entry-data.mjs';
+import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -17,7 +18,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  if(saved.mechanicsRevision!==STAT_MECHANICS_REVISION)for(const d of Object.values(state.statDecisions))d.choice='pending';
  state.mechanicsRevision=STAT_MECHANICS_REVISION;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
- let confirmed=false,hasApproval=false,bonusGroups=[];
+ let confirmed=false,hasApproval=false,bonusGroups=[],readerBonuses=[];
+ state.readerSkillMappings=saved.readerSkillMappings||{};
  const parameterIds=['hits','coefficient','skillPercent','skillAdd','skillPostAdd','hitScaleStage'];
  const save=()=>{try{localStorage.setItem(storageKey,JSON.stringify(state));}catch{$('entryStatus').textContent='浏览器未能保存核对选择，请保持当前页面打开。';}};
  const selection=()=>({...state.selection,hitMultiplier:state.hitParameters[hitKey()]?.hitMultiplier,hitDamageRatio:state.hitParameters[hitKey()]?.hitDamageRatio,hitScaleStage:state.hitParameters[hitKey()]?.hitScaleStage||state.parameters[paramKey()]?.hitScaleStage});
@@ -29,7 +31,12 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  function invalidate(message='数据待核对，确认后才会用于伤害计算。') {confirmed=false;onInvalidate(message);$('entryStatus').textContent=message;$('entryReviewSummary').textContent=message;}
  function saveParameter(id){state.parameters[paramKey()]={...state.parameters[paramKey()],[id]:$(id).value};save();}
  function setParameters() {
-  const move=selectedMove(),p=state.parameters[paramKey()],read=readMoveParameters(unit,move);
+  const move=selectedMove(),p=state.parameters[paramKey()],mappingKey=`${unit?.unitId}:${paramKey()}`,mapped=state.readerSkillMappings[mappingKey];
+  const read=readMoveParameters(unit,mapped?{...move,skillId:mapped}:move);
+  const expected=move?.kind?.startsWith('s')?'skill':move?.kind;
+  const choices=(unit?.skills||[]).filter(s=>!s.kind||s.kind===expected);
+  $('readerSkillControl').hidden=!choices.length;
+  $('readerSkillPick').innerHTML=option('','自动对应同名招式',mapped||'')+choices.map(s=>option(String(s.skillId),`${s.name||'未命名'} · ${s.skillId}`,mapped||'')).join('');
   for(const id of parameterIds)$(id).value=p?.[id]!==''&&p?.[id]!=null?p[id]:id==='hits'?'':read.parameters[id]??'';
   $('parameterReadNote').textContent=read.source;
  }
@@ -52,7 +59,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  function updateCandidate() {
   if(!report)return;
   candidate=retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},state.selection);
-  compared=compareCandidates(websiteCandidates(candidate),unit?.bonuses||[],state.mappings,candidate.context);
+  readerBonuses=evaluateReaderBonuses(unit?.bonuses||[],candidate.context);
+  compared=compareCandidates(websiteCandidates(candidate),readerBonuses,state.mappings,candidate.context);
   for(const row of compared)if(state.decisions[decisionKey(row)]?.choice==='reader'&&!row.compatible)state.decisions[decisionKey(row)]={choice:'pending'};
   for(const row of compared)if(row.group==='blessings'&&!state.decisions[decisionKey(row)]&&(!row.reader||(row.compatible&&row.difference===0)))state.decisions[decisionKey(row)]={choice:'web'};
   if(unit)for(const k of Object.keys(SIX_STATS))if(Number.isFinite(unit.stats[k])&&(!state.statDecisions[k]?.choice||state.statDecisions[k].choice==='pending'))state.statDecisions[k]={...state.statDecisions[k],choice:'reader'};
@@ -86,13 +94,17 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   return `<li><span>${esc(sourceName)}：${esc(formatEffect(effect))}${extra}</span>${index>=0?`<button type="button" class="entry-delete" data-entry-delete="${index}" aria-label="删除${esc(sourceName)}的${esc(effect.target)}">删除</button>`:''}</li>`;
  }
  function renderBonusReview() {
-  bonusGroups=buildBonusComparison(compared,unit?.bonuses||[],candidate.context,{removed:state.removedEffects,decisions:decisions()});
+  bonusGroups=buildBonusComparison(compared,readerBonuses,candidate.context,{removed:state.removedEffects,decisions:decisions()});
   const val=(n,u)=>`${n.toLocaleString('en-US')}${u}`;
+  const inventory=unit?.raw,states=readerBonuses.map(b=>readerBonusState(b,candidate.context));
+  const count=status=>states.filter(s=>s.status===status).length;
+  $('entryReadCoverage').textContent=unit?`采集 ${inventory?.buffsRead??'未知'} / ${inventory?.buffsListed??'未知'} 条 Buff；当前条件符合 ${count('active')} 项，条件不符合 ${count('inactive')} 项，条件待确认 ${count('pending')} 项，其他已说明 ${count('documented')} 项，已涵盖派生操作 ${count('covered')} 项，待解析 ${count('unresolved')} 项。配置条目不等于已触发。`:'导入报告后显示采集与解析情况。';
+  const crt=observedCritical(unit);$('entryObservedCritical').textContent=crt.value==null?'暴击面板：未读取。':`读取器观察时暴击率：${crt.value}%。${crt.note}`;
   $('entryBonusReview').innerHTML=bonusGroups.map((g,i)=>{
    const difference=g.difference==null?'':g.fullyMapped?`<small class="entry-panel-difference ${g.difference===0?'is-match':'is-different'}">${g.difference===0?`数值一致${g.candidate?'（候选）':''}`:`网站比读取器${g.difference>0?'多':'少'} ${val(Math.abs(g.difference),g.unit)}`}</small>`:`<small class="entry-panel-missing">已读部分，待完整核对</small>`;
    const formula=g.web.map(r=>val(r.effect.value,g.unit)).join(' + ');
    const webDetails=`<details data-entry-details="${esc(g.id)}"><summary>计算明细与加成来源</summary><p class="entry-bonus-formula">${esc(formula?`${formula} = ${val(g.total,g.unit)}`:'当前无计入项目')}</p><ul class="entry-source-list">${g.web.map(r=>sourceLine(r.sourceName,r.effect,compared.indexOf(r))).join('')}</ul></details>`;
-   const readDetails=g.reader.length?`<details data-entry-details="reader:${esc(g.id)}"><summary>计算明细与加成来源</summary><p class="entry-bonus-formula">${esc(g.reader.map(r=>val(r.value,g.unit)).join(' + '))} = ${esc(val(g.readTotal,g.unit))}</p><ul class="entry-source-list">${g.reader.map(r=>`<li><span>${esc(r.sourceName||r.id)}：${esc(val(r.value,g.unit))}<small>${r.state==='observed'?'读取观测':'配置候选，未证明本次触发'}${r.websiteCondition?'；按对应网站条件筛选':''}</small></span></li>`).join('')}</ul></details>`:'';
+   const readDetails=g.reader.length?`<details data-entry-details="reader:${esc(g.id)}"><summary>计算明细与加成来源</summary><p class="entry-bonus-formula">${esc(g.reader.map(r=>val(r.value,g.unit)).join(' + '))} = ${esc(val(g.readTotal,g.unit))}</p><ul class="entry-source-list">${g.reader.map(r=>`<li><span>${esc(r.sourceName||r.id)}：${esc(val(r.value,g.unit))}<small>${r.state==='observed'?'读取观测':'配置候选，未证明本次触发'}${r.websiteCondition?'；按对应网站条件筛选':''}${r.decoded?.note?`；${esc(r.decoded.note)}`:''}</small></span></li>`).join('')}</ul></details>`:'';
    return `<tr data-bonus-group="${esc(g.id)}"><td><b>${esc(g.target)}${g.type==='cap'&&g.unit==='%'?'（百分比）':''}</b></td><td><strong class="entry-panel-total" data-website-bonus="${i}">${esc(val(g.total,g.unit))}</strong>${difference}${webDetails}</td><td><strong class="entry-panel-total" data-reader-bonus="${i}">${g.readTotal==null?'未读到':esc(val(g.readTotal,g.unit))}</strong>${g.reader.length?`<small>${g.candidate?'候选小计':'已读小计'} · ${g.reader.length} 项</small>`:''}${readDetails}</td><td>${g.web.length?`<select data-entry-bonus-choice="${i}" aria-label="${esc(g.target)}采用数据">${option('pending','待选择',g.choice)}${option('web','网站',g.choice)}${g.canUseReader?option('reader','读取器',g.choice):'<option value="reader" disabled title="来源尚未完整对应">读取器</option>'}${!['pending','web','reader'].includes(g.choice)?option(g.choice,'逐项设置',g.choice):''}</select>`:'<small>暂无网站来源可采用</small>'}</td></tr>`;
   }).join('')||'<tr><td colspan="4">当前没有可比较的伤害加成或上限项目。</td></tr>';
   const removed=Object.entries(state.removedEffects);
@@ -107,7 +119,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   const pending=candidate.rows.filter(r=>r.status==='pending');
   $('entryPendingCount').textContent=`网站待确认项（${pending.length}）`;
   $('entryPending').innerHTML=pending.map(r=>`<li><b>${esc(r.sourceName)}</b><small>${r.reasons.map(esc).join('；')}</small></li>`).join('')||'<li>没有待确认项。</li>';
-  const readerOptions=(row)=>option('','未对应',state.mappings[row.id]||'')+(unit?.bonuses||[]).filter(b=>b.effectType===row.effect.type&&b.target===row.effect.target&&b.unit===(row.effect.unit||'')).map(b=>option(b.id,`${b.sourceName||b.id}：${b.value??'未解析'}${b.unit||''}`,state.mappings[row.id]||row.reader?.id)).join('');
+  const readerOptions=(row)=>option('','未对应',state.mappings[row.id]||'')+readerBonuses.filter(b=>b.effectType===row.effect.type&&b.target===row.effect.target&&b.unit===(row.effect.unit||'')).map(b=>option(b.id,`${b.sourceName||b.id}：${b.value??'未解析'}${b.unit||''}`,state.mappings[row.id]||row.reader?.id)).join('');
   const selected=decisions();
   $('entryEffectsReview').innerHTML=compared.map((r,i)=>{
    const d=selected[decisionKey(r)]||{},numeric=typeof r.effect.value==='number';
@@ -124,9 +136,9 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   renderBonusReview();
   for(const el of document.querySelectorAll('[data-entry-details]'))if(openDetails.has(el.dataset.entryDetails))el.open=true;
   const mapped=new Set(compared.map(r=>r.reader?.id).filter(Boolean));
-  const unmatched=(unit?.bonuses||[]).filter(b=>!mapped.has(b.id));
-  $('entryUnmatchedCount').textContent=`读取器未对应项（${unmatched.length}）`;
-  $('entryUnmatched').innerHTML=unmatched.map(b=>`<li><b>${esc(b.sourceName||b.id)}</b>：${esc(b.target||b.effectType||'未解析')} ${esc(b.value??'数值未解析')}${esc(b.unit||'')}<small>${esc(b.state||'candidate')} · Process ${esc(b.processId??'—')} · Condition ${esc(b.conditionId??'—')}</small><details><summary>原始证据</summary><pre>${esc(JSON.stringify(b.raw??b,null,2))}</pre></details></li>`).join('')||'<li>没有未对应项。</li>';
+  const unmatched=readerBonuses.filter(b=>!mapped.has(b.id));
+  $('entryUnmatchedCount').textContent=`其余读取记录与待解析项（${unmatched.length}）`;
+  $('entryUnmatched').innerHTML=unmatched.map(b=>{const status=readerBonusState(b,candidate.context);return `<li><b>${esc(b.sourceName||b.id)}</b>：${esc(b.target||b.effectType||'未解析')} ${esc(b.value??'数值未解析')}${esc(b.unit||'')}<small>${esc(status.reason)}${b.decoded?.note?`；${esc(b.decoded.note)}`:''}</small><details><summary>原始证据</summary>${b.decoded?.documentation?`<p>游戏脚本：${esc(b.decoded.documentation.description)}</p>`:''}<pre>${esc(JSON.stringify(b.raw??b,null,2))}</pre></details></li>`;}).join('')||'<li>没有未对应项。</li>';
  }
  function initialize() {
   initialized=true;
@@ -158,6 +170,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   invalidate('报告已载入；已有资料已暂填，请在面板与加成核对页确认。');setParameters();updateCandidate();onRead({battle,unit});
  }
  $('entryReportFile').addEventListener('change',async e=>{try{await importFile(e.target.files[0]);}catch(err){invalidate(`新文件未导入：${err.message}`);}e.target.value='';});
+ $('readerSkillPick').addEventListener('change',e=>{state.readerSkillMappings[`${unit?.unitId}:${paramKey()}`]=e.target.value;state.parameters[paramKey()]={...state.parameters[paramKey()],coefficient:'',skillPercent:'',skillAdd:'',skillPostAdd:''};setParameters();save();invalidate('读取器招式对应已修改，请核对参数后确认。');});
  $('entryUnit').addEventListener('change',e=>{unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;hasApproval=false;state.mappings={};state.statDecisions={};invalidate('读取资料已暂填；数值差异由你决定。');setParameters();updateCandidate();onRead({battle,unit});});
  for(const id of ['dualWield','specialAttack','break'])$(id).addEventListener('change',()=>{
   state.selection[id]=$(id).checked;invalidate('战斗选项已改变，按本次条件重新核对加成。');updateCandidate();

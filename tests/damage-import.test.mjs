@@ -11,7 +11,8 @@ test('import retains individual damage sources, cap components and independent s
  assert.equal(d.hitMultiplier,2);assert.equal(d.hitDamageRatio,.6);assert.equal(d.magicCanCrit,true);assert.equal(d.critAdded,13);
  assert.equal(d.effects.filter(e=>e.kind==='boss').length,2);
  assert.equal(d.effects.filter(e=>e.percent===30&&e.kind==='magical').length,2);
- assert.equal(d.effects.find(e=>e.name.startsWith('特攻增幅')).kind,'killer');
+ assert.equal(d.killerCorrection,50);assert(!d.effects.some(e=>e.name.startsWith('特攻增幅')));
+ assert.equal(context({...defaultInput(),specialAttack:true,killerCorrection:d.killerCorrection}).killerFactor,2.25);
  assert.equal(d.effects.find(e=>e.kind==='critical').percent,50);
  assert(d.reference.some(r=>r.effect.type==='statBuff'&&r.effect.value===50));
  assert(!d.effects.some(e=>/魔导提升极|EX灵气/.test(e.name)));

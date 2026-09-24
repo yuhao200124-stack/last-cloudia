@@ -1,10 +1,11 @@
 import {decodeHpStatEntry} from './stat-mechanics.mjs';
+import {decodeReaderBonuses} from './reader-bonus-decoder.mjs';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
 import {decodeKnownBlessingEntry} from './account-blessings.mjs';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
 const elementIds={无:'none',火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark'};
-const recognizedTypes=new Set(['stat','statBuff','equipmentStat','damage','cap','critRate','critPermission','killer','defenseReference','hit','statReference']);
+const recognizedTypes=new Set(['stat','statBuff','equipmentStat','damage','cap','critRate','critPermission','killer','killerPower','defenseReference','hit','statReference']);
 const num=x=>typeof x==='number'&&Number.isFinite(x)?x:null;
 const clean=x=>String(x??'').trim();
 export function readCharacterProfile(doc) {
@@ -59,13 +60,13 @@ export function websiteCandidates(report) {
  })).filter(r=>recognizedTypes.has(r.effect.type)));
 }
 export function validateBattleEntry(input) {
- if(input?.kind!=='last-cloudia-battle-entry'||input.schemaVersion!==1||!Array.isArray(input.units)||input.units.length>64)throw new Error('请选择v0.35生成的 BattleEntryReport.json，文件格式不匹配。');
+ if(input?.kind!=='last-cloudia-battle-entry'||input.schemaVersion!==1||!Array.isArray(input.units)||input.units.length>64)throw new Error('请选择v0.35或更新版生成的 BattleEntryReport.json，文件格式不匹配。');
  for(const unit of input.units) {
   if(!unit||!unit.stats||!Array.isArray(unit.bonuses)||unit.bonuses.length>20000)throw new Error('角色或加成记录格式不完整。');
   for(const key of Object.keys(SIX_STATS))if(unit.stats[key]!=null&&(num(unit.stats[key])===null||unit.stats[key]<0))throw new Error('读取报告包含无效面板数值。');
   for(const b of unit.bonuses)if(!b||typeof b.id!=='string'||(b.value!=null&&typeof b.value!=='string'&&typeof b.value!=='boolean'&&num(b.value)===null))throw new Error('读取报告包含无效加成记录。');
  }
- input={...input,units:input.units.map(unit=>({...unit,bonuses:unit.bonuses.map(decodeKnownBlessingEntry).map(decodeHpStatEntry)}))};
+ input={...input,units:input.units.map(unit=>({...unit,bonuses:decodeReaderBonuses(unit.bonuses.map(b=>{const {decoded,decodeIssue,auditCategory,coveredBy,...rawEntry}=b;return rawEntry;}).map(decodeKnownBlessingEntry).map(decodeHpStatEntry))}))};
  // v0.35 exported the game's MP thousandths. BattleUiUnit.ApplyMp divides
  // both GetMp and GetMaxStatus(MP) by 1000 before showing the values.
  // Restrict migration to that real-reader schema, never guess by magnitude.
@@ -83,6 +84,7 @@ export function validateBattleEntry(input) {
  return input;
 }
 export function readerScopeAllows(reader,context) {
+ if(reader&&(['inactive','disabled','removed'].includes(reader.state)||reader.raw?.buffRemoved===1||reader.raw?.buffIgnored===1||reader.raw?.buffEnabled===0))return false;
  const conditions=reader?.decoded?.conditions??reader?.conditions;
  if(!Array.isArray(conditions)||!context)return true; // Legacy manual mapping has no decoded scope to test.
  return evaluateCatalog([{id:'reader-scope',group:'common',rules:[{id:'reader-scope',conditions,effects:[{type:'utility'}],review:'ready'}]}],context).rows[0].status==='active';
@@ -91,7 +93,8 @@ export function compareCandidates(web,bonuses,mappings={},context) {
  const token=b=>[clean(b.sourceName),b.effectType,b.target,b.unit].join('|');
  return web.map(w=>{
   const localId=w.sourceId?.match(/^account-blessing-(\d+)$/)?.[1];
-  const matches=Object.hasOwn(mappings,w.id)?bonuses.filter(b=>b.id===mappings[w.id]):localId?bonuses.filter(b=>String(b.raw?.localId)===localId):bonuses.filter(b=>token(b)===token({sourceName:w.sourceName,effectType:w.effect.type,target:w.effect.target,unit:w.effect.unit}));
+  let matches=Object.hasOwn(mappings,w.id)?bonuses.filter(b=>b.id===mappings[w.id]):localId?bonuses.filter(b=>String(b.raw?.localId)===localId):bonuses.filter(b=>(b.decoded?.sourceId===w.sourceId||clean(b.sourceName)===clean(w.sourceName))&&b.effectType===w.effect.type&&b.target===w.effect.target&&(b.unit||'')===(w.effect.unit||''));
+  if(!Object.hasOwn(mappings,w.id)&&matches.length>1&&context){const qualified=matches.filter(b=>readerScopeAllows(b,context));if(qualified.length)matches=qualified;}
   const reader=matches.length===1?matches[0]:null;
   const scopeAllowed=readerScopeAllows(reader,context);
   const compatible=reader&&scopeAllowed&&(!localId||(reader.decoded&&JSON.stringify(reader.decoded.conditions)===JSON.stringify(w.condition)))&&reader.effectType===w.effect.type&&reader.target===w.effect.target&&(reader.unit||'')===(w.effect.unit||'')&&typeof reader.value===typeof w.effect.value;
@@ -100,7 +103,7 @@ export function compareCandidates(web,bonuses,mappings={},context) {
    !scopeAllowed?'读取器条件不满足或待确认':!compatible?'口径不同，不能直接替换':reader.value==null?'读取值未解析':JSON.stringify(reader.value)===JSON.stringify(w.effect.value)?'数值一致，仍待确认':'数值不同，待选择'};
  });
 }
-export const decisionKey=row=>JSON.stringify([row.id,row.effect,row.condition,row.reader?.id,row.reader?.value,row.reader?.state,row.reader?.evidence,row.reader?.decoded?.conditions??row.reader?.conditions]);
+export const decisionKey=row=>JSON.stringify([row.id,row.effect,row.condition,row.reader?.id,row.reader?.value,row.reader?.state,row.reader?.evidence,row.reader?.decoded?.conditions??row.reader?.conditions,row.reader?.decoded?.stage,row.reader?.raw?.buffEnabled,row.reader?.raw?.buffRemoved,row.reader?.raw?.buffIgnored]);
 export function resolveReview(report,compared,decisions) {
  const entries=new Map(),usedReader=new Set();
  for(const row of compared) {
@@ -108,6 +111,7 @@ export function resolveReview(report,compared,decisions) {
   if(!d?.choice||d.choice==='pending')throw new Error(`请决定“${row.sourceName} · ${row.effect.target}”采用哪份数据，或暂不计入。`);
   if(d.choice==='exclude')continue;
   let effect={...row.effect};
+  if(effect.type==='critRate'&&row.compatible&&row.reader?.decoded?.stage)effect.readerStage=row.reader.decoded.stage;
   if(d.choice==='reader') {
    if(!readerScopeAllows(row.reader,report.context))throw new Error(`“${row.sourceName}”的读取器条件不符合当前攻击，请重新选择。`);
    if(!row.compatible||row.reader?.value==null)throw new Error(`“${row.sourceName}”读取字段未对应，不能直接替换。`);

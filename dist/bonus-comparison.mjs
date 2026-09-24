@@ -3,7 +3,7 @@ import {decisionKey} from './entry-preparation.mjs';
 const numeric=value=>typeof value==='number'&&Number.isFinite(value);
 export const effectSelectionKey=row=>JSON.stringify([row.id,row.effect,row.condition]);
 const groupKey=e=>JSON.stringify([e.type,e.target,e.unit]);
-const comparable=e=>['damage','cap','critRate'].includes(e.type)&&numeric(e.value);
+const comparable=e=>['damage','cap','critRate','killerPower'].includes(e.type)&&numeric(e.value);
 const elements=['none','fire','ice','earth','thunder','light','dark'];
 const elementNames=['无','火','冰','树','雷','光','暗'];
 const sum=values=>Math.round(values.reduce((a,b)=>a+b,0)*1e8)/1e8;

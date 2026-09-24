@@ -3,6 +3,7 @@ import {buildDamageImport,reportStorageKey} from './damage-import.mjs';
 import {formatEffect} from './effect-rule-engine.mjs';
 import {initEntryWorkflow} from './entry-workflow.mjs';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs';
+import {observedCritical} from './reader-bonus-decoder.mjs';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -14,6 +15,7 @@ const params=new URLSearchParams(location.search);
 const characterId=params.get('character');
 const embedded=params.get('embedded')==='1' && window.parent!==window;
 let imported=null,latestReport=null,workflow=null,readUnit=null,bossRaces=[];
+let manualCriticalBase='';
 document.body.classList.toggle('is-embedded',embedded);
 const newEffect=(kind='all')=>({id:++nextId,kind,percent:0,enabled:true,target:'无',stage:'post',name:''});
 const numericKeys=Object.keys(defaultInput()).filter(k=>typeof defaultInput()[k]==='number');
@@ -31,7 +33,7 @@ function fillReaderPreview() {
   if(workflow?.isConfirmed())return;
   const mode=referenceMode(),key=mode==='int'?'intelligence':mode==='str'?'attack':null;
   $('attack').value=key?readUnit?.stats?.[key]??'':'';
-  const crit=readUnit?.statsMeta?.criticalRate;
+  const crit=observedCritical(readUnit).value;
   $('critRate').value=typeof crit==='number'&&Number.isFinite(crit)?crit:'';
 }
 function receiveEntryData({battle,unit}) {
@@ -60,7 +62,7 @@ function read() {
   for(const k of numericKeys) if($(k))s[k]=$(k).valueAsNumber;
   for(const k of booleanKeys) if($(k))s[k]=$(k).checked;
   for(const k of ['type','skillType','element','hitScaleStage']) s[k]=$(k).value;
-  s.races=bossRaces;s.killerRaces=[];s.specialAttack=$('specialAttack').checked;
+  s.races=bossRaces;s.killerRaces=[];s.specialAttack=$('specialAttack').checked;s.killerCorrection=imported?.killerCorrection??0;
   s.effects=readEffects();return s;
 }
 function renderEffects() {
@@ -100,7 +102,13 @@ function applyBoss() {
 function update() {
   if(imported) {
     const cap=$('baseCap').valueAsNumber+imported.capAdded;
-    const crit=$('baseCritRate').valueAsNumber+imported.critAdded;
+    const fromReader=$('critBasis').value==='reader',observed=observedCritical(readUnit).value;
+    $('baseCritRate').readOnly=fromReader;
+    $('baseCritLabel').textContent=fromReader?'读取器观察时暴击率 %':'基础及额外暴击率 %';
+    if(fromReader)$('baseCritRate').value=observed??'';
+    const added=fromReader?imported.critAttackAdded:imported.critAdded;
+    const crit=$('baseCritRate').valueAsNumber+added;
+    $('critImportNote').textContent=fromReader?`读取面板＋本次攻击追加 ${added}%。常驻及满血等面板加成不再重复加入；面板状态以采样时为准。${imported.critUnresolved.length?`尚需核对暴击作用阶段：${imported.critUnresolved.join('、')}`:''}`:`手填基础＋已确认网站加成 ${added}%。`;
     $('cap').value=Number.isFinite(cap)?cap:'';
     $('critRate').value=imported.skillType==='magic'&&!imported.magicCanCrit?0:Number.isFinite(crit)?Math.min(100,Math.max(0,crit)):'';
   }
@@ -108,6 +116,7 @@ function update() {
   const invalid=[...$('calculator').querySelectorAll('input[type=number]')].find(e=>!e.disabled&&!e.checkValidity());
   try {
     if(characterId&&(!imported||!workflow?.isConfirmed()))throw new Error('先完成入场核对，并确认采用的数据；候选加成不会自动用于计算。');
+    if(imported&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
     if(imported?.blockers.length)throw new Error(imported.blockers.join('；'));
     if(invalid) throw new Error(`请检查「${invalid.closest('label')?.textContent.trim()||'数值'}」的输入范围，必填数值不能留空。`);
     const s=read(),r=calculate(s),c=r.context;
@@ -193,12 +202,16 @@ $('calculator').addEventListener('change',event=>{
   update();
 });
 $('debuff').addEventListener('click',()=>{const p=bosses[$('bossPreset').value];if(p)$('bossDefense').value=p.debuff;update();});
+$('critBasis').addEventListener('change',()=>{if($('critBasis').value==='website')$('baseCritRate').value=manualCriticalBase;update();});
+$('baseCritRate').addEventListener('change',()=>{if($('critBasis').value==='website')manualCriticalBase=$('baseCritRate').value;});
 function applyImport(report,review) {
   const next=buildDamageImport(report);
   if(next.characterId!==characterId)throw new Error('导入报告与当前角色不一致');
   next.statReference=review.selection.statReference;
   effects=[...next.effects.map(e=>({...e,id:++nextId})),...readEffects().filter(e=>!e.importId)];
   imported=next;
+  $('critBasis').querySelector('[value="reader"]').disabled=observedCritical(readUnit).value==null;
+  if(observedCritical(readUnit).value==null)$('critBasis').value='website';
   for(const [id,value] of Object.entries({skillType:next.skillType,defenseRatio:next.defenseRatio,hitMultiplier:next.hitMultiplier,hitDamageRatio:next.hitDamageRatio})) {
     if(typeof value==='boolean')$(id).checked=value;else $(id).value=value??'';
   }
