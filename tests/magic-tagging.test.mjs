@@ -40,14 +40,14 @@ test('magic keeps targets, fixed numbers, decreases, references and conditional 
  for(const n of [103,108,115,120,169,196,249,357,441,584,641,890,954,1088,1143,1144,1164,1461,1694,1802,1813]){
   assert.equal(entry(n).judgment,'partial',entry(n).name);assert(entry(n).remainingConditions.length,entry(n).name);
  }
- for(const [n,mp] of [[412,5],[433,8],[561,3]])assert.deepEqual(entry(n).remainingEffects,[`MP+${mp}%`]);
+ for(const n of [412,433,561]){assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).assignedTags,['魔力','MP']);}
  assert.deepEqual(entry(1813).remainingEffects,['魔抗作为属性转换的参照量']);
 });
 
-test('magic accumulates on 20 existing skills and completes only fully covered attributes',()=>{
- assert.equal(magic.counts.ready,9);assert.equal(magic.counts.partial,42);assert.equal(magic.counts.unknown,0);
- assert.equal(magic.entries.filter(e=>e.assignedTags.length>1).length,20);
- assert.deepEqual(magic.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[17,18,19,20,291,490,1476,1864,1912]);
+test('magic accumulates with other tags and completes only fully covered attributes',()=>{
+ assert.equal(magic.counts.ready,12);assert.equal(magic.counts.partial,39);assert.equal(magic.counts.unknown,0);
+ assert.equal(magic.entries.filter(e=>e.assignedTags.length>1).length,23);
+ assert.deepEqual(magic.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[17,18,19,20,291,412,433,490,561,1476,1864,1912]);
  for(const n of [1864,1912]){
   assert.deepEqual(entry(n).assignedTags,['攻击力','魔力']);
   assert.deepEqual(labelingView(catalog,'attack').entries.find(e=>e.id===source(n).id),entry(n));
@@ -55,9 +55,9 @@ test('magic accumulates on 20 existing skills and completes only fully covered a
  assert.deepEqual(entry(304).assignedTags,['攻击力','防御力','魔力']);
  assert.deepEqual(entry(304).remainingEffects,['魔抗+10%']);
  assert(entry(304).remainingConditions.length);
- assert.equal(catalog.views.all.counts.relatedUnique,178);assert.equal(catalog.views.all.counts.ready,36);
- assert.equal(new Set(catalog.entries.map(e=>e.id)).size,178);
+ assert.equal(catalog.views.all.counts.relatedUnique,183);assert.equal(catalog.views.all.counts.ready,44);
+ assert.equal(new Set(catalog.entries.map(e=>e.id)).size,183);
  const rows=skillLabelRows(box.window.SKILL_DATA,magic);
- assert(rows.slice(0,9).every(r=>r.judgment==='ready'));
- assert(rows.slice(9).every(r=>r.judgment==='partial'));
+ assert(rows.slice(0,12).every(r=>r.judgment==='ready'));
+ assert(rows.slice(12).every(r=>r.judgment==='partial'));
 });

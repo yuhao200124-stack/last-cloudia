@@ -40,8 +40,8 @@ test('HP merges earlier attribute tags, completes six compounds, and leaves othe
  for(const n of [353,402,666,778,867,874,1221,1651,1768]){assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingConditions.length);}
  assert.deepEqual(entry(402).remainingEffects,['梅蒂斯：魔抗+20%','加速：SCT恢复速度+25%']);
  for(const n of [387,796])for(const key of ['attack',...(n===796?['defense']:[])])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
- const allView=labelingView(catalog,'all');assert.equal(allView.entries.length,178);assert.equal(allView.counts.ready,36);assert.equal(allView.counts.partial,142);
- for(const key of ['all','attack','defense','hp','magic']){
+ const allView=labelingView(catalog,'all');assert.equal(allView.entries.length,183);assert.equal(allView.counts.ready,44);assert.equal(allView.counts.partial,139);
+ for(const key of ['all','attack','defense','hp','magic','mp']){
   const rows=skillLabelRows(data,labelingView(catalog,key));const rank={ready:0,partial:1,unknown:2};
   assert(rows.every((r,i)=>!i||rank[rows[i-1].judgment]<=rank[r.judgment]));
   const filtered=filterLabelRows(rows,'HP');assert.deepEqual(filtered.map(r=>r.id),rows.filter(r=>filtered.includes(r)).map(r=>r.id));

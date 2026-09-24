@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 2,
+  "label": "MP",
+  "basicTarget": "MP",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "29fd4154c6181e8e",
+    "e090015d178e09d2",
+    "e2bf25ca0a166200",
+    "3ab5e4ec857b4879",
+    "5d075eee96d5531f",
+    "c9a348f962867ee9",
+    "0d7aece94701db3d",
+    "ad7d118adbe024cf"
+  ]
+}

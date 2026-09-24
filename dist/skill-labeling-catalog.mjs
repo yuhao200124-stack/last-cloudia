@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "magic",
+  "activeView": "mp",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -8606,15 +8606,24 @@ export const SKILL_LABELING_CATALOG = {
             "basic:c9a348f962867ee9:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "自身MP上限+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:c9a348f962867ee9:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "MP"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "MP+5%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -8646,15 +8655,24 @@ export const SKILL_LABELING_CATALOG = {
             "basic:0d7aece94701db3d:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "自身MP上限+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:0d7aece94701db3d:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "MP"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "MP+8%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -8764,15 +8782,24 @@ export const SKILL_LABELING_CATALOG = {
             "basic:ad7d118adbe024cf:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "自身MP上限+3%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:ad7d118adbe024cf:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "MP"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "MP+3%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -9366,6 +9393,171 @@ export const SKILL_LABELING_CATALOG = {
         "战斗开始时触发",
         "按魔抗数值转换加算，不是魔力百分比加成"
       ]
+    },
+    {
+      "id": "29fd4154c6181e8e",
+      "name": "法力提升",
+      "url": "https://altema.jp/lastcloudia/gino/5",
+      "text": "MP+5%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+5%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:29fd4154c6181e8e:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "e090015d178e09d2",
+      "name": "法力提升2",
+      "url": "https://altema.jp/lastcloudia/gino/6",
+      "text": "MP+8%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+8%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:e090015d178e09d2:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "e2bf25ca0a166200",
+      "name": "法力提升3",
+      "url": "https://altema.jp/lastcloudia/gino/7",
+      "text": "MP+12%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+12%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+12%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:e2bf25ca0a166200:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "3ab5e4ec857b4879",
+      "name": "法力提升极",
+      "url": "https://altema.jp/lastcloudia/gino/8",
+      "text": "MP+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+20%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+20%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:3ab5e4ec857b4879:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "5d075eee96d5531f",
+      "name": "法力提升4",
+      "url": "https://altema.jp/lastcloudia/gino/262",
+      "text": "MP+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+15%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:5d075eee96d5531f:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     }
   ],
   "views": {
@@ -9655,11 +9847,34 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 51,
         "notRelatedUnique": 884,
-        "ready": 9,
-        "partial": 42,
+        "ready": 12,
+        "partial": 39,
         "unknown": 0,
         "previousBasicMagicUnique": 43,
         "additionalRelatedUnique": 8
+      }
+    },
+    "mp": {
+      "label": "MP",
+      "displayOrder": [
+        "29fd4154c6181e8e",
+        "e090015d178e09d2",
+        "e2bf25ca0a166200",
+        "3ab5e4ec857b4879",
+        "5d075eee96d5531f",
+        "c9a348f962867ee9",
+        "0d7aece94701db3d",
+        "ad7d118adbe024cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 8,
+        "notRelatedUnique": 927,
+        "ready": 8,
+        "partial": 0,
+        "unknown": 0,
+        "previousBasicMpUnique": 8,
+        "additionalRelatedUnique": 0
       }
     },
     "all": {
@@ -9842,14 +10057,19 @@ export const SKILL_LABELING_CATALOG = {
         "b01d5a17adf13b59",
         "aa48351ee0991a93",
         "00001521ecae775f",
-        "b6f1305e6f78634c"
+        "b6f1305e6f78634c",
+        "29fd4154c6181e8e",
+        "e090015d178e09d2",
+        "e2bf25ca0a166200",
+        "3ab5e4ec857b4879",
+        "5d075eee96d5531f"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 178,
-        "notRelatedUnique": 757,
-        "ready": 36,
-        "partial": 142,
+        "relatedUnique": 183,
+        "notRelatedUnique": 752,
+        "ready": 44,
+        "partial": 139,
         "unknown": 0
       }
     }

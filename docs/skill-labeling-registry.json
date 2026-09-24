@@ -7119,6 +7119,16 @@
             "basic:c9a348f962867ee9:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "自身MP上限+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:c9a348f962867ee9:1"
+          ],
+          "relatedSkillIds": []
         }
       }
     },
@@ -7147,6 +7157,16 @@
           "relation": "attribute-change",
           "target": "self",
           "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:0d7aece94701db3d:1"
+          ],
+          "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "自身MP上限+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
           "existingRuleIds": [
             "basic:0d7aece94701db3d:1"
           ],
@@ -7241,6 +7261,16 @@
           "relation": "attribute-change",
           "target": "self",
           "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:ad7d118adbe024cf:1"
+          ],
+          "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "自身MP上限+3%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
           "existingRuleIds": [
             "basic:ad7d118adbe024cf:1"
           ],
@@ -7717,6 +7747,141 @@
           "calculationNote": "以开战时魔抗的10%换算加算值，不是魔力+10%，也不降低原魔抗。",
           "existingRuleIds": [
             "basic:b6f1305e6f78634c:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "29fd4154c6181e8e",
+      "name": "法力提升",
+      "url": "https://altema.jp/lastcloudia/gino/5",
+      "text": "MP+5%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+5%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:29fd4154c6181e8e:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "e090015d178e09d2",
+      "name": "法力提升2",
+      "url": "https://altema.jp/lastcloudia/gino/6",
+      "text": "MP+8%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+8%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:e090015d178e09d2:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "e2bf25ca0a166200",
+      "name": "法力提升3",
+      "url": "https://altema.jp/lastcloudia/gino/7",
+      "text": "MP+12%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+12%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+12%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:e2bf25ca0a166200:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "3ab5e4ec857b4879",
+      "name": "法力提升极",
+      "url": "https://altema.jp/lastcloudia/gino/8",
+      "text": "MP+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+20%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+20%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:3ab5e4ec857b4879:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "5d075eee96d5531f",
+      "name": "法力提升4",
+      "url": "https://altema.jp/lastcloudia/gino/262",
+      "text": "MP+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-stat",
+          "kind": "effect",
+          "text": "自身MP上限+15%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身MP上限+15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻MP上限属性加成。",
+          "existingRuleIds": [
+            "basic:5d075eee96d5531f:1"
           ],
           "relatedSkillIds": []
         }
@@ -9142,6 +9307,59 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "MP",
+      "assignments": [
+        {
+          "skillId": "29fd4154c6181e8e",
+          "partIds": [
+            "mp-stat"
+          ]
+        },
+        {
+          "skillId": "e090015d178e09d2",
+          "partIds": [
+            "mp-stat"
+          ]
+        },
+        {
+          "skillId": "e2bf25ca0a166200",
+          "partIds": [
+            "mp-stat"
+          ]
+        },
+        {
+          "skillId": "3ab5e4ec857b4879",
+          "partIds": [
+            "mp-stat"
+          ]
+        },
+        {
+          "skillId": "5d075eee96d5531f",
+          "partIds": [
+            "mp-stat"
+          ]
+        },
+        {
+          "skillId": "c9a348f962867ee9",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "0d7aece94701db3d",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "ad7d118adbe024cf",
+          "partIds": [
+            "effect-1"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -9492,7 +9710,12 @@
         "b01d5a17adf13b59",
         "aa48351ee0991a93",
         "00001521ecae775f",
-        "b6f1305e6f78634c"
+        "b6f1305e6f78634c",
+        "29fd4154c6181e8e",
+        "e090015d178e09d2",
+        "e2bf25ca0a166200",
+        "3ab5e4ec857b4879",
+        "5d075eee96d5531f"
       ]
     },
     "hp": {
@@ -9580,7 +9803,20 @@
         "b6f1305e6f78634c",
         "07cab38a1e00eaa5"
       ]
+    },
+    "mp": {
+      "label": "MP",
+      "displayOrder": [
+        "29fd4154c6181e8e",
+        "e090015d178e09d2",
+        "e2bf25ca0a166200",
+        "3ab5e4ec857b4879",
+        "5d075eee96d5531f",
+        "c9a348f962867ee9",
+        "0d7aece94701db3d",
+        "ad7d118adbe024cf"
+      ]
     }
   },
-  "activeView": "magic"
+  "activeView": "mp"
 }

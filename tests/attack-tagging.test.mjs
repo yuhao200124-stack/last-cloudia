@@ -130,33 +130,34 @@ test('the new table exposes only the agreed columns and scopes color classes to 
   assert(!escaped.includes('<img'));assert(!escaped.includes('<script>'));
 });
 
-test('the page defaults to magic, switches cumulative views, filters and clears without writing saved data', () => {
+test('the page defaults to MP, switches cumulative views, filters and clears without writing saved data', () => {
   const elements=new Map();
   const get=selector=>{if(!elements.has(selector))elements.set(selector,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(name,fn){this.listeners[name]=fn;},setAttribute(){},focus(){}});return elements.get(selector);};
   const code=read('../dist/skill-labeling.mjs').replace(/^import .*;\n/gm,'').replace('export function renderLabelTable','function renderLabelTable');
   const context={catalog:sharedCatalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Review page must not overwrite saved data.');}}};
   vm.runInNewContext(code,context);
-  assert.match(get('#labelCoverage').textContent,/935.*51.*884/);
-  assert.match(get('#judgmentSummary').textContent,/9.*42.*0/);
+  assert.match(get('#labelCoverage').textContent,/935.*8.*927/);
+  assert.match(get('#judgmentSummary').textContent,/8.*0.*0/);
   const tabs=get('#labelTabs');
-  assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,5);
-  assert(tabs.innerHTML.includes('全部已贴标签（178）'));
+  assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,6);
+  assert(tabs.innerHTML.includes('全部已贴标签（183）'));
   assert(tabs.innerHTML.includes('攻击力（87）'));
   assert(tabs.innerHTML.includes('防御力（70）'));
   assert(tabs.innerHTML.includes('生命力（25）'));
   assert(tabs.innerHTML.includes('魔力（51）'));
+  assert(tabs.innerHTML.includes('MP（8）'));
   const clickTab=tag=>tabs.listeners.click({target:{closest:()=>({dataset:{tag}})}});
   clickTab('attack');
   assert.match(get('#labelCoverage').textContent,/935.*87.*848/);
   assert.match(get('#judgmentSummary').textContent,/14.*73.*0/);
   clickTab('all');
-  assert.match(get('#labelCoverage').textContent,/935.*178.*757/);
-  assert.match(get('#judgmentSummary').textContent,/36.*142.*0/);
+  assert.match(get('#labelCoverage').textContent,/935.*183.*752/);
+  assert.match(get('#judgmentSummary').textContent,/44.*139.*0/);
   const rowStatuses=[...get('#labelTable').innerHTML.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(match=>match[1]);
-  assert.deepEqual(rowStatuses.slice(0,36),Array(36).fill('ready'));
-  assert(rowStatuses.slice(36).every(status=>status==='partial'));
+  assert.deepEqual(rowStatuses.slice(0,44),Array(44).fill('ready'));
+  assert(rowStatuses.slice(44).every(status=>status==='partial'));
   const search=get('#labelSearch');search.value='没有这个技能123';search.listeners.input();
   assert.equal(get('#labelEmpty').hidden,false);assert.equal(get('#labelTable').innerHTML,'');
   get('#clearLabelSearch').listeners.click();assert.equal(get('#labelEmpty').hidden,true);
-  assert.match(get('#labelResultCount').textContent,/178 \/ 178/);
+  assert.match(get('#labelResultCount').textContent,/183 \/ 183/);
 });

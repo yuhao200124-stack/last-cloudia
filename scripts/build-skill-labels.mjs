@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强']]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique']]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
