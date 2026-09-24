@@ -805,35 +805,39 @@
         {
           "part": 1,
           "text": "战斗开始时自动获得「勇敢」效果：攻击力+20%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:b30a22d022f57e37:1"
-        },
-        {
-          "id": "basic:b30a22d022f57e37:other",
-          "part": "other",
-          "text": "战斗开始时自动获得「勇敢」效果：攻击力+20%。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "remaining": false,
+      "status": "ready",
       "summary": "攻击力+20%"
     },
     {
@@ -848,35 +852,39 @@
         {
           "part": 1,
           "text": "战斗开始时自动发动“灵气”效果：魔力+20%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "法强",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "int-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:df6c512f0cfeb39c:1"
-        },
-        {
-          "id": "basic:df6c512f0cfeb39c:other",
-          "part": "other",
-          "text": "战斗开始时自动发动“灵气”效果：魔力+20%。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "remaining": false,
+      "status": "ready",
       "summary": "法强+20%"
     },
     {
@@ -897,19 +905,27 @@
               "type": "statBuff",
               "target": "攻击力",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "permanent"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:5f0091303689244c:1"
         }
       ],
-      "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+      "note": "永久Buff：选装后持续生效，独立于开场40秒开关。",
       "remaining": false,
-      "status": "pending",
+      "status": "ready",
       "summary": "攻击力+20%"
     },
     {
@@ -930,19 +946,27 @@
               "type": "statBuff",
               "target": "法强",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "int-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "permanent"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:36c52eb155eecd1f:1"
         }
       ],
-      "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+      "note": "永久Buff：选装后持续生效，独立于开场40秒开关。",
       "remaining": false,
-      "status": "pending",
+      "status": "ready",
       "summary": "法强+20%"
     },
     {
@@ -1115,47 +1139,83 @@
         {
           "part": 1,
           "text": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "awakeningBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 50,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "triggered-40s"
+              }
             },
             {
               "type": "statBuff",
               "target": "防御力",
               "value": 50,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "def-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "triggered-40s"
+              }
             },
             {
               "type": "statBuff",
               "target": "魔抗",
               "value": 50,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "mnd-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "triggered-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:4cb37bd11ae3b17f:1"
         },
         {
           "id": "basic:4cb37bd11ae3b17f:other",
           "part": "other",
           "text": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "awakeningBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [],
           "review": "pending",
           "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
+          "note": "本技能的基础属性Buff已接入；回复、移动、减伤或其它非属性效果由后续分类接入。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "note": "濒死触发后持续40秒，每Wave一次；在“觉醒Buff”勾选当前有效状态，回血后不自动结束。",
       "remaining": true,
-      "status": "pending",
+      "status": "ready",
       "summary": "攻击力+50%；防御力+50%；魔抗+50%"
     },
     {
@@ -1374,35 +1434,39 @@
         {
           "part": 1,
           "text": "战斗开始时自动获得「梅蒂斯」效果：魔抗 +20%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "魔抗",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "mnd-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:d1bc7f72d978fe26:1"
-        },
-        {
-          "id": "basic:d1bc7f72d978fe26:other",
-          "part": "other",
-          "text": "战斗开始时自动获得「梅蒂斯」效果：魔抗 +20%。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "remaining": false,
+      "status": "ready",
       "summary": "魔抗+20%"
     },
     {
@@ -1468,41 +1532,69 @@
         {
           "part": 1,
           "text": "战斗开始时自动发动“勇敢”“灵气”“保护”“魔法屏障”效果。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             },
             {
               "type": "statBuff",
               "target": "法强",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "int-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:cf4cc4324d7b87b7:1"
         },
         {
           "id": "basic:cf4cc4324d7b87b7:other",
           "part": "other",
           "text": "战斗开始时自动发动“勇敢”“灵气”“保护”“魔法屏障”效果。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [],
           "review": "pending",
           "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
+          "note": "本技能的基础属性Buff已接入；回复、移动、减伤或其它非属性效果由后续分类接入。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
       "remaining": true,
-      "status": "pending",
+      "status": "ready",
       "summary": "攻击力+20%；法强+20%"
     },
     {
@@ -2572,19 +2664,27 @@
               "type": "statBuff",
               "target": "魔抗",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "mnd-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "permanent"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:fa52989c491088fb:1"
         }
       ],
-      "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+      "note": "永久Buff：选装后持续生效，独立于开场40秒开关。",
       "remaining": false,
-      "status": "pending",
+      "status": "ready",
       "summary": "魔抗+20%"
     },
     {
@@ -2599,35 +2699,39 @@
         {
           "part": 1,
           "text": "每个Wave开始时，自身自动获得「活力」效果：HP上限+1,000。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "HP",
               "value": 1000,
-              "unit": ""
+              "unit": "",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "hp-vitality-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:c2a5f212631ba8ff:1"
-        },
-        {
-          "id": "basic:c2a5f212631ba8ff:other",
-          "part": "other",
-          "text": "每个Wave开始时，自身自动获得「活力」效果：HP上限+1,000。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "remaining": false,
+      "status": "ready",
       "summary": "HP+1000"
     },
     {
@@ -2738,35 +2842,55 @@
         {
           "part": 1,
           "text": "战斗开始时自动发动“大勇敢”“暴击”“速度”效果。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 35,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:81e5eed79e630a07:1"
         },
         {
           "id": "basic:81e5eed79e630a07:other",
           "part": "other",
           "text": "战斗开始时自动发动“大勇敢”“暴击”“速度”效果。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [],
           "review": "pending",
           "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
+          "note": "本技能的基础属性Buff已接入；回复、移动、减伤或其它非属性效果由后续分类接入。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
       "remaining": true,
-      "status": "pending",
+      "status": "ready",
       "summary": "攻击力+35%"
     },
     {
@@ -2823,47 +2947,83 @@
         {
           "part": 1,
           "text": "战斗开始时，堡垒、梅蒂斯、活力和急速会自动激活。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "防御力",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "def-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             },
             {
               "type": "statBuff",
               "target": "魔抗",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "mnd-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             },
             {
               "type": "statBuff",
               "target": "HP",
               "value": 1000,
-              "unit": ""
+              "unit": "",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "hp-vitality-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:全部技能:all:326:1"
         },
         {
           "id": "basic:全部技能:all:326:other",
           "part": "other",
           "text": "战斗开始时，堡垒、梅蒂斯、活力和急速会自动激活。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [],
           "review": "pending",
           "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
+          "note": "本技能的基础属性Buff已接入；回复、移动、减伤或其它非属性效果由后续分类接入。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
       "remaining": true,
-      "status": "pending",
+      "status": "ready",
       "summary": "防御力+20%；魔抗+20%；HP+1000"
     },
     {
@@ -3163,35 +3323,39 @@
         {
           "part": 1,
           "text": "战斗开始时自动获得「堡垒」效果：防御力 +20%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "防御力",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "def-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:c4dcb02f9f9b0945:1"
-        },
-        {
-          "id": "basic:c4dcb02f9f9b0945:other",
-          "part": "other",
-          "text": "战斗开始时自动获得「堡垒」效果：防御力 +20%。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "remaining": false,
+      "status": "ready",
       "summary": "防御力+20%"
     },
     {
@@ -3584,35 +3748,55 @@
         {
           "part": 1,
           "text": "战斗开始时自动发动“灵气”和“再施法”效果：魔力+20%、咏唱速度+30%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "法强",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "int-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:484c7ab2b4b198dc:1"
         },
         {
           "id": "basic:484c7ab2b4b198dc:other",
           "part": "other",
           "text": "战斗开始时自动发动“灵气”和“再施法”效果：魔力+20%、咏唱速度+30%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [],
           "review": "pending",
           "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
+          "note": "本技能的基础属性Buff已接入；回复、移动、减伤或其它非属性效果由后续分类接入。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
       "remaining": true,
-      "status": "pending",
+      "status": "ready",
       "summary": "法强+20%"
     },
     {
@@ -3784,19 +3968,27 @@
               "type": "statBuff",
               "target": "防御力",
               "value": 20,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "def-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "permanent"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:e3d7bd6b053a45c9:1"
         }
       ],
-      "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+      "note": "永久Buff：选装后持续生效，独立于开场40秒开关。",
       "remaining": false,
-      "status": "pending",
+      "status": "ready",
       "summary": "防御力+20%"
     },
     {
@@ -4646,35 +4838,39 @@
         {
           "part": 1,
           "text": "战斗开始时自动获得「大勇敢」效果：攻击力+35%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 35,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:352a2b49a30fa8b1:1"
-        },
-        {
-          "id": "basic:352a2b49a30fa8b1:other",
-          "part": "other",
-          "text": "战斗开始时自动获得「大勇敢」效果：攻击力+35%。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "remaining": false,
+      "status": "ready",
       "summary": "攻击力+35%"
     },
     {
@@ -4689,35 +4885,39 @@
         {
           "part": 1,
           "text": "每个Wave开始时，自身自动获得「高阶活力」效果：HP上限+2,000。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "HP",
               "value": 2000,
-              "unit": ""
+              "unit": "",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "hp-vitality-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:d214a29ee3c4826e:1"
-        },
-        {
-          "id": "basic:d214a29ee3c4826e:other",
-          "part": "other",
-          "text": "每个Wave开始时，自身自动获得「高阶活力」效果：HP上限+2,000。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "remaining": false,
+      "status": "ready",
       "summary": "HP+2000"
     },
     {
@@ -4829,47 +5029,83 @@
         {
           "part": 1,
           "text": "濒死时，HP大幅恢复，魔力、防御力、魔抗+50%，移动速度提升（每个Wave最多触发1次）。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "magicAwakeningBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "法强",
               "value": 50,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "int-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "triggered-40s"
+              }
             },
             {
               "type": "statBuff",
               "target": "防御力",
               "value": 50,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "def-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "triggered-40s"
+              }
             },
             {
               "type": "statBuff",
               "target": "魔抗",
               "value": 50,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "mnd-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "triggered-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:faa4c35ca794565a:1"
         },
         {
           "id": "basic:faa4c35ca794565a:other",
           "part": "other",
           "text": "濒死时，HP大幅恢复，魔力、防御力、魔抗+50%，移动速度提升（每个Wave最多触发1次）。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "magicAwakeningBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [],
           "review": "pending",
           "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
+          "note": "本技能的基础属性Buff已接入；回复、移动、减伤或其它非属性效果由后续分类接入。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "note": "濒死触发后持续40秒，每Wave一次；在“魔导觉醒Buff”勾选当前有效状态，回血后不自动结束。",
       "remaining": true,
-      "status": "pending",
+      "status": "ready",
       "summary": "法强+50%；防御力+50%；魔抗+50%"
     },
     {
@@ -5049,19 +5285,27 @@
               "type": "statBuff",
               "target": "攻击力",
               "value": 35,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "permanent"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:c14ec33793319bba:1"
         }
       ],
-      "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+      "note": "永久Buff：选装后持续生效，独立于开场40秒开关。",
       "remaining": false,
-      "status": "pending",
+      "status": "ready",
       "summary": "攻击力+35%"
     },
     {
@@ -5343,19 +5587,27 @@
               "type": "statBuff",
               "target": "法强",
               "value": 35,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "int-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "permanent"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:d01dcb7af94bea8f:1"
         }
       ],
-      "note": "常驻状态增益；具体状态组与覆盖规则待核对，暂不自动叠加。",
+      "note": "永久Buff：选装后持续生效，独立于开场40秒开关。",
       "remaining": false,
-      "status": "pending",
+      "status": "ready",
       "summary": "法强+35%"
     },
     {
@@ -5371,41 +5623,69 @@
         {
           "part": 1,
           "text": "战斗开始时自动发动“大勇敢”“大灵气”“保护”“魔法屏障”效果。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "攻击力",
               "value": 35,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "str-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             },
             {
               "type": "statBuff",
               "target": "法强",
               "value": 35,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "int-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:7b7b9f7c806bbd9e:1"
         },
         {
           "id": "basic:7b7b9f7c806bbd9e:other",
           "part": "other",
           "text": "战斗开始时自动发动“大勇敢”“大灵气”“保护”“魔法屏障”效果。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [],
           "review": "pending",
           "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
+          "note": "本技能的基础属性Buff已接入；回复、移动、减伤或其它非属性效果由后续分类接入。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
       "remaining": true,
-      "status": "pending",
+      "status": "ready",
       "summary": "攻击力+35%；法强+35%"
     },
     {
@@ -5551,35 +5831,39 @@
         {
           "part": 1,
           "text": "战斗开始时自动发动“大灵气”效果：魔力+35%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "法强",
               "value": 35,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "int-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:209e4252243d4679:1"
-        },
-        {
-          "id": "basic:209e4252243d4679:other",
-          "part": "other",
-          "text": "战斗开始时自动发动“大灵气”效果：魔力+35%。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "remaining": false,
+      "status": "ready",
       "summary": "法强+35%"
     },
     {
@@ -5779,35 +6063,39 @@
         {
           "part": 1,
           "text": "战斗开始时自动获得「大堡垒」效果：防御力 +35%。",
-          "conditions": [],
+          "conditions": [
+            {
+              "field": "openingBuffActive",
+              "op": "eq",
+              "value": true
+            }
+          ],
           "effects": [
             {
               "type": "statBuff",
               "target": "防御力",
               "value": 35,
-              "unit": "%"
+              "unit": "%",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "def-magic-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "opening-40s"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:40a41c3cc8543aa3:1"
-        },
-        {
-          "id": "basic:40a41c3cc8543aa3:other",
-          "part": "other",
-          "text": "战斗开始时自动获得「大堡垒」效果：防御力 +35%。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "remaining": false,
+      "status": "ready",
       "summary": "防御力+35%"
     },
     {
@@ -5871,29 +6159,27 @@
               "type": "statBuff",
               "target": "HP",
               "value": 1000,
-              "unit": ""
+              "unit": "",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "hp-vitality-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "permanent"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:f2f841598b8870ad:1"
-        },
-        {
-          "id": "basic:f2f841598b8870ad:other",
-          "part": "other",
-          "text": "常驻「活力」效果：HP上限+1,000。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "永久Buff：选装后持续生效，独立于开场40秒开关。",
+      "remaining": false,
+      "status": "ready",
       "summary": "HP+1000"
     },
     {
@@ -7232,29 +7518,27 @@
               "type": "statBuff",
               "target": "HP",
               "value": 2000,
-              "unit": ""
+              "unit": "",
+              "runtime": {
+                "layer": "runtime-stat",
+                "stackGroup": "hp-vitality-buff",
+                "stackPolicy": "exclusive",
+                "resolution": "highest",
+                "evidence": "Goldmine buff category + Altema qa-item/227 + user-confirmed-duration-2026-09-24",
+                "lifetime": "permanent"
+              }
             }
           ],
-          "review": "pending",
+          "review": "ready",
           "verification": "description",
           "mechanicsRevision": 1,
-          "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "note": "按当前Buff状态计算；同组取已生效的最高加成，不与自身的限时/永久版本相加。",
           "id": "basic:790933563ebc27aa:1"
-        },
-        {
-          "id": "basic:790933563ebc27aa:other",
-          "part": "other",
-          "text": "常驻「高阶活力」效果：HP上限+2,000。",
-          "conditions": [],
-          "effects": [],
-          "review": "pending",
-          "verification": "description",
-          "note": "技能的非基础属性效果或附带机制尚未在本轮接入；按后续类型逐项处理。"
         }
       ],
-      "note": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
-      "remaining": true,
-      "status": "pending",
+      "note": "永久Buff：选装后持续生效，独立于开场40秒开关。",
+      "remaining": false,
+      "status": "ready",
       "summary": "HP+2000"
     },
     {

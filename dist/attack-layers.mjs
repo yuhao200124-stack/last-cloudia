@@ -1,5 +1,5 @@
-import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-fullpage';
-import {runtimeStates,combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-fullpage';
+import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-buff-conditions';
+import {runtimeStates,combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-buff-conditions';
 export function needsAttributeLayers(mode,stat,panel) {
  return mode==='panel'&&Number.isFinite(stat?.beforeBuff)&&Number.isFinite(stat.crossAdd)&&Number.isFinite(panel)&&panel!==stat.beforeBuff+stat.crossAdd;
 }
@@ -29,11 +29,12 @@ export function projectAttackLayers(stat,panel,selected=[]) {
  const observed=matches.length===1?{ok:true,...matches[0]}:resolveAttackLayers(stat,panel);
  if(!observed.ok)return observed;
  const conditions=stat.runtimeConditions||{};
- const controlled=b=>b.hpCondition?.op==='eq'&&typeof conditions[b.hpCondition.field]==='boolean';
- const desired=data.buffs.filter(b=>controlled(b)&&conditions[b.hpCondition.field]===b.hpCondition.value);
+ const activation=b=>b.hpCondition||b.activationCondition;
+ const controlled=b=>activation(b)?.op==='eq'&&typeof conditions[activation(b).field]==='boolean';
+ const desired=data.buffs.filter(b=>controlled(b)&&conditions[activation(b).field]===activation(b).value);
  const active=[...observed.active.filter(b=>!controlled(b)),...desired];
  const combined=combineRuntimeBuffs(active,matches.length===1?[]:selected);if(!combined.ok)return combined;
- const projectedPanel=Math.floor(data.base*(100+combined.percent)/100);
+ const projectedPanel=Math.floor((data.base+combined.flat)*(100+combined.percent)/100);
  const identity=b=>JSON.stringify([b.id,b.source,b.stat,b.value,b.runtime.stackGroup]);
  const applied=new Set(combined.active.map(identity));
  return {ok:true,...combined,base:data.base,panel:projectedPanel,observedPanel:panel,...(projectedPanel!==panel?{projected:true}:{}),buffObserved:matches.length===1,

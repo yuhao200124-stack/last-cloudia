@@ -1,11 +1,11 @@
-import {buildCatalog} from './effect-rule-learning.mjs?v=20260924-basic-stats';
-import {retargetReport} from './entry-preparation.mjs?v=20260924-basic-stats';
-import {buildDamageImport} from './damage-import.mjs?v=20260924-fullpage';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-basic-stats';
-import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-fullpage';
-import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-fullpage';
-import {magicBuffCap} from './magic-buffs.mjs?v=20260924-fullpage';
-import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-basic-stats';
+import {buildCatalog} from './effect-rule-learning.mjs?v=20260924-buff-conditions';
+import {retargetReport} from './entry-preparation.mjs?v=20260924-buff-conditions';
+import {buildDamageImport} from './damage-import.mjs?v=20260924-buff-conditions';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-buff-conditions';
+import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-buff-conditions';
+import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-buff-conditions';
+import {magicBuffCap} from './magic-buffs.mjs?v=20260924-buff-conditions';
+import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-buff-conditions';
 
 const eq=(field,value)=>({field,op:'eq',value});
 const elements={火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark',无:'none'};
@@ -95,7 +95,7 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
   // An observed runtime buff is retained only while its source still exists;
   // selected HP conditions and selected spells are evaluated anew.
   const existing=new Set(report.rows.filter(r=>r.status==='active').map(r=>r.sourceName));
-  const anchors=runtimeAnchor.filter(b=>!b.hpCondition&&(!b.source||existing.has(b.source))&&!known.some(x=>x.runtime.stackGroup===b.runtime.stackGroup));
+  const anchors=runtimeAnchor.filter(b=>!b.hpCondition&&!b.activationCondition&&(!b.source||existing.has(b.source))&&!known.some(x=>x.runtime.stackGroup===b.runtime.stackGroup));
   const selected=selectedBuffs.filter(b=>b.stat===stat.key).map(b=>normalizeRuntimeBuff({id:b.id,source:b.name,value:b.statPercent,runtime:b.runtime},stat.key));
   if(selected.some(b=>!b))throw new Error('所选魔法增益的类型尚未确认');
   const result=combineRuntimeBuffs([...known,...anchors],selected);

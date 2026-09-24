@@ -1,7 +1,7 @@
 import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-fullpage';
-import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-basic-stats';
+import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-buff-conditions';
 /** Reusable, description-matched rule templates. No imported content is executable. */
-import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260924-basic-stats';
+import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260924-buff-conditions';
 
 export const LEARNING_STORAGE_KEY = 'lc-effect-rules:learned:v1';
 
@@ -72,7 +72,16 @@ function validateRule(rule, path, errors, sourceText) {
     rule.effects.forEach((effect, index) => {
       const p = `${path}.effects[${index}]`;
       if (!record(effect)) { errors.push(`${p}：效果必须是对象`); return; }
-      unknownKeys(effect, ['type', 'target', 'value', 'unit', 'detail', 'secondary'], p, errors);
+      unknownKeys(effect, ['type', 'target', 'value', 'unit', 'detail', 'secondary','runtime'], p, errors);
+      if(hasOwn(effect,'runtime')){
+        const r=effect.runtime;
+        if(!record(r))errors.push(`${p}：Buff定义无效`);
+        else {
+          unknownKeys(r,['layer','stackGroup','stackPolicy','resolution','evidence','lifetime'],p+'.runtime',errors);
+          if(hasOwn(r,'lifetime')&&!['permanent','opening-40s','triggered-40s'].includes(r.lifetime))errors.push(`${p}：Buff持续方式无效`);
+          if(r.layer!=='runtime-stat'||!['exclusive','add'].includes(r.stackPolicy)||!shortString(r.stackGroup,128)||!r.stackGroup||!shortString(r.evidence,512)||!r.evidence||hasOwn(r,'resolution')&&r.resolution!=='highest')errors.push(`${p}：Buff分组无效`);
+        }
+      }
       if (!TYPES.has(effect.type)) errors.push(`${p}：未知效果类型`);
       if (!shortString(effect.target, 256) || !effect.target) errors.push(`${p}：效果目标无效`);
       if (!scalar(effect.value)) errors.push(`${p}：效果值无效`);

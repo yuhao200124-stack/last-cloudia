@@ -1,15 +1,15 @@
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260924-fullpage';
-import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-fullpage';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260924-basic-stats';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-basic-stats';
+import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-buff-conditions';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260924-buff-conditions';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-buff-conditions';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
-import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-basic-stats';
+import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-buff-conditions';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
-import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-fullpage';
-import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-fullpage';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260924-basic-stats';
-import {loadCharacterReport} from './character-report-loader.mjs?v=20260924-basic-stats';
-import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-basic-stats';
+import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-buff-conditions';
+import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-buff-conditions';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260924-buff-conditions';
+import {loadCharacterReport} from './character-report-loader.mjs?v=20260924-buff-conditions';
+import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-buff-conditions';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -48,6 +48,7 @@ function renderMagicBuffs(profile) {
   $('magicBuffChoices').innerHTML=magicOptions.map(b=>`<label class="magic-buff-check"><input type="checkbox" data-magic-buff="${esc(b.id)}"${magicSelection[b.id]?' checked':''}>${esc(b.name)}：${esc(b.label)}</label>`).join('');
   $('magicBuffRelationControl').hidden=!activeMagicBuffs().length;
 }
+for(const id of ['fullHp','lowHp'])$(id).addEventListener('change',()=>{if($(id).checked)$(id==='fullHp'?'lowHp':'fullHp').checked=false;});
 $('magicBuffOptions').addEventListener('change',e=>{
   if(e.target.dataset.magicBuff){
     const chosen=magicOptions.find(b=>b.id===e.target.dataset.magicBuff);
@@ -253,7 +254,7 @@ function labels() {
   $('bossReference').textContent=`本次参照：${mode==='mixed'?'手填混合防御值':magic?'魔抗 MND':'防御力 DEF'}；${neutral?'无属性不使用六属性抗性':`使用${$('element').value||'所选'}抗性`}。`;
   const p=bosses[$('bossPreset').value];$('debuff').hidden=!p?.debuff||magic||mode==='mixed';
   if(p?.debuff)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
-  $('conditionStatus').textContent=($('dualWield').checked?'双刀按下方命中与单段倍率计算；':'')+'特攻、Break 与满血按当前选项计算；满血条件技能会随勾选重算，未满血不等于濒死。';
+  $('conditionStatus').textContent=($('dualWield').checked?'双刀按下方命中与单段倍率计算；':'')+'满血与濒死互斥；开场Buff仅在40秒内勾选。觉醒类勾选表示已经触发且仍有效，回血后可继续保持；永久Buff随已选技能生效。';
   hitSourceNote();
 }
 function applyBoss() {
@@ -499,7 +500,7 @@ if(transferred?.calculator){
 }
 unified=mountUnifiedCalculator({
  beforeOpen:()=>{if(!embedded)return true;openFullPage();return false;},
- getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,break:$('break').checked,dualWield:$('dualWield').checked},
+ getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,lowHp:$('lowHp').checked,openingBuffActive:$('openingBuffActive').checked,awakeningBuffActive:$('awakeningBuffActive').checked,magicAwakeningBuffActive:$('magicAwakeningBuffActive').checked,break:$('break').checked,dualWield:$('dualWield').checked},
   baseCap:$('baseCap').valueAsNumber,baseCritRate:$('critBasis').value==='reader'?Number(manualCriticalBase)||0:$('baseCritRate').valueAsNumber||0,
   selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],manualDefenseRatio:defenseRatioTouched?$('defenseRatio').valueAsNumber:null,
   criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),

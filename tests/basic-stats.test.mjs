@@ -76,12 +76,76 @@ test('weapon stat upgrades touch each equipped weapon only; damage receives chan
  assert.equal(changed.input.attackBase,1150);assert(calculate(changed.input).mean>calculate(first.input).mean);
  assert.equal(changed.imported.effects.length,0,'stat increase must not also become damage +15%');
 });
-test('timed, maximum and unknown mechanics remain visible; editing text invalidates official rules',()=>{
- for(const name of ['快速鼓舞','生命鼓舞','自动活力']){
+test('unresolved curves remain visible; editing text invalidates official rules',()=>{
+ for(const name of ['生命鼓舞','生命堡垒']){
   const r=report([name]);assert(r.rows.some(r=>r.sourceName===name&&r.status==='pending'));
   assert(!r.rows.some(r=>r.sourceName===name&&r.status==='active'));
  }
  const renamed={...item('攻击提升极'),name:'我的名字'};assert(basicStatRules(renamed));
  assert.equal(basicStatRules({...renamed,text:'攻击力+99%',edited:true}),null);
  const compound=report(['石之世界']);assert(compound.rows.some(r=>r.status==='active'&&r.rule.effects.some(e=>e.target==='防御力')));assert(compound.rows.some(r=>r.status==='pending'));
+});
+
+test('opening and permanent buffs share one runtime group and expiry falls back to permanent',()=>{
+ const calc=(names,flags={})=>{
+  const r=buildLoadoutReport(baseReport,snapshot(names),{...selection,...flags});
+  return {r,p:calculateWebsitePanel(base,r)};
+ };
+ assert.equal(calc(['快速鼓舞']).p.values.attack,1000);
+ assert.equal(calc(['快速鼓舞'],{openingBuffActive:true}).p.values.attack,1200);
+ assert.equal(calc(['自动鼓舞']).p.values.attack,1200);
+ assert.equal(calc(['自动鼓舞','快速鼓舞'],{openingBuffActive:true}).p.values.attack,1200);
+ assert.equal(calc(['自动鼓舞','快速大鼓舞'],{openingBuffActive:true}).p.values.attack,1350);
+ assert.equal(calc(['自动鼓舞','快速大鼓舞'],{openingBuffActive:false}).p.values.attack,1200);
+ const both=calc(['攻击提升极','自动鼓舞']);
+ assert.equal(both.p.stats.attack.beforeBuff,1150);assert.equal(both.p.values.attack,1380);
+ assert.equal(calc(['自动活力','快速高阶活力'],{openingBuffActive:true}).p.values.hp,3000);
+ assert.equal(calc(['自动活力','快速高阶活力']).p.values.hp,2000);
+ assert.equal(calc(['体力提升极','自动活力']).p.values.hp,2200,'runtime fixed HP is added after the passive percentage, not multiplied as base HP');
+});
+
+test('near-death passive and triggered awakening have separate lifetimes and groups',()=>{
+ const run=flags=>buildLoadoutReport(baseReport,snapshot(['激昂','觉醒','自动鼓舞']),{...selection,...flags});
+ assert.equal(calculateWebsitePanel(base,run({lowHp:true})).values.attack,1400);
+ assert.equal(calculateWebsitePanel(base,run({lowHp:true,awakeningBuffActive:true})).values.attack,1700,'20% passive plus highest 50% standard buff');
+ assert.equal(calculateWebsitePanel(base,run({lowHp:false,awakeningBuffActive:true})).values.attack,1500,'awakening remains after healing');
+ assert.equal(calculateWebsitePanel(base,run({lowHp:false,awakeningBuffActive:false})).values.attack,1200);
+ const inconsistent=run({fullHp:true,lowHp:true});
+ assert.equal(inconsistent.context.fullHp,null);assert.equal(inconsistent.context.lowHp,null);
+ assert(inconsistent.rows.some(r=>r.sourceName==='激昂'&&r.status==='pending'));
+ const empty=buildLoadoutReport(baseReport,snapshot([]),{...selection,lowHp:true,openingBuffActive:true,awakeningBuffActive:true});
+ assert.equal(calculateWebsitePanel(base,empty).values.attack,1000,'checking a condition grants no unselected skill');
+});
+
+test('runtime effects propagate to damage exactly once, stay separate from damage percentages, and leave when removed',()=>{
+ const input={...defaultInput(),attack:1000,defense:1000,cap:1e9};
+ const settings={baseReport,selection:{...selection,openingBuffActive:true},input};
+ const selected=snapshot(['攻击提升极','快速鼓舞','自动鼓舞']);
+ const p=prepareLoadoutPreview({...settings,snapshot:selected});
+ assert.equal(p.input.attackBase,1150);assert.equal(p.input.runtimeStatPercent,20);assert.equal(p.input.attack,1380);
+ assert.equal(p.imported.effects.length,0);
+ const removed=prepareLoadoutPreview({...settings,snapshot:snapshot(['攻击提升极'])});
+ assert.equal(removed.input.attack,1150);
+ const off=prepareLoadoutPreview({...settings,snapshot:snapshot(['快速鼓舞']),selection:{...selection,openingBuffActive:false},runtimeAnchor:p.panel.stats.attack.buffs});
+ assert.equal(off.input.attack,1000,'an observed opening buff must not revive after its condition is off');
+});
+
+test('same-group observations remain interpretable; selected permanent buff survives opening expiry',async()=>{
+ const {projectAttackLayers}=await import('../dist/attack-layers.mjs');
+ const selected=snapshot(['自动鼓舞','快速鼓舞']);
+ const r=buildLoadoutReport(baseReport,selected,{...selection,openingBuffActive:true});
+ const stat=calculateWebsitePanel(base,r).stats.attack;
+ stat.runtimeCandidates=stat.buffs;stat.runtimeConditions={openingBuffActive:false,permanentBuffActive:true};
+ const projected=projectAttackLayers(stat,1200);
+ assert.equal(projected.ok,true,projected.reason);assert.equal(projected.panel,1200);assert.equal(projected.percent,20);
+ assert.equal(projected.active.length,1);assert.equal(projected.active[0].source,'自动鼓舞');
+});
+
+test('known runtime metadata survives learned-rule save and validation',async()=>{
+ const {makeTemplate,validateTemplates,sourceKey}=await import('../dist/effect-rule-learning.mjs');
+ for(const name of ['快速鼓舞','自动鼓舞','觉醒']){
+  const source=item(name),rules=basicStatRules(source),t=makeTemplate(source,rules);
+  const result=validateTemplates({schemaVersion:1,templates:{[sourceKey(source)]:t}});
+  assert.deepEqual(result.errors,[]);assert.equal(t.rules[0].effects[0].runtime.stackPolicy,'exclusive');
+ }
 });

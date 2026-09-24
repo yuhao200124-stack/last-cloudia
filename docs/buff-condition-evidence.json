@@ -1,0 +1,889 @@
+{
+  "note": "摘录已在前次技能校对时下载的缓存，本次核对状态类别与生命周期；不是原生实测。",
+  "skills": [
+    {
+      "id": "130000014200",
+      "name": "Fast Metis",
+      "effect": {
+        "origEffect": {
+          "description": "Automatically activate Metis at the start of the battle.",
+          "note": "Metis: +20% MND for 40s.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30300:40}{~}+{MND:20%}{~} MND{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update MND"
+            ],
+            "conditions": [
+              "Wave Start"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffId": "30300",
+              "buffDuration": "40"
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000006700",
+      "name": "Awaken",
+      "effect": {
+        "origEffect": {
+          "description": "When close to death, very greatly restore HP, boost movement speed, and STR/ DEF/ MND +50% (once per wave).",
+          "note": "+2 Movement Speed.\n{HEAL:0:840%:600:100%}",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "While HP is at 30% or less,  activate the following to self (Once Per Wave):{:}{#}Heal {~}{HEAL:0:840%:600:100%}{~} HP.{##}{#}Apply the following buffs:{:}{#}{BUFF:30000:40}{~}+{STR:50%}{~} STR{<}{##}{#}{BUFF:30100:40}{~}+{DEF:50%}{~} DEF{<}{##}{#}{BUFF:30300:40}{~}+{MND:50%}{~} MND{<}{##}{#}{BUFF:31000:40}{~}+2{~} Movement Speed{<}{##}{::}{##}{::}",
+          "note": "{HEAL:0:840%:600:100%}\n{!}{=}Lake:{=} Do note that this effect will heal up to 9999 only. It's only possible to heal further by increasing the Healing Cap, but all such effects will affect Active Abilities only.\nInstead, the high healing values are useful for situations such as being debuffed.{!!}Also, a commonly asked question is whether or not this skill stacks with other similar 'Close to Death' effects.{!}The short answer is yes.{:}{#}Originally, all 'Close to Death' effects will activate at the same time that the condition is met.{:}{#}This behavior worked well for lots of effects, but it was crippling for lifesaving effects like Awaken which heals HP.{##}{#}Therefore, on May 12, 2022, this behavior was changed.{##}{::}{##}{#}All 'Close to Death' effects will activate sequentially with the order being: Trait > Passive Skills > Equips > Ark Ability.{:}{#}If multiple effects are within the same category, they'll be activated based on an internal order.{##}{#}If an effect heals the Unit's HP above the 'Close to Death' mark, then the Unit is no longer close to death and the remaining effects won't activate.{##}{::}{##}{::}",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Heal HP"
+            ],
+            "conditions": [
+              "While HP is at 30% or less"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": ""
+            },
+            "chance": "100%",
+            "extraParams": {
+              "mndAdd": "0",
+              "mndMod": "840%",
+              "healMin": "600",
+              "healMod": "100%"
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update STR"
+            ],
+            "conditions": [
+              "While HP is at 30% or less"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "50%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffId": "30000",
+              "buffDuration": "40"
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update DEF"
+            ],
+            "conditions": [
+              "While HP is at 30% or less"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "50%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffId": "30100",
+              "buffDuration": "40"
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update MND"
+            ],
+            "conditions": [
+              "While HP is at 30% or less"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "50%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffId": "30300",
+              "buffDuration": "40"
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Update Movement Speed",
+              "Apply Buff"
+            ],
+            "conditions": [
+              "While HP is at 30% or less"
+            ],
+            "values": {
+              "flat": "2",
+              "modifier": ""
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffId": "31000",
+              "buffDuration": "40"
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000005700",
+      "name": "Auto Aura",
+      "effect": {
+        "origEffect": {
+          "description": "Continuous Aura effect. Magic increases.",
+          "note": "Aura: +20% INT.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30202:-1}{~}+{INT:20%}{~} INT{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update INT"
+            ],
+            "conditions": [
+              "Wave Start"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffId": "30202",
+              "buffDuration": "-1"
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000005500",
+      "name": "Auto Brave",
+      "effect": {
+        "origEffect": {
+          "description": "Continuous Brave effect. Attack increases.",
+          "note": "Brave: +20% STR.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30002:-1}{~}+{STR:20%}{~} STR{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update STR"
+            ],
+            "conditions": [
+              "Wave Start"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffId": "30002",
+              "buffDuration": "-1"
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000005200",
+      "name": "Fast Aura",
+      "effect": {
+        "origEffect": {
+          "description": "Automatically activates Aura at the start of the battle.",
+          "note": "Aura: +20% INT for 40s.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30200:40}{~}+{INT:20%}{~} INT{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update INT"
+            ],
+            "conditions": [
+              "Wave Start"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffId": "30200",
+              "buffDuration": "40"
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000005100",
+      "name": "Fast Brave",
+      "effect": {
+        "origEffect": {
+          "description": "Automatically activates Brave at the start of the battle.",
+          "note": "Brave: +20% STR for 40s.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30000:40}{~}+{STR:20%}{~} STR{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update STR"
+            ],
+            "conditions": [
+              "Wave Start"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffId": "30000",
+              "buffDuration": "40"
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000026290",
+      "name": "Auto Fort",
+      "effect": {
+        "origEffect": {
+          "description": "Continuous Fort effect.",
+          "note": "Fort: +20% DEF.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30101:-1}{~}+{DEF:20%}{~} DEF{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update DEF"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30101",
+              "buffDuration": "-1",
+              "waveInfo": "Wave Start",
+              "stats": [
+                "DEF"
+              ]
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000023700",
+      "name": "Auto Metis",
+      "effect": {
+        "origEffect": {
+          "description": "Metis magic effect is always active.",
+          "note": "Metis: +20% MND.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30301:-1}{~}+{MND:20%}{~} MND{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update MND"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30301",
+              "buffDuration": "-1",
+              "waveInfo": "Wave Start",
+              "stats": [
+                "MND"
+              ]
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000027481",
+      "name": "Fast Vacation II",
+      "effect": {
+        "origEffect": {
+          "description": "Battle Start: Autocast Grand Brave, Grand Aura, Protection, and Magic Barrier.",
+          "note": "Grand Brave: +35% STR for 40s.\nGrand Aura: +35% INT for 40s.\nProtection: -20% Physical Damage Received for 40s.\nMagic Barrier: -20% Magic Damage Received for 40s.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply the following buffs to self:{:}{#}{BUFF:30000:40}{~}+{STR:35%}{~} STR{<}{##}{#}{BUFF:30200:40}{~}+{INT:35%}{~} INT{<}{##}{#}{BUFF:50401:40}{~}+-20%{~} Physical Damage Received{<}{##}{#}{BUFF:50402:40}{~}+-20%{~} Magic Damage Received{<}{##}{::}",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update STR"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "",
+              "modifier": "35%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30000",
+              "buffDuration": "40",
+              "waveInfo": null,
+              "stats": [
+                "STR"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update INT"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "",
+              "modifier": "35%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30200",
+              "buffDuration": "40",
+              "waveInfo": null,
+              "stats": [
+                "INT"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update Damage Received"
+            ],
+            "conditions": [
+              "Attack Type: Physical"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "-20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "50401",
+              "buffDuration": "40",
+              "waveInfo": null
+            },
+            "isBoost": false
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update Damage Received"
+            ],
+            "conditions": [
+              "Attack Type: Magic"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "-20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "50402",
+              "buffDuration": "40",
+              "waveInfo": null
+            },
+            "isBoost": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000028314",
+      "name": "Auto High Vitality",
+      "effect": {
+        "origEffect": {
+          "description": "Continuous High Vitality effect.",
+          "note": "",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30504:-1}{~}+2000{~} HP{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update HP"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "2000",
+              "modifier": ""
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30504",
+              "buffDuration": "-1",
+              "waveInfo": "Wave Start",
+              "stats": [
+                "HP"
+              ]
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000027641",
+      "name": "Auto Vitality",
+      "effect": {
+        "origEffect": {
+          "description": "Continuous Vitality effect.",
+          "note": "Vitality: +1000 HP.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30504:-1}{~}+1000{~} HP{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update HP"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "1000",
+              "modifier": ""
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30504",
+              "buffDuration": "-1",
+              "waveInfo": "Wave Start",
+              "stats": [
+                "HP"
+              ]
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000027154",
+      "name": "Fast High Vitality",
+      "effect": {
+        "origEffect": {
+          "description": "Battle Start: Autocast High Vitality.",
+          "note": "High Vitality: +2000 HP for 40s.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30500:40}{~}+2000{~} HP{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update HP"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "2000",
+              "modifier": ""
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30500",
+              "buffDuration": "40",
+              "waveInfo": "Wave Start",
+              "stats": [
+                "HP"
+              ]
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000026160",
+      "name": "Fast Fort",
+      "effect": {
+        "origEffect": {
+          "description": "Automatically activates Fort at the start of the battle.",
+          "note": "Fort: +20% DEF for 40s.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30100:40}{~}+{DEF:20%}{~} DEF{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update DEF"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30100",
+              "buffDuration": "40",
+              "waveInfo": "Wave Start",
+              "stats": [
+                "DEF"
+              ]
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000023900",
+      "name": "Fast Vitality",
+      "effect": {
+        "origEffect": {
+          "description": "Battle start: automatically activate Vitality.",
+          "note": "Vitality: +1000 HP.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply {BUFF:30500:40}{~}+1000{~} HP{<} to self.",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update HP"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "1000",
+              "modifier": ""
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30500",
+              "buffDuration": "40",
+              "waveInfo": "Wave Start",
+              "stats": [
+                "HP"
+              ]
+            },
+            "isBoost": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "130000015000",
+      "name": "Fast Vacation",
+      "effect": {
+        "origEffect": {
+          "description": "Automatically activate Brave, Aura, Protection, and Magic Barrier at the start of battle.",
+          "note": "Brave: +20% STR for 40s.\nAura: +20% INT for 40s.\nProtection: -20% Physical Damage Received for 40s.\nMagic Barrier: -20% Magic Damage Received for 40s.",
+          "warning": ""
+        },
+        "lakeEffect": {
+          "description": "{=}Wave Start{=} Apply the following buffs to self:{:}{#}{BUFF:30000:40}{~}+{STR:20%}{~} STR{<}{##}{#}{BUFF:30200:40}{~}+{INT:20%}{~} INT{<}{##}{#}{BUFF:50401:40}{~}+-20%{~} Physical Damage Received{<}{##}{#}{BUFF:50402:40}{~}+-20%{~} Magic Damage Received{<}{##}{::}",
+          "note": "",
+          "warning": ""
+        },
+        "effectCodes": [
+          {
+            "effects": [
+              "Apply Buff",
+              "Update STR"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30000",
+              "buffDuration": "40",
+              "waveInfo": null,
+              "stats": [
+                "STR"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update INT"
+            ],
+            "conditions": [],
+            "values": {
+              "flat": "",
+              "modifier": "20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "30200",
+              "buffDuration": "40",
+              "waveInfo": null,
+              "stats": [
+                "INT"
+              ]
+            },
+            "isBoost": true
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update Damage Received"
+            ],
+            "conditions": [
+              "Attack Type: Physical"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "-20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "50401",
+              "buffDuration": "40",
+              "waveInfo": null
+            },
+            "isBoost": false
+          },
+          {
+            "effects": [
+              "Apply Buff",
+              "Update Damage Received"
+            ],
+            "conditions": [
+              "Attack Type: Magic"
+            ],
+            "values": {
+              "flat": "",
+              "modifier": "-20%"
+            },
+            "chance": "100%",
+            "extraParams": {
+              "buffID": "50402",
+              "buffDuration": "40",
+              "waveInfo": null
+            },
+            "isBoost": false
+          }
+        ]
+      }
+    }
+  ],
+  "buffs": [
+    {
+      "_id": 30000,
+      "icon": "aw_buff_icon_00026",
+      "isDebuff": false,
+      "category": "STR Up 1",
+      "type": "STR",
+      "origName": "Boost STR",
+      "origDescription": "Boost STR.",
+      "lakeName": "Boost STR",
+      "lakeDescription": "Increase STR."
+    },
+    {
+      "_id": 30002,
+      "icon": "aw_buff_icon_00026",
+      "isDebuff": false,
+      "category": "STR Up 1",
+      "type": "STR",
+      "origName": "Boost STR",
+      "origDescription": "Boost STR.",
+      "lakeName": "Boost STR",
+      "lakeDescription": "Increase STR."
+    },
+    {
+      "_id": 30100,
+      "icon": "aw_buff_icon_00048",
+      "isDebuff": false,
+      "category": "DEF Up 1",
+      "type": "DEF",
+      "origName": "Boost DEF",
+      "origDescription": "Boost DEF.",
+      "lakeName": "Boost DEF",
+      "lakeDescription": "Increase DEF."
+    },
+    {
+      "_id": 30101,
+      "icon": "aw_buff_icon_00048",
+      "isDebuff": false,
+      "category": "DEF Up 1",
+      "type": "DEF",
+      "origName": "Boost DEF",
+      "origDescription": "Boost DEF.",
+      "lakeName": "Boost DEF",
+      "lakeDescription": "Increase DEF."
+    },
+    {
+      "_id": 30200,
+      "icon": "aw_buff_icon_00054",
+      "isDebuff": false,
+      "category": "INT Up 1",
+      "type": "INT",
+      "origName": "Boost INT",
+      "origDescription": "Boost INT.",
+      "lakeName": "Boost INT",
+      "lakeDescription": "Increase INT."
+    },
+    {
+      "_id": 30202,
+      "icon": "aw_buff_icon_00054",
+      "isDebuff": false,
+      "category": "INT Up 1",
+      "type": "INT",
+      "origName": "Boost INT",
+      "origDescription": "Boost INT.",
+      "lakeName": "Boost INT",
+      "lakeDescription": "Increase INT."
+    },
+    {
+      "_id": 30300,
+      "icon": "aw_buff_icon_00060",
+      "isDebuff": false,
+      "category": "MND Up 1",
+      "type": "MND",
+      "origName": "Boost MND",
+      "origDescription": "Boost MND.",
+      "lakeName": "Boost MND",
+      "lakeDescription": "Increase MND."
+    },
+    {
+      "_id": 30301,
+      "icon": "aw_buff_icon_00060",
+      "isDebuff": false,
+      "category": "MND Up 1",
+      "type": "MND",
+      "origName": "Boost MND",
+      "origDescription": "Boost MND.",
+      "lakeName": "Boost MND",
+      "lakeDescription": "Increase MND."
+    },
+    {
+      "_id": 30500,
+      "icon": "aw_buff_icon_00022",
+      "isDebuff": false,
+      "category": "HP Up 1",
+      "type": "HP",
+      "origName": "Boost Max HP",
+      "origDescription": "Boost max HP.",
+      "lakeName": "Boost Max HP",
+      "lakeDescription": "Increase HP."
+    },
+    {
+      "_id": 30504,
+      "icon": "aw_buff_icon_00022",
+      "isDebuff": false,
+      "category": "HP Up 1",
+      "type": "HP",
+      "origName": "Boost Max HP",
+      "origDescription": "Boost max HP.",
+      "lakeName": "Boost Max HP",
+      "lakeDescription": "Increase HP."
+    }
+  ]
+}

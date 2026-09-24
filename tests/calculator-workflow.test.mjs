@@ -266,3 +266,25 @@ test('switches activate configured critical, killer and full-HP packages after r
  catalog.find(s=>s.id==='通用满血').rules[0].effects[0].value=3500;
  workflow.receive(report());assert(!workflow.isConfirmed());assert.match(ui.get('entryStatus').textContent,/重新选择|未选择/);
 });
+
+test('near-death and opening/awaken controls retain separate states across saved sessions',async()=>{
+ const {BASIC_STAT_CATALOG}=await import('../dist/basic-stat-catalog.mjs');
+ const ui=controls(),base={hp:1000,mp:100,attack:1000,defense:1000,intelligence:1000,mind:1000};
+ const names=['激昂','觉醒','快速鼓舞','自动鼓舞'];
+ const sources=Object.values(BASIC_STAT_CATALOG).filter(e=>names.includes(e.name)).map(e=>({...e,group:'common'}));
+ const profile={characterId:'generic',baseStats:base,equipment:[],moves:[{id:'s1',kind:'s1',name:'测试',purpose:'attack',element:'无',statReference:'str'}],magic:[]};
+ ui.data.set('lc-entry-review:generic:v1',JSON.stringify({selection:{attack:'s1',preset:'s1',type:'physical',statReference:'str',element:'无',fullHp:true}}));
+ let last;
+ const w=initEntryWorkflow({characterId:'generic',onConfirm:(r,review)=>{last={r,review};},onInvalidate(){},onSelection(){}});
+ w.receive({kind:'last-cloudia-effect-report',characterId:'generic',profile,...evaluateCatalog(sources,{weaponCount:0,accountBlessings:false,fullHp:true})});
+ const toggle=(id,value)=>{ui.get(id).checked=value;ui.get(id).fire('change');};
+ toggle('lowHp',true);assert.equal(w.selection().fullHp,false);assert.equal(ui.get('fullHp').checked,false);
+ toggle('awakeningBuffActive',true);toggle('fullHp',true);
+ assert.equal(w.selection().lowHp,false);assert.equal(ui.get('lowHp').checked,false);assert.equal(w.selection().awakeningBuffActive,true);
+ toggle('openingBuffActive',true);
+ const saved=w.exportSession(),nextUI=controls();
+ const next=initEntryWorkflow({characterId:'generic',onConfirm(){},onInvalidate(){},onSelection(){}});
+ assert(next.restoreSession(saved));
+ assert.equal(nextUI.get('fullHp').checked,true);assert.equal(nextUI.get('lowHp').checked,false);
+ assert.equal(nextUI.get('openingBuffActive').checked,true);assert.equal(nextUI.get('awakeningBuffActive').checked,true);
+});

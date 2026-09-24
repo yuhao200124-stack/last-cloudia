@@ -1,10 +1,10 @@
-import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260924-basic-stats';
+import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260924-buff-conditions';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
-import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260924-basic-stats';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260924-basic-stats';
-import {retargetReport} from './entry-preparation.mjs?v=20260924-basic-stats';
-import {buildDamageImport} from './damage-import.mjs?v=20260924-fullpage';
-import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-basic-stats';
+import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260924-buff-conditions';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260924-buff-conditions';
+import {retargetReport} from './entry-preparation.mjs?v=20260924-buff-conditions';
+import {buildDamageImport} from './damage-import.mjs?v=20260924-buff-conditions';
+import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-buff-conditions';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const saved=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))||fallback;}catch{return fallback;}};

@@ -1,9 +1,9 @@
-import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs?v=20260924-basic-stats';
-import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260924-basic-stats';
-import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260924-basic-stats';
+import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs?v=20260924-buff-conditions';
+import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260924-buff-conditions';
+import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260924-buff-conditions';
 import { summarizeEffects } from './effect-totals.mjs';
 import { ACCOUNT_BLESSING_CATALOG, ACCOUNT_BLESSING_META } from './account-blessings.mjs?v=20260924-fullpage';
-import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260924-basic-stats';
+import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260924-buff-conditions';
 
 mountAccountBlessings();
 
@@ -227,6 +227,7 @@ function mount() {
           ${checkbox('accountBlessings', '计入账户加护')}
           ${checkbox('fullHp', 'HP全满')}${checkbox('weakness', '命中弱点')}
           ${checkbox('resonance', '重魔法（我方正在发动不可叠加魔法）')}${checkbox('lowHp', '濒死')}
+          ${checkbox('openingBuffActive','开场Buff（40秒内）')}${checkbox('awakeningBuffActive','觉醒Buff（触发后40秒）')}${checkbox('magicAwakeningBuffActive','魔导觉醒Buff（触发后40秒）')}
         </fieldset>
         ${c.attack === 'magic' ? `<div class="br-magic-family">${select('magicFamily', '魔法类别', [['normal', '一般魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊类型'], [null, '待确认']])}</div>` : ''}
       </div>

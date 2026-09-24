@@ -1,5 +1,5 @@
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260924-basic-stats';
-import {decisionKey} from './entry-preparation.mjs?v=20260924-basic-stats';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260924-buff-conditions';
+import {decisionKey} from './entry-preparation.mjs?v=20260924-buff-conditions';
 
 const sum=values=>Math.round(values.reduce((a,b)=>a+b,0)*1e8)/1e8;
 const clean=s=>String(s||'').replace(/[\s·・]/g,'');
