@@ -53,7 +53,7 @@ test('the previous attack tag is retained while only reviewed defense fragments 
   assert.equal(entry(2001).remainingConditions.length,3);
 });
 
-test('later passes accumulate on the same skill, require every fragment, and leave display positions unchanged', () => {
+test('later passes accumulate on the same skill and promote newly complete skills ahead of partial skills', () => {
   const before=JSON.stringify(registry);
   const shared=structuredClone(registry);
   shared.tagPasses.push({tag:'满HP',assignments:[{skillId:skill(119).id,partIds:['full-hp']}]});
@@ -68,7 +68,14 @@ test('later passes accumulate on the same skill, require every fragment, and lea
   assert.equal(rows.find(row=>row.id===skill(387).id).judgment,'ready');
   const deity=rows.find(row=>row.id===skill(2001).id);
   assert.equal(deity.judgment,'partial');assert.equal(deity.remainingConditions.length,2);
-  assert.deepEqual(rows.map(row=>row.id),attackLabelRows(data,catalog).map(row=>row.id));
+  const firstPartial=rows.findIndex(row=>row.judgment==='partial');
+  assert(rows.slice(0,firstPartial).every(row=>row.judgment==='ready'));
+  assert(rows.slice(firstPartial).every(row=>row.judgment==='partial'));
+  assert(rows.indexOf(full)<firstPartial);
+  for(const status of ['ready','partial']){
+    const group=rows.filter(row=>row.judgment===status).map(row=>row.id);
+    assert.deepEqual(group,catalog.displayOrder.filter(id=>group.includes(id)));
+  }
   assert(filterLabelRows(rows,'满HP').some(row=>row.id===skill(119).id));
   const rendered=renderLabelTable([full]);
   assert(rendered.includes('assigned-tag">攻击力'));assert(rendered.includes('assigned-tag">满HP'));
@@ -100,7 +107,9 @@ test('saved description changes invalidate both positive tags and old exclusions
   assert.equal(rows.find(row=>row.id===skill(9).id).name,'我的攻击提升');
   assert.equal(JSON.stringify(edits),before);
   assert.equal(skill(9).sc,'1');
-  assert.deepEqual(rows.slice(0,87).map(row=>row.id),catalog.displayOrder);
+  const rank={ready:0,partial:1,unknown:2};
+  assert(rows.every((row,index)=>!index||rank[rows[index-1].judgment]<=rank[row.judgment]));
+  assert.deepEqual(rows.slice(-2).map(row=>row.id),[skill(9).id,skill(1).id]);
   assert.equal(rows.at(-1).id,skill(1).id);
   const filtered=filterLabelRows(rows,'攻击力');
   assert.deepEqual(filtered.map(row=>row.id),rows.filter(row=>filtered.includes(row)).map(row=>row.id));
@@ -130,12 +139,21 @@ test('the page defaults to defense, switches cumulative views, filters and clear
   vm.runInNewContext(code,context);
   assert.match(get('#labelCoverage').textContent,/935.*70.*865/);
   assert.match(get('#judgmentSummary').textContent,/7.*63.*0/);
-  const select=get('#labelTagFilter');select.value='attack';select.listeners.change();
+  const tabs=get('#labelTabs');
+  assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,3);
+  assert(tabs.innerHTML.includes('全部已贴标签（131）'));
+  assert(tabs.innerHTML.includes('攻击力（87）'));
+  assert(tabs.innerHTML.includes('防御力（70）'));
+  const clickTab=tag=>tabs.listeners.click({target:{closest:()=>({dataset:{tag}})}});
+  clickTab('attack');
   assert.match(get('#labelCoverage').textContent,/935.*87.*848/);
   assert.match(get('#judgmentSummary').textContent,/6.*81.*0/);
-  select.value='all';select.listeners.change();
+  clickTab('all');
   assert.match(get('#labelCoverage').textContent,/935.*131.*804/);
   assert.match(get('#judgmentSummary').textContent,/12.*119.*0/);
+  const rowStatuses=[...get('#labelTable').innerHTML.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(match=>match[1]);
+  assert.deepEqual(rowStatuses.slice(0,12),Array(12).fill('ready'));
+  assert(rowStatuses.slice(12).every(status=>status==='partial'));
   const search=get('#labelSearch');search.value='没有这个技能123';search.listeners.input();
   assert.equal(get('#labelEmpty').hidden,false);assert.equal(get('#labelTable').innerHTML,'');
   get('#clearLabelSearch').listeners.click();assert.equal(get('#labelEmpty').hidden,true);

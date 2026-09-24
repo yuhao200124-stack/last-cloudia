@@ -1,5 +1,5 @@
-import {SKILL_LABELING_CATALOG as catalog} from './skill-labeling-catalog.mjs?v=20260924-defense-labels';
-import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260924-defense-labels';
+import {SKILL_LABELING_CATALOG as catalog} from './skill-labeling-catalog.mjs?v=20260924-label-tabs-sort';
+import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260924-label-tabs-sort';
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const statusLabels = {ready:'已完整判断', partial:'判断部分', unknown:'没办法判断'};
 const pendingList = (title, texts) => texts.length ? `<div class="remaining-effects"><b>${title}</b><ul>${texts.map(text => `<li>${escape(text)}</li>`).join('')}</ul></div>` : '';
@@ -14,16 +14,17 @@ export function renderLabelTable(rows) {
 
 if (typeof document !== 'undefined') {
   const search = document.querySelector('#labelSearch'), clear = document.querySelector('#clearLabelSearch');
-  const select = document.querySelector('#labelTagFilter');
+  const tabs = document.querySelector('#labelTabs');
   const keys = ['all', ...Object.keys(catalog.views).filter(key => key !== 'all')];
-  select.innerHTML = keys.map(key => `<option value="${escape(key)}">${escape(catalog.views[key].label)}（${catalog.views[key].counts.relatedUnique}）</option>`).join('');
   const requestedView = new URLSearchParams(window.location?.search || '').get('tag');
-  select.value = Object.hasOwn(catalog.views, requestedView) ? requestedView : catalog.activeView;
+  let activeView = Object.hasOwn(catalog.views, requestedView) ? requestedView : catalog.activeView;
   let rows = [];
   const readRows = () => {
     let edits = {};
     try { edits = JSON.parse(localStorage.getItem('lc-sheet-table:cell-edits-v1') || '{}') || {}; } catch {}
-    const view = labelingView(catalog, select.value), count = view.counts;
+    const view = labelingView(catalog, activeView), count = view.counts;
+    tabs.innerHTML = keys.map(key => `<button class="sheet-tab" type="button" id="label-tab-${escape(key)}" data-tag="${escape(key)}" role="tab" aria-controls="labelPanel" aria-selected="${key === activeView}" tabindex="${key === activeView ? 0 : -1}">${escape(catalog.views[key].label)}（${catalog.views[key].counts.relatedUnique}）</button>`).join('');
+    document.querySelector('#labelPanel').setAttribute('aria-labelledby', `label-tab-${activeView}`);
     rows = skillLabelRows(window.SKILL_DATA, view, edits);
     document.querySelector('#activeTagTitle').textContent = view.label;
     search.setAttribute('aria-label', `搜索${view.label}技能`);
@@ -39,7 +40,29 @@ if (typeof document !== 'undefined') {
     document.querySelector('#labelEmpty').hidden = filtered.length > 0;
     clear.hidden = !search.value;
   };
-  select.addEventListener('change', () => { readRows(); render(); });
+  const chooseView = key => {
+    if (!Object.hasOwn(catalog.views, key)) return;
+    activeView = key;
+    readRows(); render();
+    document.querySelector(`#label-tab-${key}`).focus();
+  };
+  tabs.addEventListener('click', event => {
+    const tab = event.target.closest('[data-tag]');
+    if (tab) chooseView(tab.dataset.tag);
+  });
+  tabs.addEventListener('keydown', event => {
+    const tab = event.target.closest('[data-tag]');
+    if (!tab) return;
+    const index = keys.indexOf(tab.dataset.tag);
+    let next;
+    if (event.key === 'ArrowRight') next = keys[(index + 1) % keys.length];
+    else if (event.key === 'ArrowLeft') next = keys[(index - 1 + keys.length) % keys.length];
+    else if (event.key === 'Home') next = keys[0];
+    else if (event.key === 'End') next = keys.at(-1);
+    else return;
+    event.preventDefault();
+    chooseView(next);
+  });
   search.addEventListener('input', render);
   clear.addEventListener('click', () => { search.value = ''; render(); search.focus(); });
   window.addEventListener('storage', event => { if (event.key === 'lc-sheet-table:cell-edits-v1' || event.key === null) { readRows(); render(); } });

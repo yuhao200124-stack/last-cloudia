@@ -70,6 +70,6 @@ test('edited defense descriptions invalidate labels without changing stable sour
  const shown=skillLabelRows(data,defense,edits);
  const changed=shown.find(e=>e.id===row.id);
  assert.equal(changed.judgment,'unknown');assert.deepEqual(changed.assignedTags,[]);
- assert.deepEqual(shown.map(e=>e.id),defense.displayOrder);
+ assert.deepEqual(shown.map(e=>e.id),[...defense.displayOrder.filter(id=>id!==row.id),row.id]);
  assert.equal(JSON.stringify(edits),before);assert.equal(row.name,'防御提升');assert.equal(row.effect,'防御力+2%');
 });

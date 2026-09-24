@@ -59,8 +59,9 @@ export function labelingView(catalog, key) {
 export function skillLabelRows(data, catalog, edits = {}) {
   const all = canonicalSkillRows(data);
   const reviewed = new Map(catalog.entries.map(entry => [entry.url || entry.id, entry]));
-  // Freeze the existing display positions. Later passes can change labels and
-  // judgment without moving a skill the user is reviewing.
+  // Judgment is the primary order; preserve the established skill order only
+  // within the same judgment group, including after later tag passes.
+  const judgmentOrder = {ready: 0, partial: 1, unknown: 2};
   const displayOrder = new Map(catalog.displayOrder.map((id, index) => [id, index]));
   return all.flatMap(row => {
     const entry = reviewed.get(row.url || row.id);
@@ -87,7 +88,8 @@ export function skillLabelRows(data, catalog, edits = {}) {
       calculationNote: valid ? entry.calculationNote : '',
       needsReview: !valid,
     }];
-  }).sort((left, right) => (displayOrder.get(left.id) ?? Infinity) - (displayOrder.get(right.id) ?? Infinity));
+  }).sort((left, right) => judgmentOrder[left.judgment] - judgmentOrder[right.judgment]
+    || (displayOrder.get(left.id) ?? Infinity) - (displayOrder.get(right.id) ?? Infinity));
 }
 
 export const attackLabelRows = skillLabelRows;
