@@ -31,7 +31,7 @@ test('physical bonuses remain distinct from caps, crits, killers, stat changes, 
  assert.equal(entry(1756).tagDetails['物理伤害增加'].target,'allies-with-faith');
  assert.deepEqual(entry(1754).tagDetails['物理伤害增加'].relatedSkillIds,[source(1756).id]);
  assert(!entry(1754).remainingEffects.some(t=>t.includes('铁锤')||t.includes('非攻击力效果')));
- assert.equal(entry(1754).remainingEffects.length,3);
+ assert.equal(entry(1754).remainingEffects.length,2);
  for(const n of [357,441]){assert.deepEqual(entry(n).assignedTags,['魔力','物理伤害增加']);assert.deepEqual(entry(n).remainingEffects,[]);assert(entry(n).remainingConditions.some(t=>t.includes('公式')));}
  for(const n of [125,366,1113,1491])assert.match(entry(n).tagDetails['物理伤害增加'].calculationNote,/不直接填入最高值/);
  assert(entry(1744).remainingConditions.some(t=>t.includes('目标敌人')&&t.includes('自身')));
@@ -45,7 +45,7 @@ test('physical tags accumulate and leave each unfinished effect/condition pendin
  for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,['装备锤时生效']);
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
- assert.equal(catalog.entries.length,349);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,349);
+ assert.equal(catalog.entries.length,432);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,432);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
  assert(allRows.slice(0,44).every(r=>r.judgment==='ready'));assert(allRows.slice(44).every(r=>r.judgment==='partial'));
  // A later equipment pass should complete a compound only after both its

@@ -3908,6 +3908,11 @@
           "id": "faith-physical-damage",
           "kind": "effect",
           "text": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加"
+        },
+        {
+          "id": "faith-light-condition",
+          "kind": "condition",
+          "text": "从神秘之力【轮光】获得的增伤仅限光属性攻击"
         }
       ],
       "tagDetails": {
@@ -3929,6 +3934,16 @@
           "existingRuleIds": [],
           "relatedSkillIds": [
             "8c11c64768072670"
+          ]
+        },
+        "伤害增加": {
+          "summary": "从其他神类型友方的神秘之力【轮光】获得光属性伤害+10%；同名效果不叠加",
+          "relation": "inherited-effect",
+          "target": "self",
+          "calculationNote": "与信仰／神秘之力【轮光】配套生效；同名效果只计一项，不能把提供者与接受者重复相加。光属性条件仍待完成。",
+          "existingRuleIds": [],
+          "relatedSkillIds": [
+            "ca8779066b942675"
           ]
         }
       }
@@ -13857,6 +13872,14 @@
           "calculationNote": "暗属性通用伤害+10%与不限属性的魔法伤害+15%是两个效果；本轮只覆盖后者。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "伤害增加": {
+          "summary": "暗属性攻击伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮覆盖暗属性通用伤害+10%；之前已覆盖的魔法伤害+15%不限属性，保留其独立标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       }
     },
@@ -14207,6 +14230,2973 @@
           "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "97d948f5e3717d10",
+      "name": "炎攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/73",
+      "text": "火属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "火属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "火属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "0d2d38cd539224ee",
+      "name": "冰攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/74",
+      "text": "冰属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "冰属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "冰属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "0ab43d7f985855cb",
+      "name": "树攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/75",
+      "text": "树属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "树属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "树属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "fc3dc40acdcff985",
+      "name": "雷攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/76",
+      "text": "雷属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "雷属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "雷属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9fc2a2451521c398",
+      "name": "光攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/77",
+      "text": "光属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "光属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "30c471c824951c9c",
+      "name": "暗攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/78",
+      "text": "暗属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "暗属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "暗属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "43cfc2a774603911",
+      "name": "猎空",
+      "url": "https://altema.jp/lastcloudia/gino/122",
+      "text": "对空中敌人的伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对空中敌人的伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人处于空中；不是自身在空中"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对空中敌人的伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "190fc2e8d9122b21",
+      "name": "偷袭",
+      "url": "https://altema.jp/lastcloudia/gino/123",
+      "text": "从背后攻击时，伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "从敌人背后攻击时，伤害+50%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "从目标敌人背后攻击"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "从敌人背后攻击时，伤害+50%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:124",
+      "name": "异常痛击",
+      "url": "https://altema.jp/lastcloudia/gino/124",
+      "text": "对带有异常状态的敌人造成的伤害+20%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对处于异常状态的敌人，伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人处于异常状态；不是自身处于异常状态"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对处于异常状态的敌人，伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "e473e81b4b16e917",
+      "name": "连击大师",
+      "url": "https://altema.jp/lastcloudia/gino/186",
+      "text": "连续Hit达到50以上时，伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "连续Hit达到50以上时，伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "当前连续Hit达到50以上"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "连续Hit达到50以上时，伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "4db25889525ff54a",
+      "name": "机会驱动",
+      "url": "https://altema.jp/lastcloudia/gino/190",
+      "text": "对处于气绝或Break状态的敌人，伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态敌人的伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态敌人的伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9146eb2670c69122",
+      "name": "特攻增幅",
+      "url": "https://altema.jp/lastcloudia/gino/206",
+      "text": "触发特攻时，伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "触发特攻时，伤害+50%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "本次攻击已触发特攻；该技能本身不赋予特攻资格"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "特攻增伤的计算阶段与叠加规则待对应机制确认，不直接并入通用增伤池"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "触发特攻时，伤害+50%",
+          "relation": "killer-damage-increase",
+          "target": "self",
+          "calculationNote": "这是已触发特攻后的伤害增加，不赋予特攻资格；计算阶段和叠加待对应机制处理，不能直接并入通用增伤池。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "dbc649cdc993f070",
+      "name": "猴宝宝",
+      "url": "https://altema.jp/lastcloudia/gino/226",
+      "text": "普通攻击时，有概率使敌人沉默；对沉默状态的敌人，伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对沉默状态敌人的伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "普通攻击时，有概率使敌人沉默"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "增伤要求目标敌人处于沉默状态"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "施加沉默要求普通攻击命中；概率与异常耐性判定待确认"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对沉默状态敌人的伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "f52898e0e4d6fcb3",
+      "name": "无属性攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/229",
+      "text": "无属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "无属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为无属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "无属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "2d24508b309322f7",
+      "name": "冰攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/240",
+      "text": "冰属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "冰属性攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "冰属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "e9fbf5b56f0559bf",
+      "name": "连击大师2",
+      "url": "https://altema.jp/lastcloudia/gino/253",
+      "text": "连续Hit达到50以上时，伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "连续Hit达到50以上时，伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "当前连续Hit达到50以上"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "连续Hit达到50以上时，伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "3d7e20ea487f3b19",
+      "name": "猎空2",
+      "url": "https://altema.jp/lastcloudia/gino/269",
+      "text": "对空中敌人的伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对空中敌人的伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人处于空中；不是自身在空中"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对空中敌人的伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "b65bccc3a5431629",
+      "name": "树攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/277",
+      "text": "树属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "树属性攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "树属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "454a237836d960b0",
+      "name": "光攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/296",
+      "text": "光属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "光属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9802f136c37301f3",
+      "name": "照亮黑暗之光",
+      "url": "https://altema.jp/lastcloudia/gino/315",
+      "text": "光属性攻击伤害+10%，受到的暗属性攻击伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的暗属性攻击伤害-10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "该伤害加成仅限光属性攻击；并列的其它效果按各自描述判断"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "光属性攻击伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "04b522e79ad2a5d2",
+      "name": "暗攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/323",
+      "text": "暗属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "暗属性攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "暗属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:284",
+      "name": "异常痛击2",
+      "url": "https://altema.jp/lastcloudia/gino/331",
+      "text": "对带有异常状态的敌人造成额外30%伤害",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对处于异常状态的敌人，伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人处于异常状态；不是自身处于异常状态"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对处于异常状态的敌人，伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:301",
+      "name": "火焰攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/359",
+      "text": "火属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "火属性攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "火属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "602202c6b41251cb",
+      "name": "无属性攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/386",
+      "text": "无属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "无属性攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为无属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "无属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:323",
+      "name": "雷攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/399",
+      "text": "雷属性攻击伤害+30%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "雷属性攻击伤害+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "雷属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "12730aa5921baa23",
+      "name": "暗攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/559",
+      "text": "暗属性伤害+30%，暗属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "暗属性攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暗属性伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "暗属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "d2278025c02f3498",
+      "name": "炎攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/648",
+      "text": "火属性伤害+30%，火属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "火属性攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "火属性伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "火属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "eb659c714ed39fd6",
+      "name": "阵形：进击的奥尔达纳",
+      "url": "https://altema.jp/lastcloudia/gino/655",
+      "text": "队伍中有2名或以上单位且全员存活时，自身造成伤害+5%，受到的伤害-5%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "队伍至少2名且全员存活时，自身造成伤害+5%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的伤害-5%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "队伍中至少2名单位"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "我方全员存活"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "队伍至少2名且全员存活时，自身造成伤害+5%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "3c949dcbeeaee844",
+      "name": "光攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/660",
+      "text": "光属性伤害+30%，光属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "光属性伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "光属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9e2b88d1d3d0923f",
+      "name": "雷攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/672",
+      "text": "雷属性伤害+30%，雷属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "雷属性攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "雷属性伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "雷属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ba33274d257a0877",
+      "name": "树攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/681",
+      "text": "树属性伤害+30%，树属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "树属性攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "树属性伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "树属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "351f8b7c824ec758",
+      "name": "冰攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/698",
+      "text": "冰属性伤害+30%，冰属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "冰属性攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "冰属性伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "冰属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "182731824b8599ca",
+      "name": "神圣强化",
+      "url": "https://altema.jp/lastcloudia/gino/711",
+      "text": "光属性攻击伤害+20%，治疗魔法威力+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "治疗魔法威力+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "该伤害加成仅限光属性攻击；并列的其它效果按各自描述判断"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "光属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "4e8a749504d3799f",
+      "name": "雷霆强化",
+      "url": "https://altema.jp/lastcloudia/gino/721",
+      "text": "雷属性攻击伤害+10%，特技伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "雷属性攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "特技伤害+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "该伤害加成仅限雷属性攻击；并列的其它效果按各自描述判断"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "雷属性攻击伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ee8769b3f842d317",
+      "name": "巨人格斗战",
+      "url": "https://altema.jp/lastcloudia/gino/731",
+      "text": "武器和防具均未装备时，对敌人造成的伤害+20%，受到的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "武器和防具栏均为空时，造成伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的伤害-20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "空武器：未装备武器"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "空防具：未装备防具；须与空武器同时满足"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "武器和防具栏均为空时，造成伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ec6ac4c14fd61cfc",
+      "name": "无属性攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/745",
+      "text": "无属性伤害+30%，无属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "无属性攻击伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "无属性伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为无属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "无属性攻击伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "1545ff2f2bc10672",
+      "name": "异常痛击3",
+      "url": "https://altema.jp/lastcloudia/gino/761",
+      "text": "对处于异常状态的敌人，伤害+30%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对处于异常状态的敌人，伤害+30%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人处于异常状态；不是自身处于异常状态"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对处于异常状态的敌人，伤害+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "d1aa6e7dfcf2a189",
+      "name": "石之强化",
+      "url": "https://altema.jp/lastcloudia/gino/765",
+      "text": "树属性攻击伤害+10%，受到的物理攻击伤害-15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "树属性攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的物理攻击伤害-15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "该伤害加成仅限树属性攻击；并列的其它效果按各自描述判断"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "树属性攻击伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "f9c63a04f63f89ea",
+      "name": "破神的神谕",
+      "url": "https://altema.jp/lastcloudia/gino/832",
+      "text": "对非神类型敌人的伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对非神类型敌人的伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人不具备神类型"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对非神类型敌人的伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "e2376f83dc028e0f",
+      "name": "冰之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/840",
+      "text": "对处于气绝或Break状态的敌人，冰属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，冰属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，冰属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "7699c0abda6d47a0",
+      "name": "冰之强化",
+      "url": "https://altema.jp/lastcloudia/gino/842",
+      "text": "冰属性攻击伤害+10%，受到的魔法攻击伤害-15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "冰属性攻击伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到的魔法攻击伤害-15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "该伤害加成仅限冰属性攻击；并列的其它效果按各自描述判断"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "冰属性攻击伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ea3727ee373b623b",
+      "name": "炎之强化",
+      "url": "https://altema.jp/lastcloudia/gino/883",
+      "text": "火属性攻击伤害+15%，必杀伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "火属性攻击伤害+15%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "必杀伤害+50%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "该伤害加成仅限火属性攻击；并列的其它效果按各自描述判断"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "火属性攻击伤害+15%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "d71dfc1292e7c678",
+      "name": "索迪安之力",
+      "url": "https://altema.jp/lastcloudia/gino/938",
+      "text": "当只装备一把剑时，与所装备武器属性相同的攻击伤 害增加 15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "只装备一把剑时，与该剑属性相同的攻击伤害+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "只装备一把武器"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "该武器为剑"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "本次攻击属性与所装备剑的属性相同"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "只装备一把剑时，与该剑属性相同的攻击伤害+15%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "a1166f16d23a209d",
+      "name": "那我就认真起来吧",
+      "url": "https://altema.jp/lastcloudia/gino/939",
+      "text": "战斗开始40秒后，赋予自身造成伤害+20%的增益效果（持续至战斗不能；若赋予时处于战斗不能状态，则再过40秒后赋予）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "战斗开始40秒后，获得造成伤害+20%的Buff，持续至自身战斗不能"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始40秒后赋予增伤Buff；不是开场立即生效"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "Buff持续至自身战斗不能；这里的40秒不是Buff持续时间，同类型Buff同时只计一项"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "赋予时若自身处于战斗不能状态，则再过40秒后赋予"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "战斗开始40秒后，获得造成伤害+20%的Buff，持续至自身战斗不能",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "40秒是首次赋予的等待时间，Buff持续至战斗不能；不可按开场持续40秒Buff处理，同类型Buff只计一项。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "32f98ad19af760dc",
+      "name": "看来我们彼此无法相容",
+      "url": "https://altema.jp/lastcloudia/gino/942",
+      "text": "触发特攻时，伤害+20%；受到敌方特攻伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "触发特攻时，伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到敌方特攻伤害-10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "增伤要求本次攻击已触发特攻；该技能本身不赋予特攻资格"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "减伤要求受到敌方特攻攻击"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "特攻增伤的计算阶段与叠加规则待对应机制确认，不直接并入通用增伤池"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "触发特攻时，伤害+20%",
+          "relation": "killer-damage-increase",
+          "target": "self",
+          "calculationNote": "这是已触发特攻后的伤害增加，不赋予特攻资格；计算阶段和叠加待对应机制处理，不能直接并入通用增伤池。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "cae22c8f6e9a70ef",
+      "name": "神圣合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1000",
+      "text": "2名以上我方单位装备“神圣合奏”时，光属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "队伍中至少2名我方单位装备“神圣合奏”，按实际人数取对应档位"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "光属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "eadf240a561579f3",
+      "name": "炎之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1008",
+      "text": "对处于气绝或Break状态的敌人，火属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，火属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，火属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9ec3cb9696053d8b",
+      "name": "暗之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1065",
+      "text": "对处于气绝或Break状态的敌人，暗属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，暗属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，暗属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "89b2bf665f5f6aad",
+      "name": "石之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1085",
+      "text": "对处于气绝或Break状态的敌人，树属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，树属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，树属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "0b9f0f0b0c0162dc",
+      "name": "神圣机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1142",
+      "text": "对处于气绝或Break状态的敌人，光属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，光属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，光属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "106e0b26cc206aed",
+      "name": "暗影合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1154",
+      "text": "2名以上我方单位装备“暗影合奏”时，暗属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "暗属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "队伍中至少2名我方单位装备“暗影合奏”，按实际人数取对应档位"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "暗属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9df5299c661312ec",
+      "name": "暗夜圣光",
+      "url": "https://altema.jp/lastcloudia/gino/1179",
+      "text": "对恐怖系（魔法生物、不死生物、精灵）敌人的光属性攻击伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对恐怖系敌人的光属性攻击伤害+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人为恐怖系：魔法生物、不死生物或精灵"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对恐怖系敌人的光属性攻击伤害+15%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "898133b240997611",
+      "name": "炎之合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1229",
+      "text": "2名以上我方单位装备“炎之合奏”时，火属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "火属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "队伍中至少2名我方单位装备“炎之合奏”，按实际人数取对应档位"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "火属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "07280db1cb26a374",
+      "name": "百八之钟",
+      "url": "https://altema.jp/lastcloudia/gino/1232",
+      "text": "连续Hit≤10时，伤害+10%；连续Hit达到108时，伤害上限+108,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "连续Hit≤10时，伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "伤害上限+108,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "伤害增加要求连续Hit≤10"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "伤害上限增加要求连续Hit达到108，不能套用≤10的增伤条件"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "连续Hit≤10时，伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "2945983140d158af",
+      "name": "神圣突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1241",
+      "text": "战斗开始时，赋予自身光属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "战斗开始时，自身获得光属性攻击伤害+20%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "光属性增伤Buff持续40秒；同类型Buff同时只计一项"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "战斗开始时，自身获得光属性攻击伤害+20%的Buff，持续40秒",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "e8339f4048e9810d",
+      "name": "雷之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1280",
+      "text": "对处于气绝或Break状态的敌人，雷属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，雷属性攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，雷属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "01b4b9edd30c865e",
+      "name": "恨死咒缚",
+      "url": "https://altema.jp/lastcloudia/gino/1316",
+      "text": "对击败你的敌人施加减益效果，使受到的伤害增加 20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "使击败自己的敌人受到伤害+20%；作用于敌人的易伤减益"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "自身被敌人击败时，向击败自己的敌人施加减益"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "仅在目标敌人当前受该易伤减益时生效"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "减益持续时间、叠加与计算阶段待确认，不假定为40秒"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "使击败自己的敌人受到伤害+20%；作用于敌人的易伤减益",
+          "relation": "enemy-damage-vulnerability",
+          "target": "enemy",
+          "calculationNote": "作用于击败自己的敌人，使该敌人受到伤害增加；不能混作自身增伤或自身易伤。持续时间与计算阶段仍待确认。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "cd5203b730b861ca",
+      "name": "雷霆合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1327",
+      "text": "2名以上我方单位装备“雷霆合奏”时，雷属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "雷属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "队伍中至少2名我方单位装备“雷霆合奏”，按实际人数取对应档位"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "雷属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "3698611e7487f0aa",
+      "name": "冰之合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1409",
+      "text": "2名以上我方单位装备“冰之合奏”时，冰属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "冰属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "队伍中至少2名我方单位装备“冰之合奏”，按实际人数取对应档位"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "冰属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "c499d85d6a7c0156",
+      "name": "暗影突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1425",
+      "text": "战斗开始时，赋予自身暗属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "战斗开始时，自身获得暗属性攻击伤害+20%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "暗属性增伤Buff持续40秒；同类型Buff同时只计一项"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "攻击属性为暗属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "战斗开始时，自身获得暗属性攻击伤害+20%的Buff，持续40秒",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "d451135c6dde31c4",
+      "name": "纳萨力克的统治者",
+      "url": "https://altema.jp/lastcloudia/gino/1478",
+      "text": "全队只有自身装备此技能时，根据其他装备“纳萨力克阶层守护者”的友方角色人数，使自身造成的伤害提高、受到的伤害降低（3名时达到最大：伤害+36%，受到的伤害-15%）",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "按其他装备纳萨力克阶层守护者的友方人数提高自身造成伤害，3名时最高+36%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "按相同人数条件减少自身受到的伤害，3名时最高-15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "全队只有自身装备纳萨力克的统治者"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "1名、2名对应的具体增减幅待确认，不直接取最高值"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "按其他装备纳萨力克阶层守护者的友方人数提高自身造成伤害，3名时最高+36%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "实际加成随人数或经过时间变化；具体换算尚未完成，不能直接使用最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "b684f06fad6f204e",
+      "name": "石之合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1506",
+      "text": "2名以上我方单位装备“石之合奏”时，树属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "树属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "队伍中至少2名我方单位装备“石之合奏”，按实际人数取对应档位"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "树属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "b59538669bf4ade7",
+      "name": "一枪流-闪月-",
+      "url": "https://altema.jp/lastcloudia/gino/1516",
+      "text": "只装备一把枪时，触发特攻时伤害+20%，攻击敌人弱点属性时伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage-killer",
+          "kind": "effect",
+          "text": "只装备一把枪时，触发特攻的伤害+20%"
+        },
+        {
+          "id": "damage-weakness",
+          "kind": "effect",
+          "text": "只装备一把枪时，命中弱点属性的伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "只装备一把武器"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "该武器为枪"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "特攻增伤要求本次攻击已触发特攻"
+        },
+        {
+          "id": "condition-4",
+          "kind": "condition",
+          "text": "弱点增伤要求本次攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "condition-5",
+          "kind": "condition",
+          "text": "两种增伤的计算阶段与叠加规则待确认，不无条件合并成40%"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "只装备一把枪时：触发特攻的伤害+20%；命中弱点属性的伤害+20%",
+          "relation": "mixed-killer-and-weakness-damage-increase",
+          "target": "self",
+          "calculationNote": "特攻与弱点分别判定，各有一个20%增伤片段；计算阶段与叠加待确认，不无条件合并成40%。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "31b0f1c6d90ec0cf",
+      "name": "女神的宠爱",
+      "url": "https://altema.jp/lastcloudia/gino/1527",
+      "text": "对人类系敌人的伤害+10%，受到人类系敌人的伤害-5%（人类系：士兵、骑士、狙击手、魔法师）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对人类系敌人的伤害+10%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到人类系敌人的伤害-5%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "增伤的目标敌人为人类系：士兵、骑士、狙击手或魔法师"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "减伤的攻击来源为人类系敌人"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对人类系敌人的伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "6e79eb857dac5a05",
+      "name": "炎之机遇2",
+      "url": "https://altema.jp/lastcloudia/gino/1546",
+      "text": "对处于气绝或Break状态的敌人，火属性攻击伤害+20%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，火属性攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "火属性伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为火属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，火属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "810e5630e720f446",
+      "name": "VISIONS of MANA",
+      "url": "https://altema.jp/lastcloudia/gino/1573",
+      "text": "当只装备一把武器时，与所装备武器属性相同的攻击 伤害增加 20%，伤害上限增加 2,000",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "只装备一把武器时，与所装备武器属性相同的攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "只装备一把武器"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "本次攻击属性与所装备武器的属性相同"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "只装备一把武器时，与所装备武器属性相同的攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "b7297c3eb4e46bba",
+      "name": "勇者之魂",
+      "url": "https://altema.jp/lastcloudia/gino/1608",
+      "text": "对BOSS造成的伤害+20%，受到BOSS的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对Boss造成的伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "受到Boss的伤害-20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "增伤要求目标敌人为Boss"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "减伤要求攻击来源为Boss"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对Boss造成的伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "f2adf1f2ba4f5cb0",
+      "name": "神圣机遇2",
+      "url": "https://altema.jp/lastcloudia/gino/1665",
+      "text": "对处于气绝或Break状态的敌人，光属性攻击伤害+20%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，光属性攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "光属性伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，光属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "51a7c25fc592d19b",
+      "name": "雷霆突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1674",
+      "text": "战斗开始时，赋予自身雷属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "战斗开始时，自身获得雷属性攻击伤害+20%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "雷属性增伤Buff持续40秒；同类型Buff同时只计一项"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "攻击属性为雷属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "战斗开始时，自身获得雷属性攻击伤害+20%的Buff，持续40秒",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "449963af5b8068b7",
+      "name": "雷之机遇2",
+      "url": "https://altema.jp/lastcloudia/gino/1675",
+      "text": "对处于气绝或Break状态的敌人，雷属性攻击伤害+20%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，雷属性攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "雷属性伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为雷属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，雷属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "4139a26172e19019",
+      "name": "冰之突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1693",
+      "text": "战斗开始时，赋予自身冰属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "战斗开始时，自身获得冰属性攻击伤害+20%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "冰属性增伤Buff持续40秒；同类型Buff同时只计一项"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "攻击属性为冰属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "战斗开始时，自身获得冰属性攻击伤害+20%的Buff，持续40秒",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "6ad84bb93596f650",
+      "name": "暗之机遇2",
+      "url": "https://altema.jp/lastcloudia/gino/1728",
+      "text": "对处于气绝或Break状态的敌人，暗属性攻击伤害+20%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人，暗属性攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "暗属性伤害上限+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态；满足任一即可，同一效果不因同时满足而重复计入"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "对气绝或Break状态的敌人，暗属性攻击伤害+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ee807560b8e94ab2",
+      "name": "两手驱动「斧枪机械」",
+      "url": "https://altema.jp/lastcloudia/gino/1746",
+      "text": "只装备斧、枪或机械中的一把武器时，与所装备武器属性相同的攻击伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "只装备斧、枪或机械中的一把武器时，与该武器属性相同的攻击伤害+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "只装备一把武器"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "该武器类型为斧、枪或机械之一"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "本次攻击属性与所装备武器的属性相同"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "只装备斧、枪或机械中的一把武器时，与该武器属性相同的攻击伤害+15%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "b50f1be94e5ec002",
+      "name": "不为人知的决战",
+      "url": "https://altema.jp/lastcloudia/gino/1776",
+      "text": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "战斗开始时，按我方人类系单位人数提高冰、光属性伤害（最多4名，最高+20%）"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时判断"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "统计我方人类系单位人数：士兵、骑士、狙击手或魔法师；最多4名"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "攻击属性为冰或光属性"
+        },
+        {
+          "id": "condition-4",
+          "kind": "condition",
+          "text": "各人数对应的具体增幅待确认，不直接取最高20%"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "战斗开始时，按我方人类系单位人数提高冰、光属性伤害（最多4名，最高+20%）",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "实际加成随人数或经过时间变化；具体换算尚未完成，不能直接使用最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9687330d53763046",
+      "name": "树属性弱点增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1778",
+      "text": "使用树属性攻击命中弱点属性时，伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "树属性攻击命中弱点属性时，伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为树属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "攻击命中敌人的属性弱点"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "树属性攻击命中弱点属性时，伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "658df1f2c3e3e424",
+      "name": "发魔期",
+      "url": "https://altema.jp/lastcloudia/gino/1798",
+      "text": "每个Wave中，随着时间经过，冰属性伤害逐渐提升（30秒时达到最高+20%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "冰属性伤害随每个Wave经过时间逐渐提高，30秒达到最高+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "每个Wave分别计时，30秒达到最高20%"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "达到最高值之前的时间与增幅换算关系待确认，不能直接取最高20%"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "冰属性伤害随每个Wave经过时间逐渐提高，30秒达到最高+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "实际加成随人数或经过时间变化；具体换算尚未完成，不能直接使用最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "f26238efd3af2674",
+      "name": "无属性合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1910",
+      "text": "2名以上我方单位装备“无属性合奏”时，无属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "无属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为无属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "队伍中至少2名我方单位装备“无属性合奏”，按实际人数取对应档位"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "无属性攻击伤害按装备同名合奏的我方单位人数提高：2名+10%、3名+20%、4名+30%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "6f69f24a14887fe1",
+      "name": "冰属性弱点增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1929",
+      "text": "使用冰属性攻击命中弱点属性时，伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "冰属性攻击命中弱点属性时，伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "攻击命中敌人的属性弱点"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "冰属性攻击命中弱点属性时，伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "d53c1518b71c0259",
+      "name": "炎之突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1954",
+      "text": "战斗开始时，赋予自身火属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "战斗开始时，自身获得火属性攻击伤害+20%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "火属性增伤Buff持续40秒；同类型Buff同时只计一项"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "攻击属性为火属性"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "战斗开始时，自身获得火属性攻击伤害+20%的Buff，持续40秒",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "085a66c6930d7fa6",
+      "name": "神圣增益",
+      "url": "https://altema.jp/lastcloudia/gino/1961",
+      "text": "每个Wave中，随着时间经过，光属性伤害逐渐提升（90秒时达到最高+20%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "光属性伤害随每个Wave经过时间逐渐提高，90秒达到最高+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为光属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "每个Wave分别计时，90秒达到最高20%"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "达到最高值之前的时间与增幅换算关系待确认，不能直接取最高20%"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "光属性伤害随每个Wave经过时间逐渐提高，90秒达到最高+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "实际加成随人数或经过时间变化；具体换算尚未完成，不能直接使用最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "fb6d9a18f0c64a74",
+      "name": "暗属性弱点增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1970",
+      "text": "使用暗属性攻击命中弱点属性时，伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "暗属性攻击命中弱点属性时，伤害+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为暗属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "攻击命中敌人的属性弱点"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "暗属性攻击命中弱点属性时，伤害+10%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "本轮只覆盖未限定物理、魔法等攻击类型的增伤效果；属性、装备、触发条件和其它效果仍分别判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:924",
+      "name": "冰属性渐增",
+      "url": "https://altema.jp/lastcloudia/gino/1981",
+      "text": "每个Wave内，冰属性伤害随经过时间逐渐提高，90秒时达到最高+20%；进入下一Wave重新计时。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "冰属性伤害随每个Wave经过时间逐渐提高，90秒达到最高+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "攻击属性为冰属性"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "每个Wave分别计时，90秒达到最高20%"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "达到最高值之前的时间与增幅换算关系待确认，不能直接取最高20%"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "冰属性伤害随每个Wave经过时间逐渐提高，90秒达到最高+20%",
+          "relation": "damage-increase",
+          "target": "self",
+          "calculationNote": "实际加成随人数或经过时间变化；具体换算尚未完成，不能直接使用最高值。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ca8779066b942675",
+      "name": "神秘之力【轮光】",
+      "url": "https://altema.jp/lastcloudia/gino/2000",
+      "text": "自身为神类型时，使我方装备「信仰」的角色获得：光属性伤害+10%。同名「神秘之力」效果不会叠加。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "自身为神类型时，使我方装备信仰的角色获得光属性伤害+10%；同名效果不叠加"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "提供效果者自身为神类型"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "受益的我方角色须装备信仰"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "受益者进行光属性攻击时，增伤才生效"
+        },
+        {
+          "id": "condition-4",
+          "kind": "condition",
+          "text": "同名神秘之力【轮光】效果不叠加"
+        }
+      ],
+      "tagDetails": {
+        "伤害增加": {
+          "summary": "自身为神类型时，使我方装备信仰的角色获得光属性伤害+10%；同名效果不叠加",
+          "relation": "ally-damage-grant",
+          "target": "allies-with-faith",
+          "calculationNote": "与信仰／神秘之力【轮光】配套生效；同名效果只计一项，不能把提供者与接受者重复相加。光属性条件仍待完成。",
+          "existingRuleIds": [],
+          "relatedSkillIds": [
+            "5dbd4f977800ad88"
+          ]
         }
       }
     }
@@ -16827,6 +19817,522 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "伤害增加",
+      "assignments": [
+        {
+          "skillId": "97d948f5e3717d10",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "0d2d38cd539224ee",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "0ab43d7f985855cb",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "fc3dc40acdcff985",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "9fc2a2451521c398",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "30c471c824951c9c",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "43cfc2a774603911",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "190fc2e8d9122b21",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:124",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "e473e81b4b16e917",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "4db25889525ff54a",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "9146eb2670c69122",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "dbc649cdc993f070",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "f52898e0e4d6fcb3",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "2d24508b309322f7",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "e9fbf5b56f0559bf",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "3d7e20ea487f3b19",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "b65bccc3a5431629",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "454a237836d960b0",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "9802f136c37301f3",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "04b522e79ad2a5d2",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:284",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:301",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "602202c6b41251cb",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:323",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "12730aa5921baa23",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "d2278025c02f3498",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "eb659c714ed39fd6",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "3c949dcbeeaee844",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "9e2b88d1d3d0923f",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "ba33274d257a0877",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "351f8b7c824ec758",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "182731824b8599ca",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "4e8a749504d3799f",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "ee8769b3f842d317",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "ec6ac4c14fd61cfc",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "1545ff2f2bc10672",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "d1aa6e7dfcf2a189",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "f9c63a04f63f89ea",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "e2376f83dc028e0f",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "7699c0abda6d47a0",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "ea3727ee373b623b",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "d71dfc1292e7c678",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "a1166f16d23a209d",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "32f98ad19af760dc",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "cae22c8f6e9a70ef",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "eadf240a561579f3",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "9ec3cb9696053d8b",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "89b2bf665f5f6aad",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "0b9f0f0b0c0162dc",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "106e0b26cc206aed",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "9df5299c661312ec",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "898133b240997611",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "07280db1cb26a374",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "2945983140d158af",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "e8339f4048e9810d",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "01b4b9edd30c865e",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "cd5203b730b861ca",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "3698611e7487f0aa",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "c499d85d6a7c0156",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "d451135c6dde31c4",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "82bfa575b36bca5b",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "b684f06fad6f204e",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "b59538669bf4ade7",
+          "partIds": [
+            "damage-killer",
+            "damage-weakness"
+          ]
+        },
+        {
+          "skillId": "31b0f1c6d90ec0cf",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "6e79eb857dac5a05",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "810e5630e720f446",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "b7297c3eb4e46bba",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "f2adf1f2ba4f5cb0",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "51a7c25fc592d19b",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "449963af5b8068b7",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "4139a26172e19019",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "6ad84bb93596f650",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "ee807560b8e94ab2",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "5dbd4f977800ad88",
+          "partIds": [
+            "faith-light-damage"
+          ]
+        },
+        {
+          "skillId": "b50f1be94e5ec002",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "9687330d53763046",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "658df1f2c3e3e424",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "f26238efd3af2674",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "6f69f24a14887fe1",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "d53c1518b71c0259",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "085a66c6930d7fa6",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "fb6d9a18f0c64a74",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:924",
+          "partIds": [
+            "damage"
+          ]
+        },
+        {
+          "skillId": "ca8779066b942675",
+          "partIds": [
+            "damage"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -17348,7 +20854,90 @@
         "e2016a861d776638",
         "42656c3afdc8103a",
         "0b4cbcd7bc326038",
-        "29da106c453e0234"
+        "29da106c453e0234",
+        "97d948f5e3717d10",
+        "0d2d38cd539224ee",
+        "0ab43d7f985855cb",
+        "fc3dc40acdcff985",
+        "9fc2a2451521c398",
+        "30c471c824951c9c",
+        "43cfc2a774603911",
+        "190fc2e8d9122b21",
+        "全部技能:all:124",
+        "e473e81b4b16e917",
+        "4db25889525ff54a",
+        "9146eb2670c69122",
+        "dbc649cdc993f070",
+        "f52898e0e4d6fcb3",
+        "2d24508b309322f7",
+        "e9fbf5b56f0559bf",
+        "3d7e20ea487f3b19",
+        "b65bccc3a5431629",
+        "454a237836d960b0",
+        "9802f136c37301f3",
+        "04b522e79ad2a5d2",
+        "全部技能:all:284",
+        "全部技能:all:301",
+        "602202c6b41251cb",
+        "全部技能:all:323",
+        "12730aa5921baa23",
+        "d2278025c02f3498",
+        "eb659c714ed39fd6",
+        "3c949dcbeeaee844",
+        "9e2b88d1d3d0923f",
+        "ba33274d257a0877",
+        "351f8b7c824ec758",
+        "182731824b8599ca",
+        "4e8a749504d3799f",
+        "ee8769b3f842d317",
+        "ec6ac4c14fd61cfc",
+        "1545ff2f2bc10672",
+        "d1aa6e7dfcf2a189",
+        "f9c63a04f63f89ea",
+        "e2376f83dc028e0f",
+        "7699c0abda6d47a0",
+        "ea3727ee373b623b",
+        "d71dfc1292e7c678",
+        "a1166f16d23a209d",
+        "32f98ad19af760dc",
+        "cae22c8f6e9a70ef",
+        "eadf240a561579f3",
+        "9ec3cb9696053d8b",
+        "89b2bf665f5f6aad",
+        "0b9f0f0b0c0162dc",
+        "106e0b26cc206aed",
+        "9df5299c661312ec",
+        "898133b240997611",
+        "07280db1cb26a374",
+        "2945983140d158af",
+        "e8339f4048e9810d",
+        "01b4b9edd30c865e",
+        "cd5203b730b861ca",
+        "3698611e7487f0aa",
+        "c499d85d6a7c0156",
+        "d451135c6dde31c4",
+        "b684f06fad6f204e",
+        "b59538669bf4ade7",
+        "31b0f1c6d90ec0cf",
+        "6e79eb857dac5a05",
+        "810e5630e720f446",
+        "b7297c3eb4e46bba",
+        "f2adf1f2ba4f5cb0",
+        "51a7c25fc592d19b",
+        "449963af5b8068b7",
+        "4139a26172e19019",
+        "6ad84bb93596f650",
+        "ee807560b8e94ab2",
+        "b50f1be94e5ec002",
+        "9687330d53763046",
+        "658df1f2c3e3e424",
+        "f26238efd3af2674",
+        "6f69f24a14887fe1",
+        "d53c1518b71c0259",
+        "085a66c6930d7fa6",
+        "fb6d9a18f0c64a74",
+        "全部技能:all:924",
+        "ca8779066b942675"
       ]
     },
     "hp": {
@@ -17648,7 +21237,97 @@
         "0b4cbcd7bc326038",
         "29da106c453e0234"
       ]
+    },
+    "damage": {
+      "label": "伤害增加",
+      "displayOrder": [
+        "97d948f5e3717d10",
+        "0d2d38cd539224ee",
+        "0ab43d7f985855cb",
+        "fc3dc40acdcff985",
+        "9fc2a2451521c398",
+        "30c471c824951c9c",
+        "43cfc2a774603911",
+        "190fc2e8d9122b21",
+        "全部技能:all:124",
+        "e473e81b4b16e917",
+        "4db25889525ff54a",
+        "9146eb2670c69122",
+        "dbc649cdc993f070",
+        "f52898e0e4d6fcb3",
+        "2d24508b309322f7",
+        "e9fbf5b56f0559bf",
+        "3d7e20ea487f3b19",
+        "b65bccc3a5431629",
+        "454a237836d960b0",
+        "9802f136c37301f3",
+        "04b522e79ad2a5d2",
+        "全部技能:all:284",
+        "全部技能:all:301",
+        "602202c6b41251cb",
+        "全部技能:all:323",
+        "12730aa5921baa23",
+        "d2278025c02f3498",
+        "eb659c714ed39fd6",
+        "3c949dcbeeaee844",
+        "9e2b88d1d3d0923f",
+        "ba33274d257a0877",
+        "351f8b7c824ec758",
+        "182731824b8599ca",
+        "4e8a749504d3799f",
+        "ee8769b3f842d317",
+        "ec6ac4c14fd61cfc",
+        "1545ff2f2bc10672",
+        "d1aa6e7dfcf2a189",
+        "f9c63a04f63f89ea",
+        "e2376f83dc028e0f",
+        "7699c0abda6d47a0",
+        "ea3727ee373b623b",
+        "d71dfc1292e7c678",
+        "a1166f16d23a209d",
+        "32f98ad19af760dc",
+        "cae22c8f6e9a70ef",
+        "eadf240a561579f3",
+        "9ec3cb9696053d8b",
+        "89b2bf665f5f6aad",
+        "0b9f0f0b0c0162dc",
+        "106e0b26cc206aed",
+        "9df5299c661312ec",
+        "898133b240997611",
+        "07280db1cb26a374",
+        "2945983140d158af",
+        "e8339f4048e9810d",
+        "01b4b9edd30c865e",
+        "cd5203b730b861ca",
+        "3698611e7487f0aa",
+        "c499d85d6a7c0156",
+        "d451135c6dde31c4",
+        "82bfa575b36bca5b",
+        "b684f06fad6f204e",
+        "b59538669bf4ade7",
+        "31b0f1c6d90ec0cf",
+        "6e79eb857dac5a05",
+        "810e5630e720f446",
+        "b7297c3eb4e46bba",
+        "f2adf1f2ba4f5cb0",
+        "51a7c25fc592d19b",
+        "449963af5b8068b7",
+        "4139a26172e19019",
+        "6ad84bb93596f650",
+        "ee807560b8e94ab2",
+        "5dbd4f977800ad88",
+        "b50f1be94e5ec002",
+        "9687330d53763046",
+        "658df1f2c3e3e424",
+        "f26238efd3af2674",
+        "6f69f24a14887fe1",
+        "d53c1518b71c0259",
+        "085a66c6930d7fa6",
+        "fb6d9a18f0c64a74",
+        "全部技能:all:924",
+        "ca8779066b942675"
+      ]
     }
   },
-  "activeView": "magic-damage"
+  "activeView": "damage"
 }
