@@ -99,11 +99,16 @@
   </aside>
   </div>
   <section id="reviewPage" class="card" hidden aria-labelledby="reviewTitle"><div class="section-heading"><h2 id="reviewTitle">面板与加成核对</h2><button id="closeReview" type="button">返回伤害计算器</button></div>
-      <div class="section-heading entry-subheading"><h3>面板核对</h3><div class="inline-options"><button id="entryUseWebsiteStats" type="button">采用网站计算面板</button><button id="entryUseStats" type="button">采用这份入场面板</button></div></div>
+      <div class="section-heading entry-subheading"><h3>面板核对</h3><div class="inline-options"><button id="entryUseWebsiteStats" type="button">全部用网站</button><button id="entryUseStats" type="button">全部用读取器</button></div></div>
       <p class="help">按当前勾选的开战配置自动合计六维，并与读取值比较；下方已作出的排除或数值修改也会计入，待决定项先按网站值预览。展开可看明细，采用最终面板后不会再次乘属性加成。</p>
-      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>网站计算结果与来源</th><th>读取值</th><th>采用哪份数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
-      <div class="section-heading entry-subheading"><h3 id="entryCandidateCount">加成候选</h3><button id="entryUseWeb" type="button">本表全部沿用网站值</button></div>
-      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>网站值</th><th>读取值／证据</th><th>比较</th><th>你的决定</th></tr></thead><tbody id="entryEffectsReview"></tbody></table></div>
+      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
+      <div class="section-heading entry-subheading"><h3>增伤与伤害上限</h3><button id="entryUseWeb" type="button">加成全部用网站</button></div>
+      <p class="help">按当前攻击条件分别统计，展开查看来源并删除。读取器仅合计已识别项目；候选小计不代表已确认生效的完整加成。</p>
+      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>项目</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryBonusReview"></tbody></table></div>
+      <details id="entryIndividualReview"><summary>逐条核对与修改 · <span id="entryCandidateCount">加成候选</span></summary>
+      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>网站</th><th>读取器</th><th>比较</th><th>采用数据</th></tr></thead><tbody id="entryEffectsReview"></tbody></table></div>
+      </details>
+      <details id="entryRemovedDetails" hidden><summary id="entryRemovedCount">已删除的加成</summary><ul id="entryRemovedEffects" class="entry-source-list"></ul></details>
       <details><summary id="entryPendingCount">网站待确认项</summary><p class="help">这些效果的条件或拆分仍未确定，不计入上表。可返回基础计算器补充，随后重新核对。</p><ul id="entryPending"></ul></details>
       <details><summary id="entryUnmatchedCount">读取器未对应项</summary><p class="help">未对应不代表不存在；可先查看原始证据，已明确的项目可在基础计算器补充后重新核对。</p><ul id="entryUnmatched"></ul></details>
       <p id="entryStatus" role="status" class="entry-status">等待角色固定资料。</p>

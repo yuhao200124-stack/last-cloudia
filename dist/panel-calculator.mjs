@@ -16,16 +16,16 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
  report={...report,rows:(report?.rows||[]).map(row=>{const rule=upgradeStatRule(row.rule,row.sourceText);return {...row,rule,status:row.status==='active'&&rule.review==='pending'?'pending':row.status};})};
  const out=Object.fromEntries(Object.entries(PANEL_LABELS).map(([key,label])=>[key,{key,label,base:baseStats[key],precision:key==='mp'?1000:1,value:null,subtotal:null,beforeBuff:null,beforeBuffRaw:null,crossAdd:0,percent:0,buffs:[],equipment:[],steps:[],issues:[],sources:[]}])) ;
  const equipped=new Map(),boosts=[],cross=[];
- const flat=(report?.rows||[]).filter(r=>r.status==='active').flatMap(row=>row.rule.effects.map(effect=>({row,effect})));
+ const flat=(report?.rows||[]).filter(r=>r.status==='active').flatMap(row=>row.rule.effects.map((effect,index)=>({row,effect,index:row.effectIndices?.[index]??index})));
  const issue=(keys,text)=>{for(const key of keys)out[key].issues.push(text);};
  for(const row of report?.rows||[])if(row.status==='pending')for(const e of row.rule.effects) {
   if(!['stat','statBuff','equipmentStat'].includes(e.type))continue;
   const plain=String(e.target).replace(/^装备/,'').replace(/^(法杖|长袍|衣服|铠甲|剑|斧|枪|槌|弓|机械|爪)(自身)?/,'');
   const keys=targetKeys(plain);issue(keys.length?keys:Object.keys(out),`${row.sourceName}：属性生效条件待确认`);
  }
- for(const {row,effect:e} of flat) {
+ for(const {row,effect:e,index} of flat) {
   if(!['stat','statBuff','equipmentStat'].includes(e.type))continue;
-  const source={sourceId:row.sourceId,sourceName:row.sourceName,effect:e};
+  const source={sourceId:row.sourceId,sourceName:row.sourceName,ruleId:row.rule.id,effectIndex:index,effect:e};
   if(e.type==='equipmentStat') {
    if(e.unit===''&&n(e.value)) {
     const key=aliases[e.target.replace(/^装备/,'')];if(!key){issue(Object.keys(out),`${row.sourceName}：未识别装备属性 ${e.target}`);continue;}
@@ -50,6 +50,13 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
    if(match&&keys.length)cross.push({keys,from:aliases[match[1]],percent:Number(match[2]),source:row.sourceName});
    else issue(keys.length?keys:Object.keys(out),`${row.sourceName}：${e.value} 尚未计入`);
   } else issue(keys.length?keys:Object.keys(out),`${row.sourceName}：属性计算尚未解析`);
+ }
+ // Removing a gear stat excludes its contribution, not the equipped item itself.
+ for(const removed of report.excludedEquipmentStats||[]) {
+  const key=aliases[String(removed.target).replace(/^装备/,'')];if(!key)continue;
+  const identity=equipment.filter(x=>x.name===removed.sourceName);
+  if(!equipped.has(removed.sourceId))equipped.set(removed.sourceId,{name:removed.sourceName,type:identity.length===1?identity[0].type:null,stats:{}});
+  const item=equipped.get(removed.sourceId);if(!Object.hasOwn(item.stats,key))item.stats[key]=0;
  }
  const contextFields={staff:'法杖',robe:'长袍',clothes:'衣服',armor:'铠甲',sword:'剑',axe:'斧',spear:'枪',hammer:'槌',bow:'弓',machine:'机械',claw:'爪'};
  for(const [field,type] of Object.entries(contextFields))if(report?.context?.[field]===true&&![...equipped.values()].some(item=>item.type===type))issue(Object.keys(out),`已勾选${type}，但尚未提供具体装备的固定属性`);

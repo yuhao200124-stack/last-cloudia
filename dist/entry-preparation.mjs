@@ -82,19 +82,25 @@ export function validateBattleEntry(input) {
  }
  return input;
 }
-export function compareCandidates(web,bonuses,mappings={}) {
+export function readerScopeAllows(reader,context) {
+ const conditions=reader?.decoded?.conditions??reader?.conditions;
+ if(!Array.isArray(conditions)||!context)return true; // Legacy manual mapping has no decoded scope to test.
+ return evaluateCatalog([{id:'reader-scope',group:'common',rules:[{id:'reader-scope',conditions,effects:[{type:'utility'}],review:'ready'}]}],context).rows[0].status==='active';
+}
+export function compareCandidates(web,bonuses,mappings={},context) {
  const token=b=>[clean(b.sourceName),b.effectType,b.target,b.unit].join('|');
  return web.map(w=>{
   const localId=w.sourceId?.match(/^account-blessing-(\d+)$/)?.[1];
   const matches=Object.hasOwn(mappings,w.id)?bonuses.filter(b=>b.id===mappings[w.id]):localId?bonuses.filter(b=>String(b.raw?.localId)===localId):bonuses.filter(b=>token(b)===token({sourceName:w.sourceName,effectType:w.effect.type,target:w.effect.target,unit:w.effect.unit}));
   const reader=matches.length===1?matches[0]:null;
-  const compatible=reader&&(!localId||(reader.decoded&&JSON.stringify(reader.decoded.conditions)===JSON.stringify(w.condition)))&&reader.effectType===w.effect.type&&reader.target===w.effect.target&&(reader.unit||'')===(w.effect.unit||'')&&typeof reader.value===typeof w.effect.value;
+  const scopeAllowed=readerScopeAllows(reader,context);
+  const compatible=reader&&scopeAllowed&&(!localId||(reader.decoded&&JSON.stringify(reader.decoded.conditions)===JSON.stringify(w.condition)))&&reader.effectType===w.effect.type&&reader.target===w.effect.target&&(reader.unit||'')===(w.effect.unit||'')&&typeof reader.value===typeof w.effect.value;
   const difference=compatible&&num(reader.value)!==null&&num(w.effect.value)!==null?reader.value-w.effect.value:null;
   return {...w,reader,compatible:Boolean(compatible),difference,comparison:!reader?(matches.length>1?'多个候选，待对应':'尚未对应'):
-   !compatible?'口径不同，不能直接替换':reader.value==null?'读取值未解析':JSON.stringify(reader.value)===JSON.stringify(w.effect.value)?'数值一致，仍待确认':'数值不同，待选择'};
+   !scopeAllowed?'读取器条件不满足或待确认':!compatible?'口径不同，不能直接替换':reader.value==null?'读取值未解析':JSON.stringify(reader.value)===JSON.stringify(w.effect.value)?'数值一致，仍待确认':'数值不同，待选择'};
  });
 }
-export const decisionKey=row=>JSON.stringify([row.id,row.effect,row.condition,row.reader?.id,row.reader?.value,row.reader?.state,row.reader?.evidence]);
+export const decisionKey=row=>JSON.stringify([row.id,row.effect,row.condition,row.reader?.id,row.reader?.value,row.reader?.state,row.reader?.evidence,row.reader?.decoded?.conditions??row.reader?.conditions]);
 export function resolveReview(report,compared,decisions) {
  const entries=new Map(),usedReader=new Set();
  for(const row of compared) {
@@ -103,6 +109,7 @@ export function resolveReview(report,compared,decisions) {
   if(d.choice==='exclude')continue;
   let effect={...row.effect};
   if(d.choice==='reader') {
+   if(!readerScopeAllows(row.reader,report.context))throw new Error(`“${row.sourceName}”的读取器条件不符合当前攻击，请重新选择。`);
    if(!row.compatible||row.reader?.value==null)throw new Error(`“${row.sourceName}”读取字段未对应，不能直接替换。`);
    if(['hit','statReference'].includes(effect.type))throw new Error('复合效果请采用网站规则或在基础计算器修改完整拆分。');
    if(usedReader.has(row.reader.id))throw new Error('同一读取字段不能重复计入多个效果，请重新对应。');

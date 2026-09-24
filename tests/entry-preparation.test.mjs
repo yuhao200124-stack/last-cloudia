@@ -55,6 +55,15 @@ test('condition and evidence changes invalidate stored decisions',()=>{
  assert.notEqual(decisionKey(row),decisionKey({...row,condition:[{field:'lowHp',value:true}]}));
  assert.notEqual(decisionKey(row),decisionKey({...row,reader:{...row.reader,state:'observed'}}));
 });
+test('a saved reader selection cannot carry skill-only damage into a magic attack',()=>{
+ const r=magic(),rows=compareCandidates(websiteCandidates(r),[]),d=decisions(rows);
+ const row=rows.find(r=>r.effect.type==='damage');
+ row.reader={id:'skill-only',effectType:row.effect.type,target:row.effect.target,unit:row.effect.unit,value:60,decoded:{conditions:[{field:'attackKind',op:'eq',value:'skill'}]}};
+ row.compatible=true;d[decisionKey(row)]={choice:'reader'};
+ assert.throws(()=>resolveReview(r,rows,d),/读取器条件不符合/);
+ const [checked]=compareCandidates([row],[row.reader],{[row.id]:row.reader.id},r.context);
+ assert.equal(checked.compatible,false);assert.match(checked.comparison,/条件不满足/);
+});
 test('battle report null stats stay null; wrong kind and invalid numbers rejected',()=>{
  const r={kind:'last-cloudia-battle-entry',schemaVersion:1,units:[{stats:{attack:null,intelligence:123},bonuses:[]}]};
  assert.equal(validateBattleEntry(r).units[0].stats.attack,null);
