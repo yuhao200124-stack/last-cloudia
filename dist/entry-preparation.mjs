@@ -1,7 +1,7 @@
-import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-buff-groups';
+import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullhp-save';
 import {decodeReaderBonuses} from './reader-bonus-decoder.mjs';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-buff-groups';
+import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-fullhp-save';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
 const elementIds={无:'none',火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark'};
@@ -48,16 +48,18 @@ export function retargetReport(report,selection) {
  const context={...report.context,killer:false,attack,damageType:selection.type,element:elementIds[selection.element]??null};
  if(typeof selection.specialAttack==='boolean')context.killerOverride=selection.specialAttack;
  if(typeof selection.break==='boolean')context.break=selection.break;
+ if(typeof selection.fullHp==='boolean')context.fullHp=selection.fullHp;
+ if(context.fullHp===true)context.lowHp=false;
  // Damage-page dual wield is a manual hit-calculation option. Equipment and
  // single/dual-weapon skill conditions come only from the basic calculator.
  const evaluated=evaluateCatalog([...grouped.values()],context,overrides);
  return {...report,...evaluated};
 }
 export function websiteCandidates(report) {
- return (report.rows||[]).filter(r=>r.status==='active').flatMap(r=>r.rule.effects.map((effect,index)=>({
+ return (report.rows||[]).filter(r=>r.status==='active').flatMap(r=>r.rule.effects.map((effect,i)=>{const index=r.effectIndices?.[i]??i;return {
   id:`${r.sourceId}:${r.rule.id}:${index}`,sourceName:r.sourceName,sourceId:r.sourceId,ruleId:r.rule.id,index,effect,
   condition:r.rule.conditions,evidence:r.group==='blessings'?'账户加护报告与规则核对':'网站条件推演，待核对',group:r.group
- })).filter(r=>recognizedTypes.has(r.effect.type)));
+ };}).filter(r=>recognizedTypes.has(r.effect.type)));
 }
 export function validateBattleEntry(input) {
  if(input?.kind!=='last-cloudia-battle-entry'||input.schemaVersion!==1||!Array.isArray(input.units)||input.units.length>64)throw new Error('请选择v0.35或更新版生成的 BattleEntryReport.json，文件格式不匹配。');
@@ -131,11 +133,15 @@ export function resolveReview(report,compared,decisions) {
   } else if(d.choice!=='web')throw new Error('核对选项无效。');
   entries.set(row.id,effect);
  }
- const rows=report.rows.filter(r=>r.status==='active').map(r=>({...r,rule:{...r.rule,effects:r.rule.effects.flatMap((e,i)=>{
-  const value=entries.get(`${r.sourceId}:${r.rule.id}:${i}`);return value?[value]:[];
- })}})).filter(r=>r.rule.effects.length);
+ const rows=report.rows.filter(r=>r.status==='active').map(r=>{
+  const effects=[],effectIndices=[];
+  r.rule.effects.forEach((e,i)=>{const index=r.effectIndices?.[i]??i,value=entries.get(`${r.sourceId}:${r.rule.id}:${index}`);if(value){effects.push(value);effectIndices.push(index);}});
+  return {...r,effectIndices,rule:{...r.rule,effects}};
+ }).filter(r=>r.rule.effects.length);
  const sources=new Map();
  for(const row of rows){if(!sources.has(row.sourceId))sources.set(row.sourceId,{id:row.sourceId,name:row.sourceName,text:row.sourceText,group:row.group,rules:[]});sources.get(row.sourceId).rules.push(row.rule);}
  const evaluated=evaluateCatalog([...sources.values()],{...report.context,killer:false});
+ const indices=new Map(rows.map(r=>[JSON.stringify([r.sourceId,r.rule.id]),r.effectIndices]));
+ evaluated.rows=evaluated.rows.map(r=>({...r,effectIndices:indices.get(JSON.stringify([r.sourceId,r.rule.id]))}));
  return {...report,...evaluated,kind:'last-cloudia-effect-report',reviewedByUser:true};
 }

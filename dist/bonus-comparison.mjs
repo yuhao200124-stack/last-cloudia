@@ -1,5 +1,5 @@
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {decisionKey} from './entry-preparation.mjs?v=20260924-buff-groups';
+import {decisionKey} from './entry-preparation.mjs?v=20260924-fullhp-save';
 const numeric=value=>typeof value==='number'&&Number.isFinite(value);
 export const effectSelectionKey=row=>JSON.stringify([row.id,row.effect,row.condition]);
 const groupKey=e=>JSON.stringify([e.type,e.target,e.unit]);

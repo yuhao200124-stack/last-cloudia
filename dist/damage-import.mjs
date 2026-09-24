@@ -1,4 +1,4 @@
-import {characterHitStage,characterSourceAllowed} from './character-combat-rules.mjs?v=20260924-buff-groups';
+import {characterHitStage,characterSourceAllowed} from './character-combat-rules.mjs?v=20260924-fullhp-save';
 // Transfer qualified effects, never reinterpret a stat bonus as a skill multiplier.
 export const reportStorageKey = id => `lc-damage-report:${id}:v1`;
 const elements = { none:'无', fire:'火', ice:'冰', earth:'树', thunder:'雷', light:'光', dark:'暗' };
@@ -17,7 +17,7 @@ export function buildDamageImport(report) {
     if(row.status!=='active') continue;
     if(!characterSourceAllowed(report.characterId,row.sourceId)){imported.blockers.push(`${row.sourceName}：角色专属效果与当前角色不匹配。`);continue;}
     for (const [index,e] of row.rule.effects.entries()) {
-      const id=`${row.sourceId}:${row.rule.id}:${index}`;
+      const id=`${row.sourceId}:${row.rule.id}:${row.effectIndices?.[index]??index}`;
       const entry={id,sourceId:row.sourceId,ruleId:row.rule.id,source:row.sourceName,effect:e,group:row.group};
       const number=typeof e.value==='number' && Number.isFinite(e.value);
       if(e.type==='damage') {

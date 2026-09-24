@@ -44,6 +44,15 @@ export function verifiedRuntimeFamily(rule,effect) {
  return null;
 }
 
+// Only the exact continuous HP-stat rule can supply this shared runtime layer.
+// Timed buffs, recovery clauses and custom decompositions remain unclassified.
+export function verifiedHpRuntime(rule,effect) {
+ const parsed=parseHpStatDescription(rule.text);
+ if(effect.type!=='statBuff'||!parsed||JSON.stringify(rule.conditions)!==JSON.stringify(parsed.conditions)||
+  !parsed.effects.some(e=>e.target===effect.target&&e.value===effect.value&&e.unit===effect.unit))return {};
+ return {hpCondition:parsed.conditions[0],runtime:{layer:'runtime-stat',stackGroup:`hp-passive:${rule.id}:${effect.target}`,stackPolicy:'add',evidence:'native-hp-condition-continuous'}};
+}
+
 // Read-only decode: an inventory candidate stays a candidate; presence is not activation proof.
 export function decodeHpStatEntry(entry) {
  const targets=HP_STAT_PROCESSES[entry.processId],raw=entry.raw,values=raw?.values;

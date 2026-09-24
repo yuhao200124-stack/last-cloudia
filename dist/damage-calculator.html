@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-buff-groups">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-fullhp-save">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html">LC</a><div><h1>伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./characters.html">角色列表</a><a href="./index.html">技能表</a></nav></header>
@@ -20,6 +20,7 @@
       <p class="help">保持基础配置进入一次战斗，运行v0.36读取器（兼容旧版报告），然后选择 BattleEntryReport.json。网站条件推演和读取器候选都不自动当作已生效。</p>
       <label>读取报告<input id="entryReportFile" type="file" accept=".json,application/json"></label>
       <p id="entryFileNote" class="help"></p><label>本次角色<select id="entryUnit"><option value="">尚未导入</option></select></label>
+      <p id="entrySaveStatus" class="help" role="status"></p>
       <div class="inline-options"><button id="openReview" type="button" class="primary">面板与加成核对</button><span id="entryReviewSummary" class="help">导入后选择要采用的面板与加成。</span></div>
     </section>
     <section class="card" id="attackPanel"><div class="section-heading"><h2><span>03</span>招式与技能参数</h2><button type="button" id="reset">重置</button></div>
@@ -30,7 +31,7 @@
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
-      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀／魔法双段（仅伤害计算）</label><label><input id="specialAttack" type="checkbox">本次触发特攻</label><label><input id="break" type="checkbox">Boss 正在 Break</label><label id="magicCanCritControl" hidden><input id="magicCanCrit" type="checkbox">本次魔法允许暴击</label></div>
+      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">break</label><label><input id="fullHp" type="checkbox">满血</label></div>
       <div id="magicBuffOptions" class="magic-buff-options" hidden><div id="magicBuffChoices"></div><div id="magicBuffRelationControl" hidden><small>同类型 Buff 只保留一个：指导的法强 +65% 替换原来的 +50%。满血等独立被动仍按各自条件计算；已读到指导后面板时不重复添加。魔法上限只加一次。</small></div></div>
       <p id="conditionStatus" class="help"></p>
       <section id="entrySpecialSection" class="special-reminders" hidden><h3>角色特殊效果</h3><p class="help">仅作提醒。是否触发按上方战斗选项与技能参数计算。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源</th><th>效果</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
@@ -98,7 +99,7 @@
       <div id="error" role="alert" hidden></div><button id="resolveReview" type="button" hidden>查看尚未选择的项目</button>
       <div id="resultValues" aria-live="polite" aria-atomic="true">
         <article class="primary-result"><span>普通每段伤害</span><strong id="normalDamage">—</strong><small>含随机波动与每段上限</small></article>
-        <article class="critical-result"><span>暴击每段伤害</span><strong id="criticalDamage">—</strong></article>
+        <article class="critical-result"><span title="触发暴击时的伤害对照；整次期望仍按最终暴击率计算">暴击每段伤害</span><strong id="criticalDamage">—</strong></article>
         <div class="total-result"><span id="totalLabel">整次技能期望伤害</span><strong id="totalMean">—</strong><small id="totalNote"></small></div>
         <dl class="result-details"><div><dt>全为普通命中时</dt><dd id="normalTotal">—</dd></div><div><dt>本段结算攻击力</dt><dd id="effectiveAttack">—</dd></div><div><dt>本段结算防御力</dt><dd id="effectiveDefense">—</dd></div><div><dt>特攻匹配</dt><dd id="killerState">—</dd></div></dl>
       </div>
@@ -109,6 +110,7 @@
   </aside>
   </div>
   <section id="reviewPage" class="card" hidden aria-labelledby="reviewTitle"><div class="section-heading"><h2 id="reviewTitle">面板与加成核对</h2><button id="closeReview" type="button">保存并返回</button></div>
+      <p id="reviewSaveStatus" class="help" role="status"></p>
       <div class="section-heading entry-subheading"><h3>面板核对</h3><div class="inline-options"><button id="entryUseWebsiteStats" type="button">全部用网站</button><button id="entryUseStats" type="button">全部用读取器</button><button type="button" class="primary" data-review-save>保存并返回</button></div></div>
       <p class="help">网站按当前条件计算；读取器显示实际采样时的面板，两者可能处于不同时刻。结算文件中采用的攻击时观察值也会显示在此处；未读取的属性保留入场值。</p>
       <label id="entrySnapshotControl" hidden>读取器面板时刻<select id="entrySnapshotPick"></select></label><p id="entrySnapshotNote" class="help"></p>
@@ -132,5 +134,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260924-buff-groups"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260924-fullhp-save"></script>
 </body></html>

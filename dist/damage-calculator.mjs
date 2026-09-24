@@ -1,12 +1,12 @@
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs';
-import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-buff-groups';
+import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-fullhp-save';
 import {formatEffect} from './effect-rule-engine.mjs';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-buff-groups';
-import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-buff-groups';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-fullhp-save';
+import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullhp-save';
 import {observedCritical} from './reader-bonus-decoder.mjs';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
-import {resolveAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-buff-groups';
-import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-buff-groups';
+import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-fullhp-save';
+import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-fullhp-save';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -56,7 +56,7 @@ function showReview(open) {
   else $('openReview').focus();
 }
 $('openReview').addEventListener('click',()=>showReview(true));
-$('closeReview').addEventListener('click',()=>{if(workflow?.applySelection())showReview(false);});
+$('closeReview').addEventListener('click',()=>workflow?.saveAndReturn());
 $('resolveReview').addEventListener('click',()=>showReview(true));
 function fillReaderPreview() {
   if(workflow?.isConfirmed())return;
@@ -126,11 +126,11 @@ function syncAttackBasis() {
   $('settledAttack').disabled=mode!=='settlement';$('settledAttack').required=mode==='settlement';
   $('attack').required=mode==='panel';
   for(const id of ['skillAdd','skillPercent','skillPostAdd','attackRatio'])$(id).disabled=mode==='settlement';
-  autoLayer=mode==='auto'?(magicBuffLayer(stat,$('attack').valueAsNumber,activeMagicBuffs())||resolveAttackLayers(stat,$('attack').valueAsNumber)):null;
+  autoLayer=mode==='auto'?(magicBuffLayer(stat,$('attack').valueAsNumber,activeMagicBuffs())||projectAttackLayers(stat,$('attack').valueAsNumber)):null;
   if(mode==='auto'){
     $('attackBase').value=autoLayer.ok?autoLayer.base:'';$('runtimeStatPercent').value=autoLayer.ok?autoLayer.percent:'';
     $('attackBasisNote').textContent=!autoLayer.ok?autoLayer.reason:autoLayer.projected?
-      `原观察属性 ${fmt(autoLayer.observedPanel)}；启用后预估 ${fmt(autoLayer.panel)}，实时加成 ${autoLayer.percent}%。${autoLayer.replaced.length?`已替换同组来源：${autoLayer.replaced.map(b=>`${b.source} ${b.value}%`).join('、')}。`:''}技能攻击修正另外在同一层相加。`:
+      `原观察属性 ${fmt(autoLayer.observedPanel)}；当前条件预估 ${fmt(autoLayer.panel)}，实时加成 ${autoLayer.percent}%。${autoLayer.replaced.length?`已替换同组来源：${autoLayer.replaced.map(b=>`${b.source} ${b.value}%`).join('、')}。`:''}技能攻击修正另外在同一层相加。`:
       `状态前基准 ${fmt(autoLayer.base)}；观察属性 ${fmt(autoLayer.panel)} 对应实时加成 ${autoLayer.percent}%（${autoLayer.active.map(b=>b.source).join('、')||'未含已知实时加成'}）。${autoLayer.buffObserved?'该面板已包含所选增益，不重复加入。':''}技能修正在同一层相加。`;
     return;
   }
@@ -227,7 +227,6 @@ function syncBossReference() {
 function labels() {
   syncAttackBasis();
   const mode=referenceMode(),magic=mode==='int';
-  $('magicCanCritControl').hidden=!characterId||$('skillType').value!=='magic';
   $('attackLabel').textContent=mode==='mixed'?'已确认的混合结算攻击值':magic?'当前战斗法强':'当前战斗攻击力';
   $('mixedReferenceNote').hidden=mode!=='mixed';$('mixedDefenseControl').hidden=mode!=='mixed';
   $('defenseLabel').textContent=mode==='mixed'?'混合结算防御值':magic?'当前魔抗 MND':'当前防御力 DEF';
@@ -236,7 +235,7 @@ function labels() {
   $('bossReference').textContent=`本次参照：${mode==='mixed'?'手填混合防御值':magic?'魔抗 MND':'防御力 DEF'}；${neutral?'无属性不使用六属性抗性':`使用${$('element').value||'所选'}抗性`}。`;
   const p=bosses[$('bossPreset').value];$('debuff').hidden=!p?.debuff||magic||mode==='mixed';
   if(p?.debuff)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
-  $('conditionStatus').textContent=$('dualWield').checked?'已启用双刀／魔法双段，只按下方一组命中及单段倍率计算；配装与面板保持原设置。':'特攻与 Break 按本次选择计算；装备条件沿用基础计算器。';
+  $('conditionStatus').textContent=($('dualWield').checked?'双刀按下方命中与单段倍率计算；':'')+'特攻、Break 与满血按当前选项计算；满血条件技能会随勾选重算，未满血不等于濒死。';
   hitSourceNote();
 }
 function applyBoss() {
@@ -267,7 +266,7 @@ function update() {
   const invalid=[...$('calculator').querySelectorAll('input[type=number]')].find(e=>!e.disabled&&!e.checkValidity());
   try {
     if(characterId&&(!imported||!workflow?.isConfirmed()))throw new Error(reviewBlocker);
-    if(imported&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
+    if(imported&&!(imported.skillType==='magic'&&!imported.magicCanCrit)&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
     if(imported?.blockers.length)throw new Error(imported.blockers.join('；'));
     if(activeMagicBuffs().some(b=>b.stat===attackStat()?.key)&&$('attackBasis').value==='panel')throw new Error('已勾选属性增益，请使用自动属性分层。');
     if($('attackBasis').value==='auto'&&!autoLayer?.ok)throw new Error(autoLayer?.reason||'请先核对属性层来源。');
@@ -282,7 +281,7 @@ function update() {
     }
     $('normalDamage').textContent=`${fmt(r.normal.min)} – ${fmt(r.normal.max)}`;
     $('criticalDamage').textContent=`${fmt(r.critical.min)} – ${fmt(r.critical.max)}`;
-    $('criticalDamage').closest('article').hidden=s.critRate===0;
+    $('criticalDamage').closest('article').hidden=false;
     $('totalMean').textContent=`≈ ${fmt(r.totalMean)}`;
     $('totalNote').textContent=`${s.hits} 原始段 × ${s.hitMultiplier} = ${r.totalHits} 段 · 暴击率 ${fmt(s.critRate)}% · 含逐段上限`;
     $('normalTotal').textContent=r.normalTotal.map(fmt).join(' – ');
@@ -291,7 +290,7 @@ function update() {
     $('killerState').textContent=c.killer?`本次触发 · 基础 ×${fmt(c.killerFactor)}`:'未触发';
     $('skillSummary').textContent=`每段系数 ×${s.coefficient} · ${s.attackBasis==='settlement'?'读取器结算攻击已含技能修正':`技能内攻击修正 ${s.skillPercent>=0?'+':''}${s.skillPercent}%`} · ${r.totalHits} 段`;
     const count=r.active.filter(e=>e.percent!==0).length;
-    $('activeNote').textContent=`已计入 ${count} 条非零加成${s.boss&&s.break?'；Boss Break 防御修正已生效':''}。${autoLayer?.projected&&$('attackBasis').value==='auto'?`所选增益生效后预估面板 ${fmt(autoLayer.panel)}；同类型 Buff 只保留本次启用的一份。`:''}`;
+    $('activeNote').textContent=`已计入 ${count} 条非零加成${s.boss&&s.break?'；Boss Break 防御修正已生效':''}。${autoLayer?.projected&&$('attackBasis').value==='auto'?`当前条件下预估面板 ${fmt(autoLayer.panel)}；同类型 Buff 只保留本次启用的一份。`:''}`;
     $('trace').innerHTML=r.normal.trace.map(t=>`<li><span>${esc(t.label)}</span><b>${fmt(t.value)}</b></li>`).join('');
     $('formulaText').textContent=`${attackFormula(s,c)} A=${fmt(c.attack)}，F=${fmt(c.defense)}，C=${s.coefficient}。先算普通核心，再按生效列表逐条修正，最后格挡与限额。`;
     document.querySelectorAll('.effect').forEach((el,i)=>{
@@ -378,7 +377,6 @@ function applyImport(report,review) {
   const next=buildDamageImport(report);
   if(next.characterId!==characterId)throw new Error('导入报告与当前角色不一致');
   next.statReference=review.selection.statReference;
-  next.magicCanCrit=review.selection.magicCanCrit===true;
   const current=readEffects(),previous=imported?{base:imported.effects,rows:current}:retainedImportDraft;
   effects=[...next.effects.flatMap(e=>{
     const old=previous?.base.find(x=>x.importId===e.importId);
@@ -393,7 +391,7 @@ function applyImport(report,review) {
   const sourceKey=JSON.stringify([review.unitId,review.battleId,review.selection.statReference,review.panelLayers]);
   if(layerSourceKey&&sourceKey!==layerSourceKey&&$('attackBasis').value==='layers'){$('attackBase').value='';$('runtimeStatPercent').value='';}
   panelLayers=review.panelLayers;layerSourceKey=sourceKey;
-  if(!attackBasisTouched)$('attackBasis').value=(attackStat()?.buffs?.length||activeMagicBuffs().some(b=>b.stat===attackStat()?.key))?'auto':'panel';
+  if(!attackBasisTouched)$('attackBasis').value=(attackStat()?.runtimeCandidates?.length||attackStat()?.buffs?.length||activeMagicBuffs().some(b=>b.stat===attackStat()?.key))?'auto':'panel';
   $('critBasis').querySelector('[value="reader"]').disabled=observedCritical(readUnit).value==null;
   if(observedCritical(readUnit).value==null)$('critBasis').value='website';
   reviewBlocker='';
@@ -450,6 +448,7 @@ if(characterId)workflow=initEntryWorkflow({
     $('entryReviewSummary').textContent=message;update();
   },
   onSelection(){fillReaderPreview();syncHitControls(true);labels();update();},
+  onDraftSaved(){showReview(false);},
   onRead:receiveEntryData,
   onConfirm:applyImport
 });

@@ -1,13 +1,13 @@
-import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-buff-groups';
+import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-fullhp-save';
 import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs';
-import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-buff-groups';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-buff-groups';
+import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullhp-save';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-fullhp-save';
 import {formatEffect,describeCondition} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-buff-groups';
-import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-buff-groups';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-fullhp-save';
+import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-fullhp-save';
 import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-buff-groups';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-fullhp-save';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -15,25 +15,50 @@ const option=(v,label,current)=>`<option value="${esc(v)}"${v===current?' select
 const meaningful=report=>JSON.stringify({...report,createdAt:''});
 const panelTypes=new Set(['stat','statBuff','equipmentStat']);
 const summaryTypes=new Set(['damage','cap','critRate','killerPower']);
-export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelection,onRead=()=>{}}) {
+export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelection,onRead=()=>{},onDraftSaved=()=>{}}) {
  const storageKey=`lc-entry-review:${characterId}:v1`;
  let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey))||{};}catch{}
  let state={parameterSchema:2,accountBlessings:true,base:{},selection:saved.selection||{},parameters:saved.parameterSchema===2?saved.parameters||{}:{},hitParameters:saved.hitParameters||{},decisions:saved.decisions||{},statDecisions:saved.statDecisions||{},mappings:saved.mappings||{},removedEffects:saved.removedEffects||{}};
  if(saved.mechanicsRevision!==STAT_MECHANICS_REVISION)for(const d of Object.values(state.statDecisions))d.choice='pending';
  state.mechanicsRevision=STAT_MECHANICS_REVISION;
+ delete state.selection.magicCanCrit;
  // Older UI defaulted Roxy's 0.6 to before-cap, before its core placement was
  // checked against native settlement samples. Migrate that exact old default.
  migrateCharacterHitDrafts(characterId,saved,state.hitParameters);
  state.hitMechanicsRevision=2;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
- let confirmed=false,hasApproval=false,bonusGroups=[],readerBonuses=[];
+ let confirmed=false,bonusGroups=[],readerBonuses=[];
+ let reportFingerprint=null,storageSaveFailed=false,importGeneration=0;
+ state.readerDrafts=saved.readerDrafts||{};
  let supplementChoices={},supplements=[],attackObservations={},snapshotSelection='entry';
  const selectedUnit=()=>observedReaderUnit(unit,snapshotSelection);
  const observation=k=>panelObservation(battle,unit,k,attackObservations,snapshotSelection);
  const readStat=k=>observation(k).value;
  state.readerSkillMappings=saved.readerSkillMappings||{};
  const parameterIds=['hits','coefficient','skillPercent','skillAdd','skillPostAdd'];
- const save=()=>{try{localStorage.setItem(storageKey,JSON.stringify(state));}catch{$('entryStatus').textContent='浏览器未能保存核对选择，请保持当前页面打开。';}};
+ const draftKey=()=>reportFingerprint&&unit?`${reportFingerprint}:${unit.unitId}`:null;
+ const saveStatus=message=>{for(const id of ['entrySaveStatus','reviewSaveStatus'])$(id).textContent=message;};
+ function rememberReaderDraft(){
+  const key=draftKey();if(!key)return;
+  delete state.readerDrafts[key];
+  state.readerDrafts[key]=clone({statDecisions:state.statDecisions,decisions:state.decisions,mappings:state.mappings,supplementChoices,attackObservations,snapshotSelection});
+  for(const old of Object.keys(state.readerDrafts).slice(0,-4))delete state.readerDrafts[old];
+ }
+ function restoreReaderDraft(){
+  const draft=state.readerDrafts[draftKey()];
+  state.statDecisions=clone(draft?.statDecisions||{});state.decisions=clone(draft?.decisions||{});state.mappings=clone(draft?.mappings||{});
+  supplementChoices=clone(draft?.supplementChoices||{});attackObservations=clone(draft?.attackObservations||{});
+  snapshotSelection=draft?.snapshotSelection??defaultReaderSnapshot(unit);
+  if(snapshotSelection!=='entry'&&!readerPanelSnapshots(unit).some(s=>s.id===snapshotSelection))snapshotSelection=defaultReaderSnapshot(unit);
+  return !!draft;
+ }
+ const save=()=>{rememberReaderDraft();try{localStorage.setItem(storageKey,JSON.stringify(state));storageSaveFailed=false;return true;}catch{storageSaveFailed=true;saveStatus('浏览器未能保存选择，请保持页面打开后重试；当前修改仍在本页。');return false;}};
+ function saveAndReturn(){
+  if(!save())return false;
+  const ready=syncSelection(true),reason=ready?'':$('entryStatus').textContent;
+  saveStatus(ready?'已保存。':`草稿已保存；${reason}`);
+  onDraftSaved({ready,reason});return true;
+ }
  const selection=()=>({...state.selection,hitMultiplier:state.hitParameters[hitKey()]?.hitMultiplier,hitDamageRatio:state.hitParameters[hitKey()]?.hitDamageRatio,hitScaleStage:state.hitParameters[hitKey()]?.hitScaleStage});
  const selectedMove=()=>[...(profile?.moves||[]),...(profile?.magic||[])].find(m=>m.id===state.selection.preset);
  const paramKey=()=>`${state.selection.attack}:${state.selection.preset||'unselected'}`;
@@ -44,7 +69,19 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   else if(!panelTypes.has(row.effect.type)&&!summaryTypes.has(row.effect.type))values[key]={choice:row.effect.type==='hit'&&state.selection.dualWield?(row.compatible?'reader':'web'):'exclude'};
   else if(panelTypes.has(row.effect.type)&&(!values[key]||values[key].choice==='pending'))values[key]={choice:'web'};
  }return values;};
- const websitePanel=(source=currentPanelReport())=>calculateWebsitePanel({...profile.baseStats,...state.base},{...source,excludedEquipmentStats:currentPanelReport().excludedEquipmentStats},{equipment:profile.equipment||[]});
+ function websitePanel(source=currentPanelReport()){
+  const base={...profile.baseStats,...state.base},equipment={equipment:profile.equipment||[]};
+  const computed=calculateWebsitePanel(base,{...source,excludedEquipmentStats:currentPanelReport().excludedEquipmentStats},equipment);
+  // Keep eligible full-HP definitions to interpret past reader observations.
+  // They are not automatically applied to the current simulated condition.
+  const fullReport=retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},{...state.selection,fullHp:true});
+  const potential=calculateWebsitePanel(base,currentPanelReport(fullReport),equipment);
+  for(const [key,stat] of Object.entries(computed.stats)){
+   stat.runtimeCandidates=[...new Map([...stat.buffs,...potential.stats[key].buffs.filter(b=>b.hpCondition?.field==='fullHp')].map(b=>[b.id,b])).values()];
+   stat.runtimeConditions={fullHp:state.selection.fullHp,...(state.selection.fullHp?{lowHp:false}:{})};
+  }
+  return computed;
+ }
  function invalidate(message='数据待核对，确认后才会用于伤害计算。') {confirmed=false;onInvalidate(message);$('entryStatus').textContent=message;$('entryReviewSummary').textContent=message;}
  function saveParameter(id){state.parameters[paramKey()]={...state.parameters[paramKey()],[id]:$(id).value};save();}
  function setParameters() {
@@ -98,15 +135,17 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   const computed=websitePanel(),blessed=withAccountBlessings({...profile.baseStats,...state.base},currentPanelReport());
   return Object.fromEntries(Object.keys(SIX_STATS).map(k=>{const d=state.statDecisions[k]||{};return [k,d.choice==='reader'?readStat(k):d.choice==='website'?computed.values[k]:d.choice==='manual'?d.value:d.choice==='blessed'?blessed[k]:d.choice==='base'?state.base[k]??profile.baseStats[k]:null];}));
  }
- function currentPanelReport() {
-  const rows=(candidate||report)?.rows||[],selected=decisions(),excludedEquipmentStats=[];
+ function currentPanelReport(source=candidate||report) {
+  const rows=source?.rows||[],selected=decisions(),excludedEquipmentStats=[];
+  const sourceRows=source===candidate?compared:compareCandidates(websiteCandidates(source),readerBonuses,state.mappings,source.context);
   for(const row of compared)if(selected[decisionKey(row)]?.choice==='exclude'&&row.effect.type==='equipmentStat'&&row.effect.unit==='')excludedEquipmentStats.push({sourceId:row.sourceId,sourceName:row.sourceName,target:row.effect.target});
-  return {...(candidate||report),excludedEquipmentStats,rows:rows.map(r=>{
+  return {...source,excludedEquipmentStats,rows:rows.map(r=>{
    const effects=[],effectIndices=[];
    r.rule.effects.forEach((effect,index)=>{
-    const row=compared.find(w=>w.sourceId===r.sourceId&&w.ruleId===r.rule.id&&w.index===index);
+    const row=sourceRows.find(w=>w.sourceId===r.sourceId&&w.ruleId===r.rule.id&&w.index===index);
     const decision=row&&selected[decisionKey(row)];
-    if(decision?.choice==='exclude')return;
+    const identity={id:`${r.sourceId}:${r.rule.id}:${index}`,effect,condition:r.rule.conditions};
+    if(decision?.choice==='exclude'||state.removedEffects[effectSelectionKey(identity)])return;
     effects.push(decision?.choice==='manual'?{...effect,value:Number.isFinite(decision.value)?decision.value:NaN}:decision?.choice==='reader'?{...effect,value:row.compatible?row.reader.value:NaN}:effect);
     effectIndices.push(index);
    });
@@ -146,7 +185,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(id!=='entry'&&!readerPanelSnapshots(unit).some(s=>s.id===id))return;
   snapshotSelection=id;attackObservations={};
   invalidate('已切换读取器面板时刻，请保存并返回。');
-  onRead({battle,unit:selectedUnit(),panelOnly:true});renderReview();
+  onRead({battle,unit:selectedUnit(),panelOnly:true});save();renderReview();
  });
  function renderReview() {
   const openDetails=new Set([...document.querySelectorAll('[data-entry-details][open]')].map(el=>el.dataset.entryDetails));
@@ -204,8 +243,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function initialize() {
   initialized=true;
-  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',dualWield:false,magicCanCrit:false,specialAttack:report.context.killer===true,break:report.context.break===true,...state.selection};
-  for(const id of ['dualWield','specialAttack','break','magicCanCrit'])$(id).checked=state.selection[id]===true;
+  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',dualWield:false,fullHp:report.context.fullHp===true,specialAttack:report.context.killer===true,break:report.context.break===true,...state.selection};
+  for(const id of ['dualWield','specialAttack','break','fullHp'])$(id).checked=state.selection[id]===true;
   $('characterPanel').hidden=false;$('entryPreparation').hidden=false;$('entryReview').hidden=false;$('attackChoice').closest('label').hidden=false;$('statReference').closest('label').hidden=false;
   $('skillType').closest('label').hidden=true;
   $('attackChoice').innerHTML=ATTACK_CHOICES.map(([v,l])=>option(v,l,state.selection.attack)).join('');
@@ -219,24 +258,32 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(!next.profile)throw new Error('角色固定资料尚未带入，请刷新角色页面后重新打开。');
   if(next.profile.characterId!==characterId)throw new Error('角色固定资料与当前角色不一致。');
   const fingerprint=meaningful(next);if(fingerprint===signature)return;
-  signature=fingerprint;report=clone(next);profile=report.profile;hasApproval=false;
+  signature=fingerprint;report=clone(next);profile=report.profile;
   if(!initialized)initialize();
   invalidate('固定资料已补齐；导入读取报告后可填写参数并核对面板。');updateCandidate();
  }
  async function importFile(file) {
   if(!file)return;if(file.size>25_000_000)throw new Error('报告超过25MB，请使用读取器生成的入场JSON报告。');
-  battle=validateBattleEntry(JSON.parse(await file.text()));unit=null;attackObservations={};hasApproval=false;state.mappings={};state.statDecisions={};supplementChoices={};
+  const generation=++importGeneration;
+  let text,nextBattle,digest;
+  try{text=await file.text();if(generation!==importGeneration)return;nextBattle=validateBattleEntry(JSON.parse(text));digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));}
+  catch(err){if(generation!==importGeneration)return;throw err;}
+  if(generation!==importGeneration)return;
+  rememberReaderDraft();reportFingerprint=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+  battle=nextBattle;unit=null;
   $('entryUnit').innerHTML=option('','请选择本次测试角色','')+battle.units.map((u,i)=>option(String(i),`${u.name||'未命名'} · Unit ${u.unitId}`,'')).join('');
   $('entryFileNote').textContent=`${file.name} · ${battle.testFixture?'模拟示例，非实际战斗 · ':''}${battle.capturedAt||'时间未提供'} · ${battle.snapshotState==='partial'?'部分读取，缺项不代表没有效果':'入场报告'}。${battle.normalization?.mpThousandths?'MP已按游戏显示单位修正，原始值保留。':''}请选择正确角色；Buff清单本身不代表全部触发。`;
   if(battle.units.length===1){unit=battle.units[0];$('entryUnit').value='0';}
-  invalidate('报告已载入；已有资料已暂填，请在面板与加成核对页确认。');setParameters();snapshotSelection=defaultReaderSnapshot(unit);onRead({battle,unit:selectedUnit()});updateCandidate();
+  const restored=restoreReaderDraft();
+  invalidate('报告已载入；已有资料已暂填，请在面板与加成核对页确认。');setParameters();onRead({battle,unit:selectedUnit()});updateCandidate();
+  if(restored&&!storageSaveFailed)saveStatus('已恢复这份报告、这个角色的核对选择和面板时刻。');
  }
  $('entryReportFile').addEventListener('change',async e=>{try{await importFile(e.target.files[0]);}catch(err){invalidate(`新文件未导入：${err.message}`);}e.target.value='';});
  $('readerSkillPick').addEventListener('change',e=>{state.readerSkillMappings[`${unit?.unitId}:${paramKey()}`]=e.target.value;state.parameters[paramKey()]={...state.parameters[paramKey()],coefficient:'',skillPercent:'',skillAdd:'',skillPostAdd:''};setParameters();save();syncSelection();});
- $('entryUnit').addEventListener('change',e=>{unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;attackObservations={};hasApproval=false;state.mappings={};state.statDecisions={};supplementChoices={};invalidate('读取资料已暂填；数值差异由你决定。');setParameters();snapshotSelection=defaultReaderSnapshot(unit);onRead({battle,unit:selectedUnit()});updateCandidate();});
- $('entrySupplementReview').addEventListener('change',e=>{const b=supplements[Number(e.target.dataset.readerSupplement)];if(!b)return;supplementChoices[supplementKey(b)]=e.target.value;invalidate('读取器补充加成已更新。');renderReview();});
- for(const id of ['dualWield','magicCanCrit'])$(id).addEventListener('change',()=>{state.selection[id]=$(id).checked;save();renderReview();onSelection(selection());});
- for(const id of ['specialAttack','break'])$(id).addEventListener('change',()=>{
+ $('entryUnit').addEventListener('change',e=>{rememberReaderDraft();unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;restoreReaderDraft();invalidate('读取资料已暂填；数值差异由你决定。');setParameters();onRead({battle,unit:selectedUnit()});updateCandidate();});
+ $('entrySupplementReview').addEventListener('change',e=>{const b=supplements[Number(e.target.dataset.readerSupplement)];if(!b)return;supplementChoices[supplementKey(b)]=e.target.value;invalidate('读取器补充加成已更新。');save();renderReview();});
+ for(const id of ['dualWield'])$(id).addEventListener('change',()=>{state.selection[id]=$(id).checked;save();renderReview();onSelection(selection());});
+ for(const id of ['specialAttack','break','fullHp'])$(id).addEventListener('change',()=>{
   state.selection[id]=$(id).checked;invalidate('战斗选项已改变，按本次条件重新核对加成。');updateCandidate();
  });
  $('attackChoice').addEventListener('change',()=>{state.selection.attack=$('attackChoice').value;renderPresets(true);applyMove();invalidate('攻击方式已改变，请核对这次攻击对应的加成。');updateCandidate();});
@@ -253,7 +300,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(!remove&&!restore)return;
   if(remove){const row=compared[Number(remove.dataset.entryDelete)];if(!row)return;state.removedEffects[effectSelectionKey(row)]={sourceName:row.sourceName,effect:clone(row.effect)};}
   else delete state.removedEffects[restore.dataset.entryRestore];
-  hasApproval=false;invalidate(remove?'已删除这条加成，网站数值已重算。':'已恢复这条加成，网站数值已重算。');save();renderProfile();renderReview();
+  invalidate(remove?'已删除这条加成，网站数值已重算。':'已恢复这条加成，网站数值已重算。');save();renderProfile();renderReview();
  });
  $('entryBonusReview').addEventListener('change',e=>{
   if(e.target.dataset.entryBonusChoice==null)return;
@@ -261,7 +308,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(!group||!['web','reader','pending'].includes(choice)||choice==='reader'&&!group.canUseReader)return;
   for(const row of group.web)state.decisions[decisionKey(row)]={choice};
   for(const b of group.supplements||[])supplementChoices[supplementKey(b)]=choice==='web'?'exclude':choice;
-  hasApproval=false;invalidate();save();renderProfile();renderReview();
+  invalidate();save();renderProfile();renderReview();
  });
  const changeEffect=e=>{
   const el=e.target;
@@ -286,8 +333,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  $('entryUseWeb').addEventListener('click',()=>useBonusGroups('web'));
  $('entryUseReader').addEventListener('click',()=>useBonusGroups('reader'));
- document.querySelectorAll('[data-review-save]').forEach(el=>el.addEventListener('click',()=>{save();syncSelection(true);}));
- $('entryStatReview').addEventListener('click',e=>{const key=e.target.dataset.entryRestoreObservation;if(!key)return;delete attackObservations[key];invalidate();renderReview();});
+ document.querySelectorAll('[data-review-save]').forEach(el=>el.addEventListener('click',saveAndReturn));
+ $('entryStatReview').addEventListener('click',e=>{const key=e.target.dataset.entryRestoreObservation;if(!key)return;delete attackObservations[key];invalidate();save();renderReview();});
  $('entryUseStats').addEventListener('click',()=>{if(!unit){$('entryStatus').textContent='请先选择读取报告中的角色。';return;}for(const k of Object.keys(SIX_STATS))if(readStat(k)!=null)state.statDecisions[k]={choice:'reader'};invalidate('已选择读取器观察值；以每项标注的采样时刻为准。');save();renderReview();});
  $('entryUseWebsiteStats').addEventListener('click',()=>{if(!candidate)return;const computed=websitePanel();let count=0;for(const k of Object.keys(SIX_STATS))if(computed.values[k]!=null){state.statDecisions[k]={choice:'website'};count++;}invalidate(`已选择 ${count} 项网站计算结果；仍需确认后应用。`);save();renderReview();});
  function syncSelection(finish=false){
@@ -311,15 +358,14 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    if(refs.some(e=>e.target==='法强')&&state.selection.statReference!=='int')throw new Error('已选规则要求以法强参照；请改选法强，或把该参照规则暂不计入。');
    const defenseRefs=reviewed.rows.filter(r=>r.status==='active').flatMap(r=>r.rule.effects).filter(e=>e.type==='defenseReference');
    if(defenseRefs.some(e=>e.target==='敌方魔抗')&&state.selection.statReference!=='int')throw new Error('已选魔抗修正要求以魔抗结算；请确认属性参照或暂不计入该修正。');
-   confirmed=true;hasApproval=true;
+   confirmed=true;
    onConfirm(reviewed,{panels,panelLayers:computed.stats,selection:selection(),profile:{...clone(profile),baseStats:{...profile.baseStats,...state.base}},unitId:unit.unitId,battleId:battle.battleId,finish});
    $('entryStatus').textContent='已按你的选择同步到伤害计算器。修改采用数据会自动更新。';
    $('entryReviewSummary').textContent='已确认面板与加成，已自动带入计算器。';
-   save();
    return true;
   }catch(err){confirmed=false;$('entryStatus').textContent=err.message;$('entryReviewSummary').textContent=err.message;onInvalidate(err.message);return false;}
  }
- $('entryConfirm').addEventListener('click',()=>syncSelection(true));
+ $('entryConfirm').addEventListener('click',saveAndReturn);
  function adoptAttackObservation(sample) {
   const next=capturePanelObservation(battle,unit,sample);if(!next)return false;
   attackObservations=next;
@@ -330,9 +376,9 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(!unit||!Object.hasOwn(SIX_STATS,key)||!Number.isFinite(value)||value<0)return;
   state.statDecisions[key]={choice:'manual',value};save();invalidate('已保存手填战斗面板。');renderReview();
  }
- return {receive,selection,panelsPreview,adoptAttackObservation,setManualPanel,applySelection:syncSelection,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
-  hasApproval=false;state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};
+ return {receive,selection,panelsPreview,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
+  state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
-  if(initialized){state.selection={...state.selection,dualWield:false,magicCanCrit:false,specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break','magicCanCrit'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
+  if(initialized){state.selection={...state.selection,dualWield:false,fullHp:report.context.fullHp===true,specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break','fullHp'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
  }};
 }

@@ -1,4 +1,4 @@
-import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-buff-groups';
+import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-fullhp-save';
 /** Reusable, description-matched rule templates. No imported content is executable. */
 import { CONDITION_FIELDS } from './effect-rule-engine.mjs';
 
