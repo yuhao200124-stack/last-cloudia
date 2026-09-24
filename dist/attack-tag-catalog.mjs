@@ -432,16 +432,39 @@ export const ATTACK_TAG_CATALOG = {
             "basic:0ab71464ffb5918f:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身HP≤30%时，攻击力+20%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "濒死"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "濒死：当前HP≤最大HP的30%"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4cb37bd11ae3b17f",
@@ -486,12 +509,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "濒死（HP≤30%）时触发，每个Wave最多1次"
+          "text": "每个Wave最多触发1次"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "觉醒Buff持续40秒；回血后不立即取消"
+        },
+        {
+          "id": "low-hp-trigger",
+          "kind": "condition",
+          "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
         }
       ],
       "tagDetails": {
@@ -514,11 +542,84 @@ export const ATTACK_TAG_CATALOG = {
             "basic:4cb37bd11ae3b17f:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时触发对应效果",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-trigger",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身濒死触发觉醒后，攻击力+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身濒死触发时回复HP，回复后Buff继续持续",
+              "activationMode": "threshold-trigger",
+              "isBuff": false
+            },
+            {
+              "group": "defense-up",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身濒死触发觉醒后，防御力+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "自身濒死触发觉醒后，魔抗+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "speed-up",
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "自身濒死触发觉醒后，移动速度+2，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "只在自身进入濒死范围时触发，每个Wave最多1次。触发后Buff按各自持续时间结束，回复HP后不会立即取消；同类型Buff只计已生效的最高一项。每Wave次数限制仍单独留待标签判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "濒死"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -527,8 +628,7 @@ export const ATTACK_TAG_CATALOG = {
         "移动速度提升"
       ],
       "remainingConditions": [
-        "濒死（HP≤30%）时触发，每个Wave最多1次",
-        "觉醒Buff持续40秒；回血后不立即取消"
+        "每个Wave最多触发1次"
       ]
     },
     {
@@ -1014,7 +1114,12 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "HP越低提升越高；属于HP／濒死条件属性，不是Buff，具体变化曲线待确认"
+          "text": "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值"
+        },
+        {
+          "id": "low-hp-scaling",
+          "kind": "condition",
+          "text": "自身HP越低，属性提升越高；是随HP变化的属性加成，不是Buff，也不限于HP≤30%"
         }
       ],
       "tagDetails": {
@@ -1027,15 +1132,40 @@ export const ATTACK_TAG_CATALOG = {
             "basic:a805be70edade9bf:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP越少，属性提升越高；不按固定濒死阈值开关",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "hp-scaling",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "direction": "lower-hp-stronger",
+            "curveStatus": "unconfirmed"
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身剩余HP越低，攻击力提升越高，最高+50%；当前加成需按HP与曲线确定",
+              "activationMode": "hp-scaling",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "HP越少加成越高，属于动态属性，不是Buff；归入濒死便于查找，不代表只有HP≤30%才生效。变化曲线未确认，不能直接使用最高值。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "濒死"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "HP越低提升越高；属于HP／濒死条件属性，不是Buff，具体变化曲线待确认"
+        "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值"
       ]
     },
     {
@@ -2137,16 +2267,39 @@ export const ATTACK_TAG_CATALOG = {
             "basic:fcf4e5ad6cd07998:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身HP≤30%时，攻击力+30%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "濒死"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "濒死：当前HP≤最大HP的30%"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "86ad4fdedf4c3869",
@@ -6209,8 +6362,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 19,
-    "partial": 68,
+    "ready": 21,
+    "partial": 66,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

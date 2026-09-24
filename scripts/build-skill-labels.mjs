@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -83,11 +83,24 @@ for(const [key,view] of Object.entries(views)){
   for(const assignment of pass.assignments){
     const entry=resolved.find(entry=>entry.id===assignment.skillId),detail=entry.tagDetails[view.label];
     if(assignment.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='condition'))throw Error('Condition pass must not cover unreviewed effect tags.');
+    if(!detail.bindings?.length)throw Error('Missing condition effect bindings.');
     const permanent=detail.activationMode==='permanent-status';
-    if(!detail.bindings?.length || (permanent ? detail.trigger?.event!=='always-active' || Object.hasOwn(detail.trigger,'delaySeconds') : detail.trigger?.delaySeconds!==0))throw Error('Invalid opening trigger or permanent state.');
+    if(key==='battle-start' && (permanent ? detail.trigger?.event!=='always-active' || Object.hasOwn(detail.trigger,'delaySeconds') : detail.trigger?.delaySeconds!==0))throw Error('Invalid opening trigger or permanent state.');
+    if(key==='low-hp'){
+      const condition=detail.condition;
+      if(!['self','target-enemy','healing-target-ally'].includes(condition?.subject) || !['hp-scaling','threshold-state','threshold-trigger'].includes(condition?.mode) || condition.metric!=='current-hp-percent-of-max')throw Error('Invalid low HP condition target or mode.');
+      if(condition.mode==='hp-scaling'){
+        if(Object.hasOwn(condition,'thresholdPercent') || condition.direction!=='lower-hp-stronger' || condition.curveStatus!=='unconfirmed')throw Error('HP scaling must not become a fixed near-death threshold.');
+      }else if(condition.operator!=='lte' || !(condition.thresholdPercent>0 && condition.thresholdPercent<100))throw Error('Missing low HP threshold.');
+    }
     for(const binding of detail.bindings){
       if(!groups.has(binding.group) || !binding.summary || !binding.partIds?.length || binding.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='effect'))throw Error('Invalid opening effect binding.');
       if(permanent && (binding.lifetime!=='permanent' || Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'endsOn') || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Permanent state must have no timed expiry and must preserve same-type Buff limits.');
+      if(key==='low-hp'){
+        if(binding.activationMode!==detail.condition.mode || typeof binding.isBuff!=='boolean')throw Error('Invalid low HP effect activation.');
+        if(binding.isBuff && (detail.condition.mode!=='threshold-trigger' || !(binding.durationSeconds>0) || binding.persistsAfterHpRecovery!==true || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Triggered low HP buffs must retain their lifetime after healing.');
+        if(!binding.isBuff && Object.hasOwn(binding,'durationSeconds'))throw Error('Conditional attributes are not timed buffs.');
+      }
     }
   }
 }

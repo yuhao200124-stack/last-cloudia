@@ -82,6 +82,7 @@ export function skillLabelRows(data, catalog, edits = {}) {
       judgment: valid ? entry.judgment : 'unknown',
       assignedTags: valid ? entry.assignedTags : [],
       openingBindings: valid ? entry.tagDetails?.['战斗开始']?.bindings || [] : [],
+      conditionBindings: valid ? Object.fromEntries(entry.assignedTags.filter(tag => entry.tagDetails?.[tag]?.bindings).map(tag => [tag, entry.tagDetails[tag].bindings])) : {},
       attackSummary: valid ? entry.attackSummary : '',
       tagSummaries: valid ? entry.assignedTags.map(tag => ({tag,
         summary: entry.tagDetails?.[tag]?.summary || (tag === '攻击力' ? entry.attackSummary : ''),

@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "battle-start",
+  "activeView": "low-hp",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -341,16 +341,39 @@ export const SKILL_LABELING_CATALOG = {
             "basic:0ab71464ffb5918f:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身HP≤30%时，攻击力+20%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "濒死"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "濒死：当前HP≤最大HP的30%"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4cb37bd11ae3b17f",
@@ -395,12 +418,17 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "濒死（HP≤30%）时触发，每个Wave最多1次"
+          "text": "每个Wave最多触发1次"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "觉醒Buff持续40秒；回血后不立即取消"
+        },
+        {
+          "id": "low-hp-trigger",
+          "kind": "condition",
+          "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
         }
       ],
       "tagDetails": {
@@ -423,11 +451,84 @@ export const SKILL_LABELING_CATALOG = {
             "basic:4cb37bd11ae3b17f:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时触发对应效果",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-trigger",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身濒死触发觉醒后，攻击力+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身濒死触发时回复HP，回复后Buff继续持续",
+              "activationMode": "threshold-trigger",
+              "isBuff": false
+            },
+            {
+              "group": "defense-up",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身濒死触发觉醒后，防御力+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "自身濒死触发觉醒后，魔抗+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "speed-up",
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "自身濒死触发觉醒后，移动速度+2，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "只在自身进入濒死范围时触发，每个Wave最多1次。触发后Buff按各自持续时间结束，回复HP后不会立即取消；同类型Buff只计已生效的最高一项。每Wave次数限制仍单独留待标签判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "濒死"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -436,8 +537,7 @@ export const SKILL_LABELING_CATALOG = {
         "移动速度提升"
       ],
       "remainingConditions": [
-        "濒死（HP≤30%）时触发，每个Wave最多1次",
-        "觉醒Buff持续40秒；回血后不立即取消"
+        "每个Wave最多触发1次"
       ]
     },
     {
@@ -923,7 +1023,12 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "HP越低提升越高；属于HP／濒死条件属性，不是Buff，具体变化曲线待确认"
+          "text": "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值"
+        },
+        {
+          "id": "low-hp-scaling",
+          "kind": "condition",
+          "text": "自身HP越低，属性提升越高；是随HP变化的属性加成，不是Buff，也不限于HP≤30%"
         }
       ],
       "tagDetails": {
@@ -936,15 +1041,40 @@ export const SKILL_LABELING_CATALOG = {
             "basic:a805be70edade9bf:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP越少，属性提升越高；不按固定濒死阈值开关",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "hp-scaling",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "direction": "lower-hp-stronger",
+            "curveStatus": "unconfirmed"
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身剩余HP越低，攻击力提升越高，最高+50%；当前加成需按HP与曲线确定",
+              "activationMode": "hp-scaling",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "HP越少加成越高，属于动态属性，不是Buff；归入濒死便于查找，不代表只有HP≤30%才生效。变化曲线未确认，不能直接使用最高值。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "濒死"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "HP越低提升越高；属于HP／濒死条件属性，不是Buff，具体变化曲线待确认"
+        "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值"
       ]
     },
     {
@@ -2046,16 +2176,39 @@ export const SKILL_LABELING_CATALOG = {
             "basic:fcf4e5ad6cd07998:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身HP≤30%时，攻击力+30%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "濒死"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "濒死：当前HP≤最大HP的30%"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "86ad4fdedf4c3869",
@@ -6185,16 +6338,39 @@ export const SKILL_LABELING_CATALOG = {
             "basic:c4fb51107daf7bda:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "自身HP≤30%时，防御力+20%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "濒死"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "濒死：当前HP≤最大HP的30%"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "23dfdab660ed35dd",
@@ -6977,16 +7153,39 @@ export const SKILL_LABELING_CATALOG = {
             "basic:f5a1761625b34037:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "自身HP≤30%时，防御力+30%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "濒死"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "濒死：当前HP≤最大HP的30%"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "08fffb416a91dd55",
@@ -7528,7 +7727,12 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "HP越低提升越高；属于HP／濒死条件属性，不是Buff，具体变化曲线待确认"
+          "text": "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值"
+        },
+        {
+          "id": "low-hp-scaling",
+          "kind": "condition",
+          "text": "自身HP越低，属性提升越高；是随HP变化的属性加成，不是Buff，也不限于HP≤30%"
         }
       ],
       "tagDetails": {
@@ -7541,15 +7745,40 @@ export const SKILL_LABELING_CATALOG = {
             "basic:6edebfe26dbf6ef3:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP越少，属性提升越高；不按固定濒死阈值开关",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "hp-scaling",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "direction": "lower-hp-stronger",
+            "curveStatus": "unconfirmed"
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "自身剩余HP越低，防御力提升越高，最高+50%；当前加成需按HP与曲线确定",
+              "activationMode": "hp-scaling",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "HP越少加成越高，属于动态属性，不是Buff；归入濒死便于查找，不代表只有HP≤30%才生效。变化曲线未确认，不能直接使用最高值。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "濒死"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "HP越低提升越高；属于HP／濒死条件属性，不是Buff，具体变化曲线待确认"
+        "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值"
       ]
     },
     {
@@ -7655,12 +7884,17 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "濒死（HP≤30%）时触发，每个Wave最多1次"
+          "text": "每个Wave最多触发1次"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "魔导觉醒Buff持续40秒"
+        },
+        {
+          "id": "low-hp-trigger",
+          "kind": "condition",
+          "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
         }
       ],
       "tagDetails": {
@@ -7683,11 +7917,84 @@ export const SKILL_LABELING_CATALOG = {
             "basic:faa4c35ca794565a:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时触发对应效果",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-trigger",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "自身濒死触发魔导觉醒后，防御力+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身濒死触发时大幅回复HP，回复后Buff继续持续",
+              "activationMode": "threshold-trigger",
+              "isBuff": false
+            },
+            {
+              "group": "magic-up",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身濒死触发魔导觉醒后，魔力+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "自身濒死触发魔导觉醒后，魔抗+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "speed-up",
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "自身濒死触发魔导觉醒后，移动速度+2，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "只在自身进入濒死范围时触发，每个Wave最多1次。触发后Buff按各自持续时间结束，回复HP后不会立即取消；同类型Buff只计已生效的最高一项。每Wave次数限制仍单独留待标签判断。"
         }
       },
       "assignedTags": [
         "防御力",
-        "魔力"
+        "魔力",
+        "濒死"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -7696,8 +8003,7 @@ export const SKILL_LABELING_CATALOG = {
         "移动速度+2"
       ],
       "remainingConditions": [
-        "濒死（HP≤30%）时触发，每个Wave最多1次",
-        "魔导觉醒Buff持续40秒"
+        "每个Wave最多触发1次"
       ]
     },
     {
@@ -8205,7 +8511,12 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "HP越低提升越高；具体变化曲线待确认"
+          "text": "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值"
+        },
+        {
+          "id": "low-hp-scaling",
+          "kind": "condition",
+          "text": "自身HP越低，属性提升越高；是随HP变化的属性加成，不是Buff，也不限于HP≤30%"
         }
       ],
       "tagDetails": {
@@ -8218,10 +8529,44 @@ export const SKILL_LABELING_CATALOG = {
             "basic:c059571f370020f5:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP越少，属性提升越高；不按固定濒死阈值开关",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "hp-scaling",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "direction": "lower-hp-stronger",
+            "curveStatus": "unconfirmed"
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "自身剩余HP越低，防御力提升越高，最高+15%",
+              "activationMode": "hp-scaling",
+              "isBuff": false
+            },
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身剩余HP越低，魔抗提升越高，最高+15%；常驻特技伤害+10%另行判断",
+              "activationMode": "hp-scaling",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "HP越少加成越高，属于动态属性，不是Buff；归入濒死便于查找，不代表只有HP≤30%才生效。变化曲线未确认，不能直接使用最高值。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "濒死"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -8229,7 +8574,7 @@ export const SKILL_LABELING_CATALOG = {
         "魔抗随剩余HP降低而提高，最高+15%"
       ],
       "remainingConditions": [
-        "HP越低提升越高；具体变化曲线待确认"
+        "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值"
       ]
     },
     {
@@ -9335,16 +9680,39 @@ export const SKILL_LABELING_CATALOG = {
             "basic:612fb4bdc81227cb:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "自身HP≤30%时，魔力+20%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "濒死"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "濒死（HP≤30%）时生效；离开该范围失效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "da082e366781c43e",
@@ -10149,16 +10517,39 @@ export const SKILL_LABELING_CATALOG = {
             "basic:9807d98320c6a014:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "自身HP≤30%时，魔力+30%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "濒死"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "濒死（HP≤30%）时生效；离开该范围失效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "209e4252243d4679",
@@ -10259,15 +10650,39 @@ export const SKILL_LABELING_CATALOG = {
             "basic:f62b7d309ec81f27:1"
           ],
           "relatedSkillIds": []
+        },
+        "濒死": {
+          "summary": "自身HP越少，属性提升越高；不按固定濒死阈值开关",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "hp-scaling",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "direction": "lower-hp-stronger",
+            "curveStatus": "unconfirmed"
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "自身剩余HP越低，魔力提升越高，最高+50%；当前加成需按HP与曲线确定",
+              "activationMode": "hp-scaling",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "HP越少加成越高，属于动态属性，不是Buff；归入濒死便于查找，不代表只有HP≤30%才生效。变化曲线未确认，不能直接使用最高值。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "濒死"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "随自身剩余HP变化的条件属性加成，不是Buff",
         "HP与魔力提升量的变化公式待确认，不能直接按最高50%计入"
       ]
     },
@@ -19478,6 +19893,905 @@ export const SKILL_LABELING_CATALOG = {
         "石墙2：受到雷属性攻击的伤害-35%"
       ],
       "remainingConditions": []
+    },
+    {
+      "id": "6a0470cbfdb54d14",
+      "name": "静暖",
+      "url": "https://altema.jp/lastcloudia/gino/116",
+      "text": "濒死时，魔抗+20%。",
+      "notes": "濒死指当前HP为最大HP的30%及以下；离开该HP范围时不再满足条件。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身HP≤30%时，魔抗+20%"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP≤30%时，魔抗+20%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身HP≤30%时，魔抗+20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "70ba6508f2c7ff23",
+      "name": "加速",
+      "url": "https://altema.jp/lastcloudia/gino/117",
+      "text": "濒死时，移动速度提升。",
+      "notes": "HP在30%及以下时，移动速度+2；不是SCT恢复速度提升。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身HP≤30%时，移动速度+2；不是SCT恢复速度"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "speed-up",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP≤30%时，移动速度+2；不是SCT恢复速度",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身HP≤30%时，移动速度+2；不是SCT恢复速度"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "ecfc5e235fabef1a",
+      "name": "玛娜的加护",
+      "url": "https://altema.jp/lastcloudia/gino/219",
+      "text": "当濒死时，保护、魔法屏障、速度和再生效果会自动激活一次。",
+      "notes": "HP降至30%及以下时触发，每个Wave最多1次。自身受到物理、魔法伤害各-20%，移动速度+2，持续40秒；再生每6秒回复HP，持续30秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身濒死触发保护Buff：受到物理伤害-20%，持续40秒"
+        },
+        {
+          "id": "low-hp-effect-2",
+          "kind": "effect",
+          "text": "自身濒死触发魔法屏障Buff：受到魔法伤害-20%，持续40秒"
+        },
+        {
+          "id": "low-hp-effect-3",
+          "kind": "effect",
+          "text": "自身濒死触发速度Buff：移动速度+2，持续40秒"
+        },
+        {
+          "id": "low-hp-effect-4",
+          "kind": "effect",
+          "text": "自身濒死触发再生Buff：每6秒回复HP，持续30秒"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "每个Wave最多触发1次"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时触发对应效果",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-trigger",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身濒死触发保护Buff：受到物理伤害-20%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "low-hp-effect-2"
+              ],
+              "summary": "自身濒死触发魔法屏障Buff：受到魔法伤害-20%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "speed-up",
+              "partIds": [
+                "low-hp-effect-3"
+              ],
+              "summary": "自身濒死触发速度Buff：移动速度+2，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "hp-regen",
+              "partIds": [
+                "low-hp-effect-4"
+              ],
+              "summary": "自身濒死触发再生Buff：每6秒回复HP，持续30秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 30,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "只在自身进入濒死范围时触发，每个Wave最多1次。触发后Buff按各自持续时间结束，回复HP后不会立即取消；同类型Buff只计已生效的最高一项。每Wave次数限制仍单独留待标签判断。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身濒死触发保护Buff：受到物理伤害-20%，持续40秒",
+        "自身濒死触发魔法屏障Buff：受到魔法伤害-20%，持续40秒",
+        "自身濒死触发速度Buff：移动速度+2，持续40秒",
+        "自身濒死触发再生Buff：每6秒回复HP，持续30秒"
+      ],
+      "remainingConditions": [
+        "每个Wave最多触发1次"
+      ]
+    },
+    {
+      "id": "b709d054e274c5ce",
+      "name": "咏歌",
+      "url": "https://altema.jp/lastcloudia/gino/523",
+      "text": "濒死时，魔法咏唱速度+20%。",
+      "notes": "濒死指当前HP为最大HP的30%及以下；离开该HP范围时不再满足条件。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身HP≤30%时，魔法咏唱速度+20%"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "cast-speed",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP≤30%时，魔法咏唱速度+20%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身HP≤30%时，魔法咏唱速度+20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "dd2669fcbcbc5696",
+      "name": "逃足",
+      "url": "https://altema.jp/lastcloudia/gino/615",
+      "text": "濒死时，移动速度提升。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身濒死时移动速度提升，具体提升量待确认"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "speed-up",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身濒死时移动速度提升，具体提升量待确认",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身濒死时移动速度提升，具体提升量待确认"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "b6f2ae8c19bf5c76",
+      "name": "狼魂",
+      "url": "https://altema.jp/lastcloudia/gino/682",
+      "text": "治疗濒死的我方角色时，HP恢复量+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "治疗濒死的友方角色时，该次HP回复量+30%；判断接受治疗者的HP"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "接受治疗的友方角色HP≤最大HP的30%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "接受治疗的友方角色HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "healing-target-ally",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "healing-target-ally",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "heal-low-hp-ally",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "治疗濒死的友方角色时，该次HP回复量+30%；判断接受治疗者的HP",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断接受治疗的友方角色的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "治疗濒死的友方角色时，该次HP回复量+30%；判断接受治疗者的HP"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "1f5b1ff3daa03f19",
+      "name": "被创造的生命",
+      "url": "https://altema.jp/lastcloudia/gino/1022",
+      "text": "新增魔法生物类型。\n濒死时，生命值大幅恢复（每波最多恢复一次）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身濒死时大幅回复HP"
+        },
+        {
+          "id": "other-effect-1",
+          "kind": "effect",
+          "text": "类型追加“魔法生物”"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "每个Wave最多回复1次"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时触发对应效果",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-trigger",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身濒死时大幅回复HP",
+              "activationMode": "threshold-trigger",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "只在自身进入濒死范围时触发，每个Wave最多1次。本项是即时HP回复。每Wave次数限制仍单独留待标签判断。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身濒死时大幅回复HP",
+        "类型追加“魔法生物”"
+      ],
+      "remainingConditions": [
+        "每个Wave最多回复1次"
+      ]
+    },
+    {
+      "id": "719fae43ca4bfa72",
+      "name": "对生命的渴望",
+      "url": "https://altema.jp/lastcloudia/gino/1153",
+      "text": "当使用者濒死时，从盟友处获得的主动技能的生命值 恢复量增加 30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身濒死时，从盟友主动技能获得的HP回复量+30%"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "incoming-healing",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身濒死时，从盟友主动技能获得的HP回复量+30%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身濒死时，从盟友主动技能获得的HP回复量+30%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "e4d78aa3f37004bd",
+      "name": "将军了",
+      "url": "https://altema.jp/lastcloudia/gino/1204",
+      "text": "对濒死敌人，特技伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "对濒死敌人的特技伤害+15%；判断目标敌人的HP"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "目标敌人HP≤最大HP的30%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "目标敌人HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "target-enemy",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "target-enemy",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "enemy-skill-damage",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "对濒死敌人的特技伤害+15%；判断目标敌人的HP",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断目标敌人的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对濒死敌人的特技伤害+15%；判断目标敌人的HP"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "f5f9e17d5670e06a",
+      "name": "暴击艺术",
+      "url": "https://altema.jp/lastcloudia/gino/1264",
+      "text": "HP≤25%时，必杀伤害+30%、伤害上限+10,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身HP≤25%时，必杀伤害+30%"
+        },
+        {
+          "id": "low-hp-effect-2",
+          "kind": "effect",
+          "text": "自身HP≤25%时，必杀伤害上限+10,000"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的25%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的25%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 25
+          },
+          "bindings": [
+            {
+              "group": "ultimate-damage",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP≤25%时，必杀伤害+30%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "low-hp-effect-2"
+              ],
+              "summary": "自身HP≤25%时，必杀伤害上限+10,000",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例，本技能明确要求25%，不能按30%处理；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身HP≤25%时，必杀伤害+30%",
+        "自身HP≤25%时，必杀伤害上限+10,000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "0e3dba96957b5563",
+      "name": "死中求生",
+      "url": "https://altema.jp/lastcloudia/gino/1349",
+      "text": "濒死时，特技伤害+20%。",
+      "notes": "濒死指当前HP为最大HP的30%及以下；离开该HP范围时不再满足条件。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身HP≤30%时，特技伤害+20%"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "skill-damage",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP≤30%时，特技伤害+20%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身HP≤30%时，特技伤害+20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "f28fd4eede5caea4",
+      "name": "女王乱舞",
+      "url": "https://altema.jp/lastcloudia/gino/1427",
+      "text": "濒死时发动特技，伤害+30%、伤害上限+15,000；仅装备一把武器时，伤害上限提升至+30,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身濒死时发动特技，特技伤害+30%"
+        },
+        {
+          "id": "low-hp-effect-2",
+          "kind": "effect",
+          "text": "自身濒死时发动特技，伤害上限+15,000；仅一把武器时改为+30,000（替代15,000）"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时生效"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器时，特技伤害上限改为+30,000；不与原+15,000相加"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "skill-damage",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身濒死时发动特技，特技伤害+30%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            },
+            {
+              "group": "skill-cap",
+              "partIds": [
+                "low-hp-effect-2"
+              ],
+              "summary": "自身濒死时发动特技，伤害上限+15,000；仅一把武器时改为+30,000（替代15,000）",
+              "activationMode": "threshold-state",
+              "isBuff": false,
+              "singleWeaponCapReplacesBase": true
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身濒死时发动特技，特技伤害+30%",
+        "自身濒死时发动特技，伤害上限+15,000；仅一把武器时改为+30,000（替代15,000）"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器时，特技伤害上限改为+30,000；不与原+15,000相加"
+      ]
+    },
+    {
+      "id": "cf54afaf524eaef4",
+      "name": "巫女的祈祷",
+      "url": "https://altema.jp/lastcloudia/gino/1446",
+      "text": "受到敌人物理、魔法攻击的伤害-10%；自身濒死时，从我方角色的主动技能获得的HP恢复量+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "自身濒死时，从我方角色主动技能获得的HP回复量+15%"
+        },
+        {
+          "id": "other-effect-1",
+          "kind": "effect",
+          "text": "受到敌人物理、魔法攻击的伤害-10%（常驻，不受濒死条件限制）"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "自身HP≤最大HP的30%时生效"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "自身HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "incoming-healing",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身濒死时，从我方角色主动技能获得的HP回复量+15%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身濒死时，从我方角色主动技能获得的HP回复量+15%",
+        "受到敌人物理、魔法攻击的伤害-10%（常驻，不受濒死条件限制）"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "2832becd6721150f",
+      "name": "致命撕裂者",
+      "url": "https://altema.jp/lastcloudia/gino/1744",
+      "text": "当只装备一把武器时，对濒死敌人的物理攻击伤害增加 30%，伤害上限增加 15,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "low-hp-effect-1",
+          "kind": "effect",
+          "text": "仅装备一把武器时，对濒死敌人的物理攻击伤害+30%"
+        },
+        {
+          "id": "low-hp-effect-2",
+          "kind": "effect",
+          "text": "仅装备一把武器时，对濒死敌人的物理攻击伤害上限+15,000"
+        },
+        {
+          "id": "low-hp-condition",
+          "kind": "condition",
+          "text": "目标敌人HP≤最大HP的30%时生效"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "仅装备一把武器"
+        }
+      ],
+      "tagDetails": {
+        "濒死": {
+          "summary": "目标敌人HP≤最大HP的30%时生效",
+          "relation": "low-hp-condition",
+          "target": "target-enemy",
+          "condition": {
+            "mode": "threshold-state",
+            "subject": "target-enemy",
+            "metric": "current-hp-percent-of-max",
+            "operator": "lte",
+            "thresholdPercent": 30
+          },
+          "bindings": [
+            {
+              "group": "enemy-physical-damage",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "仅装备一把武器时，对濒死敌人的物理攻击伤害+30%",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            },
+            {
+              "group": "enemy-physical-cap",
+              "partIds": [
+                "low-hp-effect-2"
+              ],
+              "summary": "仅装备一把武器时，对濒死敌人的物理攻击伤害上限+15,000",
+              "activationMode": "threshold-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "判断目标敌人的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        }
+      },
+      "assignedTags": [
+        "濒死"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "仅装备一把武器时，对濒死敌人的物理攻击伤害+30%",
+        "仅装备一把武器时，对濒死敌人的物理攻击伤害上限+15,000"
+      ],
+      "remainingConditions": [
+        "仅装备一把武器"
+      ]
     }
   ],
   "views": {
@@ -19576,8 +20890,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 19,
-        "partial": 68,
+        "ready": 21,
+        "partial": 66,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -19661,8 +20975,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 70,
         "notRelatedUnique": 865,
-        "ready": 12,
-        "partial": 58,
+        "ready": 14,
+        "partial": 56,
         "unknown": 0,
         "previousBasicDefenseUnique": 64,
         "additionalRelatedUnique": 6
@@ -19767,8 +21081,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 51,
         "notRelatedUnique": 884,
-        "ready": 17,
-        "partial": 34,
+        "ready": 19,
+        "partial": 32,
         "unknown": 0,
         "previousBasicMagicUnique": 43,
         "additionalRelatedUnique": 8
@@ -20228,12 +21542,76 @@ export const SKILL_LABELING_CATALOG = {
         "790933563ebc27aa",
         "6c011f9fec60b9b2"
       ],
+      "scopeDescription": "战斗开始包含开场触发和永久获得的状态，攻击力、魔力等分别列出，持续时间分别注明。同一技能可出现在多组，总数按技能去重；永久与限时的同类型Buff只计已生效的最高一项。",
       "counts": {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
         "ready": 18,
         "partial": 99,
+        "unknown": 0
+      }
+    },
+    "low-hp": {
+      "label": "濒死",
+      "childKeys": [
+        "low-hp-attack-up",
+        "low-hp-defense-up",
+        "low-hp-magic-up",
+        "low-hp-mnd-up",
+        "low-hp-skill-damage",
+        "low-hp-skill-cap",
+        "low-hp-ultimate-damage",
+        "low-hp-ultimate-cap",
+        "low-hp-physical-reduction",
+        "low-hp-magic-reduction",
+        "low-hp-speed-up",
+        "low-hp-cast-speed",
+        "low-hp-hp-heal",
+        "low-hp-hp-regen",
+        "low-hp-incoming-healing",
+        "low-hp-heal-low-hp-ally",
+        "low-hp-enemy-skill-damage",
+        "low-hp-enemy-physical-damage",
+        "low-hp-enemy-physical-cap"
+      ],
+      "overviewLabel": "全部濒死效果（分组）",
+      "separateSections": true,
+      "displayOrder": [
+        "0ab71464ffb5918f",
+        "c4fb51107daf7bda",
+        "612fb4bdc81227cb",
+        "6a0470cbfdb54d14",
+        "70ba6508f2c7ff23",
+        "4cb37bd11ae3b17f",
+        "ecfc5e235fabef1a",
+        "a805be70edade9bf",
+        "f5a1761625b34037",
+        "b709d054e274c5ce",
+        "fcf4e5ad6cd07998",
+        "dd2669fcbcbc5696",
+        "b6f2ae8c19bf5c76",
+        "6edebfe26dbf6ef3",
+        "faa4c35ca794565a",
+        "1f5b1ff3daa03f19",
+        "9807d98320c6a014",
+        "719fae43ca4bfa72",
+        "f62b7d309ec81f27",
+        "e4d78aa3f37004bd",
+        "f5f9e17d5670e06a",
+        "0e3dba96957b5563",
+        "c059571f370020f5",
+        "f28fd4eede5caea4",
+        "cf54afaf524eaef4",
+        "2832becd6721150f"
+      ],
+      "scopeDescription": "濒死和“HP越少、效果越强”放在此页，各种效果分别列组。自身、敌人和接受治疗者的HP条件分别判断；一般濒死为HP≤30%，明确写25%的技能按25%。HP越少型不受固定30%开关限制，最高值不能直接套用。触发后的Buff保留各自持续时间，回血后不会立即失效。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 26,
+        "notRelatedUnique": 909,
+        "ready": 6,
+        "partial": 20,
         "unknown": 0
       }
     },
@@ -21364,6 +22742,351 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "low-hp-attack-up": {
+      "label": "攻击力增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "attack-up",
+      "displayOrder": [
+        "0ab71464ffb5918f",
+        "4cb37bd11ae3b17f",
+        "a805be70edade9bf",
+        "fcf4e5ad6cd07998"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 2,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "low-hp-defense-up": {
+      "label": "防御力增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "defense-up",
+      "displayOrder": [
+        "c4fb51107daf7bda",
+        "4cb37bd11ae3b17f",
+        "f5a1761625b34037",
+        "6edebfe26dbf6ef3",
+        "faa4c35ca794565a",
+        "c059571f370020f5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 2,
+        "partial": 4,
+        "unknown": 0
+      }
+    },
+    "low-hp-magic-up": {
+      "label": "魔力增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "magic-up",
+      "displayOrder": [
+        "612fb4bdc81227cb",
+        "faa4c35ca794565a",
+        "9807d98320c6a014",
+        "f62b7d309ec81f27"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 2,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "low-hp-mnd-up": {
+      "label": "魔抗增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "mnd-up",
+      "displayOrder": [
+        "6a0470cbfdb54d14",
+        "4cb37bd11ae3b17f",
+        "faa4c35ca794565a",
+        "c059571f370020f5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 0,
+        "partial": 4,
+        "unknown": 0
+      }
+    },
+    "low-hp-skill-damage": {
+      "label": "特技伤害增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "skill-damage",
+      "displayOrder": [
+        "0e3dba96957b5563",
+        "f28fd4eede5caea4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "low-hp-skill-cap": {
+      "label": "特技伤害上限增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "skill-cap",
+      "displayOrder": [
+        "f28fd4eede5caea4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-ultimate-damage": {
+      "label": "必杀伤害增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "ultimate-damage",
+      "displayOrder": [
+        "f5f9e17d5670e06a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-ultimate-cap": {
+      "label": "必杀伤害上限增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "ultimate-cap",
+      "displayOrder": [
+        "f5f9e17d5670e06a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-physical-reduction": {
+      "label": "受到物理伤害减少",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "physical-reduction",
+      "displayOrder": [
+        "ecfc5e235fabef1a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-magic-reduction": {
+      "label": "受到魔法伤害减少",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "magic-reduction",
+      "displayOrder": [
+        "ecfc5e235fabef1a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-speed-up": {
+      "label": "移动速度增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "speed-up",
+      "displayOrder": [
+        "70ba6508f2c7ff23",
+        "4cb37bd11ae3b17f",
+        "ecfc5e235fabef1a",
+        "dd2669fcbcbc5696",
+        "faa4c35ca794565a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 0,
+        "partial": 5,
+        "unknown": 0
+      }
+    },
+    "low-hp-cast-speed": {
+      "label": "魔法咏唱速度增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "cast-speed",
+      "displayOrder": [
+        "b709d054e274c5ce"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-hp-heal": {
+      "label": "HP回复",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "hp-heal",
+      "displayOrder": [
+        "4cb37bd11ae3b17f",
+        "faa4c35ca794565a",
+        "1f5b1ff3daa03f19"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "low-hp-hp-regen": {
+      "label": "HP持续回复",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "hp-regen",
+      "displayOrder": [
+        "ecfc5e235fabef1a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-incoming-healing": {
+      "label": "自身受到的主动技能回复量增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "incoming-healing",
+      "displayOrder": [
+        "719fae43ca4bfa72",
+        "cf54afaf524eaef4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "low-hp-heal-low-hp-ally": {
+      "label": "治疗濒死友方的回复量增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "heal-low-hp-ally",
+      "displayOrder": [
+        "b6f2ae8c19bf5c76"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-enemy-skill-damage": {
+      "label": "对濒死敌人的特技伤害增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "enemy-skill-damage",
+      "displayOrder": [
+        "e4d78aa3f37004bd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-enemy-physical-damage": {
+      "label": "对濒死敌人的物理伤害增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "enemy-physical-damage",
+      "displayOrder": [
+        "2832becd6721150f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "low-hp-enemy-physical-cap": {
+      "label": "对濒死敌人的物理伤害上限增加",
+      "parent": "low-hp",
+      "conditionTag": "濒死",
+      "effectGroup": "enemy-physical-cap",
+      "displayOrder": [
+        "2832becd6721150f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -21717,14 +23440,28 @@ export const SKILL_LABELING_CATALOG = {
         "5fae0db345fcff39",
         "a9028de3be35cf4b",
         "e4676d68a23621cf",
-        "6c011f9fec60b9b2"
+        "6c011f9fec60b9b2",
+        "6a0470cbfdb54d14",
+        "70ba6508f2c7ff23",
+        "ecfc5e235fabef1a",
+        "b709d054e274c5ce",
+        "dd2669fcbcbc5696",
+        "b6f2ae8c19bf5c76",
+        "1f5b1ff3daa03f19",
+        "719fae43ca4bfa72",
+        "e4d78aa3f37004bd",
+        "f5f9e17d5670e06a",
+        "0e3dba96957b5563",
+        "f28fd4eede5caea4",
+        "cf54afaf524eaef4",
+        "2832becd6721150f"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 351,
-        "notRelatedUnique": 584,
-        "ready": 64,
-        "partial": 287,
+        "relatedUnique": 365,
+        "notRelatedUnique": 570,
+        "ready": 70,
+        "partial": 295,
         "unknown": 0
       }
     }
