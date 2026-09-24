@@ -667,16 +667,39 @@ export const ATTACK_TAG_CATALOG = {
             "basic:59da270118efac4f:1"
           ],
           "relatedSkillIds": []
+        },
+        "满HP": {
+          "summary": "自身当前HP等于最大HP时生效；不满HP时失效",
+          "relation": "full-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "full-hp-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身满HP时，攻击力+20%",
+              "activationMode": "full-hp-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "满HP"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "满HP时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "1a101f308e1eaae6",
@@ -6362,8 +6385,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 21,
-    "partial": 66,
+    "ready": 22,
+    "partial": 65,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

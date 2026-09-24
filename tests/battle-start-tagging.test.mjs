@@ -31,7 +31,7 @@ test('opening pass audits the full 935-skill library, including previously untag
  assert.deepEqual(numbers('battle-start').filter(n=>!permanentNumbers.includes(n)),[102,103,104,105,164,201,203,207,208,210,214,234,243,256,305,324,353,358,381,390,402,431,460,471,473,508,512,524,560,592,620,627,639,649,692,696,699,746,830,831,851,859,867,886,906,916,984,992,994,1009,1028,1066,1074,1092,1103,1144,1205,1231,1241,1256,1365,1378,1425,1432,1459,1462,1482,1604,1605,1616,1629,1674,1693,1706,1747,1753,1776,1799,1801,1802,1812,1813,1873,1879,1884,1941,1954,1981,1987,1988,2016]);
  const newEntries=opening.entries.filter(e=>e.assignedTags.length===1);
  assert.equal(newEntries.length,70);assert(newEntries.every(e=>e.assignedTags[0]==='战斗开始'));
- assert.equal(catalog.views.all.counts.relatedUnique,365);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(catalog.views.all.counts.relatedUnique,369);assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('attack and magic opening clauses occupy different groups while compound skills share stable labels',()=>{
@@ -48,7 +48,7 @@ test('attack and magic opening clauses occupy different groups while compound sk
  const union=new Set(opening.childKeys.flatMap(k=>labelingView(catalog,k).entries.map(e=>e.id)));
  assert.deepEqual([...union].sort(),opening.entries.map(e=>e.id).sort());
  assert.equal(opening.childKeys.length,59);
- assert.equal(catalog.views.all.counts.ready,70);assert.equal(catalog.views.all.counts.partial,295);
+ assert.equal(catalog.views.all.counts.ready,72);assert.equal(catalog.views.all.counts.partial,297);
 });
 
 test('opening grouping follows its own clause, never passive stats, comparison operands, delayed damage or a maximum',()=>{
@@ -106,7 +106,7 @@ test('opening overview separates effect tables, counts unique skills and preserv
  const {get,click}=page();
  assert.match(get('#labelCoverage').textContent,/935.*117.*818/);assert.match(get('#judgmentSummary').textContent,/18.*99.*0/);
  assert.match(get('#labelResultCount').textContent,/117 \/ 117/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,12);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,13);
  assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,60);
  const sections=get('#labelTable').innerHTML.split('<section ').slice(1);
  assert.equal(sections.length,59);
@@ -158,7 +158,7 @@ test('permanent named statuses are the exact user-approved extension and retain 
  assert.equal(catalog.entries.filter(e=>e.tagDetails['战斗开始']?.activationMode==='permanent-status' && e.assignedTags.length===1).length,19);
  assert.deepEqual(permanent.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[106,108,636,969,1088,1221,1768]);
  assert.equal(registry.tagPasses.filter(p=>p.tag==='战斗开始').length,1);
- assert.equal(registry.tagPasses.length,16);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,17);assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('permanent effect groups preserve stats, HP caps, speed, recovery and self-only elemental walls separately',()=>{

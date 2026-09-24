@@ -24,8 +24,8 @@ test('HP attribute pass audits the full library and includes all 25 maximum-HP m
 
 test('HP attribute tags do not cover healing, recovery caps, current-HP costs/loss or full/low-HP conditions',()=>{
  for(const n of [29,34,110,113,114,118,119,133,153,172,183,184,219,237,267,346,499,788,890,1022,1164,1257,1264,1390,1537,1548,1563,1779,1816,1839,1873,1914,1982])assert(!entry(n),source(n).name);
- assert.equal(catalog.entries.find(e=>e.id===source(119).id).judgment,'partial');
- assert.deepEqual(catalog.entries.find(e=>e.id===source(119).id).remainingConditions,['满HP时生效']);
+ assert.equal(catalog.entries.find(e=>e.id===source(119).id).judgment,'ready');
+ assert.deepEqual(catalog.entries.find(e=>e.id===source(119).id).remainingConditions,[]);
  for(const n of [353,402,432,666,867,955,967,1221,1768])assert.match(entry(n).tagDetails['生命力'].summary,/固定\+/);
  assert.match(entry(1651).tagDetails['生命力'].summary,/HP上限-15%/);
  assert.equal(entry(1651).judgment,'partial');
@@ -41,7 +41,7 @@ test('HP merges earlier attribute tags, completes six compounds, and leaves othe
  assert.equal(entry(402).judgment,'partial');assert.deepEqual(entry(402).remainingConditions,[]);
  assert.deepEqual(entry(402).remainingEffects,['梅蒂斯：魔抗+20%','加速：SCT恢复速度+25%']);
  for(const n of [387,796])for(const key of ['attack',...(n===796?['defense']:[])])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
- const allView=labelingView(catalog,'all');assert.equal(allView.entries.length,365);assert.equal(allView.counts.ready,70);assert.equal(allView.counts.partial,295);
+ const allView=labelingView(catalog,'all');assert.equal(allView.entries.length,369);assert.equal(allView.counts.ready,72);assert.equal(allView.counts.partial,297);
  for(const key of ['all','attack','defense','hp','magic','mp','physical']){
   const rows=skillLabelRows(data,labelingView(catalog,key));const rank={ready:0,partial:1,unknown:2};
   assert(rows.every((r,i)=>!i||rank[rows[i-1].judgment]<=rank[r.judgment]));

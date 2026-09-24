@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -93,6 +93,10 @@ for(const [key,view] of Object.entries(views)){
         if(Object.hasOwn(condition,'thresholdPercent') || condition.direction!=='lower-hp-stronger' || condition.curveStatus!=='unconfirmed')throw Error('HP scaling must not become a fixed near-death threshold.');
       }else if(condition.operator!=='lte' || !(condition.thresholdPercent>0 && condition.thresholdPercent<100))throw Error('Missing low HP threshold.');
     }
+    if(key==='full-hp'){
+      const condition=detail.condition;
+      if(condition?.mode!=='full-hp-state' || condition.subject!=='self' || condition.metric!=='current-hp-percent-of-max' || condition.operator!=='eq' || condition.thresholdPercent!==100)throw Error('Full HP requires current HP equal to maximum HP.');
+    }
     for(const binding of detail.bindings){
       if(!groups.has(binding.group) || !binding.summary || !binding.partIds?.length || binding.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='effect'))throw Error('Invalid opening effect binding.');
       if(permanent && (binding.lifetime!=='permanent' || Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'endsOn') || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Permanent state must have no timed expiry and must preserve same-type Buff limits.');
@@ -101,6 +105,7 @@ for(const [key,view] of Object.entries(views)){
         if(binding.isBuff && (detail.condition.mode!=='threshold-trigger' || !(binding.durationSeconds>0) || binding.persistsAfterHpRecovery!==true || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Triggered low HP buffs must retain their lifetime after healing.');
         if(!binding.isBuff && Object.hasOwn(binding,'durationSeconds'))throw Error('Conditional attributes are not timed buffs.');
       }
+      if(key==='full-hp' && (binding.activationMode!=='full-hp-state' || binding.isBuff!==false || Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'persistsAfterHpRecovery')))throw Error('Full HP bonuses are current-state conditions, not timed buffs.');
     }
   }
 }

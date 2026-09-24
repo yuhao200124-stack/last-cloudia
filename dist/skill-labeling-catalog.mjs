@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "low-hp",
+  "activeView": "full-hp",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -576,16 +576,39 @@ export const SKILL_LABELING_CATALOG = {
             "basic:59da270118efac4f:1"
           ],
           "relatedSkillIds": []
+        },
+        "满HP": {
+          "summary": "自身当前HP等于最大HP时生效；不满HP时失效",
+          "relation": "full-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "full-hp-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身满HP时，攻击力+20%",
+              "activationMode": "full-hp-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "满HP"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "满HP时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "1a101f308e1eaae6",
@@ -9743,16 +9766,39 @@ export const SKILL_LABELING_CATALOG = {
             "basic:da082e366781c43e:1"
           ],
           "relatedSkillIds": []
+        },
+        "满HP": {
+          "summary": "自身当前HP等于最大HP时生效；不满HP时失效",
+          "relation": "full-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "full-hp-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "自身满HP时，魔力+20%",
+              "activationMode": "full-hp-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "满HP"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "满HP时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "240bff829bf6cbe6",
@@ -20792,6 +20838,222 @@ export const SKILL_LABELING_CATALOG = {
       "remainingConditions": [
         "仅装备一把武器"
       ]
+    },
+    {
+      "id": "386458aa75f9df1d",
+      "name": "飞影",
+      "url": "https://altema.jp/lastcloudia/gino/121",
+      "text": "HP达到最大值时，移动速度提升。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "full-hp-effect",
+          "kind": "effect",
+          "text": "自身满HP时，移动速度提升，具体提升量待确认"
+        },
+        {
+          "id": "full-hp",
+          "kind": "condition",
+          "text": "自身当前HP等于最大HP时生效"
+        }
+      ],
+      "tagDetails": {
+        "满HP": {
+          "summary": "自身当前HP等于最大HP时生效；不满HP时失效",
+          "relation": "full-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "full-hp-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "speed-up",
+              "partIds": [
+                "full-hp-effect"
+              ],
+              "summary": "自身满HP时，移动速度提升，具体提升量待确认",
+              "activationMode": "full-hp-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
+        }
+      },
+      "assignedTags": [
+        "满HP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身满HP时，移动速度提升，具体提升量待确认"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "ccfbbcc9f91d8332",
+      "name": "锐气",
+      "url": "https://altema.jp/lastcloudia/gino/237",
+      "text": "HP满时，暴击率+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "full-hp-effect",
+          "kind": "effect",
+          "text": "自身满HP时，暴击率+10%"
+        },
+        {
+          "id": "full-hp",
+          "kind": "condition",
+          "text": "自身当前HP等于最大HP时生效"
+        }
+      ],
+      "tagDetails": {
+        "满HP": {
+          "summary": "自身当前HP等于最大HP时生效；不满HP时失效",
+          "relation": "full-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "full-hp-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "full-hp-effect"
+              ],
+              "summary": "自身满HP时，暴击率+10%",
+              "activationMode": "full-hp-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
+        }
+      },
+      "assignedTags": [
+        "满HP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身满HP时，暴击率+10%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "0599f84fed5320a1",
+      "name": "云耀",
+      "url": "https://altema.jp/lastcloudia/gino/843",
+      "text": "HP达到最大值时，特技伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "full-hp-effect",
+          "kind": "effect",
+          "text": "自身满HP时，特技伤害+20%"
+        },
+        {
+          "id": "full-hp",
+          "kind": "condition",
+          "text": "自身当前HP等于最大HP时生效"
+        }
+      ],
+      "tagDetails": {
+        "满HP": {
+          "summary": "自身当前HP等于最大HP时生效；不满HP时失效",
+          "relation": "full-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "full-hp-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "skill-damage",
+              "partIds": [
+                "full-hp-effect"
+              ],
+              "summary": "自身满HP时，特技伤害+20%",
+              "activationMode": "full-hp-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
+        }
+      },
+      "assignedTags": [
+        "满HP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身满HP时，特技伤害+20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "483798470761efdf",
+      "name": "邂逅",
+      "url": "https://altema.jp/lastcloudia/gino/1448",
+      "text": "HP达到最大值时，特技伤害上限+1,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "full-hp-effect",
+          "kind": "effect",
+          "text": "自身满HP时，特技伤害上限+1,500"
+        },
+        {
+          "id": "full-hp",
+          "kind": "condition",
+          "text": "自身当前HP等于最大HP时生效"
+        }
+      ],
+      "tagDetails": {
+        "满HP": {
+          "summary": "自身当前HP等于最大HP时生效；不满HP时失效",
+          "relation": "full-hp-condition",
+          "target": "self",
+          "condition": {
+            "mode": "full-hp-state",
+            "subject": "self",
+            "metric": "current-hp-percent-of-max",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "skill-cap",
+              "partIds": [
+                "full-hp-effect"
+              ],
+              "summary": "自身满HP时，特技伤害上限+1,500",
+              "activationMode": "full-hp-state",
+              "isBuff": false
+            }
+          ],
+          "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
+        }
+      },
+      "assignedTags": [
+        "满HP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身满HP时，特技伤害上限+1,500"
+      ],
+      "remainingConditions": []
     }
   ],
   "views": {
@@ -20890,8 +21152,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 21,
-        "partial": 66,
+        "ready": 22,
+        "partial": 65,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -21081,8 +21343,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 51,
         "notRelatedUnique": 884,
-        "ready": 19,
-        "partial": 32,
+        "ready": 20,
+        "partial": 31,
         "unknown": 0,
         "previousBasicMagicUnique": 43,
         "additionalRelatedUnique": 8
@@ -21612,6 +21874,36 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 909,
         "ready": 6,
         "partial": 20,
+        "unknown": 0
+      }
+    },
+    "full-hp": {
+      "label": "满HP",
+      "childKeys": [
+        "full-hp-attack-up",
+        "full-hp-magic-up",
+        "full-hp-speed-up",
+        "full-hp-critical-rate",
+        "full-hp-skill-damage",
+        "full-hp-skill-cap"
+      ],
+      "overviewLabel": "全部满HP效果（分组）",
+      "separateSections": true,
+      "displayOrder": [
+        "59da270118efac4f",
+        "da082e366781c43e",
+        "386458aa75f9df1d",
+        "ccfbbcc9f91d8332",
+        "0599f84fed5320a1",
+        "483798470761efdf"
+      ],
+      "scopeDescription": "满HP要求当前HP等于最大HP；攻击力、魔力、移动速度、暴击率、特技伤害与特技上限分别列组。不满HP时失效，恢复满HP后重新生效；这些是条件加成，不是限时Buff。已做过的效果标签同步保留，所有效果和条件完成后才算完整判断。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 2,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -23087,6 +23379,108 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "full-hp-attack-up": {
+      "label": "攻击力增加",
+      "parent": "full-hp",
+      "conditionTag": "满HP",
+      "effectGroup": "attack-up",
+      "displayOrder": [
+        "59da270118efac4f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "full-hp-magic-up": {
+      "label": "魔力增加",
+      "parent": "full-hp",
+      "conditionTag": "满HP",
+      "effectGroup": "magic-up",
+      "displayOrder": [
+        "da082e366781c43e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "full-hp-speed-up": {
+      "label": "移动速度增加",
+      "parent": "full-hp",
+      "conditionTag": "满HP",
+      "effectGroup": "speed-up",
+      "displayOrder": [
+        "386458aa75f9df1d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "full-hp-critical-rate": {
+      "label": "暴击率增加",
+      "parent": "full-hp",
+      "conditionTag": "满HP",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "ccfbbcc9f91d8332"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "full-hp-skill-damage": {
+      "label": "特技伤害增加",
+      "parent": "full-hp",
+      "conditionTag": "满HP",
+      "effectGroup": "skill-damage",
+      "displayOrder": [
+        "0599f84fed5320a1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "full-hp-skill-cap": {
+      "label": "特技伤害上限增加",
+      "parent": "full-hp",
+      "conditionTag": "满HP",
+      "effectGroup": "skill-cap",
+      "displayOrder": [
+        "483798470761efdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -23454,14 +23848,18 @@ export const SKILL_LABELING_CATALOG = {
         "0e3dba96957b5563",
         "f28fd4eede5caea4",
         "cf54afaf524eaef4",
-        "2832becd6721150f"
+        "2832becd6721150f",
+        "386458aa75f9df1d",
+        "ccfbbcc9f91d8332",
+        "0599f84fed5320a1",
+        "483798470761efdf"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 365,
-        "notRelatedUnique": 570,
-        "ready": 70,
-        "partial": 295,
+        "relatedUnique": 369,
+        "notRelatedUnique": 566,
+        "ready": 72,
+        "partial": 297,
         "unknown": 0
       }
     }

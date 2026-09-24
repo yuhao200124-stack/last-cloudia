@@ -36,9 +36,9 @@ test('MP completes three existing magic compounds without losing their labels or
   assert.deepEqual(labelingView(catalog,'magic').entries.find(e=>e.id===source(n).id),entry(n));
  }
  for(const n of [5,6,7,8,262])assert.deepEqual(entry(n).assignedTags,['MP']);
- assert.equal(catalog.views.magic.counts.ready,19);assert.equal(catalog.views.magic.counts.partial,32);
- assert.equal(catalog.entries.length,365);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,365);
- assert.equal(catalog.views.all.counts.ready,70);assert.equal(catalog.views.all.counts.partial,295);
+ assert.equal(catalog.views.magic.counts.ready,20);assert.equal(catalog.views.magic.counts.partial,31);
+ assert.equal(catalog.entries.length,369);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,369);
+ assert.equal(catalog.views.all.counts.ready,72);assert.equal(catalog.views.all.counts.partial,297);
  const rows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(rows.slice(0,70).every(r=>r.judgment==='ready'));assert(rows.slice(70).every(r=>r.judgment==='partial'));
+ assert(rows.slice(0,72).every(r=>r.judgment==='ready'));assert(rows.slice(72).every(r=>r.judgment==='partial'));
 });
