@@ -1,0 +1,1850 @@
+{
+  "schemaVersion": 1,
+  "label": "攻击力",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "entries": [
+    {
+      "id": "d1bed52d151e14d2",
+      "name": "攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/9",
+      "text": "攻击力+2%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "攻击力+2%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:d1bed52d151e14d2:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "aa0a91a3124a7781",
+      "name": "攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/10",
+      "text": "攻击力+5%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "攻击力+5%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:aa0a91a3124a7781:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "d90d4a6ef90a197f",
+      "name": "攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/11",
+      "text": "攻击力+8%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "攻击力+8%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:d90d4a6ef90a197f:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "e73807e621f213b2",
+      "name": "攻击提升极",
+      "url": "https://altema.jp/lastcloudia/gino/12",
+      "text": "攻击力+15%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "攻击力+15%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:e73807e621f213b2:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "b30a22d022f57e37",
+      "name": "快速鼓舞",
+      "url": "https://altema.jp/lastcloudia/gino/102",
+      "text": "战斗开始时自动获得「勇敢」效果：攻击力+20%。",
+      "notes": "每个Wave开始施加于自身：攻击力+20%，持续40秒。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "每个Wave开始获得勇敢：自身攻击力+20%，持续40秒",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:b30a22d022f57e37:1"
+      ],
+      "calculationNote": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "5f0091303689244c",
+      "name": "自动鼓舞",
+      "url": "https://altema.jp/lastcloudia/gino/106",
+      "text": "永久获得「勇敢」效果：攻击力+20%。",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "永久获得勇敢：自身攻击力+20%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:5f0091303689244c:1"
+      ],
+      "calculationNote": "永久Buff：选装后持续生效，独立于开场40秒开关。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "0ab71464ffb5918f",
+      "name": "激昂",
+      "url": "https://altema.jp/lastcloudia/gino/113",
+      "text": "濒死时，攻击力（STR）+20%。",
+      "notes": "濒死指当前HP为最大HP的30%及以下；离开该HP范围时不再满足条件。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "HP≤30%时，自身攻击力+20%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:0ab71464ffb5918f:1"
+      ],
+      "calculationNote": "随HP条件变化，计入实时属性层",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "4cb37bd11ae3b17f",
+      "name": "觉醒",
+      "url": "https://altema.jp/lastcloudia/gino/118",
+      "text": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+      "notes": "HP降至30%及以下时触发，每个Wave最多1次。回复HP后，攻击力、防御力、魔抗各+50%，移动速度+2；这组增益持续40秒。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "濒死触发后，自身攻击力+50%，持续40秒，每个Wave最多1次",
+      "remainingEffects": [
+        "回复HP",
+        "防御力、魔抗提升",
+        "移动速度提升"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:4cb37bd11ae3b17f:1"
+      ],
+      "calculationNote": "濒死触发后持续40秒，每Wave一次；在“觉醒Buff”勾选当前有效状态，回血后不自动结束。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "59da270118efac4f",
+      "name": "磊落",
+      "url": "https://altema.jp/lastcloudia/gino/119",
+      "text": "HP满时，攻击力+20%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "HP满时，自身攻击力+20%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:59da270118efac4f:1"
+      ],
+      "calculationNote": "随HP条件变化，计入实时属性层",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "1a101f308e1eaae6",
+      "name": "神圣光环",
+      "url": "https://altema.jp/lastcloudia/gino/176",
+      "text": "装备武器的攻击力和魔力数值+25%；装备两把武器时，两把武器分别生效。",
+      "notes": "提升的是武器自身的攻击力与魔力数值，不能直接将角色最终面板乘1.25。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "weapon",
+      "attackSummary": "所装备武器自身的攻击力数值+25%；双持时两把分别生效",
+      "remainingEffects": [
+        "武器自身的魔力数值+25%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "分别强化所有已装备武器自身数值",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "b480695aa2840e5c",
+      "name": "复仇鼓舞",
+      "url": "https://altema.jp/lastcloudia/gino/195",
+      "text": "受到伤害时，有概率提升攻击力。",
+      "notes": "攻击力+20%，持续40秒。计算器条件栏选择“受到伤害时”，表示该受伤Buff当前有效；与鼓舞类同组只计一项。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "受到伤害触发的勇敢Buff：自身攻击力+20%，持续40秒",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:b480695aa2840e5c:1"
+      ],
+      "calculationNote": "受伤Buff：攻击力+20%，持续40秒；勾选“受到伤害时”计入当前有效状态，与鼓舞类同组只计一项。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "cf4cc4324d7b87b7",
+      "name": "快速假期",
+      "url": "https://altema.jp/lastcloudia/gino/210",
+      "text": "战斗开始时自动发动“勇敢”“灵气”“保护”“魔法屏障”效果。",
+      "notes": "勇敢：攻击力+20%；灵气：魔力（法强）+20%；保护：受到物理伤害-20%；魔法屏障：受到魔法伤害-20%。全部作用于自身，持续40秒。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "每个Wave开始获得勇敢：自身攻击力+20%，持续40秒",
+      "remainingEffects": [
+        "灵气带来的法强提升",
+        "保护带来的物理减伤",
+        "魔法屏障带来的魔法减伤"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:cf4cc4324d7b87b7:1"
+      ],
+      "calculationNote": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "7305afeb3e366f19",
+      "name": "强力反击",
+      "url": "https://altema.jp/lastcloudia/gino/218",
+      "text": "必杀槽满时，攻击力+30%。",
+      "notes": "必杀槽处于满槽状态时攻击力+30%。属于持续条件属性加成，不是Buff；槽不满时失效，与鼓舞类Buff可以并存。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "必杀槽满时，自身攻击力+30%；属于条件属性加成",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:7305afeb3e366f19:1"
+      ],
+      "calculationNote": "条件属性加成（非Buff）：必杀槽满时攻击力+30%；槽不满即失效，可与鼓舞等属性Buff并存。与“使用必杀后Buff”分别判断。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "90951140c1d42641",
+      "name": "玛娜的节日",
+      "url": "https://altema.jp/lastcloudia/gino/223",
+      "text": "周日（现实时间）攻击力、防御力、魔力、魔抗+5%。",
+      "notes": "现实周日攻击力、防御力、法强、魔抗+5%。属于持续条件属性加成，不是Buff；条件不满足时失效，与属性Buff可以并存。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "现实时间为周日时，自身攻击力+5%；属于条件属性加成",
+      "remainingEffects": [
+        "防御力、法强、魔抗+5%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:90951140c1d42641:1"
+      ],
+      "calculationNote": "条件属性加成（非Buff）：现实周日攻击力、法强、防御力、魔抗+5%；按游戏设备时间手动勾选，可与属性Buff并存，不套40秒时限。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "1ddd7414606b9de2",
+      "name": "攻击提升4",
+      "url": "https://altema.jp/lastcloudia/gino/251",
+      "text": "攻击力+12%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "攻击力+12%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:1ddd7414606b9de2:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "a805be70edade9bf",
+      "name": "生命鼓舞",
+      "url": "https://altema.jp/lastcloudia/gino/267",
+      "text": "自身剩余HP越低，攻击力提升越高（最高+50%）。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "剩余HP越低，自身攻击力提升越高，最高+50%；属于条件属性加成",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:a805be70edade9bf:1"
+      ],
+      "calculationNote": "濒死类 / HP越低加成越高 / 属性提高（非Buff）。分类不等于低于30%才生效；需按当前HP计算，不能勾选濒死就直接按最高50%计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "ee6342cbdb0251e7",
+      "name": "黄泉之理",
+      "url": "https://altema.jp/lastcloudia/gino/272",
+      "text": "复活时，攻击力和魔力+30%，暴击率+15%。",
+      "notes": "复活后攻击力、法强+30%，暴击率+15%，持续40秒。同组属性Buff只计一项；本轮接入攻击力与法强，暴击率待暴击分类接入。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "复活后自身攻击力+30%，持续40秒",
+      "remainingEffects": [
+        "复活后法强+30%",
+        "暴击率+15%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:ee6342cbdb0251e7:1"
+      ],
+      "calculationNote": "复活Buff：攻击力、法强+30%，持续40秒；分别与鼓舞、增魔同组只计一项。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "c9e5df1dd31f35cf",
+      "name": "锤增幅",
+      "url": "https://altema.jp/lastcloudia/gino/273",
+      "text": "装备锤子时，物理攻击伤害+7%，攻击力+5%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "装备锤时，自身攻击力+5%",
+      "remainingEffects": [
+        "物理攻击伤害+7%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:c9e5df1dd31f35cf:1"
+      ],
+      "calculationNote": "满足装备条件时生效",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "b6ba057e893e1be9",
+      "name": "锤高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/281",
+      "text": "装备锤子时，物理攻击伤害+25%，攻击力+10%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "装备锤时，自身攻击力+10%",
+      "remainingEffects": [
+        "物理攻击伤害+25%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:b6ba057e893e1be9:1"
+      ],
+      "calculationNote": "满足装备条件时生效",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "3e86dffa826956a7",
+      "name": "魔兽同盟",
+      "url": "https://altema.jp/lastcloudia/gino/284",
+      "text": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "队伍至少2人装备同技能时，自身攻击力提升：2人5%、3人10%、4人15%",
+      "remainingEffects": [
+        "相同条件下防御力、法强、魔抗提升"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:3e86dffa826956a7:1"
+      ],
+      "calculationNote": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "51339f350198e9a2",
+      "name": "骑士心得-剑术-",
+      "url": "https://altema.jp/lastcloudia/gino/293",
+      "text": "当同时装备剑和盔甲时，剑的攻击力和盔甲的防御力增 加50%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "weapon",
+      "attackSummary": "同时装备剑和盔甲时，剑自身的攻击力+50%",
+      "remainingEffects": [
+        "盔甲自身的防御力+50%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅强化装备自身数值",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "4633d985390976cc",
+      "name": "光头猴",
+      "url": "https://altema.jp/lastcloudia/gino/304",
+      "text": "当武器和防具栏位未装备任何物品时，攻击力、防御、 魔力和魔抗+10%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "武器栏和防具栏都空时，自身攻击力+10%",
+      "remainingEffects": [
+        "防御力、法强、魔抗+10%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:4633d985390976cc:1"
+      ],
+      "calculationNote": "空手 / 都空：武器栏与防具栏同时为空。只空武器或只空防具均不满足；饰品栏不受此条件限制。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "5f6efbf8b35453d2",
+      "name": "从零开始的文明",
+      "url": "https://altema.jp/lastcloudia/gino/305",
+      "text": "每个Wave开始时，攻击力、防御力、魔力、魔抗各+2%，「科学」类攻击魔法威力+5%（最多叠加10次）。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "每个Wave开始，自身攻击力+2%，最多叠加10次",
+      "remainingEffects": [
+        "防御力、法强、魔抗提升",
+        "科学类攻击魔法威力提升"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:5f6efbf8b35453d2:1"
+      ],
+      "calculationNote": "每Wave叠层，最多10层；需确认当前层数后计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "c16c507cf0c2f9db",
+      "name": "暴风龙的加护",
+      "url": "https://altema.jp/lastcloudia/gino/339",
+      "text": "类型追加“龙”；攻击力+10%，受到的物理攻击伤害-15%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+10%",
+      "remainingEffects": [
+        "类型追加“龙”",
+        "受到的物理攻击伤害-15%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:c16c507cf0c2f9db:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "全部技能:all:313",
+      "name": "斗志提升4",
+      "url": "https://altema.jp/lastcloudia/gino/387",
+      "text": "攻击力・生命值+10%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+10%",
+      "remainingEffects": [
+        "HP+10%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:全部技能:all:313:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "81e5eed79e630a07",
+      "name": "那真是难以置信！",
+      "url": "https://altema.jp/lastcloudia/gino/390",
+      "text": "战斗开始时自动发动“大勇敢”“暴击”“速度”效果。",
+      "notes": "大勇敢：攻击力+35%；暴击：暴击率+15%；速度：移动速度+2。全部作用于自身，持续40秒。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "每个Wave开始获得大勇敢：自身攻击力+35%，持续40秒",
+      "remainingEffects": [
+        "暴击带来的暴击率提升",
+        "速度带来的移动速度提升"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:81e5eed79e630a07:1"
+      ],
+      "calculationNote": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "全部技能:all:318",
+      "name": "斗志提升3",
+      "url": "https://altema.jp/lastcloudia/gino/393",
+      "text": "攻击力・生命值+8%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+8%",
+      "remainingEffects": [
+        "HP+8%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:全部技能:all:318:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "7caf7c48fe8b8715",
+      "name": "能量循环",
+      "url": "https://altema.jp/lastcloudia/gino/425",
+      "text": "敌人使用必杀时，自身自动获得「勇敢」「堡垒」效果。",
+      "notes": "勇敢使攻击力+20%，堡垒使防御力+20%；增益作用于自身。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "敌人使用必杀时，自身获得勇敢：攻击力+20%",
+      "remainingEffects": [
+        "堡垒带来的防御力提升"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:7caf7c48fe8b8715:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "edc04a2cb5cbc357",
+      "name": "英雄之绊",
+      "url": "https://altema.jp/lastcloudia/gino/514",
+      "text": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "队伍至少2人装备同技能时，自身攻击力提升：2人7%、3人14%、4人21%",
+      "remainingEffects": [
+        "相同条件下防御力、法强、魔抗提升"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:edc04a2cb5cbc357:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "dece5d91ef6eddbb",
+      "name": "斗志提升2",
+      "url": "https://altema.jp/lastcloudia/gino/528",
+      "text": "攻击力・生命值+5%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+5%",
+      "remainingEffects": [
+        "HP+5%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:dece5d91ef6eddbb:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "fcf4e5ad6cd07998",
+      "name": "激昂2",
+      "url": "https://altema.jp/lastcloudia/gino/552",
+      "text": "濒死时，攻击力+30%",
+      "notes": "濒死指当前HP为最大HP的30%及以下；离开该HP范围时不再满足条件。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "HP≤30%时，自身攻击力+30%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:fcf4e5ad6cd07998:1"
+      ],
+      "calculationNote": "随HP条件变化，计入实时属性层",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "86ad4fdedf4c3869",
+      "name": "斗智转轮",
+      "url": "https://altema.jp/lastcloudia/gino/593",
+      "text": "攻击力越高，魔法攻击伤害越高。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "stat-reference",
+      "target": "self",
+      "attackSummary": "自身攻击力作为魔法伤害提高的参照量；不直接增加攻击力",
+      "remainingEffects": [
+        "魔法攻击伤害提高的效果"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "543736df65bd47f1",
+      "name": "格斗士心得",
+      "url": "https://altema.jp/lastcloudia/gino/599",
+      "text": "同时装备爪和衣服时，爪的攻击力+50%，衣服的防御力和魔抗+30%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "weapon",
+      "attackSummary": "同时装备爪和衣服时，爪自身的攻击力+50%",
+      "remainingEffects": [
+        "衣服自身的防御力和魔抗+30%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅强化装备自身数值",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "8ba52a420286cb67",
+      "name": "人类模仿",
+      "url": "https://altema.jp/lastcloudia/gino/627",
+      "text": "战斗开始时，随机为自身追加士兵、骑士、魔法师、狙击手中的1种类型（战斗结束时消失）。\n【限时】攻击力、防御力+10%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "限时效果：自身攻击力+10%",
+      "remainingEffects": [
+        "防御力+10%",
+        "开场随机追加类型"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:8ba52a420286cb67:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "619c3ef058c4b219",
+      "name": "惊喜礼物",
+      "url": "https://altema.jp/lastcloudia/gino/696",
+      "text": "战斗开始时，对除自身外攻击力最高的我方角色赋予增益：触发特攻时的伤害上限+5,000。",
+      "notes": "作用于除自身外攻击力最高的1名友方，持续40秒；仅提高其触发特攻时的伤害上限。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "target-selection",
+      "target": "ally",
+      "attackSummary": "按攻击力高低选中除自身外攻击力最高的友方；不提高攻击力",
+      "remainingEffects": [
+        "给选中友方赋予特攻伤害上限+5,000的40秒Buff"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "386eb4063fb25415",
+      "name": "斗志提升",
+      "url": "https://altema.jp/lastcloudia/gino/725",
+      "text": "攻击力・生命值+3%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+3%",
+      "remainingEffects": [
+        "HP+3%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:386eb4063fb25415:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "d0f3dc6c3cee545e",
+      "name": "美丽而残酷的世界",
+      "url": "https://altema.jp/lastcloudia/gino/726",
+      "text": "当一名盟友死亡时，给自己施加攻击力+30%的增益效 果。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "一名盟友死亡时，自身获得攻击力+30%的Buff",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:d0f3dc6c3cee545e:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "8400b28b0f6069d3",
+      "name": "魔王的觉醒",
+      "url": "https://altema.jp/lastcloudia/gino/746",
+      "text": "攻击力、魔力+10%；战斗开始时，自身会受到攻击力-20%和魔力-20%的减益效果。",
+      "notes": "开场的攻击力-20%与魔力-20%减益持续40秒；与技能自身的常驻攻击力、魔力+10%分开判断。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力常驻+10%；开场另受到攻击力-20%的40秒减益",
+      "remainingEffects": [
+        "法强常驻+10%",
+        "开场法强-20%的减益"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:8400b28b0f6069d3:1",
+        "basic:8400b28b0f6069d3:2"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "87bd554c95a1dcf1",
+      "name": "骑士心得2-剑术-",
+      "url": "https://altema.jp/lastcloudia/gino/775",
+      "text": "当同时装备剑和盔甲时，剑的攻击力和盔甲的防御力增 加100%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "weapon",
+      "attackSummary": "同时装备剑和盔甲时，剑自身的攻击力+100%",
+      "remainingEffects": [
+        "盔甲自身的防御力+100%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅强化装备自身数值",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "c97e9b651d9192d2",
+      "name": "空无鼓舞",
+      "url": "https://altema.jp/lastcloudia/gino/787",
+      "text": "MP≤20时，攻击力+15%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "MP≤20时，自身攻击力+15%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:c97e9b651d9192d2:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "db1b48cd6af48689",
+      "name": "勇士提升2",
+      "url": "https://altema.jp/lastcloudia/gino/796",
+      "text": "攻击力、防御、生命值+8%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+8%",
+      "remainingEffects": [
+        "防御力、HP+8%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:db1b48cd6af48689:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "52c559efb1ac16a7",
+      "name": "剑士心得2",
+      "url": "https://altema.jp/lastcloudia/gino/823",
+      "text": "同时装备剑和衣服时，所装备剑的攻击力+100%，所装备衣服的防御力和魔抗+50%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "weapon",
+      "attackSummary": "同时装备剑和衣服时，剑自身的攻击力+100%",
+      "remainingEffects": [
+        "衣服自身的防御力和魔抗+50%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅强化装备自身数值",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "6c8b8402a6d95bd1",
+      "name": "剑士心得",
+      "url": "https://altema.jp/lastcloudia/gino/828",
+      "text": "同时装备剑和衣服时，所装备剑的攻击力+50%，所装备衣服的防御力和魔抗+30%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "weapon",
+      "attackSummary": "同时装备剑和衣服时，剑自身的攻击力+50%",
+      "remainingEffects": [
+        "衣服自身的防御力和魔抗+30%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅强化装备自身数值",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "835e08fc4710e268",
+      "name": "怒气",
+      "url": "https://altema.jp/lastcloudia/gino/849",
+      "text": "我方角色陷入战斗不能时，赋予自身“激怒”效果（攻击力提高、防御力降低，且无法使用魔法）",
+      "notes": "激怒属于异常状态：提高攻击力、降低防御力，并禁止使用魔法。具体增减比例与持续时间尚无交叉确认值。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "我方角色战斗不能时，自身获得激怒，其中包含攻击力提高",
+      "remainingEffects": [
+        "激怒中的防御力降低",
+        "无法使用魔法"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:835e08fc4710e268:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "352a2b49a30fa8b1",
+      "name": "快速大鼓舞",
+      "url": "https://altema.jp/lastcloudia/gino/851",
+      "text": "战斗开始时自动获得「大勇敢」效果：攻击力+35%。",
+      "notes": "每个Wave开始施加于自身：攻击力+35%，持续40秒。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "每个Wave开始获得大勇敢：自身攻击力+35%，持续40秒",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:352a2b49a30fa8b1:1"
+      ],
+      "calculationNote": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "296bb9556080c9c4",
+      "name": "我以自身存在发誓绝不会输！",
+      "url": "https://altema.jp/lastcloudia/gino/941",
+      "text": "BOSS Wave中，攻击力、防御力+7%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "BOSS Wave中，自身攻击力+7%",
+      "remainingEffects": [
+        "防御力+7%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:296bb9556080c9c4:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "c14ec33793319bba",
+      "name": "自动大鼓舞",
+      "url": "https://altema.jp/lastcloudia/gino/969",
+      "text": "永久获得「大勇敢」效果：攻击力+35%。",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "永久获得大勇敢：自身攻击力+35%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:c14ec33793319bba:1"
+      ],
+      "calculationNote": "永久Buff：选装后持续生效，独立于开场40秒开关。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "be64f3014d49d50d",
+      "name": "攻击下降回避",
+      "url": "https://altema.jp/lastcloudia/gino/983",
+      "text": "有概率使主动技能造成的攻击力下降减益无效。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "debuff-protection",
+      "target": "self",
+      "attackSummary": "有概率使主动技能造成的攻击力下降减益无效；不提供攻击力加成",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "975fce45e6663534",
+      "name": "魔界的魔兽",
+      "url": "https://altema.jp/lastcloudia/gino/984",
+      "text": "战斗开始时，自身防御力、魔抗-10%，减少的数值加到攻击力上。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "开场把减少的防御力、魔抗数值加算到自身攻击力",
+      "remainingEffects": [
+        "自身防御力、魔抗-10%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:975fce45e6663534:1"
+      ],
+      "calculationNote": "开场降低防御力与魔抗并转为攻击力；转换参照与执行顺序待核对。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "6abbc6031b5d8a35",
+      "name": "勇士提升",
+      "url": "https://altema.jp/lastcloudia/gino/986",
+      "text": "攻击力、防御、生命值+5%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+5%",
+      "remainingEffects": [
+        "防御力、HP+5%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:6abbc6031b5d8a35:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "2d772214490c52ba",
+      "name": "作战行动",
+      "url": "https://altema.jp/lastcloudia/gino/1066",
+      "text": "战斗开始时，若攻击力≥魔力，则物理攻击伤害+20%；若攻击力<魔力，则魔法攻击伤害+20%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "stat-comparison",
+      "target": "self",
+      "attackSummary": "开场比较自身攻击力和法强，以比较结果选择伤害加成；不改变攻击力",
+      "remainingEffects": [
+        "物理攻击伤害+20%或魔法攻击伤害+20%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "7b7b9f7c806bbd9e",
+      "name": "快速假期2",
+      "url": "https://altema.jp/lastcloudia/gino/1103",
+      "text": "战斗开始时自动发动“大勇敢”“大灵气”“保护”“魔法屏障”效果。",
+      "notes": "大勇敢：攻击力+35%；大灵气：魔力（法强）+35%；保护：受到物理伤害-20%；魔法屏障：受到魔法伤害-20%。全部作用于自身，持续40秒。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "每个Wave开始获得大勇敢：自身攻击力+35%，持续40秒",
+      "remainingEffects": [
+        "大灵气带来的法强提升",
+        "保护带来的物理减伤",
+        "魔法屏障带来的魔法减伤"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:7b7b9f7c806bbd9e:1"
+      ],
+      "calculationNote": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "efc2aa7f65146e56",
+      "name": "锤超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1107",
+      "text": "装备锤时，物理攻击伤害+25%，物理攻击伤害上限+2,000，攻击力+10%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "装备锤时，自身攻击力+10%",
+      "remainingEffects": [
+        "物理攻击伤害+25%",
+        "物理攻击伤害上限+2,000"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:efc2aa7f65146e56:1"
+      ],
+      "calculationNote": "满足装备条件时生效",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "5f4d9cbfb64a5e02",
+      "name": "晓",
+      "url": "https://altema.jp/lastcloudia/gino/1147",
+      "text": "MP达到最大值时，攻击力+30%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "MP满时，自身攻击力+30%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:5f4d9cbfb64a5e02:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "202ccad96f292698",
+      "name": "畏怖眼光",
+      "url": "https://altema.jp/lastcloudia/gino/1176",
+      "text": "受到敌人的物理攻击时，按敌人攻击力降低5%进行该次伤害计算。",
+      "notes": "这是受到攻击时的计算修正，不是对敌人施加持续攻击力下降的减益。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "incoming-damage-reference",
+      "target": "enemy",
+      "attackSummary": "承受敌人物理攻击时，该次伤害按敌人攻击力降低5%计算；不是持续减益",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "7498b3dbd8ba7e5d",
+      "name": "复仇心",
+      "url": "https://altema.jp/lastcloudia/gino/1212",
+      "text": "若有一名友军失去行动能力，攻击力+20%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "一名友军失去行动能力时，自身攻击力+20%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:7498b3dbd8ba7e5d:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "92f18d0720224b23",
+      "name": "命运抽签",
+      "url": "https://altema.jp/lastcloudia/gino/1231",
+      "text": "战斗开始时，随机赋予攻击力增益或减益效果（+50%、+35%、+20%或-35%）。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "开场随机获得攻击力+50%、+35%、+20%或-35%的效果，持续40秒",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:92f18d0720224b23:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "1f0a096307e7bc24",
+      "name": "来！",
+      "url": "https://altema.jp/lastcloudia/gino/1249",
+      "text": "如果该单位是唯一参战单位，则攻击力和防御力+10%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身为唯一参战单位时，攻击力+10%",
+      "remainingEffects": [
+        "防御力+10%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:1f0a096307e7bc24:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "1da4935f9a387557",
+      "name": "师徒之绊",
+      "url": "https://altema.jp/lastcloudia/gino/1256",
+      "text": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
+      "notes": "相当于自身获得大勇敢与大堡垒，均持续40秒。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "除自身外恰好1人装备师徒之绊时，每个Wave开始自身攻击力+35%，持续40秒",
+      "remainingEffects": [
+        "防御力+35%的Buff"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:1da4935f9a387557:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "f5c157dab48c38c7",
+      "name": "裸身之力",
+      "url": "https://altema.jp/lastcloudia/gino/1318",
+      "text": "未装备防具时，攻击力+20%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "未装备防具时，自身攻击力+20%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:f5c157dab48c38c7:1"
+      ],
+      "calculationNote": "空手 / 空防具：未装备防具时生效，不要求武器栏为空。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "0d0bdf3f7c6e0b5a",
+      "name": "蛋形移动装置",
+      "url": "https://altema.jp/lastcloudia/gino/1365",
+      "text": "装备机械类武器时，战斗开始时将自身魔力的10%加算到攻击力。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "装备机械时，开场把自身法强的10%加算到攻击力",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:0d0bdf3f7c6e0b5a:1"
+      ],
+      "calculationNote": "开战时法强转换，不降低原属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "403a540b2ffa9519",
+      "name": "混沌翡翠",
+      "url": "https://altema.jp/lastcloudia/gino/1370",
+      "text": "从战斗开始后每 10 秒，有一定几率大幅恢复生命 值，并获得 攻击力 +100% 的增益效果，持续 20 秒（每 波最多一次）。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "战斗开始后每10秒有概率获得攻击力+100%的20秒Buff，每个Wave最多1次",
+      "remainingEffects": [
+        "大幅恢复HP"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:403a540b2ffa9519:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "8486ea2eb21efd2c",
+      "name": "垂直回环",
+      "url": "https://altema.jp/lastcloudia/gino/1380",
+      "text": "当处于移动速度增益效果下时，攻击力和防御力+10% （某些特殊增益效果除外）",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "处于移动速度增益效果下时，自身攻击力+10%；部分特殊Buff不计",
+      "remainingEffects": [
+        "防御力+10%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:8486ea2eb21efd2c:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "8df3ecca35bfe8f8",
+      "name": "改造女仆装",
+      "url": "https://altema.jp/lastcloudia/gino/1483",
+      "text": "装备衣服时，攻击力+20%",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "装备衣服时，自身攻击力+20%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:8df3ecca35bfe8f8:1"
+      ],
+      "calculationNote": "满足装备条件时生效",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "5b601cf4a2c13841",
+      "name": "全副武装",
+      "url": "https://altema.jp/lastcloudia/gino/1490",
+      "text": "装备盔甲时，攻击力+12%，受到的伤害-7%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "装备盔甲时，自身攻击力+12%",
+      "remainingEffects": [
+        "受到伤害-7%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:5b601cf4a2c13841:1"
+      ],
+      "calculationNote": "满足装备条件时生效",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "eb83e614cc424c74",
+      "name": "圣诞狂热",
+      "url": "https://altema.jp/lastcloudia/gino/1505",
+      "text": "降低魔力 15%，但提高攻击力 10% 和魔抗 10%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+10%",
+      "remainingEffects": [
+        "法强-15%",
+        "魔抗+10%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:eb83e614cc424c74:1"
+      ],
+      "calculationNote": "常驻属性（含降低）",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "5dc1aeae525c240c",
+      "name": "枪使心得",
+      "url": "https://altema.jp/lastcloudia/gino/1515",
+      "text": "同时装备枪和衣服时，枪的攻击力+50%，衣服的防御力和魔抗+30%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "weapon",
+      "attackSummary": "同时装备枪和衣服时，枪自身的攻击力+50%",
+      "remainingEffects": [
+        "衣服自身的防御力和魔抗+30%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅强化装备自身数值",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "47ea988d3391dd7d",
+      "name": "御子与守护者",
+      "url": "https://altema.jp/lastcloudia/gino/1571",
+      "text": "降低攻击力 10%，但提高防御力 20%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力-10%",
+      "remainingEffects": [
+        "防御力+20%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:47ea988d3391dd7d:1"
+      ],
+      "calculationNote": "常驻属性（含降低）",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "daa5fb62f2887078",
+      "name": "崛起鼓舞",
+      "url": "https://altema.jp/lastcloudia/gino/1629",
+      "text": "随着时间经过，攻击力逐渐提高（最高+20%，每个Wave开始时重置）。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "随时间经过自身攻击力逐渐提高，最高+20%，每个Wave重置",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:daa5fb62f2887078:1"
+      ],
+      "calculationNote": "已标注最高加成；需确认当前数值及变化公式，不能直接按最大值计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "71f0c15272a753ba",
+      "name": "重斧士心得",
+      "url": "https://altema.jp/lastcloudia/gino/1690",
+      "text": "同时装备斧和盔甲时，斧的攻击力+50%，盔甲的防御力+50%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "weapon",
+      "attackSummary": "同时装备斧和盔甲时，斧自身的攻击力+50%",
+      "remainingEffects": [
+        "盔甲自身的防御力+50%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅强化装备自身数值",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "d611639ee456760f",
+      "name": "星之所在",
+      "url": "https://altema.jp/lastcloudia/gino/1706",
+      "text": "战斗开始时，对除自身外攻击力最高的我方角色赋予90秒增益：物理攻击伤害上限+5,000。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "target-selection",
+      "target": "ally",
+      "attackSummary": "开场按攻击力选中除自身外攻击力最高的友方；不提高攻击力",
+      "remainingEffects": [
+        "给选中友方赋予物理攻击伤害上限+5,000的90秒Buff"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "4032cdf421f18002",
+      "name": "漆黑的獠牙",
+      "url": "https://altema.jp/lastcloudia/gino/1707",
+      "text": "装备暗属性武器时，暗属性伤害上限+2,000，攻击力+10%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "装备暗属性武器时，自身攻击力+10%",
+      "remainingEffects": [
+        "暗属性伤害上限+2,000"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:4032cdf421f18002:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "a92f6001f2419fda",
+      "name": "剑雷",
+      "url": "https://altema.jp/lastcloudia/gino/1727",
+      "text": "当只装备一把剑时，攻击力+20%，物理攻击伤害上限+3000，对弱雷属性的敌人伤害上限+3000。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "只装备一把剑时，自身攻击力+20%",
+      "remainingEffects": [
+        "物理攻击伤害上限+3,000",
+        "对弱雷属性敌人的伤害上限+3,000"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:a92f6001f2419fda:1"
+      ],
+      "calculationNote": "单手 / 剑：仅装备一把武器，且该武器为剑。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "a5f24684f4b2911a",
+      "name": "与你同在",
+      "url": "https://altema.jp/lastcloudia/gino/1747",
+      "text": "战斗开始时，如果除了你之外只有一名盟友装备了 “与你同在”，则攻击力+20%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "开场时，除自身外恰好只有1人装备“与你同在”，自身攻击力+20%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:a5f24684f4b2911a:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "5dbd4f977800ad88",
+      "name": "信仰",
+      "url": "https://altema.jp/lastcloudia/gino/1754",
+      "text": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "inherited-effect",
+      "target": "self",
+      "attackSummary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
+      "remainingEffects": [
+        "同系列其他神秘之力对应的非攻击力效果"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+      "relatedSkillIds": [
+        "7bc369d4036dd098"
+      ]
+    },
+    {
+      "id": "b782149b137d2614",
+      "name": "寻找“有趣的东西”",
+      "url": "https://altema.jp/lastcloudia/gino/1765",
+      "text": "魔力、魔抗-20%；随着时间经过，攻击力、防御力逐渐提升（最多40秒，最高+20%）。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "随时间经过自身攻击力逐渐提高，40秒时最高+20%",
+      "remainingEffects": [
+        "法强、魔抗-20%",
+        "防御力随时间提高"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:b782149b137d2614:2"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "6bd2eb47018db33f",
+      "name": "加速战士",
+      "url": "https://altema.jp/lastcloudia/gino/1775",
+      "text": "受到来自敌人的伤害+10%，但攻击力+10%，暴击伤害+15%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+10%",
+      "remainingEffects": [
+        "受到伤害+10%",
+        "暴击伤害+15%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:6bd2eb47018db33f:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "127eab1363110062",
+      "name": "强力治愈",
+      "url": "https://altema.jp/lastcloudia/gino/1779",
+      "text": "攻击力越高，自身主动技能的HP恢复量略微提升（部分特殊恢复效果除外）。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "stat-reference",
+      "target": "self",
+      "attackSummary": "自身攻击力作为主动技能HP恢复量提高的参照量；不直接增加攻击力",
+      "remainingEffects": [
+        "主动技能HP恢复量提升及其例外"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "34045351ea740196",
+      "name": "精灵骑士",
+      "url": "https://altema.jp/lastcloudia/gino/1801",
+      "text": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "开场时全队只有自身装备精灵骑士，且恰好1名其他友方装备禁书库的大精灵，自身攻击力+25%",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:34045351ea740196:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "0aed639a3c185d89",
+      "name": "斗智提升",
+      "url": "https://altema.jp/lastcloudia/gino/1864",
+      "text": "攻击力、魔力+3%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+3%",
+      "remainingEffects": [
+        "法强+3%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:0aed639a3c185d89:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "1f04cd2da53994eb",
+      "name": "紫苑的料理难吃透了",
+      "url": "https://altema.jp/lastcloudia/gino/1873",
+      "text": "攻击力+20%。战斗开始时，对自身赋予猛毒。",
+      "notes": "猛毒会周期性造成较大的HP损失，但该扣血本身不会使HP降至1以下。它属于异常状态，不是单纯降低防御的减益。",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+20%",
+      "remainingEffects": [
+        "开场对自身赋予猛毒"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:1f04cd2da53994eb:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "86c11809d76a7959",
+      "name": "龙觉醒",
+      "url": "https://altema.jp/lastcloudia/gino/1883",
+      "text": "类型追加“龙”；BOSS Wave中，攻击力+20%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "BOSS Wave中，自身攻击力+20%",
+      "remainingEffects": [
+        "类型追加“龙”"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:86c11809d76a7959:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "c1b1fa0330ed3ca3",
+      "name": "斗智提升3",
+      "url": "https://altema.jp/lastcloudia/gino/1912",
+      "text": "攻击力、魔力+8%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "自身攻击力+8%",
+      "remainingEffects": [
+        "法强+8%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:c1b1fa0330ed3ca3:1"
+      ],
+      "calculationNote": "常驻属性",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "e64a85601b9b58cc",
+      "name": "枪手心得",
+      "url": "https://altema.jp/lastcloudia/gino/1940",
+      "text": "同时装备机械和衣服时，机械的攻击力+50%，衣服的防御力和魔抗+30%。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "weapon",
+      "attackSummary": "同时装备机械和衣服时，机械自身的攻击力+50%",
+      "remainingEffects": [
+        "衣服自身的防御力和魔抗+30%"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅强化装备自身数值",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "07cab38a1e00eaa5",
+      "name": "适应驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1941",
+      "text": "战斗开始时，若攻击力≥魔力，则特技伤害上限+5,000；若攻击力<魔力，则魔法攻击伤害上限+5,000。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "stat-comparison",
+      "target": "self",
+      "attackSummary": "开场比较自身攻击力和法强，以比较结果选择伤害上限加成；不改变攻击力",
+      "remainingEffects": [
+        "特技伤害上限+5,000或魔法伤害上限+5,000"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [],
+      "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "899aa4edeab83540",
+      "name": "勇者前线",
+      "url": "https://altema.jp/lastcloudia/gino/1955",
+      "text": "发动物理攻击或必杀时，以攻击力+30%的状态计算伤害。对Boss的物理攻击和必杀伤害上限+10,000；仅装备一把武器时，再+10,000。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "self",
+      "attackSummary": "发动物理攻击或必杀时，该次伤害以自身攻击力+30%计算",
+      "remainingEffects": [
+        "对Boss物理攻击和必杀伤害上限+10,000",
+        "单武器额外上限+10,000"
+      ],
+      "judgment": "partial",
+      "existingAttackRuleIds": [
+        "basic:899aa4edeab83540:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    },
+    {
+      "id": "7bc369d4036dd098",
+      "name": "神秘之力【武威】",
+      "url": "https://altema.jp/lastcloudia/gino/2001",
+      "text": "自身为神类型时，使我方装备「信仰」的角色获得：攻击力+10%。同名「神秘之力」效果不会叠加。",
+      "notes": "",
+      "assignedTags": [
+        "攻击力"
+      ],
+      "relation": "attribute-change",
+      "target": "ally",
+      "attackSummary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
+      "remainingEffects": [],
+      "judgment": "ready",
+      "existingAttackRuleIds": [
+        "basic:7bc369d4036dd098:1"
+      ],
+      "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+      "relatedSkillIds": []
+    }
+  ]
+}
