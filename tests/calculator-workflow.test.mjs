@@ -46,4 +46,14 @@ test('review UI events preserve manual panel, save from both sections, keep remi
  assert(workflow.adoptAttackObservation({explicitSelection:true,unitId:502220,stats:{intelligence:12133},capturedAt:'later',sampleId:'group'}));
  assert.equal(last.review.panels.intelligence,12133);assert.equal(last.review.panels.defense,1621);assert.equal(unit.stats.intelligence,6741);
  assert(ui.get('entryStatReview').innerHTML.includes('攻击时观察值'));
+ // Re-importing v0.37 adopts one latest stable snapshot by default, including DEF/MND.
+ const snapshots=[{id:'panel-1',elapsedMs:0,stableForMs:750,stats:unit.stats},{id:'panel-2',elapsedMs:1500,stableForMs:1000,capturedAt:'stable',stats:{...unit.stats,defense:2295,intelligence:12133,mind:3482}}];
+ await workflow.importFile({name:'new.json',size:100,text:async()=>JSON.stringify({kind:'last-cloudia-battle-entry',schemaVersion:1,readerVersion:'0.37',units:[{...unit,panelSnapshots:snapshots,latestStablePanelSnapshotId:'panel-2'}]})});
+ ui.get('entryUseWeb').fire('click');
+ assert.equal(last.review.panels.intelligence,12133);assert.equal(last.review.panels.defense,2295);assert.equal(last.review.panels.mind,3482);
+ ui.get('entrySnapshotPick').value='entry';ui.get('entrySnapshotPick').fire('change');workflow.applySelection();
+ assert.equal(last.review.panels.intelligence,6741);assert.equal(last.review.panels.defense,1621);
+ ui.get('entrySnapshotPick').value='panel-2';ui.get('entrySnapshotPick').fire('change');workflow.applySelection();
+ assert.equal(last.review.panels.intelligence,12133);assert.equal(last.review.panels.defense,2295);
+
 });

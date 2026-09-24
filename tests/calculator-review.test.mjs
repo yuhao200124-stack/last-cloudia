@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {magicBuffOptions,magicBuffCap,magicBuffLayer} from '../dist/magic-buffs.mjs';
-import {panelObservation,capturePanelObservation} from '../dist/battle-entry-data.mjs';
+import {panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from '../dist/battle-entry-data.mjs';
 import {ACCOUNT_BLESSING_CATALOG,USER_CONFIRMED_BLESSING_RECORDS} from '../dist/account-blessings.mjs';
 import {retargetReport,validateBattleEntry,websiteCandidates,compareCandidates,decisionKey,resolveReview} from '../dist/entry-preparation.mjs';
 import {buildBonusComparison} from '../dist/bonus-comparison.mjs';
@@ -41,16 +41,24 @@ test('reader observation timestamps remain distinct, missing later DEF/MND never
  assert.equal(capturePanelObservation(battle,unit,{...sample,unitId:123}),null);
  assert.equal(capturePanelObservation(battle,unit,{...sample,explicitSelection:false}),null);
 });
-test('optional magic buff never defaults on or guesses its EX relationship; cap is magic-only and deduplicated',()=>{
+test('guidance calculates both EX scenarios without extra inputs, then recognizes observed post-cast panels',()=>{
  const buffs=magicBuffOptions(profile);assert.equal(buffs.length,1);
  assert.equal(magicBuffOptions({magic:[{...profile.magic[0],description:'法强+65%'}]}).length,0);
  assert.equal(magicBuffCap([], 'magic'),0);assert.equal(magicBuffCap(buffs,'skill'),0);assert.equal(magicBuffCap(buffs,'magic'),30000);
  assert.equal(magicBuffCap(buffs,'magic',[{source:'魔术指导',effect:{type:'cap',target:'魔法伤害上限',value:30000}}]),0);
  const stat={key:'intelligence',beforeBuff:6741,crossAdd:0,buffs:[{family:'ex-aura',value:50,source:'EX'},{family:'moonlight-ii',value:30,source:'月光'}]};
- assert.equal(magicBuffLayer(stat,10111,buffs).ok,false);
- assert.equal(magicBuffLayer(stat,10111,buffs,'replace').ok,false);
- assert.equal(magicBuffLayer(stat,11122,buffs,'replace').percent,65);
- assert.equal(magicBuffLayer(stat,14493,buffs,'add').percent,115);
+ const projected=magicBuffLayer(stat,10111,buffs);assert(projected.ok);
+ assert.equal(projected.observedPanel,10111);
+ assert.deepEqual(projected.scenarios.map(s=>[s.percent,s.panel]),[[65,11122],[115,14493]]);
+ assert.deepEqual(magicBuffLayer(stat,12133,buffs).scenarios.map(s=>[s.percent,s.panel]),[[95,13144],[145,16515]]);
+ assert.equal(magicBuffLayer(stat,6741,buffs).scenarios.length,1);
+ const observed=magicBuffLayer(stat,11122,buffs);assert(observed.ok&&observed.guidanceObserved);assert.equal(observed.percent,65);assert.equal(observed.scenarios.length,0);
+ assert.equal(magicBuffLayer(stat,14493,buffs).percent,115);
+ assert.equal(magicBuffLayer(stat,10000,buffs).ok,false);
+ const common={...defaultInput(),attackBasis:'layers',coefficient:.52,skillPercent:67,defense:8000,type:'magical',skillType:'magic',element:'冰',resistance:50,specialAttack:true,killerCorrection:50,hits:35,hitMultiplier:2,hitDamageRatio:.6,hitScaleStage:'core',cap:200000,critRate:0,effects:[]};
+ const calculated=projected.scenarios.map(layer=>calculate({...common,attackBase:layer.base,runtimeStatPercent:layer.percent}));
+ assert.deepEqual(calculated.map(r=>r.context.attack),[15639,19009]);assert(calculated.every(r=>r.normal.min>0&&r.totalHits===70));
+
 });
 test('exact reported wrong range is the old panel mode, and the normal layer guard prevents it',()=>{
  const report=evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG],context);
@@ -66,4 +74,17 @@ test('exact reported wrong range is the old panel mode, and the normal layer gua
  // Removing all runtime sources cannot re-enable the old multiplication path.
  assert(needsAttributeLayers('panel',{...stat,buffs:[]},10111));
  assert.equal(resolveAttackLayers({...stat,buffs:[]},10111).ok,false);
+});
+
+test('latest stable snapshot is used as one complete observed panel; invalid/unfinished snapshots cannot replace it',()=>{
+ const initial={hp:13591,mp:1018,attack:1270,defense:1621,intelligence:6741,mind:2808,critical:11};
+ const stable={...initial,defense:2295,intelligence:10111,mind:3482,critical:6};
+ const unit={stats:initial,statsMeta:{criticalRate:11},panelSnapshots:[{id:'panel-1',elapsedMs:0,stableForMs:1000,stats:initial},{id:'panel-2',capturedAt:'later',elapsedMs:1000,stableForMs:750,stats:stable},{id:'panel-3',elapsedMs:2000,stableForMs:0,stats:{...stable,intelligence:12133}},{id:'invalid',elapsedMs:3000,stableForMs:2000,stats:{intelligence:30000}}],latestStablePanelSnapshotId:'panel-2'};
+ assert.equal(readerPanelSnapshots(unit).length,3);assert.equal(defaultReaderSnapshot(unit),'panel-2');
+ for(const [key,value] of Object.entries(stable))assert.equal(panelObservation({},unit,key).value,value);
+ assert.equal(panelObservation({},unit,'intelligence',{},'entry').value,6741);
+ assert.equal(panelObservation({},unit,'intelligence',{},'panel-3').value,12133);
+ assert.equal(observedReaderUnit(unit).statsMeta.criticalRate,6);assert.equal(unit.statsMeta.criticalRate,11);
+ assert.equal(defaultReaderSnapshot({...unit,latestStablePanelSnapshotId:'invalid'}),'entry');
+ assert.equal(defaultReaderSnapshot({...unit,latestStablePanelSnapshotId:'panel-3'}),'entry');
 });

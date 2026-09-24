@@ -1,5 +1,5 @@
-import {reportStorageKey} from './damage-import.mjs?v=20260924-review2';
-import {readCharacterProfile} from './entry-preparation.mjs?v=20260924-review2';
+import {reportStorageKey} from './damage-import.mjs?v=20260924-snapshots';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260924-snapshots';
 const panel=document.getElementById('damageSimulator');
 const frame=document.getElementById('damageCalculatorFrame');
 const open=document.getElementById('damageSimulatorOpen');
@@ -20,7 +20,7 @@ function publish() {
 }
 function show() {
   publish();panel.hidden=false;backdrop.hidden=false;open.setAttribute('aria-expanded','true');
-  if(!frame.getAttribute('src'))frame.src=`./damage-calculator.html?character=${encodeURIComponent(characterId)}&embedded=1&v=20260924-review2`;
+  if(!frame.getAttribute('src'))frame.src=`./damage-calculator.html?character=${encodeURIComponent(characterId)}&embedded=1&v=20260924-snapshots`;
   close.focus();
 }
 function hide() {panel.hidden=true;backdrop.hidden=true;open.setAttribute('aria-expanded','false');open.focus();}

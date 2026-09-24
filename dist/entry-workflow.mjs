@@ -1,12 +1,12 @@
 import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs';
 import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-review2';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-snapshots';
 import {formatEffect,describeCondition} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
 import {calculateWebsitePanel} from './panel-calculator.mjs';
-import {readMoveParameters,panelObservation,capturePanelObservation} from './battle-entry-data.mjs?v=20260924-review2';
+import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-snapshots';
 import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-review2';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-snapshots';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -26,8 +26,9 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  state.hitMechanicsRevision=2;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
  let confirmed=false,hasApproval=false,bonusGroups=[],readerBonuses=[];
- let supplementChoices={},supplements=[],attackObservations={};
- const observation=k=>panelObservation(battle,unit,k,attackObservations);
+ let supplementChoices={},supplements=[],attackObservations={},snapshotSelection='entry';
+ const selectedUnit=()=>observedReaderUnit(unit,snapshotSelection);
+ const observation=k=>panelObservation(battle,unit,k,attackObservations,snapshotSelection);
  const readStat=k=>observation(k).value;
  state.readerSkillMappings=saved.readerSkillMappings||{};
  const parameterIds=['hits','coefficient','skillPercent','skillAdd','skillPostAdd'];
@@ -79,7 +80,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   supplements=readerSupplementCandidates(readerBonuses,compared,candidate.context);
   for(const row of compared)if(state.decisions[decisionKey(row)]?.choice==='reader'&&!row.compatible)state.decisions[decisionKey(row)]={choice:'pending'};
   for(const row of compared)if(row.group==='blessings'&&!state.decisions[decisionKey(row)]&&(!row.reader||(row.compatible&&row.difference===0)))state.decisions[decisionKey(row)]={choice:'web'};
-  if(unit)for(const k of Object.keys(SIX_STATS))if(Number.isFinite(unit.stats[k])&&(!state.statDecisions[k]?.choice||state.statDecisions[k].choice==='pending'))state.statDecisions[k]={...state.statDecisions[k],choice:'reader'};
+  if(unit)for(const k of Object.keys(SIX_STATS))if(Number.isFinite(readStat(k))&&(!state.statDecisions[k]?.choice||state.statDecisions[k].choice==='pending'))state.statDecisions[k]={...state.statDecisions[k],choice:'reader'};
   $('skillType').value=['magic','heavy_magic'].includes(state.selection.attack)?'magic':/^s[123]$/.test(state.selection.attack)?'skill':state.selection.attack;
   renderProfile();renderReview();save();onSelection(selection());
  }
@@ -121,7 +122,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   const inventory=unit?.raw,states=readerBonuses.map(b=>readerBonusState(b,candidate.context));
   const count=status=>states.filter(s=>s.status===status).length;
   $('entryReadCoverage').textContent=unit?`采集 ${inventory?.buffsRead??'未知'} / ${inventory?.buffsListed??'未知'} 条 Buff；当前条件符合 ${count('active')} 项，条件不符合 ${count('inactive')} 项，条件待确认 ${count('pending')} 项，其他已说明 ${count('documented')} 项，已涵盖派生操作 ${count('covered')} 项，待解析 ${count('unresolved')} 项。配置条目不等于已触发。`:'导入报告后显示采集与解析情况。';
-  const crt=observedCritical(unit);$('entryObservedCritical').textContent=crt.value==null?'暴击面板：未读取。':`读取器观察时暴击率：${crt.value}%。${crt.note}`;
+  const crt=observedCritical(selectedUnit());$('entryObservedCritical').textContent=crt.value==null?'暴击面板：未读取。':`读取器观察时暴击率：${crt.value}%。${crt.note}`;
   $('entryBonusReview').innerHTML=bonusGroups.map((g,i)=>{
    const difference=g.difference==null?'':g.fullyMapped?`<small class="entry-panel-difference ${g.difference===0?'is-match':'is-different'}">${g.difference===0?`数值一致${g.candidate?'（候选）':''}`:`网站比读取器${g.difference>0?'多':'少'} ${val(Math.abs(g.difference),g.unit)}`}</small>`:`<small class="entry-panel-missing">已读部分，待完整核对</small>`;
    const formula=g.web.map(r=>val(r.effect.value,g.unit)).join(' + ');
@@ -133,8 +134,22 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   $('entryRemovedDetails').hidden=!removed.length;$('entryRemovedCount').textContent=`已删除的加成（${removed.length}）`;
   $('entryRemovedEffects').innerHTML=removed.map(([key,r])=>`<li><span>${esc(r.sourceName)}：${esc(formatEffect(r.effect))}</span><button type="button" data-entry-restore="${esc(key)}">恢复</button></li>`).join('');
  }
+ function renderSnapshotPicker() {
+  const samples=readerPanelSnapshots(unit);
+  $('entrySnapshotControl').hidden=!samples.length;
+  $('entrySnapshotPick').innerHTML=option('entry','首次入场观察',snapshotSelection)+samples.map(s=>option(s.id,`${(s.elapsedMs/1000).toFixed(2)} 秒 · 法强 ${s.stats.intelligence} / 防御 ${s.stats.defense} / 魔抗 ${s.stats.mind}${s.stableForMs>=750?' · 稳定观察':' · 变化中'}`,snapshotSelection)).join('');
+  $('entrySnapshotNote').textContent=!unit?'':samples.length?'默认采用报告中最近的稳定快照。可以选择其他采样时刻；整组六维一起切换，Buff 候选仍以原入场清单为准。':'这份报告只保存了最初的面板，缺少战斗中的六维。请用 v0.37 或更新版重新读取一场；旧报告也可配合结算 CSV 补入攻击时法强。';
+ }
+ $('entrySnapshotPick').addEventListener('change',e=>{
+  const id=e.target.value;
+  if(id!=='entry'&&!readerPanelSnapshots(unit).some(s=>s.id===id))return;
+  snapshotSelection=id;attackObservations={};
+  invalidate('已切换读取器面板时刻，请保存并返回。');
+  onRead({battle,unit:selectedUnit(),panelOnly:true});renderReview();
+ });
  function renderReview() {
   const openDetails=new Set([...document.querySelectorAll('[data-entry-details][open]')].map(el=>el.dataset.entryDetails));
+  renderSnapshotPicker();
   const move=selectedMove();
   $('entryMoveNote').textContent=move?`${move.source}：${move.name}。${move.purpose==='support'?'这是辅助魔法，不按攻击伤害计算。':''}${state.selection.attack==='heavy_magic'?'按你选定的重魔法条件核对。':''}`:'请选择攻击方式和具体招式。';
   $('entryCandidateCount').textContent=`${compared.length} 项加成${state.accountBlessings?'（含账户加护）':''}`;
@@ -156,8 +171,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    const d=state.statDecisions[k]||{},base=state.base[k]??profile.baseStats[k],observed=readStat(k),obs=observation(k);
    const p=computed.stats[k],diff=typeof observed==='number'&&p.value!=null?p.value-observed:null;
    const value=p.value==null?'待补齐':p.value.toLocaleString('en-US');
-   const difference=diff==null?'':`<small class="entry-panel-difference ${diff===0?'is-match':'is-different'}">${diff===0?'与读取器一致':`当前条件比${obs.kind==='entry'?'入场':'攻击时'}观察${diff>0?'多':'少'} ${Math.abs(diff).toLocaleString('en-US')}`}</small>`;
-   return `<tr><td><b>${label}</b></td><td><strong class="entry-panel-total" data-website-panel="${k}">${esc(value)}</strong>${p.value==null?`<small>已算部分：${esc(p.subtotal??'—')}</small>`:'<small>本次勾选加成计算结果</small>'}${difference}${p.buffs.length?`<small>入场前面板（实时增益前）：${esc(p.beforeBuff??'—')}</small>`:''}${p.issues.map(msg=>`<small class="entry-panel-missing">${esc(msg)}</small>`).join('')}<details data-entry-details="stat:${k}"><summary>计算明细与加成来源</summary><ol class="entry-panel-steps">${p.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><ul class="entry-source-list">${p.sources.map(s=>sourceLine(s.sourceName,s.effect,compared.findIndex(r=>r.sourceId===s.sourceId&&r.ruleId===s.ruleId&&r.index===s.effectIndex))).join('')||'<li>无额外属性加成</li>'}</ul></details></td><td>${esc(observed??'未读到')}<small>${esc(obs.label)}${k==='hp'||k==='mp'?'（上限）':''}</small><small>${esc(obs.time||'采样时间未提供')}</small><small>${esc(obs.note)}</small>${attackObservations[k]?`<small>原入场值：${esc(unit.stats[k]??'未读取')}</small><button type="button" data-entry-restore-observation="${k}">恢复入场值</button>`:''}</td><td><select data-entry-stat="${k}" aria-label="${label}面板来源">${option('pending','待决定',d.choice||'pending')}${p.value!=null?option('website','网站',d.choice):''}${observed!=null?option('reader','读取器',d.choice):''}${option('manual','手动',d.choice)}${option('blessed','基础＋加护',d.choice)}${option('base','角色基础',d.choice)}</select><input data-entry-stat-value="${k}" type="number" min="0" max="100000000" step="1" value="${esc(d.value??'')}" aria-label="${label}手动面板"${d.choice==='manual'?'':' hidden'}></td></tr>`;
+   const difference=diff==null?'':`<small class="entry-panel-difference ${diff===0?'is-match':'is-different'}">${diff===0?'与读取器一致':`当前条件比${obs.kind==='entry'?'入场':obs.kind==='snapshot'?'所选快照':'攻击时'}观察${diff>0?'多':'少'} ${Math.abs(diff).toLocaleString('en-US')}`}</small>`;
+   return `<tr><td><b>${label}</b></td><td><strong class="entry-panel-total" data-website-panel="${k}">${esc(value)}</strong>${p.value==null?`<small>已算部分：${esc(p.subtotal??'—')}</small>`:'<small>本次勾选加成计算结果</small>'}${difference}${p.buffs.length?`<small>入场前面板（实时增益前）：${esc(p.beforeBuff??'—')}</small>`:''}${p.issues.map(msg=>`<small class="entry-panel-missing">${esc(msg)}</small>`).join('')}<details data-entry-details="stat:${k}"><summary>计算明细与加成来源</summary><ol class="entry-panel-steps">${p.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><ul class="entry-source-list">${p.sources.map(s=>sourceLine(s.sourceName,s.effect,compared.findIndex(r=>r.sourceId===s.sourceId&&r.ruleId===s.ruleId&&r.index===s.effectIndex))).join('')||'<li>无额外属性加成</li>'}</ul></details></td><td>${esc(observed??'未读到')}<small>${esc(obs.label)}${k==='hp'||k==='mp'?'（上限）':''}</small><small>${esc(obs.time||'采样时间未提供')}</small><small>${esc(obs.note)}</small>${attackObservations[k]?`<small>原入场值：${esc(unit.stats[k]??'未读取')}</small><button type="button" data-entry-restore-observation="${k}">恢复所选快照</button>`:''}</td><td><select data-entry-stat="${k}" aria-label="${label}面板来源">${option('pending','待决定',d.choice||'pending')}${p.value!=null?option('website','网站',d.choice):''}${observed!=null?option('reader','读取器',d.choice):''}${option('manual','手动',d.choice)}${option('blessed','基础＋加护',d.choice)}${option('base','角色基础',d.choice)}</select><input data-entry-stat-value="${k}" type="number" min="0" max="100000000" step="1" value="${esc(d.value??'')}" aria-label="${label}手动面板"${d.choice==='manual'?'':' hidden'}></td></tr>`;
   }).join('');
   renderBonusReview();
   const mapped=new Set(compared.filter(r=>r.compatible).map(r=>r.reader?.id).filter(Boolean));
@@ -213,11 +228,11 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   $('entryUnit').innerHTML=option('','请选择本次测试角色','')+battle.units.map((u,i)=>option(String(i),`${u.name||'未命名'} · Unit ${u.unitId}`,'')).join('');
   $('entryFileNote').textContent=`${file.name} · ${battle.testFixture?'模拟示例，非实际战斗 · ':''}${battle.capturedAt||'时间未提供'} · ${battle.snapshotState==='partial'?'部分读取，缺项不代表没有效果':'入场报告'}。${battle.normalization?.mpThousandths?'MP已按游戏显示单位修正，原始值保留。':''}请选择正确角色；Buff清单本身不代表全部触发。`;
   if(battle.units.length===1){unit=battle.units[0];$('entryUnit').value='0';}
-  invalidate('报告已载入；已有资料已暂填，请在面板与加成核对页确认。');setParameters();onRead({battle,unit});updateCandidate();
+  invalidate('报告已载入；已有资料已暂填，请在面板与加成核对页确认。');setParameters();snapshotSelection=defaultReaderSnapshot(unit);onRead({battle,unit:selectedUnit()});updateCandidate();
  }
  $('entryReportFile').addEventListener('change',async e=>{try{await importFile(e.target.files[0]);}catch(err){invalidate(`新文件未导入：${err.message}`);}e.target.value='';});
  $('readerSkillPick').addEventListener('change',e=>{state.readerSkillMappings[`${unit?.unitId}:${paramKey()}`]=e.target.value;state.parameters[paramKey()]={...state.parameters[paramKey()],coefficient:'',skillPercent:'',skillAdd:'',skillPostAdd:''};setParameters();save();syncSelection();});
- $('entryUnit').addEventListener('change',e=>{unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;attackObservations={};hasApproval=false;state.mappings={};state.statDecisions={};supplementChoices={};invalidate('读取资料已暂填；数值差异由你决定。');setParameters();onRead({battle,unit});updateCandidate();});
+ $('entryUnit').addEventListener('change',e=>{unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;attackObservations={};hasApproval=false;state.mappings={};state.statDecisions={};supplementChoices={};invalidate('读取资料已暂填；数值差异由你决定。');setParameters();snapshotSelection=defaultReaderSnapshot(unit);onRead({battle,unit:selectedUnit()});updateCandidate();});
  $('entrySupplementReview').addEventListener('change',e=>{const b=supplements[Number(e.target.dataset.readerSupplement)];if(!b)return;supplementChoices[supplementKey(b)]=e.target.value;invalidate('读取器补充加成已更新。');renderReview();});
  for(const id of ['dualWield','magicCanCrit'])$(id).addEventListener('change',()=>{state.selection[id]=$(id).checked;save();renderReview();onSelection(selection());});
  for(const id of ['specialAttack','break'])$(id).addEventListener('change',()=>{
@@ -272,7 +287,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  $('entryUseReader').addEventListener('click',()=>useBonusGroups('reader'));
  document.querySelectorAll('[data-review-save]').forEach(el=>el.addEventListener('click',()=>{save();syncSelection(true);}));
  $('entryStatReview').addEventListener('click',e=>{const key=e.target.dataset.entryRestoreObservation;if(!key)return;delete attackObservations[key];invalidate();renderReview();});
- $('entryUseStats').addEventListener('click',()=>{if(!unit){$('entryStatus').textContent='请先选择读取报告中的角色。';return;}for(const k of Object.keys(SIX_STATS))if(unit.stats[k]!=null)state.statDecisions[k]={choice:'reader'};invalidate('已选择读取器观察值；以每项标注的采样时刻为准。');save();renderReview();});
+ $('entryUseStats').addEventListener('click',()=>{if(!unit){$('entryStatus').textContent='请先选择读取报告中的角色。';return;}for(const k of Object.keys(SIX_STATS))if(readStat(k)!=null)state.statDecisions[k]={choice:'reader'};invalidate('已选择读取器观察值；以每项标注的采样时刻为准。');save();renderReview();});
  $('entryUseWebsiteStats').addEventListener('click',()=>{if(!candidate)return;const computed=websitePanel();let count=0;for(const k of Object.keys(SIX_STATS))if(computed.values[k]!=null){state.statDecisions[k]={choice:'website'};count++;}invalidate(`已选择 ${count} 项网站计算结果；仍需确认后应用。`);save();renderReview();});
  function syncSelection(finish=false){
   try {

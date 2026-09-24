@@ -1,7 +1,7 @@
 import {decodeHpStatEntry} from './stat-mechanics.mjs';
 import {decodeReaderBonuses} from './reader-bonus-decoder.mjs';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-review2';
+import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-snapshots';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
 const elementIds={无:'none',火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark'};
@@ -64,6 +64,7 @@ export function validateBattleEntry(input) {
  for(const unit of input.units) {
   if(!unit||!unit.stats||!Array.isArray(unit.bonuses)||unit.bonuses.length>20000)throw new Error('角色或加成记录格式不完整。');
   for(const key of Object.keys(SIX_STATS))if(unit.stats[key]!=null&&(num(unit.stats[key])===null||unit.stats[key]<0))throw new Error('读取报告包含无效面板数值。');
+  if(unit.panelSnapshots!=null&&(!Array.isArray(unit.panelSnapshots)||unit.panelSnapshots.length>512))throw new Error('读取报告的面板快照清单格式不正确。');
   for(const b of unit.bonuses)if(!b||typeof b.id!=='string'||(b.value!=null&&typeof b.value!=='string'&&typeof b.value!=='boolean'&&num(b.value)===null))throw new Error('读取报告包含无效加成记录。');
  }
  input={...input,units:input.units.map(unit=>({...unit,bonuses:decodeReaderBonuses(unit.bonuses.map(b=>{const {decoded,decodeIssue,auditCategory,coveredBy,...rawEntry}=b;return rawEntry;}).map(decodeKnownBlessingEntry).map(decodeHpStatEntry))}))};

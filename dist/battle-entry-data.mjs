@@ -1,9 +1,30 @@
 // Read only explicit report fields. Missing fields stay unknown, never inherit a preset.
 import {RACES} from './damage-engine.mjs';
 const valid=v=>typeof v==='number'&&Number.isFinite(v);
-export function panelObservation(battle,unit,key,later={}) {
+const panelKeys=['hp','mp','attack','defense','intelligence','mind'];
+export function readerPanelSnapshots(unit) {
+ if(!Array.isArray(unit?.panelSnapshots))return [];
+ const ids=new Set();
+ return unit.panelSnapshots.filter(s=>{
+  if(!s||typeof s.id!=='string'||s.id==='entry'||ids.has(s.id)||!valid(s.elapsedMs)||s.elapsedMs<0||!panelKeys.every(k=>valid(s.stats?.[k])&&s.stats[k]>=0)||s.stats.hp<=0)return false;
+  ids.add(s.id);return true;
+ }).sort((a,b)=>a.elapsedMs-b.elapsedMs);
+}
+export function defaultReaderSnapshot(unit) {
+ const samples=readerPanelSnapshots(unit),sample=samples.find(s=>s.id===unit?.latestStablePanelSnapshotId&&s.stableForMs>=750);
+ return sample?.id||'entry';
+}
+export function readerSnapshot(unit,selected=defaultReaderSnapshot(unit)) {return readerPanelSnapshots(unit).find(s=>s.id===selected)||null;}
+export function observedReaderUnit(unit,selected) {
+ const s=readerSnapshot(unit,selected);if(!s)return unit;
+ const critical=valid(s.stats.critical)?s.stats.critical:valid(s.criticalRate)?s.criticalRate:null;
+ return {...unit,stats:{...s.stats},statsMeta:{...unit.statsMeta,criticalRate:critical},raw:{...unit.raw,criticalRaw:critical},capturedAt:s.capturedAt,current:s.current||{hp:s.hp,mp:s.mp}};
+}
+export function panelObservation(battle,unit,key,later={},selected=defaultReaderSnapshot(unit)) {
  const sample=later[key];
  if(sample&&valid(sample.value))return {value:sample.value,label:'攻击时观察值',time:sample.capturedAt||'',note:'来自所选结算样本；只更新实际读取到的这一项。',kind:'attack'};
+ const snapshot=readerSnapshot(unit,selected);
+ if(snapshot)return {value:valid(snapshot.stats[key])?snapshot.stats[key]:null,label:snapshot.stableForMs>=750?'战斗中稳定观察值':'战斗中变化值',time:snapshot.capturedAt||'',kind:'snapshot',note:`入场后 ${(snapshot.elapsedMs/1000).toFixed(2)} 秒，整组六维来自同次读取。稳定表示数值暂时未变，不代表所有增益生效。`};
  return {value:valid(unit?.stats?.[key])?unit.stats[key]:null,label:'入场观察值',time:unit?.capturedAt||battle?.capturedAt||'',kind:'entry',
   note:battle?.collection?.buffApplicationVerified===true?'报告标记已核对增益生效。':'采集完整不代表开场效果已生效；与网站当前条件可能处于不同时刻。'};
 }
