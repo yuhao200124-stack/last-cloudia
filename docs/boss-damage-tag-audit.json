@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "label": "Boss伤害增加",
   "reviewedUnique": 935,
-  "matchedUnique": 12,
-  "sharedWithPreviousUnique": 5,
-  "reviewScope": "从全库935条查找完整的对Boss增伤词条，逐条复核31条Boss／首领／头目相关记录及扩展别名候选；全库指纹与此前逐条阅读原文一致。纳入对Boss的物理、魔法、特技、必杀、暴击及不限定类型的增伤，保留每条攻击类型限制。只加对Boss上限、Boss减伤、非Boss增伤、Boss Wave基础属性／恢复均排除。不把Boss增伤泛化为普通伤害增加。",
+  "matchedUnique": 1,
+  "sharedWithPreviousUnique": 0,
+  "reviewScope": "全库935条已按完整词条复核。依用户纠正，本标签只纳入不再限定物理、魔法、特技、必杀、暴击或属性的对Boss造成伤害增加，仅勇者之魂1608符合。对Boss的特技／必杀／物理／魔法／暴击增伤是各自完整词条，不拆出Boss伤害增加标签。伤害上限、受到伤害减少、非Boss增伤、Boss Wave属性或恢复均排除。",
   "rows": [
     {
       "id": "f6b3f0aa974f4913",
@@ -2306,8 +2306,8 @@
       "id": "6bb2c943681bb3e7",
       "url": "https://altema.jp/lastcloudia/gino/411",
       "sourceHash": "b7c84a39096e1d322238c2ec5264de9ba56ac2a6457ef293fff059d7a8d8cfec",
-      "decision": "related",
-      "reason": "对Boss的特技和必杀伤害+20%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "c9a348f962867ee9",
@@ -2929,8 +2929,8 @@
       "id": "7ef2d01b96b2406e",
       "url": "https://altema.jp/lastcloudia/gino/624",
       "sourceHash": "d687b9f9aa96cdc527470a6797355c9fbbe0894074859bd0e02057dd9d9d330f",
-      "decision": "related",
-      "reason": "对Boss的特技和必杀伤害+20%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "523a8585fc9c836c",
@@ -3251,8 +3251,8 @@
       "id": "a17f779989645fb0",
       "url": "https://altema.jp/lastcloudia/gino/720",
       "sourceHash": "3d3c30a416fcf563bbdd57bf501c6ab31e050f6099e239b53749567692de8366",
-      "decision": "related",
-      "reason": "对Boss的物理攻击伤害随装备调查兵团的我方单位人数提高：1名+6%、2名+12%、3名+18%、4名+24%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "4e8a749504d3799f",
@@ -3601,8 +3601,8 @@
       "id": "79a377bec526c2d4",
       "url": "https://altema.jp/lastcloudia/gino/837",
       "sourceHash": "d32e42300528da1f29b90704fe6f7a0393746d95cf9ebdc729872e7f911c6945",
-      "decision": "related",
-      "reason": "对Boss的魔法攻击伤害+20%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "e2376f83dc028e0f",
@@ -4028,8 +4028,8 @@
       "id": "2ad532afbdeb2594",
       "url": "https://altema.jp/lastcloudia/gino/985",
       "sourceHash": "b59b959efa79cb530d9f949fe0a506c670818203588b863cf384e80b12831880",
-      "decision": "related",
-      "reason": "对Boss的必杀伤害+20%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "6abbc6031b5d8a35",
@@ -4196,8 +4196,8 @@
       "id": "ecf05abb4f8e4b10",
       "url": "https://altema.jp/lastcloudia/gino/1041",
       "sourceHash": "07684d8bf1fad592b68e7597353e9aa1c44437879b3faf14128254c990b85f7c",
-      "decision": "related",
-      "reason": "对Boss的特技和必杀伤害+20%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "dd01efc0419e5a40",
@@ -4483,8 +4483,8 @@
       "id": "a97531c83b0073e7",
       "url": "https://altema.jp/lastcloudia/gino/1159",
       "sourceHash": "9aadbde384ef76e22c9f92aea3d1abebe39825a080e8df4da65740f31efd7b0c",
-      "decision": "related",
-      "reason": "对Boss的魔法攻击伤害+20%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "0e15301820186e27",
@@ -4805,8 +4805,8 @@
       "id": "e3085e506db3fa44",
       "url": "https://altema.jp/lastcloudia/gino/1289",
       "sourceHash": "2256ce45a68019a643dae769517d16cb88169565f4efb473a8eebd2c058412b5",
-      "decision": "related",
-      "reason": "对Boss的暴击伤害+10%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "1519299bec222fca",
@@ -4854,8 +4854,8 @@
       "id": "5c16599b8947ce62",
       "url": "https://altema.jp/lastcloudia/gino/1311",
       "sourceHash": "5360df00c2c843dc122c3221a97868f895b58aa904ba5d3e630581bcc60e7276",
-      "decision": "related",
-      "reason": "对Boss的特技和必杀伤害+20%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "e0f570e2539649eb",
@@ -5646,7 +5646,7 @@
       "url": "https://altema.jp/lastcloudia/gino/1608",
       "sourceHash": "7b3e73ac09f0b7f99bc2dbbb3d991aca37050edab5931aebd27aa1e62de85664",
       "decision": "related",
-      "reason": "对Boss造成的伤害+20%"
+      "reason": "对Boss造成的伤害+20%，未限定攻击类型、暴击或属性，符合本标签；受到Boss伤害-20%另作减伤待判断。"
     },
     {
       "id": "4c25a005372c0d24",
@@ -5715,8 +5715,8 @@
       "id": "f49f17d3da2551a8",
       "url": "https://altema.jp/lastcloudia/gino/1644",
       "sourceHash": "0193511b3e8f75880c26a601a809bd1b30e1d38f746e7e875150d2e6e2e5b015",
-      "decision": "related",
-      "reason": "对Boss的魔法攻击伤害+20%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "d268368f04c8f840",
@@ -6114,8 +6114,8 @@
       "id": "42656c3afdc8103a",
       "url": "https://altema.jp/lastcloudia/gino/1814",
       "sourceHash": "9081520a819ea2b1635a5103dcf3c3e63b6b1430b82cf76123bcb7298a33beec",
-      "decision": "related",
-      "reason": "对Boss的魔法攻击伤害+20%"
+      "decision": "not-related",
+      "reason": "用户纠正：完整词条额外限定物理、魔法、特技、必杀或暴击增伤，不能抽去这些限定后归为Boss伤害增加；本轮撤回此标签及其完成覆盖，已有其它标签保留。"
     },
     {
       "id": "全部技能:all:876",
