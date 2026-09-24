@@ -59,8 +59,8 @@ test('magic damage accumulates across old views and only finishes after remainin
  future.tagPasses.push({tag:'装备法杖',assignments:[{skillId:source(241).id,partIds:['condition-1']}]});
  const updated=resolveSkillLabels(future).find(e=>e.id===source(241).id);
  assert.equal(updated.judgment,'ready');assert.equal(entry(241).judgment,'partial');
- assert.equal(catalog.entries.length,332);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,332);
- assert.equal(catalog.views.all.counts.ready,57);assert.equal(catalog.views.all.counts.partial,275);
+ assert.equal(catalog.entries.length,351);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,351);
+ assert.equal(catalog.views.all.counts.ready,64);assert.equal(catalog.views.all.counts.partial,287);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,57).every(r=>r.judgment==='ready'));assert(sorted.slice(57).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,64).every(r=>r.judgment==='ready'));assert(sorted.slice(64).every(r=>r.judgment==='partial'));
 });

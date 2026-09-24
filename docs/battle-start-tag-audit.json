@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "label": "战斗开始",
   "reviewedUnique": 935,
-  "matchedUnique": 91,
-  "reviewScope": "全库935个唯一技能的效果和补充说明；核对战斗开始、每Wave开始、开场、开局、开战、起始、初始与重置。开场即时施加／判断与重置纳入，永久自动、延迟生效、周期触发、Wave结束、其它事件及仅每Wave次数限制排除。每条开场效果独立绑定，不能凭并列属性或旧标签交集分组。",
+  "matchedUnique": 117,
+  "reviewScope": "全库935个唯一技能的效果和补充说明：原战斗开始、每Wave开始、开场、开局、开战、起始、初始与重置；本轮逐条核对永久、常驻、始终、自动获得等表述，纳入永久获得具名状态。按用户要求将永久状态归入战斗开始同页，按实际效果绑定分组；保留永久持续语义，不能误作40秒开场Buff。普通无条件数值加成、并列常驻属性、延迟触发、周期触发、其它事件触发后持续至战斗不能均不因此纳入。",
   "rows": [
     {
       "id": "f6b3f0aa974f4913",
@@ -682,7 +682,7 @@
       "url": "https://altema.jp/lastcloudia/gino/97",
       "sourceHash": "238374295fabd686c77fe45dcba9272bb50b0b2f23fbe7fb7dac96f81854170d",
       "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "reason": "异常耐性等级提高；说明中的“永久免疫”是辨析，不是永久获得具名Buff"
     },
     {
       "id": "1739768b74889ad7",
@@ -744,43 +744,49 @@
       "id": "5f0091303689244c",
       "url": "https://altema.jp/lastcloudia/gino/106",
       "sourceHash": "b2254680e4225040ffd31593c28d00ee9de7d1d644878cf0dc59ff60e4e92f96",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「勇敢」：自身攻击力+20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "fa9ff44cef19f2d5",
       "url": "https://altema.jp/lastcloudia/gino/107",
       "sourceHash": "48339d03d7bb36a9f104af1265a65bc37740a78c7a79f4051736e59cad19004b",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「保护」：自身受到物理伤害-20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "36c52eb155eecd1f",
       "url": "https://altema.jp/lastcloudia/gino/108",
       "sourceHash": "88fd2961271c14046c9b69d6a1528df6701b7a8a223e0697c8fe135e3e49cfe0",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「灵气」：自身魔力+20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "d18db4372ea123a1",
       "url": "https://altema.jp/lastcloudia/gino/109",
       "sourceHash": "f2eafbd1da1967e89426d44ead007f1b2e6962c4033303d6c200b36f7f10a524",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「魔法屏障」：自身受到魔法伤害-20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "6daaeb2654b05955",
       "url": "https://altema.jp/lastcloudia/gino/110",
       "sourceHash": "ec253ccaeac39b9cc9a6dd84d06632acaa115de756487acef57c004f843b6d08",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「再生」：自身每6秒回复一次HP，回复量受自身魔抗等回复计算因素影响；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "0bcbd8a4dc9889d5",
       "url": "https://altema.jp/lastcloudia/gino/112",
       "sourceHash": "3f3ca02dbd399db26d11201bbe87d89e3975de57a1d8942750b2071b39907573",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「加速」：自身SCT恢复速度+25%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "0ab71464ffb5918f",
@@ -1179,7 +1185,7 @@
       "url": "https://altema.jp/lastcloudia/gino/173",
       "sourceHash": "83f40f84a22f289e64d94641b831722d56b6798a886c6b5fbc4a332f411cb16f",
       "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "reason": "异常状态下的回复速度增幅，不是永久获得加速状态"
     },
     {
       "id": "f504f03347fe02ac",
@@ -1347,7 +1353,7 @@
       "url": "https://altema.jp/lastcloudia/gino/200",
       "sourceHash": "ab78edc4b3a78c1429325d729c54c52d45328749c10beb9d8a4331dd8ec08319",
       "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "reason": "异常被治愈时才获得40秒耐性Buff，不是永久状态"
     },
     {
       "id": "全部技能:all:194",
@@ -1598,8 +1604,9 @@
       "id": "478822878a23edb4",
       "url": "https://altema.jp/lastcloudia/gino/239",
       "sourceHash": "f7867bf6a5f69f21039daafa1b09d2d07e3cb80c0e71a813722af32283491302",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「暴击」：自身暴击率+15%，不额外赋予魔法暴击资格；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "2d24508b309322f7",
@@ -1634,7 +1641,7 @@
       "url": "https://altema.jp/lastcloudia/gino/244",
       "sourceHash": "14082d76cfdd667b0f6ba937e5d8e626c7941375663972c735394fecd0ce2644",
       "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "reason": "每10秒发动随机墙，墙持续30秒，不是永久获得"
     },
     {
       "id": "全部技能:all:235",
@@ -2067,8 +2074,9 @@
       "id": "fa52989c491088fb",
       "url": "https://altema.jp/lastcloudia/gino/350",
       "sourceHash": "5acbd5313fc83b052f3dfeecb8de57319c9ffd68d95939afa702988a5e751a0d",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「梅蒂斯」：自身魔抗+20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "c2a5f212631ba8ff",
@@ -2291,8 +2299,9 @@
       "id": "23372f853389c00f",
       "url": "https://altema.jp/lastcloudia/gino/406",
       "sourceHash": "8697ce9aae6d8e0a315da95c985918f2b24d1fb305d10d58e01133f0f950aad8",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「速度」：自身移动速度+2；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "全部技能:all:329",
@@ -2355,7 +2364,7 @@
       "url": "https://altema.jp/lastcloudia/gino/425",
       "sourceHash": "86cdcbcb05c1a2a2d5da9f116aecca92cbaa7e0b85a6bd4cb02315a485afe19a",
       "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "reason": "敌人使用必杀时才获得勇敢／堡垒，不是永久状态"
     },
     {
       "id": "ea2269dc8dbcfa74",
@@ -2984,8 +2993,9 @@
       "id": "e3d7bd6b053a45c9",
       "url": "https://altema.jp/lastcloudia/gino/636",
       "sourceHash": "914e80eca85ae82da3c7e407ed8b75122f860636d8dee82e25d2471a1cc828d0",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「堡垒」：自身防御力+20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "全部技能:all:428",
@@ -3131,8 +3141,9 @@
       "id": "74246bc6c04abdc3",
       "url": "https://altema.jp/lastcloudia/gino/683",
       "sourceHash": "11299f4dc7586aa0e24f0942aad66e3ded531b5e2e199c2dbda374d00a8fcbd6",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「石墙」：自身受到雷属性攻击的伤害-20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "e677b6a7691dc515",
@@ -3187,8 +3198,9 @@
       "id": "ec87e1562724f2ba",
       "url": "https://altema.jp/lastcloudia/gino/700",
       "sourceHash": "0594aca2def1f80b6122f941f9848aba9a6892a9e44478cb41a7e48ca0ae6b3b",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「冰墙」：自身受到火属性攻击的伤害-20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "2901b40ce3f38847",
@@ -3215,8 +3227,9 @@
       "id": "7aa3dea4055222df",
       "url": "https://altema.jp/lastcloudia/gino/710",
       "sourceHash": "aac015a4c3d306c9194119b2db5888e44a0f1a6c03616970391dca907f9b3f8c",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「圣墙」：自身受到暗属性攻击的伤害-20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "182731824b8599ca",
@@ -3377,7 +3390,7 @@
       "url": "https://altema.jp/lastcloudia/gino/754",
       "sourceHash": "ca6734d1b42082ef09b7fa3d09073ebfbea18c418c96c85678e2fb58d0ff2439",
       "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "reason": "队伍人数条件增伤，技能名“永远”不构成永久Buff"
     },
     {
       "id": "3cc8a829b724bfe7",
@@ -3747,8 +3760,9 @@
       "id": "addbcf95d86cc87f",
       "url": "https://altema.jp/lastcloudia/gino/887",
       "sourceHash": "1f8c2f4b376167ea97bdb0bb956ec4a41775f35c5b20a36a5ae25b6323b03a17",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「暗影墙」：自身受到光属性攻击的伤害-20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "ac7e651d686855cc",
@@ -3789,8 +3803,9 @@
       "id": "36e8b2a0f4ac2cef",
       "url": "https://altema.jp/lastcloudia/gino/899",
       "sourceHash": "afd53531799f89c61a3321742d75c2921978e5070e808c74d855e867e4fd9971",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「高阶保护」：自身受到物理伤害-35%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "5837c3c5bd19cc83",
@@ -3846,7 +3861,7 @@
       "url": "https://altema.jp/lastcloudia/gino/917",
       "sourceHash": "04e387fc9854bcdaf506cc36fd8344a97d5c3ab6128c45ed0a68b85a9a86a304",
       "decision": "not-related",
-      "reason": "自身拥有2种以上类型时获得速度，每Wave仅为次数限制，不限定开场"
+      "reason": "类型数量达标时才获得速度，持续至战斗不能；不视为开场常驻状态"
     },
     {
       "id": "f851cc57b094612a",
@@ -3888,7 +3903,7 @@
       "url": "https://altema.jp/lastcloudia/gino/939",
       "sourceHash": "a059b083a28a51c46d8301b8fd082b4c8f6b5c17a4e0577f5385a2b733ae61cf",
       "decision": "not-related",
-      "reason": "开场40秒后才施加，非开场即时"
+      "reason": "开场40秒后才施加，持续至战斗不能；不视为永久获得"
     },
     {
       "id": "554267b802fb480e",
@@ -3923,7 +3938,7 @@
       "url": "https://altema.jp/lastcloudia/gino/948",
       "sourceHash": "091dfbc9e8022c0fff8aa9f8b216c0495e55d831ff9efa65301cba06729f1f59",
       "decision": "not-related",
-      "reason": "开场40秒后才施加，非开场即时"
+      "reason": "开场40秒后才施加，持续至战斗不能；不视为永久获得"
     },
     {
       "id": "ea3ec6051efc1995",
@@ -3992,8 +4007,9 @@
       "id": "c14ec33793319bba",
       "url": "https://altema.jp/lastcloudia/gino/969",
       "sourceHash": "01e86ed9f194deea6063cb62af1215b5cc743b05223ca19f004b50af1c886647",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「大勇敢」：自身攻击力+35%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "全部技能:all:572",
@@ -4307,8 +4323,9 @@
       "id": "d01dcb7af94bea8f",
       "url": "https://altema.jp/lastcloudia/gino/1088",
       "sourceHash": "6b3d7428c9f34bca24b33fa70f6ea4c0b0e5f29d3036a065fd36e081b2721281",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「大灵气」：自身魔力+35%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "f177a34c939a2dfc",
@@ -4559,8 +4576,9 @@
       "id": "0b5a9905580d734c",
       "url": "https://altema.jp/lastcloudia/gino/1190",
       "sourceHash": "51dbc051522c6ff42128f7670c45555d803455ee70c3fcac0ce2ecc33c072764",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「炎墙」：自身受到树属性攻击的伤害-20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "4aafd29a15ad98c4",
@@ -4629,8 +4647,9 @@
       "id": "f2f841598b8870ad",
       "url": "https://altema.jp/lastcloudia/gino/1221",
       "sourceHash": "ef190d1975c20eb25ba2a51fe8f64cbff8388b06a6866fafc70c7cf006b4b1b8",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「活力」：自身HP上限固定+1,000；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "723dc4cfe45b43e1",
@@ -4713,8 +4732,9 @@
       "id": "全部技能:all:675",
       "url": "https://altema.jp/lastcloudia/gino/1250",
       "sourceHash": "f018c49b9afa3477bd540370c753bf5427c1f643840af3ca223577f16a296638",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「雷墙」：自身受到冰属性攻击的伤害-20%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "282565f2d071ec9c",
@@ -4860,8 +4880,9 @@
       "id": "e0f570e2539649eb",
       "url": "https://altema.jp/lastcloudia/gino/1312",
       "sourceHash": "735ab475178a6aa55d3b4ef283be2727a6a5534add56259ae97cdf2cbfbea952",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「圣墙2」：自身受到暗属性攻击的伤害-35%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "01b4b9edd30c865e",
@@ -4965,8 +4986,9 @@
       "id": "5fae0db345fcff39",
       "url": "https://altema.jp/lastcloudia/gino/1364",
       "sourceHash": "bb2ef3151079310d84ca17f3bf948e44742e83ac840cd26395f11d7804b9f934",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「高阶魔法屏障」：自身受到魔法伤害-35%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "0d0bdf3f7c6e0b5a",
@@ -5035,8 +5057,9 @@
       "id": "a9028de3be35cf4b",
       "url": "https://altema.jp/lastcloudia/gino/1381",
       "sourceHash": "9a771a372bff7de2f13367a3ae909f985a5fe4e56c5011690ad9fc50739563d9",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「炎墙2」：自身受到树属性攻击的伤害-35%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "aba38f88e29c5cdf",
@@ -5063,8 +5086,9 @@
       "id": "e4676d68a23621cf",
       "url": "https://altema.jp/lastcloudia/gino/1395",
       "sourceHash": "c4f63e85cfca8a6956e416e0010104ab2c40b91552a442eaa0c7e745ce8a1da3",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「暗影墙2」：自身受到光属性攻击的伤害-35%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "c29d9aca92cef0ef",
@@ -5994,8 +6018,9 @@
       "id": "790933563ebc27aa",
       "url": "https://altema.jp/lastcloudia/gino/1768",
       "sourceHash": "9981247a918ee6788716442a9b7d68ac09fc9813296e8003bc07798d0dca8bc5",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「高阶活力」：自身HP上限固定+2,000；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "f838f311a82579e0",
@@ -6134,8 +6159,9 @@
       "id": "6c011f9fec60b9b2",
       "url": "https://altema.jp/lastcloudia/gino/1828",
       "sourceHash": "620281a33aa39ecf642640140fc868e1a0f06abb0ee2870de2513970f8472d18",
-      "decision": "not-related",
-      "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
+      "decision": "related",
+      "reason": "用户确认永久获得状态也归入战斗开始：永久获得「石墙2」：自身受到雷属性攻击的伤害-35%；无固定倒计时，同类型Buff不叠加。",
+      "classification": "permanent-status"
     },
     {
       "id": "44a3d9148279023c",
@@ -6550,5 +6576,6 @@
       "decision": "not-related",
       "reason": "没有明确开场即时施加、开场条件判断或每Wave重置词条。"
     }
-  ]
+  ],
+  "permanentStatusUnique": 26
 }

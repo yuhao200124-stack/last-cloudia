@@ -32,9 +32,9 @@ test('the attack pass audits all unique skills including category-only rows and 
 test('the previous attack tag is retained while only reviewed attribute fragments are added', () => {
   for(const row of catalog.entries){assert.equal(row.assignedTags[0],'攻击力');assert(row.assignedTags.every(tag=>['攻击力','防御力','生命力','魔力','物理伤害增加','魔法伤害增加','战斗开始'].includes(tag) || (tag==='Boss物理伤害增加' && row.id===skill(1883).id)));}
   assert.equal(catalog.entries.filter(row=>row.assignedTags.includes('防御力')).length,26);
-  assert.equal(catalog.counts.ready,17);
-  assert.equal(catalog.counts.partial,70);
-  assert.deepEqual(catalog.entries.filter(row=>row.judgment==='ready').map(row=>Number(row.url.split('/').pop())),[9,10,11,12,102,251,387,393,528,725,746,796,851,986,1571,1864,1912]);
+  assert.equal(catalog.counts.ready,19);
+  assert.equal(catalog.counts.partial,68);
+  assert.deepEqual(catalog.entries.filter(row=>row.judgment==='ready').map(row=>Number(row.url.split('/').pop())),[9,10,11,12,102,106,251,387,393,528,725,746,796,851,969,986,1571,1864,1912]);
   assert.equal(skill(387).basicStats.status,'ready');
   assert.equal(entry(387).judgment,'ready');
   assert.deepEqual(entry(387).remainingEffects,[]);
@@ -43,7 +43,7 @@ test('the previous attack tag is retained while only reviewed attribute fragment
   assert.equal(entry(267).judgment,'partial');
   assert.match(entry(267).calculationNote,/按当前HP计算.*不能.*最高50%/);
   assert.equal(entry(390).judgment,'partial');
-  for(const n of [106,113,119,195,218,267,552,726,787,969,983,1147,1176,1212,1231,1318,1365,1483,1629,1747,1801,2001]){
+  for(const n of [113,119,195,218,267,552,726,787,983,1147,1176,1212,1231,1318,1365,1483,1629,1747,1801,2001]){
     assert.equal(entry(n).judgment,'partial',entry(n).name);
     assert(entry(n).remainingConditions.length,entry(n).name);
   }
@@ -140,7 +140,7 @@ test('the page groups Boss labels, switches cumulative views, filters and clears
   assert.match(get('#judgmentSummary').textContent,/2.*11.*0/);
   const tabs=get('#labelTabs');
   assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,11);
-  assert(tabs.innerHTML.includes('全部已贴标签（332）'));
+  assert(tabs.innerHTML.includes('全部已贴标签（351）'));
   assert(tabs.innerHTML.includes('攻击力（87）'));
   assert(tabs.innerHTML.includes('防御力（70）'));
   assert(tabs.innerHTML.includes('生命力（25）'));
@@ -182,15 +182,15 @@ test('the page groups Boss labels, switches cumulative views, filters and clears
   clickTab('attack');
   assert.equal(sub.hidden,true);
   assert.match(get('#labelCoverage').textContent,/935.*87.*848/);
-  assert.match(get('#judgmentSummary').textContent,/17.*70.*0/);
+  assert.match(get('#judgmentSummary').textContent,/19.*68.*0/);
   clickTab('all');
-  assert.match(get('#labelCoverage').textContent,/935.*332.*603/);
-  assert.match(get('#judgmentSummary').textContent,/57.*275.*0/);
+  assert.match(get('#labelCoverage').textContent,/935.*351.*584/);
+  assert.match(get('#judgmentSummary').textContent,/64.*287.*0/);
   const rowStatuses=[...get('#labelTable').innerHTML.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(match=>match[1]);
-  assert.deepEqual(rowStatuses.slice(0,57),Array(57).fill('ready'));
-  assert(rowStatuses.slice(57).every(status=>status==='partial'));
+  assert.deepEqual(rowStatuses.slice(0,64),Array(64).fill('ready'));
+  assert(rowStatuses.slice(64).every(status=>status==='partial'));
   const search=get('#labelSearch');search.value='没有这个技能123';search.listeners.input();
   assert.equal(get('#labelEmpty').hidden,false);assert.equal(get('#labelTable').innerHTML,'');
   get('#clearLabelSearch').listeners.click();assert.equal(get('#labelEmpty').hidden,true);
-  assert.match(get('#labelResultCount').textContent,/332 \/ 332/);
+  assert.match(get('#labelResultCount').textContent,/351 \/ 351/);
 });

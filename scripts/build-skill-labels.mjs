@@ -40,6 +40,11 @@ for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','p
     if(!['related','not-related'].includes(decision.decision) || (decision.decision==='related')!==byId.has(row.id))throw Error(`Unreviewed or inconsistent tag: ${row.id}`);
   }
   if(entries.length!==audit.matchedUnique)throw Error('Related skill total drifted.');
+  if(key==='battle-start'){
+    const permanent=entries.filter(entry=>entry.tagDetails[label].activationMode==='permanent-status');
+    if(registry.permanentStatusIds?.length!==permanent.length || new Set(registry.permanentStatusIds).size!==permanent.length || permanent.some(entry=>!registry.permanentStatusIds.includes(entry.id)) || audit.permanentStatusUnique!==permanent.length)throw Error('Permanent status membership drifted.');
+    for(const decision of audit.rows)if((decision.classification==='permanent-status')!==registry.permanentStatusIds.includes(decision.id))throw Error('Permanent status audit mismatch.');
+  }
   const previous=previousKey ? rows.filter(row=>row.basicStats?.targets.includes(basicTarget)) : [];
   if(previousKey && (previous.length!==audit[previousKey] || previous.some(row=>!byId.has(row.id))))throw Error(`Previously known ${label} skill missed.`);
   const view=shared.views[key];
@@ -78,9 +83,11 @@ for(const [key,view] of Object.entries(views)){
   for(const assignment of pass.assignments){
     const entry=resolved.find(entry=>entry.id===assignment.skillId),detail=entry.tagDetails[view.label];
     if(assignment.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='condition'))throw Error('Condition pass must not cover unreviewed effect tags.');
-    if(detail.trigger?.delaySeconds!==0 || !detail.bindings?.length)throw Error('Missing immediate opening trigger.');
+    const permanent=detail.activationMode==='permanent-status';
+    if(!detail.bindings?.length || (permanent ? detail.trigger?.event!=='always-active' || Object.hasOwn(detail.trigger,'delaySeconds') : detail.trigger?.delaySeconds!==0))throw Error('Invalid opening trigger or permanent state.');
     for(const binding of detail.bindings){
       if(!groups.has(binding.group) || !binding.summary || !binding.partIds?.length || binding.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='effect'))throw Error('Invalid opening effect binding.');
+      if(permanent && (binding.lifetime!=='permanent' || Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'endsOn') || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Permanent state must have no timed expiry and must preserve same-type Buff limits.');
     }
   }
 }

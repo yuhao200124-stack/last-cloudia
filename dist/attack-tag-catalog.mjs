@@ -363,16 +363,38 @@ export const ATTACK_TAG_CATALOG = {
             "basic:5f0091303689244c:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "永久获得「勇敢」：自身攻击力+20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "永久获得「勇敢」：自身攻击力+20%（无固定倒计时）",
+              "statusName": "勇敢",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "永久勇敢Buff；与限时同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0ab71464ffb5918f",
@@ -3217,16 +3239,38 @@ export const ATTACK_TAG_CATALOG = {
             "basic:c14ec33793319bba:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "永久获得「大勇敢」：自身攻击力+35%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "永久获得「大勇敢」：自身攻击力+35%（无固定倒计时）",
+              "statusName": "大勇敢",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "永久大勇敢Buff；与限时同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "be64f3014d49d50d",
@@ -6165,8 +6209,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 17,
-    "partial": 70,
+    "ready": 19,
+    "partial": 68,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

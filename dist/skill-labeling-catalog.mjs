@@ -272,16 +272,38 @@ export const SKILL_LABELING_CATALOG = {
             "basic:5f0091303689244c:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "永久获得「勇敢」：自身攻击力+20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "永久获得「勇敢」：自身攻击力+20%（无固定倒计时）",
+              "statusName": "勇敢",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "永久勇敢Buff；与限时同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0ab71464ffb5918f",
@@ -3126,16 +3148,38 @@ export const SKILL_LABELING_CATALOG = {
             "basic:c14ec33793319bba:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "永久获得「大勇敢」：自身攻击力+35%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "永久获得「大勇敢」：自身攻击力+35%（无固定倒计时）",
+              "statusName": "大勇敢",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "永久大勇敢Buff；与限时同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "be64f3014d49d50d",
@@ -7261,16 +7305,38 @@ export const SKILL_LABELING_CATALOG = {
             "basic:e3d7bd6b053a45c9:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "永久获得「堡垒」：自身防御力+20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "永久获得「堡垒」：自身防御力+20%（无固定倒计时）",
+              "statusName": "堡垒",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "永久堡垒Buff；与限时同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:428",
@@ -8827,16 +8893,38 @@ export const SKILL_LABELING_CATALOG = {
             "basic:f2f841598b8870ad:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "永久获得「活力」：自身HP上限固定+1,000",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "hp-max",
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "永久获得「活力」：自身HP上限固定+1,000（无固定倒计时）",
+              "statusName": "活力",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
         }
       },
       "assignedTags": [
-        "生命力"
+        "生命力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "永久活力Buff；与限时同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "d268368f04c8f840",
@@ -8926,16 +9014,38 @@ export const SKILL_LABELING_CATALOG = {
             "basic:790933563ebc27aa:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "永久获得「高阶活力」：自身HP上限固定+2,000",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "hp-max",
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "永久获得「高阶活力」：自身HP上限固定+2,000（无固定倒计时）",
+              "statusName": "高阶活力",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
         }
       },
       "assignedTags": [
-        "生命力"
+        "生命力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "永久高阶活力Buff；与限时同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "91eed5f60e0d0774",
@@ -9163,16 +9273,38 @@ export const SKILL_LABELING_CATALOG = {
             "basic:36c52eb155eecd1f:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "永久获得「灵气」：自身魔力+20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "永久获得「灵气」：自身魔力+20%（无固定倒计时）",
+              "statusName": "灵气",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "永久灵气Buff；同类型Buff同时只计已生效的最高一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "612fb4bdc81227cb",
@@ -9955,16 +10087,38 @@ export const SKILL_LABELING_CATALOG = {
             "basic:d01dcb7af94bea8f:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "永久获得「大灵气」：自身魔力+35%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "永久获得「大灵气」：自身魔力+35%（无固定倒计时）",
+              "statusName": "大灵气",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "永久大灵气Buff；同类型Buff同时只计已生效的最高一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "9807d98320c6a014",
@@ -18317,6 +18471,1013 @@ export const SKILL_LABELING_CATALOG = {
         "我方全体受到雷属性攻击的伤害-35%，40秒；不提高属性耐性数值"
       ],
       "remainingConditions": []
+    },
+    {
+      "id": "fa9ff44cef19f2d5",
+      "name": "自动护盾",
+      "url": "https://altema.jp/lastcloudia/gino/107",
+      "text": "永久获得「保护」效果：受到的物理伤害 -20%",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "保护：受到物理伤害-20%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得保护，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「保护」：自身受到物理伤害-20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「保护」：自身受到物理伤害-20%（无固定倒计时）",
+              "statusName": "保护",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "保护：受到物理伤害-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "d18db4372ea123a1",
+      "name": "自动魔法屏障",
+      "url": "https://altema.jp/lastcloudia/gino/109",
+      "text": "永久获得「魔法屏障」效果：受到的魔法伤害 -20%。",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "魔法屏障：受到魔法伤害-20%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得魔法屏障，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「魔法屏障」：自身受到魔法伤害-20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「魔法屏障」：自身受到魔法伤害-20%（无固定倒计时）",
+              "statusName": "魔法屏障",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔法屏障：受到魔法伤害-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "6daaeb2654b05955",
+      "name": "自动再生",
+      "url": "https://altema.jp/lastcloudia/gino/110",
+      "text": "永久获得「再生」效果：持续自动恢复HP。",
+      "notes": "再生每6秒回复一次HP，作用于自身；回复量受自身魔抗等回复计算因素影响。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "再生：每6秒回复一次HP，回复量受自身魔抗等回复计算因素影响"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得再生，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「再生」：自身每6秒回复一次HP，回复量受自身魔抗等回复计算因素影响",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "hp-regen",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「再生」：自身每6秒回复一次HP，回复量受自身魔抗等回复计算因素影响（无固定倒计时）",
+              "statusName": "再生",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "再生：每6秒回复一次HP，回复量受自身魔抗等回复计算因素影响"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "0bcbd8a4dc9889d5",
+      "name": "自动加速",
+      "url": "https://altema.jp/lastcloudia/gino/112",
+      "text": "常驻“加速”效果：SCT恢复速度+25%。",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "加速：SCT恢复速度+25%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得加速，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「加速」：自身SCT恢复速度+25%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "sct-speed",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「加速」：自身SCT恢复速度+25%（无固定倒计时）",
+              "statusName": "加速",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "加速：SCT恢复速度+25%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "478822878a23edb4",
+      "name": "自动暴击",
+      "url": "https://altema.jp/lastcloudia/gino/239",
+      "text": "常驻「暴击」效果：暴击率+15%。",
+      "notes": "暴击率提高15个百分点，不是使所有攻击必定暴击，也不额外赋予魔法暴击资格。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "暴击：暴击率+15%，不额外赋予魔法暴击资格"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得暴击，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「暴击」：自身暴击率+15%，不额外赋予魔法暴击资格",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「暴击」：自身暴击率+15%，不额外赋予魔法暴击资格（无固定倒计时）",
+              "statusName": "暴击",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暴击：暴击率+15%，不额外赋予魔法暴击资格"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "fa52989c491088fb",
+      "name": "自动梅蒂斯",
+      "url": "https://altema.jp/lastcloudia/gino/350",
+      "text": "永久获得「梅蒂斯」效果：魔抗 +20%。",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "梅蒂斯：魔抗+20%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得梅蒂斯，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「梅蒂斯」：自身魔抗+20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「梅蒂斯」：自身魔抗+20%（无固定倒计时）",
+              "statusName": "梅蒂斯",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "梅蒂斯：魔抗+20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "23372f853389c00f",
+      "name": "自动速度",
+      "url": "https://altema.jp/lastcloudia/gino/406",
+      "text": "永久获得「速度」效果：移动速度提升。",
+      "notes": "速度状态使移动速度+2，常驻。此处不是SCT恢复速度。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "速度：移动速度+2"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得速度，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「速度」：自身移动速度+2",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "speed-up",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「速度」：自身移动速度+2（无固定倒计时）",
+              "statusName": "速度",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "速度：移动速度+2"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "74246bc6c04abdc3",
+      "name": "石之铠甲",
+      "url": "https://altema.jp/lastcloudia/gino/683",
+      "text": "仅自身，永久获得「石墙」效果。",
+      "notes": "只作用于自身，常驻受到雷属性攻击的伤害-20%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "石墙：受到雷属性攻击的伤害-20%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得石墙，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「石墙」：自身受到雷属性攻击的伤害-20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-thunder",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「石墙」：自身受到雷属性攻击的伤害-20%（无固定倒计时）",
+              "statusName": "石墙",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "石墙：受到雷属性攻击的伤害-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "ec87e1562724f2ba",
+      "name": "冰之铠甲",
+      "url": "https://altema.jp/lastcloudia/gino/700",
+      "text": "仅自身，永久获得「冰墙」效果。",
+      "notes": "只作用于自身，常驻受到火属性攻击的伤害-20%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "冰墙：受到火属性攻击的伤害-20%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得冰墙，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「冰墙」：自身受到火属性攻击的伤害-20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-fire",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「冰墙」：自身受到火属性攻击的伤害-20%（无固定倒计时）",
+              "statusName": "冰墙",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "冰墙：受到火属性攻击的伤害-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "7aa3dea4055222df",
+      "name": "神圣铠甲",
+      "url": "https://altema.jp/lastcloudia/gino/710",
+      "text": "仅自身，永久获得「圣墙」效果。",
+      "notes": "只作用于自身，常驻受到暗属性攻击的伤害-20%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "圣墙：受到暗属性攻击的伤害-20%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得圣墙，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「圣墙」：自身受到暗属性攻击的伤害-20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-dark",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「圣墙」：自身受到暗属性攻击的伤害-20%（无固定倒计时）",
+              "statusName": "圣墙",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "圣墙：受到暗属性攻击的伤害-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "addbcf95d86cc87f",
+      "name": "暗影铠甲",
+      "url": "https://altema.jp/lastcloudia/gino/887",
+      "text": "仅自身，永久获得「暗影墙」效果。",
+      "notes": "只作用于自身，常驻受到光属性攻击的伤害-20%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "暗影墙：受到光属性攻击的伤害-20%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得暗影墙，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「暗影墙」：自身受到光属性攻击的伤害-20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-light",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「暗影墙」：自身受到光属性攻击的伤害-20%（无固定倒计时）",
+              "statusName": "暗影墙",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暗影墙：受到光属性攻击的伤害-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "36e8b2a0f4ac2cef",
+      "name": "自动高阶护盾",
+      "url": "https://altema.jp/lastcloudia/gino/899",
+      "text": "永久获得「高阶保护」效果：受到的物理伤害-35%。",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "高阶保护：受到物理伤害-35%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得高阶保护，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「高阶保护」：自身受到物理伤害-35%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「高阶保护」：自身受到物理伤害-35%（无固定倒计时）",
+              "statusName": "高阶保护",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "高阶保护：受到物理伤害-35%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "0b5a9905580d734c",
+      "name": "炎之铠甲",
+      "url": "https://altema.jp/lastcloudia/gino/1190",
+      "text": "仅自身，永久获得「炎墙」效果。",
+      "notes": "只作用于自身，常驻受到树属性攻击的伤害-20%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "炎墙：受到树属性攻击的伤害-20%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得炎墙，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「炎墙」：自身受到树属性攻击的伤害-20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-tree",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「炎墙」：自身受到树属性攻击的伤害-20%（无固定倒计时）",
+              "statusName": "炎墙",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "炎墙：受到树属性攻击的伤害-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:675",
+      "name": "雷霆铠甲",
+      "url": "https://altema.jp/lastcloudia/gino/1250",
+      "text": "仅限，始终具有雷霆之墙效果 。",
+      "notes": "只作用于自身，常驻受到冰属性攻击的伤害-20%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "雷墙：受到冰属性攻击的伤害-20%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得雷墙，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「雷墙」：自身受到冰属性攻击的伤害-20%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-ice",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「雷墙」：自身受到冰属性攻击的伤害-20%（无固定倒计时）",
+              "statusName": "雷墙",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "雷墙：受到冰属性攻击的伤害-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "e0f570e2539649eb",
+      "name": "神圣铠甲2",
+      "url": "https://altema.jp/lastcloudia/gino/1312",
+      "text": "仅自身，永久获得「圣墙2」效果。",
+      "notes": "只作用于自身，常驻受到暗属性攻击的伤害-35%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "圣墙2：受到暗属性攻击的伤害-35%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得圣墙2，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「圣墙2」：自身受到暗属性攻击的伤害-35%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-dark",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「圣墙2」：自身受到暗属性攻击的伤害-35%（无固定倒计时）",
+              "statusName": "圣墙2",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "圣墙2：受到暗属性攻击的伤害-35%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "5fae0db345fcff39",
+      "name": "自动高阶魔法屏障",
+      "url": "https://altema.jp/lastcloudia/gino/1364",
+      "text": "永久获得「高阶魔法屏障」效果：受到的魔法伤害-35%。",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "高阶魔法屏障：受到魔法伤害-35%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得高阶魔法屏障，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「高阶魔法屏障」：自身受到魔法伤害-35%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「高阶魔法屏障」：自身受到魔法伤害-35%（无固定倒计时）",
+              "statusName": "高阶魔法屏障",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "高阶魔法屏障：受到魔法伤害-35%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "a9028de3be35cf4b",
+      "name": "炎之铠甲2",
+      "url": "https://altema.jp/lastcloudia/gino/1381",
+      "text": "仅自身，永久获得「炎墙2」效果。",
+      "notes": "只作用于自身，常驻受到树属性攻击的伤害-35%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "炎墙2：受到树属性攻击的伤害-35%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得炎墙2，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「炎墙2」：自身受到树属性攻击的伤害-35%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-tree",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「炎墙2」：自身受到树属性攻击的伤害-35%（无固定倒计时）",
+              "statusName": "炎墙2",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "炎墙2：受到树属性攻击的伤害-35%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "e4676d68a23621cf",
+      "name": "暗影铠甲2",
+      "url": "https://altema.jp/lastcloudia/gino/1395",
+      "text": "仅自身，永久获得「暗影墙2」效果。",
+      "notes": "只作用于自身，常驻受到光属性攻击的伤害-35%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "暗影墙2：受到光属性攻击的伤害-35%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得暗影墙2，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「暗影墙2」：自身受到光属性攻击的伤害-35%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-light",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「暗影墙2」：自身受到光属性攻击的伤害-35%（无固定倒计时）",
+              "statusName": "暗影墙2",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "暗影墙2：受到光属性攻击的伤害-35%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "6c011f9fec60b9b2",
+      "name": "石之铠甲2",
+      "url": "https://altema.jp/lastcloudia/gino/1828",
+      "text": "仅自身，永久获得「石墙2」效果。",
+      "notes": "只作用于自身，常驻受到雷属性攻击的伤害-35%；不会给全队施加此效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "permanent-effect",
+          "kind": "effect",
+          "text": "石墙2：受到雷属性攻击的伤害-35%"
+        },
+        {
+          "id": "permanent-status",
+          "kind": "condition",
+          "text": "永久获得石墙2，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "永久获得「石墙2」：自身受到雷属性攻击的伤害-35%",
+          "relation": "permanent-status-condition",
+          "target": "self",
+          "activationMode": "permanent-status",
+          "trigger": {
+            "event": "always-active"
+          },
+          "bindings": [
+            {
+              "group": "received-thunder",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「石墙2」：自身受到雷属性攻击的伤害-35%（无固定倒计时）",
+              "statusName": "石墙2",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "target": "self"
+            }
+          ],
+          "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        }
+      },
+      "assignedTags": [
+        "战斗开始"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "石墙2：受到雷属性攻击的伤害-35%"
+      ],
+      "remainingConditions": []
     }
   ],
   "views": {
@@ -18415,8 +19576,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 17,
-        "partial": 70,
+        "ready": 19,
+        "partial": 68,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -18500,8 +19661,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 70,
         "notRelatedUnique": 865,
-        "ready": 11,
-        "partial": 59,
+        "ready": 12,
+        "partial": 58,
         "unknown": 0,
         "previousBasicDefenseUnique": 64,
         "additionalRelatedUnique": 6
@@ -18540,8 +19701,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 25,
         "notRelatedUnique": 910,
-        "ready": 17,
-        "partial": 8,
+        "ready": 19,
+        "partial": 6,
         "unknown": 0,
         "previousBasicHpUnique": 25,
         "additionalRelatedUnique": 0
@@ -18606,8 +19767,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 51,
         "notRelatedUnique": 884,
-        "ready": 15,
-        "partial": 36,
+        "ready": 17,
+        "partial": 34,
         "unknown": 0,
         "previousBasicMagicUnique": 43,
         "additionalRelatedUnique": 8
@@ -19039,14 +20200,40 @@ export const SKILL_LABELING_CATALOG = {
         "全部技能:all:924",
         "c3b83f342aaa5c37",
         "全部技能:all:927",
-        "29da106c453e0234"
+        "29da106c453e0234",
+        "5f0091303689244c",
+        "fa9ff44cef19f2d5",
+        "36c52eb155eecd1f",
+        "d18db4372ea123a1",
+        "6daaeb2654b05955",
+        "0bcbd8a4dc9889d5",
+        "478822878a23edb4",
+        "fa52989c491088fb",
+        "23372f853389c00f",
+        "e3d7bd6b053a45c9",
+        "74246bc6c04abdc3",
+        "ec87e1562724f2ba",
+        "7aa3dea4055222df",
+        "addbcf95d86cc87f",
+        "36e8b2a0f4ac2cef",
+        "c14ec33793319bba",
+        "d01dcb7af94bea8f",
+        "0b5a9905580d734c",
+        "f2f841598b8870ad",
+        "全部技能:all:675",
+        "e0f570e2539649eb",
+        "5fae0db345fcff39",
+        "a9028de3be35cf4b",
+        "e4676d68a23621cf",
+        "790933563ebc27aa",
+        "6c011f9fec60b9b2"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 91,
-        "notRelatedUnique": 844,
-        "ready": 11,
-        "partial": 80,
+        "relatedUnique": 117,
+        "notRelatedUnique": 818,
+        "ready": 18,
+        "partial": 99,
         "unknown": 0
       }
     },
@@ -19101,13 +20288,15 @@ export const SKILL_LABELING_CATALOG = {
         "1da4935f9a387557",
         "0d0bdf3f7c6e0b5a",
         "a5f24684f4b2911a",
-        "34045351ea740196"
+        "34045351ea740196",
+        "5f0091303689244c",
+        "c14ec33793319bba"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 12,
-        "notRelatedUnique": 923,
-        "ready": 2,
+        "relatedUnique": 14,
+        "notRelatedUnique": 921,
+        "ready": 4,
         "partial": 10,
         "unknown": 0
       }
@@ -19125,13 +20314,15 @@ export const SKILL_LABELING_CATALOG = {
         "484c7ab2b4b198dc",
         "209e4252243d4679",
         "00001521ecae775f",
-        "b6f1305e6f78634c"
+        "b6f1305e6f78634c",
+        "36c52eb155eecd1f",
+        "d01dcb7af94bea8f"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 8,
-        "notRelatedUnique": 927,
-        "ready": 2,
+        "relatedUnique": 10,
+        "notRelatedUnique": 925,
+        "ready": 4,
         "partial": 6,
         "unknown": 0
       }
@@ -19148,13 +20339,14 @@ export const SKILL_LABELING_CATALOG = {
         "c4dcb02f9f9b0945",
         "b7e3b644c937e9da",
         "a35775967283bc44",
-        "40a41c3cc8543aa3"
+        "40a41c3cc8543aa3",
+        "e3d7bd6b053a45c9"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 7,
-        "notRelatedUnique": 928,
-        "ready": 2,
+        "relatedUnique": 8,
+        "notRelatedUnique": 927,
+        "ready": 3,
         "partial": 5,
         "unknown": 0
       }
@@ -19168,14 +20360,15 @@ export const SKILL_LABELING_CATALOG = {
         "5f6efbf8b35453d2",
         "全部技能:all:326",
         "b7e3b644c937e9da",
-        "d1bc7f72d978fe26"
+        "d1bc7f72d978fe26",
+        "fa52989c491088fb"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 4,
-        "notRelatedUnique": 931,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
         "ready": 0,
-        "partial": 4,
+        "partial": 5,
         "unknown": 0
       }
     },
@@ -19187,13 +20380,15 @@ export const SKILL_LABELING_CATALOG = {
       "displayOrder": [
         "全部技能:all:326",
         "c2a5f212631ba8ff",
-        "d214a29ee3c4826e"
+        "d214a29ee3c4826e",
+        "f2f841598b8870ad",
+        "790933563ebc27aa"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 3,
-        "notRelatedUnique": 932,
-        "ready": 2,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 4,
         "partial": 1,
         "unknown": 0
       }
@@ -19435,14 +20630,15 @@ export const SKILL_LABELING_CATALOG = {
       "displayOrder": [
         "81e5eed79e630a07",
         "全部技能:all:194",
-        "0807ea77755d60fc"
+        "0807ea77755d60fc",
+        "478822878a23edb4"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 3,
-        "notRelatedUnique": 932,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
         "ready": 0,
-        "partial": 3,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -19491,14 +20687,16 @@ export const SKILL_LABELING_CATALOG = {
         "cf4cc4324d7b87b7",
         "7b7b9f7c806bbd9e",
         "9d98ba73d408aa05",
-        "2fe14ee0a98be7af"
+        "2fe14ee0a98be7af",
+        "fa9ff44cef19f2d5",
+        "36e8b2a0f4ac2cef"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 4,
-        "notRelatedUnique": 931,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
         "ready": 0,
-        "partial": 4,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -19511,14 +20709,16 @@ export const SKILL_LABELING_CATALOG = {
         "cf4cc4324d7b87b7",
         "7b7b9f7c806bbd9e",
         "b68b7c256efa0467",
-        "18991b227c1fe30b"
+        "18991b227c1fe30b",
+        "d18db4372ea123a1",
+        "5fae0db345fcff39"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 4,
-        "notRelatedUnique": 931,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
         "ready": 0,
-        "partial": 4,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -19529,7 +20729,26 @@ export const SKILL_LABELING_CATALOG = {
       "effectGroup": "received-fire",
       "displayOrder": [
         "865730759d5fd514",
-        "全部技能:all:750"
+        "全部技能:all:750",
+        "ec87e1562724f2ba"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "battle-start-received-ice": {
+      "label": "受到冰属性伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "received-ice",
+      "displayOrder": [
+        "全部技能:all:356",
+        "全部技能:all:675"
       ],
       "counts": {
         "reviewedUnique": 935,
@@ -19540,37 +20759,22 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
-    "battle-start-received-ice": {
-      "label": "受到冰属性伤害减少",
-      "parent": "battle-start",
-      "conditionTag": "战斗开始",
-      "effectGroup": "received-ice",
-      "displayOrder": [
-        "全部技能:all:356"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
     "battle-start-received-tree": {
       "label": "受到树属性伤害减少",
       "parent": "battle-start",
       "conditionTag": "战斗开始",
       "effectGroup": "received-tree",
       "displayOrder": [
-        "全部技能:all:369"
+        "全部技能:all:369",
+        "0b5a9905580d734c",
+        "a9028de3be35cf4b"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
         "ready": 0,
-        "partial": 1,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -19581,14 +20785,16 @@ export const SKILL_LABELING_CATALOG = {
       "effectGroup": "received-thunder",
       "displayOrder": [
         "全部技能:all:429",
-        "全部技能:all:927"
+        "全部技能:all:927",
+        "74246bc6c04abdc3",
+        "6c011f9fec60b9b2"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 2,
-        "notRelatedUnique": 933,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
         "ready": 0,
-        "partial": 2,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -19599,14 +20805,16 @@ export const SKILL_LABELING_CATALOG = {
       "effectGroup": "received-light",
       "displayOrder": [
         "全部技能:all:511",
-        "全部技能:all:761"
+        "全部技能:all:761",
+        "addbcf95d86cc87f",
+        "e4676d68a23621cf"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 2,
-        "notRelatedUnique": 933,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
         "ready": 0,
-        "partial": 2,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -19617,14 +20825,16 @@ export const SKILL_LABELING_CATALOG = {
       "effectGroup": "received-dark",
       "displayOrder": [
         "全部技能:all:225",
-        "全部技能:all:740"
+        "全部技能:all:740",
+        "7aa3dea4055222df",
+        "e0f570e2539649eb"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 2,
-        "notRelatedUnique": 933,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
         "ready": 0,
-        "partial": 2,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -19703,14 +20913,15 @@ export const SKILL_LABELING_CATALOG = {
       "effectGroup": "speed-up",
       "displayOrder": [
         "81e5eed79e630a07",
-        "全部技能:all:373"
+        "全部技能:all:373",
+        "23372f853389c00f"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 2,
-        "notRelatedUnique": 933,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
         "ready": 0,
-        "partial": 2,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -19758,14 +20969,15 @@ export const SKILL_LABELING_CATALOG = {
       "displayOrder": [
         "全部技能:all:326",
         "60eca07e7c2f1a33",
-        "e27f6e2a867c1a2e"
+        "e27f6e2a867c1a2e",
+        "0bcbd8a4dc9889d5"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 3,
-        "notRelatedUnique": 932,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
         "ready": 0,
-        "partial": 3,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -19830,14 +21042,15 @@ export const SKILL_LABELING_CATALOG = {
       "conditionTag": "战斗开始",
       "effectGroup": "hp-regen",
       "displayOrder": [
-        "f177a34c939a2dfc"
+        "f177a34c939a2dfc",
+        "6daaeb2654b05955"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
         "ready": 0,
-        "partial": 1,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -20485,14 +21698,33 @@ export const SKILL_LABELING_CATALOG = {
         "d53c1518b71c0259",
         "全部技能:all:924",
         "c3b83f342aaa5c37",
-        "全部技能:all:927"
+        "全部技能:all:927",
+        "fa9ff44cef19f2d5",
+        "d18db4372ea123a1",
+        "6daaeb2654b05955",
+        "0bcbd8a4dc9889d5",
+        "478822878a23edb4",
+        "fa52989c491088fb",
+        "23372f853389c00f",
+        "74246bc6c04abdc3",
+        "ec87e1562724f2ba",
+        "7aa3dea4055222df",
+        "addbcf95d86cc87f",
+        "36e8b2a0f4ac2cef",
+        "0b5a9905580d734c",
+        "全部技能:all:675",
+        "e0f570e2539649eb",
+        "5fae0db345fcff39",
+        "a9028de3be35cf4b",
+        "e4676d68a23621cf",
+        "6c011f9fec60b9b2"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 332,
-        "notRelatedUnique": 603,
-        "ready": 57,
-        "partial": 275,
+        "relatedUnique": 351,
+        "notRelatedUnique": 584,
+        "ready": 64,
+        "partial": 287,
         "unknown": 0
       }
     }
