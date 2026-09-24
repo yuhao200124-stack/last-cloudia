@@ -276,7 +276,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    const defenseRefs=reviewed.rows.filter(r=>r.status==='active').flatMap(r=>r.rule.effects).filter(e=>e.type==='defenseReference');
    if(defenseRefs.some(e=>e.target==='敌方魔抗')&&state.selection.statReference!=='int')throw new Error('已选魔抗修正要求以魔抗结算；请确认属性参照或暂不计入该修正。');
    confirmed=true;hasApproval=true;
-   onConfirm(reviewed,{panels,selection:selection(),profile:{...clone(profile),baseStats:{...profile.baseStats,...state.base}},unitId:unit.unitId,battleId:battle.battleId,finish});
+   onConfirm(reviewed,{panels,panelLayers:computed.stats,selection:selection(),profile:{...clone(profile),baseStats:{...profile.baseStats,...state.base}},unitId:unit.unitId,battleId:battle.battleId,finish});
    $('entryStatus').textContent='已按你的选择同步到伤害计算器。修改采用数据会自动更新。';
    $('entryReviewSummary').textContent='已确认面板与加成，已自动带入计算器。';
    save();
