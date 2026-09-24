@@ -337,7 +337,7 @@ function mount() {
       const value = p.included === false ? '未触发 · 未计入' : metric.numeric ? numberText(p.effect.value, p.effect.unit) : formatEffect(p.effect);
       return `<article class="br-inline-source" data-source="${esc(p.sourceId)}"><div class="br-inline-source-header"><h4><button type="button" class="br-source-jump" data-jump-source="${esc(p.sourceId)}" title="双击定位到${esc(groups[p.group] || '原始出处')}：${esc(p.sourceName)}" aria-label="${esc(p.sourceName)}，双击或按回车定位原始出处">${esc(p.sourceName)}</button></h4><strong>${esc(value)}</strong><button type="button" class="br-button" data-edit-source="${esc(p.sourceId)}" data-focus-rule="${esc(p.ruleId)}">修改</button></div>
         ${contributionControls(p, source)}
-        <div class="br-inline-description">${sourceDescription(source)}<details class="br-contribution-details"><summary>显示完整</summary><p><b>本项计入：</b>${esc(p.included === false ? '未触发，未计入' : formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>
+        <div class="br-inline-description">${sourceDescription(source)}<details class="br-contribution-details"><summary>显示完整</summary><p><b>本项计入：</b>${esc(p.included === false ? '未触发，未计入' : formatEffect(p.effect))}</p><p class="br-muted">${esc(p.reasons.join('；'))}</p>${p.rule.note ? `<p class="br-muted">${esc(p.rule.note)}</p>` : ''}
         <button type="button" class="br-button" data-rule-toggle="${esc(p.ruleId)}">停用这一段效果</button>${p.rule.effects.length > 1 ? `<p class="br-muted">会一并停用本段的：${esc(p.rule.effects.map(formatEffect).join('；'))}</p>` : ''}</details></div></article>`;
     }).join('');
   }
@@ -387,7 +387,7 @@ function mount() {
     if (scroll) el.scrollIntoView({ block: 'nearest' });
   }
   function makeReport() {
-    return { schemaVersion: 1, kind: 'last-cloudia-effect-report', characterId, characterName, accountBlessings: ACCOUNT_BLESSING_META, createdAt: new Date().toISOString(), scope: '当前条件下的加成合计，非最终伤害', totals: clone(metrics), context: result.context, killer: result.killer, warnings: result.warnings,
+    return { schemaVersion: 1, mechanicsRevision: result.mechanicsRevision, kind: 'last-cloudia-effect-report', characterId, characterName, accountBlessings: ACCOUNT_BLESSING_META, createdAt: new Date().toISOString(), scope: '当前条件下的加成合计，非最终伤害', totals: clone(metrics), context: result.context, killer: result.killer, warnings: result.warnings,
       rows: result.rows.map(r => ({ sourceId: r.sourceId, sourceName: r.sourceName, group: r.group, sourceText: r.sourceText, status: r.status, reasons: r.reasons, rule: clone(r.rule) })) };
   }
   function download(name, value) {

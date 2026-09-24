@@ -1,3 +1,4 @@
+import {decodeHpStatEntry} from './stat-mechanics.mjs';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
 import {decodeKnownBlessingEntry} from './account-blessings.mjs';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
@@ -64,7 +65,7 @@ export function validateBattleEntry(input) {
   for(const key of Object.keys(SIX_STATS))if(unit.stats[key]!=null&&(num(unit.stats[key])===null||unit.stats[key]<0))throw new Error('读取报告包含无效面板数值。');
   for(const b of unit.bonuses)if(!b||typeof b.id!=='string'||(b.value!=null&&typeof b.value!=='string'&&typeof b.value!=='boolean'&&num(b.value)===null))throw new Error('读取报告包含无效加成记录。');
  }
- input={...input,units:input.units.map(unit=>({...unit,bonuses:unit.bonuses.map(decodeKnownBlessingEntry)}))};
+ input={...input,units:input.units.map(unit=>({...unit,bonuses:unit.bonuses.map(decodeKnownBlessingEntry).map(decodeHpStatEntry)}))};
  // v0.35 exported the game's MP thousandths. BattleUiUnit.ApplyMp divides
  // both GetMp and GetMaxStatus(MP) by 1000 before showing the values.
  // Restrict migration to that real-reader schema, never guess by magnitude.

@@ -1,3 +1,4 @@
+import {upgradeStatRule, STAT_MECHANICS_REVISION} from './stat-mechanics.mjs';
 /* Declarative effect conditions. This module does not compute final damage. */
 const options = (entries) => entries.map(([value, label]) => ({ value, label }));
 const yesNo = options([[null, '待确认'], [true, '是'], [false, '否']]);
@@ -58,6 +59,9 @@ export function normalizeContext(input = {}) {
   for (const key of ['staff', 'robe', 'iceStaff', 'fullHp', 'critical', 'weakness', 'resonance', 'alive', 'killerBuff', 'bossWaveBuff', 'penetration', 'killer', 'lowHp', 'firstLowHp', 'mpEnough', 'break']) {
     if (ctx[key] !== true && ctx[key] !== false) ctx[key] = null;
   }
+  if(ctx.fullHp===true&&ctx.lowHp===true){ctx.fullHp=null;ctx.lowHp=null;}
+  else if(ctx.fullHp===true)ctx.lowHp=false;
+  else if(ctx.lowHp===true)ctx.fullHp=false;
   if (ctx.iceStaff === true) ctx.staff = true;
   if (ctx.weaponCount === 0) { ctx.staff = false; ctx.iceStaff = false; }
   for (const key of ['sword', 'axe', 'spear', 'hammer', 'bow', 'machine', 'claw']) {
@@ -140,7 +144,7 @@ function makeRow(source, original, ctx, overrides) {
 
 export function evaluateCatalog(catalog, input = {}, overrides = {}) {
   const context = normalizeContext(input);
-  const sources = Array.isArray(catalog) ? catalog : [];
+  const sources = Array.isArray(catalog) ? catalog.map(s=>({...s,rules:(s.rules||[]).map(rule=>upgradeStatRule(rule,s.text))})) : [];
   const initialRows = sources.flatMap((source) => (source.rules ?? []).map((rule) => makeRow(source, rule, context, overrides)));
   const killerRows = initialRows.filter((row) => row.rule.effects?.some((effect) => effect.type === 'killer'));
   const killer = context.killer === true || killerRows.some((row) => row.status === 'active') ? true
@@ -150,7 +154,7 @@ export function evaluateCatalog(catalog, input = {}, overrides = {}) {
   const warnings = [];
   if (rows.some((row) => row.status === 'active' && row.rule.verification === 'untested')) warnings.push('当前招式含尚未完成实测的特殊结算；本页只核对效果，不能保证最终伤害准确。');
   if (rows.some((row) => row.status === 'pending')) warnings.push('存在待确认效果或条件；待确认项目暂不计入。');
-  return { context, rows, killer:context.killer, warnings };
+  return { mechanicsRevision:STAT_MECHANICS_REVISION, context, rows, killer:context.killer, warnings };
 }
 
 export function formatEffect(effect) {

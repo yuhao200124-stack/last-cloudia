@@ -56,7 +56,7 @@ test('complete simple stat descriptions parse, including shared values and trans
 });
 
 test('conditional, partial, ambiguous and name-only descriptions remain pending in full', () => {
-  const texts = ['装备法杖时，INT+15%。', '濒死时攻击力+30%。', 'INT+15%。仅装备1件武器时生效。', 'INT+15%、冰伤+20%。', 'INT+15%，但MP减半。', '攻击力提升。', 'INT、INT+15%', '战斗开始时INT+15%'];
+  const texts = ['装备法杖时，INT+15%。', '濒死时攻击力+30%，持续20秒。', 'INT+15%。仅装备1件武器时生效。', 'INT+15%、冰伤+20%。', 'INT+15%，但MP减半。', '攻击力提升。', 'INT、INT+15%', '战斗开始时INT+15%'];
   for (const text of texts) {
     const [catalog] = buildCatalog([{ id: 'x', name: '攻击提升极', text }]);
     assert.equal(catalog.rules[0].review, 'pending', text);

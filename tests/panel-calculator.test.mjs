@@ -16,6 +16,18 @@ test('Roxy six-stat control follows equipment, pure and runtime stages without f
  assert.equal(r.stats.mind.beforeBuff,2808);
  assert.equal(r.stats.mp.beforeBuffRaw,1018970);
 });
+test('full HP Moonlight shares the runtime layer with EX; opening conversion never uses either',()=>{
+ const full=result({fullHp:true});
+ assert.equal(full.stats.intelligence.beforeBuff,6741);
+ assert.equal(full.stats.intelligence.percent,88);
+ assert.equal(full.values.intelligence,12133);
+ assert.equal(full.stats.defense.crossAdd,674);
+ assert.equal(full.values.defense,2295);
+ assert.match(full.stats.intelligence.steps.at(-1),/80%/);
+ assert.equal(result({fullHp:false}).values.intelligence,10111);
+ assert.equal(result({fullHp:true},{'source:extraordinary-magician':{disabled:true}}).values.intelligence,8763);
+ assert.equal(result({fullHp:true},{'source:moonlight-ii':{disabled:true}}).values.intelligence,10111);
+});
 test('equipment .5 rounds to even, distinct from Lua conversion and native stat floor',()=>{
  assert.equal(equipmentRound(229*1.5),344);
  assert.equal(equipmentRound(227*1.5),340);

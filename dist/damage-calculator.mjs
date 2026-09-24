@@ -137,7 +137,7 @@ function update() {
     $('skillSummary').textContent=imported?`${imported.attackName} · 请填写该招式自己的原始系数、攻击修正及段数。`:'请检查技能参数。';
   }
 }
-function reset() {
+function reset(clearSaved=true) {
   const s=defaultInput();
   for(const k of numericKeys) if($(k))$(k).value=s[k];
   for(const k of booleanKeys) if($(k))$(k).checked=s[k];
@@ -153,11 +153,11 @@ function reset() {
     for(const id of ['attack','hits','coefficient','skillPercent','skillAdd','skillPostAdd'])$(id).value='';
     $('preset').value='custom';$('hitScaleStage').value='';
     $('critRate').value=0;$('cap').value=9999;
-    if(workflow)workflow.reset();
+    if(workflow&&clearSaved)workflow.reset();
     update();
   }
 }
-$('reset').addEventListener('click',reset);
+$('reset').addEventListener('click',()=>reset());
 $('addEffect').addEventListener('click',()=>{effects=readEffects();effects.push(newEffect());renderEffects();update();$('effects').lastElementChild.querySelector('select').focus();});
 $('effects').addEventListener('click',event=>{
   const button=event.target.closest('[data-action]');if(!button)return;
@@ -255,5 +255,5 @@ if(characterId)workflow=initEntryWorkflow({
   onRead:receiveEntryData,
   onConfirm:applyImport
 });
-reset();
+reset(false);
 if(characterId){loadReport();if(embedded)window.parent.postMessage({type:'lc-damage-ready'},location.origin);}

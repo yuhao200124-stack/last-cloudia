@@ -55,7 +55,7 @@ export const CATALOG = [
   simple('knowledge-wall-ii', '知识之壁II', 'exclusive', '战斗开始时，将INT的10%加算至DEF与MND', [], [effect('stat', '防御力与魔抗', '加算开战时法强的10%', '')], { note: '需使用开战时的法强取值，不是防御力与魔抗各自增加10%；不能从当前面板再次重复加算。' }),
   simple('auto-recast', '自动再咏唱', 'exclusive', '始终保持魔法“再咏唱”的效果：魔法咏唱速度+30%。', [magic], [effect('castSpeed', '魔法咏唱速度', 30)], { note: '自动技能为常驻效果。再咏唱的具体数值依据 Altema /maho/49；不属于伤害加成。' }),
   simple('auto-heal-ii', '自动治疗II', 'exclusive', 'HP首次进入濒死时，消耗30MP自动超回复HP（HP回复上限+5,000）', [eq('lowHp', true), eq('firstLowHp', true), eq('mpEnough', true)], [effect('recovery', '自身生命', '消耗30魔力值后超回复；回复上限+5,000', '')], { note: '濒死判定及具体回复量原文未列；条件由使用者或读取报告确认。' }),
-  simple('moonlight-ii', '月光II', 'exclusive', 'HP全满时，INT+30%', [eq('fullHp', true)], [stat('法强', 30)]),
+  simple('moonlight-ii', '月光II', 'exclusive', 'HP全满时，INT+30%', [eq('fullHp', true)], [effect('statBuff', '法强', 30)], { note: '每Wave开始及HP变化时重新判断满血条件；实时法强层+30%，不计入入场前面板。与已生效EX灵气+50%同层加算。' }),
   simple('ice-ultimate-boost', '冰系究极增幅', 'exclusive', '冰属性魔法伤害+30%、冰属性魔法伤害上限+5,000', iceMagic, [damage('冰属性魔法伤害', 30), cap('冰属性魔法伤害上限', 5000)]),
   simple('ice-critical-revised', '冰属性暴击·改', 'exclusive', '冰属性魔法可触发暴击；冰属性魔法伤害上限+2,000', iceMagic, [effect('critPermission', '冰属性魔法', true, ''), cap('冰属性魔法伤害上限', 2000)]),
   simple('mage-mindset-ii', '魔导士心得II', 'exclusive', '同时装备法杖与长袍时，法杖的INT和长袍的MND+100%', [staff, robe], [effect('equipmentStat', '法杖自身法强', 100), effect('equipmentStat', '长袍自身魔抗', 100)], { note: '提升装备提供的对应属性，不是角色总法强／魔抗翻倍。' }),

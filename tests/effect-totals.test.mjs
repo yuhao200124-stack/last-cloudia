@@ -18,7 +18,9 @@ test('weapon, element, equipment and full HP changes alter both sum and eligible
   assert.deepEqual(get(two,'damage:冰属性伤害').contributions.map(c=>c.sourceId),['ice-attack-iii']);
   const fire=totals({element:'fire'});
   assert.equal(get(fire,'damage:冰属性伤害'),undefined);
-  assert.equal(get(totals({fullHp:true}),'stat:法强').total,100);
+  assert.equal(get(totals({fullHp:true}),'stat:法强').total,70);
+  assert.equal(get(totals({fullHp:true}),'statBuff:法强').total,80);
+  assert.equal(get(totals({fullHp:true}),'stat:法强').contributions.some(c=>c.sourceId==='moonlight-ii'),false);
   const equipment=totals({staff:true,iceStaff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe']});
   assert.equal(get(equipment,'stat:法强').total,85);
   assert.equal(get(equipment,'damage:魔法伤害').total,35);

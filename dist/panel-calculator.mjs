@@ -1,3 +1,4 @@
+import {upgradeStatRule, verifiedRuntimeFamily} from './stat-mechanics.mjs';
 // Character-panel arithmetic only. Damage/cap/defense-reference effects never enter it.
 export const PANEL_LABELS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 const aliases={HP:'hp',生命:'hp',MP:'mp',魔力值:'mp',攻击力:'attack',防御力:'defense',法强:'intelligence',魔力:'intelligence',魔抗:'mind'};
@@ -12,6 +13,7 @@ export function equipmentRound(value) {
 }
 const targetKeys=target=>String(target).split(/与|、|及|\/|／/).map(s=>aliases[s]).filter(Boolean);
 export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStats={}}={}) {
+ report={...report,rows:(report?.rows||[]).map(row=>{const rule=upgradeStatRule(row.rule,row.sourceText);return {...row,rule,status:row.status==='active'&&rule.review==='pending'?'pending':row.status};})};
  const out=Object.fromEntries(Object.entries(PANEL_LABELS).map(([key,label])=>[key,{key,label,base:baseStats[key],precision:key==='mp'?1000:1,value:null,subtotal:null,beforeBuff:null,beforeBuffRaw:null,crossAdd:0,percent:0,buffs:[],equipment:[],steps:[],issues:[],sources:[]}])) ;
  const equipped=new Map(),boosts=[],cross=[];
  const flat=(report?.rows||[]).filter(r=>r.status==='active').flatMap(row=>row.rule.effects.map(effect=>({row,effect})));
@@ -41,7 +43,7 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
   const keys=targetKeys(e.target);
   for(const key of keys)out[key].sources.push(source);
   if(n(e.value)&&e.unit==='%') {
-   for(const key of keys)if(e.type==='stat')out[key].percent+=e.value;else out[key].buffs.push({value:e.value,source:row.sourceName});
+   for(const key of keys)if(e.type==='stat')out[key].percent+=e.value;else out[key].buffs.push({value:e.value,source:row.sourceName,family:verifiedRuntimeFamily(row.rule,e)});
    if(!keys.length)issue(Object.keys(out),`${row.sourceName}：属性目标尚未解析`);
   } else if(e.type==='stat'&&typeof e.value==='string') {
    const match=e.value.match(/^加算开战时(法强|魔力|攻击力|防御力|魔抗|HP|MP)的(\d+(?:\.\d+)?)%$/);
@@ -85,8 +87,13 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
   if(n(p.subtotal)) {
    let raw=p.beforeBuffRaw+p.crossAdd*p.precision;
    p.subtotal=Math.floor(raw/p.precision);
-   if(p.buffs.length===1){const before=raw/p.precision;raw=Math.floor(scale(raw,p.buffs[0].value));p.subtotal=Math.floor(raw/p.precision);p.steps.push(`${p.buffs[0].source}：${fmt(before)} × (1 + ${fmt(p.buffs[0].value)}%) → ${p.subtotal}`);}
-   else if(p.buffs.length>1)p.issues.push('多项状态属性加成的叠加关系待确认');
+   const families=p.buffs.map(b=>b.family);
+   const verifiedPair=p.buffs.length===2&&families.includes('moonlight-ii')&&families.includes('ex-aura');
+   if(p.buffs.length===1||verifiedPair){
+    const before=raw/p.precision,percent=p.buffs.reduce((s,b)=>s+b.value,0);
+    raw=Math.floor(scale(raw,percent));p.subtotal=Math.floor(raw/p.precision);
+    p.steps.push(`实时属性层（${p.buffs.map(b=>`${b.source} ${fmt(b.value)}%`).join(' + ')}）：${fmt(before)} × (1 + ${fmt(percent)}%) → ${p.subtotal}`);
+   } else if(p.buffs.length>1)p.issues.push('多项状态属性加成的分组或叠加关系待确认');
   }
   p.issues=[...new Set(p.issues)];p.value=p.issues.length?null:p.subtotal;
  }

@@ -1,3 +1,4 @@
+import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs';
 /** Reusable, description-matched rule templates. No imported content is executable. */
 import { CONDITION_FIELDS } from './effect-rule-engine.mjs';
 
@@ -33,15 +34,16 @@ function unknownKeys(value, allowed, path, errors) {
   }
 }
 
-function validateRule(rule, path, errors) {
+function validateRule(rule, path, errors, sourceText) {
   const start = errors.length;
   if (!record(rule)) { errors.push(`${path}：规则必须是对象`); return null; }
-  unknownKeys(rule, ['id', 'part', 'text', 'conditions', 'effects', 'review', 'verification', 'note'], path, errors);
+  unknownKeys(rule, ['id', 'part', 'text', 'conditions', 'effects', 'review', 'verification', 'note', 'mechanicsRevision'], path, errors);
   if (!shortString(rule.id, 256) || !rule.id) errors.push(`${path}：规则 ID 无效`);
   if (!(shortString(rule.part, 256) || (Number.isInteger(rule.part) && rule.part >= 0 && rule.part <= 1000))) errors.push(`${path}：分段编号无效`);
   if (!shortString(rule.text, LIMITS.text) || !rule.text.trim()) errors.push(`${path}：原文不能为空`);
   if (!['ready', 'pending'].includes(rule.review)) errors.push(`${path}：确认状态无效`);
   if (!['description', 'untested'].includes(rule.verification)) errors.push(`${path}：验证状态只能是描述依据或待测试`);
+  if (hasOwn(rule, 'mechanicsRevision') && rule.mechanicsRevision !== 1) errors.push(`${path}：计算机制版本无效`);
   if (hasOwn(rule, 'note') && !shortString(rule.note)) errors.push(`${path}：备注过长或格式错误`);
   if (!Array.isArray(rule.conditions) || rule.conditions.length > LIMITS.conditions) {
     errors.push(`${path}：条件列表无效或过多`);
@@ -79,7 +81,7 @@ function validateRule(rule, path, errors) {
     });
   }
   if (rule.review === 'ready' && Array.isArray(rule.effects) && rule.effects.length === 0) errors.push(`${path}：已确认规则必须有明确效果`);
-  return errors.length === start ? JSON.parse(JSON.stringify(rule)) : null;
+  return errors.length === start ? upgradeStatRule(JSON.parse(JSON.stringify(rule)),sourceText) : null;
 }
 
 function validateTemplate(template, key, path, errors) {
@@ -98,7 +100,7 @@ function validateTemplate(template, key, path, errors) {
   } else {
     const ids = new Set();
     template.rules.forEach((rule, index) => {
-      const validated = validateRule(rule, `${path}.rules[${index}]`, errors);
+      const validated = validateRule(rule, `${path}.rules[${index}]`, errors, template.text);
       if (validated) {
         if (ids.has(validated.id)) errors.push(`${path}：规则 ID 重复`);
         ids.add(validated.id);
@@ -196,7 +198,7 @@ export function buildCatalog(sources, seedCatalog = [], learnedTemplates = {}) {
     }
     const seed = seedIndex.get(key);
     if (seed) return { ...source, rules: rebaseRules(seed.rules, source), learned: false, seeded: true, unknown: false };
-    const parsed = simpleStatRule(source);
+    const parsed = hpStatRule(source) || simpleStatRule(source);
     if (parsed) return { ...source, rules: [parsed], learned: false, seeded: false, unknown: false, parsed: true };
     return {
       ...source, learned: false, seeded: false, unknown: true,
