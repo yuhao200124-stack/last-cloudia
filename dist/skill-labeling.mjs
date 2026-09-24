@@ -1,5 +1,5 @@
-import {ATTACK_TAG_CATALOG as catalog} from './attack-tag-catalog.mjs?v=20260924-attack-labels';
-import {attackLabelRows, filterLabelRows} from './skill-labeling-model.mjs?v=20260924-attack-labels';
+import {ATTACK_TAG_CATALOG as catalog} from './attack-tag-catalog.mjs?v=20260924-attack-conditions';
+import {attackLabelRows, filterLabelRows} from './skill-labeling-model.mjs?v=20260924-attack-conditions';
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const statusLabels = {ready:'已完整判断', partial:'判断部分', unknown:'没办法判断'};
 export function renderLabelTable(rows) {
@@ -7,7 +7,7 @@ export function renderLabelTable(rows) {
     <td><a class="label-name" href="${escape(row.url)}" target="_blank" rel="noreferrer">${escape(row.name)}</a></td>
     <td class="judgment-cell"><span class="judgment-label judgment-${row.judgment}">${statusLabels[row.judgment]}</span></td>
     <td><div class="effect-text">${escape(row.effect)}</div>${row.notes ? `<div class="skill-effect-notes"><span>补充说明</span>${escape(row.notes)}</div>` : ''}</td>
-    <td>${row.needsReview ? '<p class="skill-tag-note">描述已变化，需重新判断攻击力关联；原标签暂不沿用。</p>' : `${row.assignedTags.map(tag => `<span class="assigned-tag">${escape(tag)}</span>`).join('')}<p class="attack-summary">${escape(row.attackSummary)}</p>${row.remainingEffects.length ? `<div class="remaining-effects"><b>待判断效果</b><ul>${row.remainingEffects.map(text => `<li>${escape(text)}</li>`).join('')}</ul></div>` : ''}${row.calculationNote ? `<small class="calculation-note">${escape(row.calculationNote)}</small>` : ''}`}</td>
+    <td>${row.needsReview ? '<p class="skill-tag-note">描述已变化，需重新判断攻击力关联；原标签暂不沿用。</p>' : `${row.assignedTags.map(tag => `<span class="assigned-tag">${escape(tag)}</span>`).join('')}<p class="attack-summary">${escape(row.attackSummary)}</p>${row.remainingEffects.length ? `<div class="remaining-effects"><b>待判断效果</b><ul>${row.remainingEffects.map(text => `<li>${escape(text)}</li>`).join('')}</ul></div>` : ''}${row.remainingConditions.length ? `<div class="remaining-effects"><b>待判断条件／机制</b><ul>${row.remainingConditions.map(text => `<li>${escape(text)}</li>`).join('')}</ul></div>` : ''}${row.calculationNote ? `<small class="calculation-note">${escape(row.calculationNote)}</small>` : ''}`}</td>
   </tr>`).join('')}</tbody></table></div>`;
 }
 

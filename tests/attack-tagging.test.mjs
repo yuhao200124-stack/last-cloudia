@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {ATTACK_TAG_CATALOG as catalog} from '../dist/attack-tag-catalog.mjs';
-import {canonicalSkillRows, attackLabelRows, filterLabelRows} from '../dist/skill-labeling-model.mjs';
+import {canonicalSkillRows, attackLabelRows, filterLabelRows, resolveSkillLabels} from '../dist/skill-labeling-model.mjs';
 import {renderLabelTable} from '../dist/skill-labeling.mjs';
 const read = path => fs.readFileSync(new URL(path, import.meta.url), 'utf8');
 const box = {window:{}};
@@ -12,6 +12,7 @@ const data = box.window.SKILL_DATA;
 const all = canonicalSkillRows(data);
 const skill = n => all.find(row => row.url.endsWith(`/gino/${n}`));
 const entry = n => catalog.entries.find(row => row.url.endsWith(`/gino/${n}`));
+const registry = JSON.parse(read('../docs/skill-labeling-registry.json'));
 
 test('the attack pass audits all unique skills including category-only rows and every previous attack skill', () => {
   const audit = JSON.parse(read('../docs/attack-tag-audit.json'));
@@ -29,16 +30,48 @@ test('the attack pass audits all unique skills including category-only rows and 
 
 test('one tag is assigned and unrelated fragments remain pending even when old basic stats were complete', () => {
   for(const row of catalog.entries)assert.deepEqual(row.assignedTags,['攻击力']);
-  assert.equal(catalog.counts.ready,29);
-  assert.equal(catalog.counts.partial,58);
+  assert.equal(catalog.counts.ready,5);
+  assert.equal(catalog.counts.partial,82);
+  assert.deepEqual(catalog.entries.filter(row=>row.judgment==='ready').map(row=>Number(row.url.split('/').pop())),[9,10,11,12,251]);
   assert.equal(skill(387).basicStats.status,'ready');
   assert.equal(entry(387).judgment,'partial');
   assert.deepEqual(entry(387).remainingEffects,['HP+10%']);
   assert.deepEqual(entry(339).remainingEffects,['类型追加“龙”','受到的物理攻击伤害-15%']);
   assert.equal(entry(9).judgment,'ready');
-  assert.equal(entry(267).judgment,'ready');
+  assert.equal(entry(267).judgment,'partial');
   assert.match(entry(267).calculationNote,/按当前HP计算.*不能.*最高50%/);
   assert.equal(entry(390).judgment,'partial');
+  for(const n of [102,106,113,119,195,218,267,552,726,787,851,969,983,1147,1176,1212,1231,1318,1365,1483,1629,1747,1801,2001]){
+    assert.equal(entry(n).judgment,'partial',entry(n).name);
+    assert(entry(n).remainingConditions.length,entry(n).name);
+  }
+  assert.deepEqual(entry(119).remainingConditions,['满HP时生效']);
+  assert.equal(entry(1747).remainingConditions.length,2);
+  assert.equal(entry(1801).remainingConditions.length,3);
+  assert.equal(entry(2001).remainingConditions.length,3);
+});
+
+test('later passes accumulate on the same skill, require every fragment, and leave display positions unchanged', () => {
+  const before=JSON.stringify(registry);
+  const shared=structuredClone(registry);
+  shared.tagPasses.push({tag:'满HP',assignments:[{skillId:skill(119).id,partIds:['full-hp']}]});
+  shared.tagPasses.push({tag:'HP',assignments:[{skillId:skill(387).id,partIds:['effect-1']}]});
+  shared.tagPasses.push({tag:'神类型条件',assignments:[{skillId:skill(2001).id,partIds:['condition-1']}]});
+  const updated={...catalog,entries:resolveSkillLabels(shared)};
+  const rows=attackLabelRows(data,updated);
+  const full=rows.find(row=>row.id===skill(119).id);
+  assert.deepEqual(full.assignedTags,['攻击力','满HP']);
+  assert.equal(full.judgment,'ready');assert.deepEqual(full.remainingConditions,[]);
+  assert.deepEqual(rows.find(row=>row.id===skill(387).id).assignedTags,['攻击力','HP']);
+  assert.equal(rows.find(row=>row.id===skill(387).id).judgment,'ready');
+  const deity=rows.find(row=>row.id===skill(2001).id);
+  assert.equal(deity.judgment,'partial');assert.equal(deity.remainingConditions.length,2);
+  assert.deepEqual(rows.map(row=>row.id),attackLabelRows(data,catalog).map(row=>row.id));
+  assert(filterLabelRows(rows,'满HP').some(row=>row.id===skill(119).id));
+  const rendered=renderLabelTable([full]);
+  assert(rendered.includes('assigned-tag">攻击力'));assert(rendered.includes('assigned-tag">满HP'));
+  assert(rendered.includes('已完整判断'));assert(!rendered.includes('待判断条件'));
+  assert.equal(JSON.stringify(registry),before);
 });
 
 test('named spell buffs, linked faith and attack references are covered without treating damage as attack', () => {
@@ -65,12 +98,10 @@ test('saved description changes invalidate both positive tags and old exclusions
   assert.equal(rows.find(row=>row.id===skill(9).id).name,'我的攻击提升');
   assert.equal(JSON.stringify(edits),before);
   assert.equal(skill(9).sc,'1');
-  const rank={ready:0,partial:1,unknown:2};
-  assert(rows.every((row,index)=>!index||rank[row.judgment]>=rank[rows[index-1].judgment]));
-  const expectedPartial=all.filter(row=>catalog.entries.some(entry=>entry.id===row.id&&entry.judgment==='partial')).map(row=>row.id);
-  assert.deepEqual(rows.filter(row=>row.judgment==='partial').map(row=>row.id),expectedPartial);
+  assert.deepEqual(rows.slice(0,87).map(row=>row.id),catalog.displayOrder);
+  assert.equal(rows.at(-1).id,skill(1).id);
   const filtered=filterLabelRows(rows,'攻击力');
-  assert(filtered.every((row,index)=>!index||rank[row.judgment]>=rank[filtered[index-1].judgment]));
+  assert.deepEqual(filtered.map(row=>row.id),rows.filter(row=>filtered.includes(row)).map(row=>row.id));
 });
 
 test('the new table exposes only the agreed columns and scopes color classes to judgment labels', () => {
@@ -79,6 +110,7 @@ test('the new table exposes only the agreed columns and scopes color classes to 
   assert.equal((html.match(/data-skill-id=/g)||[]).length,87);
   assert.deepEqual([...html.matchAll(/<th>([^<]+)<\/th>/g)].map(match=>match[1]),['技能名称','判断','技能效果／说明','标签／判断说明']);
   assert.equal((html.match(/class="assigned-tag">攻击力/g)||[]).length,87);
+  assert(html.includes('待判断条件／机制'));
   assert(!/<tr[^>]*class="judgment-/.test(html));
   assert(!html.includes('获得方式'));
   assert(!html.includes('data-edit-field="sc"'));
@@ -95,7 +127,7 @@ test('the page boots, filters and clears without writing existing browser storag
   const context={catalog,attackLabelRows,filterLabelRows,document:{querySelector:get},window:{SKILL_DATA:data,addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Review page must not overwrite saved data.');}}};
   vm.runInNewContext(code,context);
   assert.match(get('#labelCoverage').textContent,/935.*87.*848/);
-  assert.match(get('#judgmentSummary').textContent,/29.*58.*0/);
+  assert.match(get('#judgmentSummary').textContent,/5.*82.*0/);
   const search=get('#labelSearch');search.value='没有这个技能123';search.listeners.input();
   assert.equal(get('#labelEmpty').hidden,false);assert.equal(get('#labelTable').innerHTML,'');
   get('#clearLabelSearch').listeners.click();assert.equal(get('#labelEmpty').hidden,true);

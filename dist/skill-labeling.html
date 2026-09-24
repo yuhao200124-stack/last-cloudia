@@ -6,8 +6,8 @@
     <meta name="description" content="按技能的具体效果逐类贴标签，本轮核对攻击力相关技能。" />
     <title>技能列表打标签用的｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260924-attack-labels" />
-    <link rel="stylesheet" href="./skill-labeling.css?v=20260924-attack-labels" />
+    <link rel="stylesheet" href="./styles.css?v=20260924-attack-conditions" />
+    <link rel="stylesheet" href="./skill-labeling.css?v=20260924-attack-conditions" />
   </head>
   <body>
     <header class="site-header">
@@ -25,7 +25,7 @@
         <div class="labeling-overview">
           <p id="labelCoverage">正在读取全库核对结果…</p>
           <p id="judgmentSummary" aria-live="polite"></p>
-          <p>判断针对整条技能。攻击力以外的效果暂留待判断；仅以攻击力作参照、比较或选人的技能会写明用途。</p>
+          <p>所有效果和条件都贴完标签，才算已完整判断。目前仅完成攻击力标签；后续标签累积到同一技能，判断同步更新，位置保持不变。</p>
         </div>
         <div class="toolbar">
           <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索攻击力相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
@@ -37,6 +37,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260924-attack-labels"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260924-attack-conditions"></script>
   </body>
 </html>
