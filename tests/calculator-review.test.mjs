@@ -41,7 +41,7 @@ test('reader observation timestamps remain distinct, missing later DEF/MND never
  assert.equal(capturePanelObservation(battle,unit,{...sample,unitId:123}),null);
  assert.equal(capturePanelObservation(battle,unit,{...sample,explicitSelection:false}),null);
 });
-test('guidance calculates both EX scenarios without extra inputs, then recognizes observed post-cast panels',()=>{
+test('guidance replaces the same-group EX buff while preserving independent HP effects',()=>{
  const buffs=magicBuffOptions(profile);assert.equal(buffs.length,1);
  assert.equal(magicBuffOptions({magic:[{...profile.magic[0],description:'法强+65%'}]}).length,0);
  assert.equal(magicBuffCap([], 'magic'),0);assert.equal(magicBuffCap(buffs,'skill'),0);assert.equal(magicBuffCap(buffs,'magic'),30000);
@@ -49,15 +49,16 @@ test('guidance calculates both EX scenarios without extra inputs, then recognize
  const stat={key:'intelligence',beforeBuff:6741,crossAdd:0,buffs:[{family:'ex-aura',value:50,source:'EX'},{family:'moonlight-ii',value:30,source:'月光'}]};
  const projected=magicBuffLayer(stat,10111,buffs);assert(projected.ok);
  assert.equal(projected.observedPanel,10111);
- assert.deepEqual(projected.scenarios.map(s=>[s.percent,s.panel]),[[65,11122],[115,14493]]);
- assert.deepEqual(magicBuffLayer(stat,12133,buffs).scenarios.map(s=>[s.percent,s.panel]),[[95,13144],[145,16515]]);
- assert.equal(magicBuffLayer(stat,6741,buffs).scenarios.length,1);
- const observed=magicBuffLayer(stat,11122,buffs);assert(observed.ok&&observed.guidanceObserved);assert.equal(observed.percent,65);assert.equal(observed.scenarios.length,0);
- assert.equal(magicBuffLayer(stat,14493,buffs).percent,115);
+ assert.equal(projected.percent,65);assert.equal(projected.panel,11122);assert.equal(projected.replaced[0].family,'ex-aura');
+ const full=magicBuffLayer(stat,12133,buffs);assert.equal(full.percent,95);assert.equal(full.panel,13144);assert(full.active.some(b=>b.family==='moonlight-ii'));
+ assert.equal(magicBuffLayer(stat,6741,buffs).percent,65);
+ const observed=magicBuffLayer(stat,11122,buffs);assert(observed.ok&&observed.buffObserved);assert.equal(observed.percent,65);assert.equal(observed.projected,undefined);
+ assert.equal(magicBuffLayer(stat,13144,buffs).percent,95);
+ for(const invalid of [14493,16515])assert.equal(magicBuffLayer(stat,invalid,buffs).ok,false);
  assert.equal(magicBuffLayer(stat,10000,buffs).ok,false);
  const common={...defaultInput(),attackBasis:'layers',coefficient:.52,skillPercent:67,defense:8000,type:'magical',skillType:'magic',element:'冰',resistance:50,specialAttack:true,killerCorrection:50,hits:35,hitMultiplier:2,hitDamageRatio:.6,hitScaleStage:'core',cap:200000,critRate:0,effects:[]};
- const calculated=projected.scenarios.map(layer=>calculate({...common,attackBase:layer.base,runtimeStatPercent:layer.percent}));
- assert.deepEqual(calculated.map(r=>r.context.attack),[15639,19009]);assert(calculated.every(r=>r.normal.min>0&&r.totalHits===70));
+ const calculated=[projected,full].map(layer=>calculate({...common,attackBase:layer.base,runtimeStatPercent:layer.percent}));
+ assert.deepEqual(calculated.map(r=>r.context.attack),[15639,17661]);assert(calculated.every(r=>r.normal.min>0&&r.totalHits===70));
 
 });
 test('exact reported wrong range is the old panel mode, and the normal layer guard prevents it',()=>{

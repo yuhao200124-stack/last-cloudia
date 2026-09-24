@@ -1,12 +1,13 @@
+import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-buff-groups';
 import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs';
-import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-snapshots';
+import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-buff-groups';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-buff-groups';
 import {formatEffect,describeCondition} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
-import {calculateWebsitePanel} from './panel-calculator.mjs';
-import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-snapshots';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-buff-groups';
+import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-buff-groups';
 import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-snapshots';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-buff-groups';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -22,7 +23,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  state.mechanicsRevision=STAT_MECHANICS_REVISION;
  // Older UI defaulted Roxy's 0.6 to before-cap, before its core placement was
  // checked against native settlement samples. Migrate that exact old default.
- if(characterId==='260'&&saved.hitMechanicsRevision!==2)for(const p of Object.values(state.hitParameters))if(p.hitScaleStage==='beforeCap'&&(p.hitMultiplier==null||Number(p.hitMultiplier)===2)&&(p.hitDamageRatio==null||Number(p.hitDamageRatio)===0.6))delete p.hitScaleStage;
+ migrateCharacterHitDrafts(characterId,saved,state.hitParameters);
  state.hitMechanicsRevision=2;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
  let confirmed=false,hasApproval=false,bonusGroups=[],readerBonuses=[];

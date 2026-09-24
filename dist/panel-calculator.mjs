@@ -1,4 +1,6 @@
-import {upgradeStatRule, verifiedRuntimeFamily} from './stat-mechanics.mjs';
+import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-buff-groups';
+import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-buff-groups';
+import {upgradeStatRule, verifiedRuntimeFamily} from './stat-mechanics.mjs?v=20260924-buff-groups';
 // Character-panel arithmetic only. Damage/cap/defense-reference effects never enter it.
 export const PANEL_LABELS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 const aliases={HP:'hp',生命:'hp',MP:'mp',魔力值:'mp',攻击力:'attack',防御力:'defense',法强:'intelligence',魔力:'intelligence',魔抗:'mind'};
@@ -43,7 +45,7 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
   const keys=targetKeys(e.target);
   for(const key of keys)out[key].sources.push(source);
   if(n(e.value)&&e.unit==='%') {
-   for(const key of keys)if(e.type==='stat')out[key].percent+=e.value;else out[key].buffs.push({value:e.value,source:row.sourceName,family:verifiedRuntimeFamily(row.rule,e)});
+   for(const key of keys)if(e.type==='stat')out[key].percent+=e.value;else out[key].buffs.push({value:e.value,source:row.sourceName,family:verifiedRuntimeFamily(row.rule,e),runtime:e.runtime});
    if(!keys.length)issue(Object.keys(out),`${row.sourceName}：属性目标尚未解析`);
   } else if(e.type==='stat'&&typeof e.value==='string') {
    const match=e.value.match(/^加算开战时(法强|魔力|攻击力|防御力|魔抗|HP|MP)的(\d+(?:\.\d+)?)%$/);
@@ -94,13 +96,15 @@ export function calculateWebsitePanel(baseStats,report,{equipment=[],openingStat
   if(n(p.subtotal)) {
    let raw=p.beforeBuffRaw+p.crossAdd*p.precision;
    p.subtotal=Math.floor(raw/p.precision);
-   const families=p.buffs.map(b=>b.family);
-   const verifiedPair=p.buffs.length===2&&families.includes('moonlight-ii')&&families.includes('ex-aura');
-   if(p.buffs.length===1||verifiedPair){
-    const before=raw/p.precision,percent=p.buffs.reduce((s,b)=>s+b.value,0);
+   const classified=p.buffs.map(b=>normalizeRuntimeBuff(b,p.key));
+   const combined=combineRuntimeBuffs(classified.filter(Boolean));
+   const known=classified.every(Boolean)&&combined.ok;
+   if(p.buffs.length===1||p.buffs.length&&known){
+    const active=known?combined.active:p.buffs;
+    const before=raw/p.precision,percent=active.reduce((s,b)=>s+b.value,0);
     raw=Math.floor(scale(raw,percent));p.subtotal=Math.floor(raw/p.precision);
-    p.steps.push(`实时属性层（${p.buffs.map(b=>`${b.source} ${fmt(b.value)}%`).join(' + ')}）：${fmt(before)} × (1 + ${fmt(percent)}%) → ${p.subtotal}`);
-   } else if(p.buffs.length>1)p.issues.push('多项状态属性加成的分组或叠加关系待确认');
+    p.steps.push(`实时属性层（${active.map(b=>`${b.source} ${fmt(b.value)}%`).join(' + ')}）：${fmt(before)} × (1 + ${fmt(percent)}%) → ${p.subtotal}`);
+   } else if(p.buffs.length>1)p.issues.push(combined.ok?'多项状态属性加成的分组或叠加关系待确认':combined.reason);
   }
   p.issues=[...new Set(p.issues)];p.value=p.issues.length?null:p.subtotal;
  }

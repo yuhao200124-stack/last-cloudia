@@ -1,3 +1,4 @@
+import {characterHitStage,characterSourceAllowed} from './character-combat-rules.mjs?v=20260924-buff-groups';
 // Transfer qualified effects, never reinterpret a stat bonus as a skill multiplier.
 export const reportStorageKey = id => `lc-damage-report:${id}:v1`;
 const elements = { none:'无', fire:'火', ice:'冰', earth:'树', thunder:'雷', light:'光', dark:'暗' };
@@ -14,9 +15,10 @@ export function buildDamageImport(report) {
   const defense=[],hit=[],refs=[];
   for (const row of report.rows) {
     if(row.status!=='active') continue;
+    if(!characterSourceAllowed(report.characterId,row.sourceId)){imported.blockers.push(`${row.sourceName}：角色专属效果与当前角色不匹配。`);continue;}
     for (const [index,e] of row.rule.effects.entries()) {
       const id=`${row.sourceId}:${row.rule.id}:${index}`;
-      const entry={id,source:row.sourceName,effect:e,group:row.group};
+      const entry={id,sourceId:row.sourceId,ruleId:row.rule.id,source:row.sourceName,effect:e,group:row.group};
       const number=typeof e.value==='number' && Number.isFinite(e.value);
       if(e.type==='damage') {
         let kind=kinds[e.target];let target=imported.element;
@@ -58,7 +60,7 @@ export function buildDamageImport(report) {
   if(hit.length===1 && Number.isInteger(hit[0].effect.value) && hit[0].effect.value>0 && Number.isFinite(hit[0].effect.secondary) && hit[0].effect.secondary>=0) {
     imported.hitMultiplier=hit[0].effect.value;imported.hitDamageRatio=hit[0].effect.secondary;
     imported.hitSources=hit.map(e=>e.source);
-    if(hit[0].id.startsWith('water-king:water-ice-hits:')&&c.attackKind==='magic'&&c.element==='ice'&&imported.hitMultiplier===2&&imported.hitDamageRatio===0.6)imported.hitScaleStage='core';
+    const stage=characterHitStage(report.characterId,hit[0],c);if(stage)imported.hitScaleStage=stage;
     imported.hitSourceKind=['reader','manual'].includes(hit[0].effect.parameterSource)?hit[0].effect.parameterSource:'website';
   } else if(hit.length) imported.blockers.push('存在未确认或多个分段效果，需先核对。');
   if(imported.effects.length) imported.warnings.push('增伤沿用当前引擎的后置逐条结算；导入顺序是来源顺序，尚未确认为游戏实际执行顺序，可在每条“更多”中调整。');

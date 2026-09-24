@@ -1,4 +1,4 @@
-import {upgradeStatRule, STAT_MECHANICS_REVISION} from './stat-mechanics.mjs';
+import {upgradeStatRule, STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-buff-groups';
 /* Declarative effect conditions. This module does not compute final damage. */
 const options = (entries) => entries.map(([value, label]) => ({ value, label }));
 const yesNo = options([[null, '待确认'], [true, '是'], [false, '否']]);
