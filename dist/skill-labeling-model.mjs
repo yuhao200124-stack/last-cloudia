@@ -54,7 +54,9 @@ export function labelingView(catalog, key) {
   const view = catalog.views[key];
   if (!view) throw Error('Unknown tag view.');
   const tags = view.tagKeys ? view.tagKeys.map(child => catalog.views[child].label) : [view.label];
-  return {...view, entries: key === 'all' ? catalog.entries : catalog.entries.filter(entry => entry.assignedTags.some(tag => tags.includes(tag)))};
+  return {...view, entries: key === 'all' ? catalog.entries : catalog.entries.filter(entry => view.effectGroup
+    ? entry.assignedTags.includes(view.conditionTag) && entry.tagDetails[view.conditionTag]?.bindings?.some(binding => binding.group === view.effectGroup)
+    : entry.assignedTags.some(tag => tags.includes(tag)))};
 }
 
 export function skillLabelRows(data, catalog, edits = {}) {
@@ -79,6 +81,7 @@ export function skillLabelRows(data, catalog, edits = {}) {
       effect, notes: changed ? '' : row.notes || '',
       judgment: valid ? entry.judgment : 'unknown',
       assignedTags: valid ? entry.assignedTags : [],
+      openingBindings: valid ? entry.tagDetails?.['战斗开始']?.bindings || [] : [],
       attackSummary: valid ? entry.attackSummary : '',
       tagSummaries: valid ? entry.assignedTags.map(tag => ({tag,
         summary: entry.tagDetails?.[tag]?.summary || (tag === '攻击力' ? entry.attackSummary : ''),

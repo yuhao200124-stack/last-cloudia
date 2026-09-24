@@ -296,17 +296,36 @@ export const ATTACK_TAG_CATALOG = {
             "basic:b30a22d022f57e37:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+20%，勇敢Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "每个Wave开始时触发",
-        "勇敢Buff：持续40秒，同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5f0091303689244c",
@@ -715,21 +734,67 @@ export const ATTACK_TAG_CATALOG = {
             "basic:cf4cc4324d7b87b7:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+20%，勇敢Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔力+20%，灵气Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到物理伤害-20%，保护Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "保护带来的物理减伤",
         "魔法屏障带来的魔法减伤"
       ],
-      "remainingConditions": [
-        "每个Wave开始时触发",
-        "开场Buff持续40秒，各同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "7305afeb3e366f19",
@@ -1470,12 +1535,60 @@ export const ATTACK_TAG_CATALOG = {
             "basic:5f6efbf8b35453d2:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "每Wave开始攻击力+2%，最多累计10次"
+            },
+            {
+              "group": "defense-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "每Wave开始防御力+2%，最多累计10次"
+            },
+            {
+              "group": "magic-up",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "每Wave开始魔力+2%，最多累计10次"
+            },
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "每Wave开始魔抗+2%，最多累计10次"
+            },
+            {
+              "group": "science-magic-damage",
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "每Wave开始科学类攻击魔法威力+5%，最多累计10次"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力"
+        "魔力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -1483,7 +1596,6 @@ export const ATTACK_TAG_CATALOG = {
         "科学类攻击魔法威力提升"
       ],
       "remainingConditions": [
-        "每个Wave开始时触发",
         "按Wave累计，最多叠加10次",
         "威力加成仅限科学类攻击魔法"
       ]
@@ -1648,20 +1760,57 @@ export const ATTACK_TAG_CATALOG = {
             "basic:81e5eed79e630a07:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+35%，大勇敢Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "暴击率+15%，暴击Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "speed-up",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "移动速度+2，速度Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "暴击带来的暴击率提升",
         "速度带来的移动速度提升"
       ],
-      "remainingConditions": [
-        "每个Wave开始时触发",
-        "开场Buff持续40秒，各同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:318",
@@ -2165,18 +2314,38 @@ export const ATTACK_TAG_CATALOG = {
             "basic:8ba52a420286cb67:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "type-add",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型，战斗结束时消失；活动限时攻击力／防御力不属于开场效果",
+              "endsOn": "battle-end"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "开场随机追加类型"
       ],
       "remainingConditions": [
-        "战斗开始时随机追加类型，战斗结束时消失",
         "攻击力与防御力加成为限时效果，适用活动时间待确认"
       ]
     },
@@ -2232,20 +2401,39 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "killer-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "给除自身外攻击力最高的1名友方：特攻伤害上限+5,000，40秒；不提高攻击力",
+              "durationSeconds": 40
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "给选中友方赋予特攻伤害上限+5,000的40秒Buff"
       ],
       "remainingConditions": [
-        "战斗开始时触发",
         "选中除自身外攻击力最高的1名友方",
-        "触发特攻时生效",
-        "赋予友方的Buff持续40秒"
+        "触发特攻时生效"
       ]
     },
     {
@@ -2421,18 +2609,44 @@ export const ATTACK_TAG_CATALOG = {
             "basic:8400b28b0f6069d3:2"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-down",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场攻击力-20%，40秒；常驻攻击力+10%另行处理",
+              "durationSeconds": 40
+            },
+            {
+              "group": "magic-down",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场魔力-20%，40秒；常驻魔力+10%另行处理",
+              "durationSeconds": 40
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "战斗开始时施加减益",
-        "开场减益持续40秒，与常驻加成分开判断"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "87bd554c95a1dcf1",
@@ -2873,17 +3087,36 @@ export const ATTACK_TAG_CATALOG = {
             "basic:352a2b49a30fa8b1:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+35%，大勇敢Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "每个Wave开始时触发",
-        "大勇敢Buff：持续40秒，同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "296bb9556080c9c4",
@@ -3105,18 +3338,51 @@ export const ATTACK_TAG_CATALOG = {
             "basic:975fce45e6663534:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "把开场减少的防御力、魔抗数值加算到攻击力"
+            },
+            {
+              "group": "defense-down",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场防御力-10%"
+            },
+            {
+              "group": "mnd-down",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场魔抗-10%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "魔抗-10%"
       ],
       "remainingConditions": [
-        "战斗开始时触发",
         "将减少的防御力、魔抗数值转换并加算到攻击力"
       ]
     },
@@ -3268,18 +3534,46 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场判断攻击力≥魔力时，物理攻击伤害+20%",
+              "mutuallyExclusiveBranch": true
+            },
+            {
+              "group": "magic-damage",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场判断攻击力＜魔力时，魔法攻击伤害+20%",
+              "mutuallyExclusiveBranch": true
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
         "物理伤害增加",
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "战斗开始时判断",
         "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
       ]
     },
@@ -3349,21 +3643,67 @@ export const ATTACK_TAG_CATALOG = {
             "basic:7b7b9f7c806bbd9e:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+35%，大勇敢Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔力+35%，大灵气Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到物理伤害-20%，保护Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "保护带来的物理减伤",
         "魔法屏障带来的魔法减伤"
       ],
-      "remainingConditions": [
-        "每个Wave开始时触发",
-        "开场Buff持续40秒，各同类型Buff同时只计一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "efc2aa7f65146e56",
@@ -3622,15 +3962,45 @@ export const ATTACK_TAG_CATALOG = {
             "basic:92f18d0720224b23:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "随机抽中攻击力+50%、+35%或+20%的一项，持续40秒；不与减益结果同时获得",
+              "durationSeconds": 40,
+              "mutuallyExclusiveBranch": true
+            },
+            {
+              "group": "attack-down",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "随机抽中攻击力-35%，持续40秒；不与增益结果同时获得",
+              "durationSeconds": 40,
+              "mutuallyExclusiveBranch": true
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "战斗开始时触发",
         "随机选择一种攻击力增益／减益结果",
         "效果持续40秒，按实际抽中的结果判断"
       ]
@@ -3759,18 +4129,47 @@ export const ATTACK_TAG_CATALOG = {
             "basic:1da4935f9a387557:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "除自身外恰好1人装备师徒之绊：开场攻击力+35%，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "defense-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "除自身外恰好1名友方装备“师徒之绊”",
-        "每个Wave开始时触发",
-        "大勇敢／大堡垒Buff持续40秒，各同类型Buff同时只计一项"
+        "除自身外恰好1名友方装备“师徒之绊”"
       ]
     },
     {
@@ -3879,17 +4278,36 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备机械类武器时，开场将魔力数值的10%加算到攻击力；不提高魔力"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
         "装备机械类武器",
-        "战斗开始时触发",
         "将自身法强的10%转换并加算到攻击力"
       ]
     },
@@ -4329,7 +4747,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "随战斗时间经过逐渐提升，每个Wave开始时重置；具体变化曲线待确认"
+          "text": "随战斗时间经过逐渐提升；具体变化曲线待确认"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "每个Wave开始时重置"
+        },
+        {
+          "id": "start-reset",
+          "kind": "effect",
+          "text": "每个Wave开始重置累计攻击力增幅"
         }
       ],
       "tagDetails": {
@@ -4342,15 +4770,37 @@ export const ATTACK_TAG_CATALOG = {
             "basic:daa5fb62f2887078:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始重置",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "reset",
+              "partIds": [
+                "start-reset"
+              ],
+              "summary": "每Wave开始重置累计攻击力增幅；开场不按最高+20%计算"
+            }
+          ],
+          "calculationNote": "开场仅重置累计／计时，不自动取得最高加成。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
       "judgment": "partial",
-      "remainingEffects": [],
+      "remainingEffects": [
+        "每个Wave开始重置累计攻击力增幅"
+      ],
       "remainingConditions": [
-        "随战斗时间经过逐渐提升，每个Wave开始时重置；具体变化曲线待确认"
+        "随战斗时间经过逐渐提升；具体变化曲线待确认"
       ]
     },
     {
@@ -4463,19 +4913,38 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力",
+              "durationSeconds": 90
+            }
+          ],
+          "calculationNote": "上述开场效果持续90秒。其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "给选中友方赋予物理攻击伤害上限+5,000的90秒Buff"
       ],
       "remainingConditions": [
-        "战斗开始时触发",
-        "选中除自身外攻击力最高的1名友方",
-        "赋予友方的Buff持续90秒"
+        "选中除自身外攻击力最高的1名友方"
       ]
     },
     {
@@ -4639,15 +5108,34 @@ export const ATTACK_TAG_CATALOG = {
             "basic:a5f24684f4b2911a:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场判断除自身外恰好1人装备与你同在：攻击力+20%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "战斗开始时判断",
         "除自身外恰好1名盟友装备“与你同在”"
       ]
     },
@@ -4986,15 +5474,34 @@ export const ATTACK_TAG_CATALOG = {
             "basic:34045351ea740196:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场满足精灵骑士／禁书库的大精灵的队伍配对条件：攻击力+25%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "战斗开始时判断",
         "全队只有自身装备“精灵骑士”",
         "除自身外恰好1名友方装备“禁书库的大精灵”"
       ]
@@ -5096,18 +5603,36 @@ export const ATTACK_TAG_CATALOG = {
             "basic:1f04cd2da53994eb:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "self-poison",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场对自身施加猛毒；攻击力+20%为并列常驻效果"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "开场对自身赋予猛毒"
       ],
-      "remainingConditions": [
-        "战斗开始时对自身施加猛毒"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "86c11809d76a7959",
@@ -5365,11 +5890,40 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "skill-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场判断攻击力≥魔力时，特技伤害上限+5,000",
+              "mutuallyExclusiveBranch": true
+            },
+            {
+              "group": "magic-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场判断攻击力＜魔力时，魔法伤害上限+5,000",
+              "mutuallyExclusiveBranch": true
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "战斗开始"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -5377,7 +5931,6 @@ export const ATTACK_TAG_CATALOG = {
         "魔法伤害上限+5,000"
       ],
       "remainingConditions": [
-        "战斗开始时判断",
         "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
       ]
     },
@@ -5612,8 +6165,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 14,
-    "partial": 73,
+    "ready": 17,
+    "partial": 70,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

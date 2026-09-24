@@ -42,25 +42,25 @@ test('magic damage preserves target, timing, Buff, reference and special attack 
 
 test('magic damage accumulates across old views and only finishes after remaining effect and condition passes',()=>{
  assert.equal(magicDamage.counts.ready,0);assert.equal(magicDamage.counts.partial,22);assert.equal(magicDamage.counts.unknown,0);
- assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,7);
+ assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,11);
  for(const [n,key] of [[593,'attack'],[1066,'physical'],[241,'physical'],[658,'physical'],[754,'physical'],[1060,'physical'],[1507,'physical']])
   assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  const science=catalog.entries.find(e=>e.id===source(305).id);
- assert.deepEqual(science.assignedTags,['攻击力','防御力','魔力']);
+ assert.deepEqual(science.assignedTags,['攻击力','防御力','魔力','战斗开始']);
  assert(science.remainingEffects.includes('魔抗提升'));
  assert(science.remainingEffects.some(t=>t.includes('科学')));
  assert(science.remainingConditions.some(t=>t.includes('仅限科学类攻击魔法')));
  for(const key of ['attack','defense','magic'])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===science.id),science);
- assert.deepEqual(entry(1066).assignedTags,['攻击力','魔力','物理伤害增加','魔法伤害增加']);
- assert.deepEqual(entry(1066).remainingEffects,[]);assert.equal(entry(1066).remainingConditions.length,2);
+ assert.deepEqual(entry(1066).assignedTags,['攻击力','魔力','物理伤害增加','魔法伤害增加','战斗开始']);
+ assert.deepEqual(entry(1066).remainingEffects,[]);assert.equal(entry(1066).remainingConditions.length,1);
  assert.deepEqual(entry(241).assignedTags,['物理伤害增加','魔法伤害增加']);
  assert.deepEqual(entry(241).remainingEffects,[]);assert.deepEqual(entry(241).remainingConditions,['装备法杖时生效']);
  const future=structuredClone(registry);
  future.tagPasses.push({tag:'装备法杖',assignments:[{skillId:source(241).id,partIds:['condition-1']}]});
  const updated=resolveSkillLabels(future).find(e=>e.id===source(241).id);
  assert.equal(updated.judgment,'ready');assert.equal(entry(241).judgment,'partial');
- assert.equal(catalog.entries.length,281);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,281);
- assert.equal(catalog.views.all.counts.ready,46);assert.equal(catalog.views.all.counts.partial,235);
+ assert.equal(catalog.entries.length,332);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,332);
+ assert.equal(catalog.views.all.counts.ready,57);assert.equal(catalog.views.all.counts.partial,275);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,46).every(r=>r.judgment==='ready'));assert(sorted.slice(46).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,57).every(r=>r.judgment==='ready'));assert(sorted.slice(57).every(r=>r.judgment==='partial'));
 });

@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -60,7 +60,30 @@ for(const [key,view] of Object.entries(shared.views).filter(([,view])=>Array.isA
   checkOrder(view,entries);
   views[key]={...view,counts:countsFor(entries)};
 }
-for(const [key,view] of Object.entries(views))if(view.parent && !views[view.parent]?.tagKeys?.includes(key))throw Error('Unlisted child label view.');
+// Conditional subviews use reviewed effect bindings. Intersecting whole-skill
+// tags would incorrectly include unrelated passive and delayed effects.
+for(const [key,view] of Object.entries(shared.views).filter(([,view])=>view.effectGroup)){
+  const parent=views[view.parent];
+  if(!parent || parent.label!==view.conditionTag || !parent.childKeys?.includes(key))throw Error('Invalid condition effect group.');
+  const entries=resolved.filter(entry=>entry.assignedTags.includes(view.conditionTag) && entry.tagDetails[view.conditionTag].bindings?.some(binding=>binding.group===view.effectGroup));
+  checkOrder(view,entries);
+  views[key]={...view,counts:countsFor(entries)};
+}
+for(const [key,view] of Object.entries(views)){
+  if(view.parent && !(views[view.parent]?.tagKeys || views[view.parent]?.childKeys)?.includes(key))throw Error('Unlisted child label view.');
+  if(!view.childKeys)continue;
+  if(new Set(view.childKeys).size!==view.childKeys.length || view.childKeys.some(child=>views[child]?.parent!==key))throw Error('Invalid condition child views.');
+  const groups=new Set(view.childKeys.map(child=>views[child].effectGroup));
+  const pass=shared.tagPasses.find(pass=>pass.tag===view.label);
+  for(const assignment of pass.assignments){
+    const entry=resolved.find(entry=>entry.id===assignment.skillId),detail=entry.tagDetails[view.label];
+    if(assignment.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='condition'))throw Error('Condition pass must not cover unreviewed effect tags.');
+    if(detail.trigger?.delaySeconds!==0 || !detail.bindings?.length)throw Error('Missing immediate opening trigger.');
+    for(const binding of detail.bindings){
+      if(!groups.has(binding.group) || !binding.summary || !binding.partIds?.length || binding.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='effect'))throw Error('Invalid opening effect binding.');
+    }
+  }
+}
 checkOrder(shared.views.all,resolved);
 views.all={...shared.views.all,counts:countsFor(resolved)};
 const catalog={schemaVersion:2,numericEffectInjection:false,activeView:shared.activeView,entries:resolved,views};

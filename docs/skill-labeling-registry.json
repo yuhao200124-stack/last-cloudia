@@ -180,6 +180,27 @@
             "basic:b30a22d022f57e37:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+20%，勇敢Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -534,6 +555,54 @@
             "basic:cf4cc4324d7b87b7:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+20%，勇敢Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔力+20%，灵气Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到物理伤害-20%，保护Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -1178,6 +1247,53 @@
             "basic:5f6efbf8b35453d2:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "每Wave开始攻击力+2%，最多累计10次"
+            },
+            {
+              "group": "defense-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "每Wave开始防御力+2%，最多累计10次"
+            },
+            {
+              "group": "magic-up",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "每Wave开始魔力+2%，最多累计10次"
+            },
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "每Wave开始魔抗+2%，最多累计10次"
+            },
+            {
+              "group": "science-magic-damage",
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "每Wave开始科学类攻击魔法威力+5%，最多累计10次"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -1325,6 +1441,45 @@
             "basic:81e5eed79e630a07:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+35%，大勇敢Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "暴击率+15%，暴击Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "speed-up",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "移动速度+2，速度Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -1765,6 +1920,26 @@
             "basic:8ba52a420286cb67:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "type-add",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型，战斗结束时消失；活动限时攻击力／防御力不属于开场效果",
+              "endsOn": "battle-end"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -1820,6 +1995,26 @@
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "killer-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "给除自身外攻击力最高的1名友方：特攻伤害上限+5,000，40秒；不提高攻击力",
+              "durationSeconds": 40
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -1980,6 +2175,34 @@
             "basic:8400b28b0f6069d3:2"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-down",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场攻击力-20%，40秒；常驻攻击力+10%另行处理",
+              "durationSeconds": 40
+            },
+            {
+              "group": "magic-down",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场魔力-20%，40秒；常驻魔力+10%另行处理",
+              "durationSeconds": 40
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -2360,6 +2583,27 @@
             "basic:352a2b49a30fa8b1:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+35%，大勇敢Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -2557,6 +2801,39 @@
             "basic:975fce45e6663534:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "把开场减少的防御力、魔抗数值加算到攻击力"
+            },
+            {
+              "group": "defense-down",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场防御力-10%"
+            },
+            {
+              "group": "mnd-down",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场魔抗-10%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -2700,6 +2977,34 @@
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场判断攻击力≥魔力时，物理攻击伤害+20%",
+              "mutuallyExclusiveBranch": true
+            },
+            {
+              "group": "magic-damage",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场判断攻击力＜魔力时，魔法攻击伤害+20%",
+              "mutuallyExclusiveBranch": true
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -2769,6 +3074,54 @@
             "basic:7b7b9f7c806bbd9e:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力+35%，大勇敢Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔力+35%，大灵气Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到物理伤害-20%，保护Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -2993,6 +3346,36 @@
             "basic:92f18d0720224b23:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "随机抽中攻击力+50%、+35%或+20%的一项，持续40秒；不与减益结果同时获得",
+              "durationSeconds": 40,
+              "mutuallyExclusiveBranch": true
+            },
+            {
+              "group": "attack-down",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "随机抽中攻击力-35%，持续40秒；不与增益结果同时获得",
+              "durationSeconds": 40,
+              "mutuallyExclusiveBranch": true
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -3111,6 +3494,36 @@
             "basic:1da4935f9a387557:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "除自身外恰好1人装备师徒之绊：开场攻击力+35%，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "defense-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -3212,6 +3625,25 @@
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备机械类武器时，开场将魔力数值的10%加算到攻击力；不提高魔力"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -3585,7 +4017,17 @@
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "随战斗时间经过逐渐提升，每个Wave开始时重置；具体变化曲线待确认"
+          "text": "随战斗时间经过逐渐提升；具体变化曲线待确认"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "每个Wave开始时重置"
+        },
+        {
+          "id": "start-reset",
+          "kind": "effect",
+          "text": "每个Wave开始重置累计攻击力增幅"
         }
       ],
       "tagDetails": {
@@ -3598,6 +4040,25 @@
             "basic:daa5fb62f2887078:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始重置",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "reset",
+              "partIds": [
+                "start-reset"
+              ],
+              "summary": "每Wave开始重置累计攻击力增幅；开场不按最高+20%计算"
+            }
+          ],
+          "calculationNote": "开场仅重置累计／计时，不自动取得最高加成。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -3701,6 +4162,26 @@
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力",
+              "durationSeconds": 90
+            }
+          ],
+          "calculationNote": "上述开场效果持续90秒。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -3843,6 +4324,25 @@
             "basic:a5f24684f4b2911a:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场判断除自身外恰好1人装备与你同在：攻击力+20%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -4134,6 +4634,25 @@
             "basic:34045351ea740196:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场满足精灵骑士／禁书库的大精灵的队伍配对条件：攻击力+25%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -4227,6 +4746,25 @@
             "basic:1f04cd2da53994eb:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "self-poison",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场对自身施加猛毒；攻击力+20%为并列常驻效果"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -4456,6 +4994,34 @@
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "skill-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场判断攻击力≥魔力时，特技伤害上限+5,000",
+              "mutuallyExclusiveBranch": true
+            },
+            {
+              "group": "magic-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场判断攻击力＜魔力时，魔法伤害上限+5,000",
+              "mutuallyExclusiveBranch": true
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -5144,6 +5710,54 @@
             "basic:全部技能:all:326:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "防御力+20%，堡垒Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔抗+20%，梅蒂斯Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "hp-max",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "HP上限固定+1,000，活力Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "sct-speed",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "SCT恢复速度+25%，加速Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -5266,6 +5880,27 @@
             "basic:c4dcb02f9f9b0945:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "防御力+20%，堡垒Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -5385,6 +6020,32 @@
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "将魔力数值的5%加算到防御力；不提高魔力"
+            },
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "将魔力数值的5%加算到魔抗；不提高魔力"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -6003,6 +6664,25 @@
             "basic:a35775967283bc44:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "开场将魔抗数值的7%加算到防御力；不提高魔抗"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -6156,6 +6836,27 @@
             "basic:40a41c3cc8543aa3:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "防御力+35%，大堡垒Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -6509,6 +7210,27 @@
             "basic:c2a5f212631ba8ff:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "hp-max",
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "HP上限固定+1,000，活力Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -6605,6 +7327,27 @@
             "basic:d214a29ee3c4826e:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "hp-max",
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "HP上限固定+2,000，高阶活力Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -6974,6 +7717,27 @@
             "basic:df6c512f0cfeb39c:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "魔力+20%，灵气Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -7519,6 +8283,36 @@
             "basic:484c7ab2b4b198dc:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "魔力+20%，灵气Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "cast-speed",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法咏唱速度+30%，再吟唱Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -7697,6 +8491,27 @@
             "basic:209e4252243d4679:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "魔力+35%，大灵气Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -7867,6 +8682,25 @@
             "basic:00001521ecae775f:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "开场满足禁书库的大精灵／精灵骑士的队伍配对条件：魔力+25%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -7914,6 +8748,25 @@
             "basic:b6f1305e6f78634c:1"
           ],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "装备长袍时，开场将魔抗数值的10%加算到魔力；不提高魔抗"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -9163,6 +10016,27 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "物理攻击伤害+20%的Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -9886,6 +10760,26 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "speed-down",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场赋予自身移动速度降低减益，持续至战斗不能；物理增伤另需满足减速条件",
+              "endsOn": "incapacitated"
+            }
+          ],
+          "calculationNote": "持续至战斗不能，不按40秒倒计时。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -10031,6 +10925,25 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "开场判断我方全员为恐怖系时，物理攻击伤害+10%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -10324,6 +11237,27 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "物理攻击伤害+30%的Buff，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -10686,6 +11620,26 @@
           "calculationNote": "前30秒限制的是魔法使用；原文没有说明50%魔法增伤只持续30秒，不按开场40秒Buff处理。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "magic-lock",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "战斗开始后的前30秒无法使用魔法；常驻魔法增伤不属于开场效果",
+              "durationSeconds": 30
+            }
+          ],
+          "calculationNote": "上述开场效果持续30秒。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -10946,6 +11900,32 @@
           "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "magic-damage",
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%"
+            },
+            {
+              "group": "skill-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场按指定友方类型的人数提高特技伤害，最多4名、最高+20%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -10986,6 +11966,26 @@
           "calculationNote": "自身易伤持续20秒；魔法增伤在开场20秒后生效，两者计时含义不同。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "self-damage-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场自身受到伤害+20%，持续20秒；魔法增伤在20秒后才生效",
+              "durationSeconds": 20
+            }
+          ],
+          "calculationNote": "上述开场效果持续20秒。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -11040,12 +12040,17 @@
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "战斗开始时施加魔抗降低减益；原文未给出持续时间"
+          "text": "魔抗降低减益的持续时间待确认"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "魔法增伤随时间变化，40秒达到最高30%；此前的具体换算关系待确认"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时施加魔抗降低减益"
         }
       ],
       "tagDetails": {
@@ -11056,6 +12061,25 @@
           "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "mnd-down",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场自身魔抗-20%，持续时间待确认；后续渐增魔法伤害不归入开场增伤"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         }
       }
     },
@@ -11897,6 +12921,2344 @@
           "calculationNote": "仅目标为Boss且本次实际暴击时适用。该技能不提高暴击率，也不赋予魔法暴击资格；暴击伤害上限+2,000仍待判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9d98ba73d408aa05",
+      "name": "快速护盾",
+      "url": "https://altema.jp/lastcloudia/gino/104",
+      "text": "战斗开始时自动获得「保护」效果：受到的物理伤害 -20%",
+      "notes": "每个Wave开始施加于自身：受到物理伤害-20%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "受到物理伤害-20%，保护Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "受到物理伤害-20%，保护Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "b68b7c256efa0467",
+      "name": "快速魔法屏障",
+      "url": "https://altema.jp/lastcloudia/gino/105",
+      "text": "战斗开始时自动获得「魔法屏障」效果：受到的魔法伤害 -20%。",
+      "notes": "每个Wave开始施加于自身：受到魔法伤害-20%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "受到魔法伤害-20%，魔法屏障Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "61bd034faff939fe",
+      "name": "特技1充能",
+      "url": "https://altema.jp/lastcloudia/gino/164",
+      "text": "战斗开始时，第1个特技的SCT恢复20秒（左上方特技）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "第1个特技（左上）的SCT恢复20秒"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "sct-recover",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "第1个特技（左上）的SCT恢复20秒"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:194",
+      "name": "快速暴击",
+      "url": "https://altema.jp/lastcloudia/gino/201",
+      "text": "每个Wave开始时，自身自动获得「暴击」效果：暴击率+15%。",
+      "notes": "每个Wave开始施加于自身：暴击率+15%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "暴击率+15%，暴击Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "暴击率+15%，暴击Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "d1bc7f72d978fe26",
+      "name": "快速梅蒂斯",
+      "url": "https://altema.jp/lastcloudia/gino/203",
+      "text": "战斗开始时自动获得「梅蒂斯」效果：魔抗 +20%。",
+      "notes": "每个Wave开始施加于自身：魔抗+20%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "魔抗+20%，梅蒂斯Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "魔抗+20%，梅蒂斯Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "e3c604ea07ef0eee",
+      "name": "特技2充能",
+      "url": "https://altema.jp/lastcloudia/gino/207",
+      "text": "战斗开始时，第2个特技的SCT恢复20秒（右上方特技）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "第2个特技（右上）的SCT恢复20秒"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "sct-recover",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "第2个特技（右上）的SCT恢复20秒"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "2547e056f12aa5c8",
+      "name": "快速中级魔法阵",
+      "url": "https://altema.jp/lastcloudia/gino/208",
+      "text": "战斗开始时自动发动“中级魔法阵展开”效果，持续少量恢复MP。",
+      "notes": "状态持续40秒；每6秒回复1＋最大MP的0.7%。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "中级魔法阵：每6秒回复1＋最大MP的0.7%"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "mp-regen",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "中级魔法阵：每6秒回复1＋最大MP的0.7%",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "865730759d5fd514",
+      "name": "快速冰墙",
+      "url": "https://altema.jp/lastcloudia/gino/214",
+      "text": "每个Wave开始时，对我方全体自动施加「冰墙」：受到火属性攻击的伤害-20%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到火属性攻击的伤害-20%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-fire",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到火属性攻击的伤害-20%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:225",
+      "name": "快速神圣墙",
+      "url": "https://altema.jp/lastcloudia/gino/234",
+      "text": "每个Wave开始时，对我方全体自动施加「圣墙」：受到暗属性攻击的伤害-20%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到暗属性攻击的伤害-20%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-dark",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到暗属性攻击的伤害-20%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "4f8a8b3359a2206f",
+      "name": "快速触发",
+      "url": "https://altema.jp/lastcloudia/gino/243",
+      "text": "战斗开始时，随机使1个特技的SCT恢复1次。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "随机1个特技的SCT恢复1次"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "随机选择1个特技；按该特技1次所需SCT恢复"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "sct-recover",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "随机1个特技的SCT恢复1次"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "b8934861f6189f6e",
+      "name": "特技3充能",
+      "url": "https://altema.jp/lastcloudia/gino/256",
+      "text": "战斗开始时，第3个特技的SCT恢复20秒（左下方特技）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "第3个特技（左下）的SCT恢复20秒"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "sct-recover",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "第3个特技（左下）的SCT恢复20秒"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "717087fe75ab851b",
+      "name": "防毒面具",
+      "url": "https://altema.jp/lastcloudia/gino/324",
+      "text": "战斗开始时，赋予可使基本异常状态无效1次的屏障（永久效果）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "获得可抵挡1次基本异常状态的永久屏障"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "abnormal-barrier",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "获得可抵挡1次基本异常状态的永久屏障",
+              "lifetime": "until-first-blocked-abnormal-status"
+            }
+          ],
+          "calculationNote": "屏障无固定倒计时，抵挡1次基本异常状态后消耗。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "60eca07e7c2f1a33",
+      "name": "快速加速",
+      "url": "https://altema.jp/lastcloudia/gino/358",
+      "text": "战斗开始时自动发动“加速”效果：SCT恢复速度+25%。",
+      "notes": "每个Wave开始施加于自身：SCT恢复速度+25%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "SCT恢复速度+25%，加速Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "sct-speed",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "SCT恢复速度+25%，加速Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "6133882f233d82ce",
+      "name": "终结的凝视",
+      "url": "https://altema.jp/lastcloudia/gino/381",
+      "text": "战斗开始时，对所有敌人施加全属性耐性-10的减益效果，并有概率赋予诅咒。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "对所有敌人施加全属性耐性-10的减益"
+        },
+        {
+          "id": "opening-effect-2",
+          "kind": "effect",
+          "text": "对敌人概率赋予诅咒"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "诅咒赋予概率与减益持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "enemy-resist-down",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "对所有敌人施加全属性耐性-10的减益"
+            },
+            {
+              "group": "enemy-curse",
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "对敌人概率赋予诅咒"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "fea184827daeaa39",
+      "name": "转生",
+      "url": "https://altema.jp/lastcloudia/gino/431",
+      "text": "如果在战斗开始时你处于倒地状态，你将以 50% 的生 命值复活（每个任务仅限一次）",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "开场处于倒地状态时，以50%HP复活"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "开场自身处于倒地状态"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "每个任务最多触发1次"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "revive",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场处于倒地状态时，以50%HP复活"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "3797f19e9c516ee7",
+      "name": "电话亭",
+      "url": "https://altema.jp/lastcloudia/gino/460",
+      "text": "Boss Wave开始时，HP恢复50%，SCT恢复30秒，必杀槽恢复10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "Boss Wave开始时回复50%HP"
+        },
+        {
+          "id": "opening-effect-2",
+          "kind": "effect",
+          "text": "Boss Wave开始时恢复30秒SCT"
+        },
+        {
+          "id": "opening-effect-3",
+          "kind": "effect",
+          "text": "Boss Wave开始时回复10%必杀槽"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "Boss Wave开始时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "只在Boss Wave开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "Boss Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0,
+            "waveScope": "boss"
+          },
+          "bindings": [
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "Boss Wave开始时回复50%HP"
+            },
+            {
+              "group": "sct-recover",
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "Boss Wave开始时恢复30秒SCT"
+            },
+            {
+              "group": "ultimate-gauge",
+              "partIds": [
+                "opening-effect-3"
+              ],
+              "summary": "Boss Wave开始时回复10%必杀槽"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:356",
+      "name": "快速雷壁",
+      "url": "https://altema.jp/lastcloudia/gino/471",
+      "text": "每个Wave开始时，对我方全体自动施加「雷墙」：受到冰属性攻击的伤害-20%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到冰属性攻击的伤害-20%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-ice",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到冰属性攻击的伤害-20%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:369",
+      "name": "快速炎壁",
+      "url": "https://altema.jp/lastcloudia/gino/508",
+      "text": "每个Wave开始时，对我方全体自动施加「炎墙」：受到树属性攻击的伤害-20%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到树属性攻击的伤害-20%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-tree",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到树属性攻击的伤害-20%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:373",
+      "name": "快速提速",
+      "url": "https://altema.jp/lastcloudia/gino/512",
+      "text": "在战斗开始时自动激活 速度。",
+      "notes": "每个Wave开始施加于自身：移动速度+2，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "移动速度+2，速度Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "speed-up",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "移动速度+2，速度Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "b5afb5f0a6e375bb",
+      "name": "破灭歌声",
+      "url": "https://altema.jp/lastcloudia/gino/620",
+      "text": "战斗开始时，对任意1名敌人施加「破灭歌声」减益效果；该敌人会定期对其附近的友军造成伤害。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "随机1名敌人获得破灭歌声减益，定期对其附近的友军造成伤害"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "随机选择1名敌人"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "周期、伤害量、持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "enemy-periodic-damage",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "随机1名敌人获得破灭歌声减益，定期对其附近的友军造成伤害"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:429",
+      "name": "快速石壁",
+      "url": "https://altema.jp/lastcloudia/gino/639",
+      "text": "每个Wave开始时，对我方全体自动施加「石墙」：受到雷属性攻击的伤害-20%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到雷属性攻击的伤害-20%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-thunder",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到雷属性攻击的伤害-20%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "6227c8886b43ceb0",
+      "name": "快速再吟唱",
+      "url": "https://altema.jp/lastcloudia/gino/649",
+      "text": "每个Wave开始时，自身自动获得「再吟唱」效果：魔法咏唱速度+30%。",
+      "notes": "再吟唱使魔法咏唱速度+30%，持续40秒；只作用于自身。这里的再吟唱不是把魔法额外施放一次。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "魔法咏唱速度+30%，再吟唱Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "cast-speed",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "魔法咏唱速度+30%，再吟唱Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "2fe14ee0a98be7af",
+      "name": "快速高阶护盾",
+      "url": "https://altema.jp/lastcloudia/gino/692",
+      "text": "战斗开始时自动发动「高阶保护」。",
+      "notes": "每个Wave开始施加于自身：受到物理伤害-35%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "受到物理伤害-35%，高阶保护Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "受到物理伤害-35%，高阶保护Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "94c0f3f3d7cd060f",
+      "name": "圣诞颂歌",
+      "url": "https://altema.jp/lastcloudia/gino/699",
+      "text": "使自身获得一个增益效果，在战斗开始后的100秒 内，受到的来自敌人的伤害降低10%。 效果强度每10秒降低1%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "开场获得受到敌人伤害-10%的Buff；持续100秒，每10秒减伤强度降低1%"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "damage-reduction",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场获得受到敌人伤害-10%的Buff；持续100秒，每10秒减伤强度降低1%",
+              "durationSeconds": 100
+            }
+          ],
+          "calculationNote": "上述开场效果持续100秒。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:511",
+      "name": "快速暗壁",
+      "url": "https://altema.jp/lastcloudia/gino/830",
+      "text": "每个Wave开始时，对我方全体自动施加「暗影墙」：受到光属性攻击的伤害-20%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到光属性攻击的伤害-20%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-light",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到光属性攻击的伤害-20%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "68c1f4b9c51cb15f",
+      "name": "神式-技-",
+      "url": "https://altema.jp/lastcloudia/gino/831",
+      "text": "战斗开始后的前30秒无法使用特技，但特技伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "战斗开始后的前30秒无法使用特技"
+        },
+        {
+          "id": "other-effect-1",
+          "kind": "effect",
+          "text": "特技伤害+30%（并列效果，不归入开场特技增伤）"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "skill-lock",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始后的前30秒无法使用特技",
+              "durationSeconds": 30
+            }
+          ],
+          "calculationNote": "上述开场效果持续30秒。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "9ec9d27fcaa3d0a4",
+      "name": "油涂层",
+      "url": "https://altema.jp/lastcloudia/gino/859",
+      "text": "战斗开始时，给予一个增益效果，使受到的伤害减少 5%，直到受到敌人的冰元素攻击为止。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "开场获得受到伤害-5%的Buff，受到敌人的冰属性攻击后消失"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "damage-reduction",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场获得受到伤害-5%的Buff，受到敌人的冰属性攻击后消失",
+              "endsOn": "hit-by-enemy-ice-attack"
+            }
+          ],
+          "calculationNote": "受到敌人的冰属性攻击时结束。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:545",
+      "name": "快速无属性壁",
+      "url": "https://altema.jp/lastcloudia/gino/906",
+      "text": "每个Wave开始时，对我方全体自动施加「无属性墙」：受到无属性攻击的伤害-20%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到无属性攻击的伤害-20%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-neutral",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到无属性攻击的伤害-20%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "719b23004e804e89",
+      "name": "变装！",
+      "url": "https://altema.jp/lastcloudia/gino/916",
+      "text": "战斗开始时，随机为自身追加1种类型（持续至战斗不能）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "开场随机追加1种类型，持续至战斗不能"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "随机追加类型的候选范围待确认"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "type-add",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场随机追加1种类型，持续至战斗不能",
+              "endsOn": "incapacitated"
+            }
+          ],
+          "calculationNote": "持续至战斗不能，不按40秒倒计时。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "536d92d7e2f25e26",
+      "name": "普莉的守护蝶",
+      "url": "https://altema.jp/lastcloudia/gino/992",
+      "text": "赋予一个增益效果，使受到的来自敌人的伤害减少 20%，持续 20 秒，从战斗开始算起。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "开场获得受到敌人伤害-20%的Buff，持续20秒"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "damage-reduction",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场获得受到敌人伤害-20%的Buff，持续20秒",
+              "durationSeconds": 20
+            }
+          ],
+          "calculationNote": "上述开场效果持续20秒。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "e27f6e2a867c1a2e",
+      "name": "来场演唱会吧！",
+      "url": "https://altema.jp/lastcloudia/gino/994",
+      "text": "每个Wave开始时，自身自动获得「加速」「再吟唱」效果。",
+      "notes": "加速使SCT恢复速度+25%；再吟唱使魔法咏唱速度+30%。作用于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "SCT恢复速度+25%，加速Buff"
+        },
+        {
+          "id": "opening-effect-2",
+          "kind": "effect",
+          "text": "魔法咏唱速度+30%，再吟唱Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "sct-speed",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "SCT恢复速度+25%，加速Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "cast-speed",
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "魔法咏唱速度+30%，再吟唱Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "0807ea77755d60fc",
+      "name": "双龙",
+      "url": "https://altema.jp/lastcloudia/gino/1009",
+      "text": "战斗开始时，赋予自身暴击率+15%、Break值+50%的增益效果（持续至战斗不能）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "暴击率+15%的Buff"
+        },
+        {
+          "id": "opening-effect-2",
+          "kind": "effect",
+          "text": "Break值+50%的Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "暴击率+15%的Buff",
+              "endsOn": "incapacitated"
+            },
+            {
+              "group": "break",
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "Break值+50%的Buff",
+              "endsOn": "incapacitated"
+            }
+          ],
+          "calculationNote": "持续至战斗不能，不按40秒倒计时。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "18991b227c1fe30b",
+      "name": "快速高阶魔法屏障",
+      "url": "https://altema.jp/lastcloudia/gino/1028",
+      "text": "战斗开始时自动获得「高阶魔法屏障」效果：受到的魔法伤害-35%。",
+      "notes": "每个Wave开始施加于自身：受到魔法伤害-35%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "受到魔法伤害-35%，高阶魔法屏障Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "受到魔法伤害-35%，高阶魔法屏障Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "f177a34c939a2dfc",
+      "name": "快速自愈",
+      "url": "https://altema.jp/lastcloudia/gino/1092",
+      "text": "战斗开始时自动获得「再生」效果：持续小幅恢复HP。",
+      "notes": "每个Wave开始获得再生，持续40秒，每6秒回复一次HP；回复量受自身魔抗等回复计算因素影响。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "再生：每6秒回复HP，回复量受魔抗等回复因素影响"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "hp-regen",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "再生：每6秒回复HP，回复量受魔抗等回复因素影响",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "2945983140d158af",
+      "name": "神圣突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1241",
+      "text": "战斗开始时，赋予自身光属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "光属性攻击伤害+20%的Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "light-damage",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "光属性攻击伤害+20%的Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "c499d85d6a7c0156",
+      "name": "暗影突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1425",
+      "text": "战斗开始时，赋予自身暗属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "暗属性攻击伤害+20%的Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "dark-damage",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "暗属性攻击伤害+20%的Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:740",
+      "name": "快速圣壁2",
+      "url": "https://altema.jp/lastcloudia/gino/1432",
+      "text": "每个Wave开始时，对我方全体自动施加「圣墙2」：受到暗属性攻击的伤害-35%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到暗属性攻击的伤害-35%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-dark",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到暗属性攻击的伤害-35%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:750",
+      "name": "快速冰壁2",
+      "url": "https://altema.jp/lastcloudia/gino/1459",
+      "text": "每个Wave开始时，对我方全体自动施加「冰墙2」：受到火属性攻击的伤害-35%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到火属性攻击的伤害-35%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-fire",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到火属性攻击的伤害-35%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:761",
+      "name": "快速暗壁2",
+      "url": "https://altema.jp/lastcloudia/gino/1482",
+      "text": "每个Wave开始时，对我方全体自动施加「暗影墙2」：受到光属性攻击的伤害-35%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到光属性攻击的伤害-35%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-light",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到光属性攻击的伤害-35%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "ad3aebbcb3299841",
+      "name": "魔断之楔",
+      "url": "https://altema.jp/lastcloudia/gino/1604",
+      "text": "战斗开始时，对所有敌人施加全属性耐性-10的减益效果，并有概率赋予沉默。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "对所有敌人施加全属性耐性-10的减益"
+        },
+        {
+          "id": "opening-effect-2",
+          "kind": "effect",
+          "text": "对敌人概率赋予沉默"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "沉默赋予概率与减益持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "enemy-resist-down",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "对所有敌人施加全属性耐性-10的减益"
+            },
+            {
+              "group": "enemy-silence",
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "对敌人概率赋予沉默"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "83bcff2a02ab7801",
+      "name": "快速冰耐性",
+      "url": "https://altema.jp/lastcloudia/gino/1616",
+      "text": "战斗开始时，获得冰属性耐性+20的增益效果。",
+      "notes": "每个Wave开始施加于自身：冰属性耐性+20，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "冰属性耐性数值+20的Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "ice-resist",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "冰属性耐性数值+20的Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "51a7c25fc592d19b",
+      "name": "雷霆突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1674",
+      "text": "战斗开始时，赋予自身雷属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "雷属性攻击伤害+20%的Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "thunder-damage",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "雷属性攻击伤害+20%的Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "4139a26172e19019",
+      "name": "冰之突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1693",
+      "text": "战斗开始时，赋予自身冰属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "冰属性攻击伤害+20%的Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "ice-damage",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "冰属性攻击伤害+20%的Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "7168ea516478d79a",
+      "name": "快速光耐性",
+      "url": "https://altema.jp/lastcloudia/gino/1753",
+      "text": "战斗开始时，获得光属性耐性+20的增益效果。",
+      "notes": "每个Wave开始施加于自身：光属性耐性+20，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "光属性耐性数值+20的Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "light-resist",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "光属性耐性数值+20的Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "b50f1be94e5ec002",
+      "name": "不为人知的决战",
+      "url": "https://altema.jp/lastcloudia/gino/1776",
+      "text": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%"
+        },
+        {
+          "id": "opening-effect-2",
+          "kind": "effect",
+          "text": "按我方人类系人数提高光属性伤害，最多4名、最高+20%"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "开场统计我方士兵、骑士、狙击手、魔法师类型的单位，最多4名"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "各人数对应的具体增幅待确认，不能直接取最高20%"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "ice-damage",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%"
+            },
+            {
+              "group": "light-damage",
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "3a34d4d6da6da693",
+      "name": "快速暗耐性",
+      "url": "https://altema.jp/lastcloudia/gino/1879",
+      "text": "战斗开始时，获得暗属性耐性+20的增益效果。",
+      "notes": "每个Wave开始施加于自身：暗属性耐性+20，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "暗属性耐性数值+20的Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "dark-resist",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "暗属性耐性数值+20的Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "0d45e653455b29d1",
+      "name": "龙族驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1884",
+      "text": "战斗开始时，若自身类型为龙，必杀的暴击伤害上限+100,000。【仅限龙类型】必杀可以暴击。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "开场自身为龙类型时，必杀暴击伤害上限+100,000"
+        },
+        {
+          "id": "other-effect-1",
+          "kind": "effect",
+          "text": "仅龙类型：必杀可以暴击（单独的暴击资格效果）"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "自身类型为龙"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "ultimate-critical-cap",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场自身为龙类型时，必杀暴击伤害上限+100,000"
+            }
+          ],
+          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "d53c1518b71c0259",
+      "name": "炎之突袭",
+      "url": "https://altema.jp/lastcloudia/gino/1954",
+      "text": "战斗开始时，赋予自身火属性攻击伤害+20%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "火属性攻击伤害+20%的Buff"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "战斗开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "battle-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "fire-damage",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "火属性攻击伤害+20%的Buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:924",
+      "name": "冰属性渐增",
+      "url": "https://altema.jp/lastcloudia/gino/1981",
+      "text": "每个Wave内，冰属性伤害随经过时间逐渐提高，90秒时达到最高+20%；进入下一Wave重新计时。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "进入下一Wave重置冰属性增伤的经过时间；不是开场获得最高+20%"
+        },
+        {
+          "id": "other-effect-1",
+          "kind": "effect",
+          "text": "每个Wave内冰属性伤害随时间逐渐提高，90秒最高+20%"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "每个Wave开始时重置"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "冰属性增伤随经过时间提高，90秒达到最高20%；此前的具体曲线待确认"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始重置",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "reset",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "进入下一Wave重置冰属性增伤的经过时间；不是开场获得最高+20%"
+            }
+          ],
+          "calculationNote": "开场仅重置累计／计时，不自动取得最高加成。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "c3b83f342aaa5c37",
+      "name": "栖居云海的神兽",
+      "url": "https://altema.jp/lastcloudia/gino/1987",
+      "text": "每击败1名敌人，特技伤害提升；最多累计6名，最高+30%，每个Wave重置。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "每Wave重置击败敌人的累计数及其特技增伤；不是开场获得最高+30%"
+        },
+        {
+          "id": "other-effect-1",
+          "kind": "effect",
+          "text": "按击败敌人数量提高特技伤害，最高+30%"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "每个Wave开始时重置"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "每击败1名敌人提高特技伤害，最多累计6名；各层具体增幅待确认"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始重置",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "reset",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave重置击败敌人的累计数及其特技增伤；不是开场获得最高+30%"
+            }
+          ],
+          "calculationNote": "开场仅重置累计／计时，不自动取得最高加成。其余条件和未贴标签的效果继续单独判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:927",
+      "name": "快速石壁2",
+      "url": "https://altema.jp/lastcloudia/gino/1988",
+      "text": "每个Wave开始时，对我方全体自动施加「石墙2」：受到雷属性攻击的伤害-35%。",
+      "notes": "作用于我方全体，持续40秒；减免所受的对应属性伤害，不是提高该属性抗性数值。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "opening-effect-1",
+          "kind": "effect",
+          "text": "我方全体受到雷属性攻击的伤害-35%，40秒；不提高属性耐性数值"
+        },
+        {
+          "id": "start-trigger",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        }
+      ],
+      "tagDetails": {
+        "战斗开始": {
+          "summary": "每个Wave开始时触发",
+          "relation": "opening-condition",
+          "target": "bound-effects",
+          "trigger": {
+            "event": "wave-start",
+            "delaySeconds": 0
+          },
+          "bindings": [
+            {
+              "group": "received-thunder",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "我方全体受到雷属性攻击的伤害-35%，40秒；不提高属性耐性数值",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
         }
       }
     }
@@ -14179,6 +17541,576 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "战斗开始",
+      "assignments": [
+        {
+          "skillId": "b30a22d022f57e37",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "df6c512f0cfeb39c",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "9d98ba73d408aa05",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "b68b7c256efa0467",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "61bd034faff939fe",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:194",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "d1bc7f72d978fe26",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "e3c604ea07ef0eee",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "2547e056f12aa5c8",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "cf4cc4324d7b87b7",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "865730759d5fd514",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:225",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "4f8a8b3359a2206f",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "b8934861f6189f6e",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "5f6efbf8b35453d2",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "717087fe75ab851b",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "c2a5f212631ba8ff",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "60eca07e7c2f1a33",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "6133882f233d82ce",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "81e5eed79e630a07",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:326",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "fea184827daeaa39",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "3797f19e9c516ee7",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:356",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "c4dcb02f9f9b0945",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:369",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:373",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "b7e3b644c937e9da",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "bf0d04fe54be3b33",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "484c7ab2b4b198dc",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "b5afb5f0a6e375bb",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "8ba52a420286cb67",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:429",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "6227c8886b43ceb0",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "2fe14ee0a98be7af",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "619c3ef058c4b219",
+          "partIds": [
+            "condition-1",
+            "condition-4"
+          ]
+        },
+        {
+          "skillId": "94c0f3f3d7cd060f",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "8400b28b0f6069d3",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:511",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "68c1f4b9c51cb15f",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "352a2b49a30fa8b1",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "9ec9d27fcaa3d0a4",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "d214a29ee3c4826e",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "9808082700eee5b8",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:545",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "719b23004e804e89",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "975fce45e6663534",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "536d92d7e2f25e26",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "e27f6e2a867c1a2e",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "0807ea77755d60fc",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "18991b227c1fe30b",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "2d772214490c52ba",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "a35775967283bc44",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "f177a34c939a2dfc",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "7b7b9f7c806bbd9e",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "209e4252243d4679",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "40a41c3cc8543aa3",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "92f18d0720224b23",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "2945983140d158af",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "1da4935f9a387557",
+          "partIds": [
+            "condition-2",
+            "condition-3"
+          ]
+        },
+        {
+          "skillId": "0d0bdf3f7c6e0b5a",
+          "partIds": [
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "ef62dd0cf4192724",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "c499d85d6a7c0156",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:740",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:750",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "d291d901e1625ee2",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:761",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "ad3aebbcb3299841",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "6672d9d5b8e87e98",
+          "partIds": [
+            "condition-1",
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "83bcff2a02ab7801",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "daa5fb62f2887078",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "51a7c25fc592d19b",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "4139a26172e19019",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "d611639ee456760f",
+          "partIds": [
+            "condition-1",
+            "condition-3"
+          ]
+        },
+        {
+          "skillId": "a5f24684f4b2911a",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "7168ea516478d79a",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "b50f1be94e5ec002",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "869205f984d49c10",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "34045351ea740196",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "00001521ecae775f",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "e2016a861d776638",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "b6f1305e6f78634c",
+          "partIds": [
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "1f04cd2da53994eb",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "3a34d4d6da6da693",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "0d45e653455b29d1",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "07cab38a1e00eaa5",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "d53c1518b71c0259",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:924",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "c3b83f342aaa5c37",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:927",
+          "partIds": [
+            "start-trigger"
+          ]
+        },
+        {
+          "skillId": "29da106c453e0234",
+          "partIds": [
+            "start-trigger"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -14632,7 +18564,58 @@
         "ecf05abb4f8e4b10",
         "5c16599b8947ce62",
         "2ad532afbdeb2594",
-        "e3085e506db3fa44"
+        "e3085e506db3fa44",
+        "9d98ba73d408aa05",
+        "b68b7c256efa0467",
+        "61bd034faff939fe",
+        "全部技能:all:194",
+        "d1bc7f72d978fe26",
+        "e3c604ea07ef0eee",
+        "2547e056f12aa5c8",
+        "865730759d5fd514",
+        "全部技能:all:225",
+        "4f8a8b3359a2206f",
+        "b8934861f6189f6e",
+        "717087fe75ab851b",
+        "60eca07e7c2f1a33",
+        "6133882f233d82ce",
+        "fea184827daeaa39",
+        "3797f19e9c516ee7",
+        "全部技能:all:356",
+        "全部技能:all:369",
+        "全部技能:all:373",
+        "b5afb5f0a6e375bb",
+        "全部技能:all:429",
+        "6227c8886b43ceb0",
+        "2fe14ee0a98be7af",
+        "94c0f3f3d7cd060f",
+        "全部技能:all:511",
+        "68c1f4b9c51cb15f",
+        "9ec9d27fcaa3d0a4",
+        "全部技能:all:545",
+        "719b23004e804e89",
+        "536d92d7e2f25e26",
+        "e27f6e2a867c1a2e",
+        "0807ea77755d60fc",
+        "18991b227c1fe30b",
+        "f177a34c939a2dfc",
+        "2945983140d158af",
+        "c499d85d6a7c0156",
+        "全部技能:all:740",
+        "全部技能:all:750",
+        "全部技能:all:761",
+        "ad3aebbcb3299841",
+        "83bcff2a02ab7801",
+        "51a7c25fc592d19b",
+        "4139a26172e19019",
+        "7168ea516478d79a",
+        "b50f1be94e5ec002",
+        "3a34d4d6da6da693",
+        "0d45e653455b29d1",
+        "d53c1518b71c0259",
+        "全部技能:all:924",
+        "c3b83f342aaa5c37",
+        "全部技能:all:927"
       ]
     },
     "hp": {
@@ -14934,7 +18917,761 @@
       "displayOrder": [
         "e3085e506db3fa44"
       ]
+    },
+    "battle-start-attack-up": {
+      "label": "攻击力增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "attack-up",
+      "displayOrder": [
+        "b30a22d022f57e37",
+        "cf4cc4324d7b87b7",
+        "5f6efbf8b35453d2",
+        "81e5eed79e630a07",
+        "352a2b49a30fa8b1",
+        "975fce45e6663534",
+        "7b7b9f7c806bbd9e",
+        "92f18d0720224b23",
+        "1da4935f9a387557",
+        "0d0bdf3f7c6e0b5a",
+        "a5f24684f4b2911a",
+        "34045351ea740196"
+      ]
+    },
+    "battle-start-magic-up": {
+      "label": "魔力增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "magic-up",
+      "displayOrder": [
+        "cf4cc4324d7b87b7",
+        "5f6efbf8b35453d2",
+        "7b7b9f7c806bbd9e",
+        "df6c512f0cfeb39c",
+        "484c7ab2b4b198dc",
+        "209e4252243d4679",
+        "00001521ecae775f",
+        "b6f1305e6f78634c"
+      ]
+    },
+    "battle-start-defense-up": {
+      "label": "防御力增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "defense-up",
+      "displayOrder": [
+        "5f6efbf8b35453d2",
+        "1da4935f9a387557",
+        "全部技能:all:326",
+        "c4dcb02f9f9b0945",
+        "b7e3b644c937e9da",
+        "a35775967283bc44",
+        "40a41c3cc8543aa3"
+      ]
+    },
+    "battle-start-mnd-up": {
+      "label": "魔抗增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "mnd-up",
+      "displayOrder": [
+        "5f6efbf8b35453d2",
+        "全部技能:all:326",
+        "b7e3b644c937e9da",
+        "d1bc7f72d978fe26"
+      ]
+    },
+    "battle-start-hp-max": {
+      "label": "生命上限增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "hp-max",
+      "displayOrder": [
+        "全部技能:all:326",
+        "c2a5f212631ba8ff",
+        "d214a29ee3c4826e"
+      ]
+    },
+    "battle-start-attack-down": {
+      "label": "攻击力降低",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "attack-down",
+      "displayOrder": [
+        "8400b28b0f6069d3",
+        "92f18d0720224b23"
+      ]
+    },
+    "battle-start-magic-down": {
+      "label": "魔力降低",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "magic-down",
+      "displayOrder": [
+        "8400b28b0f6069d3"
+      ]
+    },
+    "battle-start-defense-down": {
+      "label": "防御力降低",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "defense-down",
+      "displayOrder": [
+        "975fce45e6663534"
+      ]
+    },
+    "battle-start-mnd-down": {
+      "label": "魔抗降低",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "mnd-down",
+      "displayOrder": [
+        "975fce45e6663534",
+        "29da106c453e0234"
+      ]
+    },
+    "battle-start-physical-damage": {
+      "label": "物理伤害增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "physical-damage",
+      "displayOrder": [
+        "2d772214490c52ba",
+        "9808082700eee5b8",
+        "d291d901e1625ee2",
+        "6672d9d5b8e87e98"
+      ]
+    },
+    "battle-start-magic-damage": {
+      "label": "魔法伤害增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "magic-damage",
+      "displayOrder": [
+        "2d772214490c52ba",
+        "869205f984d49c10"
+      ]
+    },
+    "battle-start-skill-damage": {
+      "label": "特技伤害增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "skill-damage",
+      "displayOrder": [
+        "869205f984d49c10"
+      ]
+    },
+    "battle-start-science-magic-damage": {
+      "label": "科学魔法威力增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "science-magic-damage",
+      "displayOrder": [
+        "5f6efbf8b35453d2"
+      ]
+    },
+    "battle-start-fire-damage": {
+      "label": "火属性伤害增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "fire-damage",
+      "displayOrder": [
+        "d53c1518b71c0259"
+      ]
+    },
+    "battle-start-ice-damage": {
+      "label": "冰属性伤害增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "ice-damage",
+      "displayOrder": [
+        "4139a26172e19019",
+        "b50f1be94e5ec002"
+      ]
+    },
+    "battle-start-thunder-damage": {
+      "label": "雷属性伤害增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "thunder-damage",
+      "displayOrder": [
+        "51a7c25fc592d19b"
+      ]
+    },
+    "battle-start-light-damage": {
+      "label": "光属性伤害增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "light-damage",
+      "displayOrder": [
+        "2945983140d158af",
+        "b50f1be94e5ec002"
+      ]
+    },
+    "battle-start-dark-damage": {
+      "label": "暗属性伤害增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "dark-damage",
+      "displayOrder": [
+        "c499d85d6a7c0156"
+      ]
+    },
+    "battle-start-critical-rate": {
+      "label": "暴击率增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "81e5eed79e630a07",
+        "全部技能:all:194",
+        "0807ea77755d60fc"
+      ]
+    },
+    "battle-start-break": {
+      "label": "Break值增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "break",
+      "displayOrder": [
+        "0807ea77755d60fc"
+      ]
+    },
+    "battle-start-damage-reduction": {
+      "label": "受到伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "damage-reduction",
+      "displayOrder": [
+        "94c0f3f3d7cd060f",
+        "9ec9d27fcaa3d0a4",
+        "536d92d7e2f25e26"
+      ]
+    },
+    "battle-start-physical-reduction": {
+      "label": "受到物理伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "physical-reduction",
+      "displayOrder": [
+        "cf4cc4324d7b87b7",
+        "7b7b9f7c806bbd9e",
+        "9d98ba73d408aa05",
+        "2fe14ee0a98be7af"
+      ]
+    },
+    "battle-start-magic-reduction": {
+      "label": "受到魔法伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "magic-reduction",
+      "displayOrder": [
+        "cf4cc4324d7b87b7",
+        "7b7b9f7c806bbd9e",
+        "b68b7c256efa0467",
+        "18991b227c1fe30b"
+      ]
+    },
+    "battle-start-received-fire": {
+      "label": "受到火属性伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "received-fire",
+      "displayOrder": [
+        "865730759d5fd514",
+        "全部技能:all:750"
+      ]
+    },
+    "battle-start-received-ice": {
+      "label": "受到冰属性伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "received-ice",
+      "displayOrder": [
+        "全部技能:all:356"
+      ]
+    },
+    "battle-start-received-tree": {
+      "label": "受到树属性伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "received-tree",
+      "displayOrder": [
+        "全部技能:all:369"
+      ]
+    },
+    "battle-start-received-thunder": {
+      "label": "受到雷属性伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "received-thunder",
+      "displayOrder": [
+        "全部技能:all:429",
+        "全部技能:all:927"
+      ]
+    },
+    "battle-start-received-light": {
+      "label": "受到光属性伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "received-light",
+      "displayOrder": [
+        "全部技能:all:511",
+        "全部技能:all:761"
+      ]
+    },
+    "battle-start-received-dark": {
+      "label": "受到暗属性伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "received-dark",
+      "displayOrder": [
+        "全部技能:all:225",
+        "全部技能:all:740"
+      ]
+    },
+    "battle-start-received-neutral": {
+      "label": "受到无属性伤害减少",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "received-neutral",
+      "displayOrder": [
+        "全部技能:all:545"
+      ]
+    },
+    "battle-start-ice-resist": {
+      "label": "冰属性耐性增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "ice-resist",
+      "displayOrder": [
+        "83bcff2a02ab7801"
+      ]
+    },
+    "battle-start-light-resist": {
+      "label": "光属性耐性增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "light-resist",
+      "displayOrder": [
+        "7168ea516478d79a"
+      ]
+    },
+    "battle-start-dark-resist": {
+      "label": "暗属性耐性增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "dark-resist",
+      "displayOrder": [
+        "3a34d4d6da6da693"
+      ]
+    },
+    "battle-start-speed-up": {
+      "label": "移动速度增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "speed-up",
+      "displayOrder": [
+        "81e5eed79e630a07",
+        "全部技能:all:373"
+      ]
+    },
+    "battle-start-speed-down": {
+      "label": "移动速度降低",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "speed-down",
+      "displayOrder": [
+        "ef62dd0cf4192724"
+      ]
+    },
+    "battle-start-cast-speed": {
+      "label": "魔法咏唱速度增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "cast-speed",
+      "displayOrder": [
+        "484c7ab2b4b198dc",
+        "6227c8886b43ceb0",
+        "e27f6e2a867c1a2e"
+      ]
+    },
+    "battle-start-sct-speed": {
+      "label": "SCT恢复速度增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "sct-speed",
+      "displayOrder": [
+        "全部技能:all:326",
+        "60eca07e7c2f1a33",
+        "e27f6e2a867c1a2e"
+      ]
+    },
+    "battle-start-sct-recover": {
+      "label": "SCT充能",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "sct-recover",
+      "displayOrder": [
+        "61bd034faff939fe",
+        "e3c604ea07ef0eee",
+        "4f8a8b3359a2206f",
+        "b8934861f6189f6e",
+        "3797f19e9c516ee7"
+      ]
+    },
+    "battle-start-ultimate-gauge": {
+      "label": "必杀槽回复",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "ultimate-gauge",
+      "displayOrder": [
+        "3797f19e9c516ee7"
+      ]
+    },
+    "battle-start-hp-heal": {
+      "label": "HP回复",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "hp-heal",
+      "displayOrder": [
+        "3797f19e9c516ee7"
+      ]
+    },
+    "battle-start-hp-regen": {
+      "label": "HP持续回复",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "hp-regen",
+      "displayOrder": [
+        "f177a34c939a2dfc"
+      ]
+    },
+    "battle-start-mp-regen": {
+      "label": "MP持续回复",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "mp-regen",
+      "displayOrder": [
+        "2547e056f12aa5c8"
+      ]
+    },
+    "battle-start-type-add": {
+      "label": "类型追加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "type-add",
+      "displayOrder": [
+        "8ba52a420286cb67",
+        "719b23004e804e89"
+      ]
+    },
+    "battle-start-revive": {
+      "label": "复活",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "revive",
+      "displayOrder": [
+        "fea184827daeaa39"
+      ]
+    },
+    "battle-start-abnormal-barrier": {
+      "label": "异常状态屏障",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "abnormal-barrier",
+      "displayOrder": [
+        "717087fe75ab851b"
+      ]
+    },
+    "battle-start-enemy-resist-down": {
+      "label": "敌方全属性耐性降低",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "enemy-resist-down",
+      "displayOrder": [
+        "6133882f233d82ce",
+        "ad3aebbcb3299841"
+      ]
+    },
+    "battle-start-enemy-curse": {
+      "label": "敌方诅咒",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "enemy-curse",
+      "displayOrder": [
+        "6133882f233d82ce"
+      ]
+    },
+    "battle-start-enemy-silence": {
+      "label": "敌方沉默",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "enemy-silence",
+      "displayOrder": [
+        "ad3aebbcb3299841"
+      ]
+    },
+    "battle-start-enemy-periodic-damage": {
+      "label": "敌方周期伤害",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "enemy-periodic-damage",
+      "displayOrder": [
+        "b5afb5f0a6e375bb"
+      ]
+    },
+    "battle-start-self-poison": {
+      "label": "自身猛毒",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "self-poison",
+      "displayOrder": [
+        "1f04cd2da53994eb"
+      ]
+    },
+    "battle-start-self-damage-up": {
+      "label": "自身受到伤害增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "self-damage-up",
+      "displayOrder": [
+        "e2016a861d776638"
+      ]
+    },
+    "battle-start-magic-lock": {
+      "label": "魔法使用限制",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "magic-lock",
+      "displayOrder": [
+        "bf0d04fe54be3b33"
+      ]
+    },
+    "battle-start-skill-lock": {
+      "label": "特技使用限制",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "skill-lock",
+      "displayOrder": [
+        "68c1f4b9c51cb15f"
+      ]
+    },
+    "battle-start-killer-cap": {
+      "label": "特攻伤害上限增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "killer-cap",
+      "displayOrder": [
+        "619c3ef058c4b219"
+      ]
+    },
+    "battle-start-physical-cap": {
+      "label": "物理伤害上限增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "physical-cap",
+      "displayOrder": [
+        "d611639ee456760f"
+      ]
+    },
+    "battle-start-skill-cap": {
+      "label": "特技伤害上限增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "skill-cap",
+      "displayOrder": [
+        "07cab38a1e00eaa5"
+      ]
+    },
+    "battle-start-magic-cap": {
+      "label": "魔法伤害上限增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "magic-cap",
+      "displayOrder": [
+        "07cab38a1e00eaa5"
+      ]
+    },
+    "battle-start-ultimate-critical-cap": {
+      "label": "必杀暴击伤害上限增加",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "ultimate-critical-cap",
+      "displayOrder": [
+        "0d45e653455b29d1"
+      ]
+    },
+    "battle-start-reset": {
+      "label": "每Wave计时／累积重置",
+      "parent": "battle-start",
+      "conditionTag": "战斗开始",
+      "effectGroup": "reset",
+      "displayOrder": [
+        "daa5fb62f2887078",
+        "全部技能:all:924",
+        "c3b83f342aaa5c37"
+      ]
+    },
+    "battle-start": {
+      "label": "战斗开始",
+      "childKeys": [
+        "battle-start-attack-up",
+        "battle-start-magic-up",
+        "battle-start-defense-up",
+        "battle-start-mnd-up",
+        "battle-start-hp-max",
+        "battle-start-attack-down",
+        "battle-start-magic-down",
+        "battle-start-defense-down",
+        "battle-start-mnd-down",
+        "battle-start-physical-damage",
+        "battle-start-magic-damage",
+        "battle-start-skill-damage",
+        "battle-start-science-magic-damage",
+        "battle-start-fire-damage",
+        "battle-start-ice-damage",
+        "battle-start-thunder-damage",
+        "battle-start-light-damage",
+        "battle-start-dark-damage",
+        "battle-start-critical-rate",
+        "battle-start-break",
+        "battle-start-damage-reduction",
+        "battle-start-physical-reduction",
+        "battle-start-magic-reduction",
+        "battle-start-received-fire",
+        "battle-start-received-ice",
+        "battle-start-received-tree",
+        "battle-start-received-thunder",
+        "battle-start-received-light",
+        "battle-start-received-dark",
+        "battle-start-received-neutral",
+        "battle-start-ice-resist",
+        "battle-start-light-resist",
+        "battle-start-dark-resist",
+        "battle-start-speed-up",
+        "battle-start-speed-down",
+        "battle-start-cast-speed",
+        "battle-start-sct-speed",
+        "battle-start-sct-recover",
+        "battle-start-ultimate-gauge",
+        "battle-start-hp-heal",
+        "battle-start-hp-regen",
+        "battle-start-mp-regen",
+        "battle-start-type-add",
+        "battle-start-revive",
+        "battle-start-abnormal-barrier",
+        "battle-start-enemy-resist-down",
+        "battle-start-enemy-curse",
+        "battle-start-enemy-silence",
+        "battle-start-enemy-periodic-damage",
+        "battle-start-self-poison",
+        "battle-start-self-damage-up",
+        "battle-start-magic-lock",
+        "battle-start-skill-lock",
+        "battle-start-killer-cap",
+        "battle-start-physical-cap",
+        "battle-start-skill-cap",
+        "battle-start-magic-cap",
+        "battle-start-ultimate-critical-cap",
+        "battle-start-reset"
+      ],
+      "overviewLabel": "全部开场效果（分组）",
+      "separateSections": true,
+      "displayOrder": [
+        "b30a22d022f57e37",
+        "df6c512f0cfeb39c",
+        "9d98ba73d408aa05",
+        "b68b7c256efa0467",
+        "61bd034faff939fe",
+        "全部技能:all:194",
+        "d1bc7f72d978fe26",
+        "e3c604ea07ef0eee",
+        "2547e056f12aa5c8",
+        "cf4cc4324d7b87b7",
+        "865730759d5fd514",
+        "全部技能:all:225",
+        "4f8a8b3359a2206f",
+        "b8934861f6189f6e",
+        "5f6efbf8b35453d2",
+        "717087fe75ab851b",
+        "c2a5f212631ba8ff",
+        "60eca07e7c2f1a33",
+        "6133882f233d82ce",
+        "81e5eed79e630a07",
+        "全部技能:all:326",
+        "fea184827daeaa39",
+        "3797f19e9c516ee7",
+        "全部技能:all:356",
+        "c4dcb02f9f9b0945",
+        "全部技能:all:369",
+        "全部技能:all:373",
+        "b7e3b644c937e9da",
+        "bf0d04fe54be3b33",
+        "484c7ab2b4b198dc",
+        "b5afb5f0a6e375bb",
+        "8ba52a420286cb67",
+        "全部技能:all:429",
+        "6227c8886b43ceb0",
+        "2fe14ee0a98be7af",
+        "619c3ef058c4b219",
+        "94c0f3f3d7cd060f",
+        "8400b28b0f6069d3",
+        "全部技能:all:511",
+        "68c1f4b9c51cb15f",
+        "352a2b49a30fa8b1",
+        "9ec9d27fcaa3d0a4",
+        "d214a29ee3c4826e",
+        "9808082700eee5b8",
+        "全部技能:all:545",
+        "719b23004e804e89",
+        "975fce45e6663534",
+        "536d92d7e2f25e26",
+        "e27f6e2a867c1a2e",
+        "0807ea77755d60fc",
+        "18991b227c1fe30b",
+        "2d772214490c52ba",
+        "a35775967283bc44",
+        "f177a34c939a2dfc",
+        "7b7b9f7c806bbd9e",
+        "209e4252243d4679",
+        "40a41c3cc8543aa3",
+        "92f18d0720224b23",
+        "2945983140d158af",
+        "1da4935f9a387557",
+        "0d0bdf3f7c6e0b5a",
+        "ef62dd0cf4192724",
+        "c499d85d6a7c0156",
+        "全部技能:all:740",
+        "全部技能:all:750",
+        "d291d901e1625ee2",
+        "全部技能:all:761",
+        "ad3aebbcb3299841",
+        "6672d9d5b8e87e98",
+        "83bcff2a02ab7801",
+        "daa5fb62f2887078",
+        "51a7c25fc592d19b",
+        "4139a26172e19019",
+        "d611639ee456760f",
+        "a5f24684f4b2911a",
+        "7168ea516478d79a",
+        "b50f1be94e5ec002",
+        "869205f984d49c10",
+        "34045351ea740196",
+        "00001521ecae775f",
+        "e2016a861d776638",
+        "b6f1305e6f78634c",
+        "1f04cd2da53994eb",
+        "3a34d4d6da6da693",
+        "0d45e653455b29d1",
+        "07cab38a1e00eaa5",
+        "d53c1518b71c0259",
+        "全部技能:all:924",
+        "c3b83f342aaa5c37",
+        "全部技能:all:927",
+        "29da106c453e0234"
+      ]
     }
   },
-  "activeView": "boss"
+  "activeView": "battle-start"
 }
