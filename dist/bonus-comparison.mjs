@@ -1,8 +1,9 @@
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {decisionKey} from './entry-preparation.mjs?v=20260924-fullhp-save';
+import {criticalDamageEffect} from './critical-options.mjs?v=20260924-critical-link';
+import {decisionKey} from './entry-preparation.mjs?v=20260924-critical-link';
 const numeric=value=>typeof value==='number'&&Number.isFinite(value);
 export const effectSelectionKey=row=>JSON.stringify([row.id,row.effect,row.condition]);
-const groupKey=e=>JSON.stringify([e.type,e.target,e.unit]);
+const groupKey=e=>JSON.stringify([e.type,e.target,e.unit,...(e.criticalOnly?['critical']:[])]);
 const comparable=e=>['damage','cap','critRate','killerPower'].includes(e.type)&&numeric(e.value);
 const elements=['none','fire','ice','earth','thunder','light','dark'];
 const elementNames=['无','火','冰','树','雷','光','暗'];
@@ -28,14 +29,15 @@ function readerConditions(b,matches) {
 /** Totals of like-labelled bonuses, not a combined damage multiplier. Missing != zero. */
 export function buildBonusComparison(compared,bonuses,context,{removed={},decisions={}}={}) {
  const groups=new Map();
- const get=e=>{const id=groupKey(e);if(!groups.has(id))groups.set(id,{id,type:e.type,target:e.target,unit:e.unit,web:[],reader:[],removed:[]});return groups.get(id);};
+ const get=e=>{const id=groupKey(e);if(!groups.has(id))groups.set(id,{id,type:e.type,target:e.target,unit:e.unit,criticalOnly:!!e.criticalOnly,web:[],reader:[],removed:[]});return groups.get(id);};
  for(const row of compared)if(comparable(row.effect)){
-  const g=get(row.effect);(removed[effectSelectionKey(row)]||decisions[decisionKey(row)]?.choice==='exclude'?g.removed:g.web).push(row);
+  const g=get({...row.effect,criticalOnly:criticalDamageEffect(row.effect,row.condition)});(removed[effectSelectionKey(row)]||decisions[decisionKey(row)]?.choice==='exclude'?g.removed:g.web).push(row);
  }
  const seen=new Set();
  for(const b of bonuses||[]){
   const e={type:b.effectType,target:b.target,value:b.value,unit:b.unit||''};
-  if(!comparable(e)||seen.has(b.id)||['inactive','disabled','removed'].includes(b.state)||b.raw?.buffRemoved===1||b.raw?.buffIgnored===1||b.raw?.buffEnabled===0)continue;
+  e.criticalOnly=criticalDamageEffect(e,[...(b.decoded?.conditions||[]),...(b.decoded?.triggerConditions||[])]);
+  if(!comparable(e)||seen.has(b.id)||b.optionExcludedReason||['inactive','disabled','removed'].includes(b.state)||b.raw?.buffRemoved===1||b.raw?.buffIgnored===1||b.raw?.buffEnabled===0)continue;
   const matches=compared.filter(r=>r.reader?.id===b.id),conditions=readerConditions(b,matches);
   if(!conditions||!qualifies(conditions,context))continue;
   seen.add(b.id);get(e).reader.push({...b,conditions,websiteCondition:!b.decoded?.conditions&&!b.conditions&&b.processId!==1050450});

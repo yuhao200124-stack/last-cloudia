@@ -1,12 +1,12 @@
-import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs';
-import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-fullhp-save';
+import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260924-critical-link';
+import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-critical-link';
 import {formatEffect} from './effect-rule-engine.mjs';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-fullhp-save';
-import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullhp-save';
-import {observedCritical} from './reader-bonus-decoder.mjs';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-critical-link';
+import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-critical-link';
+import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-critical-link';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
-import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-fullhp-save';
-import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-fullhp-save';
+import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-critical-link';
+import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-critical-link';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -26,6 +26,7 @@ let magicOptions=[],magicSelection={};
 let defenseRatioTouched=false;
 try {magicSelection=JSON.parse(localStorage.getItem(`lc-magic-buffs:${characterId}`))||{};}catch{}
 const activeMagicBuffs=()=>selectedMagicBuffs(magicOptions,magicSelection);
+const criticalDisabled=()=>!$('criticalEnabled').checked||imported?.skillType==='magic'&&!imported.magicCanCrit;
 const attackStat=()=>panelLayers?.[referenceMode()==='int'?'intelligence':referenceMode()==='str'?'attack':''];
 function renderMagicBuffs(profile) {
   magicOptions=magicBuffOptions(profile);$('magicBuffOptions').hidden=!magicOptions.length;
@@ -207,7 +208,9 @@ function read() {
   for(const k of ['type','skillType','element','hitScaleStage','attackBasis']) s[k]=$(k).value;
   if(s.attackBasis==='auto')s.attackBasis='layers';
   s.races=bossRaces;s.killerRaces=[];s.specialAttack=$('specialAttack').checked;s.killerCorrection=imported?.killerCorrection??0;
-  s.effects=readEffects();return s;
+  if(criticalDisabled())s.critRate=0;
+  s.criticalCapAdded=imported?.criticalCapAdded??0;
+  s.effects=readEffects().map(e=>!$('criticalEnabled').checked&&(e.kind==='critical'||e.criticalOnly)?{...e,enabled:false}:e);return s;
 }
 function renderEffects() {
   $('effects').innerHTML=effects.map((e,i)=>{
@@ -250,23 +253,24 @@ function update() {
   if(imported) {
     const magicCap=magicBuffCap(activeMagicBuffs(),imported.skillType,imported.reference);
     const cap=$('baseCap').valueAsNumber+imported.capAdded+magicCap;
-    $('capImportNote').textContent=`已确认固定上限 +${fmt(imported.capAdded)}${magicCap?`；所选魔法增益 +${fmt(magicCap)}`:''}。`;
+    $('capImportNote').textContent=`已确认固定上限 +${fmt(imported.capAdded)}${magicCap?`；所选魔法增益 +${fmt(magicCap)}`:''}${imported.criticalCapAdded?`；仅暴击命中时另加 +${fmt(imported.criticalCapAdded)}`:''}。`;
     const fromReader=$('critBasis').value==='reader',observed=observedCritical(readUnit).value;
     $('baseCritRate').readOnly=fromReader;
-    $('baseCritRate').required=!(imported.skillType==='magic'&&!imported.magicCanCrit);
+    $('baseCritRate').required=!criticalDisabled();
     $('baseCritLabel').textContent=fromReader?'读取器观察时暴击率 %':'基础及额外暴击率 %';
     if(fromReader)$('baseCritRate').value=observed??'';
     const added=fromReader?imported.critAttackAdded:imported.critAdded;
     const crit=$('baseCritRate').valueAsNumber+added;
     $('critImportNote').textContent=fromReader?`读取面板＋本次攻击追加 ${added}%。常驻及满血等面板加成不再重复加入；面板状态以采样时为准。${imported.critUnresolved.length?`尚需核对暴击作用阶段：${imported.critUnresolved.join('、')}`:''}`:`手填基础＋已确认网站加成 ${added}%。`;
+    if(!$('criticalEnabled').checked)$('critImportNote').textContent='暴击已关闭，相关技能、暴伤及附带上限不计入；结果保留暴击伤害对照。';
     $('cap').value=Number.isFinite(cap)?cap:'';
-    $('critRate').value=imported.skillType==='magic'&&!imported.magicCanCrit?0:Number.isFinite(crit)?Math.min(100,Math.max(0,crit)):'';
+    $('critRate').value=criticalDisabled()?0:Number.isFinite(crit)?Math.min(100,Math.max(0,crit)):'';
   }
   labels();
   const invalid=[...$('calculator').querySelectorAll('input[type=number]')].find(e=>!e.disabled&&!e.checkValidity());
   try {
     if(characterId&&(!imported||!workflow?.isConfirmed()))throw new Error(reviewBlocker);
-    if(imported&&!(imported.skillType==='magic'&&!imported.magicCanCrit)&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
+    if(imported&&!criticalDisabled()&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
     if(imported?.blockers.length)throw new Error(imported.blockers.join('；'));
     if(activeMagicBuffs().some(b=>b.stat===attackStat()?.key)&&$('attackBasis').value==='panel')throw new Error('已勾选属性增益，请使用自动属性分层。');
     if($('attackBasis').value==='auto'&&!autoLayer?.ok)throw new Error(autoLayer?.reason||'请先核对属性层来源。');
@@ -318,7 +322,7 @@ function reset(clearSaved=true) {
   $('preset').value='eris';$('bossPreset').value='bird';
   document.querySelectorAll('.choices input').forEach(e=>e.checked=false);
   effects=[newEffect('boss'),newEffect('element'),newEffect('skill')];
-  $('dualWield').checked=false;$('specialAttack').checked=false;applyBoss();
+  $('dualWield').checked=false;$('specialAttack').checked=false;if(!characterId)$('criticalEnabled').checked=true;applyBoss();
   renderEffects();labels();update();
   if(characterId) {
     imported=null;effects=[];renderEffects();

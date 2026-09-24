@@ -1,4 +1,5 @@
-import {characterHitStage,characterSourceAllowed} from './character-combat-rules.mjs?v=20260924-fullhp-save';
+import {characterHitStage,characterSourceAllowed} from './character-combat-rules.mjs?v=20260924-critical-link';
+import {criticalDamageEffect} from './critical-options.mjs?v=20260924-critical-link';
 // Transfer qualified effects, never reinterpret a stat bonus as a skill multiplier.
 export const reportStorageKey = id => `lc-damage-report:${id}:v1`;
 const elements = { none:'无', fire:'火', ice:'冰', earth:'树', thunder:'雷', light:'光', dark:'暗' };
@@ -9,7 +10,7 @@ export function buildDamageImport(report) {
   const c=report.context;
   const imported={characterId:String(report.characterId),characterName:report.characterName,createdAt:report.createdAt,
     attackName:attackNames[c.attack]||'未选择',attack:c.attack,magicFamily:c.magicFamily,type:c.damageType,skillType:c.attackKind,element:elements[c.element],
-    effects:[],reference:[],warnings:[],blockers:[],capAdded:0,critAdded:0,critAttackAdded:0,critUnresolved:[],magicCanCrit:false,
+    effects:[],reference:[],warnings:[],blockers:[],capAdded:0,criticalCapAdded:0,critAdded:0,critAttackAdded:0,critUnresolved:[],magicCanCrit:false,criticalEnabled:c.criticalEnabled,
     bossKiller:false,killerCorrection:0,defenseRatio:1,hitMultiplier:1,hitDamageRatio:1,hitSources:[],hitSourceKind:null,statReference:null};
   if (!['physical','magical'].includes(c.damageType) || !imported.element) imported.blockers.push('请在基础计算器确认伤害类型和攻击属性。');
   const defense=[],hit=[],refs=[];
@@ -20,6 +21,7 @@ export function buildDamageImport(report) {
       const id=`${row.sourceId}:${row.rule.id}:${row.effectIndices?.[index]??index}`;
       const entry={id,sourceId:row.sourceId,ruleId:row.rule.id,source:row.sourceName,effect:e,group:row.group};
       const number=typeof e.value==='number' && Number.isFinite(e.value);
+      const criticalOnly=criticalDamageEffect(e,row.rule.conditions);
       if(e.type==='damage') {
         let kind=kinds[e.target];let target=imported.element;
         if(Object.values(elements).some(el=>e.target===`${el}属性伤害`)) kind='element';
@@ -27,13 +29,13 @@ export function buildDamageImport(report) {
         if(e.target.includes('暴击伤害')) kind='critical';
         if(!kind || !number || e.unit!=='%') { imported.blockers.push(`${row.sourceName}：${e.target}尚无伤害字段映射，请先在基础计算器确认或停用。`);continue; }
         imported.effects.push({importId:id,kind,target,percent:e.value,enabled:true,stage:'post',name:`${row.sourceName} · ${e.target}`,
-          scope:{type:c.damageType,skillType:c.attackKind,element:imported.element,boss:c.boss},sourceText:row.sourceText});
+          criticalOnly,scope:{type:c.damageType,skillType:c.attackKind,element:imported.element,boss:c.boss},sourceText:row.sourceText});
       } else if(e.type==='killerPower') {
         if(number&&e.unit==='%')imported.killerCorrection+=e.value;
         else imported.blockers.push(`${row.sourceName}：特攻威力修正未确认。`);
         imported.reference.push(entry);
       } else if(e.type==='cap') {
-        if(number && e.unit==='') imported.capAdded+=e.value;
+        if(number && e.unit==='') {if(criticalOnly)imported.criticalCapAdded+=e.value;else imported.capAdded+=e.value;}
         else imported.blockers.push(`${row.sourceName}：上限修正${e.value}${e.unit}尚未确认计算顺序。`);
         imported.reference.push(entry);
       } else if(e.type==='critRate' && number && e.unit==='%') {

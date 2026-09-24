@@ -21,6 +21,8 @@ export function defaultInput() {
     hitMultiplier:1, hitDamageRatio:1, hitScaleStage:'core', effects:[]};
 }
 export function validate(s) {
+  const criticalCap=s.criticalCapAdded??0;
+  if(!Number.isSafeInteger(criticalCap)||criticalCap<0||s.cap+criticalCap>2e9)throw new Error('请检查暴击专用伤害上限');
   if(!['panel','layers','settlement'].includes(s.attackBasis??'panel'))throw new Error('请选择结算攻击值的来源');
   if(s.attackBasis==='layers'&&(!Number.isFinite(s.attackBase)||s.attackBase<0||s.attackBase>1e8||!Number.isFinite(s.runtimeStatPercent)||s.runtimeStatPercent < -100||s.runtimeStatPercent>1e5))throw new Error('请填写状态加成前的面板与已确认的实时属性加成');
   if(s.attackBasis==='settlement'&&(!Number.isFinite(s.settledAttack)||s.settledAttack<0||s.settledAttack>1e8))throw new Error('请填写读取器的实际结算攻击值');
@@ -61,6 +63,7 @@ export function context(s) {
 }
 export function applies(e,s,c,critical) {
   if (!e.enabled) return false;
+  if(e.criticalOnly&&!critical)return false;
   if (e.scope && Object.entries(e.scope).some(([key,value])=>s[key]!==value)) return false;
   switch(e.kind) {
     case 'boss': return s.boss;
@@ -93,10 +96,10 @@ export function prepare(s,critical=false) {
   const exponent=c.attack>0 ? f(f(c.defense/c.attack)*(critical?6:10)) : 0;
   const base=c.attack>0 ? f(f(Math.pow(f(.9),exponent))*c.attack) : 0;
   if(!Number.isFinite(base*q) || f(base*q)>2147483647) throw new Error('该组参数超过普通整数伤害的计算范围，请检查技能系数与增伤数值');
-  return {s,c,q,base,effects,critical,immune:c.element<=0};
+  return {s,c,q,base,effects,critical,cap:s.cap+(critical?(s.criticalCapAdded??0):0),immune:c.element<=0};
 }
 export function damageAt(prepared,random=.95,withTrace=false) {
-  const {s,c,q,base,effects,immune}=prepared;
+  const {s,c,q,base,effects,immune,cap}=prepared;
   const trace=[];
   const record=(label,value)=>{if(withTrace)trace.push({label,value});return value;};
   if(immune) return {value:0,uncapped:0,trace:[{label:'属性抗性达到 100%，伤害无效',value:0}]};
@@ -108,7 +111,7 @@ export function damageAt(prepared,random=.95,withTrace=false) {
   if(s.guarded) d=record('格挡',Math.floor(d*(1-s.guardReduction/100)));
   if(s.hitScaleStage==='beforeCap' && s.hitDamageRatio!==1) d=record('分段单段修正（上限前试算）',Math.trunc(d*s.hitDamageRatio));
   const uncapped=Math.max(d,1);
-  d=record('每段伤害上限',clamp(uncapped,1,s.cap));
+  d=record('每段伤害上限',clamp(uncapped,1,cap));
   if(s.hitScaleStage==='afterCap' && s.hitDamageRatio!==1) d=record('分段单段修正（上限后试算）',Math.max(1,Math.trunc(d*s.hitDamageRatio)));
   return {value:d,uncapped,trace,attack:c.attack};
 }

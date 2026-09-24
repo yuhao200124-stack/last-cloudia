@@ -1,6 +1,6 @@
 import {PROCESS_SIGNATURES,PROCESS_DOCUMENTATION} from './reader-process-evidence.mjs';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {READ_ID_TO_SOURCE_ID,decodeKnownBlessingEntry} from './account-blessings.mjs?v=20260924-fullhp-save';
+import {READ_ID_TO_SOURCE_ID,decodeKnownBlessingEntry} from './account-blessings.mjs?v=20260924-critical-link';
 const eq=(field,value)=>({field,op:'eq',value}), inside=(field,value)=>({field,op:'in',value});
 const finite=v=>typeof v==='number'&&Number.isFinite(v);
 const ELEMENTS=['none','fire','ice','earth','thunder','light','dark'];
@@ -126,7 +126,8 @@ export function decodeReaderBonuses(bonuses){
 }
 export function evaluateReaderBonuses(bonuses,context){
  const validController=(b,pid)=>b.processId===pid&&b.raw?.function===`process${pid}`&&!b.raw.masterFunction&&b.raw.buffEnabled!==0&&b.raw.buffRemoved!==1&&b.raw.buffIgnored!==1&&PROCESS_SIGNATURES[pid]?.some(s=>JSON.stringify(s)===JSON.stringify([b.conditionId,b.raw.trigger,b.raw.conditionParams]));
- let result=bonuses.map(b=>{
+ let result=bonuses.map(original=>{
+  const b={...original};
   const d=b.decoded?.dynamic;if(!d)return b;
   const conditions=[...(b.decoded.conditions||[])];
   if(d.kind==='chain'){
@@ -164,6 +165,7 @@ export function evaluateReaderBonuses(bonuses,context){
  return result.filter(b=>!used.has(b.id));
 }
 export function readerBonusState(b,context){
+ if(b.optionExcludedReason)return {status:'inactive',reason:b.optionExcludedReason};
  if(b.coveredBy)return {status:'covered',reason:b.decodeIssue};
  if(['inactive','disabled','removed'].includes(b.state)||b.raw?.buffRemoved===1||b.raw?.buffIgnored===1||b.raw?.buffEnabled===0)return {status:'inactive',reason:'读取到已移除或禁用的记录'};
  if(!Array.isArray(b.decoded?.conditions))return {status:b.auditCategory?'documented':'unresolved',reason:b.decodeIssue||'已采集，条件未解析'};

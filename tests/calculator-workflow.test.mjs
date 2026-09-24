@@ -40,6 +40,26 @@ test('review UI events preserve manual panel, save from both sections, keep remi
  for(const button of ui.saves){button.fire('click');assert.equal(last.review.finish,true);assert.equal(last.review.panels.intelligence,10111);}
  assert.equal(resolveAttackLayers(last.review.panelLayers.intelligence,last.review.panels.intelligence).percent,50);
  assert.equal(buildDamageImport(last.r).effects.filter(e=>e.name.includes('加护 · 长袍 · 魔法伤害')).length,1);
+ const capOff=buildDamageImport(last.r).capAdded;
+ assert.equal(workflow.selection().criticalEnabled,false);
+ ui.get('criticalEnabled').checked=true;ui.get('criticalEnabled').fire('change');
+ assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).magicCanCrit,true);
+ assert.equal(buildDamageImport(last.r).capAdded,capOff+2000);
+ assert(ui.get('entryBonusReview').innerHTML.includes('冰属性暴击伤害'));
+ ui.get('criticalEnabled').checked=false;ui.get('criticalEnabled').fire('change');
+ assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).magicCanCrit,false);
+ assert.equal(buildDamageImport(last.r).capAdded,capOff);
+ assert(!ui.get('entryBonusReview').innerHTML.includes('冰属性暴击伤害'));
+ ui.get('criticalEnabled').checked=true;ui.get('criticalEnabled').fire('change');
+ assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).capAdded,capOff+2000);
+ const capRow=ui.get('entryEffectsReview').innerHTML.split('</tr>').find(r=>r.includes('冰属性暴击·改'));
+ const capIndex=capRow.match(/data-entry-choice="(\d+)"/)[1];
+ ui.get('entryEffectsReview').fire('change',{dataset:{entryChoice:capIndex},value:'exclude'});
+ ui.get('criticalEnabled').checked=false;ui.get('criticalEnabled').fire('change');
+ ui.get('criticalEnabled').checked=true;ui.get('criticalEnabled').fire('change');
+ assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).capAdded,capOff,'excluded permission-skill cap must not return');
+ ui.get('criticalEnabled').checked=false;ui.get('criticalEnabled').fire('change');
+
  ui.get('dualWield').checked=false;ui.get('dualWield').fire('change');
  assert.equal(buildDamageImport(last.r).hitMultiplier,1);assert.equal(last.r.context.weaponCount,1);assert.equal(last.r.context.robe,true);
  const before=last.review.panels.intelligence;ui.get('entryUseReader').fire('click');

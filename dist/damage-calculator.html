@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-fullhp-save">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-critical-link">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html">LC</a><div><h1>伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./characters.html">角色列表</a><a href="./index.html">技能表</a></nav></header>
@@ -31,7 +31,8 @@
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
-      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">break</label><label><input id="fullHp" type="checkbox">满血</label></div>
+      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">break</label><label><input id="fullHp" type="checkbox">满血</label><label><input id="criticalEnabled" type="checkbox">暴击</label></div>
+      <p class="help">暴击：控制相关技能、暴伤及附带上限；关闭后这些加成不计入。结果仍显示暴击伤害对照。</p>
       <div id="magicBuffOptions" class="magic-buff-options" hidden><div id="magicBuffChoices"></div><div id="magicBuffRelationControl" hidden><small>同类型 Buff 只保留一个：指导的法强 +65% 替换原来的 +50%。满血等独立被动仍按各自条件计算；已读到指导后面板时不重复添加。魔法上限只加一次。</small></div></div>
       <p id="conditionStatus" class="help"></p>
       <section id="entrySpecialSection" class="special-reminders" hidden><h3>角色特殊效果</h3><p class="help">仅作提醒。是否触发按上方战斗选项与技能参数计算。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源</th><th>效果</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
@@ -134,5 +135,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260924-fullhp-save"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260924-critical-link"></script>
 </body></html>

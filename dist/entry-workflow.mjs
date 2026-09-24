@@ -1,13 +1,14 @@
-import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-fullhp-save';
-import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs';
-import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullhp-save';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-fullhp-save';
+import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-critical-link';
+import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-critical-link';
+import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260924-critical-link';
+import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-critical-link';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-critical-link';
 import {formatEffect,describeCondition} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-fullhp-save';
-import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-fullhp-save';
-import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-fullhp-save';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-critical-link';
+import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-critical-link';
+import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-critical-link';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-critical-link';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -21,7 +22,9 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  let state={parameterSchema:2,accountBlessings:true,base:{},selection:saved.selection||{},parameters:saved.parameterSchema===2?saved.parameters||{}:{},hitParameters:saved.hitParameters||{},decisions:saved.decisions||{},statDecisions:saved.statDecisions||{},mappings:saved.mappings||{},removedEffects:saved.removedEffects||{}};
  if(saved.mechanicsRevision!==STAT_MECHANICS_REVISION)for(const d of Object.values(state.statDecisions))d.choice='pending';
  state.mechanicsRevision=STAT_MECHANICS_REVISION;
+ if(typeof state.selection.criticalEnabled!=='boolean'&&typeof state.selection.magicCanCrit==='boolean')state.selection.criticalEnabled=state.selection.magicCanCrit;
  delete state.selection.magicCanCrit;
+ state.bonusPreference=saved.bonusPreference||null;
  // Older UI defaulted Roxy's 0.6 to before-cap, before its core placement was
  // checked against native settlement samples. Migrate that exact old default.
  migrateCharacterHitDrafts(characterId,saved,state.hitParameters);
@@ -66,7 +69,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  const decisions=()=>{const values={...state.decisions};for(const row of compared){const key=decisionKey(row);if(state.removedEffects[effectSelectionKey(row)])values[key]={choice:'exclude'};
   // The six-stat source choice adopts the final panel. These reference entries
   // do not become damage bonuses and need no second approval in a hidden table.
-  else if(!panelTypes.has(row.effect.type)&&!summaryTypes.has(row.effect.type))values[key]={choice:row.effect.type==='hit'&&state.selection.dualWield?(row.compatible?'reader':'web'):'exclude'};
+  else if(!panelTypes.has(row.effect.type)&&!summaryTypes.has(row.effect.type))values[key]={choice:(row.effect.type==='hit'&&state.selection.dualWield||row.effect.type==='critPermission'&&state.selection.criticalEnabled)?(row.compatible?'reader':'web'):'exclude'};
   else if(panelTypes.has(row.effect.type)&&(!values[key]||values[key].choice==='pending'))values[key]={choice:'web'};
  }return values;};
  function websitePanel(source=currentPanelReport()){
@@ -113,10 +116,15 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  function updateCandidate() {
   if(!report)return;
   candidate=retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},state.selection);
-  readerBonuses=evaluateReaderBonuses(unit?.bonuses||[],candidate.context);
+  readerBonuses=selectReaderCriticalBonuses(evaluateReaderBonuses(unit?.bonuses||[],candidate.context),candidate);
   compared=compareCandidates(websiteCandidates(candidate),readerBonuses,state.mappings,candidate.context);
   supplements=readerSupplementCandidates(readerBonuses,compared,candidate.context);
   for(const row of compared)if(state.decisions[decisionKey(row)]?.choice==='reader'&&!row.compatible)state.decisions[decisionKey(row)]={choice:'pending'};
+  for(const row of compared)if(row.criticalLinked&&!state.decisions[decisionKey(row)]){
+   const prior=bonusGroups.find(g=>g.type===row.effect.type&&g.target===row.effect.target&&g.unit===(row.effect.unit||''));
+   const choice=state.bonusPreference||prior?.choice;
+   if(choice==='web'||choice==='reader'&&row.compatible)state.decisions[decisionKey(row)]={choice};
+  }
   for(const row of compared)if(row.group==='blessings'&&!state.decisions[decisionKey(row)]&&(!row.reader||(row.compatible&&row.difference===0)))state.decisions[decisionKey(row)]={choice:'web'};
   if(unit)for(const k of Object.keys(SIX_STATS))if(Number.isFinite(readStat(k))&&(!state.statDecisions[k]?.choice||state.statDecisions[k].choice==='pending'))state.statDecisions[k]={...state.statDecisions[k],choice:'reader'};
   $('skillType').value=['magic','heavy_magic'].includes(state.selection.attack)?'magic':/^s[123]$/.test(state.selection.attack)?'skill':state.selection.attack;
@@ -141,7 +149,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   for(const row of compared)if(selected[decisionKey(row)]?.choice==='exclude'&&row.effect.type==='equipmentStat'&&row.effect.unit==='')excludedEquipmentStats.push({sourceId:row.sourceId,sourceName:row.sourceName,target:row.effect.target});
   return {...source,excludedEquipmentStats,rows:rows.map(r=>{
    const effects=[],effectIndices=[];
-   r.rule.effects.forEach((effect,index)=>{
+   r.rule.effects.forEach((effect,i)=>{
+    const index=r.effectIndices?.[i]??i;
     const row=sourceRows.find(w=>w.sourceId===r.sourceId&&w.ruleId===r.rule.id&&w.index===index);
     const decision=row&&selected[decisionKey(row)];
     const identity={id:`${r.sourceId}:${r.rule.id}:${index}`,effect,condition:r.rule.conditions};
@@ -168,7 +177,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    const formula=g.web.map(r=>val(r.effect.value,g.unit)).join(' + ');
    const webDetails=`<details data-entry-details="${esc(g.id)}"><summary>计算明细与加成来源</summary><p class="entry-bonus-formula">${esc(formula?`${formula} = ${val(g.total,g.unit)}`:'当前无计入项目')}</p><ul class="entry-source-list">${g.web.map(r=>sourceLine(r.sourceName,r.effect,compared.indexOf(r))).join('')}</ul></details>`;
    const readDetails=g.reader.length?`<details data-entry-details="reader:${esc(g.id)}"><summary>计算明细与加成来源</summary><p class="entry-bonus-formula">${esc(g.reader.map(r=>val(r.value,g.unit)).join(' + '))} = ${esc(val(g.readTotal,g.unit))}</p><ul class="entry-source-list">${g.reader.map(r=>`<li><span>${esc(r.sourceName||r.id)}：${esc(val(r.value,g.unit))}<small>${r.state==='observed'?'读取观测':'配置候选，未证明本次触发'}${r.websiteCondition?'；按对应网站条件筛选':''}${r.decoded?.note?`；${esc(r.decoded.note)}`:''}</small></span></li>`).join('')}</ul></details>`:'';
-   return `<tr data-bonus-group="${esc(g.id)}"><td><b>${esc(g.target)}${g.type==='cap'&&g.unit==='%'?'（百分比）':''}</b></td><td><strong class="entry-panel-total" data-website-bonus="${i}">${esc(val(g.total,g.unit))}</strong>${difference}${webDetails}</td><td><strong class="entry-panel-total" data-reader-bonus="${i}">${g.readTotal==null?'未读到':esc(val(g.readTotal,g.unit))}</strong>${g.reader.length?`<small>${g.candidate?'候选小计':'已读小计'} · ${g.reader.length} 项</small>`:''}${readDetails}</td><td>${g.web.length||g.supplements?.length?`<select data-entry-bonus-choice="${i}" aria-label="${esc(g.target)}采用数据">${option('pending','待选择',g.choice)}${g.web.length?option('web','网站',g.choice):''}${g.canUseReader?option('reader','读取器',g.choice):'<option value="reader" disabled title="来源尚未完整对应">读取器</option>'}${!['pending','web','reader'].includes(g.choice)?option(g.choice,'逐项设置',g.choice):''}</select>`:'<small>暂无网站来源可采用</small>'}</td></tr>`;
+   return `<tr data-bonus-group="${esc(g.id)}"><td><b>${esc(g.target)}${g.criticalOnly?'（仅暴击）':''}${g.type==='cap'&&g.unit==='%'?'（百分比）':''}</b></td><td><strong class="entry-panel-total" data-website-bonus="${i}">${esc(val(g.total,g.unit))}</strong>${difference}${webDetails}</td><td><strong class="entry-panel-total" data-reader-bonus="${i}">${g.readTotal==null?'未读到':esc(val(g.readTotal,g.unit))}</strong>${g.reader.length?`<small>${g.candidate?'候选小计':'已读小计'} · ${g.reader.length} 项</small>`:''}${readDetails}</td><td>${g.web.length||g.supplements?.length?`<select data-entry-bonus-choice="${i}" aria-label="${esc(g.target)}采用数据">${option('pending','待选择',g.choice)}${g.web.length?option('web','网站',g.choice):''}${g.canUseReader?option('reader','读取器',g.choice):'<option value="reader" disabled title="来源尚未完整对应">读取器</option>'}${!['pending','web','reader'].includes(g.choice)?option(g.choice,'逐项设置',g.choice):''}</select>`:'<small>暂无网站来源可采用</small>'}</td></tr>`;
   }).join('')||'<tr><td colspan="4">当前没有可比较的伤害加成或上限项目。</td></tr>';
   const removed=Object.entries(state.removedEffects);
   $('entryRemovedDetails').hidden=!removed.length;$('entryRemovedCount').textContent=`已删除的加成（${removed.length}）`;
@@ -243,8 +252,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function initialize() {
   initialized=true;
-  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',dualWield:false,fullHp:report.context.fullHp===true,specialAttack:report.context.killer===true,break:report.context.break===true,...state.selection};
-  for(const id of ['dualWield','specialAttack','break','fullHp'])$(id).checked=state.selection[id]===true;
+  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,specialAttack:report.context.killer===true,break:report.context.break===true,...state.selection};
+  for(const id of ['dualWield','specialAttack','break','fullHp','criticalEnabled'])$(id).checked=state.selection[id]===true;
   $('characterPanel').hidden=false;$('entryPreparation').hidden=false;$('entryReview').hidden=false;$('attackChoice').closest('label').hidden=false;$('statReference').closest('label').hidden=false;
   $('skillType').closest('label').hidden=true;
   $('attackChoice').innerHTML=ATTACK_CHOICES.map(([v,l])=>option(v,l,state.selection.attack)).join('');
@@ -283,7 +292,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  $('entryUnit').addEventListener('change',e=>{rememberReaderDraft();unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;restoreReaderDraft();invalidate('读取资料已暂填；数值差异由你决定。');setParameters();onRead({battle,unit:selectedUnit()});updateCandidate();});
  $('entrySupplementReview').addEventListener('change',e=>{const b=supplements[Number(e.target.dataset.readerSupplement)];if(!b)return;supplementChoices[supplementKey(b)]=e.target.value;invalidate('读取器补充加成已更新。');save();renderReview();});
  for(const id of ['dualWield'])$(id).addEventListener('change',()=>{state.selection[id]=$(id).checked;save();renderReview();onSelection(selection());});
- for(const id of ['specialAttack','break','fullHp'])$(id).addEventListener('change',()=>{
+ for(const id of ['specialAttack','break','fullHp','criticalEnabled'])$(id).addEventListener('change',()=>{
   state.selection[id]=$(id).checked;invalidate('战斗选项已改变，按本次条件重新核对加成。');updateCandidate();
  });
  $('attackChoice').addEventListener('change',()=>{state.selection.attack=$('attackChoice').value;renderPresets(true);applyMove();invalidate('攻击方式已改变，请核对这次攻击对应的加成。');updateCandidate();});
@@ -321,6 +330,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  $('entryEffectsReview').addEventListener('change',changeEffect);
  $('entryStatReview').addEventListener('change',e=>{const el=e.target,key=el.dataset.entryStat??el.dataset.entryStatValue;if(!key)return;const d=state.statDecisions[key]||{};if(el.dataset.entryStat)d.choice=el.value;else d.value=el.valueAsNumber;state.statDecisions[key]=d;invalidate();save();renderReview();});
  function useBonusGroups(choice) {
+  state.bonusPreference=choice;
   let applied=0,skipped=0;
   for(const group of bonusGroups){
    if(choice==='reader'&&!group.canUseReader||choice==='web'&&!group.web.length){skipped++;continue;}
@@ -379,6 +389,6 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  return {receive,selection,panelsPreview,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
   state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
-  if(initialized){state.selection={...state.selection,dualWield:false,fullHp:report.context.fullHp===true,specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break','fullHp'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
+  if(initialized){state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break','fullHp','criticalEnabled'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
  }};
 }

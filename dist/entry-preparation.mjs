@@ -1,7 +1,8 @@
-import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullhp-save';
-import {decodeReaderBonuses} from './reader-bonus-decoder.mjs';
+import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-critical-link';
+import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260924-critical-link';
+import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-critical-link';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-fullhp-save';
+import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-critical-link';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
 const elementIds={无:'none',火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark'};
@@ -50,15 +51,16 @@ export function retargetReport(report,selection) {
  if(typeof selection.break==='boolean')context.break=selection.break;
  if(typeof selection.fullHp==='boolean')context.fullHp=selection.fullHp;
  if(context.fullHp===true)context.lowHp=false;
+ if(typeof selection.criticalEnabled==='boolean'){context.criticalEnabled=selection.criticalEnabled;context.critical=selection.criticalEnabled;}
  // Damage-page dual wield is a manual hit-calculation option. Equipment and
  // single/dual-weapon skill conditions come only from the basic calculator.
  const evaluated=evaluateCatalog([...grouped.values()],context,overrides);
- return {...report,...evaluated};
+ return applyCriticalOption({...report,...evaluated});
 }
 export function websiteCandidates(report) {
  return (report.rows||[]).filter(r=>r.status==='active').flatMap(r=>r.rule.effects.map((effect,i)=>{const index=r.effectIndices?.[i]??i;return {
   id:`${r.sourceId}:${r.rule.id}:${index}`,sourceName:r.sourceName,sourceId:r.sourceId,ruleId:r.rule.id,index,effect,
-  condition:r.rule.conditions,evidence:r.group==='blessings'?'账户加护报告与规则核对':'网站条件推演，待核对',group:r.group
+  condition:r.rule.conditions,criticalLinked:r.criticalLinked||criticalEffect(effect),evidence:r.group==='blessings'?'账户加护报告与规则核对':'网站条件推演，待核对',group:r.group
  };}).filter(r=>recognizedTypes.has(r.effect.type)));
 }
 export function validateBattleEntry(input) {
@@ -87,6 +89,7 @@ export function validateBattleEntry(input) {
  return input;
 }
 export function readerScopeAllows(reader,context) {
+ if(reader?.optionExcludedReason)return false;
  if(reader&&(['inactive','disabled','removed'].includes(reader.state)||reader.raw?.buffRemoved===1||reader.raw?.buffIgnored===1||reader.raw?.buffEnabled===0))return false;
  const conditions=reader?.decoded?.conditions??reader?.conditions;
  if(!Array.isArray(conditions)||!context)return true; // Legacy manual mapping has no decoded scope to test.
