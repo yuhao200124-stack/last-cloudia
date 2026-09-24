@@ -1,6 +1,6 @@
-import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-result-cap';
-import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-result-cap';
-import {upgradeStatRule, verifiedRuntimeFamily,verifiedHpRuntime} from './stat-mechanics.mjs?v=20260924-result-cap';
+import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-combat-modes';
+import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-combat-modes';
+import {upgradeStatRule, verifiedRuntimeFamily,verifiedHpRuntime} from './stat-mechanics.mjs?v=20260924-combat-modes';
 // Character-panel arithmetic only. Damage/cap/defense-reference effects never enter it.
 export const PANEL_LABELS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 const aliases={HP:'hp',生命:'hp',MP:'mp',魔力值:'mp',攻击力:'attack',防御力:'defense',法强:'intelligence',魔力:'intelligence',魔抗:'mind'};

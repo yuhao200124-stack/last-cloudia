@@ -1,15 +1,16 @@
-import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-result-cap';
-import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-result-cap';
-import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260924-result-cap';
-import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-result-cap';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-result-cap';
+import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-combat-modes';
+import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-combat-modes';
+import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260924-combat-modes';
+import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-combat-modes';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-combat-modes';
 import {formatEffect,describeCondition} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-result-cap';
-import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-result-cap';
-import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-result-cap';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-result-cap';
-import {withReaderGroupChoices,readerGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups} from './reader-group-review.mjs?v=20260924-result-cap';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-combat-modes';
+import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-combat-modes';
+import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-combat-modes';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-combat-modes';
+import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260924-combat-modes';
+import {MODE_LABELS} from './combat-modes.mjs?v=20260924-combat-modes';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -31,7 +32,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  migrateCharacterHitDrafts(characterId,saved,state.hitParameters);
  state.hitMechanicsRevision=2;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
- let confirmed=false,bonusGroups=[],readerBonuses=[];
+ let confirmed=false,bonusGroups=[],readerBonuses=[],modeCatalog={},potentialModeGroups=[];
  let reportFingerprint=null,storageSaveFailed=false,importGeneration=0;
  state.readerDrafts=saved.readerDrafts||{};
  let supplementChoices={},supplements=[],groupReaderChoices={},attackObservations={},snapshotSelection='entry';
@@ -120,12 +121,23 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   candidate=retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},state.selection);
   readerBonuses=selectReaderCriticalBonuses(evaluateReaderBonuses(unit?.bonuses||[],candidate.context),candidate);
   compared=compareCandidates(websiteCandidates(candidate),readerBonuses,state.mappings,candidate.context);
+  // The mode switches activate configured skills. Approve their known scopes
+  // together with a group selection, so toggling a mode can add its sources.
+  const modesReport=retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},{...state.selection,criticalEnabled:true,specialAttack:true,fullHp:true,break:true});
+  const modesBonuses=selectReaderCriticalBonuses(evaluateReaderBonuses(unit?.bonuses||[],modesReport.context),modesReport);
+  const modesCompared=compareCandidates(websiteCandidates(modesReport),modesBonuses,state.mappings,modesReport.context);
+  potentialModeGroups=buildBonusComparison(modesCompared,modesBonuses,modesReport.context,{removed:state.removedEffects,decisions:state.decisions});
+  modeCatalog=modeGroupCatalog(potentialModeGroups);
+  // One-time upgrade for previously saved choices in this exact report/unit.
+  for(const [id,approved] of Object.entries(groupReaderChoices))if(!Object.hasOwn(approved,'modeWeb')){
+   Object.assign(approved,upgradeReaderGroupChoice(approved,modeCatalog[id]));
+  }
   supplements=readerSupplementCandidates(readerBonuses,compared,candidate.context);
   for(const row of compared)if(state.decisions[decisionKey(row)]?.choice==='reader'&&!row.compatible)state.decisions[decisionKey(row)]={choice:'pending'};
-  for(const row of compared)if(row.criticalLinked&&!state.decisions[decisionKey(row)]){
+  for(const row of compared)if(row.modeLinks?.length&&!state.decisions[decisionKey(row)]){
    const prior=bonusGroups.find(g=>g.type===row.effect.type&&g.target===row.effect.target&&g.unit===(row.effect.unit||''));
-   const choice=state.bonusPreference||prior?.choice;
-   if(choice==='web'||choice==='reader'&&row.compatible)state.decisions[decisionKey(row)]={choice};
+   const choice=state.bonusPreference||prior?.choice||'reader';
+   if(choice==='web'||choice==='reader')state.decisions[decisionKey(row)]={choice:choice==='reader'&&row.compatible?'reader':'web'};
   }
   for(const row of compared)if(row.group==='blessings'&&!state.decisions[decisionKey(row)]&&(!row.reader||(row.compatible&&row.difference===0)))state.decisions[decisionKey(row)]={choice:'web'};
   if(unit)for(const k of Object.keys(SIX_STATS))if(Number.isFinite(readStat(k))&&(!state.statDecisions[k]?.choice||state.statDecisions[k].choice==='pending'))state.statDecisions[k]={...state.statDecisions[k],choice:'reader'};
@@ -168,7 +180,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function renderBonusReview() {
   supplements=readerSupplementCandidates(readerBonuses,compared,candidate.context);
-  bonusGroups=withReaderGroupChoices(includeSupplementGroups(buildBonusComparison(compared,readerBonuses,candidate.context,{removed:state.removedEffects,decisions:decisions()}),supplements,supplementChoices),groupReaderChoices);
+  bonusGroups=withReaderGroupChoices(includeSupplementGroups(buildBonusComparison(compared,readerBonuses,candidate.context,{removed:state.removedEffects,decisions:decisions()}),supplements,supplementChoices),groupReaderChoices,modeCatalog);
   const val=(n,u)=>`${n.toLocaleString('en-US')}${u}`;
   const inventory=unit?.raw,states=readerBonuses.map(b=>readerBonusState(b,candidate.context));
   const count=status=>states.filter(s=>s.status===status).length;
@@ -179,7 +191,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    const formula=g.web.map(r=>val(r.effect.value,g.unit)).join(' + ');
    const webDetails=`<details data-entry-details="${esc(g.id)}"><summary>计算明细与加成来源</summary><p class="entry-bonus-formula">${esc(formula?`${formula} = ${val(g.total,g.unit)}`:'当前无计入项目')}</p><ul class="entry-source-list">${g.web.map(r=>sourceLine(r.sourceName,r.effect,compared.indexOf(r))).join('')}</ul></details>`;
    const readDetails=g.reader.length?`<details data-entry-details="reader:${esc(g.id)}"><summary>计算明细与加成来源</summary><p class="entry-bonus-formula">${esc(g.reader.map(r=>val(r.value,g.unit)).join(' + '))} = ${esc(val(g.readTotal,g.unit))}</p><ul class="entry-source-list">${g.reader.map(r=>`<li><span>${esc(r.sourceName||r.id)}：${esc(val(r.value,g.unit))}<small>${r.state==='observed'?'读取观测':'配置候选，未证明本次触发'}${r.websiteCondition?'；按对应网站条件筛选':''}${r.decoded?.note?`；${esc(r.decoded.note)}`:''}</small></span></li>`).join('')}</ul></details>`:'';
-   return `<tr data-bonus-group="${esc(g.id)}"><td><b>${esc(g.target)}${g.criticalOnly?'（仅暴击）':''}${g.type==='cap'&&g.unit==='%'?'（百分比）':''}</b></td><td><strong class="entry-panel-total" data-website-bonus="${i}">${esc(val(g.total,g.unit))}</strong>${difference}${webDetails}</td><td><strong class="entry-panel-total" data-reader-bonus="${i}">${g.readTotal==null?'未读到':esc(val(g.readTotal,g.unit))}</strong>${g.reader.length?`<small>${g.candidate?'候选小计':'已读小计'} · ${g.reader.length} 项</small>`:''}${readDetails}</td><td>${g.web.length||g.reader.length?`<select data-entry-bonus-choice="${i}" aria-label="${esc(g.target)}采用数据">${option('pending','待选择',g.choice)}${g.web.length?option('web','网站',g.choice):''}${g.canUseReader?option('reader','读取器',g.choice):'<option value="reader" disabled title="没有符合当前条件且未被删除的读取器加成">读取器</option>'}${!['pending','web','reader'].includes(g.choice)?option(g.choice,'逐项设置',g.choice):''}</select>${g.readerGroupStale?'<small>来源或数值已变化，请重新选择。</small>':g.readerGroupSelected?`<small>已采用读取器 ${esc(val(g.adoptableTotal,g.unit))} · ${g.adoptableReader.length} 项；本组网站来源不再叠加。</small>`:''}${g.reader.length&&!g.fullyMapped?'<small>可采用已读小计；未对应的网站来源本次不计入。</small>':''}${g.adoptableReader.length<g.reader.length?`<small>你已删除或排除 ${g.reader.length-g.adoptableReader.length} 项对应来源，采用小计 ${esc(val(g.adoptableTotal,g.unit))}。</small>`:''}`:'<small>暂无可采用来源</small>'}</td></tr>`;
+   return `<tr data-bonus-group="${esc(g.id)}"><td><b>${esc(g.target)}${g.criticalOnly?'（仅暴击）':''}${g.type==='cap'&&g.unit==='%'?'（百分比）':''}</b></td><td><strong class="entry-panel-total" data-website-bonus="${i}">${esc(val(g.total,g.unit))}</strong>${difference}${webDetails}</td><td><strong class="entry-panel-total" data-reader-bonus="${i}">${g.readTotal==null?'未读到':esc(val(g.readTotal,g.unit))}</strong>${g.reader.length?`<small>${g.candidate?'候选小计':'已读小计'} · ${g.reader.length} 项</small>`:''}${readDetails}</td><td>${g.web.length||g.reader.length?`<select data-entry-bonus-choice="${i}" aria-label="${esc(g.target)}采用数据">${option('pending','待选择',g.choice)}${g.web.length?option('web','网站',g.choice):''}${g.canUseReader?option('reader','读取器',g.choice):'<option value="reader" disabled title="没有符合当前条件且未被删除的读取器加成">读取器</option>'}${!['pending','web','reader'].includes(g.choice)?option(g.choice,'逐项设置',g.choice):''}</select>${g.readerGroupStale?'<small>来源或数值已变化，请重新选择。</small>':''}${g.readerGroupSelected&&g.modeWebsiteFallback.length?`<small>${esc([...new Set(g.modeWebsiteFallback.flatMap(r=>r.modeLinks))].map(m=>MODE_LABELS[m]).join('、'))}模式 +${esc(val(g.modeWebsiteTotal,g.unit))}（网站）<br>采用 ${esc(val(g.adoptedTotal,g.unit))}</small>`:''}${g.adoptableReader.length<g.reader.length?`<small>你已删除或排除 ${g.reader.length-g.adoptableReader.length} 项对应来源，采用小计 ${esc(val(g.adoptableTotal,g.unit))}。</small>`:''}`:'<small>暂无可采用来源</small>'}</td></tr>`;
   }).join('')||'<tr><td colspan="4">当前没有可比较的伤害加成或上限项目。</td></tr>';
   const removed=Object.entries(state.removedEffects);
   $('entryRemovedDetails').hidden=!removed.length;$('entryRemovedCount').textContent=`已删除的加成（${removed.length}）`;
@@ -223,7 +235,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    const p=computed.stats[k],diff=typeof observed==='number'&&p.value!=null?p.value-observed:null;
    const value=p.value==null?'待补齐':p.value.toLocaleString('en-US');
    const difference=diff==null?'':`<small class="entry-panel-difference ${diff===0?'is-match':'is-different'}">${diff===0?'与读取器一致':`当前条件比${obs.kind==='entry'?'入场':obs.kind==='snapshot'?'所选快照':'攻击时'}观察${diff>0?'多':'少'} ${Math.abs(diff).toLocaleString('en-US')}`}</small>`;
-   return `<tr><td><b>${label}</b></td><td><strong class="entry-panel-total" data-website-panel="${k}">${esc(value)}</strong>${p.value==null?`<small>已算部分：${esc(p.subtotal??'—')}</small>`:'<small>本次勾选加成计算结果</small>'}${difference}${p.buffs.length?`<small>入场前面板（实时增益前）：${esc(p.beforeBuff??'—')}</small>`:''}${p.issues.map(msg=>`<small class="entry-panel-missing">${esc(msg)}</small>`).join('')}<details data-entry-details="stat:${k}"><summary>计算明细与加成来源</summary><ol class="entry-panel-steps">${p.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><ul class="entry-source-list">${p.sources.map(s=>sourceLine(s.sourceName,s.effect,compared.findIndex(r=>r.sourceId===s.sourceId&&r.ruleId===s.ruleId&&r.index===s.effectIndex))).join('')||'<li>无额外属性加成</li>'}</ul></details></td><td>${esc(observed??'未读到')}<small>${esc(obs.label)}${k==='hp'||k==='mp'?'（上限）':''}</small><small>${esc(obs.time||'采样时间未提供')}</small><small>${esc(obs.note)}</small>${attackObservations[k]?`<small>原入场值：${esc(unit.stats[k]??'未读取')}</small><button type="button" data-entry-restore-observation="${k}">恢复所选快照</button>`:''}</td><td><select data-entry-stat="${k}" aria-label="${label}面板来源">${option('pending','待决定',d.choice||'pending')}${p.value!=null?option('website','网站',d.choice):''}${observed!=null?option('reader','读取器',d.choice):''}${option('manual','手动',d.choice)}${option('blessed','基础＋加护',d.choice)}${option('base','角色基础',d.choice)}</select><input data-entry-stat-value="${k}" type="number" min="0" max="100000000" step="1" value="${esc(d.value??'')}" aria-label="${label}手动面板"${d.choice==='manual'?'':' hidden'}></td></tr>`;
+   return `<tr><td><b>${label}</b></td><td><strong class="entry-panel-total" data-website-panel="${k}">${esc(value)}</strong>${p.value==null?`<small>已算部分：${esc(p.subtotal??'—')}</small>`:'<small>本次勾选加成计算结果</small>'}${difference}${p.buffs.length?`<small>入场前面板（实时增益前）：${esc(p.beforeBuff??'—')}</small>`:''}${p.issues.map(msg=>`<small class="entry-panel-missing">${esc(msg)}</small>`).join('')}<details data-entry-details="stat:${k}"><summary>计算明细与加成来源</summary><ol class="entry-panel-steps">${p.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><ul class="entry-source-list">${p.sources.map(s=>sourceLine(s.sourceName,s.effect,compared.findIndex(r=>r.sourceId===s.sourceId&&r.ruleId===s.ruleId&&r.index===s.effectIndex))).join('')||'<li>无额外属性加成</li>'}</ul></details></td><td><strong class="entry-panel-total">${esc(observed==null?'未读到':observed.toLocaleString('en-US'))}</strong><small>${esc(obs.label)}${k==='hp'||k==='mp'?'（上限）':''}</small><small>${esc(obs.time||'采样时间未提供')}</small><small>${esc(obs.note)}</small>${attackObservations[k]?`<small>原入场值：${esc(unit.stats[k]??'未读取')}</small><button type="button" data-entry-restore-observation="${k}">恢复所选快照</button>`:''}</td><td><select data-entry-stat="${k}" aria-label="${label}面板来源">${option('pending','待决定',d.choice||'pending')}${p.value!=null?option('website','网站',d.choice):''}${observed!=null?option('reader','读取器',d.choice):''}${option('manual','手动',d.choice)}${option('blessed','基础＋加护',d.choice)}${option('base','角色基础',d.choice)}</select><input data-entry-stat-value="${k}" type="number" min="0" max="100000000" step="1" value="${esc(d.value??'')}" aria-label="${label}手动面板"${d.choice==='manual'?'':' hidden'}></td></tr>`;
   }).join('');
   renderBonusReview();
   const mapped=new Set(compared.filter(r=>r.compatible).map(r=>r.reader?.id).filter(Boolean));
@@ -349,8 +361,11 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    chooseBonusGroup(group,choice);
    applied++;
   }
+  if(choice==='reader')for(const group of withReaderGroupChoices(potentialModeGroups,{},modeCatalog)){
+   if(!bonusGroups.some(g=>g.id===group.id)&&group.canUseReader&&group.web.every(r=>r.modeLinks?.length)&&group.adoptableReader.every(b=>b.modeLinks?.length))groupReaderChoices[group.id]=readerGroupChoice(group);
+  }
   invalidate();save();renderProfile();renderReview();
-  $('entryBonusBulkNote').textContent=`已将 ${applied} 组增伤与上限选择为${choice==='reader'?'读取器':'网站'}。${skipped?`${skipped} 组没有可采用的${choice==='reader'?'读取器':'网站'}来源，保留原选择。`:''}${choice==='reader'?'按已解析的读取器来源计入；未对应的网站来源不再叠加。':''}角色特殊效果仅作提醒。`;
+  $('entryBonusBulkNote').textContent=`已将 ${applied} 组增伤与上限选择为${choice==='reader'?'读取器':'网站'}。${skipped?`${skipped} 组没有可采用的${choice==='reader'?'读取器':'网站'}来源，保留原选择。`:''}`;
  }
  $('entryUseWeb').addEventListener('click',()=>useBonusGroups('web'));
  $('entryUseReader').addEventListener('click',()=>useBonusGroups('reader'));

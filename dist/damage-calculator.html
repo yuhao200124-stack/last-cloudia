@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-result-cap">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-combat-modes">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html">LC</a><div><h1>伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./characters.html">角色列表</a><a href="./index.html">技能表</a></nav></header>
@@ -102,7 +102,7 @@
         <article class="primary-result"><span>普通每段伤害</span><strong id="normalDamage">—</strong><small>含随机波动与每段上限</small></article>
         <article class="critical-result"><span title="触发暴击时的伤害对照；整次期望仍按最终暴击率计算">暴击每段伤害</span><strong id="criticalDamage">—</strong></article>
         <div class="total-result"><span id="totalLabel">整次技能期望伤害</span><strong id="totalMean">—</strong><small id="totalNote"></small></div>
-        <dl class="result-details"><div><dt>全为普通命中时</dt><dd id="normalTotal">—</dd></div><div><dt id="damageCapLabel">每段伤害上限</dt><dd id="damageCap">—</dd></div><div id="criticalCapResult" hidden><dt>暴击每段上限</dt><dd id="criticalCap">—</dd></div><div><dt>本段结算攻击力</dt><dd id="effectiveAttack">—</dd></div><div><dt>本段结算防御力</dt><dd id="effectiveDefense">—</dd></div><div><dt>特攻匹配</dt><dd id="killerState">—</dd></div></dl>
+        <dl class="result-details"><div class="result-cap"><dt id="damageCapLabel">每段伤害上限</dt><dd id="damageCap">—</dd></div><div id="criticalCapResult" class="result-cap" hidden><dt>暴击每段上限</dt><dd id="criticalCap">—</dd></div><div><dt>全为普通命中时</dt><dd id="normalTotal">—</dd></div><div><dt>本段结算攻击力</dt><dd id="effectiveAttack">—</dd></div><div><dt>本段结算防御力</dt><dd id="effectiveDefense">—</dd></div><div><dt>特攻匹配</dt><dd id="killerState">—</dd></div></dl>
         <p id="resultCapNote" class="result-cap-note" hidden></p>
       </div>
     </div>
@@ -116,11 +116,11 @@
       <div class="section-heading entry-subheading"><h3>面板核对</h3><div class="inline-options"><button id="entryUseWebsiteStats" type="button">全部用网站</button><button id="entryUseStats" type="button">全部用读取器</button><button type="button" class="primary" data-review-save>保存并返回</button></div></div>
       <p class="help">网站按当前条件计算；读取器显示实际采样时的面板，两者可能处于不同时刻。结算文件中采用的攻击时观察值也会显示在此处；未读取的属性保留入场值。</p>
       <label id="entrySnapshotControl" hidden>读取器面板时刻<select id="entrySnapshotPick"></select></label><p id="entrySnapshotNote" class="help"></p>
-      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
+      <div class="entry-table-wrap"><table class="entry-table review-comparison"><colgroup><col class="review-item"><col class="review-website"><col class="review-reader"><col class="review-choice"></colgroup><thead><tr><th>属性</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
       <div class="section-heading entry-subheading"><h3>增伤与伤害上限</h3><div class="inline-options"><button id="entryUseWeb" type="button">全部用网站</button><button id="entryUseReader" type="button">全部用读取器</button><button type="button" class="primary" data-review-save>保存并返回</button></div></div>
       <p class="help">按当前攻击条件分别统计，展开查看来源并删除。读取器仅合计已识别项目；候选小计不代表已确认生效的完整加成。</p>
       <p id="entryBonusBulkNote" role="status" class="help"></p><p class="help" id="entryReadCoverage"></p><p class="help" id="entryObservedCritical"></p>
-      <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>项目</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryBonusReview"></tbody></table></div>
+      <div class="entry-table-wrap"><table class="entry-table review-comparison"><colgroup><col class="review-item"><col class="review-website"><col class="review-reader"><col class="review-choice"></colgroup><thead><tr><th>项目</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryBonusReview"></tbody></table></div>
 
       <section id="entrySupplementSection" hidden><h3>读取器补充加成</h3><p class="help">网站尚无对应来源的已解析条目。按原始条件列出，选择采用后进入伤害计算；已采用的网站来源不会重复补入。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／条件</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entrySupplementReview"></tbody></table></div></section>
       <details id="entryIndividualReview"><summary>逐条核对与修改 · <span id="entryCandidateCount">加成候选</span></summary>
@@ -136,5 +136,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260924-result-cap"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260924-combat-modes"></script>
 </body></html>

@@ -1,6 +1,6 @@
 import {PROCESS_SIGNATURES,PROCESS_DOCUMENTATION} from './reader-process-evidence.mjs';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {READ_ID_TO_SOURCE_ID,decodeKnownBlessingEntry} from './account-blessings.mjs?v=20260924-result-cap';
+import {READ_ID_TO_SOURCE_ID,decodeKnownBlessingEntry} from './account-blessings.mjs?v=20260924-combat-modes';
 const eq=(field,value)=>({field,op:'eq',value}), inside=(field,value)=>({field,op:'in',value});
 const finite=v=>typeof v==='number'&&Number.isFinite(v);
 const ELEMENTS=['none','fire','ice','earth','thunder','light','dark'];

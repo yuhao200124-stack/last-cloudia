@@ -1,32 +1,38 @@
+import {effectCombatModes,blockedCombatModes,MODE_LABELS,requiresTrue} from './combat-modes.mjs?v=20260924-combat-modes';
 // A combat-selection switch, not a claim that every hit is a critical hit.
 // A permission rule is one skill bundle: its fixed cap is removed with that
 // bundle when disabled, but remains a BOTH-branch cap while enabled.
-export const requiresCritical=conditions=>(conditions||[]).some(c=>c.field==='critical'&&(
- c.op==='eq'&&c.value===true||c.op==='in'&&Array.isArray(c.value)&&c.value.length===1&&c.value[0]===true||c.op==='notIn'&&Array.isArray(c.value)&&c.value.includes(false)&&!c.value.includes(true)));
-export const criticalEffect=e=>['critPermission','critRate'].includes(e.type)||['damage','cap'].includes(e.type)&&String(e.target).includes('暴击');
+export const requiresCritical=conditions=>requiresTrue(conditions,'critical');
+export const criticalEffect=e=>['critPermission','critRate'].includes(e.type)||['damage','cap'].includes(e.type)&&(e.criticalOnly===true||String(e.target).includes('暴击'));
 export const criticalDamageEffect=(e,conditions=[])=>['damage','cap'].includes(e.type)&&(e.criticalOnly===true||String(e.target).includes('暴击')||requiresCritical(conditions));
 export function applyCriticalOption(report) {
- if(typeof report.context?.criticalEnabled!=='boolean')return report;
- const enabled=report.context.criticalEnabled;
  return {...report,rows:report.rows.map(row=>{
-  const bundle=row.rule.effects.some(e=>e.type==='critPermission'),trigger=requiresCritical(row.rule.conditions);
-  if(enabled)return {...row,criticalLinked:bundle||trigger};
-  const excluded=row.rule.effects.map((e,i)=>(bundle||trigger||criticalEffect(e))?i:-1).filter(i=>i>=0);
-  if(!excluded.length)return row;
-  const reason='暴击选项已关闭，本次不计入';
-  if(excluded.length===row.rule.effects.length)return {...row,status:row.status==='disabled'?'disabled':'inactive',criticalLinked:true,optionExcludedReason:reason,reasons:[...row.reasons,reason]};
-  return {...row,rule:{...row.rule,effects:row.rule.effects.filter((_,i)=>!excluded.includes(i))},effectIndices:row.rule.effects.flatMap((_,i)=>excluded.includes(i)?[]:[row.effectIndices?.[i]??i])};
+  const links=row.rule.effects.map(e=>effectCombatModes(e,row.rule.conditions,row.rule.effects));
+  const excluded=row.rule.effects.map((e,i)=>blockedCombatModes(e,row.rule.conditions,report.context,row.rule.effects).length?i:-1).filter(i=>i>=0);
+  if(!excluded.length)return {...row,criticalLinked:links.some(modes=>modes.includes('critical'))};
+  const modes=[...new Set(excluded.flatMap(i=>blockedCombatModes(row.rule.effects[i],row.rule.conditions,report.context,row.rule.effects)))];
+  const reason=`${modes.map(m=>MODE_LABELS[m]).join('、')}选项已关闭，本次不计入`;
+  if(excluded.length===row.rule.effects.length)return {...row,status:row.status==='disabled'?'disabled':'inactive',criticalLinked:links.some(m=>m.includes('critical')),optionExcludedReason:reason,reasons:[...row.reasons,reason]};
+  return {...row,modeRule:row.rule,rule:{...row.rule,effects:row.rule.effects.filter((_,i)=>!excluded.includes(i))},effectIndices:row.rule.effects.flatMap((_,i)=>excluded.includes(i)?[]:[row.effectIndices?.[i]??i])};
  })};
 }
 export function selectReaderCriticalBonuses(bonuses,report) {
- if(report.context?.criticalEnabled!==false)return bonuses;
  const permissionIds=new Set(bonuses.filter(b=>b.effectType==='critPermission'&&Number.isSafeInteger(b.raw?.localId)&&b.raw.localId>0).map(b=>b.raw.localId));
- const bundles=report.rows.filter(r=>r.optionExcludedReason&&r.rule.effects.some(e=>e.type==='critPermission'));
  return bonuses.map(b=>{
-  const effect={type:b.effectType,target:b.target};
-  const linked=bundles.some(r=>(b.decoded?.sourceId===r.sourceId||b.sourceName===r.sourceName)&&r.rule.effects.some(e=>e.type===b.effectType&&e.target===b.target));
+  const effect={type:b.effectType,target:b.target,criticalOnly:b.criticalOnly};
+  const conditions=[...(b.decoded?.conditions||b.conditions||[]),...(b.decoded?.triggerConditions||[])];
+  const matches=report.rows.filter(r=>b.decoded?.sourceId===r.sourceId||b.sourceName===r.sourceName).flatMap(r=>{
+   const rule=r.modeRule||r.rule;
+   return rule.effects.filter(e=>e.type===b.effectType&&e.target===b.target).map(e=>({effect:e,rule}));
+  });
+  // A skill can contain independent unconditional and HP-dependent operations.
+  // Do not union their modes merely because they share a source and target.
+  const linked=matches.length===1?effectCombatModes(matches[0].effect,matches[0].rule.conditions,matches[0].rule.effects):[];
+  const criticalOnly=b.criticalOnly===true||matches.length===1&&criticalDamageEffect(matches[0].effect,matches[0].rule.conditions);
   const combat=['damage','cap','critPermission','critRate'].includes(b.effectType);
-  return criticalEffect(effect)||requiresCritical([...(b.decoded?.conditions||[]),...(b.decoded?.triggerConditions||[])])||linked||combat&&permissionIds.has(b.raw?.localId)
-   ?{...b,optionExcludedReason:'暴击选项已关闭；原始读取记录保留，本次不计入'}:b;
+  const modeLinks=[...new Set([...effectCombatModes(effect,conditions),...linked,...(combat&&permissionIds.has(b.raw?.localId)?['critical']:[])])];
+  const modeConditions=modeLinks.map(field=>({field,op:'eq',value:true}));
+  const blocked=blockedCombatModes(effect,[...conditions,...modeConditions],report.context);
+  return {...b,modeLinks,...(criticalOnly?{criticalOnly:true}:{}),...(blocked.length?{optionExcludedReason:`${blocked.map(m=>MODE_LABELS[m]).join('、')}选项已关闭；原始读取记录保留，本次不计入`}:{})};
  });
 }

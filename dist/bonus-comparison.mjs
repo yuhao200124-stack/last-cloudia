@@ -1,6 +1,6 @@
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {criticalDamageEffect} from './critical-options.mjs?v=20260924-result-cap';
-import {decisionKey} from './entry-preparation.mjs?v=20260924-result-cap';
+import {criticalDamageEffect} from './critical-options.mjs?v=20260924-combat-modes';
+import {decisionKey} from './entry-preparation.mjs?v=20260924-combat-modes';
 const numeric=value=>typeof value==='number'&&Number.isFinite(value);
 export const effectSelectionKey=row=>JSON.stringify([row.id,row.effect,row.condition]);
 const groupKey=e=>JSON.stringify([e.type,e.target,e.unit,...(e.criticalOnly?['critical']:[])]);
@@ -35,7 +35,7 @@ export function buildBonusComparison(compared,bonuses,context,{removed={},decisi
  }
  const seen=new Set();
  for(const b of bonuses||[]){
-  const e={type:b.effectType,target:b.target,value:b.value,unit:b.unit||''};
+  const e={type:b.effectType,target:b.target,value:b.value,unit:b.unit||'',criticalOnly:b.criticalOnly===true};
   e.criticalOnly=criticalDamageEffect(e,[...(b.decoded?.conditions||[]),...(b.decoded?.triggerConditions||[])]);
   if(!comparable(e)||seen.has(b.id)||b.optionExcludedReason||['inactive','disabled','removed'].includes(b.state)||b.raw?.buffRemoved===1||b.raw?.buffIgnored===1||b.raw?.buffEnabled===0)continue;
   const matches=compared.filter(r=>r.reader?.id===b.id),conditions=readerConditions(b,matches);

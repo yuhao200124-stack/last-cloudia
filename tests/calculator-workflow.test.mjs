@@ -151,7 +151,7 @@ test('generic full-HP multi-stat source retains effect identity after deleting o
  assert.equal(last.panelLayers.intelligence.runtimeCandidates.length,0,'deleted INT cannot remain as a simulated source');
 });
 
-test('partial reader groups adopt their actual subtotal, persist per report and follow critical conditions',async()=>{
+test('reader groups preserve raw totals and add configured mode effects, with per-report persistence',async()=>{
  let ui=controls(),last;
  ui.data.set('lc-entry-review:260:v1',JSON.stringify({selection:{attack:'magic',preset:'m',type:'magical',statReference:'int',element:'冰',criticalEnabled:true}}));
  const base={hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619};
@@ -168,28 +168,28 @@ test('partial reader groups adopt their actual subtotal, persist per report and 
  assert.match(capRow(),/>15,000</);assert.match(capRow(),/>13,000</);
  assert.match(capRow(),/<option value="reader">读取器/);
  choose('reader');assert(workflow.isConfirmed());
- assert.equal(buildDamageImport(last.r).capAdded,websiteCap-2000);
+ assert.equal(buildDamageImport(last.r).capAdded,websiteCap);
  assert.equal(last.r.rows.filter(r=>r.origin==='readerGroup').length,3);
- assert.match(capRow(),/>15,000</);assert.match(capRow(),/已采用读取器 13,000 · 3 项/);
+ assert.match(capRow(),/>15,000</);assert.match(capRow(),/暴击模式 \+2,000（网站）/);assert.match(capRow(),/采用 15,000/);assert(!capRow().includes('本组网站来源不再叠加'));
  assert.equal(workflow.saveAndReturn(),true);
  const persisted=new Map(ui.data);ui=controls();for(const [key,value] of persisted)ui.data.set(key,value);
  workflow=make();workflow.receive(report);await workflow.importFile(file());
- assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).capAdded,websiteCap-2000);
+ assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).capAdded,websiteCap);
  assert.match(capRow(),/<option value="reader" selected>/);
  ui.get('criticalEnabled').checked=false;ui.get('criticalEnabled').fire('change');
  assert(workflow.isConfirmed());assert.match(capRow(),/<option value="reader" selected>/);
  assert.equal(buildDamageImport(last.r).capAdded,websiteCap-2000);
  ui.get('criticalEnabled').checked=true;ui.get('criticalEnabled').fire('change');
- assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).capAdded,websiteCap-2000);
+ assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).capAdded,websiteCap);
  choose('web');assert.equal(buildDamageImport(last.r).capAdded,websiteCap);
  choose('reader');
  await workflow.importFile(file(true));assert(!capRow().includes('<option value="reader" selected>'));
  await workflow.importFile(file());assert(workflow.isConfirmed());assert.match(capRow(),/<option value="reader" selected>/);
- assert.equal(buildDamageImport(last.r).capAdded,websiteCap-2000);
+ assert.equal(buildDamageImport(last.r).capAdded,websiteCap);
  // A known mapped source deleted from the website cannot return through group adoption.
  const deleteIndex=capRow().match(/data-entry-delete="(\d+)"/)[1];
  ui.get('reviewPage').fire('click',{closest:q=>q==='[data-entry-delete]'?{dataset:{entryDelete:deleteIndex}}:null});
- assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).capAdded,websiteCap-7000);
+ assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).capAdded,websiteCap-5000);
  assert.match(capRow(),/>13,000</);assert.match(capRow(),/采用小计 8,000/);
  // A reader-only supplement selected earlier is transferred once, not added again.
  const extra=structuredClone(raw.find(b=>b.raw.localId===27365&&b.processId===1050354));
@@ -206,4 +206,42 @@ test('partial reader groups adopt their actual subtotal, persist per report and 
  assert.match(supplemental,/disabled/);assert.match(supplemental,/只计入一次/);
  ui.get('entryBonusReview').fire('change',{dataset:{entryBonusChoice:magicRow.match(/data-entry-bonus-choice="(\d+)"/)[1]},value:'web'});
  assert(workflow.isConfirmed());assert(!buildDamageImport(last.r).effects.some(e=>e.name.includes('附加读取1%')));
+});
+
+test('switches activate configured critical, killer and full-HP packages after reader adoption while off',async()=>{
+ const ui=controls(),base={hp:100,mp:100,attack:100,defense:100,intelligence:100,mind:100};
+ ui.data.set('lc-entry-review:generic:v1',JSON.stringify({selection:{attack:'magic',preset:'m',type:'magical',statReference:'int',element:'冰',criticalEnabled:false,specialAttack:false,fullHp:false}}));
+ const effect=(type,target,value)=>({type,target,value,unit:type==='damage'?'%':''});
+ const source=(id,conditions,effects)=>({id,name:id,group:'common',rules:[{id:`${id}-r`,conditions,effects,review:'ready'}]});
+ const catalog=[source('基础冰上限',[],[effect('cap','冰属性魔法伤害上限',1000)]),
+  source('通用冰魔法暴击',[],[effect('critPermission','冰属性魔法',true),effect('cap','冰属性魔法伤害上限',2000)]),
+  source('通用满血',[{field:'fullHp',op:'eq',value:true}],[effect('cap','冰属性魔法伤害上限',3000),effect('damage','魔法伤害',30)]),
+  source('通用特攻',[],[effect('killer','Boss',true)]),
+  source('通用特攻增幅',[],[effect('cap','特攻伤害上限',2000),effect('damage','特攻伤害',50)])];
+ const profile={characterId:'generic',baseStats:base,equipment:[],moves:[],magic:[{id:'m',kind:'magic',name:'测试',purpose:'attack',element:'冰',statReference:'int'}]};
+ const report=()=>({kind:'last-cloudia-effect-report',characterId:'generic',profile,...evaluateCatalog(catalog,{attack:'magic',damageType:'magical',element:'ice'})});
+ const bonuses=[{id:'base-cap',sourceName:'基础冰上限',effectType:'cap',target:'冰属性魔法伤害上限',value:1000,unit:'',conditions:[],state:'candidate'},
+  {id:'reader-crit',sourceName:'读取器暴击上限',effectType:'cap',target:'暴击伤害上限',value:6000,unit:'',conditions:[],state:'candidate'}];
+ let last;const workflow=initEntryWorkflow({characterId:'generic',onConfirm:r=>{last=r;},onInvalidate:()=>{},onSelection:()=>{}});
+ workflow.receive(report());await workflow.importFile({name:'generic.json',size:100,text:async()=>JSON.stringify({kind:'last-cloudia-battle-entry',schemaVersion:1,units:[{unitId:1,stats:base,bonuses}]})});
+ ui.get('entryUseWeb').fire('click');ui.get('entryUseReader').fire('click');
+ assert(workflow.isConfirmed());const baseline=buildDamageImport(last).capAdded;
+ const toggle=(id,on)=>{ui.get(id).checked=on;ui.get(id).fire('change');assert(workflow.isConfirmed(),ui.get('entryStatus').textContent);};
+ toggle('criticalEnabled',true);
+ let imp=buildDamageImport(last);assert.equal(imp.capAdded,baseline+2000);assert.equal(imp.criticalCapAdded,6000);assert.equal(imp.magicCanCrit,true);
+ toggle('specialAttack',true);imp=buildDamageImport(last);assert.equal(imp.capAdded,baseline+4000);assert(imp.effects.some(e=>e.kind==='killer'&&e.percent===50));
+ toggle('fullHp',true);imp=buildDamageImport(last);assert.equal(imp.capAdded,baseline+7000);assert(imp.effects.some(e=>e.name.includes('通用满血')&&e.percent===30));
+ toggle('criticalEnabled',false);assert.equal(buildDamageImport(last).capAdded,baseline+5000);assert.equal(buildDamageImport(last).criticalCapAdded,0);
+ toggle('specialAttack',false);imp=buildDamageImport(last);assert.equal(imp.capAdded,baseline+3000);assert(!imp.effects.some(e=>e.kind==='killer'));
+ toggle('fullHp',false);assert.equal(buildDamageImport(last).capAdded,baseline);
+ toggle('criticalEnabled',true);
+ const row=ui.get('entryEffectsReview').innerHTML.split('</tr>').find(r=>r.includes('通用冰魔法暴击')&&r.includes('冰属性魔法伤害上限'));
+ ui.get('entryEffectsReview').fire('change',{dataset:{entryChoice:row.match(/data-entry-choice="(\d+)"/)[1]},value:'exclude'});
+ toggle('criticalEnabled',false);toggle('criticalEnabled',true);
+ assert.equal(buildDamageImport(last).capAdded,baseline,'manual exclusions take priority over mode activation');
+ toggle('fullHp',true);
+ const capGroup=ui.get('entryBonusReview').innerHTML.split('</tr>').find(r=>r.includes('<b>冰属性魔法伤害上限</b>'));
+ ui.get('entryBonusReview').fire('change',{dataset:{entryBonusChoice:capGroup.match(/data-entry-bonus-choice="(\d+)"/)[1]},value:'reader'});
+ catalog.find(s=>s.id==='通用满血').rules[0].effects[0].value=3500;
+ workflow.receive(report());assert(!workflow.isConfirmed());assert.match(ui.get('entryStatus').textContent,/重新选择|未选择/);
 });

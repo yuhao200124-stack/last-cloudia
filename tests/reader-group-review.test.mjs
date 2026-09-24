@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {evaluateCatalog} from '../dist/effect-rule-engine.mjs';
 import {websiteCandidates,compareCandidates,decisionKey,resolveReview} from '../dist/entry-preparation.mjs';
 import {buildBonusComparison,effectSelectionKey} from '../dist/bonus-comparison.mjs';
-import {withReaderGroupChoices,readerGroupChoice,readerGroupDecisions,appendReaderGroups} from '../dist/reader-group-review.mjs';
+import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,appendReaderGroups,modeGroupCatalog} from '../dist/reader-group-review.mjs';
 import {buildDamageImport} from '../dist/damage-import.mjs';
 const context={attack:'magic',damageType:'magical',element:'ice',criticalEnabled:true,critical:true};
 const target='冰属性魔法伤害上限';
@@ -80,10 +80,28 @@ test('deleting one mapped operation does not remove another operation from the s
 });
 test('known character ownership and critical-rate stage survive group adoption',()=>{
  const s=setup([5],[5],'critRate','冰属性攻击暴击率','%');
- s.bonuses[0].decoded={conditions:[],stage:'attack',sourceId:'water-king'};
+ s.bonuses[0].decoded={conditions:[],stage:'attack',sourceId:'water-king'};s.bonuses[0].sourceName='来源0';
  const groups=withReaderGroupChoices(buildBonusComparison(s.compared,s.bonuses,s.report.context));
  const adopted=adopt(s,groups);
  assert(adopted.imported.blockers.some(x=>x.includes('角色专属')));
  const correct=buildDamageImport({...adopted.reviewed,characterId:'260'});
  assert.equal(correct.critAttackAdded,5);assert.equal(correct.critUnresolved.length,0);
+});
+test('mode and ordinary reader records retain one shared approved execution order',()=>{
+ const s=setup([35],[10,20,30],'damage','魔法伤害','%');s.bonuses[1].modeLinks=['fullHp'];
+ const initial=withReaderGroupChoices(buildBonusComparison(s.compared,s.bonuses,s.report.context));
+ const choices=Object.fromEntries(initial.map(g=>[g.id,readerGroupChoice(g)]));
+ const changed=withReaderGroupChoices(buildBonusComparison(s.compared,[s.bonuses[1],s.bonuses[0],s.bonuses[2]],s.report.context),choices);
+ assert.equal(changed[0].readerGroupStale,true);
+});
+test('legacy choices retain approved ordinary order while registering mode entries',()=>{
+ const s=setup([35],[10,20,30],'damage','魔法伤害','%');s.bonuses[1].modeLinks=['fullHp'];
+ const old=withReaderGroupChoices(buildBonusComparison(s.compared,[s.bonuses[0],s.bonuses[2]],s.report.context))[0];
+ const choice=readerGroupChoice(old),legacy={web:choice.web,reader:choice.reader};
+ for(const [bonuses,stale] of [[s.bonuses,false],[[s.bonuses[2],s.bonuses[1],s.bonuses[0]],true]]){
+  const groups=buildBonusComparison(s.compared,bonuses,s.report.context),catalog=modeGroupCatalog(groups);
+  const upgraded=upgradeReaderGroupChoice(legacy,catalog[old.id]);
+  const selected=withReaderGroupChoices(groups,{[old.id]:upgraded},catalog);
+  assert.equal(selected[0].readerGroupStale,stale);
+ }
 });

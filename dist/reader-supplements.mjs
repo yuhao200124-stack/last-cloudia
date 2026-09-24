@@ -1,6 +1,6 @@
-import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260924-result-cap';
+import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260924-combat-modes';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {requiresCritical} from './critical-options.mjs?v=20260924-result-cap';
+import {requiresCritical} from './critical-options.mjs?v=20260924-combat-modes';
 
 // A supplement is a reader source, never a fabricated website/account value.
 // Only fully decoded, scoped outgoing percentages are supported here.
@@ -17,7 +17,7 @@ export function appendReaderSupplements(report,bonuses,compared,choices) {
  const selected=readerSupplementCandidates(bonuses,compared,report.context).filter(b=>choices[supplementKey(b)]==='reader');
  const sources=selected.map(b=>({id:`reader-supplement:${b.id}`,name:`读取器补充 · ${b.sourceName||b.id}`,group:'readerSupplement',text:`${b.target}+${b.value}%`,
   rules:[{id:'decoded',part:'读取器配置',conditions:b.decoded.conditions,review:'ready',verification:'untested',
-   effects:[{type:'damage',target:b.target,value:b.value,unit:'%',...(requiresCritical(b.decoded.triggerConditions)?{criticalOnly:true}:{})}],note:'已解析的读取器配置，经用户采用；非逐击生效证明。'}]}));
+   effects:[{type:'damage',target:b.target,value:b.value,unit:'%',...(b.criticalOnly===true||requiresCritical(b.decoded.triggerConditions)?{criticalOnly:true}:{})}],note:'已解析的读取器配置，经用户采用；非逐击生效证明。'}]}));
  const rows=evaluateCatalog(sources,report.context).rows.map(r=>({...r,origin:'readerSupplement'}));
  return {...report,rows:[...report.rows,...rows]};
 }
