@@ -411,6 +411,16 @@
           "calculationNote": "分别强化所有已装备武器自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "所装备武器自身的魔力数值+25%；双持时两把分别生效",
+          "relation": "equipment-stat",
+          "target": "weapon",
+          "calculationNote": "提高的是所装备武器自身的魔力数值，不能直接乘到角色最终魔力面板。",
+          "existingRuleIds": [
+            "basic:1a101f308e1eaae6:1"
+          ],
+          "relatedSkillIds": []
         }
       }
     },
@@ -514,6 +524,16 @@
             "basic:cf4cc4324d7b87b7:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "每个Wave开始获得灵气：自身魔力+20%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:cf4cc4324d7b87b7:1"
+          ],
+          "relatedSkillIds": []
         }
       }
     },
@@ -613,6 +633,16 @@
           "relation": "attribute-change",
           "target": "self",
           "calculationNote": "条件属性加成（非Buff）：现实周日攻击力、法强、防御力、魔抗+5%；按游戏设备时间手动勾选，可与属性Buff并存，不套40秒时限。",
+          "existingRuleIds": [
+            "basic:90951140c1d42641:1"
+          ],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "现实时间为周日时，自身魔力+5%；属于条件属性加成",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
           "existingRuleIds": [
             "basic:90951140c1d42641:1"
           ],
@@ -740,6 +770,16 @@
           "relation": "attribute-change",
           "target": "self",
           "calculationNote": "复活Buff：攻击力、法强+30%，持续40秒；分别与鼓舞、增魔同组只计一项。",
+          "existingRuleIds": [
+            "basic:ee6342cbdb0251e7:1"
+          ],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "复活后自身魔力+30%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
           "existingRuleIds": [
             "basic:ee6342cbdb0251e7:1"
           ],
@@ -896,6 +936,16 @@
             "basic:3e86dffa826956a7:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "队伍至少2人装备魔兽同盟时，自身魔力提升：2人5%、3人10%、4人15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:3e86dffa826956a7:1"
+          ],
+          "relatedSkillIds": []
         }
       }
     },
@@ -1013,6 +1063,16 @@
             "basic:4633d985390976cc:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "武器栏和防具栏都空时，自身魔力+10%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:4633d985390976cc:1"
+          ],
+          "relatedSkillIds": []
         }
       }
     },
@@ -1083,6 +1143,16 @@
           "relation": "attribute-change",
           "target": "self",
           "calculationNote": "每Wave叠层，最多10层；需确认当前层数后计入。",
+          "existingRuleIds": [
+            "basic:5f6efbf8b35453d2:1"
+          ],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "每个Wave开始，自身魔力+2%，最多叠加10次",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
           "existingRuleIds": [
             "basic:5f6efbf8b35453d2:1"
           ],
@@ -1402,6 +1472,16 @@
           "relation": "attribute-change",
           "target": "self",
           "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "existingRuleIds": [
+            "basic:edc04a2cb5cbc357:1"
+          ],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "队伍至少2人装备英雄之绊时，自身魔力提升：2人7%、3人14%、4人21%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
           "existingRuleIds": [
             "basic:edc04a2cb5cbc357:1"
           ],
@@ -1855,6 +1935,17 @@
           "relation": "attribute-change",
           "target": "self",
           "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:8400b28b0f6069d3:1",
+            "basic:8400b28b0f6069d3:2"
+          ],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力常驻+10%；开场另受到魔力-20%的40秒减益",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻+10%与开场40秒减益-20%分开判断。",
           "existingRuleIds": [
             "basic:8400b28b0f6069d3:1",
             "basic:8400b28b0f6069d3:2"
@@ -2541,6 +2632,11 @@
           "id": "condition-2",
           "kind": "condition",
           "text": "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
+        },
+        {
+          "id": "magic-reference",
+          "kind": "effect",
+          "text": "魔力参与开场攻击力与魔力的大小比较，决定伤害加成分支；不改变魔力"
         }
       ],
       "tagDetails": {
@@ -2549,6 +2645,14 @@
           "relation": "stat-comparison",
           "target": "self",
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "魔力参与开场攻击力与魔力的大小比较，决定伤害加成分支；不改变魔力",
+          "relation": "stat-comparison",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
         }
@@ -2606,6 +2710,16 @@
           "relation": "attribute-change",
           "target": "self",
           "calculationNote": "开场Buff：勾选“开场Buff（40秒内）”时生效，过期后取消勾选。",
+          "existingRuleIds": [
+            "basic:7b7b9f7c806bbd9e:1"
+          ],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "每个Wave开始获得大灵气：自身魔力+35%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
           "existingRuleIds": [
             "basic:7b7b9f7c806bbd9e:1"
           ],
@@ -3020,6 +3134,11 @@
           "id": "condition-3",
           "kind": "condition",
           "text": "将自身法强的10%转换并加算到攻击力"
+        },
+        {
+          "id": "magic-reference",
+          "kind": "effect",
+          "text": "自身魔力作为转换参照量：装备机械时，开场将其10%加算到攻击力；不提高魔力"
         }
       ],
       "tagDetails": {
@@ -3031,6 +3150,14 @@
           "existingRuleIds": [
             "basic:0d0bdf3f7c6e0b5a:1"
           ],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力作为转换参照量：装备机械时，开场将其10%加算到攻击力；不提高魔力",
+          "relation": "stat-reference",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
+          "existingRuleIds": [],
           "relatedSkillIds": []
         }
       }
@@ -3258,6 +3385,16 @@
           "relation": "attribute-change",
           "target": "self",
           "calculationNote": "常驻属性（含降低）",
+          "existingRuleIds": [
+            "basic:eb83e614cc424c74:1"
+          ],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力-15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
           "existingRuleIds": [
             "basic:eb83e614cc424c74:1"
           ],
@@ -3771,6 +3908,16 @@
             "basic:b782149b137d2614:2"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力-20%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:b782149b137d2614:1"
+          ],
+          "relatedSkillIds": []
         }
       }
     },
@@ -3948,6 +4095,16 @@
             "basic:0aed639a3c185d89:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力+3%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:0aed639a3c185d89:1"
+          ],
+          "relatedSkillIds": []
         }
       }
     },
@@ -4075,6 +4232,16 @@
             "basic:c1b1fa0330ed3ca3:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:c1b1fa0330ed3ca3:1"
+          ],
+          "relatedSkillIds": []
         }
       }
     },
@@ -4173,6 +4340,11 @@
           "id": "condition-2",
           "kind": "condition",
           "text": "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
+        },
+        {
+          "id": "magic-reference",
+          "kind": "effect",
+          "text": "魔力参与开场攻击力与魔力的大小比较，决定伤害上限加成分支；不改变魔力"
         }
       ],
       "tagDetails": {
@@ -4181,6 +4353,14 @@
           "relation": "stat-comparison",
           "target": "self",
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "魔力参与开场攻击力与魔力的大小比较，决定伤害上限加成分支；不改变魔力",
+          "relation": "stat-comparison",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
         }
@@ -5072,6 +5252,14 @@
             "basic:b7e3b644c937e9da:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力作为转换参照量：其5%分别加算到防御力、魔抗；不提高魔力",
+          "relation": "stat-reference",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       }
     },
@@ -5498,6 +5686,16 @@
             "basic:faa4c35ca794565a:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "濒死触发魔导觉醒后，自身魔力+50%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:faa4c35ca794565a:1"
+          ],
+          "relatedSkillIds": []
         }
       }
     },
@@ -5611,6 +5809,16 @@
           "target": "armor",
           "calculationNote": "仅强化装备自身数值",
           "existingRuleIds": [],
+          "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "同时装备法杖和衣服时，法杖自身的魔力+50%",
+          "relation": "equipment-stat",
+          "target": "weapon",
+          "calculationNote": "提高的是所装备武器自身的魔力数值，不能直接乘到角色最终魔力面板。",
+          "existingRuleIds": [
+            "basic:e23ff7a9e123570f:1"
+          ],
           "relatedSkillIds": []
         }
       }
@@ -6470,6 +6678,1045 @@
           "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
           "existingRuleIds": [
             "basic:790933563ebc27aa:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "91eed5f60e0d0774",
+      "name": "魔力提升",
+      "url": "https://altema.jp/lastcloudia/gino/17",
+      "text": "魔力+2%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力+2%"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力+2%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:91eed5f60e0d0774:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "bd347cfc34080b43",
+      "name": "魔力提升2",
+      "url": "https://altema.jp/lastcloudia/gino/18",
+      "text": "魔力+5%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力+5%"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:bd347cfc34080b43:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "f679a748e1757e1e",
+      "name": "魔力提升3",
+      "url": "https://altema.jp/lastcloudia/gino/19",
+      "text": "魔力+8%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力+8%"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:f679a748e1757e1e:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "a19aeaa315b422e8",
+      "name": "魔力提升极",
+      "url": "https://altema.jp/lastcloudia/gino/20",
+      "text": "魔力+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力+15%"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力+15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:a19aeaa315b422e8:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "df6c512f0cfeb39c",
+      "name": "快速增魔",
+      "url": "https://altema.jp/lastcloudia/gino/103",
+      "text": "战斗开始时自动发动“灵气”效果：魔力+20%。",
+      "notes": "每个Wave开始施加于自身：魔力（法强）+20%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "每个Wave开始获得灵气：自身魔力+20%，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "每个Wave开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "灵气Buff持续40秒；同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "每个Wave开始获得灵气：自身魔力+20%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:df6c512f0cfeb39c:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "36c52eb155eecd1f",
+      "name": "自动增魔",
+      "url": "https://altema.jp/lastcloudia/gino/108",
+      "text": "常驻“灵气”效果：魔力+20%。",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "永久获得灵气：自身魔力+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "永久灵气Buff；同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "永久获得灵气：自身魔力+20%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:36c52eb155eecd1f:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "612fb4bdc81227cb",
+      "name": "感应",
+      "url": "https://altema.jp/lastcloudia/gino/115",
+      "text": "濒死时，魔力（法强）+20%。",
+      "notes": "濒死指当前HP为最大HP的30%及以下；离开该HP范围时不再满足条件。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "濒死时，自身魔力+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "濒死（HP≤30%）时生效；离开该范围失效"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "濒死时，自身魔力+20%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:612fb4bdc81227cb:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "da082e366781c43e",
+      "name": "月光",
+      "url": "https://altema.jp/lastcloudia/gino/120",
+      "text": "HP达到最大值时，魔力+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "满HP时，自身魔力+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "满HP时生效"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "满HP时，自身魔力+20%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:da082e366781c43e:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "240bff829bf6cbe6",
+      "name": "魔转相",
+      "url": "https://altema.jp/lastcloudia/gino/169",
+      "text": "魔力越高，普通攻击伤害越高。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力作为普通攻击伤害提升的参照量；不提高魔力"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "随魔力提高而提升普通攻击伤害"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "魔力与伤害提升量的换算公式尚待判断"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力作为普通攻击伤害提升的参照量；不提高魔力",
+          "relation": "stat-reference",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "6c8bc1de0d7802c2",
+      "name": "复仇增魔",
+      "url": "https://altema.jp/lastcloudia/gino/196",
+      "text": "受到伤害时，有概率提升魔力。",
+      "notes": "受到伤害时有5%概率给自身施加魔力（法强）+20%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "受到伤害后Buff生效时，自身魔力+20%，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "受到伤害时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "受伤Buff持续40秒；同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "受到伤害后Buff生效时，自身魔力+20%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:6c8bc1de0d7802c2:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ab0b9f05425aae49",
+      "name": "强化",
+      "url": "https://altema.jp/lastcloudia/gino/249",
+      "text": "必杀槽充满时，魔力+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "必杀槽充满时，自身魔力+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "必杀槽满时生效；槽不满时失效"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "必杀槽充满时，自身魔力+30%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:ab0b9f05425aae49:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9eb48a851890bcdc",
+      "name": "魔力提升4",
+      "url": "https://altema.jp/lastcloudia/gino/291",
+      "text": "魔力+12%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力+12%"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力+12%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:9eb48a851890bcdc:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "762fb2ff5d9381f0",
+      "name": "魔武转轮",
+      "url": "https://altema.jp/lastcloudia/gino/357",
+      "text": "魔力越高，物理攻击伤害越高。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力作为物理攻击伤害提升的参照量；不提高魔力"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "随魔力提高而提升物理攻击伤害"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "魔力与伤害提升量的换算公式尚待判断"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力作为物理攻击伤害提升的参照量；不提高魔力",
+          "relation": "stat-reference",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "c9a348f962867ee9",
+      "name": "魔导提升2",
+      "url": "https://altema.jp/lastcloudia/gino/412",
+      "text": "魔力、MP+5%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力+5%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "MP+5%"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:c9a348f962867ee9:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "0d7aece94701db3d",
+      "name": "魔导提升3",
+      "url": "https://altema.jp/lastcloudia/gino/433",
+      "text": "魔力、MP+8%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力+8%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "MP+8%"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:0d7aece94701db3d:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "96db78d77cedf5cf",
+      "name": "魔武转轮·改",
+      "url": "https://altema.jp/lastcloudia/gino/441",
+      "text": "魔力越高，物理攻击伤害大幅提升。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力作为物理攻击伤害大幅提升的参照量；不提高魔力"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "随魔力提高而大幅提升物理攻击伤害"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "魔力与伤害提升量的换算公式尚待判断"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力作为物理攻击伤害大幅提升的参照量；不提高魔力",
+          "relation": "stat-reference",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "82914b5361062d3a",
+      "name": "科学力提升",
+      "url": "https://altema.jp/lastcloudia/gino/490",
+      "text": "魔力+5%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力+5%"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:82914b5361062d3a:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ad7d118adbe024cf",
+      "name": "魔导提升",
+      "url": "https://altema.jp/lastcloudia/gino/561",
+      "text": "魔力、MP+3%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力+3%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "MP+3%"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力+3%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:ad7d118adbe024cf:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "c68e5d899b2196da",
+      "name": "不，是雨啦",
+      "url": "https://altema.jp/lastcloudia/gino/584",
+      "text": "我方角色陷入战斗不能时，自身获得魔力+30%的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "我方角色战斗不能后，自身获得魔力+30%的Buff，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "我方角色陷入战斗不能时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "魔力Buff持续40秒；同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "我方角色战斗不能后，自身获得魔力+30%的Buff，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:c68e5d899b2196da:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "484c7ab2b4b198dc",
+      "name": "夏日祭典",
+      "url": "https://altema.jp/lastcloudia/gino/592",
+      "text": "战斗开始时自动发动“灵气”和“再施法”效果：魔力+20%、咏唱速度+30%。",
+      "notes": "灵气使魔力（法强）+20%，再吟唱使魔法咏唱速度+30%；均作用于自身，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "每个Wave开始获得灵气：自身魔力+20%，持续40秒"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "再吟唱：魔法咏唱速度+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "每个Wave开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "灵气与再吟唱Buff持续40秒；各同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "每个Wave开始获得灵气：自身魔力+20%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:484c7ab2b4b198dc:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "756acbe5f4ea23ca",
+      "name": "魔导士心得",
+      "url": "https://altema.jp/lastcloudia/gino/641",
+      "text": "同时装备法杖和长袍时，法杖的魔力+50%，长袍的魔抗+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "同时装备法杖和长袍时，法杖自身的魔力+50%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "长袍自身的魔抗+50%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "同时装备法杖和长袍"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "增加的是装备自身数值，不是角色最终面板百分比"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "同时装备法杖和长袍时，法杖自身的魔力+50%",
+          "relation": "equipment-stat",
+          "target": "weapon",
+          "calculationNote": "提高的是所装备武器自身的魔力数值，不能直接乘到角色最终魔力面板。",
+          "existingRuleIds": [
+            "basic:756acbe5f4ea23ca:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ea3ec6051efc1995",
+      "name": "魔力下降回避",
+      "url": "https://altema.jp/lastcloudia/gino/954",
+      "text": "有概率使主动技能造成的魔力下降减益无效。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "有概率抵抗主动技能造成的魔力下降减益；不直接增加魔力"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "限主动技能造成的魔力下降减益"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "减益无效的概率和判定机制尚待判断"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "有概率抵抗主动技能造成的魔力下降减益；不直接增加魔力",
+          "relation": "debuff-protection",
+          "target": "self",
+          "calculationNote": "防止魔力下降，不按魔力提升处理。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "d01dcb7af94bea8f",
+      "name": "自动大增魔",
+      "url": "https://altema.jp/lastcloudia/gino/1088",
+      "text": "常驻“大灵气”效果：魔力+35%。",
+      "notes": "该状态作用于自身，无固定倒计时，按常驻增益处理。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "永久获得大灵气：自身魔力+35%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "永久大灵气Buff；同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "永久获得大灵气：自身魔力+35%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:d01dcb7af94bea8f:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "9807d98320c6a014",
+      "name": "感应2",
+      "url": "https://altema.jp/lastcloudia/gino/1143",
+      "text": "濒死时，魔力+30%。",
+      "notes": "濒死指当前HP为最大HP的30%及以下；离开该HP范围时不再满足条件。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "濒死时，自身魔力+30%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "濒死（HP≤30%）时生效；离开该范围失效"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "濒死时，自身魔力+30%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:9807d98320c6a014:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "209e4252243d4679",
+      "name": "快速大增魔",
+      "url": "https://altema.jp/lastcloudia/gino/1144",
+      "text": "战斗开始时自动发动“大灵气”效果：魔力+35%。",
+      "notes": "每个Wave开始施加于自身：魔力（法强）+35%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "每个Wave开始获得大灵气：自身魔力+35%，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "每个Wave开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "大灵气Buff持续40秒；同类型Buff同时只计已生效的最高一项"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "每个Wave开始获得大灵气：自身魔力+35%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:209e4252243d4679:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "f62b7d309ec81f27",
+      "name": "生命光环",
+      "url": "https://altema.jp/lastcloudia/gino/1164",
+      "text": "剩余HP越低，魔力提升越多（最高+50%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身剩余HP越低，魔力提升越多，最高+50%；当前提升量待确认"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "随自身剩余HP变化的条件属性加成，不是Buff"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "HP与魔力提升量的变化公式待确认，不能直接按最高50%计入"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身剩余HP越低，魔力提升越多，最高+50%；当前提升量待确认",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "只确认最高加成，当前数值取决于HP，不能把濒死直接当作+50%。",
+          "existingRuleIds": [
+            "basic:f62b7d309ec81f27:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "b01d5a17adf13b59",
+      "name": "裸身头脑",
+      "url": "https://altema.jp/lastcloudia/gino/1461",
+      "text": "未装备防具时，魔力+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "未装备防具时，自身魔力+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "空防具：未装备防具，不要求武器栏为空"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "未装备防具时，自身魔力+20%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:b01d5a17adf13b59:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "0618d7853a27d1e4",
+      "name": "魔力增加",
+      "url": "https://altema.jp/lastcloudia/gino/1476",
+      "text": "魔力+100。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "自身魔力固定+100"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "自身魔力固定+100",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "固定增加100点魔力，不是增加100%。",
+          "existingRuleIds": [
+            "basic:0618d7853a27d1e4:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "aa48351ee0991a93",
+      "name": "海洋洞察",
+      "url": "https://altema.jp/lastcloudia/gino/1694",
+      "text": "进行冰属性攻击时，该次伤害计算使用的魔力+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "进行冰属性攻击时，该次伤害计算使用的魔力+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "进行冰属性攻击时生效"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "只修正该次伤害计算所用魔力，不是常驻面板加成或持续Buff"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "进行冰属性攻击时，该次伤害计算使用的魔力+15%",
+          "relation": "attack-calculation-stat",
+          "target": "self",
+          "calculationNote": "只用于冰属性攻击的当次伤害计算；不是冰属性伤害直接+15%。",
+          "existingRuleIds": [
+            "basic:aa48351ee0991a93:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "00001521ecae775f",
+      "name": "禁书库的大精灵",
+      "url": "https://altema.jp/lastcloudia/gino/1802",
+      "text": "战斗开始时，若己方只有自身装备“禁书库的大精灵”，且恰好有1名其他友方装备“精灵骑士”，则魔力+25%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "开场满足己方指定技能配对条件时，自身魔力+25%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "战斗开始时判断"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "全队只有自身装备禁书库的大精灵，且恰好1名其他友方装备精灵骑士"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "开场满足己方指定技能配对条件时，自身魔力+25%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:00001521ecae775f:1"
+          ],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "b6f1305e6f78634c",
+      "name": "无尽的求知欲",
+      "url": "https://altema.jp/lastcloudia/gino/1813",
+      "text": "装备长袍时，战斗开始时将自身魔抗的10%加算到魔力。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic",
+          "kind": "effect",
+          "text": "装备长袍时，开场将自身魔抗的10%加算到魔力"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔抗作为属性转换的参照量"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备长袍时生效"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "战斗开始时触发"
+        },
+        {
+          "id": "condition-3",
+          "kind": "condition",
+          "text": "按魔抗数值转换加算，不是魔力百分比加成"
+        }
+      ],
+      "tagDetails": {
+        "魔力": {
+          "summary": "装备长袍时，开场将自身魔抗的10%加算到魔力",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "以开战时魔抗的10%换算加算值，不是魔力+10%，也不降低原魔抗。",
+          "existingRuleIds": [
+            "basic:b6f1305e6f78634c:1"
           ],
           "relatedSkillIds": []
         }
@@ -7583,6 +8830,318 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "魔力",
+      "assignments": [
+        {
+          "skillId": "91eed5f60e0d0774",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "bd347cfc34080b43",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "f679a748e1757e1e",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "a19aeaa315b422e8",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "df6c512f0cfeb39c",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "36c52eb155eecd1f",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "612fb4bdc81227cb",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "da082e366781c43e",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "240bff829bf6cbe6",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "1a101f308e1eaae6",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "6c8bc1de0d7802c2",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "cf4cc4324d7b87b7",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "90951140c1d42641",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "ab0b9f05425aae49",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "ee6342cbdb0251e7",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "3e86dffa826956a7",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "9eb48a851890bcdc",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "4633d985390976cc",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "5f6efbf8b35453d2",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "762fb2ff5d9381f0",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "c9a348f962867ee9",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "0d7aece94701db3d",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "96db78d77cedf5cf",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "82914b5361062d3a",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "edc04a2cb5cbc357",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "b7e3b644c937e9da",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "ad7d118adbe024cf",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "c68e5d899b2196da",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "484c7ab2b4b198dc",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "756acbe5f4ea23ca",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "8400b28b0f6069d3",
+          "partIds": [
+            "effect-1",
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "faa4c35ca794565a",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "ea3ec6051efc1995",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "e23ff7a9e123570f",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "2d772214490c52ba",
+          "partIds": [
+            "magic-reference"
+          ]
+        },
+        {
+          "skillId": "d01dcb7af94bea8f",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "7b7b9f7c806bbd9e",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "9807d98320c6a014",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "209e4252243d4679",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "f62b7d309ec81f27",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "0d0bdf3f7c6e0b5a",
+          "partIds": [
+            "magic-reference"
+          ]
+        },
+        {
+          "skillId": "b01d5a17adf13b59",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "0618d7853a27d1e4",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "eb83e614cc424c74",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "aa48351ee0991a93",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "b782149b137d2614",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "00001521ecae775f",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "b6f1305e6f78634c",
+          "partIds": [
+            "magic"
+          ]
+        },
+        {
+          "skillId": "0aed639a3c185d89",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "c1b1fa0330ed3ca3",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "07cab38a1e00eaa5",
+          "partIds": [
+            "magic-reference"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -7902,7 +9461,38 @@
         "ea81b15f2a9dc860",
         "f2f841598b8870ad",
         "d268368f04c8f840",
-        "790933563ebc27aa"
+        "790933563ebc27aa",
+        "91eed5f60e0d0774",
+        "bd347cfc34080b43",
+        "f679a748e1757e1e",
+        "a19aeaa315b422e8",
+        "9eb48a851890bcdc",
+        "82914b5361062d3a",
+        "0618d7853a27d1e4",
+        "df6c512f0cfeb39c",
+        "36c52eb155eecd1f",
+        "612fb4bdc81227cb",
+        "da082e366781c43e",
+        "240bff829bf6cbe6",
+        "6c8bc1de0d7802c2",
+        "ab0b9f05425aae49",
+        "762fb2ff5d9381f0",
+        "c9a348f962867ee9",
+        "0d7aece94701db3d",
+        "96db78d77cedf5cf",
+        "ad7d118adbe024cf",
+        "c68e5d899b2196da",
+        "484c7ab2b4b198dc",
+        "756acbe5f4ea23ca",
+        "ea3ec6051efc1995",
+        "d01dcb7af94bea8f",
+        "9807d98320c6a014",
+        "209e4252243d4679",
+        "f62b7d309ec81f27",
+        "b01d5a17adf13b59",
+        "aa48351ee0991a93",
+        "00001521ecae775f",
+        "b6f1305e6f78634c"
       ]
     },
     "hp": {
@@ -7934,7 +9524,63 @@
         "d268368f04c8f840",
         "790933563ebc27aa"
       ]
+    },
+    "magic": {
+      "label": "魔力",
+      "displayOrder": [
+        "91eed5f60e0d0774",
+        "bd347cfc34080b43",
+        "f679a748e1757e1e",
+        "a19aeaa315b422e8",
+        "9eb48a851890bcdc",
+        "82914b5361062d3a",
+        "0618d7853a27d1e4",
+        "0aed639a3c185d89",
+        "c1b1fa0330ed3ca3",
+        "df6c512f0cfeb39c",
+        "36c52eb155eecd1f",
+        "612fb4bdc81227cb",
+        "da082e366781c43e",
+        "240bff829bf6cbe6",
+        "1a101f308e1eaae6",
+        "6c8bc1de0d7802c2",
+        "cf4cc4324d7b87b7",
+        "90951140c1d42641",
+        "ab0b9f05425aae49",
+        "ee6342cbdb0251e7",
+        "3e86dffa826956a7",
+        "4633d985390976cc",
+        "5f6efbf8b35453d2",
+        "762fb2ff5d9381f0",
+        "c9a348f962867ee9",
+        "0d7aece94701db3d",
+        "96db78d77cedf5cf",
+        "edc04a2cb5cbc357",
+        "b7e3b644c937e9da",
+        "ad7d118adbe024cf",
+        "c68e5d899b2196da",
+        "484c7ab2b4b198dc",
+        "756acbe5f4ea23ca",
+        "8400b28b0f6069d3",
+        "faa4c35ca794565a",
+        "ea3ec6051efc1995",
+        "e23ff7a9e123570f",
+        "2d772214490c52ba",
+        "d01dcb7af94bea8f",
+        "7b7b9f7c806bbd9e",
+        "9807d98320c6a014",
+        "209e4252243d4679",
+        "f62b7d309ec81f27",
+        "0d0bdf3f7c6e0b5a",
+        "b01d5a17adf13b59",
+        "eb83e614cc424c74",
+        "aa48351ee0991a93",
+        "b782149b137d2614",
+        "00001521ecae775f",
+        "b6f1305e6f78634c",
+        "07cab38a1e00eaa5"
+      ]
     }
   },
-  "activeView": "hp"
+  "activeView": "magic"
 }

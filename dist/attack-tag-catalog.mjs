@@ -574,15 +574,24 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "分别强化所有已装备武器自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "所装备武器自身的魔力数值+25%；双持时两把分别生效",
+          "relation": "equipment-stat",
+          "target": "weapon",
+          "calculationNote": "提高的是所装备武器自身的魔力数值，不能直接乘到角色最终魔力面板。",
+          "existingRuleIds": [
+            "basic:1a101f308e1eaae6:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "武器自身的魔力数值+25%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "作用于所装备武器自身的数值；装备两把武器时分别生效"
       ]
@@ -696,14 +705,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:cf4cc4324d7b87b7:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "每个Wave开始获得灵气：自身魔力+20%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:cf4cc4324d7b87b7:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "灵气带来的法强提升",
         "保护带来的物理减伤",
         "魔法屏障带来的魔法减伤"
       ],
@@ -820,15 +839,25 @@ export const ATTACK_TAG_CATALOG = {
             "basic:90951140c1d42641:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "现实时间为周日时，自身魔力+5%；属于条件属性加成",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:90951140c1d42641:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "法强+5%",
         "魔抗+5%"
       ],
       "remainingConditions": [
@@ -973,14 +1002,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:ee6342cbdb0251e7:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "复活后自身魔力+30%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:ee6342cbdb0251e7:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "复活后法强+30%",
         "暴击率+15%"
       ],
       "remainingConditions": [
@@ -1157,15 +1196,25 @@ export const ATTACK_TAG_CATALOG = {
             "basic:3e86dffa826956a7:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "队伍至少2人装备魔兽同盟时，自身魔力提升：2人5%、3人10%、4人15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:3e86dffa826956a7:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "法强提升",
         "魔抗提升"
       ],
       "remainingConditions": [
@@ -1296,15 +1345,25 @@ export const ATTACK_TAG_CATALOG = {
             "basic:4633d985390976cc:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "武器栏和防具栏都空时，自身魔力+10%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:4633d985390976cc:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "法强+10%",
         "魔抗+10%"
       ],
       "remainingConditions": [
@@ -1382,15 +1441,25 @@ export const ATTACK_TAG_CATALOG = {
             "basic:5f6efbf8b35453d2:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "每个Wave开始，自身魔力+2%，最多叠加10次",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:5f6efbf8b35453d2:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "法强提升",
         "魔抗提升",
         "科学类攻击魔法威力提升"
       ],
@@ -1760,15 +1829,25 @@ export const ATTACK_TAG_CATALOG = {
             "basic:edc04a2cb5cbc357:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "队伍至少2人装备英雄之绊时，自身魔力提升：2人7%、3人14%、4人21%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:edc04a2cb5cbc357:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "法强提升",
         "魔抗提升"
       ],
       "remainingConditions": [
@@ -2304,16 +2383,25 @@ export const ATTACK_TAG_CATALOG = {
             "basic:8400b28b0f6069d3:2"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力常驻+10%；开场另受到魔力-20%的40秒减益",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻+10%与开场40秒减益-20%分开判断。",
+          "existingRuleIds": [
+            "basic:8400b28b0f6069d3:1",
+            "basic:8400b28b0f6069d3:2"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "法强常驻+10%",
-        "开场法强-20%的减益"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "战斗开始时施加减益",
         "开场减益持续40秒，与常驻加成分开判断"
@@ -3114,6 +3202,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
+        },
+        {
+          "id": "magic-reference",
+          "kind": "effect",
+          "text": "魔力参与开场攻击力与魔力的大小比较，决定伤害加成分支；不改变魔力"
         }
       ],
       "tagDetails": {
@@ -3124,10 +3217,19 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "魔力参与开场攻击力与魔力的大小比较，决定伤害加成分支；不改变魔力",
+          "relation": "stat-comparison",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -3195,14 +3297,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:7b7b9f7c806bbd9e:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "每个Wave开始获得大灵气：自身魔力+35%，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:7b7b9f7c806bbd9e:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "大灵气带来的法强提升",
         "保护带来的物理减伤",
         "魔法屏障带来的魔法减伤"
       ],
@@ -3692,6 +3804,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-3",
           "kind": "condition",
           "text": "将自身法强的10%转换并加算到攻击力"
+        },
+        {
+          "id": "magic-reference",
+          "kind": "effect",
+          "text": "自身魔力作为转换参照量：装备机械时，开场将其10%加算到攻击力；不提高魔力"
         }
       ],
       "tagDetails": {
@@ -3704,10 +3821,19 @@ export const ATTACK_TAG_CATALOG = {
             "basic:0d0bdf3f7c6e0b5a:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力作为转换参照量：装备机械时，开场将其10%加算到攻击力；不提高魔力",
+          "relation": "stat-reference",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -3982,14 +4108,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:eb83e614cc424c74:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力-15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:eb83e614cc424c74:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "法强-15%",
         "魔抗+10%"
       ],
       "remainingConditions": []
@@ -4592,15 +4728,25 @@ export const ATTACK_TAG_CATALOG = {
             "basic:b782149b137d2614:2"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力-20%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:b782149b137d2614:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "法强-20%",
         "魔抗-20%"
       ],
       "remainingConditions": [
@@ -4811,15 +4957,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:0aed639a3c185d89:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力+3%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:0aed639a3c185d89:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "法强+3%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -4966,15 +5121,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:c1b1fa0330ed3ca3:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "自身魔力+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "existingRuleIds": [
+            "basic:c1b1fa0330ed3ca3:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "法强+8%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -5084,6 +5248,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
+        },
+        {
+          "id": "magic-reference",
+          "kind": "effect",
+          "text": "魔力参与开场攻击力与魔力的大小比较，决定伤害上限加成分支；不改变魔力"
         }
       ],
       "tagDetails": {
@@ -5094,10 +5263,19 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔力": {
+          "summary": "魔力参与开场攻击力与魔力的大小比较，决定伤害上限加成分支；不改变魔力",
+          "relation": "stat-comparison",
+          "target": "self",
+          "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "魔力"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -5340,8 +5518,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 12,
-    "partial": 75,
+    "ready": 14,
+    "partial": 73,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

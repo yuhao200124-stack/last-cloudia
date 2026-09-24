@@ -52,12 +52,12 @@ test('cumulative judgments agree across views and do not claim unfinished condit
  }
  assert.equal(entry(1571).judgment,'ready');assert.deepEqual(entry(1571).remainingEffects,[]);
  assert.deepEqual(entry(796).remainingEffects,[]);
- assert.deepEqual(entry(304).remainingEffects,['法强+10%','魔抗+10%']);
+ assert.deepEqual(entry(304).remainingEffects,['魔抗+10%']);
  for(const n of [114,118,284,293,304,473,507,636,666,788,890,914,1133,1171,1205,1256,1555]){
   assert.equal(entry(n).judgment,'partial',entry(n).name);assert(entry(n).remainingConditions.length,entry(n).name);
  }
  assert.deepEqual(entry(419).remainingEffects,['魔抗+8%']);
- assert.equal(catalog.entries.length,147);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,147);
+ assert.equal(catalog.entries.length,178);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,178);
  assert.deepEqual(catalog.views.all.displayOrder.slice(0,87),catalog.views.attack.displayOrder);
  const rows=skillLabelRows(data,defense);
  const single=filterLabelRows(rows,'御子与守护者');assert.equal(single.length,1);
