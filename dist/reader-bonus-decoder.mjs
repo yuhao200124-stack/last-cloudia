@@ -1,5 +1,6 @@
 import {PROCESS_SIGNATURES,PROCESS_DOCUMENTATION} from './reader-process-evidence.mjs';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
+import {READ_ID_TO_SOURCE_ID,decodeKnownBlessingEntry} from './account-blessings.mjs';
 const eq=(field,value)=>({field,op:'eq',value}), inside=(field,value)=>({field,op:'in',value});
 const finite=v=>typeof v==='number'&&Number.isFinite(v);
 const ELEMENTS=['none','fire','ice','earth','thunder','light','dark'];
@@ -11,6 +12,10 @@ const AUDIT={1050513:'装备条件下受伤修正',1050406:'指定敌类型减�
 const SOURCES={70001409:['trans-life-magic','命导提升'],50222014:['water-king','水王级魔术师'],50222022:['mentor','指导者'],24450:['magic-guide-max','魔导提升极'],28176:['magic-steady-max','魔常提升极'],28180:['killer-cap-v','特攻界限突破V'],28607:['knowledge-wall-ii','知识之壁II'],25400:['auto-recast','自动再咏唱'],27830:['auto-heal-ii','自动治疗II'],26505:['moonlight-ii','月光II'],27552:['ice-ultimate-boost','冰系究极增幅'],26634:['ice-critical-revised','冰属性暴击·改'],27183:['mage-mindset-ii','魔导士心得II'],27362:['staff-ultimate-boost','法杖究极增幅'],27365:['robe-ultimate-boost','长袍究极增幅'],28608:['giant-purge-v','巨型净化V'],26421:['penetration','贯导'],55782:['magic-resonance','魔术共鸣'],55783:['short-incantation','缩短咏唱'],55784:['extraordinary-magician','超规格的魔术师'],180:['mp-up-max','MP提升极'],620:['critical-up-iii','暴击提升III'],800:['proud-force','骄傲之力'],14500:['special-boost','特攻增幅'],27414:['killer-cap-iii','特攻界限突破III'],17000:['ardor','锐气'],24810:['ice-high-boost','冰系超级增幅'],26466:['ice-attack-iii','冰属性攻击提升III'],19100:['ice-critical-boost','冰属性暴击提升'],26100:['spell-link','法术联结'],28333:['giant-purge-iii','巨型净化III'],27460:['giant-shield-ii','巨型护盾II'],70001276:['trans-ultimate-ii','超必杀技增幅II'],70001419:['trans-reduction','受到伤害减轻-20%'],70001312:['trans-robe-ii','长袍精通II'],70001418:['trans-giant-shield','巨型护盾'],70001399:['trans-killer-cap','特攻界限突破'],70001467:['trans-magic-weakness','魔法弱点增幅'],108119:['roxy-staff','洛琪希之杖'],203110:['roxy-robe','洛琪希的衣服']};
 
 function decode(entry) {
+ if(READ_ID_TO_SOURCE_ID[entry.raw?.localId]&&!entry.decoded?.accountBlessing){
+  entry=decodeKnownBlessingEntry(entry);
+  if(!entry.decoded?.accountBlessing)return [{...entry,effectType:'unknown',target:'已知加护 ID，参数待核对',value:null,unit:'',decoded:{},decodeIssue:'此 ID 在账户加护对照中，但本次来源或参数结构不同；保留原始记录，暂不计入。'}];
+ }
  const r=entry.raw,p=r?.values,pid=entry.processId,doc=PROCESS_DOCUMENTATION[pid];
  if(!r||!Array.isArray(p)||!p.every(Number.isSafeInteger))return [entry];
  const source=SOURCES[r.localId],original={...entry,sourceName:source?.[1]||entry.sourceName,decoded:{...entry.decoded,...(source?{sourceId:source[0]}:{}),documentation:doc}};

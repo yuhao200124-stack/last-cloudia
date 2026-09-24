@@ -44,6 +44,9 @@ The origin category, function, trigger, operation flag, full condition arrays, s
 parameters, zero tail slots, and secondary parameters must still match. Decode the
 value from the imported raw slot; never substitute the saved account value. Six-stat
 components and variable/missing parameter wrappers remain strict.
+An identified control ID with a rejected signature is retained as unresolved; the
+generic process decoder cannot bypass that rejection. Account source matching also
+requires the validated blessing identity, not just equal IDs and condition labels.
 
 Confirmed records now carry the explicit account-blessing name and a description
 using their imported value. The reader inventory displays them in a separate,

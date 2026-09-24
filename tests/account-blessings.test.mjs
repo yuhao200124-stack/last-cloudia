@@ -72,8 +72,13 @@ test('blessing compatibility changes only the exporter label; new values and unv
  const d=decodeKnownBlessingEntry(b);assert.equal(d.value,3.14);assert.match(d.decoded.accountBlessing.description,/3.14%/);
  const report=evaluateCatalog(catalog,{attack:'ultimate',element:'fire'}),rows=compareCandidates(websiteCandidates(report),[d],{},report.context);
  assert(Math.abs(rows.find(r=>r.sourceId==='account-blessing-60003340').difference-1.13)<1e-10);
- for(const change of [r=>r.values[0]=2,r=>r.values[9]=1,r=>r.conditionParams[0]=0,r=>r.function='process1050450',r=>r.affiliation=1,r=>r.component='variable_parameter_not_actual',r=>r.component='mapped_parameter_missing',r=>r.component='mul']){
+ for(const change of [r=>r.values[0]=2,r=>r.values[9]=1,r=>r.conditionParams[0]=0,r=>r.function='process1050450',r=>r.affiliation=1,r=>r.masterCondition=123,r=>r.component='variable_parameter_not_actual',r=>r.component='mapped_parameter_missing',r=>r.component='mul']){
   const bad=structuredClone(b);change(bad.raw);assert.equal(decodeKnownBlessingEntry(bad).decoded,undefined);
+  const imported=validateBattleEntry(reportFrom([bad])).units[0].bonuses;
+  const compared=compareCandidates(websiteCandidates(report),imported,{},report.context);
+  assert.equal(compared.find(r=>r.sourceId==='account-blessing-60003340').compatible,false);
+  assert.equal(readerBonusState(imported[0],report.context).status,'unresolved');
+  assert(!buildBonusComparison(compared,imported,report.context).some(g=>g.reader.length));
  }
  const stats=structuredClone(RAW_BLESSING_RECORDS.find(b=>b.effectType==='stat'));stats.raw.component='mapped_configured_parameter';
  assert.equal(decodeKnownBlessingEntry(stats).decoded,undefined);

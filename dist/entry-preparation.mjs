@@ -97,7 +97,7 @@ export function compareCandidates(web,bonuses,mappings={},context) {
   if(!Object.hasOwn(mappings,w.id)&&matches.length>1&&context){const qualified=matches.filter(b=>readerScopeAllows(b,context));if(qualified.length)matches=qualified;}
   const reader=matches.length===1?matches[0]:null;
   const scopeAllowed=readerScopeAllows(reader,context);
-  const compatible=reader&&scopeAllowed&&(!localId||(reader.decoded&&JSON.stringify(reader.decoded.conditions)===JSON.stringify(w.condition)))&&reader.effectType===w.effect.type&&reader.target===w.effect.target&&(reader.unit||'')===(w.effect.unit||'')&&typeof reader.value===typeof w.effect.value;
+  const compatible=reader&&scopeAllowed&&(!localId||(reader.decoded?.accountBlessing?.localId===Number(localId)&&reader.decoded.sourceId===w.sourceId&&JSON.stringify(reader.decoded.conditions)===JSON.stringify(w.condition)))&&reader.effectType===w.effect.type&&reader.target===w.effect.target&&(reader.unit||'')===(w.effect.unit||'')&&typeof reader.value===typeof w.effect.value;
   const difference=compatible&&num(reader.value)!==null&&num(w.effect.value)!==null?reader.value-w.effect.value:null;
   return {...w,reader,compatible:Boolean(compatible),difference,comparison:!reader?(matches.length>1?'多个候选，待对应':'尚未对应'):
    !scopeAllowed?'读取器条件不满足或待确认':!compatible?'口径不同，不能直接替换':reader.value==null?'读取值未解析':JSON.stringify(reader.value)===JSON.stringify(w.effect.value)?'数值一致，仍待确认':'数值不同，待选择'};
