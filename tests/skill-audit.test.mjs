@@ -85,24 +85,36 @@ test('condition tags display and search; edited effects drop stale tags from loa
  assert(!edited.search('光头猴').includes('条件标签'));
 });
 
-test('review status covers remaining effects and metadata stays outside editable descriptions and sources',()=>{
- const complete=primary.find(r=>r.basicStats?.status==='ready'&&r.basicStats.remaining===false);
- const partial=primary.find(r=>r.basicStats?.status==='ready'&&r.basicStats.remaining===true);
+test('judgment column replaces SC and sources while retaining complete and partial effect coverage',()=>{
+ const complete=skill(8),partial=skill(339),opening=skill(390);
  const unknown=primary.find(r=>!r.basicStats&&!r.skillTags);
  const page=boot(),html=page.elements.get('#tableArea').innerHTML;
- const rowHtml=(markup,row)=>[...markup.matchAll(/<tr class="judgment-[\s\S]*?<\/tr>/g)].find(m=>m[0].includes(`data-edit-key="skill:${row.id}"`))?.[0];
- assert.match(rowHtml(html,complete),/data-judgment="ready"/);
- assert.match(rowHtml(html,partial),/data-judgment="partial"/);
- assert.match(rowHtml(html,unknown),/data-judgment="unknown"/);
+ const rowHtml=(markup,row)=>[...markup.matchAll(/<tr data-skill-id="[^"]+"[\s\S]*?<\/tr>/g)].find(m=>m[0].includes(`data-skill-id="${row.id}"`))?.[0];
+ for(const [row,state,label] of [[complete,'ready','已完整判断'],[partial,'partial','判断部分'],[opening,'partial','判断部分'],[unknown,'unknown','没办法判断']]){
+  const markup=rowHtml(html,row);
+  assert(markup.includes(`data-judgment="${state}"`));
+  assert(markup.includes(`class="judgment-label judgment-${state}">${label}</span>`));
+  assert(!/<tr[^>]*class="judgment-/.test(markup));
+  const judgment=markup.match(/<td class="judgment-cell">([\s\S]*?)<\/td>/)[0];
+  assert(!judgment.includes('data-edit-field'));
+  assert(!markup.replace(judgment,'').includes(`judgment-${state}`));
+ }
+ assert.match(rowHtml(html,complete),/已判断标签：MP/);
+ const partialTags=rowHtml(html,partial).match(/<td class="skill-tags-cell">([\s\S]*?)<\/td>/)[1];
+ assert.match(partialTags,/已判断标签：攻击力/);
+ assert(!partialTags.includes('已判断标签：类型追加'));
+ assert.match(partialTags,/其余效果尚未全部贴标签/);
  for(const sheet of data.sheetOrder){
   const markup=boot({},sheet).elements.get('#tableArea').innerHTML;
-  for(const match of markup.matchAll(/<td[^>]*data-edit-field="effect"[^>]*>([\s\S]*?)<\/td>/g))assert(!/skill-stat-metadata|skill-condition-tags|skill-judgment-label/.test(match[1]));
+  assert(!/data-edit-field="(?:sc|sources)"|source-list|<th[^>]*>SC<\/th>|<th>获得方式<\/th>/.test(markup));
+  for(const match of markup.matchAll(/<td[^>]*data-edit-field="effect"[^>]*>([\s\S]*?)<\/td>/g))assert(!/skill-stat-metadata|skill-condition-tags|judgment-label/.test(match[1]));
  }
- const sourceCell=rowHtml(html,complete).match(/<td[^>]*data-edit-field="sources"[^>]*>([\s\S]*?)<\/td>/)[0];
- assert.match(sourceCell,/skill-stat-metadata/);
- assert(!sourceCell.match(/data-edit-value="([^"]*)"/)[1].includes('已完整判断'));
- const edited=boot({'lc-sheet-table:cell-edits-v1':{[`skill:${complete.id}`]:{effect:'自定义效果'}}});
+ const edits={[`skill:${complete.id}`]:{effect:'自定义效果',sc:'19',sources:'用户保存的来源'}};
+ const edited=boot({'lc-sheet-table:cell-edits-v1':edits,'lc-sheet-table:sc-calculator-v1':{skillIds:[complete.id],characterId:'',activeBreaks:[]}});
  const editedRow=rowHtml(edited.elements.get('#tableArea').innerHTML,complete);
  assert.match(editedRow,/data-judgment="unknown"/);
  assert(!editedRow.includes('skill-stat-metadata'));
+ assert(!editedRow.includes('用户保存的来源'));
+ assert.equal(edited.window.LC_LOADOUT_CALCULATOR.snapshot().items[0].sc,19);
+ assert.deepEqual(JSON.parse(edited.saved.get('lc-sheet-table:cell-edits-v1')),edits);
 });
