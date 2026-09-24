@@ -1,6 +1,6 @@
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {criticalDamageEffect} from './critical-options.mjs?v=20260924-critical-link';
-import {decisionKey} from './entry-preparation.mjs?v=20260924-critical-link';
+import {criticalDamageEffect} from './critical-options.mjs?v=20260924-reader-choice';
+import {decisionKey} from './entry-preparation.mjs?v=20260924-reader-choice';
 const numeric=value=>typeof value==='number'&&Number.isFinite(value);
 export const effectSelectionKey=row=>JSON.stringify([row.id,row.effect,row.condition]);
 const groupKey=e=>JSON.stringify([e.type,e.target,e.unit,...(e.criticalOnly?['critical']:[])]);

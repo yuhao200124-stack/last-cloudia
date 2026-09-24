@@ -1,4 +1,4 @@
-import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-critical-link';
+import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-reader-choice';
 /** Reusable, description-matched rule templates. No imported content is executable. */
 import { CONDITION_FIELDS } from './effect-rule-engine.mjs';
 

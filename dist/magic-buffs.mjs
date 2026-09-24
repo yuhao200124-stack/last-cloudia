@@ -1,5 +1,5 @@
-import {projectAttackLayers} from './attack-layers.mjs?v=20260924-critical-link';
-import {SUPPORT_BUFFS,normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-critical-link';
+import {projectAttackLayers} from './attack-layers.mjs?v=20260924-reader-choice';
+import {SUPPORT_BUFFS,normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-reader-choice';
 const normalized=s=>String(s||'').replace(/\s|[,，。、]/g,'').replaceAll('＋','+');
 export function magicBuffOptions(profile) {
  return SUPPORT_BUFFS.flatMap(def=>{
