@@ -134,11 +134,27 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    return `<tr><td><b>${label}</b></td><td><strong class="entry-panel-total" data-website-panel="${k}">${esc(value)}</strong>${p.value==null?`<small>已算部分：${esc(p.subtotal??'—')}</small>`:'<small>本次勾选加成计算结果</small>'}${difference}${p.buffs.length?`<small>入场前面板（实时增益前）：${esc(p.beforeBuff??'—')}</small>`:''}${p.issues.map(msg=>`<small class="entry-panel-missing">${esc(msg)}</small>`).join('')}<details data-entry-details="stat:${k}"><summary>计算明细与加成来源</summary><ol class="entry-panel-steps">${p.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><ul class="entry-source-list">${p.sources.map(s=>sourceLine(s.sourceName,s.effect,compared.findIndex(r=>r.sourceId===s.sourceId&&r.ruleId===s.ruleId&&r.index===s.effectIndex))).join('')||'<li>无额外属性加成</li>'}</ul></details></td><td>${esc(observed??'未读到')}<small>入场最终面板${k==='hp'||k==='mp'?'（上限）':''}</small></td><td><select data-entry-stat="${k}" aria-label="${label}面板来源">${option('pending','待决定',d.choice||'pending')}${p.value!=null?option('website','网站',d.choice):''}${observed!=null?option('reader','读取器',d.choice):''}${option('manual','手动',d.choice)}${option('blessed','基础＋加护',d.choice)}${option('base','角色基础',d.choice)}</select><input data-entry-stat-value="${k}" type="number" min="0" max="100000000" step="1" value="${esc(d.value??'')}" aria-label="${label}手动面板"${d.choice==='manual'?'':' hidden'}></td></tr>`;
   }).join('');
   renderBonusReview();
-  for(const el of document.querySelectorAll('[data-entry-details]'))if(openDetails.has(el.dataset.entryDetails))el.open=true;
   const mapped=new Set(compared.map(r=>r.reader?.id).filter(Boolean));
-  const unmatched=readerBonuses.filter(b=>!mapped.has(b.id));
-  $('entryUnmatchedCount').textContent=`其余读取记录与待解析项（${unmatched.length}）`;
-  $('entryUnmatched').innerHTML=unmatched.map(b=>{const status=readerBonusState(b,candidate.context);return `<li><b>${esc(b.sourceName||b.id)}</b>：${esc(b.target||b.effectType||'未解析')} ${esc(b.value??'数值未解析')}${esc(b.unit||'')}<small>${esc(status.reason)}${b.decoded?.note?`；${esc(b.decoded.note)}`:''}</small><details><summary>原始证据</summary>${b.decoded?.documentation?`<p>游戏脚本：${esc(b.decoded.documentation.description)}</p>`:''}<pre>${esc(JSON.stringify(b.raw??b,null,2))}</pre></details></li>`;}).join('')||'<li>没有未对应项。</li>';
+  const blessings=readerBonuses.filter(b=>b.decoded?.accountBlessing);
+  $('entryReadBlessingsDetails').hidden=!blessings.length;
+  $('entryReadBlessingsCount').textContent=`读取器账户加护（${blessings.length}）`;
+  $('entryReadBlessings').innerHTML=blessings.map(b=>{
+   const status=readerBonusState(b,candidate.context);
+   const removed=['inactive','disabled','removed'].includes(b.state)||b.raw?.buffRemoved===1||b.raw?.buffIgnored===1||b.raw?.buffEnabled===0;
+   const webRows=compared.filter(r=>r.reader?.id===b.id);
+   const excluded=webRows.length&&webRows.every(r=>selected[decisionKey(r)]?.choice==='exclude');
+   const reason=removed?status.reason:b.effectType==='defense'?'减伤效果：已识别，单独保留，不加入输出增伤或六维面板。':
+    excluded?'网站未计入：你已删除或排除此项；读取记录保留。':
+    candidate.context.accountBlessings===false?'网站未计入：账户加护已关闭；读取记录保留。':
+    mapped.has(b.id)?'已对应网站项目；采用数据及删除状态以上方选择为准。':
+    status.status==='active'?'符合当前条件，网站尚未对应。':status.reason||'条件待确认。';
+   return `<li data-reader-blessing="${esc(b.decoded.accountBlessing.localId)}"><b>${esc(b.sourceName)}</b><div>${esc(b.decoded.accountBlessing.description)}</div><small>${esc(reason)}</small><details data-entry-details="blessing:${esc(b.id)}"><summary>原始证据</summary><p>来源：裸装对照确认的账户加护 · 技能 ID ${esc(b.raw.localId)}。这是读取到的配置，非逐击触发证明。</p><pre>${esc(JSON.stringify(b.raw,null,2))}</pre></details></li>`;
+  }).join('');
+  const unmatched=readerBonuses.filter(b=>!mapped.has(b.id)&&!b.decoded?.accountBlessing);
+  const unresolved=unmatched.filter(b=>readerBonusState(b,candidate.context).status==='unresolved').length;
+  $('entryUnmatchedCount').textContent=`其他读取记录（${unmatched.length}，其中 ${unresolved} 项待解析）`;
+  $('entryUnmatched').innerHTML=unmatched.map(b=>{const status=readerBonusState(b,candidate.context);return `<li><b>${esc(b.sourceName||b.id)}</b>：${esc(b.target||b.effectType||'未解析')} ${esc(b.value??'数值未解析')}${esc(b.unit||'')}<small>${esc(status.reason)}${b.decoded?.note?`；${esc(b.decoded.note)}`:''}</small><details><summary>原始证据</summary>${b.decoded?.documentation?`<p>游戏脚本：${esc(b.decoded.documentation.description)}</p>`:''}<pre>${esc(JSON.stringify(b.raw??b,null,2))}</pre></details></li>`;}).join('')||'<li>没有其他读取记录。</li>';
+  for(const el of document.querySelectorAll('[data-entry-details]'))if(openDetails.has(el.dataset.entryDetails))el.open=true;
  }
  function initialize() {
   initialized=true;

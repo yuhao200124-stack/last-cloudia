@@ -150,6 +150,9 @@ export const ACCOUNT_BLESSING_CATALOG = ACCOUNT_BLESSING_DEFINITIONS.map(d=>({
     note:d.type==='stat'?'读取器战斗最终面板已包含生效属性时，不得再次乘入加护。':'依据process参数说明核对配置条件；外层condition实现和逐击执行未验证，不根据Buff清单认定已触发。'}]
 }));
 function sameArray(a,b){return Array.isArray(a)&&Array.isArray(b)&&a.length===b.length&&a.every((v,i)=>v===b[i]);}
+// v0.36's damageFunctionMap names these already-stored scalar parameters.
+// This is an exporter label change, not a different game operation or proof of activation.
+const mappedConfigurationProcesses=new Set([1050253,1050463,1050415,1050200,1050513]);
 /** Return the original entry unchanged unless its complete known process signature is valid.
  * Values are decoded from this entry, never substituted with the account defaults.
  * The original candidate/observed state and raw evidence are preserved. */
@@ -158,10 +161,12 @@ export function decodeKnownBlessingEntry(entry) {
   const expected=recordsByLocalId.get(entry.raw.localId);
   if(!expected)return entry;
   const raw=entry.raw,source=expected.raw;
+  const sameComponent=raw.component===source.component||
+    (source.component==='unmapped_operation'&&raw.component==='mapped_configured_parameter'&&mappedConfigurationProcesses.has(entry.processId));
   if(entry.processId!==expected.processId||entry.conditionId!==expected.conditionId||raw.function!==source.function||
     raw.masterFunction!==source.masterFunction||raw.masterCondition!==source.masterCondition||
     !sameArray(raw.conditionParams,source.conditionParams)||!sameArray(raw.masterConditionParams,source.masterConditionParams)||
-    raw.operationFlag!==source.operationFlag||raw.component!==source.component||raw.trigger!==source.trigger)return entry;
+    raw.affiliation!==source.affiliation||raw.operationFlag!==source.operationFlag||!sameComponent||raw.trigger!==source.trigger)return entry;
   const d=ACCOUNT_BLESSING_DEFINITIONS.find(x=>x.localId===raw.localId),p=raw.values;
   if(!Array.isArray(p)||p.length!==source.values.length||p.some(v=>!Number.isSafeInteger(v)))return entry;
   // Only the documented value can vary. Scope, unused slots and secondary cap multipliers must match.
@@ -169,7 +174,10 @@ export function decodeKnownBlessingEntry(entry) {
   if(d.type==='stat'&&(raw.statType!==source.statType||raw.flags!==source.flags||raw.add!==0||raw.postAdd!==0||raw.mul!==p[1]))return entry;
   const value=p[d.parameterIndex]/(d.unit==='%'?100:1);
   if(!Number.isFinite(value))return entry;
-  return {...entry,effectType:d.type,target:d.target,value,unit:d.unit,
+  const actual=describe(entry);
+  return {...entry,sourceName:d.name,effectType:d.type,target:d.target,value,unit:d.unit,
     decoded:{sourceId:d.sourceId,conditions:d.conditions,processId:d.processId,conditionId:d.conditionId,
-      parameterIndex:d.parameterIndex,evidence:d.evidence,externalConditionImplementationVerified:false,appliedToHitVerified:false}};
+      parameterIndex:d.parameterIndex,evidence:d.evidence,
+      accountBlessing:{localId:d.localId,description:actual.text,identificationBasis:ACCOUNT_BLESSING_META.identificationBasis,originalSourceName:entry.sourceName},
+      externalConditionImplementationVerified:false,appliedToHitVerified:false}};
 }

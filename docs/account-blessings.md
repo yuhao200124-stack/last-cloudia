@@ -29,6 +29,34 @@ Damage percentages stay distinct from stat percentages, fixed cap additions, and
 incoming damage reductions. Conditions remain declarative and edits are reviewable.
 Do not interpret buffActive=0 as absence, or operationActive=1 as proof of a hit.
 
+## Reader v0.36 compatibility and review display (2026-09-24)
+
+The 46 shared configurations contain six stat entries, 15 outgoing damage entries,
+14 outgoing cap entries, and 11 incoming damage reductions. A fresh comparison of
+the two control reports found no additional shared entries outside this catalog.
+
+v0.36's `battle_entry_report.h::bonusRows` names 19 of these existing scalar
+configurations through the damage-function fallback. Their `raw.component` changes
+from `unmapped_operation` to `mapped_configured_parameter`: seven equipment physical
+damage bonuses, one ultimate damage bonus, and 11 incoming reductions. Accept only
+this known wrapper change for processes 1050253, 1050463, 1050415, 1050200 and 1050513.
+The origin category, function, trigger, operation flag, full condition arrays, scope
+parameters, zero tail slots, and secondary parameters must still match. Decode the
+value from the imported raw slot; never substitute the saved account value. Six-stat
+components and variable/missing parameter wrappers remain strict.
+
+Confirmed records now carry the explicit account-blessing name and a description
+using their imported value. The reader inventory displays them in a separate,
+collapsed account-blessing list without adding another calculation source. Incoming
+reductions stay outside outgoing damage and six-stat panels. An inactive fire or
+ultimate effect is recognized but does not qualify for an ice magic attack. Matching,
+adoption and activation remain separate; deleted/excluded website effects stay out.
+
+The screenshot's four records are 60002070 (robe, incoming physical -1%), 60003340
+(ultimate damage +2.01%), 60002800 (incoming ice -1.99%), and 60001500 (fire cap +200).
+The fire cap's exporter label did not change; its previous unmatched status was due
+to the currently selected ice element, not a missing record.
+
 ## MP normalization
 
 Reader v0.35 stores GetMp/GetMaxStatus(MP) internal thousandths. In the supplied
