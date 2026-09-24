@@ -1,5 +1,5 @@
-import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-reader-choice';
-import {runtimeStates,combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-reader-choice';
+import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-result-cap';
+import {runtimeStates,combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-result-cap';
 export function needsAttributeLayers(mode,stat,panel) {
  return mode==='panel'&&Number.isFinite(stat?.beforeBuff)&&Number.isFinite(stat.crossAdd)&&Number.isFinite(panel)&&panel!==stat.beforeBuff+stat.crossAdd;
 }

@@ -1,5 +1,5 @@
-import {characterHitStage,characterSourceAllowed} from './character-combat-rules.mjs?v=20260924-reader-choice';
-import {criticalDamageEffect} from './critical-options.mjs?v=20260924-reader-choice';
+import {characterHitStage,characterSourceAllowed} from './character-combat-rules.mjs?v=20260924-result-cap';
+import {criticalDamageEffect} from './critical-options.mjs?v=20260924-result-cap';
 // Transfer qualified effects, never reinterpret a stat bonus as a skill multiplier.
 export const reportStorageKey = id => `lc-damage-report:${id}:v1`;
 const elements = { none:'无', fire:'火', ice:'冰', earth:'树', thunder:'雷', light:'光', dark:'暗' };

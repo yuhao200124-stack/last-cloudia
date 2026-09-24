@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-reader-choice">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-result-cap">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html">LC</a><div><h1>伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./characters.html">角色列表</a><a href="./index.html">技能表</a></nav></header>
@@ -81,7 +81,7 @@
       <div class="fields two"><label>结算防御参照倍率 ×<input id="defenseRatio" type="number" min="0" max="1" step="any" value="1" required></label><p class="help">贯导触发时为0.5；上方仍填写原始当前魔抗，不需要手动减半。</p></div>
       <details><summary>其他战斗条件</summary><div class="inline-options"><label><input id="back" type="checkbox"> 背后攻击</label><label><input id="air" type="checkbox"> 对空条件满足</label><label><input id="ailment" type="checkbox"> 异常状态条件满足</label><label><input id="guarded" type="checkbox"> 本段被格挡</label></div><div class="fields two"><label>格挡减伤 %<input id="guardReduction" type="number" min="0" max="100" step="any" value="50" required></label><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="0.5" required></label></div><p class="help">降防填写在「当前防御力」；Boss 的 Break 防御修正在此基础上单独计算。</p></details>
     </section>
-    <section class="card"><div class="section-heading"><h2><span>05</span>已确认的伤害加成</h2><button type="button" id="addEffect" class="primary">＋ 添加一条</button></div>
+    <section id="confirmedEffectsSection" class="card" hidden><div class="section-heading"><h2><span>05</span>已确认的伤害加成</h2><button type="button" id="addEffect" class="primary">＋ 添加一条</button></div>
       <p class="help">每条填写一个实际生效的效果。同名效果是否叠加须先确认；被覆盖的效果请取消勾选。装备、个性与其他条件由你确认。</p>
       <div id="effects"></div>
       <details><summary>加成如何计算</summary><p>常见 Boss、属性、物理、魔法、特技等增伤按所填顺序逐条结算，并逐步四舍五入。同类描述不自动合并。</p><p>若已确认某效果使用原生核心前入口，可在该条「更多」中更改。上移、下移用于对照实际生效顺序；未核对的顺序可能带来取整差异。</p></details>
@@ -102,7 +102,8 @@
         <article class="primary-result"><span>普通每段伤害</span><strong id="normalDamage">—</strong><small>含随机波动与每段上限</small></article>
         <article class="critical-result"><span title="触发暴击时的伤害对照；整次期望仍按最终暴击率计算">暴击每段伤害</span><strong id="criticalDamage">—</strong></article>
         <div class="total-result"><span id="totalLabel">整次技能期望伤害</span><strong id="totalMean">—</strong><small id="totalNote"></small></div>
-        <dl class="result-details"><div><dt>全为普通命中时</dt><dd id="normalTotal">—</dd></div><div><dt>本段结算攻击力</dt><dd id="effectiveAttack">—</dd></div><div><dt>本段结算防御力</dt><dd id="effectiveDefense">—</dd></div><div><dt>特攻匹配</dt><dd id="killerState">—</dd></div></dl>
+        <dl class="result-details"><div><dt>全为普通命中时</dt><dd id="normalTotal">—</dd></div><div><dt id="damageCapLabel">每段伤害上限</dt><dd id="damageCap">—</dd></div><div id="criticalCapResult" hidden><dt>暴击每段上限</dt><dd id="criticalCap">—</dd></div><div><dt>本段结算攻击力</dt><dd id="effectiveAttack">—</dd></div><div><dt>本段结算防御力</dt><dd id="effectiveDefense">—</dd></div><div><dt>特攻匹配</dt><dd id="killerState">—</dd></div></dl>
+        <p id="resultCapNote" class="result-cap-note" hidden></p>
       </div>
     </div>
     <div class="result-notes"><p id="activeNote"></p><p>角色资料先与入场报告核对，只有你确认采用的加成才进入计算；另行添加时请避免重复。</p><p>输出为所填条件下的伤害。护盾、保命、帧内无敌、Boss 专属减伤等未填入机制，可能让实际掉血更低。</p></div>
@@ -135,5 +136,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260924-reader-choice"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260924-result-cap"></script>
 </body></html>

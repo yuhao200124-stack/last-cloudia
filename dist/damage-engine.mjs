@@ -124,7 +124,7 @@ export function calculate(s) {
     let sum=0;
     const samples=1024;
     for(let i=0;i<samples;i++) sum+=damageAt(p,.9+(i+.5)*.1/samples).value;
-    return {min:lo.value,max:hi.value,mean:sum/samples,uncappedMax:hi.uncapped,trace:damageAt(p,.95,true).trace};
+    return {min:lo.value,max:hi.value,mean:sum/samples,cap:p.cap,uncappedMax:hi.uncapped,trace:damageAt(p,.95,true).trace};
   }
   const n=branch(normal),cr=branch(critical),chance=s.critRate/100;
   const mean=n.mean*(1-chance)+cr.mean*chance;
