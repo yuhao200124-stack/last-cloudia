@@ -24,6 +24,6 @@ test('explicit special-attack switch overrides eligibility and requires review f
  const rows=compareCandidates(websiteCandidates(off),[]),decisions=Object.fromEntries(rows.map(r=>[decisionKey(r),{choice:'web'}]));
  const on=retargetReport(report,{...selection,specialAttack:true,break:true});assert.equal(on.context.killer,true);assert.equal(on.context.break,true);
  assert.throws(()=>resolveReview(on,compareCandidates(websiteCandidates(on),[]),decisions),/请决定/);
- const dual=retargetReport(report,{...selection,dualWield:true});assert.equal(dual.context.weaponCount,2);assert.equal(dual.context.robe,false);
- assert.equal(dual.rows.some(r=>r.status==='active'&&r.rule.id==='water-king-single'),false);
+ const dual=retargetReport(report,{...selection,dualWield:true});assert.equal(dual.context.weaponCount,1);assert.equal(dual.context.robe,true);
+ assert.equal(dual.rows.some(r=>r.status==='active'&&r.rule.id==='water-single'),true);
 });

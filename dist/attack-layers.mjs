@@ -2,6 +2,9 @@
 // edit. The base comes from the website's independently calculated pure panel,
 // never from dividing a final panel or from a captured settlement attack.
 const families=new Map([['ex-aura',50],['moonlight-ii',30]]);
+export function needsAttributeLayers(mode,stat,panel) {
+ return mode==='panel'&&stat?.key==='intelligence'&&Number.isFinite(stat.beforeBuff)&&Number.isFinite(stat.crossAdd)&&Number.isFinite(panel)&&panel!==stat.beforeBuff+stat.crossAdd;
+}
 export function resolveAttackLayers(stat,panel) {
  const fail=reason=>({ok:false,reason});
  if(!stat||stat.key!=='intelligence')return fail('当前参照没有已核对的自动属性层，请选择明确的计算方式。');

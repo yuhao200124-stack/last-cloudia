@@ -9,8 +9,8 @@ const raw={id:'100:60002460:0:mapped_configured_parameter',sourceName:'被动技
 const decode=b=>validateBattleEntry({kind:'last-cloudia-battle-entry',schemaVersion:1,units:[{stats:{},bonuses:[b]}]}).units[0].bonuses[0];
 const context=normalizeContext({attack:'magic',damageType:'magical',element:'ice',robe:true});
 const report={kind:'last-cloudia-effect-report',characterId:'roxy',rows:[],context};
-test('real robe configuration is offered without classifying it as a confirmed account blessing',()=>{
- const b=decode(raw),candidates=readerSupplementCandidates([b,b],[],context);
+test('unknown robe source is a supplement, not an inferred account blessing',()=>{
+ const b=decode({...raw,raw:{...raw.raw,localId:99999}}),candidates=readerSupplementCandidates([b,b],[],context);
  assert.equal(candidates.length,1);assert.equal(b.target,'魔法伤害');assert.equal(b.value,1);assert(!b.decoded.accountBlessing);
  const empty=appendReaderSupplements(report,[b],[],{});assert.equal(empty.rows.length,0);
  const adopted=appendReaderSupplements(report,[b,b],[],{[supplementKey(b)]:'reader'});

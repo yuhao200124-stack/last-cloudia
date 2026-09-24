@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-review2">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html">LC</a><div><h1>伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./characters.html">角色列表</a><a href="./index.html">技能表</a></nav></header>
@@ -30,11 +30,13 @@
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
-      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀／魔法双段（仅伤害计算）</label><label><input id="specialAttack" type="checkbox">本次触发特攻</label><label><input id="break" type="checkbox">Boss 正在 Break</label></div>
+      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀／魔法双段（仅伤害计算）</label><label><input id="specialAttack" type="checkbox">本次触发特攻</label><label><input id="break" type="checkbox">Boss 正在 Break</label><label id="magicCanCritControl" hidden><input id="magicCanCrit" type="checkbox">本次魔法允许暴击</label></div>
+      <div id="magicBuffOptions" class="magic-buff-options" hidden><div id="magicBuffChoices"></div><div id="magicBuffRelationControl" hidden><label>魔术指导与 EX 灵气的关系<select id="magicBuffRelation"><option value="">待核对</option><option value="add">同层相加（手动确认）</option><option value="replace">替换 EX 灵气（手动确认）</option></select></label><small>填写增益生效后的法强；不对最终面板再乘 1.65。魔法上限仅计入一次。</small></div></div>
       <p id="conditionStatus" class="help"></p>
+      <section id="entrySpecialSection" class="special-reminders" hidden><h3>角色特殊效果</h3><p class="help">仅作提醒。是否触发按上方战斗选项与技能参数计算。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源</th><th>效果</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
       <p class="help">战斗面板与本段结算攻击值不同。EX 灵气等实时属性加成可能与技能修正在同一层相加，请在下方选择计算方式。</p>
       <details id="settlementDetails" open><summary>结算攻击值</summary>
-        <label>计算方式<select id="attackBasis"><option value="auto">自动核对已验证的属性层</option><option value="panel">面板无实时加成，应用技能修正</option><option value="layers">手填状态前面板＋同层实时加成</option><option value="settlement">直接采用读取器结算攻击值（仅对照）</option></select></label>
+        <label>计算方式<select id="attackBasis"><option value="auto">自动核对属性层</option><option value="panel">面板无实时加成，应用技能修正</option><option value="layers">手填状态前面板＋同层实时加成</option><option value="settlement">直接采用读取器结算攻击值（仅对照）</option></select></label>
         <div id="attackLayerControls" class="fields two" hidden><label>状态加成前面板<input id="attackBase" type="number" min="0" max="100000000" step="1"></label><label>已确认的同层实时属性加成 %<input id="runtimeStatPercent" type="number" min="-100" max="100000" step="any"></label></div>
         <label id="settledAttackControl" hidden>实际结算攻击值<input id="settledAttack" type="number" min="0" max="100000000" step="1"></label>
         <p id="attackBasisNote" class="help"></p>
@@ -58,7 +60,7 @@
           <label>技能内攻击后加算<input id="skillPostAdd" type="number" min="-100000000" max="100000000" step="any" required></label>
         </div>
       </details>
-      <details id="hitDetails"><summary>手填段数与单段伤害修正</summary><div class="fields two">
+      <details id="hitDetails"><summary>双刀信息</summary><div class="fields two">
         <label><span id="hitsLabel">基础命中段数（手动填写）</span><input id="hits" type="number" min="1" max="1000" step="1" required></label>
         <label>命中数倍率 ×<input id="hitMultiplier" type="number" min="1" max="100" step="1" value="1" required></label>
         <label>单段伤害倍率 ×<input id="hitDamageRatio" type="number" min="0" max="100" step="any" value="1" required></label>
@@ -106,28 +108,28 @@
     <details class="card"><summary>公式依据与适用范围</summary><p>普通核心：A × 0.9<sup>kF/A</sup> × 技能系数 × 核心前倍率 × 随机数。普通 k=10，暴击 k=6；随机数范围为 0.9～1.0。</p><p>取自所提供版本的游戏程序与技能脚本，核心使用单精度运算。伯雷亞斯拳的技能内攻击修正 +51.8%、每段系数 0.334 来自原始技能参数。</p><p>期望值以均匀随机的数值积分估算，先逐段处理暴击和上限；不等同于最大伤害。默认暴击率 20% 是测试起点，请改成实际总暴击率。</p><p>这页计算相同条件、相同系数的各段普通物理／魔法伤害。混合属性技能须先确定结算攻击；不同系数的段、固定伤害、追加伤害、FatalBlow 与竞技场需分开处理。</p></details>
   </aside>
   </div>
-  <section id="reviewPage" class="card" hidden aria-labelledby="reviewTitle"><div class="section-heading"><h2 id="reviewTitle">面板与加成核对</h2><button id="closeReview" type="button">应用已选数据并返回</button></div>
-      <div class="section-heading entry-subheading"><h3>面板核对</h3><div class="inline-options"><button id="entryUseWebsiteStats" type="button">全部用网站</button><button id="entryUseStats" type="button">全部用读取器</button></div></div>
-      <p class="help">按当前勾选的开战配置自动合计六维，并与读取值比较；下方已作出的排除或数值修改也会计入，待决定项先按网站值预览。展开可看明细，采用最终面板后不会再次乘属性加成。</p>
+  <section id="reviewPage" class="card" hidden aria-labelledby="reviewTitle"><div class="section-heading"><h2 id="reviewTitle">面板与加成核对</h2><button id="closeReview" type="button">保存并返回</button></div>
+      <div class="section-heading entry-subheading"><h3>面板核对</h3><div class="inline-options"><button id="entryUseWebsiteStats" type="button">全部用网站</button><button id="entryUseStats" type="button">全部用读取器</button><button type="button" class="primary" data-review-save>保存并返回</button></div></div>
+      <p class="help">网站按当前条件计算；读取器显示实际采样时的面板，两者可能处于不同时刻。结算文件中采用的攻击时观察值也会显示在此处；未读取的属性保留入场值。</p>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
-      <div class="section-heading entry-subheading"><h3>增伤与伤害上限</h3><button id="entryUseWeb" type="button">加成全部用网站</button></div>
+      <div class="section-heading entry-subheading"><h3>增伤与伤害上限</h3><div class="inline-options"><button id="entryUseWeb" type="button">全部用网站</button><button id="entryUseReader" type="button">全部用读取器</button><button type="button" class="primary" data-review-save>保存并返回</button></div></div>
       <p class="help">按当前攻击条件分别统计，展开查看来源并删除。读取器仅合计已识别项目；候选小计不代表已确认生效的完整加成。</p>
-      <p class="help" id="entryReadCoverage"></p><p class="help" id="entryObservedCritical"></p>
+      <p id="entryBonusBulkNote" role="status" class="help"></p><p class="help" id="entryReadCoverage"></p><p class="help" id="entryObservedCritical"></p>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>项目</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryBonusReview"></tbody></table></div>
-      <section id="entrySpecialSection" hidden><h3>命中、特攻与其他特殊效果</h3><p class="help">这些效果也会影响计算，请选择采用或暂不计入。六维已选最终面板时，属性词条无需重复确认。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
+
       <section id="entrySupplementSection" hidden><h3>读取器补充加成</h3><p class="help">网站尚无对应来源的已解析条目。按原始条件列出，选择采用后进入伤害计算；已采用的网站来源不会重复补入。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／条件</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entrySupplementReview"></tbody></table></div></section>
       <details id="entryIndividualReview"><summary>逐条核对与修改 · <span id="entryCandidateCount">加成候选</span></summary>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>网站</th><th>读取器</th><th>比较</th><th>采用数据</th></tr></thead><tbody id="entryEffectsReview"></tbody></table></div>
       </details>
       <details id="entryRemovedDetails" hidden><summary id="entryRemovedCount">已删除的加成</summary><ul id="entryRemovedEffects" class="entry-source-list"></ul></details>
       <details><summary id="entryPendingCount">网站待确认项</summary><p class="help">这些效果的条件或拆分仍未确定，不计入上表。可返回基础计算器补充，随后重新核对。</p><ul id="entryPending"></ul></details>
-      <details id="entryReadBlessingsDetails" hidden><summary id="entryReadBlessingsCount">读取器账户加护</summary><p class="help">这些来源已与裸装对照确认的账户加护对应。按本次攻击和装备条件参与上方对照；减伤单独保留，不加入输出增伤或六维面板。</p><ul id="entryReadBlessings"></ul></details>
+      <details id="entryReadBlessingsDetails" hidden><summary id="entryReadBlessingsCount">读取器账户加护</summary><p class="help">这些来源已与裸装对照或你确认的账户加护对应。按本次攻击和装备条件参与上方对照；减伤单独保留，不加入输出增伤或六维面板。</p><ul id="entryReadBlessings"></ul></details>
       <details><summary id="entryUnmatchedCount">其他读取记录</summary><p class="help">已对应的账户加护单独列在上方。其余记录会说明条件不符、已涵盖或待解析的原因；未参与本次对照不代表没有读到。</p><ul id="entryUnmatched"></ul></details>
       <p id="entryStatus" role="status" class="entry-status">等待角色固定资料。</p>
-      <button id="entryConfirm" class="primary" type="button">应用已选数据并返回</button>
+      <button id="entryConfirm" class="primary" type="button">保存并返回</button>
 
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260924-review2"></script>
 </body></html>

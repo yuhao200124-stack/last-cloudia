@@ -58,6 +58,7 @@ export function buildDamageImport(report) {
   if(hit.length===1 && Number.isInteger(hit[0].effect.value) && hit[0].effect.value>0 && Number.isFinite(hit[0].effect.secondary) && hit[0].effect.secondary>=0) {
     imported.hitMultiplier=hit[0].effect.value;imported.hitDamageRatio=hit[0].effect.secondary;
     imported.hitSources=hit.map(e=>e.source);
+    if(hit[0].id.startsWith('water-king:water-ice-hits:')&&c.attackKind==='magic'&&c.element==='ice'&&imported.hitMultiplier===2&&imported.hitDamageRatio===0.6)imported.hitScaleStage='core';
     imported.hitSourceKind=['reader','manual'].includes(hit[0].effect.parameterSource)?hit[0].effect.parameterSource:'website';
   } else if(hit.length) imported.blockers.push('存在未确认或多个分段效果，需先核对。');
   if(imported.effects.length) imported.warnings.push('增伤沿用当前引擎的后置逐条结算；导入顺序是来源顺序，尚未确认为游戏实际执行顺序，可在每条“更多”中调整。');

@@ -1,6 +1,20 @@
 // Read only explicit report fields. Missing fields stay unknown, never inherit a preset.
 import {RACES} from './damage-engine.mjs';
 const valid=v=>typeof v==='number'&&Number.isFinite(v);
+export function panelObservation(battle,unit,key,later={}) {
+ const sample=later[key];
+ if(sample&&valid(sample.value))return {value:sample.value,label:'攻击时观察值',time:sample.capturedAt||'',note:'来自所选结算样本；只更新实际读取到的这一项。',kind:'attack'};
+ return {value:valid(unit?.stats?.[key])?unit.stats[key]:null,label:'入场观察值',time:unit?.capturedAt||battle?.capturedAt||'',kind:'entry',
+  note:battle?.collection?.buffApplicationVerified===true?'报告标记已核对增益生效。':'采集完整不代表开场效果已生效；与网站当前条件可能处于不同时刻。'};
+}
+export function capturePanelObservation(battle,unit,sample) {
+ // Entry battle IDs and CSV session IDs use different clocks. This is an
+ // explicit adoption of the selected group's panel, never a guessed join.
+ if(!battle||!unit||sample.explicitSelection!==true||String(sample.unitId)!==String(unit.unitId))return null;
+ const values={};
+ for(const key of ['attack','intelligence'])if(valid(sample.stats?.[key])&&sample.stats[key]>=0)values[key]={value:sample.stats[key],capturedAt:sample.capturedAt||'',sampleId:sample.sampleId};
+ return Object.keys(values).length?values:null;
+}
 export const BOSS_ELEMENTS={fire:'火',ice:'冰',earth:'树',thunder:'雷',light:'光',dark:'暗'};
 export function readBossRecord(record={}) {
  const raw=Array.isArray(record.races)?record.races:Array.isArray(record.race)?record.race:record.race==null?[]:[record.race];

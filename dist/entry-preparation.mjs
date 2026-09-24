@@ -1,7 +1,7 @@
 import {decodeHpStatEntry} from './stat-mechanics.mjs';
 import {decodeReaderBonuses} from './reader-bonus-decoder.mjs';
 import {evaluateCatalog} from './effect-rule-engine.mjs';
-import {decodeKnownBlessingEntry} from './account-blessings.mjs';
+import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-review2';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
 const elementIds={无:'none',火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark'};
@@ -41,6 +41,9 @@ export function retargetReport(report,selection) {
   grouped.get(row.sourceId).rules.push(row.rule);
   if(row.status==='disabled')overrides[row.rule.id]={disabled:true};
  }
+ // Add newly recognized account entries to older saved calculator reports.
+ // Existing rules, exclusions and user edits keep their identity.
+ for(const source of ACCOUNT_BLESSING_CATALOG)if(!grouped.has(source.id))grouped.set(source.id,source);
  const attack=selection.attack==='heavy_magic'?'magic':selection.attack;
  const context={...report.context,killer:false,attack,damageType:selection.type,element:elementIds[selection.element]??null};
  if(typeof selection.specialAttack==='boolean')context.killerOverride=selection.specialAttack;

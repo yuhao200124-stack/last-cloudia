@@ -61,8 +61,11 @@ export const RAW_BLESSING_RECORDS = [
 {"id":"24:60003629:0:unmapped_operation","sourceName":"被动技能 ID=60003629","effectType":"unknown","target":"战斗加成","value":null,"unit":"","state":"candidate","processId":1082608,"conditionId":23010,"evidence":"stable_buff_inventory_not_application_proof","raw":{"buffUid":24,"passiveId":0,"localId":60003629,"affiliation":4,"operationIndex":0,"operationFlag":1,"operationActive":1,"buffEnabled":1,"buffActive":0,"buffRemoved":0,"buffIgnored":0,"trigger":23,"component":"unmapped_operation","add":0,"mul":0,"postAdd":0,"mulDenominator":10000,"flags":0,"statType":0,"values":[15,10,600,0,0,0,0,0,0,0],"function":"process1082608","masterFunction":"","conditionParams":[1,1,2,1,3],"masterCondition":0,"masterConditionParams":[],"parameterMeaningRecognized":false,"appliedToHit":null}},
 {"id":"50:60003637:0:unmapped_operation","sourceName":"被动技能 ID=60003637","effectType":"unknown","target":"战斗加成","value":null,"unit":"","state":"candidate","processId":1050253,"conditionId":27026,"evidence":"stable_buff_inventory_not_application_proof","raw":{"buffUid":50,"passiveId":0,"localId":60003637,"affiliation":4,"operationIndex":0,"operationFlag":1,"operationActive":1,"buffEnabled":1,"buffActive":0,"buffRemoved":0,"buffIgnored":0,"trigger":27,"component":"unmapped_operation","add":0,"mul":0,"postAdd":0,"mulDenominator":10000,"flags":0,"statType":0,"values":[14,201,0,0,0,0,0,0,0,0],"function":"process1050253","masterFunction":"","conditionParams":[1,1,10,1,1],"masterCondition":0,"masterConditionParams":[],"parameterMeaningRecognized":false,"appliedToHit":null}}
 ];
-const recordsByLocalId = new Map(RAW_BLESSING_RECORDS.map(entry=>[entry.raw.localId,entry]));
-export const READ_ID_TO_SOURCE_ID = Object.freeze(Object.fromEntries(RAW_BLESSING_RECORDS.map(entry=>[String(entry.raw.localId),`account-blessing-${entry.raw.localId}`])));
+// Kept separate from the original 46-record unequipped control. Confirmed by the user on 2026-09-24.
+export const USER_CONFIRMED_BLESSING_RECORDS = [{"id":"100:60002460:0:mapped_configured_parameter","sourceName":"被动技能 ID=60002460","effectType":"damage","target":"魔法伤害修正","value":1,"unit":"%","state":"candidate","processId":1050354,"conditionId":27026,"evidence":"stable_buff_inventory_not_application_proof","raw":{"buffUid":100,"passiveId":0,"localId":60002460,"affiliation":4,"operationIndex":0,"operationFlag":1,"operationActive":1,"buffEnabled":1,"buffActive":0,"buffRemoved":0,"buffIgnored":0,"trigger":27,"component":"mapped_configured_parameter","add":0,"mul":0,"postAdd":0,"mulDenominator":10000,"flags":0,"statType":0,"values":[22,100,0,0,0,0,0,0,0,0],"function":"process1050354","masterFunction":"","conditionParams":[1,1,2,1,1],"masterCondition":0,"masterConditionParams":[],"panelStatCandidate":false,"criticalValueUnit":null,"parameterMeaningRecognized":false,"appliedToHit":null,"role":"stored_operation_candidate"},"identificationBasis":"user-confirmed-account-blessing","sourceReport":"cae60c30-7d8c-4f06-91d6-e144e8bd01b6.json"}];
+const knownRecords = [...RAW_BLESSING_RECORDS,...USER_CONFIRMED_BLESSING_RECORDS];
+const recordsByLocalId = new Map(knownRecords.map(entry=>[entry.raw.localId,entry]));
+export const READ_ID_TO_SOURCE_ID = Object.freeze(Object.fromEntries(knownRecords.map(entry=>[String(entry.raw.localId),`account-blessing-${entry.raw.localId}`])));
 export const SOURCE_ID_TO_READ_ID = Object.freeze(Object.fromEntries(Object.entries(READ_ID_TO_SOURCE_ID).map(([readId,sourceId])=>[sourceId,readId])));
 export const ACCOUNT_BLESSING_READ_ID_MAP = READ_ID_TO_SOURCE_ID;
 const EQ = (field,value)=>({field,op:'eq',value});
@@ -98,6 +101,7 @@ function describe(entry) {
   const info={localId:entry.raw.localId,processId:pid,conditionId,conditionParams:[...entry.raw.conditionParams],
     value:null,type:null,target:null,unit:'%',conditions:[],equipId:null,equipLabel:null,elementId:null,elementLabel:null,
     attackTypeId:null,attackTypeLabel:null,parameterIndex:null,externalConditionImplementationVerified:false,
+    identificationBasis:entry.identificationBasis||recordsByLocalId.get(entry.raw.localId)?.identificationBasis||ACCOUNT_BLESSING_META.identificationBasis,
     evidence:[],sourceId:`account-blessing-${entry.raw.localId}`};
   const equip=id=>{const [field,label]=equipment[id];info.equipId=id;info.equipLabel=label;info.conditions.push(EQ(field,true));info.evidence.push(equipmentEvidence);};
   const element=(id,incoming=false)=>{const [field,label]=elements[id];info.elementId=id;info.elementLabel=label;info.conditions.push(EQ(incoming?'incomingElement':'element',field));info.evidence.push(elementEvidence);};
@@ -111,6 +115,8 @@ function describe(entry) {
   }
   let line;
   switch(pid) {
+    case 1050354:
+      info.type='damage';info.target='魔法伤害';equip(p[0]);attack(2);info.parameterIndex=1;line=18351;break;
     case 1050253:
       info.type='damage';info.target='物理伤害';equip(p[0]);attack(10);info.parameterIndex=1;line=17472;break;
     case 1050463:
@@ -138,10 +144,10 @@ function describe(entry) {
   info.evidence.unshift(evidence('process.lua',line,`process${pid}参数声明及实际调用；Lua params[${info.parameterIndex+1}]为此数值`));
   if(info.type==='cap')info.evidence.push(evidence('procCondCommon.lua',2773,'EditDamageLimit传固定加值、万分率和后加值；本记录倍率为0'),evidence('procCondCommon.lua',437,'DmgLimitUp参数：增减值、增减倍率、倍率计算后增减值'));
   else info.evidence.push(...percentageEvidence);
-  info.evidence.push({file:ACCOUNT_BLESSING_META.sourceReport,line:1,description:`localId=${info.localId}，processId=${pid}，conditionId=${conditionId}，外层conditionParams未逐位解码；配置语义不代表当前命中已生效`});
+  info.evidence.push({file:recordsByLocalId.get(info.localId)?.sourceReport||ACCOUNT_BLESSING_META.sourceReport,line:1,description:`localId=${info.localId}，processId=${pid}，conditionId=${conditionId}，外层conditionParams未逐位解码；配置语义不代表当前命中已生效`});
   info.verification='untested';return info;
 }
-export const ACCOUNT_BLESSING_DEFINITIONS = RAW_BLESSING_RECORDS.map(describe);
+export const ACCOUNT_BLESSING_DEFINITIONS = knownRecords.map(describe);
 export const ACCOUNT_BLESSING_CATALOG = ACCOUNT_BLESSING_DEFINITIONS.map(d=>({
   id:d.sourceId,name:d.name,group:'blessings',text:d.text,readId:String(d.localId),localId:d.localId,
   provenance:{...d,raw:recordsByLocalId.get(d.localId).raw},
@@ -152,7 +158,7 @@ export const ACCOUNT_BLESSING_CATALOG = ACCOUNT_BLESSING_DEFINITIONS.map(d=>({
 function sameArray(a,b){return Array.isArray(a)&&Array.isArray(b)&&a.length===b.length&&a.every((v,i)=>v===b[i]);}
 // v0.36's damageFunctionMap names these already-stored scalar parameters.
 // This is an exporter label change, not a different game operation or proof of activation.
-const mappedConfigurationProcesses=new Set([1050253,1050463,1050415,1050200,1050513]);
+const mappedConfigurationProcesses=new Set([1050354,1050253,1050463,1050415,1050200,1050513]);
 /** Return the original entry unchanged unless its complete known process signature is valid.
  * Values are decoded from this entry, never substituted with the account defaults.
  * The original candidate/observed state and raw evidence are preserved. */
@@ -161,7 +167,7 @@ export function decodeKnownBlessingEntry(entry) {
   const expected=recordsByLocalId.get(entry.raw.localId);
   if(!expected)return entry;
   const raw=entry.raw,source=expected.raw;
-  const sameComponent=raw.component===source.component||
+  const sameComponent=raw.component===source.component||(entry.processId===1050354&&raw.component==='unmapped_operation'&&source.component==='mapped_configured_parameter')||
     (source.component==='unmapped_operation'&&raw.component==='mapped_configured_parameter'&&mappedConfigurationProcesses.has(entry.processId));
   if(entry.processId!==expected.processId||entry.conditionId!==expected.conditionId||raw.function!==source.function||
     raw.masterFunction!==source.masterFunction||raw.masterCondition!==source.masterCondition||
@@ -178,6 +184,6 @@ export function decodeKnownBlessingEntry(entry) {
   return {...entry,sourceName:d.name,effectType:d.type,target:d.target,value,unit:d.unit,
     decoded:{sourceId:d.sourceId,conditions:d.conditions,processId:d.processId,conditionId:d.conditionId,
       parameterIndex:d.parameterIndex,evidence:d.evidence,
-      accountBlessing:{localId:d.localId,description:actual.text,identificationBasis:ACCOUNT_BLESSING_META.identificationBasis,originalSourceName:entry.sourceName},
+      accountBlessing:{localId:d.localId,description:actual.text,identificationBasis:d.identificationBasis,originalSourceName:entry.sourceName},
       externalConditionImplementationVerified:false,appliedToHitVerified:false}};
 }

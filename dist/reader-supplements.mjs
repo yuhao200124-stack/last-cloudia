@@ -26,10 +26,10 @@ export function includeSupplementGroups(groups,supplements,choices) {
  return groups.map(g=>{
   const mapped=g.web.map(w=>w.compatible?w.reader?.id:null);
   const extras=g.reader.filter(b=>!mapped.includes(b.id));
-  const complete=g.web.length>0&&mapped.every(Boolean)&&new Set(mapped).size===mapped.length&&extras.length>0&&extras.every(b=>supplements.some(s=>s.id===b.id))&&g.reader.length===mapped.length+extras.length;
+  const complete=mapped.every(Boolean)&&new Set(mapped).size===mapped.length&&extras.length>0&&extras.every(b=>supplements.some(s=>s.id===b.id))&&g.reader.length===mapped.length+extras.length;
   if(!complete)return g;
   const extraChoices=extras.map(b=>choices[supplementKey(b)]||'pending');
-  const choice=g.choice==='reader'&&extraChoices.every(v=>v==='reader')?'reader':g.choice==='web'&&extraChoices.every(v=>v!=='reader')?'web':'mixed';
+  const choice=(!g.web.length||g.choice==='reader')&&extraChoices.every(v=>v==='reader')?'reader':g.choice==='web'&&extraChoices.every(v=>v!=='reader')?'web':'mixed';
   return {...g,canUseReader:true,choice,supplements:extras};
  });
 }

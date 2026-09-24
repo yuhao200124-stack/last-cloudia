@@ -2,7 +2,7 @@ import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs';
 import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs';
 import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs';
 import { summarizeEffects } from './effect-totals.mjs';
-import { ACCOUNT_BLESSING_CATALOG, ACCOUNT_BLESSING_META } from './account-blessings.mjs';
+import { ACCOUNT_BLESSING_CATALOG, ACCOUNT_BLESSING_META } from './account-blessings.mjs?v=20260924-review2';
 import { mountAccountBlessings } from './account-blessings-panel.mjs';
 
 mountAccountBlessings();
