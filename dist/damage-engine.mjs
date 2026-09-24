@@ -12,7 +12,7 @@ export const EFFECTS = {
   ailment:'对异常目标增伤', reduction:'受到伤害修正'
 };
 export function defaultInput() {
-  return {attack:3805, defense:4000, hits:8, critRate:20, coefficient:0.334,
+  return {attack:3805, attackBasis:'panel', attackBase:3805, runtimeStatPercent:0, settledAttack:3805, defense:4000, hits:8, critRate:20, coefficient:0.334,
     skillAdd:0, skillPercent:51.8, skillPostAdd:0, attackRatio:0, runtimeRatio:1,
     integerRatio:0, type:'physical', skillType:'skill', element:'无', resistance:0,
     resistCorrection:0, boss:true, races:[], killerRaces:[], killerCorrection:0,
@@ -21,12 +21,17 @@ export function defaultInput() {
     hitMultiplier:1, hitDamageRatio:1, hitScaleStage:'core', effects:[]};
 }
 export function validate(s) {
+  if(!['panel','layers','settlement'].includes(s.attackBasis??'panel'))throw new Error('请选择结算攻击值的来源');
+  if(s.attackBasis==='layers'&&(!Number.isFinite(s.attackBase)||s.attackBase<0||s.attackBase>1e8||!Number.isFinite(s.runtimeStatPercent)||s.runtimeStatPercent < -100||s.runtimeStatPercent>1e5))throw new Error('请填写状态加成前的面板与已确认的实时属性加成');
+  if(s.attackBasis==='settlement'&&(!Number.isFinite(s.settledAttack)||s.settledAttack<0||s.settledAttack>1e8))throw new Error('请填写读取器的实际结算攻击值');
   const bounds = {attack:[0,1e8],defense:[0,1e8],hits:[1,1000],critRate:[0,100],
     coefficient:[0,1e4],skillAdd:[-1e8,1e8],skillPercent:[-100,1e5],skillPostAdd:[-1e8,1e8],
     attackRatio:[-100,1e5],runtimeRatio:[0,1e4],integerRatio:[-100,1e5],
     resistance:[-999,1000],resistCorrection:[-999,1000],killerCorrection:[-100,1e4],
     breakDefenseRatio:[0,1],guardReduction:[0,100],cap:[1,2e9],defenseRatio:[0,1],hitMultiplier:[1,100],hitDamageRatio:[0,100]};
   for (const [key,[lo,hi]] of Object.entries(bounds)) {
+    if(s.attackBasis==='settlement'&&['attack','skillAdd','skillPercent','skillPostAdd','attackRatio'].includes(key))continue;
+    if(s.attackBasis==='layers'&&key==='attack')continue;
     if (!Number.isFinite(s[key]) || s[key]<lo || s[key]>hi) throw new Error(`参数 ${key} 超出可计算范围`);
   }
   if (!Number.isInteger(s.hits) || !Number.isInteger(s.cap)) throw new Error('段数和伤害上限必须是整数');
@@ -40,8 +45,13 @@ export function validate(s) {
   }
 }
 export function context(s) {
-  const edited = Math.floor((s.attack+s.skillAdd)*(1+s.skillPercent/100)+s.skillPostAdd);
-  const attack = Math.max(f(f(edited)*f(1+f(s.attackRatio/100))),0);
+  // ProcStatus combines runtime and skill modifiers on their original base.
+  // A final battle panel cannot be multiplied by the skill modifier again when
+  // it already contains modifiers in that same layer. Never reverse-divide it.
+  const layered=s.attackBasis==='layers';
+  const edited = Math.floor(((layered?s.attackBase:s.attack)+s.skillAdd)*(1+((layered?s.runtimeStatPercent:0)+s.skillPercent)/100)+s.skillPostAdd);
+  // CACHE +0x90 is the actual CalcDamage input: all attack edits are included.
+  const attack = s.attackBasis==='settlement'?f(s.settledAttack):Math.max(f(f(edited)*f(1+f(s.attackRatio/100))),0);
   const defense = f(s.defense * s.defenseRatio * (s.boss && s.break ? s.breakDefenseRatio : 1));
   const resistance = (s.element==='无' ? 0 : s.resistance)+s.resistCorrection;
   const element = f(1-clamp(f(resistance/100),-9.99,1));

@@ -4,6 +4,7 @@ import {formatEffect} from './effect-rule-engine.mjs';
 import {initEntryWorkflow} from './entry-workflow.mjs';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs';
 import {observedCritical} from './reader-bonus-decoder.mjs';
+import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -17,6 +18,7 @@ const embedded=params.get('embedded')==='1' && window.parent!==window;
 let imported=null,latestReport=null,workflow=null,readUnit=null,bossRaces=[],reviewBlocker='请导入读取报告并选择采用的数据。',lastHitKey='';
 let manualCriticalBase='';
 let retainedImportDraft=null;
+let formulaCapture=null,captureOptions=[],captureApplication=null;
 document.body.classList.toggle('is-embedded',embedded);
 const newEffect=(kind='all')=>({id:++nextId,kind,percent:0,enabled:true,target:'无',stage:'post',name:''});
 const numericKeys=Object.keys(defaultInput()).filter(k=>typeof defaultInput()[k]==='number');
@@ -60,6 +62,7 @@ function hitSourceNote(){
 }
 function receiveEntryData({battle,unit}) {
   readUnit=unit;
+  clearSettlementCapture('读取报告或角色已改变，请重新选择结算样本。');renderCaptureOptions();
   const old=$('bossPreset').value;
   $('bossPreset').querySelectorAll('[data-reader-boss]').forEach(el=>el.remove());
   for(const key of Object.keys(bosses))if(key.startsWith('reader-'))delete bosses[key];
@@ -79,11 +82,73 @@ function readEffects() {
     stage:row.querySelector('[data-field=stage]').value,
     name:row.querySelector('[data-field=name]').value.trim()}));
 }
+function attackFormula(s,c) {
+  if(s.attackBasis==='settlement')return `直接采用读取器结算攻击 ${fmt(c.attack)}；不再应用技能攻击修正或 AtkRatio。`;
+  if(s.attackBasis==='layers')return `同层属性：(${fmt(s.attackBase)} + ${s.skillAdd}) × (1 + ${s.runtimeStatPercent}% + ${s.skillPercent}%) + ${s.skillPostAdd}，再应用 AtkRatio。`;
+  return '按无实时属性加成的面板应用技能攻击修正。';
+}
+function syncAttackBasis() {
+  const mode=$('attackBasis').value;
+  $('attackLayerControls').hidden=mode!=='layers';$('settledAttackControl').hidden=mode!=='settlement';
+  for(const id of ['attackBase','runtimeStatPercent']){$(id).disabled=mode!=='layers';$(id).required=mode==='layers';}
+  $('settledAttack').disabled=mode!=='settlement';$('settledAttack').required=mode==='settlement';
+  $('attack').required=mode==='panel';
+  for(const id of ['skillAdd','skillPercent','skillPostAdd','attackRatio'])$(id).disabled=mode==='settlement';
+  $('attackBasisNote').textContent=mode==='settlement'?'结算值已含技能修正和 AtkRatio，直接进入攻防核心。读取器记录为整数；其他倍率及伤害加成仍按本页计算。':mode==='layers'?'只合并已确认属于同一实时属性层的加成。例：6,741 × (1 + 50% + 67%) → 14,627；不能给已经加过 50% 的 10,111 再乘 1.67。':'如果面板含 EX 灵气、月光等实时加成，请改用属性分层或读取器结算值；不能直接再次乘技能攻击修正。';
+}
+function captureKey() {
+  return JSON.stringify([readUnit?.unitId,workflow?.selection(),...['preset','type','skillType','element','readerSkillPick','attack','coefficient','skillPercent','skillAdd','skillPostAdd','attackRatio','runtimeRatio','hitMultiplier','hitDamageRatio','hitScaleStage','bossPreset','bossDefense','bossMind','defenseRatio','resistCorrection'].map(id=>$(id)?.value),...['dualWield','specialAttack','break'].map(id=>$(id).checked)]);
+}
+function clearSettlementCapture(reason) {
+  const hadValue=!!captureApplication||$('settledAttack').value!=='';
+  captureApplication=null;$('settledAttack').value='';
+  if(hadValue)$('formulaCaptureNote').textContent=reason;
+}
+function renderCaptureOptions() {
+  captureOptions=(formulaCapture?.battles||[]).flatMap(b=>b.settlementGroups.filter(g=>g.sourceIdentity&&(!readUnit||String(g.sourceIdentity.unitId)===String(readUnit.unitId))).map(g=>({battle:b,group:g})));
+  const time=(b,g)=>{const date=new Date(Number(b.session)+g.timeRange[0]);return Number.isFinite(date.getTime())?date.toISOString().slice(0,19).replace('T',' '):'时间未提供';};
+  $('formulaCapturePick').innerHTML='<option value="">请选择本次战斗与结算值</option>'+captureOptions.map(({battle:b,group:g},i)=>`<option value="${i}">${esc(time(b,g))} · 第${esc(b.battle)}场 · ${esc(g.sourceIdentity.name)} · A ${g.attack} / F ${g.defense} · ${b.hpTargets.reduce((n,h)=>n+h.eventCount,0)}次掉血 / ${fmt(b.hpTargets.reduce((n,h)=>n+h.totalDecrease,0))}</option>`).join('');
+  $('applyFormulaCapture').disabled=true;
+}
+function selectedCapture() {return $('formulaCapturePick').value===''?null:captureOptions[Number($('formulaCapturePick').value)];}
+function showCaptureChoice() {
+  const value=selectedCapture();$('applyFormulaCapture').disabled=!value;
+  if(!value)return;
+  const {battle:b,group:g}=value;
+  $('formulaCaptureNote').textContent=`${g.sampleCount} 条结算样本：攻击 ${g.attack}，防御 ${g.defense}，基础倍率 ${Number(g.baseRatio.toPrecision(6))}，最终倍率 ${Number(g.finalRatio.toPrecision(6))}。观察法强：${g.panelIntValues.map(v=>v.value).join('／')||'未读取'}。${g.knownLogSkillIds.length?`部分样本与技能 ${g.knownLogSkillIds.join('、')} 日志对应。`:''}缓存未完整绑定招式；点击后将该值用于当前所选招式。掉血合计属于本场目标，不能直接当作逐段伤害。`;
+}
+$('formulaCaptureFile').addEventListener('change',async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try {
+    if(file.size>25*1024*1024)throw new Error('文件超过25MB，请拆分战斗记录。');
+    const parsed=parseDamageFormulaCsv(await file.text());
+    clearSettlementCapture('已载入新的结算记录，请重新选择。');formulaCapture=parsed;renderCaptureOptions();
+    $('formulaCaptureNote').textContent=`${file.name}：${parsed.battleCount} 场战斗，${captureOptions.length} 组我方结算值。请选择本次样本。${parsed.issues.length?`${parsed.issues.length} 条字段不完整或冲突的记录未用于对应。`:''}`;
+  }catch(error){$('formulaCaptureNote').textContent=`结算文件未导入：${error.message}`;}
+  e.target.value='';update();
+});
+$('formulaCapturePick').addEventListener('change',showCaptureChoice);
+$('applyFormulaCapture').addEventListener('click',()=>{
+  const selected=selectedCapture();if(!selected)return;
+  const {group:g}=selected,mode=referenceMode();
+  const values=mode==='int'?g.panelIntValues:mode==='str'?g.panelAttackValues:[];
+  // Adopt a sampled panel only when it is unique within this selected group.
+  const c=$('coefficient').valueAsNumber,h=$('hitDamageRatio').valueAsNumber;
+  let coreMatched=false;
+  if($('dualWield').checked&&Number.isFinite(c)&&c>0&&Number.isFinite(h)&&h!==1&&$('runtimeRatio').valueAsNumber===1&&Math.abs(g.baseRatio-c*h)<1e-6){
+    $('hitScaleStage').value='core';$('hitScaleStage').dispatchEvent(new Event('change',{bubbles:true}));coreMatched=true;
+  }
+  if(values.length===1)$('attack').value=values[0].value;
+  $('attackBasis').value='settlement';$('settledAttack').value=g.attack;
+  captureApplication={key:captureKey(),groupId:g.id};
+  $('formulaCaptureNote').textContent=`已将本组实际结算攻击 ${g.attack} 用于当前招式，跳过技能攻击修正与 AtkRatio。${coreMatched?'基础倍率与“技能系数 × 单段倍率”一致，已选择核心系数中的分段修正。':''}本页未自动更改装备、暴击资格、其他加成及手填段数。`;
+  update();
+});
 function read() {
   const s=defaultInput();
   for(const k of numericKeys) if($(k))s[k]=$(k).valueAsNumber;
   for(const k of booleanKeys) if($(k))s[k]=$(k).checked;
-  for(const k of ['type','skillType','element','hitScaleStage']) s[k]=$(k).value;
+  for(const k of ['type','skillType','element','hitScaleStage','attackBasis']) s[k]=$(k).value;
   s.races=bossRaces;s.killerRaces=[];s.specialAttack=$('specialAttack').checked;s.killerCorrection=imported?.killerCorrection??0;
   s.effects=readEffects();return s;
 }
@@ -103,6 +168,7 @@ function syncBossReference() {
   $('resistance').value=$('element').value==='无'?0:index<0?'':document.querySelector(`[data-boss-resistance="${keys[index]}"]`).value;
 }
 function labels() {
+  syncAttackBasis();
   const mode=referenceMode(),magic=mode==='int';
   $('attackLabel').textContent=mode==='mixed'?'已确认的混合结算攻击值':magic?'当前战斗法强':'当前战斗攻击力';
   $('mixedReferenceNote').hidden=mode!=='mixed';$('mixedDefenseControl').hidden=mode!=='mixed';
@@ -123,6 +189,7 @@ function applyBoss() {
   $('boss').checked=true;labels();
 }
 function update() {
+  if(captureApplication&&captureApplication.key!==captureKey())clearSettlementCapture('面板、招式或战斗条件已改变，请重新采用相应的结算样本。');
   if(imported) {
     const cap=$('baseCap').valueAsNumber+imported.capAdded;
     const fromReader=$('critBasis').value==='reader',observed=observedCritical(readUnit).value;
@@ -148,17 +215,18 @@ function update() {
     $('resultState').textContent=c.element<=0?'属性免疫':r.normal.uncappedMax>s.cap?'普通伤害触及上限':imported?'导入条件下试算':'实时计算';
     $('normalDamage').textContent=`${fmt(r.normal.min)} – ${fmt(r.normal.max)}`;
     $('criticalDamage').textContent=`${fmt(r.critical.min)} – ${fmt(r.critical.max)}`;
+    $('criticalDamage').closest('article').hidden=s.critRate===0;
     $('totalMean').textContent=`≈ ${fmt(r.totalMean)}`;
     $('totalNote').textContent=`${s.hits} 原始段 × ${s.hitMultiplier} = ${r.totalHits} 段 · 暴击率 ${fmt(s.critRate)}% · 含逐段上限`;
     $('normalTotal').textContent=r.normalTotal.map(fmt).join(' – ');
     $('effectiveAttack').textContent=fmt(c.attack);
     $('effectiveDefense').textContent=fmt(c.defense);
     $('killerState').textContent=c.killer?`本次触发 · 基础 ×${fmt(c.killerFactor)}`:'未触发';
-    $('skillSummary').textContent=`每段系数 ×${s.coefficient} · 技能内攻击修正 ${s.skillPercent>=0?'+':''}${s.skillPercent}% · ${r.totalHits} 段`;
+    $('skillSummary').textContent=`每段系数 ×${s.coefficient} · ${s.attackBasis==='settlement'?'读取器结算攻击已含技能修正':`技能内攻击修正 ${s.skillPercent>=0?'+':''}${s.skillPercent}%`} · ${r.totalHits} 段`;
     const count=r.active.filter(e=>e.percent!==0).length;
     $('activeNote').textContent=`已计入 ${count} 条非零加成${s.boss&&s.break?'；Boss Break 防御修正已生效':''}。`;
     $('trace').innerHTML=r.normal.trace.map(t=>`<li><span>${esc(t.label)}</span><b>${fmt(t.value)}</b></li>`).join('');
-    $('formulaText').textContent=`A=${fmt(c.attack)}，F=${fmt(c.defense)}，C=${s.coefficient}。先算普通核心，再按生效列表逐条修正，最后格挡与限额。`;
+    $('formulaText').textContent=`${attackFormula(s,c)} A=${fmt(c.attack)}，F=${fmt(c.defense)}，C=${s.coefficient}。先算普通核心，再按生效列表逐条修正，最后格挡与限额。`;
     document.querySelectorAll('.effect').forEach((el,i)=>{
       const e=s.effects[i],normal=applies(e,s,c,false),crit=applies(e,s,c,true);
       el.classList.toggle('is-inactive',!normal&&!crit);
@@ -172,9 +240,11 @@ function update() {
   }
 }
 function reset(clearSaved=true) {
+  captureApplication=null;$('attackBasis').value='panel';
   retainedImportDraft=null;
   const s=defaultInput();
   for(const k of numericKeys) if($(k))$(k).value=s[k];
+  $('settledAttack').value='';$('attackBase').value='';
   for(const k of booleanKeys) if($(k))$(k).checked=s[k];
   for(const k of ['type','skillType','element']) $(k).value=s[k];
   $('preset').value='eris';$('bossPreset').value='bird';
@@ -212,6 +282,8 @@ $('calculator').addEventListener('submit',e=>e.preventDefault());
 $('calculator').addEventListener('input',event=>{clearTimeout(timer);timer=setTimeout(update,70);});
 $('calculator').addEventListener('change',event=>{
   const id=event.target.id;
+  if(id==='attackBasis'&&$('attackBasis').value!=='settlement')clearSettlementCapture('已切换计算方式；重新采用结算值时需选择对应样本或填写。');
+  if(id==='settledAttack')captureApplication={key:captureKey(),manual:true};
   if(['bossDefense','bossMind'].includes(id)||event.target.dataset.bossResistance){$('bossPreset').value='custom';labels();}
   if(!characterId&&id==='preset') {
     if($('preset').value==='eris') {
@@ -289,6 +361,7 @@ document.addEventListener('keydown',e=>{if(embedded&&e.key==='Escape')window.par
 if(characterId)workflow=initEntryWorkflow({
   characterId,
   onInvalidate(message){
+    clearSettlementCapture('核对条件已改变，请重新选择本次结算值。');
     reviewBlocker=message;
     if(imported)retainedImportDraft={base:imported.effects,rows:readEffects().filter(e=>e.importId)};
     imported=null;effects=readEffects().filter(e=>!e.importId);renderEffects();

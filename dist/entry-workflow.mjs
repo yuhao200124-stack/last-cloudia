@@ -1,11 +1,12 @@
 import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs';
 import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs';
 import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs';
-import {formatEffect} from './effect-rule-engine.mjs';
+import {formatEffect,describeCondition} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
 import {calculateWebsitePanel} from './panel-calculator.mjs';
 import {readMoveParameters} from './battle-entry-data.mjs';
 import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -21,6 +22,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  state.mechanicsRevision=STAT_MECHANICS_REVISION;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
  let confirmed=false,hasApproval=false,bonusGroups=[],readerBonuses=[];
+ let supplementChoices={},supplements=[];
  state.readerSkillMappings=saved.readerSkillMappings||{};
  const parameterIds=['hits','coefficient','skillPercent','skillAdd','skillPostAdd'];
  const save=()=>{try{localStorage.setItem(storageKey,JSON.stringify(state));}catch{$('entryStatus').textContent='浏览器未能保存核对选择，请保持当前页面打开。';}};
@@ -68,6 +70,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   candidate=retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},state.selection);
   readerBonuses=evaluateReaderBonuses(unit?.bonuses||[],candidate.context);
   compared=compareCandidates(websiteCandidates(candidate),readerBonuses,state.mappings,candidate.context);
+  supplements=readerSupplementCandidates(readerBonuses,compared,candidate.context);
   for(const row of compared)if(state.decisions[decisionKey(row)]?.choice==='reader'&&!row.compatible)state.decisions[decisionKey(row)]={choice:'pending'};
   for(const row of compared)if(row.group==='blessings'&&!state.decisions[decisionKey(row)]&&(!row.reader||(row.compatible&&row.difference===0)))state.decisions[decisionKey(row)]={choice:'web'};
   if(unit)for(const k of Object.keys(SIX_STATS))if(Number.isFinite(unit.stats[k])&&(!state.statDecisions[k]?.choice||state.statDecisions[k].choice==='pending'))state.statDecisions[k]={...state.statDecisions[k],choice:'reader'};
@@ -106,7 +109,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   return `<li><span>${esc(sourceName)}：${esc(formatEffect(effect))}${extra}</span>${index>=0?`<button type="button" class="entry-delete" data-entry-delete="${index}" aria-label="删除${esc(sourceName)}的${esc(effect.target)}">删除</button>`:''}</li>`;
  }
  function renderBonusReview() {
-  bonusGroups=buildBonusComparison(compared,readerBonuses,candidate.context,{removed:state.removedEffects,decisions:decisions()});
+  supplements=readerSupplementCandidates(readerBonuses,compared,candidate.context);
+  bonusGroups=includeSupplementGroups(buildBonusComparison(compared,readerBonuses,candidate.context,{removed:state.removedEffects,decisions:decisions()}),supplements,supplementChoices);
   const val=(n,u)=>`${n.toLocaleString('en-US')}${u}`;
   const inventory=unit?.raw,states=readerBonuses.map(b=>readerBonusState(b,candidate.context));
   const count=status=>states.filter(s=>s.status===status).length;
@@ -166,6 +170,9 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    return `<li data-reader-blessing="${esc(b.decoded.accountBlessing.localId)}"><b>${esc(b.sourceName)}</b><div>${esc(b.decoded.accountBlessing.description)}</div><small>${esc(reason)}</small><details data-entry-details="blessing:${esc(b.id)}"><summary>原始证据</summary><p>来源：裸装对照确认的账户加护 · 技能 ID ${esc(b.raw.localId)}。这是读取到的配置，非逐击触发证明。</p><pre>${esc(JSON.stringify(b.raw,null,2))}</pre></details></li>`;
   }).join('');
   const unmatched=readerBonuses.filter(b=>!mapped.has(b.id)&&!b.decoded?.accountBlessing);
+  supplements=readerSupplementCandidates(readerBonuses,compared,candidate.context);
+  $('entrySupplementSection').hidden=!supplements.length;
+  $('entrySupplementReview').innerHTML=supplements.map((b,i)=>`<tr><td><b>${esc(b.sourceName||b.id)}</b><small>${esc(b.decoded.conditions.map(describeCondition).join('；')||'已解析配置')}</small></td><td>${esc(b.target)} +${esc(b.value)}%<small>配置候选，需选择采用</small></td><td><select data-reader-supplement="${i}" aria-label="${esc(b.sourceName)}补充加成">${option('pending','待选择（暂不计入）',supplementChoices[supplementKey(b)]||'pending')}${option('reader','读取器',supplementChoices[supplementKey(b)])}${option('exclude','不计入',supplementChoices[supplementKey(b)])}</select></td></tr>`).join('');
   const unresolved=unmatched.filter(b=>readerBonusState(b,candidate.context).status==='unresolved').length;
   $('entryUnmatchedCount').textContent=`其他读取记录（${unmatched.length}，其中 ${unresolved} 项待解析）`;
   $('entryUnmatched').innerHTML=unmatched.map(b=>{const status=readerBonusState(b,candidate.context);return `<li><b>${esc(b.sourceName||b.id)}</b>：${esc(b.target||b.effectType||'未解析')} ${esc(b.value??'数值未解析')}${esc(b.unit||'')}<small>${esc(status.reason)}${b.decoded?.note?`；${esc(b.decoded.note)}`:''}</small><details><summary>原始证据</summary>${b.decoded?.documentation?`<p>游戏脚本：${esc(b.decoded.documentation.description)}</p>`:''}<pre>${esc(JSON.stringify(b.raw??b,null,2))}</pre></details></li>`;}).join('')||'<li>没有其他读取记录。</li>';
@@ -195,7 +202,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  async function importFile(file) {
   if(!file)return;if(file.size>25_000_000)throw new Error('报告超过25MB，请使用读取器生成的入场JSON报告。');
-  battle=validateBattleEntry(JSON.parse(await file.text()));unit=null;hasApproval=false;state.mappings={};state.statDecisions={};
+  battle=validateBattleEntry(JSON.parse(await file.text()));unit=null;hasApproval=false;state.mappings={};state.statDecisions={};supplementChoices={};
   $('entryUnit').innerHTML=option('','请选择本次测试角色','')+battle.units.map((u,i)=>option(String(i),`${u.name||'未命名'} · Unit ${u.unitId}`,'')).join('');
   $('entryFileNote').textContent=`${file.name} · ${battle.testFixture?'模拟示例，非实际战斗 · ':''}${battle.capturedAt||'时间未提供'} · ${battle.snapshotState==='partial'?'部分读取，缺项不代表没有效果':'入场报告'}。${battle.normalization?.mpThousandths?'MP已按游戏显示单位修正，原始值保留。':''}请选择正确角色；Buff清单本身不代表全部触发。`;
   if(battle.units.length===1){unit=battle.units[0];$('entryUnit').value='0';}
@@ -203,7 +210,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  $('entryReportFile').addEventListener('change',async e=>{try{await importFile(e.target.files[0]);}catch(err){invalidate(`新文件未导入：${err.message}`);}e.target.value='';});
  $('readerSkillPick').addEventListener('change',e=>{state.readerSkillMappings[`${unit?.unitId}:${paramKey()}`]=e.target.value;state.parameters[paramKey()]={...state.parameters[paramKey()],coefficient:'',skillPercent:'',skillAdd:'',skillPostAdd:''};setParameters();save();syncSelection();});
- $('entryUnit').addEventListener('change',e=>{unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;hasApproval=false;state.mappings={};state.statDecisions={};invalidate('读取资料已暂填；数值差异由你决定。');setParameters();onRead({battle,unit});updateCandidate();});
+ $('entryUnit').addEventListener('change',e=>{unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;hasApproval=false;state.mappings={};state.statDecisions={};supplementChoices={};invalidate('读取资料已暂填；数值差异由你决定。');setParameters();onRead({battle,unit});updateCandidate();});
+ $('entrySupplementReview').addEventListener('change',e=>{const b=supplements[Number(e.target.dataset.readerSupplement)];if(!b)return;supplementChoices[supplementKey(b)]=e.target.value;invalidate('读取器补充加成已更新。');renderReview();});
  $('dualWield').addEventListener('change',()=>{state.selection.dualWield=$('dualWield').checked;save();renderReview();onSelection(selection());});
  for(const id of ['specialAttack','break'])$(id).addEventListener('change',()=>{
   state.selection[id]=$(id).checked;invalidate('战斗选项已改变，按本次条件重新核对加成。');updateCandidate();
@@ -229,6 +237,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   const group=bonusGroups[Number(e.target.dataset.entryBonusChoice)],choice=e.target.value;
   if(!group||!['web','reader','pending'].includes(choice)||choice==='reader'&&!group.canUseReader)return;
   for(const row of group.web)state.decisions[decisionKey(row)]={choice};
+  for(const b of group.supplements||[])supplementChoices[supplementKey(b)]=choice==='web'?'exclude':choice;
   hasApproval=false;invalidate();save();renderProfile();renderReview();
  });
  const changeEffect=e=>{
@@ -242,7 +251,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  $('entryEffectsReview').addEventListener('change',changeEffect);
  $('entrySpecialReview').addEventListener('change',changeEffect);
  $('entryStatReview').addEventListener('change',e=>{const el=e.target,key=el.dataset.entryStat??el.dataset.entryStatValue;if(!key)return;const d=state.statDecisions[key]||{};if(el.dataset.entryStat)d.choice=el.value;else d.value=el.valueAsNumber;state.statDecisions[key]=d;invalidate();save();renderReview();});
- $('entryUseWeb').addEventListener('click',()=>{for(const row of compared)state.decisions[decisionKey(row)]={choice:'web'};invalidate('已选择沿用网站候选；仍需核对面板并确认应用。');save();renderProfile();renderReview();});
+ $('entryUseWeb').addEventListener('click',()=>{for(const b of supplements)supplementChoices[supplementKey(b)]='exclude';for(const row of compared)state.decisions[decisionKey(row)]={choice:'web'};invalidate('已选择沿用网站候选；仍需核对面板并确认应用。');save();renderProfile();renderReview();});
  $('entryUseStats').addEventListener('click',()=>{if(!unit){$('entryStatus').textContent='请先选择读取报告中的角色。';return;}for(const k of Object.keys(SIX_STATS))if(unit.stats[k]!=null)state.statDecisions[k]={choice:'reader'};invalidate('已选择入场最终面板；属性加成不会再次乘入。');save();renderReview();});
  $('entryUseWebsiteStats').addEventListener('click',()=>{if(!candidate)return;const computed=websitePanel();let count=0;for(const k of Object.keys(SIX_STATS))if(computed.values[k]!=null){state.statDecisions[k]={choice:'website'};count++;}invalidate(`已选择 ${count} 项网站计算结果；仍需确认后应用。`);save();renderReview();});
  function syncSelection(finish=false){
@@ -255,7 +264,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    for(const k of Object.keys(SIX_STATS))if(!['reader','manual','blessed','base','website'].includes(state.statDecisions[k]?.choice))throw new Error(`请确认${SIX_STATS[k]}最终采用的数值。`);
    const selected=decisions(),pending=compared.filter(r=>!selected[decisionKey(r)]||selected[decisionKey(r)].choice==='pending');
    if(pending.length)throw new Error(`还有 ${pending.length} 项加成未选择采用数据：${pending.slice(0,3).map(r=>`${r.sourceName} · ${r.effect.target}`).join('、')}${pending.length>3?'等':''}。请在“面板与加成核对”选择网站、读取器或暂不计入。`);
-   const reviewed=resolveReview(candidate,compared,selected);
+   const reviewed=appendReaderSupplements(resolveReview(candidate,compared,selected),readerBonuses,compared,supplementChoices);
    const blessed=withAccountBlessings({...profile.baseStats,...state.base},reviewed);
    const computed=websitePanel({...reviewed,rows:[...reviewed.rows,...candidate.rows.filter(r=>r.status==='pending')]});
    const panels={};for(const k of Object.keys(SIX_STATS)){
@@ -276,7 +285,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  $('entryConfirm').addEventListener('click',()=>syncSelection(true));
  return {receive,selection,panelsPreview,applySelection:syncSelection,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
-  hasApproval=false;state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};
+  hasApproval=false;state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
   if(initialized){state.selection={...state.selection,dualWield:false,specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
  }};

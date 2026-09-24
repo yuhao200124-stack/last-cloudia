@@ -80,3 +80,28 @@ test('UI input contract covers all numeric/boolean model parameters and imported
   const js=readFileSync(new URL('../dist/damage-calculator.mjs',import.meta.url),'utf8');
   for(const m of js.matchAll(/\$\('([^']+)'\)/g)) assert(ids.includes(m[1]),`missing referenced element ${m[1]}`);
 });
+test('Roxy recorded runtime and skill INT modifiers share their original base',()=>{
+ const s={...defaultInput(),attack:10111,attackBasis:'layers',attackBase:6741,runtimeStatPercent:50,skillPercent:67};
+ assert.equal(context(s).attack,14627);
+ assert.notEqual(context({...s,attackBasis:'panel'}).attack,14627);
+ assert.equal(context({...s,runtimeStatPercent:80}).attack,16650);
+});
+test('captured settled attack bypasses already included attack edits',()=>{
+ const s={...defaultInput(),attackBasis:'settlement',settledAttack:14627,attack:NaN,skillAdd:NaN,skillPercent:NaN,skillPostAdd:NaN,attackRatio:NaN};
+ assert.equal(calculate(s).context.attack,14627);
+ for(const settledAttack of [NaN,-1,1e9])assert.throws(()=>calculate({...s,settledAttack}));
+});
+test('Roxy no-crit capture: core contains 0.6, scoped robe 1% is a separate after-effect',()=>{
+ const percentages=[50,30,20,15,20,30,30,30,4,20,35,4.06,1];
+ const s={...defaultInput(),attack:10111,attackBasis:'settlement',settledAttack:14627,defense:8000,coefficient:.52,skillPercent:67,
+   type:'magical',skillType:'magic',element:'冰',resistance:50,specialAttack:true,killerCorrection:50,
+   hits:35,hitMultiplier:2,hitDamageRatio:.6,hitScaleStage:'core',cap:200000,critRate:0,effects:percentages.map(p=>effect('magical',p))};
+ const r=calculate(s);assert.equal(r.context.attack,14627);assert.equal(r.totalHits,70);
+ assert(Math.abs(prepare(s).q-.351)<1e-6);
+ assert.deepEqual([r.normal.min,r.normal.max],[32611,36247]);
+ assert.equal(r.totalMean,r.normal.mean*70);
+ // Recorded base_damage is replayed independently of random number sampling.
+ const replay=n=>percentages.reduce((d,p)=>Math.floor(d*(1+p/100)+.5),n);
+ assert.equal(replay(2810),35302); // game 35303; order/rounding still unverified.
+ assert.equal(replay(2701),33939); // game 33938; do not fit an extra scalar.
+});

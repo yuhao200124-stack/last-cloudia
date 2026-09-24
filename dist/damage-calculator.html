@@ -32,7 +32,14 @@
       </div>
       <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀／魔法双段（仅伤害计算）</label><label><input id="specialAttack" type="checkbox">本次触发特攻</label><label><input id="break" type="checkbox">Boss 正在 Break</label></div>
       <p id="conditionStatus" class="help"></p>
-      <p class="help">战斗属性填写已包含面板与状态加成的数值；攻击／法强提升、EX灵气、装备和加护不再重复计入。</p>
+      <p class="help">战斗面板与本段结算攻击值不同。EX 灵气等实时属性加成可能与技能修正在同一层相加，请在下方选择计算方式。</p>
+      <details id="settlementDetails" open><summary>结算攻击值</summary>
+        <label>计算方式<select id="attackBasis"><option value="panel">面板无实时加成，应用技能修正</option><option value="layers">状态加成前面板＋同层实时加成</option><option value="settlement">直接采用读取器结算攻击值</option></select></label>
+        <div id="attackLayerControls" class="fields two" hidden><label>状态加成前面板<input id="attackBase" type="number" min="0" max="100000000" step="1"></label><label>已确认的同层实时属性加成 %<input id="runtimeStatPercent" type="number" min="-100" max="100000" step="any"></label></div>
+        <label id="settledAttackControl" hidden>实际结算攻击值<input id="settledAttack" type="number" min="0" max="100000000" step="1"></label>
+        <p id="attackBasisNote" class="help"></p>
+        <details><summary>从结算文件读取</summary><label>结算记录 CSV<input id="formulaCaptureFile" type="file" accept=".csv,text/csv"></label><p id="formulaCaptureNote" class="help">导入 DamageFormulaCapture.csv，选择本次战斗及结算样本；不会以掉血次数替代命中段数。</p><label>战斗与结算样本<select id="formulaCapturePick"><option value="">尚未导入</option></select></label><button id="applyFormulaCapture" type="button" disabled>将本组结算攻击用于当前招式</button></details>
+      </details>
       <div id="importStatControls" class="fields two" hidden><label>暴击率基准<select id="critBasis"><option value="reader">读取器面板</option><option value="website">网站加成＋手填基础</option></select></label><label><span id="baseCritLabel">基础及额外暴击率 %</span><input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help"></p></div>
       <div class="fields three">
         <label>伤害分类（词条适用类型）<select id="type"><option value="physical">物理</option><option value="magical">魔法</option></select></label>
@@ -108,6 +115,7 @@
       <p class="help" id="entryReadCoverage"></p><p class="help" id="entryObservedCritical"></p>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>项目</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryBonusReview"></tbody></table></div>
       <section id="entrySpecialSection" hidden><h3>命中、特攻与其他特殊效果</h3><p class="help">这些效果也会影响计算，请选择采用或暂不计入。六维已选最终面板时，属性词条无需重复确认。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
+      <section id="entrySupplementSection" hidden><h3>读取器补充加成</h3><p class="help">网站尚无对应来源的已解析条目。按原始条件列出，选择采用后进入伤害计算；已采用的网站来源不会重复补入。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／条件</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entrySupplementReview"></tbody></table></div></section>
       <details id="entryIndividualReview"><summary>逐条核对与修改 · <span id="entryCandidateCount">加成候选</span></summary>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>网站</th><th>读取器</th><th>比较</th><th>采用数据</th></tr></thead><tbody id="entryEffectsReview"></tbody></table></div>
       </details>
