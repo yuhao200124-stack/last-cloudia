@@ -60,3 +60,24 @@ test('CRT panel and attack additions remain separate and killer power is applied
  assert.equal(evaluateCatalog([old],{killer:true}).rows[0].rule.effects[0].type,'killerPower');
  const modified=evaluateCatalog([old],{killer:true},{s:{effects:[{type:'damage',target:'特攻伤害',value:70,unit:'%'}]}});assert.equal(modified.rows[0].status,'pending');
 });
+test('reader multi-magic configuration adopts both hit values and records their origin',()=>{
+ const s=setup(),hit=s.compared.find(r=>r.effect.type==='hit');
+ assert(hit.compatible);assert.equal(hit.reader.value,2);assert.equal(hit.reader.secondary,0.6);
+ const d=Object.fromEntries(s.compared.map(r=>[decisionKey(r),{choice:r===hit?'reader':'web'}]));
+ const imported=buildDamageImport(resolveReview(s.report,s.compared,d));
+ assert.equal(imported.hitMultiplier,2);assert.equal(imported.hitDamageRatio,0.6);assert.equal(imported.hitSourceKind,'reader');
+ const changed=input();changed.units[0].bonuses.find(b=>b.processId===1082501&&!b.raw.masterFunction).raw.values[7]=7500;
+ const next=setup({},changed),newHit=next.compared.find(r=>r.effect.type==='hit');
+ assert(newHit.compatible);assert.match(newHit.comparison,/数值不同/);
+ assert.notEqual(decisionKey(hit),decisionKey(newHit),'changing only the per-hit ratio requires a new choice');
+ assert.throws(()=>resolveReview(next.report,next.compared,d),/请决定/);
+ const chosen=Object.fromEntries(next.compared.map(r=>[decisionKey(r),{choice:r===newHit?'reader':'web'}]));
+ assert.equal(buildDamageImport(resolveReview(next.report,next.compared,chosen)).hitDamageRatio,0.75);
+ const incomplete={...newHit.reader,secondary:null};
+ assert.equal(compareCandidates([newHit],[incomplete],{},next.report.context)[0].compatible,false);
+ const fire={...s.report.context,element:'fire'};
+ assert.equal(compareCandidates([hit],[hit.reader],{},fire)[0].compatible,false);
+ d[decisionKey(hit)]={choice:'exclude'};
+ const excluded=buildDamageImport(resolveReview(s.report,s.compared,d));
+ assert.equal(excluded.hitMultiplier,1);assert.equal(excluded.hitDamageRatio,1);assert.equal(excluded.hitSourceKind,null);
+});

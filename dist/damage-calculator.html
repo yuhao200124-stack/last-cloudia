@@ -30,7 +30,7 @@
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
-      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀（仅伤害计算）</label><label><input id="specialAttack" type="checkbox">本次触发特攻</label><label><input id="break" type="checkbox">Boss 正在 Break</label></div>
+      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀／魔法双段（仅伤害计算）</label><label><input id="specialAttack" type="checkbox">本次触发特攻</label><label><input id="break" type="checkbox">Boss 正在 Break</label></div>
       <p id="conditionStatus" class="help"></p>
       <p class="help">战斗属性填写已包含面板与状态加成的数值；攻击／法强提升、EX灵气、装备和加护不再重复计入。</p>
       <div id="importStatControls" class="fields two" hidden><label>暴击率基准<select id="critBasis"><option value="reader">读取器面板</option><option value="website">网站加成＋手填基础</option></select></label><label><span id="baseCritLabel">基础及额外暴击率 %</span><input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help"></p></div>
@@ -56,7 +56,7 @@
         <label>命中数倍率 ×<input id="hitMultiplier" type="number" min="1" max="100" step="1" value="1" required></label>
         <label>单段伤害倍率 ×<input id="hitDamageRatio" type="number" min="0" max="100" step="any" value="1" required></label>
         <label id="hitScaleControl">修正试算位置<select id="hitScaleStage"><option value="">待确认</option><option value="core" selected>核心系数中</option><option value="beforeCap">伤害上限前</option><option value="afterCap">伤害上限后</option></select></label>
-      </div><p id="hitSourceNote" class="help"></p><p class="help">基础段数不含翻倍。单段倍率为1时无需选择修正位置；其他倍率需选择试算位置，执行顺序未实测。</p></details>
+      </div><p id="hitSourceNote" class="help"></p><p class="help">基础段数不含翻倍；如果填写的是实际总段数，请将命中数倍率设为1。清空倍率可恢复自动值。单段倍率为1时无需选择修正位置；其他倍率需选择试算位置，执行顺序未实测。</p></details>
     </section>
     <section class="card"><div class="section-heading"><h2><span>04</span>Boss 与战斗条件</h2></div>
       <label class="wide">目标预设<select id="bossPreset"><option value="bird">轟鳥龍恩德爾羅納</option><option value="beast">神獸帕帕拉納</option><option value="custom">自定义目标</option></select></label>

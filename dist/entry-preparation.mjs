@@ -86,6 +86,7 @@ export function readerScopeAllows(reader,context) {
  if(!Array.isArray(conditions)||!context)return true; // Legacy manual mapping has no decoded scope to test.
  return evaluateCatalog([{id:'reader-scope',group:'common',rules:[{id:'reader-scope',conditions,effects:[{type:'utility'}],review:'ready'}]}],context).rows[0].status==='active';
 }
+const completeReaderHit=reader=>reader?.decoded?.stage==='configuration'&&Array.isArray(reader.decoded.conditions)&&Number.isInteger(reader.value)&&reader.value>0&&num(reader.secondary)!==null&&reader.secondary>=0;
 export function compareCandidates(web,bonuses,mappings={},context) {
  const token=b=>[clean(b.sourceName),b.effectType,b.target,b.unit].join('|');
  return web.map(w=>{
@@ -94,13 +95,14 @@ export function compareCandidates(web,bonuses,mappings={},context) {
   if(!Object.hasOwn(mappings,w.id)&&matches.length>1&&context){const qualified=matches.filter(b=>readerScopeAllows(b,context));if(qualified.length)matches=qualified;}
   const reader=matches.length===1?matches[0]:null;
   const scopeAllowed=readerScopeAllows(reader,context);
-  const compatible=reader&&scopeAllowed&&(!localId||(reader.decoded?.accountBlessing?.localId===Number(localId)&&reader.decoded.sourceId===w.sourceId&&JSON.stringify(reader.decoded.conditions)===JSON.stringify(w.condition)))&&reader.effectType===w.effect.type&&reader.target===w.effect.target&&(reader.unit||'')===(w.effect.unit||'')&&typeof reader.value===typeof w.effect.value;
-  const difference=compatible&&num(reader.value)!==null&&num(w.effect.value)!==null?reader.value-w.effect.value:null;
+  const compatible=reader&&scopeAllowed&&(!localId||(reader.decoded?.accountBlessing?.localId===Number(localId)&&reader.decoded.sourceId===w.sourceId&&JSON.stringify(reader.decoded.conditions)===JSON.stringify(w.condition)))&&reader.effectType===w.effect.type&&reader.target===w.effect.target&&(reader.unit||'')===(w.effect.unit||'')&&typeof reader.value===typeof w.effect.value&&(w.effect.type!=='hit'||completeReaderHit(reader));
+  const difference=compatible&&w.effect.type!=='hit'&&num(reader.value)!==null&&num(w.effect.value)!==null?reader.value-w.effect.value:null;
+  const equal=compatible&&JSON.stringify(reader.value)===JSON.stringify(w.effect.value)&&(w.effect.type!=='hit'||reader.secondary===w.effect.secondary);
   return {...w,reader,compatible:Boolean(compatible),difference,comparison:!reader?(matches.length>1?'多个候选，待对应':'尚未对应'):
-   !scopeAllowed?'读取器条件不满足或待确认':!compatible?'口径不同，不能直接替换':reader.value==null?'读取值未解析':JSON.stringify(reader.value)===JSON.stringify(w.effect.value)?'数值一致，仍待确认':'数值不同，待选择'};
+   !scopeAllowed?'读取器条件不满足或待确认':!compatible?'口径不同，不能直接替换':reader.value==null?'读取值未解析':equal?'数值一致，仍待确认':'数值不同，待选择'};
  });
 }
-export const decisionKey=row=>JSON.stringify([row.id,row.effect,row.condition,row.reader?.id,row.reader?.value,row.reader?.state,row.reader?.evidence,row.reader?.decoded?.conditions??row.reader?.conditions,row.reader?.decoded?.stage,row.reader?.raw?.buffEnabled,row.reader?.raw?.buffRemoved,row.reader?.raw?.buffIgnored]);
+export const decisionKey=row=>JSON.stringify([row.id,row.effect,row.condition,row.reader?.id,row.reader?.value,row.reader?.state,row.reader?.evidence,row.reader?.decoded?.conditions??row.reader?.conditions,row.reader?.decoded?.stage,row.reader?.raw?.buffEnabled,row.reader?.raw?.buffRemoved,row.reader?.raw?.buffIgnored,...(row.effect.type==='hit'?[row.reader?.secondary]:[])]);
 export function resolveReview(report,compared,decisions) {
  const entries=new Map(),usedReader=new Set();
  for(const row of compared) {
@@ -112,13 +114,16 @@ export function resolveReview(report,compared,decisions) {
   if(d.choice==='reader') {
    if(!readerScopeAllows(row.reader,report.context))throw new Error(`“${row.sourceName}”的读取器条件不符合当前攻击，请重新选择。`);
    if(!row.compatible||row.reader?.value==null)throw new Error(`“${row.sourceName}”读取字段未对应，不能直接替换。`);
-   if(['hit','statReference'].includes(effect.type))throw new Error('复合效果请采用网站规则或在基础计算器修改完整拆分。');
+   if(effect.type==='statReference')throw new Error('属性参照请采用网站规则或在基础计算器修改完整拆分。');
+   if(effect.type==='hit'&&!completeReaderHit(row.reader))throw new Error('读取器分段配置不完整，需同时读取命中数倍率与单段伤害倍率。');
    if(usedReader.has(row.reader.id))throw new Error('同一读取字段不能重复计入多个效果，请重新对应。');
    usedReader.add(row.reader.id);
    effect.value=row.reader.value;
+   if(effect.type==='hit')effect={...effect,secondary:row.reader.secondary,parameterSource:'reader',readerId:row.reader.id};
   } else if(d.choice==='manual') {
    if(typeof effect.value!=='number'||!Number.isFinite(d.value))throw new Error('手动填写只接受已知单位的数值。');
    effect.value=d.value;
+   if(effect.type==='hit')effect.parameterSource='manual';
   } else if(d.choice!=='web')throw new Error('核对选项无效。');
   entries.set(row.id,effect);
  }

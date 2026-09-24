@@ -42,17 +42,20 @@ function syncHitControls(force=false){
   const s=workflow?.selection();if(!s)return;
   const key=JSON.stringify([s.attack,s.preset,s.dualWield]);
   if(!force&&key===lastHitKey)return;lastHitKey=key;
-  for(const id of ['hitMultiplier','hitDamageRatio'])$(id).value=s[id]??(s.dualWield?'':imported?.[id]??1);
-  $('hitScaleStage').value=s.hitScaleStage||'';
+  for(const id of ['hitMultiplier','hitDamageRatio']){
+    $(id).disabled=!s.dualWield;
+    $(id).value=!s.dualWield?1:s[id]!=null&&s[id]!==''?s[id]:imported?.hitSources.length?imported[id]:'';
+  }
+  $('hitScaleStage').value=s.dualWield?s.hitScaleStage||'':'';
   if(s.dualWield||Number($('hitDamageRatio').value)!==1)$('hitDetails').open=true;
 }
 function hitSourceNote(){
-  const s=workflow?.selection(),manual=s&&(s.hitMultiplier!==undefined||s.hitDamageRatio!==undefined);
+  const s=workflow?.selection(),manual=s?.dualWield&&['hitMultiplier','hitDamageRatio'].some(k=>s[k]!=null&&s[k]!=='');
   const values=`命中 ×${$('hitMultiplier').value||'待填'}，单段 ×${$('hitDamageRatio').value||'待填'}`;
-  $('hitSourceNote').textContent=manual?`手动填写：${values}。重新应用核对结果会保留你的数值。`:
-    s?.dualWield?'双刀由你手动判断。请填写该招式的总命中数倍率和单段伤害倍率；不会改变配装，也不会再叠加一份隐藏倍率。':
-    imported?.hitSources.length?`来源：已采用的${imported.hitSources.join('、')}技能效果，${values}；这是按技能效果带入的数值，并非读取器观测到的本次实际命中结果。`:
-    `默认无分段修正：${values}，不是读取器观测值。`;
+  $('hitSourceNote').textContent=!s?.dualWield?'本次未启用双刀／魔法双段，命中 ×1、单段 ×1；此项不改变配装。':
+    manual?`手动填写：${values}。重新应用核对结果会保留你的数值；清空某个倍率可恢复自动值。`:
+    imported?.hitSources.length?`来源：${{reader:'读取器技能配置',manual:'手动核对',website:'网站技能效果'}[imported.hitSourceKind]} · ${imported.hitSources.join('、')}；${values}。已自动填写，只执行这一份分段修正，未代表本次实际命中观测。`:
+    '已启用双刀／魔法双段，当前没有已核对的分段倍率。请先在核对页采用读取器或网站的分段效果；未读到的倍率需手动填写。';
   $('hitScaleControl').hidden=$('hitDamageRatio').value!==''&&$('hitDamageRatio').valueAsNumber===1;
 }
 function receiveEntryData({battle,unit}) {
@@ -109,7 +112,7 @@ function labels() {
   $('bossReference').textContent=`本次参照：${mode==='mixed'?'手填混合防御值':magic?'魔抗 MND':'防御力 DEF'}；${neutral?'无属性不使用六属性抗性':`使用${$('element').value||'所选'}抗性`}。`;
   const p=bosses[$('bossPreset').value];$('debuff').hidden=!p?.debuff||magic||mode==='mixed';
   if(p?.debuff)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
-  $('conditionStatus').textContent=$('dualWield').checked?'双刀仅使用你填写的命中及单段倍率；配装、武器数量条件和已选面板保持基础计算器的设置。':'特攻与 Break 按本次选择计算；装备条件沿用基础计算器。';
+  $('conditionStatus').textContent=$('dualWield').checked?'已启用双刀／魔法双段，只按下方一组命中及单段倍率计算；配装与面板保持原设置。':'特攻与 Break 按本次选择计算；装备条件沿用基础计算器。';
   hitSourceNote();
 }
 function applyBoss() {
@@ -293,7 +296,7 @@ if(characterId)workflow=initEntryWorkflow({
     fillReaderPreview();$('cap').value=$('baseCap').value;
     $('entryReviewSummary').textContent=message;update();
   },
-  onSelection(){fillReaderPreview();syncHitControls();labels();update();},
+  onSelection(){fillReaderPreview();syncHitControls(true);labels();update();},
   onRead:receiveEntryData,
   onConfirm:applyImport
 });
