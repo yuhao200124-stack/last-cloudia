@@ -1,5 +1,5 @@
-import {SKILL_LABELING_CATALOG as catalog} from './skill-labeling-catalog.mjs?v=20260924-damage-scope-fix';
-import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260924-damage-scope-fix';
+import {SKILL_LABELING_CATALOG as catalog} from './skill-labeling-catalog.mjs?v=20260924-boss-damage-labels';
+import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260924-boss-damage-labels';
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const statusLabels = {ready:'已完整判断', partial:'判断部分', unknown:'没办法判断'};
 const pendingList = (title, texts) => texts.length ? `<div class="remaining-effects"><b>${title}</b><ul>${texts.map(text => `<li>${escape(text)}</li>`).join('')}</ul></div>` : '';

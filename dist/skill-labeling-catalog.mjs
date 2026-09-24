@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "damage",
+  "activeView": "boss-damage",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -11883,16 +11883,28 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "Boss伤害增加": {
+          "summary": "对Boss的物理攻击伤害随装备调查兵团的我方单位人数提高：1名+6%、2名+12%、3名+18%、4名+24%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "damageType": "physical"
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。 队伍人数条件仍待判断，不能无条件使用最高24%。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "Boss伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "按队伍中装备调查兵团的单位数量计算",
-        "目标敌人为Boss"
+        "按队伍中装备调查兵团的单位数量计算"
       ]
     },
     {
@@ -16819,16 +16831,29 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "Boss伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "magic"
+            ]
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "Boss伤害增加"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为Boss"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5f13abe1484bc2c7",
@@ -16989,18 +17014,31 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "Boss伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "magic"
+            ]
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "Boss伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "魔法攻击伤害上限+2,000"
       ],
-      "remainingConditions": [
-        "目标敌人为Boss"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "911c90d5593ecf69",
@@ -17282,18 +17320,31 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "Boss伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "magic"
+            ]
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "Boss伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "魔法攻击伤害上限+6,000"
       ],
-      "remainingConditions": [
-        "目标敌人为Boss"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "869205f984d49c10",
@@ -17435,18 +17486,31 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "Boss伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "magic"
+            ]
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "Boss伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "魔法攻击伤害上限+4,000"
       ],
-      "remainingConditions": [
-        "目标敌人为Boss"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0b4cbcd7bc326038",
@@ -17871,6 +17935,393 @@ export const SKILL_LABELING_CATALOG = {
         "全队只有自身装备纳萨力克的统治者",
         "统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大",
         "1名、2名对应的具体增减幅待确认，不直接取最高值"
+      ]
+    },
+    {
+      "id": "6bb2c943681bb3e7",
+      "name": "巨人杀手",
+      "url": "https://altema.jp/lastcloudia/gino/411",
+      "text": "对BOSS的特技和必杀伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-skill-damage",
+          "kind": "effect",
+          "text": "对Boss的特技伤害+20%"
+        },
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss伤害增加": {
+          "summary": "对Boss的特技和必杀伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "skill",
+              "ultimate"
+            ]
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "Boss伤害增加"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "7ef2d01b96b2406e",
+      "name": "巨人杀手2",
+      "url": "https://altema.jp/lastcloudia/gino/624",
+      "text": "对BOSS的特技和必杀伤害+20%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-skill-damage",
+          "kind": "effect",
+          "text": "对Boss的特技伤害+20%"
+        },
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "对Boss的特技伤害上限+2,000"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害上限+2,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss伤害增加": {
+          "summary": "对Boss的特技和必杀伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "skill",
+              "ultimate"
+            ]
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "Boss伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对Boss的特技伤害上限+2,000",
+        "对Boss的必杀伤害上限+2,000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "2ad532afbdeb2594",
+      "name": "邪恶织法",
+      "url": "https://altema.jp/lastcloudia/gino/985",
+      "text": "对BOSS的必杀伤害+20%，伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害上限+5,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss伤害增加": {
+          "summary": "对Boss的必杀伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "ultimate"
+            ]
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "Boss伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对Boss的必杀伤害上限+5,000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "ecf05abb4f8e4b10",
+      "name": "巨人杀手3",
+      "url": "https://altema.jp/lastcloudia/gino/1041",
+      "text": "对BOSS的特技和必杀伤害+20%，伤害上限+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-skill-damage",
+          "kind": "effect",
+          "text": "对Boss的特技伤害+20%"
+        },
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "对Boss的特技伤害上限+4,000"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害上限+4,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss伤害增加": {
+          "summary": "对Boss的特技和必杀伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "skill",
+              "ultimate"
+            ]
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "Boss伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对Boss的特技伤害上限+4,000",
+        "对Boss的必杀伤害上限+4,000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "e3085e506db3fa44",
+      "name": "锐利一击",
+      "url": "https://altema.jp/lastcloudia/gino/1289",
+      "text": "对BOSS的暴击伤害+10%，暴击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-critical-damage",
+          "kind": "effect",
+          "text": "对Boss的暴击伤害+10%"
+        },
+        {
+          "id": "critical-cap",
+          "kind": "effect",
+          "text": "对Boss的暴击伤害上限+2,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        },
+        {
+          "id": "critical-hit",
+          "kind": "condition",
+          "text": "本次攻击实际发生暴击；该技能本身不提高暴击率或赋予魔法暴击资格"
+        }
+      ],
+      "tagDetails": {
+        "Boss伤害增加": {
+          "summary": "对Boss的暴击伤害+10%",
+          "relation": "boss-critical-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "criticalOnly": true
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。 这是暴击伤害的增幅，不是普通伤害+10%；实际暴击条件、暴击上限及其计算阶段另行判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "Boss伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对Boss的暴击伤害上限+2,000"
+      ],
+      "remainingConditions": [
+        "本次攻击实际发生暴击；该技能本身不提高暴击率或赋予魔法暴击资格"
+      ]
+    },
+    {
+      "id": "5c16599b8947ce62",
+      "name": "巨人杀手4",
+      "url": "https://altema.jp/lastcloudia/gino/1311",
+      "text": "对BOSS的特技和必杀伤害+20%，伤害上限+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-skill-damage",
+          "kind": "effect",
+          "text": "对Boss的特技伤害+20%"
+        },
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "对Boss的特技伤害上限+6,000"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害上限+6,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss伤害增加": {
+          "summary": "对Boss的特技和必杀伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "skill",
+              "ultimate"
+            ]
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "Boss伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对Boss的特技伤害上限+6,000",
+        "对Boss的必杀伤害上限+6,000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "b7297c3eb4e46bba",
+      "name": "勇者之魂",
+      "url": "https://altema.jp/lastcloudia/gino/1608",
+      "text": "对BOSS造成的伤害+20%，受到BOSS的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-damage",
+          "kind": "effect",
+          "text": "对Boss造成的伤害+20%"
+        },
+        {
+          "id": "boss-mitigation",
+          "kind": "effect",
+          "text": "受到Boss的伤害-20%"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "增伤要求目标敌人为Boss"
+        },
+        {
+          "id": "boss-source",
+          "kind": "condition",
+          "text": "减伤要求攻击来源为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss伤害增加": {
+          "summary": "对Boss造成的伤害+20%",
+          "relation": "boss-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true
+          },
+          "calculationNote": "按完整的对Boss增伤词条记录，并保留原文攻击类型限制；同一技能的旧标签和本标签指向同一增伤效果，不能重复相加。 受到Boss的伤害-20%是另一条减伤效果，不在本轮完成。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "Boss伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "受到Boss的伤害-20%"
+      ],
+      "remainingConditions": [
+        "减伤要求攻击来源为Boss"
       ]
     }
   ],
@@ -18401,8 +18852,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 59,
         "notRelatedUnique": 876,
-        "ready": 0,
-        "partial": 59,
+        "ready": 1,
+        "partial": 58,
         "unknown": 0
       }
     },
@@ -18423,6 +18874,31 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 928,
         "ready": 0,
         "partial": 7,
+        "unknown": 0
+      }
+    },
+    "boss-damage": {
+      "label": "Boss伤害增加",
+      "displayOrder": [
+        "6bb2c943681bb3e7",
+        "79a377bec526c2d4",
+        "7ef2d01b96b2406e",
+        "a17f779989645fb0",
+        "2ad532afbdeb2594",
+        "ecf05abb4f8e4b10",
+        "a97531c83b0073e7",
+        "e3085e506db3fa44",
+        "5c16599b8947ce62",
+        "b7297c3eb4e46bba",
+        "f49f17d3da2551a8",
+        "42656c3afdc8103a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 12,
+        "notRelatedUnique": 923,
+        "ready": 2,
+        "partial": 10,
         "unknown": 0
       }
     },
@@ -18784,14 +19260,21 @@ export const SKILL_LABELING_CATALOG = {
         "ee8769b3f842d317",
         "a1166f16d23a209d",
         "07280db1cb26a374",
-        "d451135c6dde31c4"
+        "d451135c6dde31c4",
+        "6bb2c943681bb3e7",
+        "7ef2d01b96b2406e",
+        "2ad532afbdeb2594",
+        "ecf05abb4f8e4b10",
+        "e3085e506db3fa44",
+        "5c16599b8947ce62",
+        "b7297c3eb4e46bba"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 356,
-        "notRelatedUnique": 579,
-        "ready": 44,
-        "partial": 312,
+        "relatedUnique": 363,
+        "notRelatedUnique": 572,
+        "ready": 46,
+        "partial": 317,
         "unknown": 0
       }
     }

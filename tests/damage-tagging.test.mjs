@@ -48,13 +48,14 @@ test('scope correction preserves old tags and source skills while unfinished con
  assert.deepEqual(shadow.remainingEffects,['暗属性攻击伤害+10%']);assert.equal(shadow.remainingConditions.length,1);
  assert.deepEqual(faith.assignedTags,['攻击力','物理伤害增加']);
  assert.equal(faith.remainingEffects.length,3);assert(faith.remainingEffects.some(t=>t.includes('轮光')));
- for(const n of [73,938,2000,1316,122,1608]){assert(source(n));assert(!catalog.entries.some(e=>e.id===source(n).id));}
+ for(const n of [73,938,2000,1316,122]){assert(source(n));assert(!catalog.entries.some(e=>e.id===source(n).id));}
+ assert.deepEqual(catalog.entries.find(e=>e.id===source(1608).id).assignedTags,['Boss伤害增加']);
  const future=structuredClone(registry);
  future.tagPasses.push({tag:'连续Hit达到50',assignments:[{skillId:source(186).id,partIds:['condition-1']}]});
  const updated=resolveSkillLabels(future).find(e=>e.id===source(186).id);
  assert.equal(updated.judgment,'ready');assert.equal(entry(186).judgment,'partial');
- assert.equal(catalog.entries.length,356);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,356);
- assert.equal(catalog.views.all.counts.ready,44);assert.equal(catalog.views.all.counts.partial,312);
+ assert.equal(catalog.entries.length,363);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,363);
+ assert.equal(catalog.views.all.counts.ready,46);assert.equal(catalog.views.all.counts.partial,317);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,44).every(r=>r.judgment==='ready'));assert(sorted.slice(44).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,46).every(r=>r.judgment==='ready'));assert(sorted.slice(46).every(r=>r.judgment==='partial'));
 });

@@ -47,8 +47,8 @@ test('magic damage preserves target, timing, Buff, reference and special attack 
 });
 
 test('magic damage accumulates across old views and only finishes after remaining effect and condition passes',()=>{
- assert.equal(magicDamage.counts.ready,0);assert.equal(magicDamage.counts.partial,59);assert.equal(magicDamage.counts.unknown,0);
- assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,9);
+ assert.equal(magicDamage.counts.ready,1);assert.equal(magicDamage.counts.partial,58);assert.equal(magicDamage.counts.unknown,0);
+ assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,13);
  for(const [n,key] of [[305,'attack'],[305,'defense'],[305,'magic'],[593,'attack'],[1066,'physical'],[241,'physical'],[658,'physical'],[754,'physical'],[1060,'physical'],[1366,'physical'],[1507,'physical']])
   assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  assert.deepEqual(entry(305).assignedTags,['攻击力','防御力','魔力','魔法伤害增加']);
@@ -62,8 +62,8 @@ test('magic damage accumulates across old views and only finishes after remainin
  future.tagPasses.push({tag:'装备法杖',assignments:[{skillId:source(241).id,partIds:['condition-1']}]});
  const updated=resolveSkillLabels(future).find(e=>e.id===source(241).id);
  assert.equal(updated.judgment,'ready');assert.equal(entry(241).judgment,'partial');
- assert.equal(catalog.entries.length,356);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,356);
- assert.equal(catalog.views.all.counts.ready,44);assert.equal(catalog.views.all.counts.partial,312);
+ assert.equal(catalog.entries.length,363);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,363);
+ assert.equal(catalog.views.all.counts.ready,46);assert.equal(catalog.views.all.counts.partial,317);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,44).every(r=>r.judgment==='ready'));assert(sorted.slice(44).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,46).every(r=>r.judgment==='ready'));assert(sorted.slice(46).every(r=>r.judgment==='partial'));
 });
