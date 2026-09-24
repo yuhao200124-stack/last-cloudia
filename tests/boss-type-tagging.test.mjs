@@ -11,7 +11,7 @@ const source=n=>all.find(r=>r.url.endsWith(`/gino/${n}`));
 const entry=n=>catalog.entries.find(e=>e.id===source(n).id);
 const members={
  'boss-magic-damage':[837,1159,1644,1814],
- 'boss-physical-damage':[720],
+ 'boss-physical-damage':[720,1883],
  'boss-skill-damage':[411,624,1041,1311],
  'boss-ultimate-damage':[411,624,985,1041,1311]
 };
@@ -52,15 +52,52 @@ test('typed Boss bonuses leave caps and party counts pending without injecting d
  assert.equal(catalog.numericEffectInjection,false);
 });
 
-test('Boss page is a deduplicated union of five categories, not an extra bonus tag',()=>{
+test('Boss page is a deduplicated union of six categories, not an extra bonus tag',()=>{
  const boss=labelingView(catalog,'boss');
- assert.equal(boss.entries.length,11);assert.equal(new Set(boss.entries.map(e=>e.id)).size,11);
- assert.equal(boss.counts.ready,2);assert.equal(boss.counts.partial,9);
- assert.equal(boss.tagKeys.reduce((sum,key)=>sum+catalog.views[key].counts.relatedUnique,0),15);
+ assert.equal(boss.entries.length,13);assert.equal(new Set(boss.entries.map(e=>e.id)).size,13);
+ assert.equal(boss.counts.ready,2);assert.equal(boss.counts.partial,11);
+ assert.equal(boss.tagKeys.reduce((sum,key)=>sum+catalog.views[key].counts.relatedUnique,0),17);
  assert.deepEqual(boss.entries.filter(e=>e.judgment==='ready').map(e=>e.name).sort(),['巨人杀手','巨型净化']);
  assert(boss.entries.every(e=>!e.assignedTags.includes('Boss增伤')));
  const rows=skillLabelRows(box.window.SKILL_DATA,boss);
  assert(rows.slice(0,2).every(r=>r.judgment==='ready'));assert(rows.slice(2).every(r=>r.judgment==='partial'));
- assert.equal(catalog.views.all.counts.relatedUnique,280);assert.equal(catalog.views.all.counts.ready,46);assert.equal(catalog.views.all.counts.partial,234);
+ assert.equal(catalog.views.all.counts.relatedUnique,281);assert.equal(catalog.views.all.counts.ready,46);assert.equal(catalog.views.all.counts.partial,235);
  assert.equal(catalog.views.physical.counts.relatedUnique,78);assert.equal(catalog.views['magic-damage'].counts.relatedUnique,22);
+});
+
+test('Boss critical damage covers its target and actual critical hit but leaves the critical cap pending',()=>{
+ const view=labelingView(catalog,'boss-critical-damage'),audit=JSON.parse(read('../docs/boss-critical-damage-tag-audit.json'));
+ assert.equal(audit.rows.length,935);assert.equal(new Set(audit.rows.map(r=>r.id)).size,935);
+ assert.equal(audit.rows.filter(r=>r.decision==='related').length,1);
+ assert.deepEqual(view.entries.map(e=>e.name),['锐利一击']);
+ const sharp=entry(1289),detail=sharp.tagDetails['Boss暴击伤害增加'];
+ assert.deepEqual(sharp.assignedTags,['Boss暴击伤害增加']);
+ assert.deepEqual(detail.scope,{boss:true,criticalOnly:true});
+ assert.equal(detail.relation,'boss-critical-damage-increase');
+ assert.match(detail.calculationNote,/不提高暴击率.*不赋予魔法暴击资格/);
+ assert.equal(sharp.judgment,'partial');
+ assert.deepEqual(sharp.remainingEffects,['对Boss的暴击伤害上限+2,000']);
+ assert.deepEqual(sharp.remainingConditions,[]);
+ for(const n of [25,28,216,252,600,763,1519,1775,1884])assert.equal(audit.rows.find(r=>r.id===source(n).id).decision,'not-related');
+});
+
+test('requested Dragon Awakening grouping preserves the STR effect and does not grant a physical damage multiplier',()=>{
+ const dragon=entry(1883),detail=dragon.tagDetails['Boss物理伤害增加'];
+ assert.deepEqual(dragon.assignedTags,['攻击力','Boss物理伤害增加']);
+ assert.equal(detail.relation,'boss-wave-attribute-change');assert.equal(detail.groupingOnly,true);
+ assert.deepEqual(detail.scope,{bossWave:true,stat:'STR'});
+ assert.match(detail.calculationNote,/不能按物理伤害直接\+20%计算/);
+ assert.deepEqual(detail.existingRuleIds,dragon.tagDetails['攻击力'].existingRuleIds);
+ const attack=registry.tagPasses.find(p=>p.tag==='攻击力').assignments.find(a=>a.skillId===dragon.id);
+ const boss=registry.tagPasses.find(p=>p.tag==='Boss物理伤害增加').assignments.find(a=>a.skillId===dragon.id);
+ assert.deepEqual(boss.partIds,attack.partIds);assert.deepEqual(boss.partIds,['attack']);
+ assert.deepEqual(dragon.remainingEffects,['类型追加“龙”']);
+ assert.deepEqual(dragon.remainingConditions,['BOSS Wave中生效']);
+ assert.equal(dragon.judgment,'partial');
+ assert.strictEqual(labelingView(catalog,'attack').entries.find(e=>e.id===dragon.id),labelingView(catalog,'boss-physical-damage').entries.find(e=>e.id===dragon.id));
+ const withoutGrouping=structuredClone(registry);withoutGrouping.tagPasses.find(p=>p.tag==='Boss物理伤害增加').assignments=withoutGrouping.tagPasses.find(p=>p.tag==='Boss物理伤害增加').assignments.filter(a=>a.skillId!==dragon.id);
+ const previous=resolveSkillLabels(withoutGrouping).find(e=>e.id===dragon.id);
+ assert.deepEqual(previous.remainingEffects,dragon.remainingEffects);assert.deepEqual(previous.remainingConditions,dragon.remainingConditions);
+ assert(!labelingView(catalog,'boss-physical-damage').entries.some(e=>e.id===source(941).id));
+ assert.equal(catalog.entries.filter(e=>e.id===dragon.id).length,1);
 });

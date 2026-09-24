@@ -48,7 +48,7 @@ test('physical tags accumulate and leave each unfinished effect/condition pendin
  for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,['装备锤时生效']);
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
- assert.equal(catalog.entries.length,280);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,280);
+ assert.equal(catalog.entries.length,281);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,281);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
  assert(allRows.slice(0,46).every(r=>r.judgment==='ready'));assert(allRows.slice(46).every(r=>r.judgment==='partial'));
  // A later equipment pass should complete a compound only after both its

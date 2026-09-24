@@ -6,8 +6,8 @@
     <meta name="description" content="按完整效果词条逐类贴标签，核对已有分类与未完成条件。" />
     <title>技能列表打标签用的｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260924-boss-types" />
-    <link rel="stylesheet" href="./skill-labeling.css?v=20260924-boss-types" />
+    <link rel="stylesheet" href="./styles.css?v=20260924-boss-critical" />
+    <link rel="stylesheet" href="./skill-labeling.css?v=20260924-boss-critical" />
   </head>
   <body>
     <header class="site-header">
@@ -30,7 +30,7 @@
           <p id="judgmentSummary" aria-live="polite"></p>
           <p id="cumulativeCoverage"></p>
           <p>按完整效果词条分类：属性、Boss、种族、空中、弱点等限定增伤不拆成宽泛增伤标签。装备、队伍、自身状态、时间等启用条件继续独立判断；并列效果各自贴标签。</p>
-          <p>所有效果和条件都贴完标签，才算已完整判断。Boss页按伤害、魔法、物理、特技、必杀分别列出；一个技能可出现在多个子分类，总数按技能去重。其余效果和条件继续留待判断。按已完整判断、判断部分、没办法判断排序。</p>
+          <p>所有效果和条件都贴完标签，才算已完整判断。Boss页按伤害、魔法、物理、特技、必杀、暴击分别列出；一个技能可出现在多个子分类，总数按技能去重。其余效果和条件继续留待判断。按已完整判断、判断部分、没办法判断排序。</p>
         </div>
         <div class="toolbar">
           <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索Boss伤害增加相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
@@ -43,6 +43,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260924-boss-types"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260924-boss-critical"></script>
   </body>
 </html>

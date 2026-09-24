@@ -5059,10 +5059,26 @@ export const SKILL_LABELING_CATALOG = {
             "basic:86c11809d76a7959:1"
           ],
           "relatedSkillIds": []
+        },
+        "Boss物理伤害增加": {
+          "summary": "Boss Wave中，攻击力+20%（属性加成）",
+          "relation": "boss-wave-attribute-change",
+          "target": "self",
+          "scope": {
+            "bossWave": true,
+            "stat": "STR"
+          },
+          "groupingOnly": true,
+          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型和Boss Wave条件仍待判断。",
+          "existingRuleIds": [
+            "basic:86c11809d76a7959:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "Boss物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -14476,6 +14492,58 @@ export const SKILL_LABELING_CATALOG = {
         "对Boss的必杀伤害上限+5,000"
       ],
       "remainingConditions": []
+    },
+    {
+      "id": "e3085e506db3fa44",
+      "name": "锐利一击",
+      "url": "https://altema.jp/lastcloudia/gino/1289",
+      "text": "对BOSS的暴击伤害+10%，暴击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-critical-damage",
+          "kind": "effect",
+          "text": "对Boss的暴击伤害+10%"
+        },
+        {
+          "id": "critical-cap",
+          "kind": "effect",
+          "text": "对Boss的暴击伤害上限+2,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        },
+        {
+          "id": "critical-hit",
+          "kind": "condition",
+          "text": "本次攻击实际发生暴击；该技能本身不提高暴击率或赋予魔法暴击资格"
+        }
+      ],
+      "tagDetails": {
+        "Boss暴击伤害增加": {
+          "summary": "对Boss的暴击伤害+10%",
+          "relation": "boss-critical-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "criticalOnly": true
+          },
+          "calculationNote": "仅目标为Boss且本次实际暴击时适用。该技能不提高暴击率，也不赋予魔法暴击资格；暴击伤害上限+2,000仍待判断。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "Boss暴击伤害增加"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对Boss的暴击伤害上限+2,000"
+      ],
+      "remainingConditions": []
     }
   ],
   "views": {
@@ -14978,14 +15046,15 @@ export const SKILL_LABELING_CATALOG = {
       "label": "Boss物理伤害增加",
       "parent": "boss",
       "displayOrder": [
-        "a17f779989645fb0"
+        "a17f779989645fb0",
+        "86c11809d76a7959"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
         "ready": 0,
-        "partial": 1,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -15026,6 +15095,21 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "boss-critical-damage": {
+      "label": "Boss暴击伤害增加",
+      "parent": "boss",
+      "displayOrder": [
+        "e3085e506db3fa44"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
     "boss": {
       "label": "Boss增伤",
       "tagKeys": [
@@ -15033,7 +15117,8 @@ export const SKILL_LABELING_CATALOG = {
         "boss-magic-damage",
         "boss-physical-damage",
         "boss-skill-damage",
-        "boss-ultimate-damage"
+        "boss-ultimate-damage",
+        "boss-critical-damage"
       ],
       "displayOrder": [
         "b7297c3eb4e46bba",
@@ -15046,14 +15131,16 @@ export const SKILL_LABELING_CATALOG = {
         "7ef2d01b96b2406e",
         "ecf05abb4f8e4b10",
         "5c16599b8947ce62",
-        "2ad532afbdeb2594"
+        "2ad532afbdeb2594",
+        "e3085e506db3fa44",
+        "86c11809d76a7959"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 11,
-        "notRelatedUnique": 924,
+        "relatedUnique": 13,
+        "notRelatedUnique": 922,
         "ready": 2,
-        "partial": 9,
+        "partial": 11,
         "unknown": 0
       }
     },
@@ -15339,14 +15426,15 @@ export const SKILL_LABELING_CATALOG = {
         "7ef2d01b96b2406e",
         "ecf05abb4f8e4b10",
         "5c16599b8947ce62",
-        "2ad532afbdeb2594"
+        "2ad532afbdeb2594",
+        "e3085e506db3fa44"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 280,
-        "notRelatedUnique": 655,
+        "relatedUnique": 281,
+        "notRelatedUnique": 654,
         "ready": 46,
-        "partial": 234,
+        "partial": 235,
         "unknown": 0
       }
     }

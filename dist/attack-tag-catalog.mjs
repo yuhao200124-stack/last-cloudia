@@ -5150,10 +5150,26 @@ export const ATTACK_TAG_CATALOG = {
             "basic:86c11809d76a7959:1"
           ],
           "relatedSkillIds": []
+        },
+        "Boss物理伤害增加": {
+          "summary": "Boss Wave中，攻击力+20%（属性加成）",
+          "relation": "boss-wave-attribute-change",
+          "target": "self",
+          "scope": {
+            "bossWave": true,
+            "stat": "STR"
+          },
+          "groupingOnly": true,
+          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型和Boss Wave条件仍待判断。",
+          "existingRuleIds": [
+            "basic:86c11809d76a7959:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "Boss物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
