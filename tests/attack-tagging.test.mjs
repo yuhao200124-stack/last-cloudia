@@ -29,15 +29,15 @@ test('the attack pass audits all unique skills including category-only rows and 
   assert.equal(audit.rows.filter(row=>row.decision==='not-related').length,848);
 });
 
-test('the previous attack tag is retained while only reviewed defense fragments are added', () => {
-  for(const row of catalog.entries){assert.equal(row.assignedTags[0],'攻击力');assert(row.assignedTags.every(tag=>['攻击力','防御力'].includes(tag)));}
+test('the previous attack tag is retained while only reviewed defense and HP fragments are added', () => {
+  for(const row of catalog.entries){assert.equal(row.assignedTags[0],'攻击力');assert(row.assignedTags.every(tag=>['攻击力','防御力','生命力'].includes(tag)));}
   assert.equal(catalog.entries.filter(row=>row.assignedTags.includes('防御力')).length,26);
-  assert.equal(catalog.counts.ready,6);
-  assert.equal(catalog.counts.partial,81);
-  assert.deepEqual(catalog.entries.filter(row=>row.judgment==='ready').map(row=>Number(row.url.split('/').pop())),[9,10,11,12,251,1571]);
+  assert.equal(catalog.counts.ready,12);
+  assert.equal(catalog.counts.partial,75);
+  assert.deepEqual(catalog.entries.filter(row=>row.judgment==='ready').map(row=>Number(row.url.split('/').pop())),[9,10,11,12,251,387,393,528,725,796,986,1571]);
   assert.equal(skill(387).basicStats.status,'ready');
-  assert.equal(entry(387).judgment,'partial');
-  assert.deepEqual(entry(387).remainingEffects,['HP+10%']);
+  assert.equal(entry(387).judgment,'ready');
+  assert.deepEqual(entry(387).remainingEffects,[]);
   assert.deepEqual(entry(339).remainingEffects,['类型追加“龙”','受到的物理攻击伤害-15%']);
   assert.equal(entry(9).judgment,'ready');
   assert.equal(entry(267).judgment,'partial');
@@ -57,14 +57,13 @@ test('later passes accumulate on the same skill and promote newly complete skill
   const before=JSON.stringify(registry);
   const shared=structuredClone(registry);
   shared.tagPasses.push({tag:'满HP',assignments:[{skillId:skill(119).id,partIds:['full-hp']}]});
-  shared.tagPasses.push({tag:'HP',assignments:[{skillId:skill(387).id,partIds:['effect-1']}]});
   shared.tagPasses.push({tag:'神类型条件',assignments:[{skillId:skill(2001).id,partIds:['condition-1']}]});
   const updated={...catalog,entries:resolveSkillLabels(shared).filter(row=>row.assignedTags.includes('攻击力'))};
   const rows=attackLabelRows(data,updated);
   const full=rows.find(row=>row.id===skill(119).id);
   assert.deepEqual(full.assignedTags,['攻击力','满HP']);
   assert.equal(full.judgment,'ready');assert.deepEqual(full.remainingConditions,[]);
-  assert.deepEqual(rows.find(row=>row.id===skill(387).id).assignedTags,['攻击力','HP']);
+  assert.deepEqual(rows.find(row=>row.id===skill(387).id).assignedTags,['攻击力','生命力']);
   assert.equal(rows.find(row=>row.id===skill(387).id).judgment,'ready');
   const deity=rows.find(row=>row.id===skill(2001).id);
   assert.equal(deity.judgment,'partial');assert.equal(deity.remainingConditions.length,2);
@@ -131,31 +130,32 @@ test('the new table exposes only the agreed columns and scopes color classes to 
   assert(!escaped.includes('<img'));assert(!escaped.includes('<script>'));
 });
 
-test('the page defaults to defense, switches cumulative views, filters and clears without writing saved data', () => {
+test('the page defaults to HP, switches cumulative views, filters and clears without writing saved data', () => {
   const elements=new Map();
   const get=selector=>{if(!elements.has(selector))elements.set(selector,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(name,fn){this.listeners[name]=fn;},setAttribute(){},focus(){}});return elements.get(selector);};
   const code=read('../dist/skill-labeling.mjs').replace(/^import .*;\n/gm,'').replace('export function renderLabelTable','function renderLabelTable');
   const context={catalog:sharedCatalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Review page must not overwrite saved data.');}}};
   vm.runInNewContext(code,context);
-  assert.match(get('#labelCoverage').textContent,/935.*70.*865/);
-  assert.match(get('#judgmentSummary').textContent,/7.*63.*0/);
+  assert.match(get('#labelCoverage').textContent,/935.*25.*910/);
+  assert.match(get('#judgmentSummary').textContent,/15.*10.*0/);
   const tabs=get('#labelTabs');
-  assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,3);
-  assert(tabs.innerHTML.includes('全部已贴标签（131）'));
+  assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,4);
+  assert(tabs.innerHTML.includes('全部已贴标签（147）'));
   assert(tabs.innerHTML.includes('攻击力（87）'));
   assert(tabs.innerHTML.includes('防御力（70）'));
+  assert(tabs.innerHTML.includes('生命力（25）'));
   const clickTab=tag=>tabs.listeners.click({target:{closest:()=>({dataset:{tag}})}});
   clickTab('attack');
   assert.match(get('#labelCoverage').textContent,/935.*87.*848/);
-  assert.match(get('#judgmentSummary').textContent,/6.*81.*0/);
+  assert.match(get('#judgmentSummary').textContent,/12.*75.*0/);
   clickTab('all');
-  assert.match(get('#labelCoverage').textContent,/935.*131.*804/);
-  assert.match(get('#judgmentSummary').textContent,/12.*119.*0/);
+  assert.match(get('#labelCoverage').textContent,/935.*147.*788/);
+  assert.match(get('#judgmentSummary').textContent,/27.*120.*0/);
   const rowStatuses=[...get('#labelTable').innerHTML.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(match=>match[1]);
-  assert.deepEqual(rowStatuses.slice(0,12),Array(12).fill('ready'));
-  assert(rowStatuses.slice(12).every(status=>status==='partial'));
+  assert.deepEqual(rowStatuses.slice(0,27),Array(27).fill('ready'));
+  assert(rowStatuses.slice(27).every(status=>status==='partial'));
   const search=get('#labelSearch');search.value='没有这个技能123';search.listeners.input();
   assert.equal(get('#labelEmpty').hidden,false);assert.equal(get('#labelTable').innerHTML,'');
   get('#clearLabelSearch').listeners.click();assert.equal(get('#labelEmpty').hidden,true);
-  assert.match(get('#labelResultCount').textContent,/131 \/ 131/);
+  assert.match(get('#labelResultCount').textContent,/147 \/ 147/);
 });

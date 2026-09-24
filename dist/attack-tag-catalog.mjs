@@ -1488,15 +1488,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:全部技能:all:313:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+10%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:全部技能:all:313:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+10%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -1601,15 +1610,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:全部技能:all:318:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:全部技能:all:318:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+8%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -1793,15 +1811,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:dece5d91ef6eddbb:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:dece5d91ef6eddbb:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+5%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -2151,15 +2178,24 @@ export const ATTACK_TAG_CATALOG = {
             "basic:386eb4063fb25415:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+3%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:386eb4063fb25415:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+3%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -2444,16 +2480,25 @@ export const ATTACK_TAG_CATALOG = {
             "basic:db1b48cd6af48689:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:db1b48cd6af48689:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+8%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -3011,16 +3056,25 @@ export const ATTACK_TAG_CATALOG = {
             "basic:6abbc6031b5d8a35:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:6abbc6031b5d8a35:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+5%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -5286,8 +5340,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 6,
-    "partial": 81,
+    "ready": 12,
+    "partial": 75,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

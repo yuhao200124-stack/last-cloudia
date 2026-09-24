@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "defense",
+  "activeView": "hp",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -1397,15 +1397,24 @@ export const SKILL_LABELING_CATALOG = {
             "basic:全部技能:all:313:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+10%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:全部技能:all:313:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+10%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -1510,15 +1519,24 @@ export const SKILL_LABELING_CATALOG = {
             "basic:全部技能:all:318:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:全部技能:all:318:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+8%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -1702,15 +1720,24 @@ export const SKILL_LABELING_CATALOG = {
             "basic:dece5d91ef6eddbb:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:dece5d91ef6eddbb:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+5%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -2060,15 +2087,24 @@ export const SKILL_LABELING_CATALOG = {
             "basic:386eb4063fb25415:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+3%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:386eb4063fb25415:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+3%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -2353,16 +2389,25 @@ export const SKILL_LABELING_CATALOG = {
             "basic:db1b48cd6af48689:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:db1b48cd6af48689:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+8%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -2920,16 +2965,25 @@ export const SKILL_LABELING_CATALOG = {
             "basic:6abbc6031b5d8a35:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:6abbc6031b5d8a35:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "生命力"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "HP+5%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -5761,15 +5815,25 @@ export const SKILL_LABELING_CATALOG = {
             "basic:全部技能:all:326:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "开场获得活力：自身HP上限固定+1,000，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
+          "existingRuleIds": [
+            "basic:全部技能:all:326:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "生命力"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "梅蒂斯：魔抗+20%",
-        "活力：HP上限固定+1,000",
         "加速：SCT恢复速度+25%"
       ],
       "remainingConditions": [
@@ -6354,15 +6418,25 @@ export const SKILL_LABELING_CATALOG = {
             "basic:1c1fef3cdbb3164c:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "发动必杀后获得活力：自身HP上限固定+1,000，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
+          "existingRuleIds": [
+            "basic:1c1fef3cdbb3164c:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "生命力"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "梅蒂斯：魔抗+20%",
-        "活力：HP上限固定+1,000",
         "加速：SCT恢复速度+25%"
       ],
       "remainingConditions": [
@@ -6896,14 +6970,24 @@ export const SKILL_LABELING_CATALOG = {
             "basic:448ba5ba48be6d12:1"
           ],
           "relatedSkillIds": []
+        },
+        "生命力": {
+          "summary": "自身HP上限+7%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:448ba5ba48be6d12:1"
+          ],
+          "relatedSkillIds": []
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "生命力"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "HP+7%",
         "受到的暴击伤害-10%"
       ],
       "remainingConditions": []
@@ -7171,6 +7255,614 @@ export const SKILL_LABELING_CATALOG = {
       "judgment": "ready",
       "remainingEffects": [],
       "remainingConditions": []
+    },
+    {
+      "id": "f6b3f0aa974f4913",
+      "name": "体力提升",
+      "url": "https://altema.jp/lastcloudia/gino/1",
+      "text": "HP+5%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限+5%"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限+5%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:f6b3f0aa974f4913:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b12fa7047d286a40",
+      "name": "体力提升2",
+      "url": "https://altema.jp/lastcloudia/gino/2",
+      "text": "HP+8%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限+8%"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限+8%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:b12fa7047d286a40:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "bfa737afd0bafd62",
+      "name": "体力提升3",
+      "url": "https://altema.jp/lastcloudia/gino/3",
+      "text": "HP+12%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限+12%"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限+12%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:bfa737afd0bafd62:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "6aba6d174112baeb",
+      "name": "体力提升极",
+      "url": "https://altema.jp/lastcloudia/gino/4",
+      "text": "HP+20%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限+20%"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限+20%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:6aba6d174112baeb:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "f3ba0d8a036da02b",
+      "name": "体力提升4",
+      "url": "https://altema.jp/lastcloudia/gino/279",
+      "text": "HP+15%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限+15%"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限+15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:f3ba0d8a036da02b:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "c2a5f212631ba8ff",
+      "name": "快速活力",
+      "url": "https://altema.jp/lastcloudia/gino/353",
+      "text": "每个Wave开始时，自身自动获得「活力」效果：HP上限+1,000。",
+      "notes": "作用于自身，持续40秒。增加的是固定1,000 HP上限，不是20%。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "每个Wave开始获得活力：自身HP上限固定+1,000，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "每个Wave开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "活力Buff持续40秒；同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "每个Wave开始获得活力：自身HP上限固定+1,000，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
+          "existingRuleIds": [
+            "basic:c2a5f212631ba8ff:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每个Wave开始时触发",
+        "活力Buff持续40秒；同类型Buff同时只计一项"
+      ]
+    },
+    {
+      "id": "7bbf56fd7760a806",
+      "name": "体力增加2",
+      "url": "https://altema.jp/lastcloudia/gino/432",
+      "text": "HP+1,000",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限固定+1,000"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限固定+1,000",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
+          "existingRuleIds": [
+            "basic:7bbf56fd7760a806:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "314745e663f4e29e",
+      "name": "防具体力增加2",
+      "url": "https://altema.jp/lastcloudia/gino/778",
+      "text": "装备防具时，生命值+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "装备防具时，自身HP上限+15%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备防具时生效"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "装备防具时，自身HP上限+15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "装备任意防具时生效",
+          "existingRuleIds": [
+            "basic:314745e663f4e29e:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "装备防具时生效"
+      ]
+    },
+    {
+      "id": "d214a29ee3c4826e",
+      "name": "快速高阶活力",
+      "url": "https://altema.jp/lastcloudia/gino/867",
+      "text": "每个Wave开始时，自身自动获得「高阶活力」效果：HP上限+2,000。",
+      "notes": "作用于自身，持续40秒。效果是增加固定2,000 HP上限，不是持续回复魔法。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "每个Wave开始获得高阶活力：自身HP上限固定+2,000，持续40秒"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "每个Wave开始时触发"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "高阶活力Buff持续40秒；同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "每个Wave开始获得高阶活力：自身HP上限固定+2,000，持续40秒",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
+          "existingRuleIds": [
+            "basic:d214a29ee3c4826e:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每个Wave开始时触发",
+        "高阶活力Buff持续40秒；同类型Buff同时只计一项"
+      ]
+    },
+    {
+      "id": "ea81b15f2a9dc860",
+      "name": "防具体力增加",
+      "url": "https://altema.jp/lastcloudia/gino/874",
+      "text": "装备防具时，生命值+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "装备防具时，自身HP上限+10%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "装备防具时生效"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "装备防具时，自身HP上限+10%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "装备任意防具时生效",
+          "existingRuleIds": [
+            "basic:ea81b15f2a9dc860:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "装备防具时生效"
+      ]
+    },
+    {
+      "id": "c88348128726808e",
+      "name": "体力增加",
+      "url": "https://altema.jp/lastcloudia/gino/955",
+      "text": "HP+500",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限固定+500"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限固定+500",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
+          "existingRuleIds": [
+            "basic:c88348128726808e:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "0a58a5155b05a1fa",
+      "name": "体力增加3",
+      "url": "https://altema.jp/lastcloudia/gino/967",
+      "text": "HP+1,500",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限固定+1,500"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限固定+1,500",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
+          "existingRuleIds": [
+            "basic:0a58a5155b05a1fa:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "6b8d9d40764f9b54",
+      "name": "魔女之心",
+      "url": "https://altema.jp/lastcloudia/gino/991",
+      "text": "HP+10%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限+10%"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限+10%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "常驻属性",
+          "existingRuleIds": [
+            "basic:6b8d9d40764f9b54:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "f2f841598b8870ad",
+      "name": "自动活力",
+      "url": "https://altema.jp/lastcloudia/gino/1221",
+      "text": "常驻「活力」效果：HP上限+1,000。",
+      "notes": "增加固定1,000 HP上限，不是20%；常驻状态不代表不断重复回复HP。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "永久获得活力：自身HP上限固定+1,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "永久活力Buff；与限时同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "永久获得活力：自身HP上限固定+1,000",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
+          "existingRuleIds": [
+            "basic:f2f841598b8870ad:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "永久活力Buff；与限时同类型Buff同时只计一项"
+      ]
+    },
+    {
+      "id": "d268368f04c8f840",
+      "name": "荒神御魂",
+      "url": "https://altema.jp/lastcloudia/gino/1651",
+      "text": "HP-15%，但对BOSS的物理攻击伤害上限+3,000；仅装备一把武器或未装备武器时，再+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "自身HP上限-15%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "对Boss的物理攻击伤害上限+3,000"
+        },
+        {
+          "id": "effect-2",
+          "kind": "effect",
+          "text": "单武器或空武器时，物理攻击伤害上限再+3,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "伤害上限加成针对Boss"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "额外上限要求仅装备一把武器或未装备武器"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "自身HP上限-15%",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "减少的是HP上限15%，不是持续扣除当前HP。",
+          "existingRuleIds": [
+            "basic:d268368f04c8f840:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "对Boss的物理攻击伤害上限+3,000",
+        "单武器或空武器时，物理攻击伤害上限再+3,000"
+      ],
+      "remainingConditions": [
+        "伤害上限加成针对Boss",
+        "额外上限要求仅装备一把武器或未装备武器"
+      ]
+    },
+    {
+      "id": "790933563ebc27aa",
+      "name": "自动高阶活力",
+      "url": "https://altema.jp/lastcloudia/gino/1768",
+      "text": "常驻「高阶活力」效果：HP上限+2,000。",
+      "notes": "增加固定2,000 HP上限，常驻；不属于持续自动回复HP的再生效果。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-stat",
+          "kind": "effect",
+          "text": "永久获得高阶活力：自身HP上限固定+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "永久高阶活力Buff；与限时同类型Buff同时只计一项"
+        }
+      ],
+      "tagDetails": {
+        "生命力": {
+          "summary": "永久获得高阶活力：自身HP上限固定+2,000",
+          "relation": "attribute-change",
+          "target": "self",
+          "calculationNote": "增加的是固定HP上限，不能换算成百分比或当作回复量。",
+          "existingRuleIds": [
+            "basic:790933563ebc27aa:1"
+          ],
+          "relatedSkillIds": []
+        }
+      },
+      "assignedTags": [
+        "生命力"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "永久高阶活力Buff；与限时同类型Buff同时只计一项"
+      ]
     }
   ],
   "views": {
@@ -7269,8 +7961,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 6,
-        "partial": 81,
+        "ready": 12,
+        "partial": 75,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -7354,11 +8046,51 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 70,
         "notRelatedUnique": 865,
-        "ready": 7,
-        "partial": 63,
+        "ready": 9,
+        "partial": 61,
         "unknown": 0,
         "previousBasicDefenseUnique": 64,
         "additionalRelatedUnique": 6
+      }
+    },
+    "hp": {
+      "label": "生命力",
+      "displayOrder": [
+        "f6b3f0aa974f4913",
+        "b12fa7047d286a40",
+        "bfa737afd0bafd62",
+        "6aba6d174112baeb",
+        "f3ba0d8a036da02b",
+        "全部技能:all:313",
+        "全部技能:all:318",
+        "7bbf56fd7760a806",
+        "dece5d91ef6eddbb",
+        "386eb4063fb25415",
+        "db1b48cd6af48689",
+        "c88348128726808e",
+        "0a58a5155b05a1fa",
+        "6abbc6031b5d8a35",
+        "6b8d9d40764f9b54",
+        "c2a5f212631ba8ff",
+        "全部技能:all:326",
+        "1c1fef3cdbb3164c",
+        "314745e663f4e29e",
+        "d214a29ee3c4826e",
+        "ea81b15f2a9dc860",
+        "448ba5ba48be6d12",
+        "f2f841598b8870ad",
+        "d268368f04c8f840",
+        "790933563ebc27aa"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 25,
+        "notRelatedUnique": 910,
+        "ready": 15,
+        "partial": 10,
+        "unknown": 0,
+        "previousBasicHpUnique": 25,
+        "additionalRelatedUnique": 0
       }
     },
     "all": {
@@ -7494,14 +8226,30 @@ export const SKILL_LABELING_CATALOG = {
         "8c4e8f50e9a5ccaa",
         "c059571f370020f5",
         "a53fde03adbf4fb8",
-        "704d27924f2c43d1"
+        "704d27924f2c43d1",
+        "f6b3f0aa974f4913",
+        "b12fa7047d286a40",
+        "bfa737afd0bafd62",
+        "6aba6d174112baeb",
+        "f3ba0d8a036da02b",
+        "7bbf56fd7760a806",
+        "c88348128726808e",
+        "0a58a5155b05a1fa",
+        "6b8d9d40764f9b54",
+        "c2a5f212631ba8ff",
+        "314745e663f4e29e",
+        "d214a29ee3c4826e",
+        "ea81b15f2a9dc860",
+        "f2f841598b8870ad",
+        "d268368f04c8f840",
+        "790933563ebc27aa"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 131,
-        "notRelatedUnique": 804,
-        "ready": 12,
-        "partial": 119,
+        "relatedUnique": 147,
+        "notRelatedUnique": 788,
+        "ready": 27,
+        "partial": 120,
         "unknown": 0
       }
     }

@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique']]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP']]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -40,7 +40,7 @@ for(const [key,label,previousKey] of [['attack','攻击力','previousBasicAttack
     if(!['related','not-related'].includes(decision.decision) || (decision.decision==='related')!==byId.has(row.id))throw Error(`Unreviewed or inconsistent tag: ${row.id}`);
   }
   if(entries.length!==audit.matchedUnique)throw Error('Related skill total drifted.');
-  const previous=rows.filter(row=>row.basicStats?.targets.includes(label));
+  const previous=rows.filter(row=>row.basicStats?.targets.includes(basicTarget));
   if(previous.length!==audit[previousKey] || previous.some(row=>!byId.has(row.id)))throw Error(`Previously known ${label} skill missed.`);
   const view=shared.views[key];
   if(view.label!==label)throw Error('View label mismatch.');

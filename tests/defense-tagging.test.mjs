@@ -41,23 +41,23 @@ test('defense keeps pure damage reduction, guard, armor names and unprovided fai
 });
 
 test('cumulative judgments agree across views and do not claim unfinished conditions or other stats are tagged',()=>{
- assert.equal(defense.counts.ready,7);assert.equal(defense.counts.partial,63);
- assert.deepEqual(defense.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[13,14,15,16,254,1571,1969]);
+ assert.equal(defense.counts.ready,9);assert.equal(defense.counts.partial,61);
+ assert.deepEqual(defense.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[13,14,15,16,254,796,986,1571,1969]);
  const shared=defense.entries.filter(e=>e.assignedTags.includes('攻击力'));
  assert.equal(shared.length,26);
  for(const e of shared){
-  assert.deepEqual(e.assignedTags,['攻击力','防御力']);
+  assert.deepEqual(e.assignedTags.slice(0,2),['攻击力','防御力']);
   const attack=labelingView(catalog,'attack').entries.find(r=>r.id===e.id);
   assert.deepEqual(attack,e);
  }
  assert.equal(entry(1571).judgment,'ready');assert.deepEqual(entry(1571).remainingEffects,[]);
- assert.deepEqual(entry(796).remainingEffects,['HP+8%']);
+ assert.deepEqual(entry(796).remainingEffects,[]);
  assert.deepEqual(entry(304).remainingEffects,['法强+10%','魔抗+10%']);
  for(const n of [114,118,284,293,304,473,507,636,666,788,890,914,1133,1171,1205,1256,1555]){
   assert.equal(entry(n).judgment,'partial',entry(n).name);assert(entry(n).remainingConditions.length,entry(n).name);
  }
  assert.deepEqual(entry(419).remainingEffects,['魔抗+8%']);
- assert.equal(catalog.entries.length,131);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,131);
+ assert.equal(catalog.entries.length,147);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,147);
  assert.deepEqual(catalog.views.all.displayOrder.slice(0,87),catalog.views.attack.displayOrder);
  const rows=skillLabelRows(data,defense);
  const single=filterLabelRows(rows,'御子与守护者');assert.equal(single.length,1);
@@ -70,6 +70,6 @@ test('edited defense descriptions invalidate labels without changing stable sour
  const shown=skillLabelRows(data,defense,edits);
  const changed=shown.find(e=>e.id===row.id);
  assert.equal(changed.judgment,'unknown');assert.deepEqual(changed.assignedTags,[]);
- assert.deepEqual(shown.map(e=>e.id),[...defense.displayOrder.filter(id=>id!==row.id),row.id]);
+ assert.deepEqual(shown.map(e=>e.id),[...skillLabelRows(data,defense).map(e=>e.id).filter(id=>id!==row.id),row.id]);
  assert.equal(JSON.stringify(edits),before);assert.equal(row.name,'防御提升');assert.equal(row.effect,'防御力+2%');
 });
