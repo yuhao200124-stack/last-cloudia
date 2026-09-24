@@ -6,6 +6,15 @@ import {CATALOG} from '../dist/roxy-rules.mjs';
 const initial=()=>({kind:'last-cloudia-effect-report',characterId:'260',...evaluateCatalog(CATALOG,{weaponCount:1,staff:true,robe:true})});
 const magic=()=>retargetReport(initial(),{attack:'magic',type:'magical',element:'冰'});
 const decisions=rows=>Object.fromEntries(rows.map(r=>[decisionKey(r),{choice:'web'}]));
+test('damage-page dual wield never changes weapon count, equipment or qualifying bonuses',()=>{
+ const source={...initial(),profile:{equipment:[{name:'洛琪希的衣服',type:'长袍'}]}};
+ source.context.equipmentIds=['roxy-staff','roxy-robe'];
+ const s={attack:'magic',type:'magical',element:'冰'};
+ const off=retargetReport(source,{...s,dualWield:false}),on=retargetReport(source,{...s,dualWield:true});
+ assert.deepEqual(on,off);assert.equal(on.context.weaponCount,1);assert.deepEqual(on.context.equipmentIds,['roxy-staff','roxy-robe']);
+ const two={...source,context:{...source.context,weaponCount:2}};
+ assert.equal(retargetReport(two,{...s,dualWield:false}).context.weaponCount,2);
+});
 test('changing magic to normal clears derived killer eligibility',()=>{
  const r=retargetReport(initial(),{attack:'normal',type:'physical',element:'无'});
  assert.equal(r.context.killer,false);

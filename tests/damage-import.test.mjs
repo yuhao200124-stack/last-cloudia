@@ -9,6 +9,7 @@ test('import retains individual damage sources, cap components and independent s
  const d=buildDamageImport(report({penetration:true,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe']}));
  assert.deepEqual(d.blockers,[]);assert.equal(d.bossKiller,true);assert.equal(d.defenseRatio,.5);
  assert.equal(d.hitMultiplier,2);assert.equal(d.hitDamageRatio,.6);assert.equal(d.magicCanCrit,true);assert.equal(d.critAdded,13);
+ assert.deepEqual(d.hitSources,['水王级魔术师']);
  assert.equal(d.effects.filter(e=>e.kind==='boss').length,2);
  assert.equal(d.effects.filter(e=>e.percent===30&&e.kind==='magical').length,2);
  assert.equal(d.killerCorrection,50);assert(!d.effects.some(e=>e.name.startsWith('特攻增幅')));
@@ -42,6 +43,7 @@ test('Boss killer applies once, defense scaling does not mutate input, and scope
  assert.equal(calculate({...defaultInput(),effects}).active.length,0,'ice magic import cannot leak to Eris physical');
 });
 test('split hit correction requires explicit placement and caps apply at chosen stage',()=>{
+ assert.doesNotThrow(()=>calculate({...defaultInput(),hitMultiplier:1,hitDamageRatio:1,hitScaleStage:''}));
  const s={...defaultInput(),cap:600,hitMultiplier:2,hitDamageRatio:.6,hitScaleStage:''};
  assert.throws(()=>calculate(s),/试算位置/);
  const before=calculate({...s,hitScaleStage:'beforeCap'}),after=calculate({...s,hitScaleStage:'afterCap'});

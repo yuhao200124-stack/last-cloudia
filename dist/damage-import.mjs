@@ -9,7 +9,7 @@ export function buildDamageImport(report) {
   const imported={characterId:String(report.characterId),characterName:report.characterName,createdAt:report.createdAt,
     attackName:attackNames[c.attack]||'未选择',attack:c.attack,magicFamily:c.magicFamily,type:c.damageType,skillType:c.attackKind,element:elements[c.element],
     effects:[],reference:[],warnings:[],blockers:[],capAdded:0,critAdded:0,critAttackAdded:0,critUnresolved:[],magicCanCrit:false,
-    bossKiller:false,killerCorrection:0,defenseRatio:1,hitMultiplier:1,hitDamageRatio:1,statReference:null};
+    bossKiller:false,killerCorrection:0,defenseRatio:1,hitMultiplier:1,hitDamageRatio:1,hitSources:[],statReference:null};
   if (!['physical','magical'].includes(c.damageType) || !imported.element) imported.blockers.push('请在基础计算器确认伤害类型和攻击属性。');
   const defense=[],hit=[],refs=[];
   for (const row of report.rows) {
@@ -57,6 +57,7 @@ export function buildDamageImport(report) {
   } else if(defense.length) imported.blockers.push('存在未确认或多个防御参照修正，需先核对。');
   if(hit.length===1 && Number.isInteger(hit[0].effect.value) && hit[0].effect.value>0 && Number.isFinite(hit[0].effect.secondary) && hit[0].effect.secondary>=0) {
     imported.hitMultiplier=hit[0].effect.value;imported.hitDamageRatio=hit[0].effect.secondary;
+    imported.hitSources=hit.map(e=>e.source);
   } else if(hit.length) imported.blockers.push('存在未确认或多个分段效果，需先核对。');
   if(imported.effects.length) imported.warnings.push('增伤沿用当前引擎的后置逐条结算；导入顺序是来源顺序，尚未确认为游戏实际执行顺序，可在每条“更多”中调整。');
   if(typeof c.killerOverride==='boolean')imported.bossKiller=c.killerOverride;

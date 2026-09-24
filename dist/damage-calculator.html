@@ -30,7 +30,7 @@
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
-      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">本次触发特攻</label><label><input id="break" type="checkbox">Boss 正在 Break</label></div>
+      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀（仅伤害计算）</label><label><input id="specialAttack" type="checkbox">本次触发特攻</label><label><input id="break" type="checkbox">Boss 正在 Break</label></div>
       <p id="conditionStatus" class="help"></p>
       <p class="help">战斗属性填写已包含面板与状态加成的数值；攻击／法强提升、EX灵气、装备和加护不再重复计入。</p>
       <div id="importStatControls" class="fields two" hidden><label>暴击率基准<select id="critBasis"><option value="reader">读取器面板</option><option value="website">网站加成＋手填基础</option></select></label><label><span id="baseCritLabel">基础及额外暴击率 %</span><input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help"></p></div>
@@ -55,8 +55,8 @@
         <label><span id="hitsLabel">基础命中段数（手动填写）</span><input id="hits" type="number" min="1" max="1000" step="1" required></label>
         <label>命中数倍率 ×<input id="hitMultiplier" type="number" min="1" max="100" step="1" value="1" required></label>
         <label>单段伤害倍率 ×<input id="hitDamageRatio" type="number" min="0" max="100" step="any" value="1" required></label>
-        <label>修正试算位置<select id="hitScaleStage"><option value="">待确认</option><option value="core" selected>核心系数中</option><option value="beforeCap">伤害上限前</option><option value="afterCap">伤害上限后</option></select></label>
-      </div><p class="help">原始段数不含翻倍。特殊分段修正的执行位置未实测时需自行选择试算位置，结果不表示已验证。</p></details>
+        <label id="hitScaleControl">修正试算位置<select id="hitScaleStage"><option value="">待确认</option><option value="core" selected>核心系数中</option><option value="beforeCap">伤害上限前</option><option value="afterCap">伤害上限后</option></select></label>
+      </div><p id="hitSourceNote" class="help"></p><p class="help">基础段数不含翻倍。单段倍率为1时无需选择修正位置；其他倍率需选择试算位置，执行顺序未实测。</p></details>
     </section>
     <section class="card"><div class="section-heading"><h2><span>04</span>Boss 与战斗条件</h2></div>
       <label class="wide">目标预设<select id="bossPreset"><option value="bird">轟鳥龍恩德爾羅納</option><option value="beast">神獸帕帕拉納</option><option value="custom">自定义目标</option></select></label>
@@ -86,7 +86,7 @@
   </form>
   <aside class="results" aria-label="伤害计算结果">
     <div class="result-main"><div class="result-top"><h2>计算结果</h2><span id="resultState">实时计算</span></div>
-      <div id="error" role="alert" hidden></div>
+      <div id="error" role="alert" hidden></div><button id="resolveReview" type="button" hidden>查看尚未选择的项目</button>
       <div id="resultValues" aria-live="polite" aria-atomic="true">
         <article class="primary-result"><span>普通每段伤害</span><strong id="normalDamage">—</strong><small>含随机波动与每段上限</small></article>
         <article class="critical-result"><span>暴击每段伤害</span><strong id="criticalDamage">—</strong></article>
@@ -99,7 +99,7 @@
     <details class="card"><summary>公式依据与适用范围</summary><p>普通核心：A × 0.9<sup>kF/A</sup> × 技能系数 × 核心前倍率 × 随机数。普通 k=10，暴击 k=6；随机数范围为 0.9～1.0。</p><p>取自所提供版本的游戏程序与技能脚本，核心使用单精度运算。伯雷亞斯拳的技能内攻击修正 +51.8%、每段系数 0.334 来自原始技能参数。</p><p>期望值以均匀随机的数值积分估算，先逐段处理暴击和上限；不等同于最大伤害。默认暴击率 20% 是测试起点，请改成实际总暴击率。</p><p>这页计算相同条件、相同系数的各段普通物理／魔法伤害。混合属性技能须先确定结算攻击；不同系数的段、固定伤害、追加伤害、FatalBlow 与竞技场需分开处理。</p></details>
   </aside>
   </div>
-  <section id="reviewPage" class="card" hidden aria-labelledby="reviewTitle"><div class="section-heading"><h2 id="reviewTitle">面板与加成核对</h2><button id="closeReview" type="button">返回伤害计算器</button></div>
+  <section id="reviewPage" class="card" hidden aria-labelledby="reviewTitle"><div class="section-heading"><h2 id="reviewTitle">面板与加成核对</h2><button id="closeReview" type="button">应用已选数据并返回</button></div>
       <div class="section-heading entry-subheading"><h3>面板核对</h3><div class="inline-options"><button id="entryUseWebsiteStats" type="button">全部用网站</button><button id="entryUseStats" type="button">全部用读取器</button></div></div>
       <p class="help">按当前勾选的开战配置自动合计六维，并与读取值比较；下方已作出的排除或数值修改也会计入，待决定项先按网站值预览。展开可看明细，采用最终面板后不会再次乘属性加成。</p>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryStatReview"></tbody></table></div>
@@ -107,6 +107,7 @@
       <p class="help">按当前攻击条件分别统计，展开查看来源并删除。读取器仅合计已识别项目；候选小计不代表已确认生效的完整加成。</p>
       <p class="help" id="entryReadCoverage"></p><p class="help" id="entryObservedCritical"></p>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>项目</th><th>网站</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entryBonusReview"></tbody></table></div>
+      <section id="entrySpecialSection" hidden><h3>命中、特攻与其他特殊效果</h3><p class="help">这些效果也会影响计算，请选择采用或暂不计入。六维已选最终面板时，属性词条无需重复确认。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>读取器</th><th>采用数据</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
       <details id="entryIndividualReview"><summary>逐条核对与修改 · <span id="entryCandidateCount">加成候选</span></summary>
       <div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源／效果</th><th>网站</th><th>读取器</th><th>比较</th><th>采用数据</th></tr></thead><tbody id="entryEffectsReview"></tbody></table></div>
       </details>
@@ -115,7 +116,7 @@
       <details id="entryReadBlessingsDetails" hidden><summary id="entryReadBlessingsCount">读取器账户加护</summary><p class="help">这些来源已与裸装对照确认的账户加护对应。按本次攻击和装备条件参与上方对照；减伤单独保留，不加入输出增伤或六维面板。</p><ul id="entryReadBlessings"></ul></details>
       <details><summary id="entryUnmatchedCount">其他读取记录</summary><p class="help">已对应的账户加护单独列在上方。其余记录会说明条件不符、已涵盖或待解析的原因；未参与本次对照不代表没有读到。</p><ul id="entryUnmatched"></ul></details>
       <p id="entryStatus" role="status" class="entry-status">等待角色固定资料。</p>
-      <button id="entryConfirm" class="primary" type="button">确认采用的数据并用于计算</button>
+      <button id="entryConfirm" class="primary" type="button">应用已选数据并返回</button>
 
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>

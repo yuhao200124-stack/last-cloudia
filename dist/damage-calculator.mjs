@@ -14,8 +14,9 @@ let effects=[],nextId=0,timer;
 const params=new URLSearchParams(location.search);
 const characterId=params.get('character');
 const embedded=params.get('embedded')==='1' && window.parent!==window;
-let imported=null,latestReport=null,workflow=null,readUnit=null,bossRaces=[];
+let imported=null,latestReport=null,workflow=null,readUnit=null,bossRaces=[],reviewBlocker='请导入读取报告并选择采用的数据。',lastHitKey='';
 let manualCriticalBase='';
+let retainedImportDraft=null;
 document.body.classList.toggle('is-embedded',embedded);
 const newEffect=(kind='all')=>({id:++nextId,kind,percent:0,enabled:true,target:'无',stage:'post',name:''});
 const numericKeys=Object.keys(defaultInput()).filter(k=>typeof defaultInput()[k]==='number');
@@ -28,13 +29,31 @@ function showReview(open) {
   else $('openReview').focus();
 }
 $('openReview').addEventListener('click',()=>showReview(true));
-$('closeReview').addEventListener('click',()=>showReview(false));
+$('closeReview').addEventListener('click',()=>{workflow?.applySelection();showReview(false);});
+$('resolveReview').addEventListener('click',()=>showReview(true));
 function fillReaderPreview() {
   if(workflow?.isConfirmed())return;
   const mode=referenceMode(),key=mode==='int'?'intelligence':mode==='str'?'attack':null;
-  $('attack').value=key?readUnit?.stats?.[key]??'':'';
+  $('attack').value=key?workflow?.panelsPreview()?.[key]??'':$('attack').value;
   const crit=observedCritical(readUnit).value;
   $('critRate').value=typeof crit==='number'&&Number.isFinite(crit)?crit:'';
+}
+function syncHitControls(force=false){
+  const s=workflow?.selection();if(!s)return;
+  const key=JSON.stringify([s.attack,s.preset,s.dualWield]);
+  if(!force&&key===lastHitKey)return;lastHitKey=key;
+  for(const id of ['hitMultiplier','hitDamageRatio'])$(id).value=s[id]??(s.dualWield?'':imported?.[id]??1);
+  $('hitScaleStage').value=s.hitScaleStage||'';
+  if(s.dualWield||Number($('hitDamageRatio').value)!==1)$('hitDetails').open=true;
+}
+function hitSourceNote(){
+  const s=workflow?.selection(),manual=s&&(s.hitMultiplier!==undefined||s.hitDamageRatio!==undefined);
+  const values=`命中 ×${$('hitMultiplier').value||'待填'}，单段 ×${$('hitDamageRatio').value||'待填'}`;
+  $('hitSourceNote').textContent=manual?`手动填写：${values}。重新应用核对结果会保留你的数值。`:
+    s?.dualWield?'双刀由你手动判断。请填写该招式的总命中数倍率和单段伤害倍率；不会改变配装，也不会再叠加一份隐藏倍率。':
+    imported?.hitSources.length?`来源：已采用的${imported.hitSources.join('、')}技能效果，${values}；这是按技能效果带入的数值，并非读取器观测到的本次实际命中结果。`:
+    `默认无分段修正：${values}，不是读取器观测值。`;
+  $('hitScaleControl').hidden=$('hitDamageRatio').value!==''&&$('hitDamageRatio').valueAsNumber===1;
 }
 function receiveEntryData({battle,unit}) {
   readUnit=unit;
@@ -90,7 +109,8 @@ function labels() {
   $('bossReference').textContent=`本次参照：${mode==='mixed'?'手填混合防御值':magic?'魔抗 MND':'防御力 DEF'}；${neutral?'无属性不使用六属性抗性':`使用${$('element').value||'所选'}抗性`}。`;
   const p=bosses[$('bossPreset').value];$('debuff').hidden=!p?.debuff||magic||mode==='mixed';
   if(p?.debuff)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
-  $('conditionStatus').textContent=$('dualWield').checked&&$('type').value==='physical'?'已按双武器筛选技能；双刀段数及单段倍率请在下方确认，其他增伤按最终核对结果计入。':'特攻、Break 与武器条件的技能加成按最终核对结果计入。';
+  $('conditionStatus').textContent=$('dualWield').checked?'双刀仅使用你填写的命中及单段倍率；配装、武器数量条件和已选面板保持基础计算器的设置。':'特攻与 Break 按本次选择计算；装备条件沿用基础计算器。';
+  hitSourceNote();
 }
 function applyBoss() {
   const p=bosses[$('bossPreset').value];
@@ -104,6 +124,7 @@ function update() {
     const cap=$('baseCap').valueAsNumber+imported.capAdded;
     const fromReader=$('critBasis').value==='reader',observed=observedCritical(readUnit).value;
     $('baseCritRate').readOnly=fromReader;
+    $('baseCritRate').required=!(imported.skillType==='magic'&&!imported.magicCanCrit);
     $('baseCritLabel').textContent=fromReader?'读取器观察时暴击率 %':'基础及额外暴击率 %';
     if(fromReader)$('baseCritRate').value=observed??'';
     const added=fromReader?imported.critAttackAdded:imported.critAdded;
@@ -115,12 +136,12 @@ function update() {
   labels();
   const invalid=[...$('calculator').querySelectorAll('input[type=number]')].find(e=>!e.disabled&&!e.checkValidity());
   try {
-    if(characterId&&(!imported||!workflow?.isConfirmed()))throw new Error('先完成入场核对，并确认采用的数据；候选加成不会自动用于计算。');
+    if(characterId&&(!imported||!workflow?.isConfirmed()))throw new Error(reviewBlocker);
     if(imported&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
     if(imported?.blockers.length)throw new Error(imported.blockers.join('；'));
     if(invalid) throw new Error(`请检查「${invalid.closest('label')?.textContent.trim()||'数值'}」的输入范围，必填数值不能留空。`);
     const s=read(),r=calculate(s),c=r.context;
-    $('error').hidden=true;$('resultValues').hidden=false;
+    $('error').hidden=true;$('resolveReview').hidden=true;$('resultValues').hidden=false;
     $('resultState').textContent=c.element<=0?'属性免疫':r.normal.uncappedMax>s.cap?'普通伤害触及上限':imported?'导入条件下试算':'实时计算';
     $('normalDamage').textContent=`${fmt(r.normal.min)} – ${fmt(r.normal.max)}`;
     $('criticalDamage').textContent=`${fmt(r.critical.min)} – ${fmt(r.critical.max)}`;
@@ -142,11 +163,13 @@ function update() {
     });
   } catch(e) {
     $('error').hidden=false;$('error').textContent=e.message;$('resultValues').hidden=true;$('resultState').textContent=characterId&&!workflow?.isConfirmed()?'等待核对':'请检查输入';
+    $('resolveReview').hidden=!characterId||workflow?.isConfirmed();
     $('trace').replaceChildren();$('formulaText').textContent='';$('activeNote').textContent='输入有效数值后会自动重新计算。';
     $('skillSummary').textContent=imported?`${imported.attackName} · 请填写该招式自己的原始系数、攻击修正及段数。`:'请检查技能参数。';
   }
 }
 function reset(clearSaved=true) {
+  retainedImportDraft=null;
   const s=defaultInput();
   for(const k of numericKeys) if($(k))$(k).value=s[k];
   for(const k of booleanKeys) if($(k))$(k).checked=s[k];
@@ -208,11 +231,21 @@ function applyImport(report,review) {
   const next=buildDamageImport(report);
   if(next.characterId!==characterId)throw new Error('导入报告与当前角色不一致');
   next.statReference=review.selection.statReference;
-  effects=[...next.effects.map(e=>({...e,id:++nextId})),...readEffects().filter(e=>!e.importId)];
+  const current=readEffects(),previous=imported?{base:imported.effects,rows:current}:retainedImportDraft;
+  effects=[...next.effects.flatMap(e=>{
+    const old=previous?.base.find(x=>x.importId===e.importId);
+    if(old&&JSON.stringify(old)===JSON.stringify(e)){
+      const draft=previous.rows.find(x=>x.importId===e.importId);
+      return draft?[{...draft,id:++nextId}]:[]; // Keep an unchanged source's edits or deletion.
+    }
+    return [{...e,id:++nextId}];
+  }),...current.filter(e=>!e.importId)];
+  retainedImportDraft=null;
   imported=next;
   $('critBasis').querySelector('[value="reader"]').disabled=observedCritical(readUnit).value==null;
   if(observedCritical(readUnit).value==null)$('critBasis').value='website';
-  for(const [id,value] of Object.entries({skillType:next.skillType,defenseRatio:next.defenseRatio,hitMultiplier:next.hitMultiplier,hitDamageRatio:next.hitDamageRatio})) {
+  reviewBlocker='';
+  for(const [id,value] of Object.entries({skillType:next.skillType,defenseRatio:next.defenseRatio})) {
     if(typeof value==='boolean')$(id).checked=value;else $(id).value=value??'';
   }
   $('attack').value=next.statReference==='int'?review.panels.intelligence:next.statReference==='str'?review.panels.attack:'';
@@ -220,23 +253,17 @@ function applyImport(report,review) {
   $('boss').checked=true;
   for(const id of ['boss','defenseRatio'])$(id).disabled=true;
   for(const id of ['hitMultiplier','hitDamageRatio'])$(id).disabled=false;
-  if($('dualWield').checked&&$('type').value==='physical'&&next.hitMultiplier===1){
-    for(const id of ['hitMultiplier','hitDamageRatio'])$(id).value=review.selection[id]??'';
-    $('hitScaleStage').value=review.selection.hitScaleStage||'';
-  }
+  syncHitControls(true);
   $('critRate').readOnly=true;$('cap').readOnly=true;
   $('importStatControls').hidden=false;$('importCapControls').hidden=false;
   $('skillDetails').open=true;
-  if(next.hitDamageRatio===1&&!($('dualWield').checked&&$('type').value==='physical'))$('hitScaleStage').value='core';
-  else $('hitScaleStage').value=review.selection.hitScaleStage||'';
-  $('hitDetails').open=next.hitMultiplier!==1||next.hitDamageRatio!==1;
   $('entryReviewSummary').textContent=`${next.characterName} · ${next.attackName} · ${next.element||'属性待确认'} · 已确认 ${next.effects.length} 条伤害加成`;
   $('critImportNote').textContent=`已确认 +${next.critAdded}% 暴击率${next.skillType==='magic'&&!next.magicCanCrit?'；当前魔法没有已确认的暴击资格，按0%计算。':'；最终值为左侧输入与确认加成之和，上限100%。'}`;
   $('capImportNote').textContent=`已确认固定上限 +${fmt(next.capAdded)}；最终值为左侧输入与确认加成之和。`;
   $('importReferences').innerHTML=`<ul>${next.reference.map(e=>`<li><b>${esc(e.source)}</b>：${esc(formatEffect(e.effect))}${['stat','statBuff','equipmentStat'].includes(e.effect.type)?'（面板核对，不重复乘算）':''}</li>`).join('')}</ul>`;
   const noLongerActive=report.rows.filter(r=>r.status!=='active').map(r=>`${r.sourceName}：确认后的前置条件不成立，相关效果未计入。`);
   $('importWarnings').innerHTML=[...next.blockers,...next.warnings,...noLongerActive].map(w=>`<p class="import-warning">${esc(w)}</p>`).join('');
-  renderEffects();labels();update();showReview(false);
+  renderEffects();labels();update();if(review.finish)showReview(false);
 }
 function receiveReport(report,force=false) {
   try {
@@ -259,12 +286,14 @@ document.addEventListener('keydown',e=>{if(embedded&&e.key==='Escape')window.par
 if(characterId)workflow=initEntryWorkflow({
   characterId,
   onInvalidate(message){
+    reviewBlocker=message;
+    if(imported)retainedImportDraft={base:imported.effects,rows:readEffects().filter(e=>e.importId)};
     imported=null;effects=readEffects().filter(e=>!e.importId);renderEffects();
     $('importReferences').replaceChildren();$('importWarnings').replaceChildren();
-    $('attack').value='';$('critRate').value=0;$('cap').value=$('baseCap').value;
+    fillReaderPreview();$('cap').value=$('baseCap').value;
     $('entryReviewSummary').textContent=message;update();
   },
-  onSelection(){fillReaderPreview();labels();update();},
+  onSelection(){fillReaderPreview();syncHitControls();labels();update();},
   onRead:receiveEntryData,
   onConfirm:applyImport
 });
