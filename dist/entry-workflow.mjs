@@ -1,16 +1,16 @@
-import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-unified';
-import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-unified';
-import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260924-unified';
-import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-unified';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-unified';
+import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-fullpage';
+import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-fullpage';
+import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260924-fullpage';
+import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullpage';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260924-fullpage';
 import {formatEffect,describeCondition} from './effect-rule-engine.mjs';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-unified';
-import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-unified';
-import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-unified';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-unified';
-import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260924-unified';
-import {MODE_LABELS} from './combat-modes.mjs?v=20260924-unified';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-fullpage';
+import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-fullpage';
+import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-fullpage';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260924-fullpage';
+import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260924-fullpage';
+import {MODE_LABELS} from './combat-modes.mjs?v=20260924-fullpage';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -429,7 +429,21 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   });
   return {...report,profile:{...profile,baseStats:{...profile.baseStats,...state.base}},context:{...report.context,accountBlessings:state.accountBlessings},rows};
  }
- return {receive,selection,panelsPreview,planningBase,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
+ function exportSession(){
+  const snapshot=clone(state);
+  snapshot.parameters[paramKey()]={...snapshot.parameters[paramKey()],...Object.fromEntries(parameterIds.map(id=>[id,$(id).value]))};
+  return clone({characterId,report,state:snapshot,battle,unitIndex:battle?.units.indexOf(unit)??-1,reportFingerprint,supplementChoices,groupReaderChoices,attackObservations,snapshotSelection,fileNote:$('entryFileNote').textContent});
+ }
+ function restoreSession(data){
+  if(String(data?.characterId)!==characterId||!data.report?.profile||String(data.report.profile.characterId)!==characterId)return false;
+  state=clone(data.state);report=clone(data.report);profile=report.profile;signature=meaningful(report);
+  battle=clone(data.battle);unit=battle?.units?.[data.unitIndex]||null;reportFingerprint=data.reportFingerprint;
+  supplementChoices=clone(data.supplementChoices||{});groupReaderChoices=clone(data.groupReaderChoices||{});attackObservations=clone(data.attackObservations||{});snapshotSelection=data.snapshotSelection||'entry';
+  initialize();
+  if(battle){$('entryUnit').innerHTML=option('','请选择本次测试角色','')+battle.units.map((u,i)=>option(String(i),`${u.name||'未命名'} · Unit ${u.unitId}`,unit?String(data.unitIndex):'')).join('');$('entryFileNote').textContent=data.fileNote||'';onRead({battle,unit:selectedUnit()});}
+  updateCandidate();return true;
+ }
+ return {receive,selection,panelsPreview,planningBase,exportSession,restoreSession,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
   state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};groupReaderChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
   if(initialized){state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,specialAttack:report.context.killer===true,break:false};for(const id of ['dualWield','specialAttack','break','fullHp','criticalEnabled'])$(id).checked=state.selection[id];renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();

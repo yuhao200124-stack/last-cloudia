@@ -101,7 +101,7 @@ test('explicit character waits for its report before accepting any previous ifra
  const child={postMessage(message){messages.push(message);}};controls.get('unifiedLoadoutFrame').contentWindow=child;
  globalThis.document={getElementById:id=>controls.get(id),body:{classList:{toggle(){}}}};
  globalThis.localStorage={getItem(){return null;}};
- globalThis.location={origin:'https://example.test'};
+ globalThis.location={origin:'https://example.test',href:'https://example.test/damage-calculator.html?character=260&unified=1'};
  globalThis.window={addEventListener(type,fn){listeners[type]=fn;}};
  let report=null;
  const ui=mountUnifiedCalculator({getContext:()=>({characterId:'260',baseReport:report,selection}),onChange(){}});

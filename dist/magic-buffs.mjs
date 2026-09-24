@@ -1,5 +1,5 @@
-import {projectAttackLayers} from './attack-layers.mjs?v=20260924-unified';
-import {SUPPORT_BUFFS,normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-unified';
+import {projectAttackLayers} from './attack-layers.mjs?v=20260924-fullpage';
+import {SUPPORT_BUFFS,normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-fullpage';
 const normalized=s=>String(s||'').replace(/\s|[,，。、]/g,'').replaceAll('＋','+');
 export function magicBuffOptions(profile) {
  return SUPPORT_BUFFS.flatMap(def=>{

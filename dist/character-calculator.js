@@ -430,7 +430,7 @@
       savedBuildDraftDirty = false;
       savedBuildNote.hidden = true;
       savedBuildBreaks.innerHTML = "";
-      savedBuildSkills.innerHTML = '<div class="saved-build-empty">还没有这个角色的已保存方案。<br>请先使用上方“配装计算器”选择技能并保存。</div>';
+      savedBuildSkills.innerHTML = '<div class="saved-build-empty">还没有这个角色的已保存方案。<br>请先使用“配装与伤害计算器”选择技能并保存。</div>';
       savedBuildTotal.textContent = "0 SC";
       savedBuildDetails.disabled = true;
       savedBuildEffects.disabled = true;
@@ -589,7 +589,7 @@
       finalDamageAttacks.innerHTML = "";
       finalDamageCapTypes.innerHTML = "";
       finalDamageCapSources.innerHTML = "";
-      finalDamageSummary.innerHTML = '<div class="bonus-empty">请先使用“配装计算器”保存这个角色的方案。</div>';
+      finalDamageSummary.innerHTML = '<div class="bonus-empty">请先使用“配装与伤害计算器”保存这个角色的方案。</div>';
       return;
     }
 
@@ -1090,7 +1090,7 @@
       characterFreeIds: Array.isArray(plan.characterFreeIds) ? plan.characterFreeIds.map(String).filter((id) => savedBuildDraftSkillIds.includes(id)) : [],
       activeBreaks: Array.isArray(plan.activeBreaks) ? [...plan.activeBreaks] : [],
     }));
-    location.href = `./index.html?editPlan=${encodeURIComponent(plan.id)}&draft=1#全部技能`;
+    location.href = `./damage-calculator.html?character=${encodeURIComponent(plan.characterId)}&unified=1&editPlan=${encodeURIComponent(plan.id)}&draft=1`;
   });
   savedBuildRestore.addEventListener("click", () => {
     const plan = readSavedBuildPlans().find((item) => item.id === selectedSavedBuildId);

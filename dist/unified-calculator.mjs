@@ -1,9 +1,10 @@
-import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260924-unified';
-import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-unified';
-import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260924-unified';
+import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260924-fullpage';
+import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
+import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260924-fullpage';
 import {formatEffect} from './effect-rule-engine.mjs';
-import {retargetReport} from './entry-preparation.mjs?v=20260924-unified';
-import {buildDamageImport} from './damage-import.mjs?v=20260924-unified';
+import {retargetReport} from './entry-preparation.mjs?v=20260924-fullpage';
+import {buildDamageImport} from './damage-import.mjs?v=20260924-fullpage';
+import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-fullpage';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const saved=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))||fallback;}catch{return fallback;}};
@@ -14,7 +15,7 @@ export function renderDamageGauges(result,input){
   track.firstElementChild.style.width=`${gauge.fill}%`;track.setAttribute('aria-valuenow',String(Math.round(branch.mean)));track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax',String(gauge.cap));track.setAttribute('aria-valuetext',`每段 ${fmt(gauge.min)} 至 ${fmt(gauge.max)}，上限 ${fmt(gauge.cap)}`);
  }
 }
-export function mountUnifiedCalculator({getContext,onChange}){
+export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
  const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,showSettings=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES);
  const send=(type,extra={})=>{if(ready)frame.contentWindow.postMessage({type,...extra},location.origin);};
  function layout(){
@@ -27,8 +28,9 @@ export function mountUnifiedCalculator({getContext,onChange}){
   return Number.isFinite(context.criticalObservation)&&context.baseReport?{rate:context.criticalObservation,contribution:buildDamageImport(retargetReport(context.baseReport,context.selection)).critAdded}:null;
  }
  function open(){
+  if(beforeOpen?.()===false)return;
   const context=getContext();anchor=context.runtimeAnchor||[];criticalAnchor=captureCritical(context);active=true;layout();
-  if(!frame.src)frame.src='./index.html?embeddedLoadout=1&v=20260924-unified';else initialize();
+  if(!frame.src)frame.src=loadoutFrameUrl(location.href);else initialize();
   onChange();
  }
  $('unifiedStart').addEventListener('click',open);
@@ -36,12 +38,15 @@ export function mountUnifiedCalculator({getContext,onChange}){
  $('unifiedSettings').addEventListener('click',()=>{showSettings=!showSettings;layout();});
  window.addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==frame.contentWindow)return;
-  if(e.data?.type==='lc-loadout-ready'){ready=true;initialize();}
+  if(e.data?.type==='lc-loadout-ready'){
+   ready=true;initialize();
+   const url=new URL(location.href);url.searchParams.delete('editPlan');url.searchParams.delete('draft');globalThis.history?.replaceState(null,'',url.href);
+  }
   if(e.data?.type==='lc-loadout-change'){
    const next=e.data.snapshot,context=getContext();
    if(!next||!Array.isArray(next.items))return;
    if(String(next.characterId)!==String(context.characterId||'')){
-    const url=new URL(location.href);if(next.characterId)url.searchParams.set('character',next.characterId);else url.searchParams.delete('character');url.searchParams.set('unified','1');location.assign(url.href);return;
+    const url=new URL(location.href);if(next.characterId)url.searchParams.set('character',next.characterId);else url.searchParams.delete('character');url.searchParams.set('unified','1');for(const key of ['embedded','session','editPlan','draft'])url.searchParams.delete(key);location.assign(url.href);return;
    }
    snapshot=next;onChange();
   }

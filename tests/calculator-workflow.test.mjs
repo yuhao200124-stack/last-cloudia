@@ -18,6 +18,27 @@ function controls() {
  globalThis.localStorage={getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)};
  return {get:id=>elements.get(id),saves,data};
 }
+test('full-page handoff restores imported reader data, reviewed panels, exclusions and in-progress skill parameters',async()=>{
+ const ui=controls(),base={hp:100,mp:100,attack:100,defense:100,intelligence:100,mind:100};
+ ui.data.set('lc-entry-review:260:v1',JSON.stringify({selection:{attack:'magic',preset:'m',type:'magical',statReference:'int',element:'冰',criticalEnabled:false,specialAttack:false,fullHp:false}}));
+ const profile={characterId:'260',baseStats:base,equipment:[],moves:[],magic:[{id:'m',kind:'magic',name:'测试冰魔法',purpose:'attack',element:'冰',statReference:'int'}]};
+ const catalog=[{id:'cap',name:'上限技能',group:'common',rules:[{id:'cap-r',review:'ready',conditions:[],effects:[{type:'cap',target:'魔法伤害上限',value:2000,unit:''}]}]}];
+ const report={kind:'last-cloudia-effect-report',characterId:'260',profile,...evaluateCatalog(catalog,{attack:'magic',damageType:'magical',element:'ice'})};
+ let original;const workflow=initEntryWorkflow({characterId:'260',onConfirm:(r,review)=>{original={r,review};},onInvalidate(){},onSelection(){}});
+ workflow.receive(report);await workflow.importFile({name:'battle.json',size:100,text:async()=>JSON.stringify({kind:'last-cloudia-battle-entry',schemaVersion:1,battleId:'kept-battle',units:[{unitId:502220,stats:base,bonuses:[]}]})});
+ ui.get('entryUseWeb').fire('click');workflow.setManualPanel('intelligence',10111);assert(workflow.isConfirmed());
+ const capRow=ui.get('entryEffectsReview').innerHTML.split('</tr>').find(r=>r.includes('上限技能'));
+ ui.get('entryEffectsReview').fire('change',{dataset:{entryChoice:capRow.match(/data-entry-choice="(\d+)"/)[1]},value:'exclude'});
+ ui.get('coefficient').value='0.52';ui.get('hits').value='35';ui.get('skillPercent').value='67';
+ const snapshot=workflow.exportSession(),selection=workflow.selection(),expected=buildDamageImport(original.r);
+ const nextUi=controls();let restored,reader;
+ const next=initEntryWorkflow({characterId:'260',onConfirm:(r,review)=>{restored={r,review};},onRead:value=>{reader=value;},onInvalidate(){},onSelection(){}});
+ assert.equal(next.restoreSession(snapshot),true);assert(next.isConfirmed());
+ assert.equal(reader.battle.battleId,'kept-battle');assert.equal(reader.unit.unitId,502220);assert.equal(restored.review.panels.intelligence,10111);
+ assert.deepEqual(next.selection(),selection);assert.deepEqual(buildDamageImport(restored.r),expected);
+ assert.equal(nextUi.get('coefficient').value,'0.52');assert.equal(nextUi.get('hits').value,'35');assert.equal(nextUi.get('skillPercent').value,'67');
+ assert.equal(next.restoreSession({...snapshot,characterId:'245'}),false);
+});
 test('review UI events preserve manual panel, save from both sections, keep reminders inert and migrate dual stage',async()=>{
  const ui=controls();
  ui.data.set('lc-entry-review:260:v1',JSON.stringify({selection:{attack:'magic',preset:'magic-1',type:'magical',element:'冰',statReference:'int',dualWield:true,specialAttack:true},hitParameters:{'magic:magic-1:dual':{hitMultiplier:'2',hitDamageRatio:'0.6',hitScaleStage:'beforeCap'}}}));

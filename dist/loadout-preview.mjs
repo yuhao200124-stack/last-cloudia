@@ -1,10 +1,10 @@
-import {buildCatalog} from './effect-rule-learning.mjs?v=20260924-unified';
-import {retargetReport} from './entry-preparation.mjs?v=20260924-unified';
-import {buildDamageImport} from './damage-import.mjs?v=20260924-unified';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-unified';
-import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-unified';
-import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-unified';
-import {magicBuffCap} from './magic-buffs.mjs?v=20260924-unified';
+import {buildCatalog} from './effect-rule-learning.mjs?v=20260924-fullpage';
+import {retargetReport} from './entry-preparation.mjs?v=20260924-fullpage';
+import {buildDamageImport} from './damage-import.mjs?v=20260924-fullpage';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-fullpage';
+import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-fullpage';
+import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-fullpage';
+import {magicBuffCap} from './magic-buffs.mjs?v=20260924-fullpage';
 
 const eq=(field,value)=>({field,op:'eq',value});
 const elements={火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark',无:'none'};

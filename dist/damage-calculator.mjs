@@ -1,14 +1,15 @@
-import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260924-unified';
-import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-unified';
+import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260924-fullpage';
+import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-fullpage';
 import {formatEffect} from './effect-rule-engine.mjs';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-unified';
-import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-unified';
-import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-unified';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-fullpage';
+import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
+import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-fullpage';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
-import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-unified';
-import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-unified';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260924-unified';
-import {loadCharacterReport} from './character-report-loader.mjs?v=20260924-unified';
+import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-fullpage';
+import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-fullpage';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260924-fullpage';
+import {loadCharacterReport} from './character-report-loader.mjs?v=20260924-fullpage';
+import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-fullpage';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -18,6 +19,7 @@ const bosses={bird:{def:4000,mnd:10000,debuff:2599,res:[25,-25,50,50,-25,25]},be
 let effects=[],nextId=0,timer;
 const params=new URLSearchParams(location.search);
 const characterId=params.get('character');
+if(characterId&&/^\d+$/.test(characterId)){$('calculatorCharacterBack').href=`./character-${characterId}.html`;$('calculatorCharacterBack').textContent='返回角色';}
 const embedded=params.get('embedded')==='1' && window.parent!==window;
 let imported=null,latestReport=null,workflow=null,readUnit=null,bossRaces=[],reviewBlocker='请导入读取报告并选择采用的数据。',lastHitKey='';
 let manualCriticalBase='';
@@ -27,6 +29,16 @@ let panelLayers=null,layerSourceKey='',attackBasisTouched=false,autoLayer=null;
 let magicOptions=[],magicSelection={};
 let defenseRatioTouched=false;
 let unified=null;
+let openingFullPage=false;
+async function openFullPage(){
+ if(openingFullPage)return;openingFullPage=true;$('unifiedStart').disabled=true;
+ try{
+  const session=await saveCalculatorSession({characterId,workflow:workflow?.exportSession(),controls:captureControls($('calculator')),
+   calculator:{effects:readEffects(),nextId,imported,readUnit,manualCriticalBase,retainedImportDraft,formulaCapture,captureOptions,captureApplication,panelLayers,layerSourceKey,attackBasisTouched,autoLayer,magicSelection,defenseRatioTouched,bossRaces,reviewBlocker,lastHitKey},
+   captureNote:$('formulaCaptureNote').textContent});
+  window.parent.postMessage({type:'lc-damage-fullpage',session},location.origin);
+ }catch{$('error').hidden=false;$('error').textContent='暂时无法带上当前数据打开大页面，请重试。当前填写内容已保留。';openingFullPage=false;$('unifiedStart').disabled=false;}
+}
 try {magicSelection=JSON.parse(localStorage.getItem(`lc-magic-buffs:${characterId}`))||{};}catch{}
 const activeMagicBuffs=()=>selectedMagicBuffs(magicOptions,magicSelection);
 const criticalDisabled=()=>!$('criticalEnabled').checked||imported?.skillType==='magic'&&!imported.magicCanCrit;
@@ -280,6 +292,7 @@ function update() {
       if($('attackBasis').value==='auto'&&!autoLayer?.ok)throw new Error(autoLayer?.reason||'请先核对属性层来源。');
       if(invalid) throw new Error(`请检查「${invalid.closest('label')?.textContent.trim()||'数值'}」的输入范围，必填数值不能留空。`);
     }
+    if(unified?.active)for(const [id,label] of [['coefficient','每段基础系数'],['hits','基础命中段数'],['skillPercent','技能内攻击修正'],['skillAdd','技能内攻击前加算'],['skillPostAdd','技能内攻击后加算']])if(!Number.isFinite($(id).valueAsNumber))throw new Error(`请在“战斗设置”中填写${label}。`);
     const preview=unified?.active?unified.prepare(read()):null;
     const s=preview?.input||read(),r=calculate(s),c=r.context;
     $('error').hidden=true;$('resolveReview').hidden=true;$('resultValues').hidden=false;
@@ -473,8 +486,19 @@ if(characterId)workflow=initEntryWorkflow({
   onConfirm:applyImport
 });
 reset(false);
-if(characterId){loadReport();if(embedded)window.parent.postMessage({type:'lc-damage-ready'},location.origin);}
+let transferred=null;
+if(!embedded&&params.has('session'))try{transferred=await loadCalculatorSession(params.get('session'),characterId);}catch{}
+if(transferred?.workflow?.report){latestReport=transferred.workflow.report;renderMagicBuffs(latestReport.profile);workflow?.restoreSession(transferred.workflow);}
+else if(characterId){loadReport();if(embedded)window.parent.postMessage({type:'lc-damage-ready'},location.origin);}
+if(transferred?.calculator){
+ ({effects,nextId,imported,readUnit,manualCriticalBase,retainedImportDraft,formulaCapture,captureOptions,captureApplication,panelLayers,layerSourceKey,attackBasisTouched,autoLayer,magicSelection,defenseRatioTouched,bossRaces,reviewBlocker,lastHitKey}=transferred.calculator);
+ renderMagicBuffs(latestReport?.profile);renderEffects();renderCaptureOptions();restoreControls($('calculator'),transferred.controls);
+ $('applyFormulaCapture').disabled=!selectedCapture();$('formulaCaptureNote').textContent=transferred.captureNote||'';labels();update();
+ const restoredUrl=new URL(location.href);restoredUrl.searchParams.delete('session');history.replaceState(null,'',restoredUrl.href);
+ removeCalculatorSession(params.get('session')).catch(()=>{});
+}
 unified=mountUnifiedCalculator({
+ beforeOpen:()=>{if(!embedded)return true;openFullPage();return false;},
  getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,break:$('break').checked,dualWield:$('dualWield').checked},
   baseCap:$('baseCap').valueAsNumber,baseCritRate:$('critBasis').value==='reader'?Number(manualCriticalBase)||0:$('baseCritRate').valueAsNumber||0,
   selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],manualDefenseRatio:defenseRatioTouched?$('defenseRatio').valueAsNumber:null,

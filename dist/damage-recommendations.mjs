@@ -1,4 +1,4 @@
-import {calculate} from './damage-engine.mjs?v=20260924-unified';
+import {calculate} from './damage-engine.mjs?v=20260924-fullpage';
 
 export const DEFAULT_SC_RATES={damage:10,stat:10,criticalRate:1.5,criticalDamage:8};
 const clone=x=>structuredClone(x);

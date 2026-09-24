@@ -158,7 +158,7 @@
     calculatorState.expandedBonusKey = '';
     openCalculatorOnLoad = true;
     localStorage.setItem(calculatorStorageKey, JSON.stringify(calculatorState));
-    history.replaceState(null, '', `${location.pathname}${location.hash}`);
+    history.replaceState(null, '', `${location.pathname}${embeddedLoadout?'?embeddedLoadout=1':''}${location.hash}`);
   } else if (inboundLoadout) {
     const includedIds = inboundLoadout.skillIds.filter(id => skillIndex.has(id));
     calculatorState.skillIds = [...includedIds];
@@ -169,7 +169,7 @@
     calculatorState.expandedBonusKey = '';
     openCalculatorOnLoad = true;
     localStorage.setItem(calculatorStorageKey, JSON.stringify(calculatorState));
-    history.replaceState(null, '', `${location.pathname}${location.hash}`);
+    history.replaceState(null, '', `${location.pathname}${embeddedLoadout?'?embeddedLoadout=1':''}${location.hash}`);
   }
 
   const escapeHtml = (value = '') => String(value)
@@ -430,7 +430,7 @@
       }).join('')
       : '<div class="calculator-empty">点击技能右侧的“＋”添加技能</div>';
     calculatorTotal.textContent = `${formatSc(result.total)} SC`;
-    calculatorBadge.textContent = `${formatSc(result.total)} SC`;
+    calculatorBadge.textContent = embeddedLoadout ? `${formatSc(result.total)} SC` : '配装与伤害';
     if (embeddedLoadout && window.LC_LOADOUT_CALCULATOR) {
       window.dispatchEvent(new CustomEvent('lc:loadout-change', { detail: window.LC_LOADOUT_CALCULATOR.snapshot() }));
       renderCharacterSkillPicker();
@@ -547,6 +547,14 @@
   }
 
   function setCalculatorOpen(open) {
+    if (!embeddedLoadout && open) {
+      saveCalculatorState();
+      const url = new URL('./damage-calculator.html', location.href);
+      url.searchParams.set('unified', '1');
+      if (calculatorState.characterId) url.searchParams.set('character', calculatorState.characterId);
+      location.assign(url.href);
+      return;
+    }
     if (embeddedLoadout) open = true;
     if (!open) {
       calculatorState.detailsOpen = false;
