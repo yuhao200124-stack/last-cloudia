@@ -11,65 +11,50 @@ const source=n=>all.find(r=>r.url.endsWith(`/gino/${n}`));
 const entry=n=>damage.entries.find(e=>e.id===source(n).id);
 const registry=JSON.parse(read('../docs/skill-labeling-registry.json'));
 
-test('general damage audits all 935 skills including split words and excludes specific attack types and unrelated damage events',()=>{
+test('general damage audits all 935 skills and classifies the complete bonus phrase rather than stripping its restrictions',()=>{
  const audit=JSON.parse(read('../docs/damage-tag-audit.json'));
  assert.equal(audit.rows.length,935);assert.equal(new Set(audit.rows.map(r=>r.id)).size,935);
- assert.equal(audit.rows.filter(r=>r.decision==='related').length,85);assert.equal(audit.rows.filter(r=>r.decision==='not-related').length,850);
+ assert.equal(audit.rows.filter(r=>r.decision==='related').length,7);assert.equal(audit.rows.filter(r=>r.decision==='not-related').length,928);
  for(const n of [2026,2028])assert(audit.rows.some(r=>r.id===source(n).id));
- assert(source(938).effect.includes('伤 害'));assert(entry(938));
- for(const n of [73,74,75,76,77,78,229,240,277,296,323,359,386,399,559,648,660,672,681,698,745]){
-  assert(entry(n));assert(entry(n).remainingConditions.some(t=>t.includes('攻击属性')));
- }
- for(const n of [9,17,28,40,42,127,169,175,177,178,181,185,202,205,212,215,241,325,364,620,754,865,895,1060,1066,1228,1289,1366,1477,1507,1692,1694,1775,1799,1812,1816,1931,1955,2026,2028])assert(!entry(n),source(n).name);
+ assert.deepEqual(damage.entries.map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[186,253,655,731,939,1232,1478]);
+ // “Damage against Bosses / airborne targets” is a complete specialized
+ // bonus. It must not also become a generic damage fragment in this pass.
+ for(const n of [122,123,124,190,206,226,269,331,761,832,942,1516,1527,1608])assert(!entry(n),source(n).name);
+ // Even untyped elemental bonuses, weapon-element matching and inherited
+ // light bonuses are outside this user-defined tag.
+ for(const n of [73,74,75,76,77,78,229,240,277,296,323,359,386,399,559,648,660,672,681,698,745,711,721,765,842,883,938,1000,1179,1241,1479,1546,1573,1746,1754,1776,1798,1910,1961,1981,2000])assert(!entry(n),source(n).name);
+ assert(source(938).effect.includes('伤 害'));assert(!entry(938));
+ for(const n of [9,17,28,40,42,127,169,175,177,178,181,185,202,205,212,215,241,325,364,620,754,865,895,1060,1066,1228,1289,1316,1366,1477,1507,1692,1694,1775,1799,1812,1816,1931,1955,2026,2028])assert(!entry(n),source(n).name);
  assert.equal(catalog.numericEffectInjection,false);
 });
 
-test('general damage keeps Buff timing, opposing targets, empty slots and special multipliers separate',()=>{
- assert.equal(entry(1316).tagDetails['伤害增加'].target,'enemy');
- assert.equal(entry(1316).tagDetails['伤害增加'].relation,'enemy-damage-vulnerability');
- assert.match(entry(1316).tagDetails['伤害增加'].calculationNote,/不能混作自身增伤或自身易伤/);
- assert(entry(1316).remainingConditions.some(t=>t.includes('不假定为40秒')));
- for(const n of [206,942]){
-  assert.equal(entry(n).tagDetails['伤害增加'].relation,'killer-damage-increase');
-  assert.match(entry(n).tagDetails['伤害增加'].calculationNote,/不能直接并入通用增伤池/);
- }
- const pass=registry.tagPasses.find(p=>p.tag==='伤害增加');
- assert.deepEqual(pass.assignments.find(a=>a.skillId===source(1516).id).partIds,['damage-killer','damage-weakness']);
- assert.match(entry(1516).tagDetails['伤害增加'].calculationNote,/不无条件合并成40%/);
+test('general damage retains its own activation conditions and keeps Buff timing, reduction and caps separate',()=>{
+ assert.equal(entry(655).tagDetails['伤害增加'].summary,'队伍至少2名且全员存活时，自身造成伤害+5%');
+ assert.deepEqual(entry(655).remainingEffects,['受到的伤害-5%']);
+ assert.deepEqual(entry(655).remainingConditions,['队伍中至少2名单位','我方全员存活']);
+ for(const n of [186,253])assert.deepEqual(entry(n).remainingConditions,['当前连续Hit达到50以上']);
  assert.deepEqual(entry(731).remainingConditions,['空武器：未装备武器','空防具：未装备防具；须与空武器同时满足']);
- assert.deepEqual(entry(938).remainingConditions,['只装备一把武器','该武器为剑','本次攻击属性与所装备剑的属性相同']);
  assert(entry(939).remainingConditions.some(t=>t.includes('不是Buff持续时间')));
  assert(entry(939).remainingConditions.some(t=>t.includes('再过40秒')));
- for(const n of [1241,1425,1674,1693,1954])assert(entry(n).remainingConditions.some(t=>/持续40秒.*同类型Buff.*一项/.test(t)));
- for(const n of [1478,1776,1798,1961,1981])assert.match(entry(n).tagDetails['伤害增加'].calculationNote,/不能直接使用最高值/);
+ assert.match(entry(1478).tagDetails['伤害增加'].calculationNote,/不能直接使用最高值/);
  assert(entry(1232).remainingConditions.some(t=>t.includes('≤10')));assert(entry(1232).remainingConditions.some(t=>t.includes('达到108')));
- assert(entry(226).remainingEffects.some(t=>t.includes('普通攻击')));
- assert(entry(226).remainingConditions.some(t=>t.includes('目标敌人处于沉默')));
- assert(entry(1608).remainingEffects.includes('受到Boss的伤害-20%'));
- assert(entry(1608).remainingConditions.includes('增伤要求目标敌人为Boss'));
- assert(entry(1608).remainingConditions.includes('减伤要求攻击来源为Boss'));
- assert.deepEqual(entry(721).remainingEffects,['特技伤害+15%']);
- assert.deepEqual(entry(883).remainingEffects,['必杀伤害+50%']);
 });
 
-test('general damage merges with previous tags without declaring untagged conditions complete',()=>{
- assert.equal(damage.counts.ready,0);assert.equal(damage.counts.partial,85);assert.equal(damage.counts.unknown,0);
- assert.equal(damage.entries.filter(e=>e.assignedTags.length>1).length,2);
- assert.deepEqual(entry(1479).assignedTags,['魔法伤害增加','伤害增加']);
- assert.deepEqual(entry(1479).remainingEffects,[]);assert.equal(entry(1479).remainingConditions.length,1);
- assert.deepEqual(labelingView(catalog,'magic-damage').entries.find(e=>e.id===source(1479).id),entry(1479));
- assert.deepEqual(entry(1754).assignedTags,['攻击力','物理伤害增加','伤害增加']);
- assert.equal(entry(1754).remainingEffects.length,2);
- assert(entry(1754).remainingConditions.some(t=>t.includes('仅限光属性')));
- assert.equal(entry(2000).tagDetails['伤害增加'].target,'allies-with-faith');
- assert.deepEqual(entry(2000).tagDetails['伤害增加'].relatedSkillIds,[source(1754).id]);
- assert.deepEqual(entry(1754).tagDetails['伤害增加'].relatedSkillIds,[source(2000).id]);
+test('scope correction preserves old tags and source skills while unfinished conditions remain partial',()=>{
+ assert.equal(damage.counts.ready,0);assert.equal(damage.counts.partial,7);assert.equal(damage.counts.unknown,0);
+ assert.equal(damage.entries.filter(e=>e.assignedTags.length>1).length,0);
+ const shadow=catalog.entries.find(e=>e.id===source(1479).id),faith=catalog.entries.find(e=>e.id===source(1754).id);
+ assert.deepEqual(shadow.assignedTags,['魔法伤害增加']);
+ assert.deepEqual(shadow.remainingEffects,['暗属性攻击伤害+10%']);assert.equal(shadow.remainingConditions.length,1);
+ assert.deepEqual(faith.assignedTags,['攻击力','物理伤害增加']);
+ assert.equal(faith.remainingEffects.length,3);assert(faith.remainingEffects.some(t=>t.includes('轮光')));
+ for(const n of [73,938,2000,1316,122,1608]){assert(source(n));assert(!catalog.entries.some(e=>e.id===source(n).id));}
  const future=structuredClone(registry);
- future.tagPasses.push({tag:'暗属性',assignments:[{skillId:source(1479).id,partIds:['condition-1']}]});
- const updated=resolveSkillLabels(future).find(e=>e.id===source(1479).id);
- assert.equal(updated.judgment,'ready');assert.equal(entry(1479).judgment,'partial');
- assert.equal(catalog.entries.length,432);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,432);
- assert.equal(catalog.views.all.counts.ready,44);assert.equal(catalog.views.all.counts.partial,388);
+ future.tagPasses.push({tag:'连续Hit达到50',assignments:[{skillId:source(186).id,partIds:['condition-1']}]});
+ const updated=resolveSkillLabels(future).find(e=>e.id===source(186).id);
+ assert.equal(updated.judgment,'ready');assert.equal(entry(186).judgment,'partial');
+ assert.equal(catalog.entries.length,356);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,356);
+ assert.equal(catalog.views.all.counts.ready,44);assert.equal(catalog.views.all.counts.partial,312);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
  assert(sorted.slice(0,44).every(r=>r.judgment==='ready'));assert(sorted.slice(44).every(r=>r.judgment==='partial'));
 });

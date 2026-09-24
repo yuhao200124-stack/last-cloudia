@@ -4713,11 +4713,6 @@ export const ATTACK_TAG_CATALOG = {
           "id": "faith-physical-damage",
           "kind": "effect",
           "text": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加"
-        },
-        {
-          "id": "faith-light-condition",
-          "kind": "condition",
-          "text": "从神秘之力【轮光】获得的增伤仅限光属性攻击"
         }
       ],
       "tagDetails": {
@@ -4740,33 +4735,22 @@ export const ATTACK_TAG_CATALOG = {
           "relatedSkillIds": [
             "8c11c64768072670"
           ]
-        },
-        "伤害增加": {
-          "summary": "从其他神类型友方的神秘之力【轮光】获得光属性伤害+10%；同名效果不叠加",
-          "relation": "inherited-effect",
-          "target": "self",
-          "calculationNote": "与信仰／神秘之力【轮光】配套生效；同名效果只计一项，不能把提供者与接受者重复相加。光属性条件仍待完成。",
-          "existingRuleIds": [],
-          "relatedSkillIds": [
-            "ca8779066b942675"
-          ]
         }
       },
       "assignedTags": [
         "攻击力",
-        "物理伤害增加",
-        "伤害增加"
+        "物理伤害增加"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
-        "从神秘之力【守护】获得受到的物理攻击伤害-10%"
+        "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+        "从神秘之力【轮光】获得光属性伤害+10%"
       ],
       "remainingConditions": [
         "效果来自自身以外的神类型友方",
         "该友方须装备相应“神秘之力”技能",
-        "同名“神秘之力”效果不叠加",
-        "从神秘之力【轮光】获得的增伤仅限光属性攻击"
+        "同名“神秘之力”效果不叠加"
       ]
     },
     {

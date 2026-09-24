@@ -6,8 +6,8 @@
     <meta name="description" content="按技能的具体效果逐类贴标签，本轮核对伤害增加相关技能。" />
     <title>技能列表打标签用的｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260924-damage-labels" />
-    <link rel="stylesheet" href="./skill-labeling.css?v=20260924-damage-labels" />
+    <link rel="stylesheet" href="./styles.css?v=20260924-damage-scope-fix" />
+    <link rel="stylesheet" href="./skill-labeling.css?v=20260924-damage-scope-fix" />
   </head>
   <body>
     <header class="site-header">
@@ -28,7 +28,7 @@
           <p id="labelCoverage">正在读取全库核对结果…</p>
           <p id="judgmentSummary" aria-live="polite"></p>
           <p id="cumulativeCoverage"></p>
-          <p>本轮处理未限定物理、魔法等攻击类型的伤害增加。属性、装备、敌人状态、时间等条件仍分别待判断；并列的其它增伤、减伤和伤害上限继续拆开。敌方易伤会注明作用对象。</p>
+          <p>按完整增伤词条分类：对Boss增伤、对空中敌人增伤、属性增伤等各自分类，不拆掉限定词后归入“伤害增加”。本轮只处理自身整体造成伤害增加；其生效条件及并列的其它效果仍分别待判断。</p>
           <p>所有效果和条件都贴完标签，才算已完整判断。已处理攻击力、防御力、生命力（HP上限属性）、魔力（INT）、MP上限属性、物理伤害增加、魔法伤害增加、伤害增加；其余效果和条件继续留待判断。按已完整判断、判断部分、没办法判断排序。</p>
         </div>
         <div class="toolbar">
@@ -42,6 +42,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260924-damage-labels"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260924-damage-scope-fix"></script>
   </body>
 </html>
