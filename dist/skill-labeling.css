@@ -21,3 +21,6 @@
 
 .label-tabs { flex-wrap: wrap; overflow-x: visible; row-gap: 6px; }
 .label-tabs .sheet-tab:focus-visible { outline: 2px solid var(--blue-strong); outline-offset: -3px; }
+.label-subtabs { margin: 0 22px 14px; padding: 0; border-bottom: 1px solid #aebbd0; }
+.label-subtabs[hidden] { display: none; }
+@media (max-width: 700px) { .label-subtabs { margin-inline: 14px; } }

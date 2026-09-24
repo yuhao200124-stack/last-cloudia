@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 2,
+  "label": "Boss魔法伤害增加",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "79a377bec526c2d4",
+    "a97531c83b0073e7",
+    "f49f17d3da2551a8",
+    "42656c3afdc8103a"
+  ]
+}

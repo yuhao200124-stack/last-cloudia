@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 2,
+  "label": "Boss物理伤害增加",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "a17f779989645fb0"
+  ]
+}

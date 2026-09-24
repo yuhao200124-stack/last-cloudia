@@ -1,5 +1,5 @@
-import {SKILL_LABELING_CATALOG as catalog} from './skill-labeling-catalog.mjs?v=20260924-label-scope-corrected';
-import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260924-label-scope-corrected';
+import {SKILL_LABELING_CATALOG as catalog} from './skill-labeling-catalog.mjs?v=20260924-boss-types';
+import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260924-boss-types';
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const statusLabels = {ready:'已完整判断', partial:'判断部分', unknown:'没办法判断'};
 const pendingList = (title, texts) => texts.length ? `<div class="remaining-effects"><b>${title}</b><ul>${texts.map(text => `<li>${escape(text)}</li>`).join('')}</ul></div>` : '';
@@ -14,8 +14,8 @@ export function renderLabelTable(rows) {
 
 if (typeof document !== 'undefined') {
   const search = document.querySelector('#labelSearch'), clear = document.querySelector('#clearLabelSearch');
-  const tabs = document.querySelector('#labelTabs');
-  const keys = ['all', ...Object.keys(catalog.views).filter(key => key !== 'all')];
+  const tabs = document.querySelector('#labelTabs'), subTabs = document.querySelector('#labelSubTabs');
+  const keys = ['all', ...Object.keys(catalog.views).filter(key => key !== 'all' && !catalog.views[key].parent)];
   const requestedView = new URLSearchParams(window.location?.search || '').get('tag');
   let activeView = Object.hasOwn(catalog.views, requestedView) ? requestedView : catalog.activeView;
   let rows = [];
@@ -23,8 +23,12 @@ if (typeof document !== 'undefined') {
     let edits = {};
     try { edits = JSON.parse(localStorage.getItem('lc-sheet-table:cell-edits-v1') || '{}') || {}; } catch {}
     const view = labelingView(catalog, activeView), count = view.counts;
-    tabs.innerHTML = keys.map(key => `<button class="sheet-tab" type="button" id="label-tab-${escape(key)}" data-tag="${escape(key)}" role="tab" aria-controls="labelPanel" aria-selected="${key === activeView}" tabindex="${key === activeView ? 0 : -1}">${escape(catalog.views[key].label)}（${catalog.views[key].counts.relatedUnique}）</button>`).join('');
-    document.querySelector('#labelPanel').setAttribute('aria-labelledby', `label-tab-${activeView}`);
+    const parent = view.parent || activeView;
+    tabs.innerHTML = keys.map(key => `<button class="sheet-tab" type="button" id="label-tab-${escape(key)}" data-tag="${escape(key)}" role="tab" aria-controls="labelPanel" aria-selected="${key === parent}" tabindex="${key === parent ? 0 : -1}">${escape(catalog.views[key].label)}（${catalog.views[key].counts.relatedUnique}）</button>`).join('');
+    const group = catalog.views[parent];
+    subTabs.hidden = !group.tagKeys;
+    subTabs.innerHTML = group.tagKeys ? [parent, ...group.tagKeys].map(key => `<button class="sheet-tab" type="button" id="label-subtab-${escape(key)}" data-tag="${escape(key)}" role="tab" aria-controls="labelPanel" aria-selected="${key === activeView}" tabindex="${key === activeView ? 0 : -1}">${key === parent ? '全部Boss增伤' : escape(catalog.views[key].label)}（${catalog.views[key].counts.relatedUnique}）</button>`).join('') : '';
+    document.querySelector('#labelPanel').setAttribute('aria-labelledby', `label-${group.tagKeys ? 'subtab' : 'tab'}-${activeView}`);
     rows = skillLabelRows(window.SKILL_DATA, view, edits);
     document.querySelector('#activeTagTitle').textContent = view.label;
     search.setAttribute('aria-label', `搜索${view.label}技能`);
@@ -40,28 +44,36 @@ if (typeof document !== 'undefined') {
     document.querySelector('#labelEmpty').hidden = filtered.length > 0;
     clear.hidden = !search.value;
   };
-  const chooseView = key => {
+  const chooseView = (key, prefix) => {
     if (!Object.hasOwn(catalog.views, key)) return;
     activeView = key;
     readRows(); render();
-    document.querySelector(`#label-tab-${key}`).focus();
+    document.querySelector(`#${prefix}-${key}`).focus();
   };
-  tabs.addEventListener('click', event => {
-    const tab = event.target.closest('[data-tag]');
-    if (tab) chooseView(tab.dataset.tag);
-  });
-  tabs.addEventListener('keydown', event => {
-    const tab = event.target.closest('[data-tag]');
-    if (!tab) return;
-    const index = keys.indexOf(tab.dataset.tag);
-    let next;
-    if (event.key === 'ArrowRight') next = keys[(index + 1) % keys.length];
-    else if (event.key === 'ArrowLeft') next = keys[(index - 1 + keys.length) % keys.length];
-    else if (event.key === 'Home') next = keys[0];
-    else if (event.key === 'End') next = keys.at(-1);
-    else return;
-    event.preventDefault();
-    chooseView(next);
+  const bindTabs = (element, prefix, getKeys) => {
+    element.addEventListener('click', event => {
+      const tab = event.target.closest('[data-tag]');
+      if (tab) chooseView(tab.dataset.tag, prefix);
+    });
+    element.addEventListener('keydown', event => {
+      const tab = event.target.closest('[data-tag]');
+      if (!tab) return;
+      const available = getKeys(), index = available.indexOf(tab.dataset.tag);
+      if (index < 0) return;
+      let next;
+      if (event.key === 'ArrowRight') next = available[(index + 1) % available.length];
+      else if (event.key === 'ArrowLeft') next = available[(index - 1 + available.length) % available.length];
+      else if (event.key === 'Home') next = available[0];
+      else if (event.key === 'End') next = available.at(-1);
+      else return;
+      event.preventDefault();
+      chooseView(next, prefix);
+    });
+  };
+  bindTabs(tabs, 'label-tab', () => keys);
+  bindTabs(subTabs, 'label-subtab', () => {
+    const parent = catalog.views[activeView].parent || activeView;
+    return [parent, ...(catalog.views[parent].tagKeys || [])];
   });
   search.addEventListener('input', render);
   clear.addEventListener('click', () => { search.value = ''; render(); search.focus(); });

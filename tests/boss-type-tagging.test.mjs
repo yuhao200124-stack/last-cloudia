@@ -1,0 +1,66 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {SKILL_LABELING_CATALOG as catalog} from '../dist/skill-labeling-catalog.mjs';
+import {canonicalSkillRows,labelingView,resolveSkillLabels,skillLabelRows} from '../dist/skill-labeling-model.mjs';
+const read=path=>fs.readFileSync(new URL(path,import.meta.url),'utf8');
+const box={window:{}};vm.runInNewContext(read('../dist/data.js'),box);
+const all=canonicalSkillRows(box.window.SKILL_DATA),registry=JSON.parse(read('../docs/skill-labeling-registry.json'));
+const source=n=>all.find(r=>r.url.endsWith(`/gino/${n}`));
+const entry=n=>catalog.entries.find(e=>e.id===source(n).id);
+const members={
+ 'boss-magic-damage':[837,1159,1644,1814],
+ 'boss-physical-damage':[720],
+ 'boss-skill-damage':[411,624,1041,1311],
+ 'boss-ultimate-damage':[411,624,985,1041,1311]
+};
+
+test('each Boss attack-type pass audits the full library and keeps the complete phrase separate',()=>{
+ for(const [key,numbers] of Object.entries(members)){
+  const view=labelingView(catalog,key),audit=JSON.parse(read(`../docs/${key}-tag-audit.json`));
+  assert.deepEqual(view.entries.map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),numbers);
+  assert.equal(audit.rows.length,935);assert.equal(new Set(audit.rows.map(r=>r.id)).size,935);
+  assert.equal(audit.rows.filter(r=>r.decision==='related').length,numbers.length);
+  assert.equal(view.parent,'boss');
+  for(const n of [760,1289,1526,1608,1651,1708,1830,1955,2028])assert(!view.entries.some(e=>e.id===source(n).id),`${key}/${n}`);
+  for(const e of view.entries)assert(!e.assignedTags.some(t=>['Boss伤害增加','物理伤害增加','魔法伤害增加','伤害增加'].includes(t)));
+ }
+ assert.deepEqual(entry(720).tagDetails['Boss物理伤害增加'].scope,{boss:true,damageType:'physical'});
+ assert.deepEqual(entry(837).tagDetails['Boss魔法伤害增加'].scope,{boss:true,attackKinds:['magic']});
+ assert.deepEqual(entry(411).tagDetails['Boss特技伤害增加'].scope,{boss:true,attackKinds:['skill']});
+ assert.deepEqual(entry(411).tagDetails['Boss必杀伤害增加'].scope,{boss:true,attackKinds:['ultimate']});
+});
+
+test('parallel skill and ultimate clauses share one record and finish only after both type labels',()=>{
+ const giant=entry(411),skill=labelingView(catalog,'boss-skill-damage'),ultimate=labelingView(catalog,'boss-ultimate-damage');
+ assert.deepEqual(giant.assignedTags,['Boss特技伤害增加','Boss必杀伤害增加']);
+ assert.strictEqual(skill.entries.find(e=>e.id===giant.id),ultimate.entries.find(e=>e.id===giant.id));
+ assert.equal(giant.judgment,'ready');assert.deepEqual(giant.remainingEffects,[]);assert.deepEqual(giant.remainingConditions,[]);
+ const beforeUltimate=structuredClone(registry);beforeUltimate.tagPasses=beforeUltimate.tagPasses.filter(p=>p.tag!=='Boss必杀伤害增加');
+ const unfinished=resolveSkillLabels(beforeUltimate).find(e=>e.id===giant.id);
+ assert.equal(unfinished.judgment,'partial');assert.deepEqual(unfinished.remainingEffects,['对Boss的必杀伤害+20%']);
+ assert.equal(giant.parts.filter(p=>p.kind==='effect').length,2);
+});
+
+test('typed Boss bonuses leave caps and party counts pending without injecting damage twice',()=>{
+ assert.equal(entry(837).judgment,'ready');
+ for(const n of [624,1041,1311]){assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,2);assert(entry(n).remainingEffects.every(t=>t.includes('上限')));}
+ for(const n of [985,1159,1644,1814]){assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,1);assert(entry(n).remainingEffects[0].includes('上限'));}
+ assert.equal(entry(720).judgment,'partial');assert.deepEqual(entry(720).remainingConditions,['按队伍中装备调查兵团的单位数量计算']);
+ assert.match(entry(720).tagDetails['Boss物理伤害增加'].summary,/1名\+6%.*2名\+12%.*3名\+18%.*4名\+24%/);
+ assert.equal(catalog.numericEffectInjection,false);
+});
+
+test('Boss page is a deduplicated union of five categories, not an extra bonus tag',()=>{
+ const boss=labelingView(catalog,'boss');
+ assert.equal(boss.entries.length,11);assert.equal(new Set(boss.entries.map(e=>e.id)).size,11);
+ assert.equal(boss.counts.ready,2);assert.equal(boss.counts.partial,9);
+ assert.equal(boss.tagKeys.reduce((sum,key)=>sum+catalog.views[key].counts.relatedUnique,0),15);
+ assert.deepEqual(boss.entries.filter(e=>e.judgment==='ready').map(e=>e.name).sort(),['巨人杀手','巨型净化']);
+ assert(boss.entries.every(e=>!e.assignedTags.includes('Boss增伤')));
+ const rows=skillLabelRows(box.window.SKILL_DATA,boss);
+ assert(rows.slice(0,2).every(r=>r.judgment==='ready'));assert(rows.slice(2).every(r=>r.judgment==='partial'));
+ assert.equal(catalog.views.all.counts.relatedUnique,280);assert.equal(catalog.views.all.counts.ready,46);assert.equal(catalog.views.all.counts.partial,234);
+ assert.equal(catalog.views.physical.counts.relatedUnique,78);assert.equal(catalog.views['magic-damage'].counts.relatedUnique,22);
+});

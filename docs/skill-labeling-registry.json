@@ -11351,6 +11351,495 @@
           "relatedSkillIds": []
         }
       }
+    },
+    {
+      "id": "79a377bec526c2d4",
+      "name": "巨型净化",
+      "url": "https://altema.jp/lastcloudia/gino/837",
+      "text": "对BOSS的魔法攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "对Boss的魔法攻击伤害+20%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss魔法伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "boss-magic-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "magic"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss魔法增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "a97531c83b0073e7",
+      "name": "巨型净化2",
+      "url": "https://altema.jp/lastcloudia/gino/1159",
+      "text": "对BOSS的魔法攻击伤害+20%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "对Boss的魔法攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+2,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss魔法伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "boss-magic-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "magic"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss魔法增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "f49f17d3da2551a8",
+      "name": "巨型净化4",
+      "url": "https://altema.jp/lastcloudia/gino/1644",
+      "text": "对BOSS的魔法攻击伤害+20%，伤害上限+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "对Boss的魔法攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+6,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss魔法伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "boss-magic-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "magic"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss魔法增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "42656c3afdc8103a",
+      "name": "巨型净化3",
+      "url": "https://altema.jp/lastcloudia/gino/1814",
+      "text": "对BOSS的魔法攻击伤害+20%，伤害上限+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "对Boss的魔法攻击伤害+20%"
+        },
+        {
+          "id": "effect-1",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+4,000"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss魔法伤害增加": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "boss-magic-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "magic"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss魔法增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "a17f779989645fb0",
+      "name": "调查兵团",
+      "url": "https://altema.jp/lastcloudia/gino/720",
+      "text": "根据装备“调查兵团”的我方单位数量，提高对BOSS的物理攻击伤害（1名：+6%；2名：+12%；3名：+18%；4名：+24%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-damage",
+          "kind": "effect",
+          "text": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%"
+        },
+        {
+          "id": "condition-1",
+          "kind": "condition",
+          "text": "按队伍中装备调查兵团的单位数量计算"
+        },
+        {
+          "id": "condition-2",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss物理伤害增加": {
+          "summary": "根据装备“调查兵团”的我方人数，提高对Boss的物理攻击伤害：1名+6%、2名+12%、3名+18%、4名+24%",
+          "relation": "boss-physical-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "damageType": "physical"
+          },
+          "calculationNote": "本标签覆盖完整的对Boss物理增伤；队伍中装备同技能的人数仍待判断，不能直接按最高24%计入。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "6bb2c943681bb3e7",
+      "name": "巨人杀手",
+      "url": "https://altema.jp/lastcloudia/gino/411",
+      "text": "对BOSS的特技和必杀伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-skill-damage",
+          "kind": "effect",
+          "text": "对Boss的特技伤害+20%"
+        },
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss特技伤害增加": {
+          "summary": "对Boss的特技伤害+20%",
+          "relation": "boss-skill-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "skill"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss特技增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        },
+        "Boss必杀伤害增加": {
+          "summary": "对Boss的必杀伤害+20%",
+          "relation": "boss-ultimate-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "ultimate"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss必杀增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "7ef2d01b96b2406e",
+      "name": "巨人杀手2",
+      "url": "https://altema.jp/lastcloudia/gino/624",
+      "text": "对BOSS的特技和必杀伤害+20%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-skill-damage",
+          "kind": "effect",
+          "text": "对Boss的特技伤害+20%"
+        },
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "对Boss的特技伤害上限+2,000"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害上限+2,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss特技伤害增加": {
+          "summary": "对Boss的特技伤害+20%",
+          "relation": "boss-skill-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "skill"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss特技增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        },
+        "Boss必杀伤害增加": {
+          "summary": "对Boss的必杀伤害+20%",
+          "relation": "boss-ultimate-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "ultimate"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss必杀增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "ecf05abb4f8e4b10",
+      "name": "巨人杀手3",
+      "url": "https://altema.jp/lastcloudia/gino/1041",
+      "text": "对BOSS的特技和必杀伤害+20%，伤害上限+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-skill-damage",
+          "kind": "effect",
+          "text": "对Boss的特技伤害+20%"
+        },
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "对Boss的特技伤害上限+4,000"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害上限+4,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss特技伤害增加": {
+          "summary": "对Boss的特技伤害+20%",
+          "relation": "boss-skill-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "skill"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss特技增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        },
+        "Boss必杀伤害增加": {
+          "summary": "对Boss的必杀伤害+20%",
+          "relation": "boss-ultimate-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "ultimate"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss必杀增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "5c16599b8947ce62",
+      "name": "巨人杀手4",
+      "url": "https://altema.jp/lastcloudia/gino/1311",
+      "text": "对BOSS的特技和必杀伤害+20%，伤害上限+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-skill-damage",
+          "kind": "effect",
+          "text": "对Boss的特技伤害+20%"
+        },
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "对Boss的特技伤害上限+6,000"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害上限+6,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss特技伤害增加": {
+          "summary": "对Boss的特技伤害+20%",
+          "relation": "boss-skill-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "skill"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss特技增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        },
+        "Boss必杀伤害增加": {
+          "summary": "对Boss的必杀伤害+20%",
+          "relation": "boss-ultimate-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "ultimate"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss必杀增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
+    },
+    {
+      "id": "2ad532afbdeb2594",
+      "name": "邪恶织法",
+      "url": "https://altema.jp/lastcloudia/gino/985",
+      "text": "对BOSS的必杀伤害+20%，伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "boss-ultimate-damage",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害+20%"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "对Boss的必杀伤害上限+5,000"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss必杀伤害增加": {
+          "summary": "对Boss的必杀伤害+20%",
+          "relation": "boss-ultimate-damage-increase",
+          "target": "self",
+          "scope": {
+            "boss": true,
+            "attackKinds": [
+              "ultimate"
+            ]
+          },
+          "calculationNote": "本标签覆盖完整的对Boss必杀增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
+          "existingRuleIds": [],
+          "relatedSkillIds": []
+        }
+      }
     }
   ],
   "tagPasses": [
@@ -13494,6 +13983,124 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "Boss魔法伤害增加",
+      "assignments": [
+        {
+          "skillId": "79a377bec526c2d4",
+          "partIds": [
+            "magic-damage",
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "a97531c83b0073e7",
+          "partIds": [
+            "magic-damage",
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "f49f17d3da2551a8",
+          "partIds": [
+            "magic-damage",
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "42656c3afdc8103a",
+          "partIds": [
+            "magic-damage",
+            "condition-1"
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "Boss物理伤害增加",
+      "assignments": [
+        {
+          "skillId": "a17f779989645fb0",
+          "partIds": [
+            "physical-damage",
+            "condition-2"
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "Boss特技伤害增加",
+      "assignments": [
+        {
+          "skillId": "6bb2c943681bb3e7",
+          "partIds": [
+            "boss-skill-damage",
+            "boss-target"
+          ]
+        },
+        {
+          "skillId": "7ef2d01b96b2406e",
+          "partIds": [
+            "boss-skill-damage",
+            "boss-target"
+          ]
+        },
+        {
+          "skillId": "ecf05abb4f8e4b10",
+          "partIds": [
+            "boss-skill-damage",
+            "boss-target"
+          ]
+        },
+        {
+          "skillId": "5c16599b8947ce62",
+          "partIds": [
+            "boss-skill-damage",
+            "boss-target"
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "Boss必杀伤害增加",
+      "assignments": [
+        {
+          "skillId": "6bb2c943681bb3e7",
+          "partIds": [
+            "boss-ultimate-damage",
+            "boss-target"
+          ]
+        },
+        {
+          "skillId": "7ef2d01b96b2406e",
+          "partIds": [
+            "boss-ultimate-damage",
+            "boss-target"
+          ]
+        },
+        {
+          "skillId": "2ad532afbdeb2594",
+          "partIds": [
+            "boss-ultimate-damage",
+            "boss-target"
+          ]
+        },
+        {
+          "skillId": "ecf05abb4f8e4b10",
+          "partIds": [
+            "boss-ultimate-damage",
+            "boss-target"
+          ]
+        },
+        {
+          "skillId": "5c16599b8947ce62",
+          "partIds": [
+            "boss-ultimate-damage",
+            "boss-target"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -13936,7 +14543,17 @@
         "a1166f16d23a209d",
         "07280db1cb26a374",
         "d451135c6dde31c4",
-        "b7297c3eb4e46bba"
+        "b7297c3eb4e46bba",
+        "79a377bec526c2d4",
+        "a97531c83b0073e7",
+        "f49f17d3da2551a8",
+        "42656c3afdc8103a",
+        "a17f779989645fb0",
+        "6bb2c943681bb3e7",
+        "7ef2d01b96b2406e",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62",
+        "2ad532afbdeb2594"
       ]
     },
     "hp": {
@@ -14164,8 +14781,70 @@
       "label": "Boss伤害增加",
       "displayOrder": [
         "b7297c3eb4e46bba"
+      ],
+      "parent": "boss"
+    },
+    "boss-magic-damage": {
+      "label": "Boss魔法伤害增加",
+      "parent": "boss",
+      "displayOrder": [
+        "79a377bec526c2d4",
+        "a97531c83b0073e7",
+        "f49f17d3da2551a8",
+        "42656c3afdc8103a"
+      ]
+    },
+    "boss-physical-damage": {
+      "label": "Boss物理伤害增加",
+      "parent": "boss",
+      "displayOrder": [
+        "a17f779989645fb0"
+      ]
+    },
+    "boss-skill-damage": {
+      "label": "Boss特技伤害增加",
+      "parent": "boss",
+      "displayOrder": [
+        "6bb2c943681bb3e7",
+        "7ef2d01b96b2406e",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62"
+      ]
+    },
+    "boss-ultimate-damage": {
+      "label": "Boss必杀伤害增加",
+      "parent": "boss",
+      "displayOrder": [
+        "6bb2c943681bb3e7",
+        "7ef2d01b96b2406e",
+        "2ad532afbdeb2594",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62"
+      ]
+    },
+    "boss": {
+      "label": "Boss增伤",
+      "tagKeys": [
+        "boss-damage",
+        "boss-magic-damage",
+        "boss-physical-damage",
+        "boss-skill-damage",
+        "boss-ultimate-damage"
+      ],
+      "displayOrder": [
+        "b7297c3eb4e46bba",
+        "79a377bec526c2d4",
+        "a97531c83b0073e7",
+        "f49f17d3da2551a8",
+        "42656c3afdc8103a",
+        "a17f779989645fb0",
+        "6bb2c943681bb3e7",
+        "7ef2d01b96b2406e",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62",
+        "2ad532afbdeb2594"
       ]
     }
   },
-  "activeView": "boss-damage"
+  "activeView": "boss"
 }

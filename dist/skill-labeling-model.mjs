@@ -53,7 +53,8 @@ export function canonicalSkillRows(data) {
 export function labelingView(catalog, key) {
   const view = catalog.views[key];
   if (!view) throw Error('Unknown tag view.');
-  return {...view, entries: key === 'all' ? catalog.entries : catalog.entries.filter(entry => entry.assignedTags.includes(view.label))};
+  const tags = view.tagKeys ? view.tagKeys.map(child => catalog.views[child].label) : [view.label];
+  return {...view, entries: key === 'all' ? catalog.entries : catalog.entries.filter(entry => entry.assignedTags.some(tag => tags.includes(tag)))};
 }
 
 export function skillLabelRows(data, catalog, edits = {}) {

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 2,
+  "label": "Boss必杀伤害增加",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "6bb2c943681bb3e7",
+    "7ef2d01b96b2406e",
+    "2ad532afbdeb2594",
+    "ecf05abb4f8e4b10",
+    "5c16599b8947ce62"
+  ]
+}
