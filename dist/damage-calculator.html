@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>配装与伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-fullpage">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-table-layout">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a id="calculatorCharacterBack" href="./characters.html">角色列表</a><a href="./index.html">技能表</a></nav></header>
@@ -12,7 +12,7 @@
   <div class="page-intro"><p>输入当前战斗属性，查看每段与整次技能伤害。</p><span class="tag">PvE · 普通物理 / 魔法伤害</span></div>
   <div class="calculator-layout" id="calculationPage">
   <section id="unifiedWorkspace" class="unified-workspace" hidden aria-label="实时配装">
-    <div class="unified-toolbar"><strong>配装与伤害</strong><button id="unifiedSettings" type="button">战斗设置</button><button id="unifiedExit" type="button">返回伤害核对</button></div>
+    <div class="unified-toolbar"><strong>配装与伤害</strong><button id="unifiedResultToggle" type="button" aria-expanded="true" aria-controls="unifiedResults">收起结果</button><button id="unifiedSettings" type="button">战斗设置</button><button id="unifiedExit" type="button">返回伤害核对</button></div>
     <iframe id="unifiedLoadoutFrame" title="技能配装与 SC 方案"></iframe>
   </section>
   <form id="calculator" novalidate>
@@ -99,7 +99,7 @@
       </div></details>
     </section>
   </form>
-  <aside class="results" aria-label="伤害计算结果">
+  <aside id="unifiedResults" class="results" aria-label="伤害计算结果">
     <div class="result-main"><div class="result-top"><h2>计算结果</h2><span id="resultState">实时计算</span></div>
       <div id="error" role="alert" hidden></div><button id="resolveReview" type="button" hidden>查看尚未选择的项目</button>
       <div id="resultValues" aria-live="polite" aria-atomic="true">
@@ -147,5 +147,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260924-fullpage"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260924-table-layout"></script>
 </body></html>

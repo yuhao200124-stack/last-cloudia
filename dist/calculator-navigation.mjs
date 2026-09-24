@@ -8,7 +8,7 @@ export function unifiedPageUrl(href,characterId,{session='',editPlan='',draft=''
 }
 export function loadoutFrameUrl(href) {
  const current=new URL(href),url=new URL('./index.html',current);
- url.searchParams.set('embeddedLoadout','1');url.searchParams.set('v','20260924-fullpage');
+ url.searchParams.set('embeddedLoadout','1');url.searchParams.set('v','20260924-table-layout');
  for(const key of ['editPlan','draft'])if(current.searchParams.has(key))url.searchParams.set(key,current.searchParams.get(key));
  return url.href;
 }

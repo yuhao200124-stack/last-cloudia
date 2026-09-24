@@ -4,7 +4,7 @@ import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260924-fullpa
 import {formatEffect} from './effect-rule-engine.mjs';
 import {retargetReport} from './entry-preparation.mjs?v=20260924-fullpage';
 import {buildDamageImport} from './damage-import.mjs?v=20260924-fullpage';
-import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-fullpage';
+import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-table-layout';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const saved=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))||fallback;}catch{return fallback;}};
@@ -16,10 +16,11 @@ export function renderDamageGauges(result,input){
  }
 }
 export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
- const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,showSettings=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES);
+ const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,showSettings=false,resultsCollapsed=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES);
  const send=(type,extra={})=>{if(ready)frame.contentWindow.postMessage({type,...extra},location.origin);};
  function layout(){
   document.body.classList.toggle('unified-mode',active);document.body.classList.toggle('unified-settings',active&&showSettings);
+  document.body.classList.toggle('unified-results-collapsed',active&&resultsCollapsed);
   $('unifiedWorkspace').hidden=!active;$('unifiedStart').hidden=active;$('unifiedSummary').hidden=!active;
   $('unifiedSettings').textContent=showSettings?'返回技能配装':'战斗设置';
  }
@@ -36,6 +37,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
  $('unifiedStart').addEventListener('click',open);
  $('unifiedExit').addEventListener('click',()=>{active=false;layout();$('unifiedUnresolved').hidden=true;onChange();});
  $('unifiedSettings').addEventListener('click',()=>{showSettings=!showSettings;layout();});
+ $('unifiedResultToggle')?.addEventListener('click',()=>{resultsCollapsed=!resultsCollapsed;$('unifiedResultToggle').textContent=resultsCollapsed?'显示结果':'收起结果';$('unifiedResultToggle').setAttribute('aria-expanded',String(!resultsCollapsed));layout();});
  window.addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==frame.contentWindow)return;
   if(e.data?.type==='lc-loadout-ready'){

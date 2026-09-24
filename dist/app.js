@@ -430,7 +430,7 @@
       }).join('')
       : '<div class="calculator-empty">点击技能右侧的“＋”添加技能</div>';
     calculatorTotal.textContent = `${formatSc(result.total)} SC`;
-    calculatorBadge.textContent = embeddedLoadout ? `${formatSc(result.total)} SC` : '配装与伤害';
+    calculatorBadge.textContent = embeddedLoadout ? `已选技能 · ${formatSc(result.total)} SC` : '配装与伤害';
     if (embeddedLoadout && window.LC_LOADOUT_CALCULATOR) {
       window.dispatchEvent(new CustomEvent('lc:loadout-change', { detail: window.LC_LOADOUT_CALCULATOR.snapshot() }));
       renderCharacterSkillPicker();
@@ -555,7 +555,6 @@
       location.assign(url.href);
       return;
     }
-    if (embeddedLoadout) open = true;
     if (!open) {
       calculatorState.detailsOpen = false;
       calculatorEffectsOpen = false;
@@ -1028,7 +1027,7 @@
       calculatorState.characterFreeIds = [...new Set([...(characterLoadouts[id]?.skillIds || []), ...Object.keys(bindings)])];
       unifiedCatalog[id] = {sources, initialized: true};
       localStorage.setItem(unifiedCatalogKey, JSON.stringify(unifiedCatalog));
-      saveCalculatorState(); render(); setCalculatorOpen(true);
+      saveCalculatorState(); render();
     }
   };
   document.getElementById('unifiedCharacterSkills')?.addEventListener('change', event => {

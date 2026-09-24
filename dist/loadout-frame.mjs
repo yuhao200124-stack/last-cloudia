@@ -1,7 +1,7 @@
 const embedded=new URLSearchParams(location.search).get('embeddedLoadout')==='1'&&window.parent!==window;
 if(embedded){
  document.body.classList.add('embedded-loadout');
- document.getElementById('scCalculator').hidden=false;
+ document.getElementById('calculatorLauncher').setAttribute('aria-label','展开或收起已选技能、SC 和加成推荐');
  document.getElementById('unifiedCharacterPicker').hidden=false;
  const send=data=>window.parent.postMessage(data,location.origin);
  let previous='';
