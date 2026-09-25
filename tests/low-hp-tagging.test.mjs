@@ -22,10 +22,10 @@ test('low HP audits every canonical skill, including explicit 25% HP and untagge
  assert.equal(audit.matchedUnique,26);assert.equal(audit.rows.filter(r=>r.decision==='related').length,26);
  assert.deepEqual(numbers('low-hp'),[113,114,115,116,117,118,219,267,507,523,552,615,682,788,890,1022,1143,1153,1164,1204,1264,1349,1390,1427,1446,1744]);
  for(const row of all){const d=audit.rows.find(d=>d.id===row.id);assert.equal(d.sourceHash,createHash('sha256').update(JSON.stringify([row.id,row.url,row.name,row.effect,row.notes||''])).digest('hex'));assert.equal(d.decision==='related',view.entries.some(e=>e.id===row.id));}
- assert.equal(view.entries.filter(e=>e.assignedTags.length===1).length,11);
+ assert.equal(view.entries.filter(e=>e.assignedTags.length===1).length,9);
  assert(view.entries.filter(e=>e.assignedTags.length===1).every(e=>e.assignedTags[0]==='濒死'));
- assert.equal(catalog.entries.length,653);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,653);
- assert.equal(catalog.views.all.counts.ready,261);assert.equal(catalog.views.all.counts.partial,392);
+ assert.equal(catalog.entries.length,685);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,685);
+ assert.equal(catalog.views.all.counts.ready,294);assert.equal(catalog.views.all.counts.partial,391);
  assert.equal(catalog.numericEffectInjection,false);
 });
 
@@ -37,7 +37,7 @@ test('low HP groups bind each actual effect and share identities without multipl
  assert.equal(view.childKeys.length,19);assert.equal(view.childKeys.reduce((sum,k)=>sum+catalog.views[k].counts.relatedUnique,0),41);
  assert.equal(new Set(view.childKeys.flatMap(k=>labelingView(catalog,k).entries.map(e=>e.id))).size,26);
  for(const key of ['attack-up','defense-up','mnd-up','speed-up','hp-heal'])assert.strictEqual(labelingView(catalog,'low-hp-'+key).entries.find(e=>e.id===source(118).id),entry(118));
- assert.deepEqual(groups(1390),['defense-up','mnd-up']);assert(entry(1390).remainingEffects.includes('特技伤害+10%'));
+ assert.deepEqual(groups(1390),['defense-up','mnd-up']);assert(!entry(1390).remainingEffects.includes('特技伤害+10%'));
  assert.deepEqual(groups(1446),['incoming-healing']);assert(entry(1446).remainingEffects.some(t=>t.includes('常驻')));
  assert.deepEqual(groups(1022),['hp-heal']);assert(entry(1022).remainingEffects.some(t=>t.includes('魔法生物')));
  assert(!labelingView(catalog,'hp').entries.some(e=>e.id===source(1022).id));
@@ -53,7 +53,7 @@ test('HP scaling retains its missing curve and stays distinct from a completed t
   assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingConditions.some(t=>/曲线|公式/.test(t)),entry(n).name);
   assert.match(d.calculationNote,/不代表只有HP≤30%.*不能直接使用最高值/);
  }
- const completed=[113,114,115,507,552,1143,1264];
+ const completed=[113,114,115,507,552,1143,1204,1264,1349,1427];
  assert.deepEqual(view.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),completed);
  const before=structuredClone(registry);before.tagPasses=before.tagPasses.filter(p=>p.tag!=='濒死');const beforeEntries=resolveSkillLabels(before);
  for(const n of completed){assert.equal(beforeEntries.find(e=>e.id===source(n).id).judgment,'partial');assert.deepEqual(entry(n).remainingConditions,[]);assert.equal(detail(n).condition.mode,'threshold-state');}
@@ -85,7 +85,7 @@ test('awakening buffs keep their duration after HP recovery, while instant heals
  for(const b of detail(219).bindings){assert.equal(b.durationSeconds,b.group==='hp-regen'?30:40);assert.equal(b.persistsAfterHpRecovery,true);}
  assert.equal(detail(1022).bindings[0].durationSeconds,undefined);assert.equal(detail(1022).bindings[0].isBuff,false);
  for(const n of [113,114,115,267,507,552,788,1143,1164,1264,1349,1390,1427,1744])assert(detail(n).bindings.every(b=>!b.isBuff && b.durationSeconds===undefined));
- assert.equal(view.counts.ready,7);assert.equal(view.counts.partial,19);
+ assert.equal(view.counts.ready,10);assert.equal(view.counts.partial,16);
 });
 
 function page(edits={}){
@@ -98,8 +98,8 @@ function page(edits={}){
 
 test('low HP page separates effect tables, keeps status ordering and search, and switches cleanly to opening and Boss views',()=>{
  const {get,click}=page();
- assert.match(get('#labelCoverage').textContent,/935.*26.*909/);assert.match(get('#judgmentSummary').textContent,/7.*19.*0/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,38);
+ assert.match(get('#labelCoverage').textContent,/935.*26.*909/);assert.match(get('#judgmentSummary').textContent,/10.*16.*0/);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,39);
  assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,20);
  assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,19);
  assert.match(get('#labelResultCount').textContent,/26 \/ 26/);

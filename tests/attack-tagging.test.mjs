@@ -30,7 +30,7 @@ test('the attack pass audits all unique skills including category-only rows and 
 });
 
 test('the previous attack tag is retained while only reviewed attribute fragments are added', () => {
-  for(const row of catalog.entries){assert.equal(row.assignedTags[0],'攻击力');assert(row.assignedTags.every(tag=>['攻击力','防御力','生命力','魔力','MP','物理伤害增加','魔法伤害增加','战斗开始','濒死','满HP','受到攻击','必杀相关','复活','友军死亡','暴击','雷属性','暗属性','剑','斧','枪','锤','弓','机械','爪','杖','单手','双手','空武器','空防具','空武器+防具'].includes(tag) || (tag==='Boss物理伤害增加' && row.id===skill(1883).id)));}
+  for(const row of catalog.entries){assert.equal(row.assignedTags[0],'攻击力');assert(row.assignedTags.every(tag=>['攻击力','防御力','生命力','魔力','MP','物理伤害增加','魔法伤害增加','战斗开始','濒死','满HP','受到攻击','必杀相关','特技相关','复活','友军死亡','暴击','雷属性','暗属性','剑','斧','枪','锤','弓','机械','爪','杖','单手','双手','空武器','空防具','空武器+防具'].includes(tag) || (tag==='Boss物理伤害增加' && row.id===skill(1883).id)));}
   assert.equal(catalog.entries.filter(row=>row.assignedTags.includes('防御力')).length,26);
   assert.equal(catalog.counts.ready,30);
   assert.equal(catalog.counts.partial,57);
@@ -138,10 +138,10 @@ test('the page groups Boss labels, switches cumulative views, filters and clears
   const context={catalog:sharedCatalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,location:{search:"?tag=boss"},addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Review page must not overwrite saved data.');}}};
   vm.runInNewContext(code,context);
   assert.match(get('#labelCoverage').textContent,/935.*13.*922/);
-  assert.match(get('#judgmentSummary').textContent,/4.*9.*0/);
+  assert.match(get('#judgmentSummary').textContent,/7.*6.*0/);
   const tabs=get('#labelTabs');
-  assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,38);
-  assert(tabs.innerHTML.includes('全部已贴标签（653）'));
+  assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,39);
+  assert(tabs.innerHTML.includes('全部已贴标签（685）'));
   assert(tabs.innerHTML.includes('攻击力（87）'));
   assert(tabs.innerHTML.includes('防御力（70）'));
   assert(tabs.innerHTML.includes('生命力（25）'));
@@ -185,13 +185,13 @@ test('the page groups Boss labels, switches cumulative views, filters and clears
   assert.match(get('#labelCoverage').textContent,/935.*87.*848/);
   assert.match(get('#judgmentSummary').textContent,/30.*57.*0/);
   clickTab('all');
-  assert.match(get('#labelCoverage').textContent,/935.*653.*282/);
-  assert.match(get('#judgmentSummary').textContent,/261.*392.*0/);
+  assert.match(get('#labelCoverage').textContent,/935.*685.*250/);
+  assert.match(get('#judgmentSummary').textContent,/294.*391.*0/);
   const rowStatuses=[...get('#labelTable').innerHTML.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(match=>match[1]);
-  assert.deepEqual(rowStatuses.slice(0,261),Array(261).fill('ready'));
-  assert(rowStatuses.slice(261).every(status=>status==='partial'));
+  assert.deepEqual(rowStatuses.slice(0,294),Array(294).fill('ready'));
+  assert(rowStatuses.slice(294).every(status=>status==='partial'));
   const search=get('#labelSearch');search.value='没有这个技能123';search.listeners.input();
   assert.equal(get('#labelEmpty').hidden,false);assert.equal(get('#labelTable').innerHTML,'');
   get('#clearLabelSearch').listeners.click();assert.equal(get('#labelEmpty').hidden,true);
-  assert.match(get('#labelResultCount').textContent,/653 \/ 653/);
+  assert.match(get('#labelResultCount').textContent,/685 \/ 685/);
 });

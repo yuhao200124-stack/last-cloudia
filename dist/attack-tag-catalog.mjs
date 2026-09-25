@@ -8345,16 +8345,57 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "开场判断攻击力≥魔力时，特技伤害上限+5,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "capPoints": 5000,
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "condition": {
+                "left": "STR",
+                "operator": "gte",
+                "right": "INT"
+              },
+              "mutuallyExclusiveWithPartId": "effect-2",
+              "group": "opening-stat-skill-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场判断攻击力≥魔力时，特技伤害上限+5,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "07cab38a1e00eaa5:effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "特技伤害上限+5,000",
         "魔法伤害上限+5,000"
       ],
       "remainingConditions": [

@@ -1,3 +1,4 @@
+import {validateTechniqueCoverage,validateTechniqueBinding} from './validate-technique-labels.mjs';
 import {validateUltimateCoverage,validateUltimateBinding} from './validate-ultimate-labels.mjs';
 import {equipmentStateKeys,validateEquipmentStateCoverage,validateEquipmentStateBinding} from './validate-equipment-state-labels.mjs';
 import fs from 'node:fs';
@@ -31,7 +32,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['revive','复活',null],['ally-death','友军死亡',null],['critical','暴击',null],['fire','火属性',null],['ice','冰属性',null],['earth','树属性',null],['thunder','雷属性',null],['light','光属性',null],['dark','暗属性',null],['neutral','无属性',null],['sword','剑',null],['axe','斧',null],['spear','枪',null],['hammer','锤',null],['bow','弓',null],['machine','机械',null],['claw','爪',null],['staff','杖',null],['single-weapon','单手',null],['dual-weapon','双手',null],['empty-weapon','空武器',null],['empty-armor','空防具',null],['empty-gear','空武器+防具',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['technique','特技相关',null],['revive','复活',null],['ally-death','友军死亡',null],['critical','暴击',null],['fire','火属性',null],['ice','冰属性',null],['earth','树属性',null],['thunder','雷属性',null],['light','光属性',null],['dark','暗属性',null],['neutral','无属性',null],['sword','剑',null],['axe','斧',null],['spear','枪',null],['hammer','锤',null],['bow','弓',null],['machine','机械',null],['claw','爪',null],['staff','杖',null],['single-weapon','单手',null],['dual-weapon','双手',null],['empty-weapon','空武器',null],['empty-armor','空防具',null],['empty-gear','空武器+防具',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -121,6 +122,8 @@ for(const [key,view] of Object.entries(views)){
       validateWeaponCoverage(key,view,detail,assignment,entry);
     }else if(additionalElements.includes(key)){
       validateElementCoverage(key,view,detail,assignment,entry);
+    }else if(key==='technique'){
+      validateTechniqueCoverage(view,detail,assignment,entry);
     }else if(key==='ultimate'){
       validateUltimateCoverage(view,detail,assignment,entry);
     }else if(key==='critical'){
@@ -252,6 +255,7 @@ for(const [key,view] of Object.entries(views)){
         if(binding.activationMode==='per-hit-stat-reference' && (binding.phase!=='damage-calculation' || binding.isBuff || !['self','attacking-enemy'].includes(binding.referenceTarget)))throw Error('Invalid incoming damage stat reference.');
       }
       if(key==='ultimate')validateUltimateBinding(detail,assignment,binding);
+      if(key==='technique')validateTechniqueBinding(detail,assignment,binding);
     }
   }
 }

@@ -48,9 +48,9 @@ test('physical tags accumulate and leave each unfinished effect/condition pendin
  for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,[]);
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
- assert.equal(catalog.entries.length,653);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,653);
+ assert.equal(catalog.entries.length,685);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,685);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(allRows.slice(0,261).every(r=>r.judgment==='ready'));assert(allRows.slice(261).every(r=>r.judgment==='partial'));
+ assert(allRows.slice(0,294).every(r=>r.judgment==='ready'));assert(allRows.slice(294).every(r=>r.judgment==='partial'));
  // Removing the weapon type pass leaves its condition pending; restoring it completes the shared skill.
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='锤');
  assert.equal(resolveSkillLabels(earlier).find(e=>e.id===source(273).id).judgment,'partial');

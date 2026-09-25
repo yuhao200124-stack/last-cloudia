@@ -13,16 +13,16 @@ test('six passes independently audit all 935 unique skills and preserve complete
   for(const n of [91,97,148,381,439,691,836,938,1272,1519,1573,1604,1746])assert(!ids.includes(n));
   for(const a of registry.tagPasses.find(p=>p.tag===label).assignments){const e=catalog.entries.find(e=>e.id===a.skillId),d=e.tagDetails[label];assert.deepEqual(a.partIds,[...d.coverage.effectPartIds,...d.coverage.conditionPartIds]);for(const b of d.bindings.filter(b=>b.elementRole==='condition-benefit'))assert(b.partIds.every(id=>!a.partIds.includes(id)));}
  }
- assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,653);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,653);
+ assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,685);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,685);
 });
 test('multi-element records accumulate tags and synchronize completeness without widening generic damage',()=>{
  for(const n of [662,663,1572,1640]){assert.deepEqual(entry(n).assignedTags,[...([663,1572].includes(n)?['必杀相关']:[]),'火属性','冰属性','树属性','雷属性']);assert.equal(entry(n).judgment,'ready');assert.deepEqual(entry(n).remainingEffects,[]);assert.equal(labelingView(catalog,'fire').entries.find(e=>e.id===source(n).id).judgment,'ready');}
  for(const n of [956,957,1528,1529]){assert.deepEqual(entry(n).assignedTags,[...([956,1529].includes(n)?['必杀相关']:[]),'光属性','暗属性']);assert.equal(entry(n).judgment,'ready');}
  assert.deepEqual(entry(315).assignedTags,['光属性','暗属性']);assert.equal(entry(315).judgment,'ready');
  assert.deepEqual(entry(380).assignedTags,['MP','冰属性']);assert.equal(entry(380).judgment,'ready');assert.equal(bindings(380,'ice')[0].costAdjustmentPercent,25);
- for(const[n,k,text]of[[842,'ice','魔法'],[765,'earth','物理'],[721,'thunder','特技'],[711,'light','治疗']]){assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingEffects.some(x=>x.includes(text)));assert.equal(bindings(n,k).length,1);}
+ for(const[n,k,text]of[[842,'ice','魔法'],[765,'earth','物理'],[711,'light','治疗']]){assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingEffects.some(x=>x.includes(text)));assert.equal(bindings(n,k).length,1);}
  for(const n of [74,128,527,1582])assert(!entry(n).assignedTags.includes('伤害增加'));
- assert.equal(catalog.views.fire.counts.ready,21);assert.equal(catalog.views.critical.counts.ready,25);assert.equal(catalog.views.mp.counts.ready,13);
+ assert.equal(catalog.views.fire.counts.ready,21);assert.equal(catalog.views.critical.counts.ready,25);assert.equal(catalog.views.mp.counts.ready,14);
 });
 test('walls, resistance and termination use their actual element, target, duration and stacking',()=>{
  for(const[n,k,v]of[[471,'ice',20],[508,'earth',20],[639,'thunder',20],[830,'light',20],[234,'dark',20],[906,'neutral',20],[1482,'light',35],[1988,'thunder',35]]){const b=bindings(n,k)[0];assert.equal(b.target,'all-allies');assert.equal(b.valuePercent,v);assert.equal(b.durationSeconds,40);assert.equal(b.changesResistance,false);assert.equal(b.buffType,`received-${k}-damage-down`);assert.equal(b.stacking,'highest-active-buff-of-same-type-only');}
@@ -34,7 +34,7 @@ test('walls, resistance and termination use their actual element, target, durati
 });
 test('weapon attribute, attack attribute and enemy weakness stay separate; cap alternatives never add',()=>{
  for(const b of bindings(1695,'ice')){assert.equal(b.scope.element,'ice');assert.equal(b.scope.equipment.weaponElement,'ice');assert.equal(b.branchOperator,'or');assert.equal(b.minValuePercent,10);assert.equal(b.maxValuePercent,40);assert.equal(b.valuePercent,undefined);}
- assert(entry(1695).remainingConditions.some(x=>x.includes('随机')));assert(entry(1695).remainingConditions.some(x=>x.includes('特技')));
+ assert(entry(1695).remainingConditions.some(x=>x.includes('随机')));assert(!entry(1695).remainingConditions.some(x=>x.includes('特技')));assert.equal(entry(721).judgment,'ready');
  const ref=bindings(1694,'ice')[0];assert.equal(ref.stat,'INT');assert.equal(ref.operation,'stat-reference-up');assert.equal(ref.phase,'damage-calculation');assert.equal(ref.isBuff,false);
  const sword=bindings(1727,'thunder')[0];assert.equal(sword.scope.element,undefined);assert.equal(sword.scope.enemyWeakElement,'thunder');assert.equal(sword.requiresAttackElement,false);assert.equal(sword.capPoints,3000);assert.deepEqual(detail(1727,'thunder').coverage.effectPartIds,[]);
  for(const[n,k]of[[1774,'ice'],[1603,'dark']])for(const b of bindings(n,k)){assert.deepEqual(b.capCases,[{when:{weaponCountIn:[0,1]},capPoints:3000},{otherwise:true,capPoints:1500}]);assert.equal(b.capPoints,undefined);assert.equal(b.branches,'mutually-exclusive');}

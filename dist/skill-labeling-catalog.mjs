@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "ultimate",
+  "activeView": "technique",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -8254,16 +8254,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "开场判断攻击力≥魔力时，特技伤害上限+5,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "capPoints": 5000,
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "condition": {
+                "left": "STR",
+                "operator": "gte",
+                "right": "INT"
+              },
+              "mutuallyExclusiveWithPartId": "effect-2",
+              "group": "opening-stat-skill-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场判断攻击力≥魔力时，特技伤害上限+5,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "07cab38a1e00eaa5:effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "特技伤害上限+5,000",
         "魔法伤害上限+5,000"
       ],
       "remainingConditions": [
@@ -9450,17 +9491,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "每Wave开始后获得加速：SCT恢复速度+25%，持续40秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "valuePercent": 25,
+              "buffType": "haste",
+              "activationMode": "triggered-buff",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start",
+                "actor": "self"
+              },
+              "group": "sct-speed-up",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "每Wave开始后获得加速：SCT恢复速度+25%，持续40秒。",
+              "operation": "sct-speed-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "全部技能:all:326:effect-3"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "防御力",
         "生命力",
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "梅蒂斯：魔抗+20%",
-        "加速：SCT恢复速度+25%"
+        "梅蒂斯：魔抗+20%"
       ],
       "remainingConditions": []
     },
@@ -10446,12 +10527,53 @@ export const SKILL_LABELING_CATALOG = {
               "condition-2"
             ]
           }
+        },
+        "特技相关": {
+          "summary": "发动必杀后获得加速：SCT恢复速度+25%，持续40秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "valuePercent": 25,
+              "buffType": "haste",
+              "activationMode": "triggered-buff",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "ultimate-used",
+                "actor": "self"
+              },
+              "group": "sct-speed-up",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "发动必杀后获得加速：SCT恢复速度+25%，持续40秒。",
+              "operation": "sct-speed-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "1c1fef3cdbb3164c:effect-3"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "防御力",
         "生命力",
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -11622,15 +11744,46 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "HP越少加成越高，属于动态属性，不是Buff；归入濒死便于查找，不代表只有HP≤30%才生效。变化曲线未确认，不能直接使用最高值。"
+        },
+        "特技相关": {
+          "summary": "特技伤害+10%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 10,
+              "group": "skill-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "特技伤害+10%",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "c059571f370020f5:effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "防御力",
-        "濒死"
+        "濒死",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "特技伤害+10%",
         "魔抗随剩余HP降低而提高，最高+15%"
       ],
       "remainingConditions": [
@@ -25604,16 +25757,63 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "eachUnitCountsOnce": true,
+                "maxCount": 4
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "group": "team-scaled-skill-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
+              "operation": "team-scaled-damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "按相同人数条件提高特技伤害，最高+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "统计我方士兵、骑士、狙击手、魔法师、精灵类型的单位，最多4名",
         "各人数对应的增幅待确认，不能无条件取最高20%"
@@ -26695,12 +26895,45 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "对Boss的特技伤害+20%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "group": "boss-skill-damage",
+              "partIds": [
+                "boss-skill-damage"
+              ],
+              "summary": "对Boss的特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "6bb2c943681bb3e7:boss-skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "Boss特技伤害增加",
         "Boss必杀伤害增加",
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -26819,17 +27052,67 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "对Boss的特技伤害+20%；对Boss的特技伤害上限+2,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-skill-damage",
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "group": "boss-skill-damage",
+              "partIds": [
+                "boss-skill-damage"
+              ],
+              "summary": "对Boss的特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "7ef2d01b96b2406e:boss-skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "capPoints": 2000,
+              "group": "boss-skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "对Boss的特技伤害上限+2,000",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "7ef2d01b96b2406e:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "Boss特技伤害增加",
         "Boss必杀伤害增加",
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "对Boss的特技伤害上限+2,000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -26945,17 +27228,67 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "对Boss的特技伤害+20%；对Boss的特技伤害上限+4,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-skill-damage",
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "group": "boss-skill-damage",
+              "partIds": [
+                "boss-skill-damage"
+              ],
+              "summary": "对Boss的特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "ecf05abb4f8e4b10:boss-skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "capPoints": 4000,
+              "group": "boss-skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "对Boss的特技伤害上限+4,000",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "ecf05abb4f8e4b10:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "Boss特技伤害增加",
         "Boss必杀伤害增加",
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "对Boss的特技伤害上限+4,000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -27071,17 +27404,67 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "对Boss的特技伤害+20%；对Boss的特技伤害上限+6,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-skill-damage",
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "group": "boss-skill-damage",
+              "partIds": [
+                "boss-skill-damage"
+              ],
+              "summary": "对Boss的特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "5c16599b8947ce62:boss-skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "capPoints": 6000,
+              "group": "boss-skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "对Boss的特技伤害上限+6,000",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "5c16599b8947ce62:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "Boss特技伤害增加",
         "Boss必杀伤害增加",
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "对Boss的特技伤害上限+6,000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -27433,15 +27816,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "战斗开始时，第1特技SCT回复20秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT",
+                "skillSlot": 1
+              },
+              "resource": "SCT",
+              "restoreSeconds": 20,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "group": "sct-slot1",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，第1特技SCT回复20秒。",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "61bd034faff939fe:opening-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "第1个特技（左上）的SCT恢复20秒"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -27621,15 +28039,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "战斗开始时，第2特技SCT回复20秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT",
+                "skillSlot": 2
+              },
+              "resource": "SCT",
+              "restoreSeconds": 20,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "group": "sct-slot2",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，第2特技SCT回复20秒。",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "e3c604ea07ef0eee:opening-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "第2个特技（右上）的SCT恢复20秒"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -27943,18 +28396,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "战斗开始时，随机一个特技回复一次SCT库存。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreStocks": 1,
+              "skillSelection": "random-one",
+              "trigger": {
+                "event": "battle-start"
+              },
+              "group": "sct-stock-random",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，随机一个特技回复一次SCT库存。",
+              "operation": "restore-sct-stocks",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "4f8a8b3359a2206f:opening-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "随机1个特技的SCT恢复1次"
-      ],
-      "remainingConditions": [
-        "随机选择1个特技；按该特技1次所需SCT恢复"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "b8934861f6189f6e",
@@ -27994,15 +28482,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "战斗开始时，第3特技SCT回复20秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT",
+                "skillSlot": 3
+              },
+              "resource": "SCT",
+              "restoreSeconds": 20,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "group": "sct-slot3",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，第3特技SCT回复20秒。",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "b8934861f6189f6e:opening-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "第3个特技（左下）的SCT恢复20秒"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -28095,15 +28618,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "每Wave开始后获得加速：SCT恢复速度+25%，持续40秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "valuePercent": 25,
+              "buffType": "haste",
+              "activationMode": "triggered-buff",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start",
+                "actor": "self"
+              },
+              "group": "sct-speed-up",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始后获得加速：SCT恢复速度+25%，持续40秒。",
+              "operation": "sct-speed-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "60eca07e7c2f1a33:opening-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "SCT恢复速度+25%，加速Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -28377,16 +28939,52 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "Boss Wave开始时，自身SCT回复30秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 30,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "boss-wave-start"
+              },
+              "group": "sct-seconds",
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "Boss Wave开始时，自身SCT回复30秒。",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "3797f19e9c516ee7:opening-effect-2"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "战斗开始",
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "Boss Wave开始时回复50%HP",
-        "Boss Wave开始时恢复30秒SCT"
+        "Boss Wave开始时回复50%HP"
       ],
       "remainingConditions": [
         "只在Boss Wave开始时触发"
@@ -29061,16 +29659,66 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续30秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "特技伤害+30%（并列效果，不归入开场特技增伤）；战斗开始后的前30秒无法使用特技；独立的特技增伤30%不受这30秒限制。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "other-effect-1",
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 30,
+              "group": "skill-damage",
+              "partIds": [
+                "other-effect-1"
+              ],
+              "summary": "特技伤害+30%（并列效果，不归入开场特技增伤）",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "68c1f4b9c51cb15f:other-effect-1"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "control",
+                "attackType": "skill"
+              },
+              "trigger": {
+                "event": "battle-start"
+              },
+              "lockSeconds": 30,
+              "group": "skill-lock",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始后的前30秒无法使用特技；独立的特技增伤30%不受这30秒限制。",
+              "operation": "disable-skills",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "68c1f4b9c51cb15f:opening-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "战斗开始后的前30秒无法使用特技",
-        "特技伤害+30%（并列效果，不归入开场特技增伤）"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -29449,14 +30097,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "每Wave开始后获得加速：SCT恢复速度+25%，持续40秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "valuePercent": 25,
+              "buffType": "haste",
+              "activationMode": "triggered-buff",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start",
+                "actor": "self"
+              },
+              "group": "sct-speed-up",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始后获得加速：SCT恢复速度+25%，持续40秒。",
+              "operation": "sct-speed-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "e27f6e2a867c1a2e:opening-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "SCT恢复速度+25%，加速Buff",
         "魔法咏唱速度+30%，再吟唱Buff"
       ],
       "remainingConditions": []
@@ -31196,16 +31884,72 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "开场仅重置累计／计时，不自动取得最高加成。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "特技相关": {
+          "summary": "自身每击败一个敌人提高特技伤害，最多6名、最高30%；每Wave重置，具体各层增幅待确认；每Wave开始重置击杀计数及其特技增伤；不是开场直接获得30%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "other-effect-1",
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "scaling": {
+                "metric": "enemies-defeated-by-self",
+                "maxCount": 6,
+                "curveStatus": "unconfirmed"
+              },
+              "maxValuePercent": 30,
+              "resetScope": "wave",
+              "group": "kill-scaled-skill-damage",
+              "partIds": [
+                "other-effect-1"
+              ],
+              "summary": "自身每击败一个敌人提高特技伤害，最多6名、最高30%；每Wave重置，具体各层增幅待确认。",
+              "operation": "kill-scaled-damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "c3b83f342aaa5c37:other-effect-1"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "control",
+                "attackType": "skill"
+              },
+              "trigger": {
+                "event": "wave-start"
+              },
+              "resetToCount": 0,
+              "group": "kill-count-reset",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始重置击杀计数及其特技增伤；不是开场直接获得30%。",
+              "operation": "reset-skill-damage-counter",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "c3b83f342aaa5c37:opening-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "每Wave重置击败敌人的累计数及其特技增伤；不是开场获得最高+30%",
-        "按击败敌人数量提高特技伤害，最高+30%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "每击败1名敌人提高特技伤害，最多累计6名；各层具体增幅待确认"
       ]
@@ -31501,15 +32245,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        },
+        "特技相关": {
+          "summary": "常驻获得加速：SCT恢复速度+25%（无固定倒计时）。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "valuePercent": 25,
+              "buffType": "haste",
+              "activationMode": "permanent-status",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "lifetime": "permanent",
+              "trigger": {
+                "event": "always-active"
+              },
+              "group": "sct-speed-up",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "常驻获得加速：SCT恢复速度+25%（无固定倒计时）。",
+              "operation": "sct-speed-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "0bcbd8a4dc9889d5:permanent-effect"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "加速：SCT恢复速度+25%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -33253,15 +34035,46 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "判断目标敌人的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        },
+        "特技相关": {
+          "summary": "目标敌人HP≤30%时，对其特技伤害+15%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyHpPercentLte": 30
+              },
+              "valuePercent": 15,
+              "group": "enemy-low-hp-skill-damage",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "目标敌人HP≤30%时，对其特技伤害+15%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "e4d78aa3f37004bd:low-hp-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "濒死"
+        "濒死",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "对濒死敌人的特技伤害+15%；判断目标敌人的HP"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -33435,15 +34248,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        },
+        "特技相关": {
+          "summary": "自身HP≤30%时，特技伤害+20%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 20,
+              "condition": {
+                "subject": "self",
+                "metric": "current-hp-percent-of-max",
+                "operator": "lte",
+                "thresholdPercent": 30
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP≤30%时，特技伤害+20%",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "0e3dba96957b5563:low-hp-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "濒死"
+        "濒死",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身HP≤30%时，特技伤害+20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -33560,17 +34409,84 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "只绑定受武器数量影响的特技上限；前半段濒死特技伤害+30%不要求单武器。"
+        },
+        "特技相关": {
+          "summary": "自身濒死时发动特技，上限基础+15,000；仅1把武器时改为+30,000，不相加；自身濒死时发动特技，特技伤害+30%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-2",
+              "low-hp-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "selfHpPercentLte": 30
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "low-hp-effect-2"
+              ],
+              "summary": "自身濒死时发动特技，上限基础+15,000；仅1把武器时改为+30,000，不相加。",
+              "operation": "conditional-cap-up",
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 30000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 15000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "f28fd4eede5caea4:low-hp-effect-2"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 30,
+              "condition": {
+                "subject": "self",
+                "metric": "current-hp-percent-of-max",
+                "operator": "lte",
+                "thresholdPercent": 30
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身濒死时发动特技，特技伤害+30%",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "f28fd4eede5caea4:low-hp-effect-1"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "濒死",
-        "单手"
+        "单手",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身濒死时发动特技，特技伤害+30%",
-        "自身濒死时发动特技，伤害上限+15,000；仅一把武器时改为+30,000（替代15,000）"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -33951,15 +34867,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
+        },
+        "特技相关": {
+          "summary": "自身满HP时，特技伤害+20%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "full-hp-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 20,
+              "condition": {
+                "subject": "self",
+                "metric": "current-hp-percent-of-max",
+                "operator": "eq",
+                "thresholdPercent": 100
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "full-hp-effect"
+              ],
+              "summary": "自身满HP时，特技伤害+20%",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "0599f84fed5320a1:full-hp-effect"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "满HP"
+        "满HP",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身满HP时，特技伤害+20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -34005,15 +34957,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
+        },
+        "特技相关": {
+          "summary": "自身满HP时，特技伤害上限+1,500。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "full-hp-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "capPoints": 1500,
+              "condition": {
+                "subject": "self",
+                "metric": "current-hp-percent-of-max",
+                "operator": "eq",
+                "thresholdPercent": 100
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "full-hp-effect"
+              ],
+              "summary": "自身满HP时，特技伤害上限+1,500。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "483798470761efdf:full-hp-effect"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "满HP"
+        "满HP",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身满HP时，特技伤害上限+1,500"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -35655,10 +36643,50 @@ export const SKILL_LABELING_CATALOG = {
               "random-target"
             ]
           }
+        },
+        "特技相关": {
+          "summary": "自身发动必杀时，随机一个特技回复一次SCT库存。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": [
+              "random-target"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreStocks": 1,
+              "skillSelection": "random-one",
+              "trigger": {
+                "event": "ultimate-used",
+                "actor": "self"
+              },
+              "group": "sct-stock-random",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "自身发动必杀时，随机一个特技回复一次SCT库存。",
+              "operation": "restore-sct-stocks",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "8f928b05fc447ac9:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -35954,17 +36982,61 @@ export const SKILL_LABELING_CATALOG = {
               "branchOperator": "or"
             }
           ],
-          "calculationNote": "武器与本次攻击都要求冰属性；特技、必杀是或关系。随机分布待确认，不能默认40%或擅自取平均值；特技发动条件仍待其标签。"
+          "calculationNote": "武器与本次攻击都要求冰属性；特技、必杀是或关系。随机分布待确认，不能默认40%或擅自取平均值；特技与必杀发动条件均已分别贴标签。"
+        },
+        "特技相关": {
+          "summary": "装备冰属性武器并发动冰属性特技时，该次伤害随机+10%～40%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-skill-damage"
+            ],
+            "conditionPartIds": [
+              "ice-skill-condition"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "element": "ice",
+                "equipment": {
+                  "weaponElement": "ice"
+                }
+              },
+              "group": "ice-skill-damage",
+              "partIds": [
+                "ice-skill-damage"
+              ],
+              "summary": "装备冰属性武器并发动冰属性特技时，该次伤害随机+10%～40%。",
+              "operation": "random-damage-up",
+              "minValuePercent": 10,
+              "maxValuePercent": 40,
+              "distributionStatus": "unconfirmed",
+              "alternativeAttackTypes": [
+                "skill",
+                "ultimate"
+              ],
+              "branchOperator": "or",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "ed00d6c7e726b8ce:ice-skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "必杀相关",
-        "冰属性"
+        "冰属性",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "发动冰属性特技时（与冰属性必杀是“或”关系，仍待对应标签）",
         "伤害加成在10%～40%间随机；分布待确认"
       ]
     },
@@ -36592,15 +37664,50 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 25
             }
           ]
+        },
+        "特技相关": {
+          "summary": "自身处于异常状态时，SCT恢复速度+25%；MP恢复速度是另一条效果。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-speed"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "valuePercent": 25,
+              "condition": {
+                "subject": "self",
+                "state": "abnormal-status-active"
+              },
+              "group": "sct-speed-up",
+              "partIds": [
+                "sct-speed"
+              ],
+              "summary": "自身处于异常状态时，SCT恢复速度+25%；MP恢复速度是另一条效果。",
+              "operation": "sct-speed-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "7983e8b7c5f6eceb:sct-speed"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "MP"
+        "MP",
+        "特技相关"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "SCT恢复速度+25%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "自身处于异常状态时"
       ]
@@ -36675,17 +37782,90 @@ export const SKILL_LABELING_CATALOG = {
               "costGateStatus": "unconfirmed"
             }
           ]
+        },
+        "特技相关": {
+          "summary": "发动攻击型特技时，消耗相当于最大MP3%的当前MP；发动攻击型特技并支付最大MP的3%时，该次特技伤害+50%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "mp-cost",
+              "skill-damage"
+            ],
+            "conditionPartIds": [
+              "attack-skill"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillKind": "attack"
+              },
+              "resource": "MP",
+              "costBase": "maximum-MP",
+              "costPercent": 3,
+              "trigger": {
+                "actor": "self",
+                "event": "attack-skill-used"
+              },
+              "payment": {
+                "resource": "MP",
+                "base": "maximum-MP",
+                "percent": 3,
+                "insufficientResourceStatus": "unconfirmed"
+              },
+              "group": "mp-cost",
+              "partIds": [
+                "mp-cost"
+              ],
+              "summary": "发动攻击型特技时，消耗相当于最大MP3%的当前MP。",
+              "operation": "consume-resource",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "84d23b82f37b1490:mp-cost"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillKind": "attack"
+              },
+              "valuePercent": 50,
+              "trigger": {
+                "actor": "self",
+                "event": "attack-skill-used"
+              },
+              "payment": {
+                "resource": "MP",
+                "base": "maximum-MP",
+                "percent": 3,
+                "insufficientResourceStatus": "unconfirmed"
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "发动攻击型特技并支付最大MP的3%时，该次特技伤害+50%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "84d23b82f37b1490:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "MP"
+        "MP",
+        "特技相关"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "该次攻击型特技伤害+50%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "使用攻击型特技时",
         "须支付最大MP的3%；MP不足时处理待确认"
       ]
     },
@@ -36917,20 +38097,60 @@ export const SKILL_LABELING_CATALOG = {
               "maxTriggersPerWave": 1
             }
           ],
-          "calculationNote": "回复的受益者是施放复活的自身，不是刚被复活的角色；队友自己自动复活或由其他角色复活不满足这里“自身主动技能”的条件。MP30点与SCT15秒分开，MP标签沿用上一轮。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
+          "calculationNote": "回复的受益者是施放复活的自身，不是刚被复活的角色；队友自己自动复活或由其他角色复活不满足这里“自身主动技能”的条件。MP30点与SCT15秒分开，MP标签沿用上一轮。 SCT回复与每Wave次数已由特技标签补齐。"
+        },
+        "特技相关": {
+          "summary": "用自身主动技能复活友方后，自身SCT回复15秒；每Wave最多一次。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": [
+              "once-per-wave"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 15,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "ally-revived",
+                "actor": "self",
+                "method": "own-active-skill",
+                "revivedTarget": "ally"
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "group": "sct-seconds",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "用自身主动技能复活友方后，自身SCT回复15秒；每Wave最多一次。",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "4170fcd45f772a61:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "MP",
-        "复活"
+        "复活",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身SCT回复15秒"
-      ],
-      "remainingConditions": [
-        "每Wave最多一次"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "d97a22bd801e515c",
@@ -37347,17 +38567,90 @@ export const SKILL_LABELING_CATALOG = {
               "costGateStatus": "unconfirmed"
             }
           ]
+        },
+        "特技相关": {
+          "summary": "发动攻击型特技时，消耗相当于最大MP3%的当前MP；发动攻击型特技并支付MP代价时，该次特技上限+5,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "mp-cost",
+              "skill-cap"
+            ],
+            "conditionPartIds": [
+              "attack-skill"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillKind": "attack"
+              },
+              "resource": "MP",
+              "costBase": "maximum-MP",
+              "costPercent": 3,
+              "trigger": {
+                "actor": "self",
+                "event": "attack-skill-used"
+              },
+              "payment": {
+                "resource": "MP",
+                "base": "maximum-MP",
+                "percent": 3,
+                "insufficientResourceStatus": "unconfirmed"
+              },
+              "group": "mp-cost",
+              "partIds": [
+                "mp-cost"
+              ],
+              "summary": "发动攻击型特技时，消耗相当于最大MP3%的当前MP。",
+              "operation": "consume-resource",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "a8ee2e010b6e5d6c:mp-cost"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillKind": "attack"
+              },
+              "capPoints": 5000,
+              "trigger": {
+                "actor": "self",
+                "event": "attack-skill-used"
+              },
+              "payment": {
+                "resource": "MP",
+                "base": "maximum-MP",
+                "percent": 3,
+                "insufficientResourceStatus": "unconfirmed"
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "发动攻击型特技并支付MP代价时，该次特技上限+5,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "a8ee2e010b6e5d6c:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "MP"
+        "MP",
+        "特技相关"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "该次攻击型特技伤害上限+5,000"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "使用攻击型特技时",
         "须支付最大MP的3%；MP不足时处理待确认"
       ]
     },
@@ -37497,20 +38790,58 @@ export const SKILL_LABELING_CATALOG = {
               "maxTriggersPerWave": 1
             }
           ],
-          "calculationNote": "回复一次特技库存，不是回复1秒，也不是全部特技。再起之种仅在复活后触发，不提供自动复活能力。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
+          "calculationNote": "回复一次特技库存，不是回复1秒，也不是全部特技。再起之种仅在复活后触发，不提供自动复活能力。 SCT回复、随机选择与每Wave次数已由特技标签补齐。"
+        },
+        "特技相关": {
+          "summary": "自身复活时，随机一个特技回复一次SCT库存，每Wave最多一次。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": [
+              "random-target",
+              "once-per-wave"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreStocks": 1,
+              "skillSelection": "random-one",
+              "trigger": {
+                "event": "revived",
+                "actor": "self"
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "group": "sct-stock-random",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "自身复活时，随机一个特技回复一次SCT库存，每Wave最多一次。",
+              "operation": "restore-sct-stocks",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "89a90b8df36a0475:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "复活"
+        "复活",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "随机1个特技的SCT回复1次"
-      ],
-      "remainingConditions": [
-        "随机选择1个特技",
-        "每个Wave最多触发1次"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "387b6e052ad74bb1",
@@ -37586,20 +38917,60 @@ export const SKILL_LABELING_CATALOG = {
               "resetScope": "wave"
             }
           ],
-          "calculationNote": "回复给仍能行动的自身，不复活倒下的友军。特技库存是次数，不是固定SCT秒数，也不是SCT回复速度；回复量和每Wave次数限制继续待判断。"
+          "calculationNote": "回复给仍能行动的自身，不复活倒下的友军。特技库存是次数，不是固定SCT秒数，也不是SCT回复速度；SCT库存回复和每Wave次数已由特技标签补齐；HP回复量继续待确认。"
+        },
+        "特技相关": {
+          "summary": "其他友军倒下时，根据该友军已积攒的库存回复自身对应特技库存；每Wave最多一次。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-stock"
+            ],
+            "conditionPartIds": [
+              "once-per-wave"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "unit": "skill-stock-count",
+              "amountSource": "incapacitated-ally-stocks",
+              "mapping": "corresponding-skill-slot",
+              "trigger": {
+                "event": "became-incapacitated",
+                "actor": "other-ally"
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "group": "sct-inherit",
+              "partIds": [
+                "sct-stock"
+              ],
+              "summary": "其他友军倒下时，根据该友军已积攒的库存回复自身对应特技库存；每Wave最多一次。",
+              "operation": "restore-stocks-from-ally",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "387b6e052ad74bb1:sct-stock"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "友军死亡"
+        "友军死亡",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "自身HP大幅回复，具体回复量待确认",
-        "根据倒下友军已经积攒的特技库存，回复自身对应的特技库存"
+        "自身HP大幅回复，具体回复量待确认"
       ],
-      "remainingConditions": [
-        "每个Wave最多触发1次"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "e4203cbe63a20722",
@@ -42980,10 +44351,72 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "25%和2,000只是最高值，距离与曲线尚未确认时不直接当当前加成；不扩为全部火属性物理攻击。距离条件继续待标签。"
+        },
+        "特技相关": {
+          "summary": "火属性特技发动时，离敌人越近伤害越高，最高+25%；火属性特技发动时，离敌人越近伤害上限越高，最高+2,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-skill-damage",
+              "fire-skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "element": "fire"
+              },
+              "group": "fire-skill-damage",
+              "partIds": [
+                "fire-skill-damage"
+              ],
+              "summary": "火属性特技发动时，离敌人越近伤害越高，最高+25%。",
+              "operation": "distance-damage-up",
+              "maxValuePercent": 25,
+              "scaling": {
+                "metric": "distance-to-target-at-skill-use",
+                "direction": "closer-stronger",
+                "curveStatus": "unconfirmed"
+              },
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "9e9ea3affb033550:fire-skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "element": "fire"
+              },
+              "group": "fire-skill-cap",
+              "partIds": [
+                "fire-skill-cap"
+              ],
+              "summary": "火属性特技发动时，离敌人越近伤害上限越高，最高+2,000。",
+              "operation": "distance-cap-up",
+              "maxCapPoints": 2000,
+              "scaling": {
+                "metric": "distance-to-target-at-skill-use",
+                "direction": "closer-stronger",
+                "curveStatus": "unconfirmed"
+              },
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "9e9ea3affb033550:fire-skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -47785,15 +49218,45 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技伤害+15%为独立不限属性词条，不改成雷属性特技增伤。"
+        },
+        "特技相关": {
+          "summary": "特技伤害+15%，不限定雷属性。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 15,
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "特技伤害+15%，不限定雷属性",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "4e8a749504d3799f:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "雷属性"
+        "雷属性",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特技伤害+15%，不限定雷属性"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -52689,10 +54152,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "只作用暗属性特技，不扩大为所有物理伤害；不需要三种脸同时装备。"
+        },
+        "特技相关": {
+          "summary": "暗属性特技伤害+15%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "element": "dark"
+              },
+              "group": "dark-skill-damage",
+              "partIds": [
+                "dark-skill-damage"
+              ],
+              "summary": "暗属性特技伤害+15%。",
+              "operation": "damage-up",
+              "valuePercent": 15,
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "efdc0583f2618634:dark-skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "特技相关"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -54870,15 +56366,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "特技相关": {
+          "summary": "特技1上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 1
+              },
+              "group": "slot1-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技1上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+              "operation": "conditional-cap-up",
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "4c3d40e4148fa790:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特技1上限+2000；仅1把武器时替换为+4000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -54951,15 +56491,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "特技相关": {
+          "summary": "特技2上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 2
+              },
+              "group": "slot2-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技2上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+              "operation": "conditional-cap-up",
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "e822e4450ab4dcad:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特技2上限+2000；仅1把武器时替换为+4000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -55032,15 +56616,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "特技相关": {
+          "summary": "特技3上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 3
+              },
+              "group": "slot3-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技3上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+              "operation": "conditional-cap-up",
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "21cb7e642833caf7:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特技3上限+2000；仅1把武器时替换为+4000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -55113,15 +56741,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "特技相关": {
+          "summary": "特技1上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 1
+              },
+              "group": "slot1-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技1上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+              "operation": "conditional-cap-up",
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "c5f213214da57548:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特技1上限+3000；仅1把武器时替换为+6000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -55194,15 +56866,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "特技相关": {
+          "summary": "特技2上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 2
+              },
+              "group": "slot2-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技2上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+              "operation": "conditional-cap-up",
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "2ae3c62f62930431:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特技2上限+3000；仅1把武器时替换为+6000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -55275,15 +56991,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "特技相关": {
+          "summary": "特技3上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 3
+              },
+              "group": "slot3-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技3上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+              "operation": "conditional-cap-up",
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "03a679c6deeb2898:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特技3上限+3000；仅1把武器时替换为+6000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -55809,16 +57569,69 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基础Break+30%及移动速度-1不受单武器条件限制，只把额外Break分支放入本组。"
+        },
+        "特技相关": {
+          "summary": "仅1把武器时，特技Break值在基础+30%之外再+30%；特技Break值+30%；单武器另加30%的分支独立计算。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "extra-skill-break",
+              "skill-break"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "group": "skill-break",
+              "partIds": [
+                "extra-skill-break"
+              ],
+              "summary": "仅1把武器时，特技Break值在基础+30%之外再+30%。",
+              "operation": "break-up",
+              "effectStacking": "once-per-skill",
+              "valuePercent": 30,
+              "addsToPartId": "skill-break",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "73530ee6f38ccc34:extra-skill-break"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 30,
+              "group": "skill-break",
+              "partIds": [
+                "skill-break"
+              ],
+              "summary": "特技Break值+30%；单武器另加30%的分支独立计算。",
+              "operation": "break-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "73530ee6f38ccc34:skill-break"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "移动速度-1",
-        "特技Break值+30%",
-        "仅1把武器时，特技Break值再+30%"
+        "移动速度-1"
       ],
       "remainingConditions": []
     },
@@ -55854,6 +57667,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "single-weapon-count",
           "kind": "condition",
           "text": "仅1把武器时获得额外上限"
+        },
+        {
+          "id": "hp-payment-unconfirmed",
+          "kind": "condition",
+          "text": "当前HP不足最大HP的15%时，消耗与加成的处理待确认"
         }
       ],
       "tagDetails": {
@@ -55897,19 +57715,123 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "单武器只限制额外5,000；HP消耗及基础上限不擅自附加单武器条件。"
+        },
+        "特技相关": {
+          "summary": "使用攻击型特技并消耗最大HP15%时，基础上限+5,000；仅1把武器时再+5,000；发动攻击型特技时，消耗相当于最大HP15%的当前HP；发动攻击型特技并支付HP代价时，该次特技上限+5,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "extra-skill-cap",
+              "hp-cost",
+              "skill-cap"
+            ],
+            "conditionPartIds": [
+              "attack-skill-used"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "requiresHpCost": true,
+                "hpCostPercentOfMaximum": 15,
+                "skillKind": "attack"
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "extra-skill-cap"
+              ],
+              "summary": "使用攻击型特技并消耗最大HP15%时，基础上限+5,000；仅1把武器时再+5,000。",
+              "operation": "cap-up",
+              "effectStacking": "once-per-skill",
+              "capPoints": 5000,
+              "addsToPartId": "skill-cap",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "9efcdc31fa117787:extra-skill-cap",
+              "payment": {
+                "resource": "HP",
+                "base": "maximum-HP",
+                "percent": 15,
+                "insufficientResourceStatus": "unconfirmed"
+              }
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillKind": "attack"
+              },
+              "resource": "HP",
+              "costBase": "maximum-HP",
+              "costPercent": 15,
+              "trigger": {
+                "actor": "self",
+                "event": "attack-skill-used"
+              },
+              "payment": {
+                "resource": "HP",
+                "base": "maximum-HP",
+                "percent": 15,
+                "insufficientResourceStatus": "unconfirmed"
+              },
+              "group": "hp-cost",
+              "partIds": [
+                "hp-cost"
+              ],
+              "summary": "发动攻击型特技时，消耗相当于最大HP15%的当前HP。",
+              "operation": "consume-resource",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "9efcdc31fa117787:hp-cost"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillKind": "attack"
+              },
+              "capPoints": 5000,
+              "trigger": {
+                "actor": "self",
+                "event": "attack-skill-used"
+              },
+              "payment": {
+                "resource": "HP",
+                "base": "maximum-HP",
+                "percent": 15,
+                "insufficientResourceStatus": "unconfirmed"
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "发动攻击型特技并支付HP代价时，该次特技上限+5,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "9efcdc31fa117787:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "特技相关"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "使用攻击型特技时消耗最大HP的15%",
-        "对应特技伤害上限+5,000",
-        "仅1把武器时对应特技上限再+5,000"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "发动攻击型特技并支付HP代价"
+        "当前HP不足最大HP的15%时，消耗与加成的处理待确认"
       ]
     },
     {
@@ -56181,7 +58103,7 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 1500
             }
           ],
-          "calculationNote": "双武器同属性与同种类是不同条件；武器数和武器之间同属性已贴标签。必杀增伤与必杀上限已补齐，特技效果和攻击与武器的动态属性匹配条件继续待标签。"
+          "calculationNote": "双武器同属性与同种类是不同条件；武器数和武器之间同属性已贴标签。特技与必杀的伤害及上限均已补齐；攻击与武器的动态属性匹配条件继续待标签。"
         },
         "必杀相关": {
           "summary": "2把武器同属性，且本次必杀为该属性时，伤害+15%。；2把武器同属性，且本次必杀为该属性时，上限+1,500。",
@@ -56243,17 +58165,76 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "2把武器同属性，且本次特技为该属性时，伤害+15%；2把武器同属性，且本次特技为该属性时，上限+1,500。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "matching-skill-damage",
+              "matching-skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponElement": true
+                },
+                "attackElementRelation": "same-as-both-equipped-weapons"
+              },
+              "group": "matching-skill-damage",
+              "partIds": [
+                "matching-skill-damage"
+              ],
+              "summary": "2把武器同属性，且本次特技为该属性时，伤害+15%。",
+              "operation": "damage-up",
+              "effectStacking": "once-per-skill",
+              "valuePercent": 15,
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "0257679d2708509b:matching-skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponElement": true
+                },
+                "attackElementRelation": "same-as-both-equipped-weapons"
+              },
+              "group": "matching-skill-cap",
+              "partIds": [
+                "matching-skill-cap"
+              ],
+              "summary": "2把武器同属性，且本次特技为该属性时，上限+1,500。",
+              "operation": "cap-up",
+              "effectStacking": "once-per-skill",
+              "capPoints": 1500,
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "0257679d2708509b:matching-skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "必杀相关",
-        "双手"
+        "双手",
+        "特技相关"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "双武器同属性且本次特技为该属性时，特技伤害+15%",
-        "对应属性特技上限+1,500"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "本次特技／必杀属性等于这2把武器的共同属性"
       ]
@@ -56347,16 +58328,73 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "特技相关": {
+          "summary": "装备2把武器时，特技伤害+10%；装备2把武器并从敌人背后发动对应攻击时，特技伤害在基础+10%之外再+20%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage",
+              "back-skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "装备2把武器时，特技伤害+10%。",
+              "operation": "damage-up",
+              "effectStacking": "once-per-skill",
+              "valuePercent": 10,
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "1519299bec222fca:skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                },
+                "requiresAttackFromBehind": true
+              },
+              "group": "behind-skill-damage",
+              "partIds": [
+                "back-skill-damage"
+              ],
+              "summary": "装备2把武器并从敌人背后发动对应攻击时，特技伤害在基础+10%之外再+20%。",
+              "operation": "damage-up",
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20,
+              "addsToPartId": "skill-damage",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "1519299bec222fca:back-skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "双手"
+        "双手",
+        "特技相关"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "双武器时特技伤害+10%",
-        "双武器且从敌人背后发动对应攻击时，特技伤害再+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "对应特技从目标背后攻击"
       ]
@@ -56478,16 +58516,50 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "装备2把武器时，特技伤害+15%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "装备2把武器时，特技伤害+15%。",
+              "operation": "damage-up",
+              "effectStacking": "once-per-skill",
+              "valuePercent": 15,
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "7fae80d83cb7551a:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
         "必杀相关",
-        "双手"
+        "双手",
+        "特技相关"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "双武器时特技伤害+15%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -56604,17 +58676,95 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "特技相关": {
+          "summary": "装备2把武器时，特技伤害+20%；装备2把武器时，特技上限+5,000；装备2把武器对Boss时，特技上限在基础+5,000之外再+5,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage",
+              "skill-cap",
+              "boss-skill-extra-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "装备2把武器时，特技伤害+20%。",
+              "operation": "damage-up",
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20,
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "bc94425edcde5d97:skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "装备2把武器时，特技上限+5,000。",
+              "operation": "cap-up",
+              "effectStacking": "once-per-skill",
+              "capPoints": 5000,
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "bc94425edcde5d97:skill-cap"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                },
+                "enemyType": "boss"
+              },
+              "group": "boss-skill-cap",
+              "partIds": [
+                "boss-skill-extra-cap"
+              ],
+              "summary": "装备2把武器对Boss时，特技上限在基础+5,000之外再+5,000。",
+              "operation": "cap-up",
+              "effectStacking": "once-per-skill",
+              "capPoints": 5000,
+              "addsToPartId": "skill-cap",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "bc94425edcde5d97:boss-skill-extra-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "assignedTags": [
-        "双手"
+        "双手",
+        "特技相关"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "双武器时特技伤害+20%",
-        "双武器时特技伤害上限+5,000",
-        "双武器时对Boss的特技伤害上限再+5,000"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "额外特技上限要求目标为Boss"
       ]
@@ -57987,16 +60137,74 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "仅自身一人参战时，特技伤害+20%；仅自身一人参战时，特技上限+3,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage",
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 20,
+              "condition": {
+                "metric": "participating-unit-count",
+                "operator": "eq",
+                "count": 1
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "仅自身一人参战时，特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "全部技能:all:572:skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "capPoints": 3000,
+              "condition": {
+                "metric": "participating-unit-count",
+                "operator": "eq",
+                "count": 1
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "仅自身一人参战时，特技上限+3,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "全部技能:all:572:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "单人参战时，特技伤害+20%",
-        "单人参战时，特技伤害上限+3,000",
         "单人参战时，受到敌人伤害-10%"
       ],
       "remainingConditions": [
@@ -58327,16 +60535,54 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "每名机械类型我方单位使特技上限+1,000，最多4名。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "count": {
+                "metric": "allied-units-of-race",
+                "race": "machine",
+                "includesSelf": true,
+                "maxCount": 4
+              },
+              "capPerUnit": 1000,
+              "maxCapPoints": 4000,
+              "group": "ally-machine-skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "每名机械类型我方单位使特技上限+1,000，最多4名",
+              "operation": "count-scaled-cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "4aafd29a15ad98c4:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "类型追加“机械”",
-        "每名机械类型我方单位使特技上限+1,000，最多4名",
         "每名机械类型我方单位使反击上限+1,000，最多4名"
       ],
       "remainingConditions": [
@@ -59154,16 +61400,54 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "特技相关": {
+          "summary": "每名士兵类型我方单位使特技上限+1,000，最多4名。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "count": {
+                "metric": "allied-units-of-race",
+                "race": "soldier",
+                "includesSelf": true,
+                "maxCount": 4
+              },
+              "capPerUnit": 1000,
+              "maxCapPoints": 4000,
+              "group": "ally-soldier-skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "每名士兵类型我方单位使特技上限+1,000，最多4名",
+              "operation": "count-scaled-cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "b1235f3ab30aff73:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "必杀相关"
+        "必杀相关",
+        "特技相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "类型追加“士兵”",
-        "每名士兵类型我方单位使特技上限+1,000，最多4名"
+        "类型追加“士兵”"
       ],
       "remainingConditions": [
         "统计我方士兵类型单位，包含自身，最多4名"
@@ -60392,6 +62676,2429 @@ export const SKILL_LABELING_CATALOG = {
       "remainingConditions": [
         "目标敌人为龙类型"
       ]
+    },
+    {
+      "id": "9644f0427e3b56be",
+      "name": "荣光姿势",
+      "url": "https://altema.jp/lastcloudia/gino/156",
+      "text": "击败敌人时，SCT恢复5秒。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "SCT回复5秒"
+        },
+        {
+          "id": "sct-trigger",
+          "kind": "condition",
+          "text": "自身击败敌人时"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "击败敌人时，SCT恢复5秒。（回复的是SCT秒数。）。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 5,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "enemy-defeated-by-self",
+                "actor": "self"
+              },
+              "group": "sct-seconds",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "击败敌人时，SCT恢复5秒。（回复的是SCT秒数。）",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "9644f0427e3b56be:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "自身击败敌人时"
+      ]
+    },
+    {
+      "id": "36bf633cebd4748e",
+      "name": "荣光美酒",
+      "url": "https://altema.jp/lastcloudia/gino/159",
+      "text": "每个Wave结束时，所有特技的SCT回复10秒。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "SCT回复10秒"
+        },
+        {
+          "id": "sct-trigger",
+          "kind": "condition",
+          "text": "每个Wave结束时"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "每个Wave结束时，所有特技的SCT回复10秒。（回复的是SCT秒数。）。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 10,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "wave-end",
+                "actor": "self"
+              },
+              "group": "sct-seconds",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "每个Wave结束时，所有特技的SCT回复10秒。（回复的是SCT秒数。）",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "36bf633cebd4748e:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每个Wave结束时"
+      ]
+    },
+    {
+      "id": "ba24f4a2e20a74dc",
+      "name": "海盗之宴",
+      "url": "https://altema.jp/lastcloudia/gino/162",
+      "text": "战斗结束后，所有特技的SCT完全恢复。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "战斗结束后，所有特技的SCT完全恢复。"
+        },
+        {
+          "id": "battle-end",
+          "kind": "condition",
+          "text": "每个Wave战斗结束时触发"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "每个Wave战斗结束后，所有特技的SCT完全恢复。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "skillSelection": "all",
+              "trigger": {
+                "event": "wave-end",
+                "sourceWording": "battle-end"
+              },
+              "fillTo": "each-skill-maximum-stock",
+              "group": "sct-full",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "每个Wave战斗结束后，所有特技的SCT完全恢复。",
+              "operation": "restore-sct-full",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "ba24f4a2e20a74dc:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每个Wave战斗结束时触发"
+      ]
+    },
+    {
+      "id": "3e4595947b5c48f3",
+      "name": "精灵呼吸法",
+      "url": "https://altema.jp/lastcloudia/gino/199",
+      "text": "受到可恢复HP的主动技能效果时，SCT恢复3秒。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "SCT回复3秒"
+        },
+        {
+          "id": "sct-trigger",
+          "kind": "condition",
+          "text": "受到具有HP恢复效果的主动技能；不是自然回复或持续再生"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "受到可恢复HP的主动技能效果时，SCT恢复3秒。（回复的是SCT秒数。）。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 3,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "active-skill-healing-received",
+                "actor": "self",
+                "source": "active-skill",
+                "requiresHpRecoveryCapability": true,
+                "passiveRegenCounts": false
+              },
+              "group": "sct-seconds",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "受到可恢复HP的主动技能效果时，SCT恢复3秒。（回复的是SCT秒数。）",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "3e4595947b5c48f3:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "受到具有HP恢复效果的主动技能；不是自然回复或持续再生"
+      ]
+    },
+    {
+      "id": "全部技能:all:197",
+      "name": "格挡充能",
+      "url": "https://altema.jp/lastcloudia/gino/204",
+      "text": "[仅装备防御时生效] 防御会略微恢复 SCT",
+      "notes": "",
+      "parts": [
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "装备格挡技能并成功格挡时，SCT少量回复"
+        },
+        {
+          "id": "guard-equipped",
+          "kind": "condition",
+          "text": "要求装备的是格挡技能，不是防具"
+        },
+        {
+          "id": "guard-success",
+          "kind": "condition",
+          "text": "成功格挡时触发"
+        },
+        {
+          "id": "sct-amount",
+          "kind": "condition",
+          "text": "具体SCT回复量待确认"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "装备「格挡」技能并成功格挡时，SCT少量回复；回复量待确认。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "event": "guard-success"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "group": "sct-guard",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "装备「格挡」技能并成功格挡时，SCT少量回复；回复量待确认。",
+              "operation": "restore-sct-unconfirmed",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "全部技能:all:197:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "要求装备的是格挡技能，不是防具",
+        "成功格挡时触发",
+        "具体SCT回复量待确认"
+      ]
+    },
+    {
+      "id": "398ea3fcd696c86a",
+      "name": "特技1储备",
+      "url": "https://altema.jp/lastcloudia/gino/213",
+      "text": "第1个特技的最大库存数+1（左上方特技）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "stock-limit",
+          "kind": "effect",
+          "text": "特技1最大库存+1"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "第1特技的最大库存数+1。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "stock-limit"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "skill-stock",
+                "skillSlot": 1
+              },
+              "stocks": 1,
+              "immediatelyRestoresStocks": false,
+              "group": "stock-limit-1",
+              "partIds": [
+                "stock-limit"
+              ],
+              "summary": "第1特技的最大库存数+1。",
+              "operation": "stock-limit-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "398ea3fcd696c86a:stock-limit"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "2b6dfc06601860b0",
+      "name": "特技2储备",
+      "url": "https://altema.jp/lastcloudia/gino/264",
+      "text": "第2个特技的最大库存数+1（右上方特技）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "stock-limit",
+          "kind": "effect",
+          "text": "特技2最大库存+1"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "第2特技的最大库存数+1。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "stock-limit"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "skill-stock",
+                "skillSlot": 2
+              },
+              "stocks": 1,
+              "immediatelyRestoresStocks": false,
+              "group": "stock-limit-2",
+              "partIds": [
+                "stock-limit"
+              ],
+              "summary": "第2特技的最大库存数+1。",
+              "operation": "stock-limit-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "2b6dfc06601860b0:stock-limit"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "3550232308d53341",
+      "name": "魔兽之宴",
+      "url": "https://altema.jp/lastcloudia/gino/289",
+      "text": "战斗结束后，所有特技的SCT恢复1次。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "战斗结束后，所有特技的SCT恢复1次。"
+        },
+        {
+          "id": "battle-end",
+          "kind": "condition",
+          "text": "每个Wave战斗结束时触发"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "每个Wave战斗结束后，所有特技的SCT恢复1次。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "skillSelection": "all",
+              "trigger": {
+                "event": "wave-end",
+                "sourceWording": "battle-end"
+              },
+              "restoreStocks": 1,
+              "group": "sct-stock-all",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "每个Wave战斗结束后，所有特技的SCT恢复1次。",
+              "operation": "restore-sct-stocks",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "3550232308d53341:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每个Wave战斗结束时触发"
+      ]
+    },
+    {
+      "id": "43675d5d0ba943ae",
+      "name": "这就是力量！",
+      "url": "https://altema.jp/lastcloudia/gino/458",
+      "text": "使用特技时，该特技剩余库存越多，伤害越高（库存为6时最高+20%）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "发动特技时，该特技库存越多伤害越高，6库存最高+20%"
+        },
+        {
+          "id": "stock-curve",
+          "kind": "condition",
+          "text": "各库存对应增幅及库存读取时点待确认，不能把最高20%当作固定值"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "当前使用的特技库存越多，伤害越高；6库存最高+20%，中间档位待确认。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "scaling": {
+                "metric": "used-skill-current-stock",
+                "direction": "more-stocks-stronger",
+                "curveStatus": "unconfirmed",
+                "maxAtStocks": 6
+              },
+              "maxValuePercent": 20,
+              "group": "stock-scaled-skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "当前使用的特技库存越多，伤害越高；6库存最高+20%，中间档位待确认。",
+              "operation": "stock-scaled-damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "43675d5d0ba943ae:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "各库存对应增幅及库存读取时点待确认，不能把最高20%当作固定值"
+      ]
+    },
+    {
+      "id": "a24d9ff67f38ccf6",
+      "name": "紫魂石",
+      "url": "https://altema.jp/lastcloudia/gino/461",
+      "text": "所有特技的最大库存数+1。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "stock-limit",
+          "kind": "effect",
+          "text": "全部特技最大库存+1"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "所有特技的最大库存数+1。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "stock-limit"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "skill-stock",
+                "skillSlot": "all"
+              },
+              "stocks": 1,
+              "immediatelyRestoresStocks": false,
+              "group": "stock-limit-all",
+              "partIds": [
+                "stock-limit"
+              ],
+              "summary": "所有特技的最大库存数+1。",
+              "operation": "stock-limit-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "a24d9ff67f38ccf6:stock-limit"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "e61761228b58bde4",
+      "name": "跑者亢奋",
+      "url": "https://altema.jp/lastcloudia/gino/510",
+      "text": "连续移动每满2秒，获得“特技伤害+10%”效果，最高可叠加至+100%；发动特技攻击后或经过一定时间后解除。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "连续移动每2秒，特技增伤Buff提高10个百分点，最高100%"
+        },
+        {
+          "id": "continuous-movement",
+          "kind": "condition",
+          "text": "连续移动累计，每满2秒强化一次同一个Buff"
+        },
+        {
+          "id": "timeout",
+          "kind": "condition",
+          "text": "停止或经过时间后的Buff解除时长待确认"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "连续移动每满2秒使同一个特技增伤Buff提高10个百分点，最高100%；特技攻击后或超时解除，超时时长待确认。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "buffType": "skill-damage-up",
+              "activationMode": "moving-charge-buff",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "progressionWithinOneBuff": true,
+              "stepPercent": 10,
+              "maxValuePercent": 100,
+              "trigger": {
+                "event": "continuous-movement",
+                "intervalSeconds": 2
+              },
+              "endsOn": "skill-attack-or-timeout",
+              "durationStatus": "unconfirmed",
+              "activeByDefault": false,
+              "group": "moving-skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "连续移动每满2秒使同一个特技增伤Buff提高10个百分点，最高100%；特技攻击后或超时解除，超时时长待确认。",
+              "operation": "stacking-buff-damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "e61761228b58bde4:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续移动累计，每满2秒强化一次同一个Buff",
+        "停止或经过时间后的Buff解除时长待确认"
+      ]
+    },
+    {
+      "id": "9dffb7f0d9297302",
+      "name": "特技1增幅",
+      "url": "https://altema.jp/lastcloudia/gino/583",
+      "text": "第1个特技的SCT恢复速度-10%，伤害+20%，伤害上限+2,000（左上方特技）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "slot-damage",
+          "kind": "effect",
+          "text": "特技1伤害+20%"
+        },
+        {
+          "id": "slot-cap",
+          "kind": "effect",
+          "text": "特技1伤害上限+2,000"
+        },
+        {
+          "id": "slot-sct-speed-down",
+          "kind": "effect",
+          "text": "特技1SCT恢复速度-10%"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "第1特技伤害+20%；第1特技伤害上限+2,000；第1特技SCT恢复速度-10%，不是恢复时间直接增加10%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "slot-damage",
+              "slot-cap",
+              "slot-sct-speed-down"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 1
+              },
+              "valuePercent": 20,
+              "group": "slot1-damage",
+              "partIds": [
+                "slot-damage"
+              ],
+              "summary": "第1特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "9dffb7f0d9297302:slot-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 1
+              },
+              "capPoints": 2000,
+              "group": "slot1-cap",
+              "partIds": [
+                "slot-cap"
+              ],
+              "summary": "第1特技伤害上限+2,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "9dffb7f0d9297302:slot-cap"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT",
+                "skillSlot": 1
+              },
+              "valuePercent": 10,
+              "group": "slot1-sct-speed-down",
+              "partIds": [
+                "slot-sct-speed-down"
+              ],
+              "summary": "第1特技SCT恢复速度-10%，不是恢复时间直接增加10%。",
+              "operation": "sct-speed-down",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "9dffb7f0d9297302:slot-sct-speed-down"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "6da309b5ff349e89",
+      "name": "特技2增幅",
+      "url": "https://altema.jp/lastcloudia/gino/604",
+      "text": "第2个特技的SCT恢复速度-10%，伤害+20%，伤害上限+2,000（右上方特技）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "slot-damage",
+          "kind": "effect",
+          "text": "特技2伤害+20%"
+        },
+        {
+          "id": "slot-cap",
+          "kind": "effect",
+          "text": "特技2伤害上限+2,000"
+        },
+        {
+          "id": "slot-sct-speed-down",
+          "kind": "effect",
+          "text": "特技2SCT恢复速度-10%"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "第2特技伤害+20%；第2特技伤害上限+2,000；第2特技SCT恢复速度-10%，不是恢复时间直接增加10%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "slot-damage",
+              "slot-cap",
+              "slot-sct-speed-down"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 2
+              },
+              "valuePercent": 20,
+              "group": "slot2-damage",
+              "partIds": [
+                "slot-damage"
+              ],
+              "summary": "第2特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "6da309b5ff349e89:slot-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 2
+              },
+              "capPoints": 2000,
+              "group": "slot2-cap",
+              "partIds": [
+                "slot-cap"
+              ],
+              "summary": "第2特技伤害上限+2,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "6da309b5ff349e89:slot-cap"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT",
+                "skillSlot": 2
+              },
+              "valuePercent": 10,
+              "group": "slot2-sct-speed-down",
+              "partIds": [
+                "slot-sct-speed-down"
+              ],
+              "summary": "第2特技SCT恢复速度-10%，不是恢复时间直接增加10%。",
+              "operation": "sct-speed-down",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "6da309b5ff349e89:slot-sct-speed-down"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "763e0e91176c648b",
+      "name": "蓄力攻击",
+      "url": "https://altema.jp/lastcloudia/gino/626",
+      "text": "特技库存达到最大时，特技伤害+20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "当前发动的特技库存满时，该特技伤害+20%"
+        },
+        {
+          "id": "full-stock",
+          "kind": "condition",
+          "text": "仅判断当前使用的这个特技库存已满，不要求所有特技都满"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "当前使用的这个特技库存达到自身最大值时，该特技伤害+20%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": [
+              "full-stock"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 20,
+              "condition": {
+                "metric": "used-skill-stock",
+                "operator": "equals-own-maximum",
+                "allSkillsNeedFull": false
+              },
+              "group": "full-stock-skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "当前使用的这个特技库存达到自身最大值时，该特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "763e0e91176c648b:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "5950c82ca13345b0",
+      "name": "反击充能",
+      "url": "https://altema.jp/lastcloudia/gino/730",
+      "text": "发动反击时，SCT恢复1秒。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "SCT回复1秒"
+        },
+        {
+          "id": "sct-trigger",
+          "kind": "condition",
+          "text": "自身发动反击时"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "发动反击时，SCT恢复1秒。（回复的是SCT秒数。）。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 1,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "counter-used",
+                "actor": "self"
+              },
+              "group": "sct-seconds",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "发动反击时，SCT恢复1秒。（回复的是SCT秒数。）",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "5950c82ca13345b0:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "自身发动反击时"
+      ]
+    },
+    {
+      "id": "a0e9ad8c974ebca1",
+      "name": "弱肉强食",
+      "url": "https://altema.jp/lastcloudia/gino/760",
+      "text": "对非BOSS敌人的特技伤害+10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "non-boss-skill-damage",
+          "kind": "effect",
+          "text": "对非Boss敌人特技伤害+10%"
+        },
+        {
+          "id": "non-boss-target",
+          "kind": "condition",
+          "text": "目标敌人不是Boss"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "对非Boss敌人的特技伤害+10%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "non-boss-skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "non-boss"
+              },
+              "valuePercent": 10,
+              "group": "non-boss-skill-damage",
+              "partIds": [
+                "non-boss-skill-damage"
+              ],
+              "summary": "对非Boss敌人的特技伤害+10%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "a0e9ad8c974ebca1:non-boss-skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人不是Boss"
+      ]
+    },
+    {
+      "id": "c0f93572d58f624a",
+      "name": "特技3增幅",
+      "url": "https://altema.jp/lastcloudia/gino/827",
+      "text": "第3个特技的SCT恢复速度-10%，伤害+20%，伤害上限+2,000（左下方特技）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "slot-damage",
+          "kind": "effect",
+          "text": "特技3伤害+20%"
+        },
+        {
+          "id": "slot-cap",
+          "kind": "effect",
+          "text": "特技3伤害上限+2,000"
+        },
+        {
+          "id": "slot-sct-speed-down",
+          "kind": "effect",
+          "text": "特技3SCT恢复速度-10%"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "第3特技伤害+20%；第3特技伤害上限+2,000；第3特技SCT恢复速度-10%，不是恢复时间直接增加10%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "slot-damage",
+              "slot-cap",
+              "slot-sct-speed-down"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 3
+              },
+              "valuePercent": 20,
+              "group": "slot3-damage",
+              "partIds": [
+                "slot-damage"
+              ],
+              "summary": "第3特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "c0f93572d58f624a:slot-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillSlot": 3
+              },
+              "capPoints": 2000,
+              "group": "slot3-cap",
+              "partIds": [
+                "slot-cap"
+              ],
+              "summary": "第3特技伤害上限+2,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "c0f93572d58f624a:slot-cap"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT",
+                "skillSlot": 3
+              },
+              "valuePercent": 10,
+              "group": "slot3-sct-speed-down",
+              "partIds": [
+                "slot-sct-speed-down"
+              ],
+              "summary": "第3特技SCT恢复速度-10%，不是恢复时间直接增加10%。",
+              "operation": "sct-speed-down",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "c0f93572d58f624a:slot-sct-speed-down"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "cb8a66108ee1f3e0",
+      "name": "十二支之力「击」",
+      "url": "https://altema.jp/lastcloudia/gino/968",
+      "text": "类型追加“兽”；特技伤害+12%，特技伤害上限+1,200。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "类型追加“兽”"
+        },
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "特技伤害+12%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "特技伤害上限+1,200"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "特技伤害+12%；特技伤害上限+1,200。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage",
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 12,
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "特技伤害+12%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "cb8a66108ee1f3e0:skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "capPoints": 1200,
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技伤害上限+1,200。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "cb8a66108ee1f3e0:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "类型追加“兽”"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "31e0fc5aedd96ccb",
+      "name": "黑色骑士团",
+      "url": "https://altema.jp/lastcloudia/gino/1067",
+      "text": "装备“黑色骑士团”的友方角色达到2名以上时，特技伤害上限提升（2名：+1,000，3名：+2,000，4名：+3,000）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "allies-with-skill",
+          "kind": "condition",
+          "text": "装备黑色骑士团的我方单位至少2名，按实际人数取对应档位"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "按装备黑色骑士团的我方人数：2名特技上限+1,000、3名+2,000、4名+3,000"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "装备黑色骑士团的我方单位2／3／4名时，特技上限分别+1,000／2,000／3,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "31e0fc5aedd96ccb",
+              "minimumCount": 2,
+              "tiers": [
+                {
+                  "count": 2,
+                  "capPoints": 1000
+                },
+                {
+                  "count": 3,
+                  "capPoints": 2000
+                },
+                {
+                  "count": 4,
+                  "capPoints": 3000
+                }
+              ],
+              "belowMinimumCapPoints": 0,
+              "group": "team-skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "装备黑色骑士团的我方单位2／3／4名时，特技上限分别+1,000／2,000／3,000。",
+              "operation": "tiered-cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "31e0fc5aedd96ccb:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "装备黑色骑士团的我方单位至少2名，按实际人数取对应档位"
+      ]
+    },
+    {
+      "id": "7597b164f4387ec7",
+      "name": "一击入魂",
+      "url": "https://altema.jp/lastcloudia/gino/1257",
+      "text": "使用攻击型特技时，消耗最大HP的15%，使伤害+25%、伤害上限+2,000。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "hp-cost",
+          "kind": "effect",
+          "text": "发动攻击型特技时消耗最大HP的15%"
+        },
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "该次攻击型特技伤害+25%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "该次攻击型特技上限+2,000"
+        },
+        {
+          "id": "attack-skill",
+          "kind": "condition",
+          "text": "使用攻击型特技时"
+        },
+        {
+          "id": "hp-payment-unconfirmed",
+          "kind": "condition",
+          "text": "当前HP不足最大HP的15%时，消耗与加成的处理待确认"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "发动攻击型特技时，消耗相当于最大HP15%的当前HP；发动攻击型特技并支付最大HP的15%时，该次特技伤害+25%；发动攻击型特技并支付最大HP的15%时，该次特技上限+2,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "hp-cost",
+              "skill-damage",
+              "skill-cap"
+            ],
+            "conditionPartIds": [
+              "attack-skill"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillKind": "attack"
+              },
+              "resource": "HP",
+              "costBase": "maximum-HP",
+              "costPercent": 15,
+              "trigger": {
+                "actor": "self",
+                "event": "attack-skill-used"
+              },
+              "payment": {
+                "resource": "HP",
+                "base": "maximum-HP",
+                "percent": 15,
+                "insufficientResourceStatus": "unconfirmed"
+              },
+              "group": "hp-cost",
+              "partIds": [
+                "hp-cost"
+              ],
+              "summary": "发动攻击型特技时，消耗相当于最大HP15%的当前HP。",
+              "operation": "consume-resource",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "7597b164f4387ec7:hp-cost"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillKind": "attack"
+              },
+              "valuePercent": 25,
+              "trigger": {
+                "actor": "self",
+                "event": "attack-skill-used"
+              },
+              "payment": {
+                "resource": "HP",
+                "base": "maximum-HP",
+                "percent": 15,
+                "insufficientResourceStatus": "unconfirmed"
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "发动攻击型特技并支付最大HP的15%时，该次特技伤害+25%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "7597b164f4387ec7:skill-damage"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "skillKind": "attack"
+              },
+              "capPoints": 2000,
+              "trigger": {
+                "actor": "self",
+                "event": "attack-skill-used"
+              },
+              "payment": {
+                "resource": "HP",
+                "base": "maximum-HP",
+                "percent": 15,
+                "insufficientResourceStatus": "unconfirmed"
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "发动攻击型特技并支付最大HP的15%时，该次特技上限+2,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "7597b164f4387ec7:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "当前HP不足最大HP的15%时，消耗与加成的处理待确认"
+      ]
+    },
+    {
+      "id": "6958b9c4d7aad7cb",
+      "name": "Dear Hearts",
+      "url": "https://altema.jp/lastcloudia/gino/1271",
+      "text": "除自身外，若刚好只有1名友方角色也装备“Dear Hearts”，则自身战斗不能时，使仍存活的配对角色HP大幅恢复，并使其所有特技的SCT恢复15秒（每对角色仅限触发1次）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "hp-restore",
+          "kind": "effect",
+          "text": "自身倒下时，使仍存活的配对角色HP大幅回复，具体回复量待确认"
+        },
+        {
+          "id": "paired-skill",
+          "kind": "condition",
+          "text": "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
+        },
+        {
+          "id": "self-death",
+          "kind": "condition",
+          "text": "技能持有者自身陷入战斗不能时触发"
+        },
+        {
+          "id": "once-per-pair",
+          "kind": "condition",
+          "text": "每对角色最多触发1次，不是每个角色各1次"
+        },
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "存活的配对角色全部特技SCT回复15秒"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "paired-living-ally",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 15,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "became-incapacitated",
+                "actor": "self"
+              },
+              "pair": {
+                "otherEquippedCount": 1,
+                "requiredSkillId": "6958b9c4d7aad7cb",
+                "targetMustBeAlive": true
+              },
+              "maxTriggers": 1,
+              "resetScope": "pair",
+              "group": "sct-paired-ally",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。",
+              "operation": "restore-sct-seconds",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "6958b9c4d7aad7cb:sct-restore"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身倒下时，使仍存活的配对角色HP大幅回复，具体回复量待确认"
+      ],
+      "remainingConditions": [
+        "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活",
+        "技能持有者自身陷入战斗不能时触发",
+        "每对角色最多触发1次，不是每个角色各1次"
+      ]
+    },
+    {
+      "id": "763f4480345cdbb6",
+      "name": "龙卷攻击",
+      "url": "https://altema.jp/lastcloudia/gino/1368",
+      "text": "击败敌人时，获得“特技伤害+20%”的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "击败敌人时获得特技伤害+20%的40秒Buff"
+        },
+        {
+          "id": "enemy-defeated",
+          "kind": "condition",
+          "text": "自身击败敌人时触发"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "自身击败敌人后获得特技伤害+20%的Buff，持续40秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 20,
+              "buffType": "skill-damage-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "actor": "self",
+                "event": "enemy-defeated"
+              },
+              "stacking": "highest-active-buff-of-same-type-only",
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "自身击败敌人后获得特技伤害+20%的Buff，持续40秒。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "763f4480345cdbb6:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "自身击败敌人时触发"
+      ]
+    },
+    {
+      "id": "2d7be6839ef276d6",
+      "name": "危机之绿",
+      "url": "https://altema.jp/lastcloudia/gino/1463",
+      "text": "对带有2个以上减益效果的敌人，特技伤害+15%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "对带有2个以上减益效果的敌人特技伤害+15%"
+        },
+        {
+          "id": "enemy-debuff-count",
+          "kind": "condition",
+          "text": "目标敌人当前带有至少2个减益效果；不等同于2种基础异常状态"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "目标敌人拥有至少2个减益效果时，特技伤害+15%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyDebuffCountGte": 2
+              },
+              "valuePercent": 15,
+              "group": "debuff-count-skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "目标敌人拥有至少2个减益效果时，特技伤害+15%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "2d7be6839ef276d6:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人当前带有至少2个减益效果；不等同于2种基础异常状态"
+      ]
+    },
+    {
+      "id": "27978c00d7374193",
+      "name": "弱肉强食2",
+      "url": "https://altema.jp/lastcloudia/gino/1526",
+      "text": "对非BOSS敌人的特技伤害+20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "non-boss-skill-damage",
+          "kind": "effect",
+          "text": "对非Boss敌人特技伤害+20%"
+        },
+        {
+          "id": "non-boss-target",
+          "kind": "condition",
+          "text": "目标敌人不是Boss"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "对非Boss敌人的特技伤害+20%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "non-boss-skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "non-boss"
+              },
+              "valuePercent": 20,
+              "group": "non-boss-skill-damage",
+              "partIds": [
+                "non-boss-skill-damage"
+              ],
+              "summary": "对非Boss敌人的特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "27978c00d7374193:non-boss-skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人不是Boss"
+      ]
+    },
+    {
+      "id": "74710ff77dbf0cb0",
+      "name": "无影",
+      "url": "https://altema.jp/lastcloudia/gino/1743",
+      "text": "敌人正在发动特技或反击时，对该敌人的特技伤害+20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "敌人发动特技或反击时，对该敌人特技伤害+20%"
+        },
+        {
+          "id": "enemy-action",
+          "kind": "condition",
+          "text": "判断目标敌人正在发动特技或反击，二者为OR；不是自身反击"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "目标敌人正在发动特技或反击时，对其特技伤害+20%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyActionAnyOf": [
+                  "skill",
+                  "counter"
+                ]
+              },
+              "valuePercent": 20,
+              "group": "enemy-action-skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "目标敌人正在发动特技或反击时，对其特技伤害+20%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "74710ff77dbf0cb0:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "判断目标敌人正在发动特技或反击，二者为OR；不是自身反击"
+      ]
+    },
+    {
+      "id": "7fa993c76e14f621",
+      "name": "进击的姿势",
+      "url": "https://altema.jp/lastcloudia/gino/1745",
+      "text": "击败敌人时，获得“特技伤害+30%”的增益效果。",
+      "notes": "触发后施加于自身，持续40秒。",
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "击败敌人时获得特技伤害+30%的40秒Buff"
+        },
+        {
+          "id": "enemy-defeated",
+          "kind": "condition",
+          "text": "自身击败敌人时触发"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "自身击败敌人后获得特技伤害+30%的Buff，持续40秒。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 30,
+              "buffType": "skill-damage-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "actor": "self",
+                "event": "enemy-defeated"
+              },
+              "stacking": "highest-active-buff-of-same-type-only",
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "自身击败敌人后获得特技伤害+30%的Buff，持续40秒。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "7fa993c76e14f621:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "自身击败敌人时触发"
+      ]
+    },
+    {
+      "id": "f838f311a82579e0",
+      "name": "桶～子",
+      "url": "https://altema.jp/lastcloudia/gino/1773",
+      "text": "战斗开始后每10秒，有概率获得增益效果，使下一次发动的特技伤害+30%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "获得下一次特技伤害+30%的增益"
+        },
+        {
+          "id": "next-skill",
+          "kind": "condition",
+          "text": "只用于获得Buff后的下一次特技"
+        },
+        {
+          "id": "grant-chance",
+          "kind": "condition",
+          "text": "每10秒尝试赋予的概率及已有Buff刷新规则待确认"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "每10秒有概率获得Buff，下一次特技伤害+30%；概率待确认。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": [
+              "next-skill"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 30,
+              "buffType": "skill-damage-up",
+              "activationMode": "next-use-buff",
+              "uses": 1,
+              "grantIntervalSeconds": 10,
+              "chanceStatus": "unconfirmed",
+              "activeByDefault": false,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "每10秒有概率获得Buff，下一次特技伤害+30%；概率待确认。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "f838f311a82579e0:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每10秒尝试赋予的概率及已有Buff刷新规则待确认"
+      ]
+    },
+    {
+      "id": "fac8318ca53f2e7b",
+      "name": "凶兽之爪",
+      "url": "https://altema.jp/lastcloudia/gino/1816",
+      "text": "特技发动时，向目标敌人累积裂伤值。裂伤值达到一定值时触发裂伤，使目标HP减少最大HP的15%（HP减少上限30,000,000）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "skill-used",
+          "kind": "condition",
+          "text": "自身发动特技时，向当前目标累积裂伤值"
+        },
+        {
+          "id": "laceration-value",
+          "kind": "effect",
+          "text": "向当前目标敌人累积裂伤值"
+        },
+        {
+          "id": "laceration-hp-loss",
+          "kind": "effect",
+          "text": "达到裂伤阈值时，目标HP减少最大HP的15%，上限30,000,000"
+        },
+        {
+          "id": "laceration-parameters",
+          "kind": "condition",
+          "text": "每次裂伤累积量及裂伤触发阈值待确认"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "自身发动特技时，向目标敌人累积裂伤值；每次累积量及触发阈值待确认；裂伤累计达到阈值后，目标HP减少其最大HP的15%，最多30,000,000；不是特技伤害+15%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "laceration-value",
+              "laceration-hp-loss"
+            ],
+            "conditionPartIds": [
+              "skill-used"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "target-enemy",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "skill-used"
+              },
+              "per": "skill-activation",
+              "amountStatus": "unconfirmed",
+              "thresholdStatus": "unconfirmed",
+              "group": "laceration-accumulation",
+              "partIds": [
+                "laceration-value"
+              ],
+              "summary": "自身发动特技时，向目标敌人累积裂伤值；每次累积量及触发阈值待确认。",
+              "operation": "accumulate-laceration",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "fac8318ca53f2e7b:laceration-value"
+            },
+            {
+              "target": "target-enemy",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "laceration"
+              },
+              "trigger": {
+                "event": "laceration-threshold-reached"
+              },
+              "hpBase": "target-maximum-HP",
+              "hpLossPercent": 15,
+              "hpLossCapPoints": 30000000,
+              "group": "laceration-hp-loss",
+              "partIds": [
+                "laceration-hp-loss"
+              ],
+              "summary": "裂伤累计达到阈值后，目标HP减少其最大HP的15%，最多30,000,000；不是特技伤害+15%。",
+              "operation": "reduce-enemy-hp",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "fac8318ca53f2e7b:laceration-hp-loss"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每次裂伤累积量及裂伤触发阈值待确认"
+      ]
+    },
+    {
+      "id": "d542c5868da412e7",
+      "name": "预测演算",
+      "url": "https://altema.jp/lastcloudia/gino/1856",
+      "text": "仅自身存活时，SCT恢复速度+20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "sct-speed",
+          "kind": "effect",
+          "text": "仅自身存活时，SCT恢复速度+20%"
+        },
+        {
+          "id": "team-state",
+          "kind": "condition",
+          "text": "仅自身存活"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "仅自身存活时，SCT恢复速度+20%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "sct-speed"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "valuePercent": 20,
+              "condition": {
+                "metric": "living-allied-unit-count",
+                "operator": "eq",
+                "count": 1,
+                "onlyLivingUnitIsSelf": true
+              },
+              "group": "sct-speed-up",
+              "partIds": [
+                "sct-speed"
+              ],
+              "summary": "仅自身存活时，SCT恢复速度+20%。",
+              "operation": "sct-speed-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "d542c5868da412e7:sct-speed"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "仅自身存活"
+      ]
+    },
+    {
+      "id": "2a1da0c826ca8526",
+      "name": "暴风龙四天王",
+      "url": "https://altema.jp/lastcloudia/gino/1874",
+      "text": "装备“暴风龙四天王”的友方角色达到3名以上时，特技伤害+30%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "至少3名友方装备暴风龙四天王时，特技伤害+30%"
+        },
+        {
+          "id": "allies-with-skill",
+          "kind": "condition",
+          "text": "至少3名我方单位装备暴风龙四天王"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "至少3名友方装备暴风龙四天王时，特技伤害+30%。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 30,
+              "condition": {
+                "metric": "allies-with-same-skill",
+                "requiredSkillId": "2a1da0c826ca8526",
+                "operator": "gte",
+                "count": 3
+              },
+              "group": "skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "至少3名友方装备暴风龙四天王时，特技伤害+30%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "2a1da0c826ca8526:skill-damage"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "至少3名我方单位装备暴风龙四天王"
+      ]
+    },
+    {
+      "id": "6d4f5f8de8ab47d2",
+      "name": "裂伤加速",
+      "url": "https://altema.jp/lastcloudia/gino/1931",
+      "text": "特技发动时，对目标敌人施加的裂伤值+20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "skill-used",
+          "kind": "condition",
+          "text": "自身发动特技时"
+        },
+        {
+          "id": "laceration-value-up",
+          "kind": "effect",
+          "text": "特技施加的裂伤值+20%"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "发动特技时，对目标敌人施加的裂伤值+20%；不改变裂伤造成的HP减少比例。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "laceration-value-up"
+            ],
+            "conditionPartIds": [
+              "skill-used"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "target-enemy",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 20,
+              "trigger": {
+                "actor": "self",
+                "event": "skill-used"
+              },
+              "grantsLacerationSource": false,
+              "group": "laceration-value-up",
+              "partIds": [
+                "laceration-value-up"
+              ],
+              "summary": "发动特技时，对目标敌人施加的裂伤值+20%；不改变裂伤造成的HP减少比例。",
+              "operation": "laceration-value-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "6d4f5f8de8ab47d2:laceration-value-up"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "cb30f3c1c621732d",
+      "name": "格雷拉特家的血统",
+      "url": "https://altema.jp/lastcloudia/gino/2028",
+      "text": "自身以外有女性友方存活时，对BOSS的特技和魔法伤害上限+10,000。",
+      "notes": "只需自身以外存在女性友方存活，无须其余队友全部为女性。",
+      "parts": [
+        {
+          "id": "magic-cap",
+          "kind": "effect",
+          "text": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000"
+        },
+        {
+          "id": "female-ally-alive",
+          "kind": "condition",
+          "text": "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "目标敌人为Boss"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "自身以外有女性友方存活时，对Boss特技上限+10,000"
+        }
+      ],
+      "tagDetails": {
+        "特技相关": {
+          "summary": "自身以外至少一名女性友方存活时，对Boss特技上限+10,000。",
+          "relation": "technique-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "capPoints": 10000,
+              "condition": {
+                "metric": "living-female-allies-excluding-self",
+                "operator": "gte",
+                "count": 1
+              },
+              "group": "boss-skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "自身以外至少一名女性友方存活时，对Boss特技上限+10,000。",
+              "operation": "cap-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "cb30f3c1c621732d:skill-cap"
+            }
+          ],
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        }
+      },
+      "relatedSkillIds": [],
+      "assignedTags": [
+        "特技相关"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000"
+      ],
+      "remainingConditions": [
+        "自身以外至少一名女性友方存活；不要求其余队友全为女性",
+        "目标敌人为Boss"
+      ]
     }
   ],
   "views": {
@@ -60760,8 +65467,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 32,
         "notRelatedUnique": 903,
-        "ready": 13,
-        "partial": 19,
+        "ready": 14,
+        "partial": 18,
         "unknown": 0,
         "previousBasicMpUnique": 8,
         "additionalRelatedUnique": 24
@@ -60975,8 +65682,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 1,
-        "partial": 3,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -60994,8 +65701,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 2,
-        "partial": 3,
+        "ready": 5,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -61203,8 +65910,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
-        "ready": 49,
-        "partial": 68,
+        "ready": 56,
+        "partial": 61,
         "unknown": 0
       }
     },
@@ -61266,8 +65973,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 26,
         "notRelatedUnique": 909,
-        "ready": 7,
-        "partial": 19,
+        "ready": 10,
+        "partial": 16,
         "unknown": 0
       }
     },
@@ -61296,8 +66003,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 3,
-        "partial": 3,
+        "ready": 5,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -61565,8 +66272,164 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 113,
         "notRelatedUnique": 822,
-        "ready": 52,
-        "partial": 61,
+        "ready": 56,
+        "partial": 57,
+        "unknown": 0
+      }
+    },
+    "technique": {
+      "label": "特技相关",
+      "passKind": "technique-effects-and-condition",
+      "childKeys": [
+        "technique-slot1-cap",
+        "technique-slot2-cap",
+        "technique-slot3-cap",
+        "technique-matching-skill-damage",
+        "technique-matching-skill-cap",
+        "technique-skill-damage",
+        "technique-behind-skill-damage",
+        "technique-skill-cap",
+        "technique-dark-skill-damage",
+        "technique-fire-skill-damage",
+        "technique-fire-skill-cap",
+        "technique-ice-skill-damage",
+        "technique-skill-break",
+        "technique-boss-skill-cap",
+        "technique-skill-lock",
+        "technique-non-boss-skill-damage",
+        "technique-enemy-low-hp-skill-damage",
+        "technique-debuff-count-skill-damage",
+        "technique-enemy-action-skill-damage",
+        "technique-boss-skill-damage",
+        "technique-ally-machine-skill-cap",
+        "technique-ally-soldier-skill-cap",
+        "technique-team-skill-cap",
+        "technique-opening-stat-skill-cap",
+        "technique-slot1-damage",
+        "technique-slot1-sct-speed-down",
+        "technique-slot2-damage",
+        "technique-slot2-sct-speed-down",
+        "technique-slot3-damage",
+        "technique-slot3-sct-speed-down",
+        "technique-stock-limit-1",
+        "technique-stock-limit-2",
+        "technique-stock-limit-all",
+        "technique-full-stock-skill-damage",
+        "technique-stock-scaled-skill-damage",
+        "technique-mp-cost",
+        "technique-hp-cost",
+        "technique-sct-slot1",
+        "technique-sct-slot2",
+        "technique-sct-slot3",
+        "technique-sct-seconds",
+        "technique-sct-full",
+        "technique-sct-stock-all",
+        "technique-sct-stock-random",
+        "technique-sct-inherit",
+        "technique-sct-guard",
+        "technique-sct-paired-ally",
+        "technique-sct-speed-up",
+        "technique-moving-skill-damage",
+        "technique-kill-scaled-skill-damage",
+        "technique-kill-count-reset",
+        "technique-team-scaled-skill-damage",
+        "technique-laceration-accumulation",
+        "technique-laceration-hp-loss",
+        "technique-laceration-value-up"
+      ],
+      "overviewLabel": "全部特技相关（分组）",
+      "separateSections": true,
+      "displayOrder": [
+        "0bcbd8a4dc9889d5",
+        "9644f0427e3b56be",
+        "36bf633cebd4748e",
+        "ba24f4a2e20a74dc",
+        "61bd034faff939fe",
+        "7983e8b7c5f6eceb",
+        "3e4595947b5c48f3",
+        "84d23b82f37b1490",
+        "全部技能:all:197",
+        "e3c604ea07ef0eee",
+        "398ea3fcd696c86a",
+        "4f8a8b3359a2206f",
+        "b8934861f6189f6e",
+        "2b6dfc06601860b0",
+        "3550232308d53341",
+        "60eca07e7c2f1a33",
+        "全部技能:all:326",
+        "6bb2c943681bb3e7",
+        "43675d5d0ba943ae",
+        "3797f19e9c516ee7",
+        "a24d9ff67f38ccf6",
+        "387b6e052ad74bb1",
+        "e61761228b58bde4",
+        "9dffb7f0d9297302",
+        "6da309b5ff349e89",
+        "7ef2d01b96b2406e",
+        "763e0e91176c648b",
+        "1c1fef3cdbb3164c",
+        "4e8a749504d3799f",
+        "5950c82ca13345b0",
+        "4170fcd45f772a61",
+        "a0e9ad8c974ebca1",
+        "c0f93572d58f624a",
+        "68c1f4b9c51cb15f",
+        "0599f84fed5320a1",
+        "4c3d40e4148fa790",
+        "e822e4450ab4dcad",
+        "cb8a66108ee1f3e0",
+        "全部技能:all:572",
+        "e27f6e2a867c1a2e",
+        "ecf05abb4f8e4b10",
+        "21cb7e642833caf7",
+        "31e0fc5aedd96ccb",
+        "4aafd29a15ad98c4",
+        "e4d78aa3f37004bd",
+        "7597b164f4387ec7",
+        "6958b9c4d7aad7cb",
+        "0257679d2708509b",
+        "1519299bec222fca",
+        "5c16599b8947ce62",
+        "8f928b05fc447ac9",
+        "0e3dba96957b5563",
+        "c5f213214da57548",
+        "763f4480345cdbb6",
+        "c059571f370020f5",
+        "f28fd4eede5caea4",
+        "483798470761efdf",
+        "2d7be6839ef276d6",
+        "27978c00d7374193",
+        "efdc0583f2618634",
+        "b1235f3ab30aff73",
+        "2ae3c62f62930431",
+        "7fae80d83cb7551a",
+        "9e9ea3affb033550",
+        "ed00d6c7e726b8ce",
+        "74710ff77dbf0cb0",
+        "7fa993c76e14f621",
+        "73530ee6f38ccc34",
+        "a8ee2e010b6e5d6c",
+        "f838f311a82579e0",
+        "869205f984d49c10",
+        "fac8318ca53f2e7b",
+        "bc94425edcde5d97",
+        "03a679c6deeb2898",
+        "d542c5868da412e7",
+        "2a1da0c826ca8526",
+        "9efcdc31fa117787",
+        "6d4f5f8de8ab47d2",
+        "07cab38a1e00eaa5",
+        "c3b83f342aaa5c37",
+        "89a90b8df36a0475",
+        "cb30f3c1c621732d"
+      ],
+      "scopeDescription": "特技增伤、上限、属性／Boss等限定、特技1／2／3、SCT秒数与库存、恢复速度、使用限制、Break和裂伤分别列组。发动条件与实际效果各自保留标签，回复者和受益对象分开；未处理的其他条件及未知参数继续待判断。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 82,
+        "notRelatedUnique": 853,
+        "ready": 37,
+        "partial": 45,
         "unknown": 0
       }
     },
@@ -61599,8 +66462,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 0,
-        "partial": 6,
+        "ready": 2,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -62049,8 +66912,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 30,
         "notRelatedUnique": 905,
-        "ready": 21,
-        "partial": 9,
+        "ready": 22,
+        "partial": 8,
         "unknown": 0
       }
     },
@@ -62739,8 +67602,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 58,
         "notRelatedUnique": 877,
-        "ready": 2,
-        "partial": 56,
+        "ready": 9,
+        "partial": 49,
         "unknown": 0
       }
     },
@@ -62785,8 +67648,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 9,
         "notRelatedUnique": 926,
-        "ready": 0,
-        "partial": 9,
+        "ready": 1,
+        "partial": 8,
         "unknown": 0
       }
     },
@@ -62923,8 +67786,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 13,
         "notRelatedUnique": 922,
-        "ready": 4,
-        "partial": 9,
+        "ready": 7,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -63633,8 +68496,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 0,
-        "partial": 4,
+        "ready": 2,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -63654,8 +68517,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 0,
-        "partial": 5,
+        "ready": 4,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -63912,8 +68775,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -64116,8 +68979,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -64133,8 +68996,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -64327,8 +69190,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -64446,8 +69309,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -64463,8 +69326,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -65008,8 +69871,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 26,
         "notRelatedUnique": 909,
-        "ready": 8,
-        "partial": 18,
+        "ready": 9,
+        "partial": 17,
         "unknown": 0
       }
     },
@@ -65167,8 +70030,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 7,
         "notRelatedUnique": 928,
-        "ready": 0,
-        "partial": 7,
+        "ready": 1,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -65697,8 +70560,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -65714,8 +70577,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -65731,8 +70594,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -68126,8 +72989,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 3,
-        "partial": 1,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -72313,8 +77176,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -72331,8 +77194,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -72349,8 +77212,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -72496,8 +77359,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -72993,8 +77856,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 3,
         "notRelatedUnique": 932,
-        "ready": 0,
-        "partial": 3,
+        "ready": 1,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -73027,8 +77890,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -73596,8 +78459,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 1,
-        "partial": 5,
+        "ready": 4,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -73680,8 +78543,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 2,
-        "partial": 3,
+        "ready": 5,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -74688,6 +79551,993 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "technique-slot1-cap": {
+      "label": "特技1：伤害上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "slot1-cap",
+      "displayOrder": [
+        "9dffb7f0d9297302",
+        "4c3d40e4148fa790",
+        "c5f213214da57548"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-slot2-cap": {
+      "label": "特技2：伤害上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "slot2-cap",
+      "displayOrder": [
+        "6da309b5ff349e89",
+        "e822e4450ab4dcad",
+        "2ae3c62f62930431"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-slot3-cap": {
+      "label": "特技3：伤害上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "slot3-cap",
+      "displayOrder": [
+        "c0f93572d58f624a",
+        "21cb7e642833caf7",
+        "03a679c6deeb2898"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-matching-skill-damage": {
+      "label": "攻击与武器同属性：特技伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "matching-skill-damage",
+      "displayOrder": [
+        "0257679d2708509b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-matching-skill-cap": {
+      "label": "攻击与武器同属性：特技伤害上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "matching-skill-cap",
+      "displayOrder": [
+        "0257679d2708509b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-skill-damage": {
+      "label": "特技伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "skill-damage",
+      "displayOrder": [
+        "84d23b82f37b1490",
+        "4e8a749504d3799f",
+        "68c1f4b9c51cb15f",
+        "0599f84fed5320a1",
+        "cb8a66108ee1f3e0",
+        "全部技能:all:572",
+        "7597b164f4387ec7",
+        "1519299bec222fca",
+        "0e3dba96957b5563",
+        "763f4480345cdbb6",
+        "c059571f370020f5",
+        "f28fd4eede5caea4",
+        "7fae80d83cb7551a",
+        "7fa993c76e14f621",
+        "f838f311a82579e0",
+        "bc94425edcde5d97",
+        "2a1da0c826ca8526"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 17,
+        "notRelatedUnique": 918,
+        "ready": 6,
+        "partial": 11,
+        "unknown": 0
+      }
+    },
+    "technique-behind-skill-damage": {
+      "label": "背后攻击：特技伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "behind-skill-damage",
+      "displayOrder": [
+        "1519299bec222fca"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-skill-cap": {
+      "label": "特技伤害上限增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "skill-cap",
+      "displayOrder": [
+        "cb8a66108ee1f3e0",
+        "全部技能:all:572",
+        "7597b164f4387ec7",
+        "f28fd4eede5caea4",
+        "483798470761efdf",
+        "a8ee2e010b6e5d6c",
+        "bc94425edcde5d97",
+        "9efcdc31fa117787"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 8,
+        "notRelatedUnique": 927,
+        "ready": 2,
+        "partial": 6,
+        "unknown": 0
+      }
+    },
+    "technique-dark-skill-damage": {
+      "label": "暗属性特技伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "dark-skill-damage",
+      "displayOrder": [
+        "efdc0583f2618634"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-fire-skill-damage": {
+      "label": "火属性特技伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "fire-skill-damage",
+      "displayOrder": [
+        "9e9ea3affb033550"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-fire-skill-cap": {
+      "label": "火属性特技伤害上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "fire-skill-cap",
+      "displayOrder": [
+        "9e9ea3affb033550"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-ice-skill-damage": {
+      "label": "冰属性特技伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "ice-skill-damage",
+      "displayOrder": [
+        "ed00d6c7e726b8ce"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-skill-break": {
+      "label": "特技Break值增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "skill-break",
+      "displayOrder": [
+        "73530ee6f38ccc34"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-boss-skill-cap": {
+      "label": "对Boss特技伤害上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "boss-skill-cap",
+      "displayOrder": [
+        "7ef2d01b96b2406e",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62",
+        "bc94425edcde5d97",
+        "cb30f3c1c621732d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 3,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "technique-skill-lock": {
+      "label": "特技使用限制",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "skill-lock",
+      "displayOrder": [
+        "68c1f4b9c51cb15f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-non-boss-skill-damage": {
+      "label": "对非Boss特技伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "non-boss-skill-damage",
+      "displayOrder": [
+        "a0e9ad8c974ebca1",
+        "27978c00d7374193"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "technique-enemy-low-hp-skill-damage": {
+      "label": "对濒死敌人特技伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "enemy-low-hp-skill-damage",
+      "displayOrder": [
+        "e4d78aa3f37004bd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-debuff-count-skill-damage": {
+      "label": "对至少2个减益敌人：特技增伤",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "debuff-count-skill-damage",
+      "displayOrder": [
+        "2d7be6839ef276d6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-enemy-action-skill-damage": {
+      "label": "敌人发动特技／反击时：特技增伤",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "enemy-action-skill-damage",
+      "displayOrder": [
+        "74710ff77dbf0cb0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-boss-skill-damage": {
+      "label": "对Boss特技伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "boss-skill-damage",
+      "displayOrder": [
+        "6bb2c943681bb3e7",
+        "7ef2d01b96b2406e",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 4,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-ally-machine-skill-cap": {
+      "label": "我方机械类型人数：特技上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "ally-machine-skill-cap",
+      "displayOrder": [
+        "4aafd29a15ad98c4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-ally-soldier-skill-cap": {
+      "label": "我方士兵类型人数：特技上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "ally-soldier-skill-cap",
+      "displayOrder": [
+        "b1235f3ab30aff73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-team-skill-cap": {
+      "label": "同技能队伍人数：特技上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "team-skill-cap",
+      "displayOrder": [
+        "31e0fc5aedd96ccb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-opening-stat-skill-cap": {
+      "label": "开场攻击力≥魔力：特技上限",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "opening-stat-skill-cap",
+      "displayOrder": [
+        "07cab38a1e00eaa5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-slot1-damage": {
+      "label": "特技1：伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "slot1-damage",
+      "displayOrder": [
+        "9dffb7f0d9297302"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-slot1-sct-speed-down": {
+      "label": "特技1：SCT恢复速度降低",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "slot1-sct-speed-down",
+      "displayOrder": [
+        "9dffb7f0d9297302"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-slot2-damage": {
+      "label": "特技2：伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "slot2-damage",
+      "displayOrder": [
+        "6da309b5ff349e89"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-slot2-sct-speed-down": {
+      "label": "特技2：SCT恢复速度降低",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "slot2-sct-speed-down",
+      "displayOrder": [
+        "6da309b5ff349e89"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-slot3-damage": {
+      "label": "特技3：伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "slot3-damage",
+      "displayOrder": [
+        "c0f93572d58f624a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-slot3-sct-speed-down": {
+      "label": "特技3：SCT恢复速度降低",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "slot3-sct-speed-down",
+      "displayOrder": [
+        "c0f93572d58f624a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-stock-limit-1": {
+      "label": "特技1：最大库存增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "stock-limit-1",
+      "displayOrder": [
+        "398ea3fcd696c86a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-stock-limit-2": {
+      "label": "特技2：最大库存增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "stock-limit-2",
+      "displayOrder": [
+        "2b6dfc06601860b0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-stock-limit-all": {
+      "label": "全部特技：最大库存增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "stock-limit-all",
+      "displayOrder": [
+        "a24d9ff67f38ccf6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-full-stock-skill-damage": {
+      "label": "当前特技满库存：伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "full-stock-skill-damage",
+      "displayOrder": [
+        "763e0e91176c648b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-stock-scaled-skill-damage": {
+      "label": "当前特技库存越多：伤害增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "stock-scaled-skill-damage",
+      "displayOrder": [
+        "43675d5d0ba943ae"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-mp-cost": {
+      "label": "发动特技：MP消耗",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "mp-cost",
+      "displayOrder": [
+        "84d23b82f37b1490",
+        "a8ee2e010b6e5d6c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "technique-hp-cost": {
+      "label": "发动特技：HP消耗",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "hp-cost",
+      "displayOrder": [
+        "7597b164f4387ec7",
+        "9efcdc31fa117787"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "technique-sct-slot1": {
+      "label": "特技1：SCT回复",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-slot1",
+      "displayOrder": [
+        "61bd034faff939fe"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-sct-slot2": {
+      "label": "特技2：SCT回复",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-slot2",
+      "displayOrder": [
+        "e3c604ea07ef0eee"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-sct-slot3": {
+      "label": "特技3：SCT回复",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-slot3",
+      "displayOrder": [
+        "b8934861f6189f6e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-sct-seconds": {
+      "label": "SCT回复：秒数",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-seconds",
+      "displayOrder": [
+        "9644f0427e3b56be",
+        "36bf633cebd4748e",
+        "3e4595947b5c48f3",
+        "3797f19e9c516ee7",
+        "5950c82ca13345b0",
+        "4170fcd45f772a61"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 1,
+        "partial": 5,
+        "unknown": 0
+      }
+    },
+    "technique-sct-full": {
+      "label": "SCT完全回复",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-full",
+      "displayOrder": [
+        "ba24f4a2e20a74dc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-sct-stock-all": {
+      "label": "所有特技：回复一次库存",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-stock-all",
+      "displayOrder": [
+        "3550232308d53341"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-sct-stock-random": {
+      "label": "随机1个特技：回复一次库存",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-stock-random",
+      "displayOrder": [
+        "4f8a8b3359a2206f",
+        "8f928b05fc447ac9",
+        "89a90b8df36a0475"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "technique-sct-inherit": {
+      "label": "继承倒下友军的特技库存",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-inherit",
+      "displayOrder": [
+        "387b6e052ad74bb1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-sct-guard": {
+      "label": "格挡时：SCT回复",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-guard",
+      "displayOrder": [
+        "全部技能:all:197"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-sct-paired-ally": {
+      "label": "配对友方：SCT回复",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-paired-ally",
+      "displayOrder": [
+        "6958b9c4d7aad7cb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-sct-speed-up": {
+      "label": "SCT恢复速度增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "sct-speed-up",
+      "displayOrder": [
+        "0bcbd8a4dc9889d5",
+        "7983e8b7c5f6eceb",
+        "60eca07e7c2f1a33",
+        "全部技能:all:326",
+        "1c1fef3cdbb3164c",
+        "e27f6e2a867c1a2e",
+        "d542c5868da412e7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 7,
+        "notRelatedUnique": 928,
+        "ready": 3,
+        "partial": 4,
+        "unknown": 0
+      }
+    },
+    "technique-moving-skill-damage": {
+      "label": "连续移动累积：特技增伤",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "moving-skill-damage",
+      "displayOrder": [
+        "e61761228b58bde4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-kill-scaled-skill-damage": {
+      "label": "击杀数量累计：特技增伤",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "kill-scaled-skill-damage",
+      "displayOrder": [
+        "c3b83f342aaa5c37"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-kill-count-reset": {
+      "label": "每Wave重置特技增伤累计",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "kill-count-reset",
+      "displayOrder": [
+        "c3b83f342aaa5c37"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-team-scaled-skill-damage": {
+      "label": "开场指定类型人数：特技增伤",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "team-scaled-skill-damage",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-laceration-accumulation": {
+      "label": "发动特技：累积裂伤",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "laceration-accumulation",
+      "displayOrder": [
+        "fac8318ca53f2e7b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-laceration-hp-loss": {
+      "label": "裂伤触发：敌人HP减少",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "laceration-hp-loss",
+      "displayOrder": [
+        "fac8318ca53f2e7b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "technique-laceration-value-up": {
+      "label": "发动特技：裂伤累积量增加",
+      "parent": "technique",
+      "conditionTag": "特技相关",
+      "effectGroup": "laceration-value-up",
+      "displayOrder": [
+        "6d4f5f8de8ab47d2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -75343,14 +81193,46 @@ export const SKILL_LABELING_CATALOG = {
         "全部技能:all:917",
         "f06cd362877374b9",
         "c0fa524208139962",
-        "af2b1b7f6ebbb498"
+        "af2b1b7f6ebbb498",
+        "9644f0427e3b56be",
+        "36bf633cebd4748e",
+        "ba24f4a2e20a74dc",
+        "3e4595947b5c48f3",
+        "全部技能:all:197",
+        "398ea3fcd696c86a",
+        "2b6dfc06601860b0",
+        "3550232308d53341",
+        "43675d5d0ba943ae",
+        "a24d9ff67f38ccf6",
+        "e61761228b58bde4",
+        "9dffb7f0d9297302",
+        "6da309b5ff349e89",
+        "763e0e91176c648b",
+        "5950c82ca13345b0",
+        "a0e9ad8c974ebca1",
+        "c0f93572d58f624a",
+        "cb8a66108ee1f3e0",
+        "31e0fc5aedd96ccb",
+        "7597b164f4387ec7",
+        "6958b9c4d7aad7cb",
+        "763f4480345cdbb6",
+        "2d7be6839ef276d6",
+        "27978c00d7374193",
+        "74710ff77dbf0cb0",
+        "7fa993c76e14f621",
+        "f838f311a82579e0",
+        "fac8318ca53f2e7b",
+        "d542c5868da412e7",
+        "2a1da0c826ca8526",
+        "6d4f5f8de8ab47d2",
+        "cb30f3c1c621732d"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 653,
-        "notRelatedUnique": 282,
-        "ready": 261,
-        "partial": 392,
+        "relatedUnique": 685,
+        "notRelatedUnique": 250,
+        "ready": 294,
+        "partial": 391,
         "unknown": 0
       }
     }
