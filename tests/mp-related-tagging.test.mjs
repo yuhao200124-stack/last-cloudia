@@ -16,8 +16,8 @@ test('MP expands the existing page across the entire library without mixing INT,
  for(const [g,ns] of Object.entries(mapping))assert.deepEqual(numbers(labelingView(catalog,'mp-'+g)),ns,g);
  assert.equal(view.childKeys.length,26);assert.equal(view.childKeys.reduce((n,k)=>n+catalog.views[k].counts.relatedUnique,0),41);
  for(const n of [17,18,19,20,29,110,112,119,120,121,164,1858,196,199,217,218,249,460,666,914,1163,1335,1768,1909])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
- assert.equal(registry.tagPasses.length,45);assert.equal(registry.tagPasses.filter(p=>p.tag==='MP').length,1);assert.equal(catalog.numericEffectInjection,false);
- assert.equal(catalog.entries.length,772);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,772);
+ assert.equal(registry.tagPasses.length,46);assert.equal(registry.tagPasses.filter(p=>p.tag==='MP').length,1);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(catalog.entries.length,776);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,776);
 });
 
 test('MP states preserve absolute points, percentages and unknown scaling curves while costs preserve their own bases',()=>{
@@ -44,9 +44,9 @@ test('MP covers resource fragments and MP conditions, preserves old MP maxima, a
  const before=structuredClone(registry);before.tagPasses=before.tagPasses.filter(p=>p.tag!=='魔法');before.tagPasses.find(p=>p.tag==='MP').assignments=before.tagPasses.find(p=>p.tag==='MP').assignments.filter(a=>maxIds.some(n=>a.skillId===source(n).id));const prior=resolveSkillLabels(before);
  for(const n of [185,787,1147,1555]){assert.equal(prior.find(e=>e.id===source(n).id).judgment,'partial');assert.equal(entry(n).judgment,'ready');}
  assert.equal(entry(209).judgment,'partial');assert(entry(209).remainingEffects.includes('魔抗+20%'));assert.equal(entry(208).judgment,'partial');assert(entry(208).remainingConditions.some(c=>c.includes('Buff')));
- assert.deepEqual(entry(1214).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)),['MP','必杀相关']);assert.deepEqual(entry(233).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)),['MP','受到攻击']);
- for(const n of [202,1766])assert.equal(entry(n).judgment,'partial');assert(!entry(380).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)).includes('魔法伤害增加'));
- assert.equal(view.counts.ready,14);assert.equal(view.counts.partial,18);assert.equal(catalog.views.all.counts.ready,364);assert.equal(catalog.views.all.counts.partial,408);
+ assert.deepEqual(entry(1214).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['MP','必杀相关']);assert.deepEqual(entry(233).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['MP','受到攻击']);
+ for(const n of [202,1766])assert.equal(entry(n).judgment,'partial');assert(!entry(380).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).includes('魔法伤害增加'));
+ assert.equal(view.counts.ready,14);assert.equal(view.counts.partial,18);assert.equal(catalog.views.all.counts.ready,370);assert.equal(catalog.views.all.counts.partial,406);
  const ordered=skillLabelRows(data,view);assert(ordered.slice(0,14).every(e=>e.judgment==='ready'));assert(ordered.slice(14).every(e=>e.judgment==='partial'));
 });
 
@@ -58,7 +58,7 @@ function page(edits={}){
 }
 test('expanded MP page keeps one main tab, grouped effects, deduplicated searches, old pages and stale edit review',()=>{
  const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*32.*903/);assert.match(get('#judgmentSummary').textContent,/14.*18.*0/);assert.match(get('#labelResultCount').textContent,/32 \/ 32/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,39);assert.equal((get('#labelTabs').innerHTML.match(/data-tag="mp"/g)||[]).length,1);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,27);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,26);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,40);assert.equal((get('#labelTabs').innerHTML.match(/data-tag="mp"/g)||[]).length,1);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,27);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,26);
  const search=get('#labelSearch');search.value='万物尽灭';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 32/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,3);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','mp-max');assert.match(get('#labelResultCount').textContent,/8 \/ 8/);assert.match(get('#judgmentSummary').textContent,/8.*0.*0/);
  click('#labelSubTabs','mp-full-defense');assert(get('#labelTable').innerHTML.includes('黄昏'));assert(!get('#labelTable').innerHTML.includes('空无堡垒'));

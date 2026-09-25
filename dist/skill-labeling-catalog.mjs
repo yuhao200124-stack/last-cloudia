@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "magic-damage",
+  "activeView": "bird",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -73821,9 +73821,52 @@ export const SKILL_LABELING_CATALOG = {
           "text": "对魔兽系敌人物理伤害上限+5,000"
         },
         {
+          "id": "enemy-race-beast",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "beast"
+        },
+        {
+          "id": "enemy-race-plant",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "plant"
+        },
+        {
+          "id": "enemy-race-insect",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "insect"
+        },
+        {
           "id": "enemy-race",
           "kind": "condition",
-          "text": "目标敌人为兽、植物、昆虫、鸟、鱼或魔法生物之一"
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：鸟（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "bird"
+        },
+        {
+          "id": "enemy-race-fish",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "fish"
+        },
+        {
+          "id": "enemy-race-creature",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "creature"
         },
         {
           "id": "ultimate-cap",
@@ -73910,17 +73953,118 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "鸟": {
+          "summary": "对魔兽系敌人物理伤害上限+5,000；对魔兽系敌人必杀伤害上限+5,000。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-cap",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对魔兽系敌人物理伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:physical-cap",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "cap-up",
+              "capPoints": 5000,
+              "group": "monster-physical-cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对魔兽系敌人必杀伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "cap-up",
+              "capPoints": 5000,
+              "group": "monster-ultimate-cap-up"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "鸟"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "目标敌人为兽、植物、昆虫、鸟、鱼或魔法生物之一"
+        "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
       ]
     },
     {
@@ -75077,18 +75221,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "鸟": {
+          "summary": "对鸟类型敌人物理攻击伤害+10%；对鸟类型敌人物理攻击伤害上限+2,000；对鸟类型敌人必杀伤害+10%；对鸟类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对鸟类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "f06cd362877374b9:physical-damage",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "damage-up",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "bird-physical-damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对鸟类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "f06cd362877374b9:physical-cap",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "cap-up",
+              "capPoints": 2000,
+              "group": "bird-physical-cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对鸟类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "f06cd362877374b9:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "damage-up",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "bird-ultimate-damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对鸟类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "f06cd362877374b9:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "cap-up",
+              "capPoints": 2000,
+              "group": "bird-ultimate-cap-up"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "鸟"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为鸟类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c0fa524208139962",
@@ -78055,17 +78336,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "鸟": {
+          "summary": "物理攻击对鸟类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对鸟类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "258a551f597f7933:physical-killer",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "enable-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "guaranteedCritical": false,
+              "group": "bird-physical-enable-killer"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "鸟"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为鸟类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4f28c098f1f146e8",
@@ -78860,9 +79188,52 @@ export const SKILL_LABELING_CATALOG = {
           "text": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻"
         },
         {
+          "id": "enemy-race-beast",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "beast"
+        },
+        {
+          "id": "enemy-race-plant",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "plant"
+        },
+        {
+          "id": "enemy-race-insect",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "insect"
+        },
+        {
           "id": "enemy-race",
           "kind": "condition",
-          "text": "目标敌人为兽、植物、昆虫、鸟、鱼、魔法生物中的任一类型"
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：鸟（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "bird"
+        },
+        {
+          "id": "enemy-race-fish",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "fish"
+        },
+        {
+          "id": "enemy-race-creature",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "creature"
         }
       ],
       "tagDetails": {
@@ -78905,16 +79276,79 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "鸟": {
+          "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "088d62f108c82b62:physical-killer",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "enable-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "guaranteedCritical": false,
+              "group": "monster-physical-enable-killer"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "鸟"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "目标敌人为兽、植物、昆虫、鸟、鱼、魔法生物中的任一类型"
+        "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
       ]
     },
     {
@@ -80223,9 +80657,28 @@ export const SKILL_LABELING_CATALOG = {
           "text": "对兽、鱼、鸟类型敌人物理伤害+10%"
         },
         {
+          "id": "enemy-race-beast",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：兽（兽／鱼／鸟任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "beast"
+        },
+        {
+          "id": "enemy-race-fish",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：鱼（兽／鱼／鸟任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "fish"
+        },
+        {
           "id": "enemy-race",
           "kind": "condition",
-          "text": "目标为兽、鱼、鸟中的任一类型"
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：鸟（兽／鱼／鸟任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "bird"
         }
       ],
       "tagDetails": {
@@ -80264,16 +80717,69 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "鸟": {
+          "summary": "对兽、鱼、鸟类型敌人物理伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对兽、鱼、鸟类型敌人物理伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "20486fa2dfba235e:physical-damage",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "fish",
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "beast",
+                  "fish",
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "damage-up",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "beast-fish-bird-physical-damage-up"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "鸟"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "目标为兽、鱼、鸟中的任一类型"
+        "目标类型选项：兽（兽／鱼／鸟任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：鱼（兽／鱼／鸟任一类型满足即可；同一效果不按命中类型数重复）"
       ]
     },
     {
@@ -82835,17 +83341,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "鸟": {
+          "summary": "魔法攻击对鸟类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对鸟类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "f851cc57b094612a:magic-killer",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "enable-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "guaranteedCritical": false,
+              "group": "bird-attack-magic-enable-killer"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "鸟"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为鸟类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "57d0535b82a9b33c",
@@ -83952,6 +84505,350 @@ export const SKILL_LABELING_CATALOG = {
         "受益者须装备信仰且提供者为自身以外的神类型友方",
         "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
       ]
+    },
+    {
+      "id": "cd58d19d280ac44f",
+      "url": "https://altema.jp/lastcloudia/gino/47",
+      "name": "鸟类克星",
+      "text": "普通攻击对鸟系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对鸟类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为鸟类型"
+        }
+      ],
+      "tagDetails": {
+        "鸟": {
+          "summary": "普通攻击对鸟类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对鸟类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "cd58d19d280ac44f:normal-killer",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "enable-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "guaranteedCritical": false,
+              "group": "bird-normal-attack-enable-killer"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
+        }
+      },
+      "calculationNote": "鸟相关效果保留攻击种类和种族主体；多种族为OR，同一效果只计一次。特攻资格不擅自补造倍率。",
+      "assignedTags": [
+        "鸟"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "a4f12207dfb9a3df",
+      "url": "https://altema.jp/lastcloudia/gino/858",
+      "name": "鸟类护罩",
+      "text": "受到鸟系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到鸟类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为鸟类型；不要求自身为鸟"
+        }
+      ],
+      "tagDetails": {
+        "鸟": {
+          "summary": "受到鸟类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到鸟类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "a4f12207dfb9a3df:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "attacking-enemy",
+                "raceAnyOf": [
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "incoming-damage-down",
+              "valuePercent": 10,
+              "changesDefenseStat": false,
+              "group": "incoming-damage-down"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
+        }
+      },
+      "calculationNote": "鸟相关效果保留攻击种类和种族主体；多种族为OR，同一效果只计一次。特攻资格不擅自补造倍率。",
+      "assignedTags": [
+        "鸟"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "181c27a332185ca2",
+      "url": "https://altema.jp/lastcloudia/gino/1178",
+      "name": "拟态【鸟】",
+      "text": "类型追加“鸟”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "add-bird-type",
+          "kind": "effect",
+          "text": "自身类型追加鸟，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "鸟": {
+          "summary": "自身类型追加鸟，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "add-bird-type"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "add-bird-type"
+              ],
+              "summary": "自身类型追加鸟，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "181c27a332185ca2:add-bird-type",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "bird"
+              },
+              "preservesExistingTypes": true,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
+        }
+      },
+      "calculationNote": "鸟相关效果保留攻击种类和种族主体；多种族为OR，同一效果只计一次。特攻资格不擅自补造倍率。",
+      "assignedTags": [
+        "鸟"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "dda1c38d5e1c90f8",
+      "url": "https://altema.jp/lastcloudia/gino/1557",
+      "name": "魔兽克星",
+      "text": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race-beast",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "beast"
+        },
+        {
+          "id": "enemy-race-plant",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "plant"
+        },
+        {
+          "id": "enemy-race-insect",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "insect"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：鸟（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "bird"
+        },
+        {
+          "id": "enemy-race-fish",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "fish"
+        },
+        {
+          "id": "enemy-race-creature",
+          "kind": "condition",
+          "alternativeGroup": "enemy-race-choice",
+          "logicalOperator": "OR",
+          "text": "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+          "race": "creature"
+        }
+      ],
+      "tagDetails": {
+        "鸟": {
+          "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "bird",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "birdRole": "direct-effect",
+              "effectIdentity": "dda1c38d5e1c90f8:normal-killer",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "enable-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "guaranteedCritical": false,
+              "group": "monster-normal-attack-enable-killer"
+            }
+          ],
+          "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
+        }
+      },
+      "calculationNote": "鸟相关效果保留攻击种类和种族主体；多种族为OR，同一效果只计一次。特攻资格不擅自补造倍率。",
+      "assignedTags": [
+        "鸟"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
+        "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
+      ]
     }
   ],
   "views": {
@@ -84682,8 +85579,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 230,
         "notRelatedUnique": 705,
-        "ready": 94,
-        "partial": 136,
+        "ready": 96,
+        "partial": 134,
         "unknown": 0
       }
     },
@@ -84902,8 +85799,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 130,
         "notRelatedUnique": 805,
-        "ready": 59,
-        "partial": 71,
+        "ready": 60,
+        "partial": 70,
         "unknown": 0
       }
     },
@@ -85579,8 +86476,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 113,
         "notRelatedUnique": 822,
-        "ready": 67,
-        "partial": 46,
+        "ready": 68,
+        "partial": 45,
         "unknown": 0
       }
     },
@@ -87061,6 +87958,49 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 933,
         "ready": 0,
         "partial": 2,
+        "unknown": 0
+      }
+    },
+    "bird": {
+      "label": "鸟",
+      "passKind": "race-effects-and-condition",
+      "displayOrder": [
+        "cd58d19d280ac44f",
+        "258a551f597f7933",
+        "088d62f108c82b62",
+        "a4f12207dfb9a3df",
+        "f851cc57b094612a",
+        "20486fa2dfba235e",
+        "181c27a332185ca2",
+        "dda1c38d5e1c90f8",
+        "3d51ab68dddbe948",
+        "f06cd362877374b9"
+      ],
+      "childKeys": [
+        "bird-bird-normal-attack-enable-killer",
+        "bird-bird-physical-enable-killer",
+        "bird-monster-physical-enable-killer",
+        "bird-incoming-damage-down",
+        "bird-bird-attack-magic-enable-killer",
+        "bird-beast-fish-bird-physical-damage-up",
+        "bird-self-add-type",
+        "bird-monster-normal-attack-enable-killer",
+        "bird-monster-physical-cap-up",
+        "bird-monster-ultimate-cap-up",
+        "bird-bird-physical-damage-up",
+        "bird-bird-physical-cap-up",
+        "bird-bird-ultimate-damage-up",
+        "bird-bird-ultimate-cap-up"
+      ],
+      "overviewLabel": "全部鸟相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "鸟相关的特攻资格、增伤、伤害上限、承伤和自身追加类型分别分组。含其他种族时保留完整范围，任一满足只计一次；鸟分支与其余种族分别累计判断。鸟类型不等于处于空中。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 10,
+        "notRelatedUnique": 925,
+        "ready": 6,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -98700,8 +99640,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -98717,8 +99657,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -100158,8 +101098,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101881,8 +102821,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101898,8 +102838,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102918,8 +103858,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103233,6 +104173,244 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 934,
         "ready": 0,
         "partial": 1,
+        "unknown": 0
+      }
+    },
+    "bird-bird-normal-attack-enable-killer": {
+      "label": "对鸟：普通攻击特攻资格",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "bird-normal-attack-enable-killer",
+      "displayOrder": [
+        "cd58d19d280ac44f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "bird-bird-physical-enable-killer": {
+      "label": "对鸟：物理攻击特攻资格",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "bird-physical-enable-killer",
+      "displayOrder": [
+        "258a551f597f7933"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "bird-monster-physical-enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物：物理攻击特攻资格",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "monster-physical-enable-killer",
+      "displayOrder": [
+        "088d62f108c82b62"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "bird-incoming-damage-down": {
+      "label": "受到鸟类型敌人伤害减少",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "incoming-damage-down",
+      "displayOrder": [
+        "a4f12207dfb9a3df"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "bird-bird-attack-magic-enable-killer": {
+      "label": "对鸟：魔法攻击特攻资格",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "bird-attack-magic-enable-killer",
+      "displayOrder": [
+        "f851cc57b094612a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "bird-beast-fish-bird-physical-damage-up": {
+      "label": "对兽／鱼／鸟：物理攻击伤害增加",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "beast-fish-bird-physical-damage-up",
+      "displayOrder": [
+        "20486fa2dfba235e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "bird-self-add-type": {
+      "label": "自身追加鸟类型",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "181c27a332185ca2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "bird-monster-normal-attack-enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物：普通攻击特攻资格",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "monster-normal-attack-enable-killer",
+      "displayOrder": [
+        "dda1c38d5e1c90f8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "bird-monster-physical-cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物：物理攻击伤害上限增加",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "monster-physical-cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "bird-monster-ultimate-cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物：必杀伤害上限增加",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "monster-ultimate-cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "bird-bird-physical-damage-up": {
+      "label": "对鸟：物理攻击伤害增加",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "bird-physical-damage-up",
+      "displayOrder": [
+        "f06cd362877374b9"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "bird-bird-physical-cap-up": {
+      "label": "对鸟：物理攻击伤害上限增加",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "bird-physical-cap-up",
+      "displayOrder": [
+        "f06cd362877374b9"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "bird-bird-ultimate-damage-up": {
+      "label": "对鸟：必杀伤害增加",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "bird-ultimate-damage-up",
+      "displayOrder": [
+        "f06cd362877374b9"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "bird-bird-ultimate-cap-up": {
+      "label": "对鸟：必杀伤害上限增加",
+      "parent": "bird",
+      "conditionTag": "鸟",
+      "effectGroup": "bird-ultimate-cap-up",
+      "displayOrder": [
+        "f06cd362877374b9"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104010,14 +105188,18 @@ export const SKILL_LABELING_CATALOG = {
         "a4d841b7ab1590f8",
         "8545a75056e827a4",
         "9a64344759c572ed",
-        "7611b3c1ae612f0e"
+        "7611b3c1ae612f0e",
+        "cd58d19d280ac44f",
+        "a4f12207dfb9a3df",
+        "181c27a332185ca2",
+        "dda1c38d5e1c90f8"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 772,
-        "notRelatedUnique": 163,
-        "ready": 364,
-        "partial": 408,
+        "relatedUnique": 776,
+        "notRelatedUnique": 159,
+        "ready": 370,
+        "partial": 406,
         "unknown": 0
       }
     }

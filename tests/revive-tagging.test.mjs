@@ -14,7 +14,7 @@ test('revival audits the full library and distinguishes resurrection from surviv
  for(const [g,ns] of Object.entries(mapping))assert.deepEqual(numbers(labelingView(catalog,'revive-'+g)),ns,g);
  assert.equal(view.childKeys.length,9);assert.equal(view.childKeys.reduce((n,k)=>n+catalog.views[k].counts.relatedUnique,0),10);
  for(const n of [110,113,118,184,195,219,389,493,584,690,726,849,890,916,917,939,948,976,1009,1015,1022,1092,1212,1270,1271,1305,1316,1378])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
- assert.equal(catalog.entries.length,772);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,772);
+ assert.equal(catalog.entries.length,776);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,776);
 });
 
 test('revival preserves initial HP, Wave versus quest limits, recipient identity, Buff lifetime and distinct SCT units',()=>{
@@ -28,12 +28,12 @@ test('revival preserves initial HP, Wave versus quest limits, recipient identity
 });
 
 test('revival operations and conditions accumulate without completing other effects or use-limit mechanisms',()=>{
- assert.equal(registry.tagPasses.length,45);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,46);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='复活');for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId),d=e.tagDetails['复活'];assert.deepEqual(a.partIds,[...d.coverage.revivalPartIds,...d.coverage.conditionPartIds]);assert.equal(e.judgment,[753,1998].some(n=>e.id===source(n).id)?'ready':'partial');for(const b of d.bindings.filter(b=>b.revivalRole==='post-revival-benefit'))assert(b.partIds.every(id=>!a.partIds.includes(id)));}
- assert.deepEqual(entry(272).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)),['攻击力','魔力','复活','暴击']);assert.deepEqual(entry(1060).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)),['物理伤害增加','魔法伤害增加','复活']);assert.deepEqual(entry(753).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)),['MP','复活','特技相关']);assert.deepEqual(entry(431).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)),['战斗开始','复活']);
+ assert.deepEqual(entry(272).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['攻击力','魔力','复活','暴击']);assert.deepEqual(entry(1060).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['物理伤害增加','魔法伤害增加','复活']);assert.deepEqual(entry(753).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['MP','复活','特技相关']);assert.deepEqual(entry(431).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['战斗开始','复活']);
  assert.deepEqual(entry(272).remainingEffects,[]);assert(entry(1060).remainingConditions.some(c=>c.includes('40秒')));assert.deepEqual(entry(753).remainingEffects,[]);assert.deepEqual(entry(753).remainingConditions,[]);assert.deepEqual(entry(1998).remainingConditions,[]);
  for(const n of [183,431])assert(entry(n).remainingConditions.some(c=>c.includes('最多')));
- assert.equal(view.counts.ready,2);assert.equal(view.counts.partial,4);assert.equal(catalog.views.all.counts.ready,364);assert.equal(catalog.views.all.counts.partial,408);
+ assert.equal(view.counts.ready,2);assert.equal(view.counts.partial,4);assert.equal(catalog.views.all.counts.ready,370);assert.equal(catalog.views.all.counts.partial,406);
  assert.deepEqual(labelingView(catalog,'attack').entries.find(e=>e.id===source(272).id),entry(272));assert.deepEqual(labelingView(catalog,'mp').entries.find(e=>e.id===source(753).id),entry(753));
 });
 
@@ -45,7 +45,7 @@ function page(edits={}){
 }
 test('revival page separates self and ally benefits, deduplicates grouped searches and preserves prior views and stale edit review',()=>{
  const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*6.*929/);assert.match(get('#judgmentSummary').textContent,/2.*4.*0/);assert.match(get('#labelResultCount').textContent,/6 \/ 6/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,39);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,10);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,9);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,40);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,10);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,9);
  const search=get('#labelSearch');search.value='黄泉之理';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 6/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,3);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','revive-sct-ally');assert(get('#labelTable').innerHTML.includes('守护至今的约定'));assert(!get('#labelTable').innerHTML.includes('再起之种'));
  click('#labelSubTabs','revive-self');assert(get('#labelTable').innerHTML.includes('诱饵'));assert(get('#labelTable').innerHTML.includes('转生'));assert(!get('#labelTable').innerHTML.includes('黄泉之理'));
