@@ -18,7 +18,7 @@ test('ultimate review audits all 935 skills, includes all 113 explicit ultimate 
  for(const n of [411,391,1180,1272,1695,1884,1021,1858,1955])assert(!generic.includes(n),source(n).name);
  assert.deepEqual(numbers(labelingView(catalog,'ultimate-boss-ultimate-damage')),[411,624,985,1041,1311]);
  assert.deepEqual(numbers(labelingView(catalog,'ultimate-incoming-ultimate-down')),[521,573,1145,1989]);
- assert.equal(catalog.entries.length,737);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,737);
+ assert.equal(catalog.entries.length,772);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,772);
 });
 
 test('ultimate conditions distinguish full gauges, enemy and self use, single-use buffs, and exact damage and resource effects',()=>{
@@ -38,18 +38,18 @@ test('ultimate conditions distinguish full gauges, enemy and self use, single-us
 });
 
 test('ultimate effects complete cumulatively while unrelated effects and unreviewed conditions stay pending',()=>{
- assert.equal(registry.tagPasses.length,44);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,45);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='必杀相关');for(const a of pass.assignments){const e=entry(Number(catalog.entries.find(e=>e.id===a.skillId).url.split('/').pop())),d=e.tagDetails['必杀相关'];assert.deepEqual(a.partIds,[...d.coverage.effectPartIds,...d.coverage.conditionPartIds]);assert(d.coverage.effectPartIds.length);}
  for(const n of [364,369,732,883,948,1037,1057,1122,1264,1284,1335,1447,666,456,1163,1909,777])assert.equal(entry(n).judgment,'ready',source(n).name);
  for(const n of [217,425,717,976,1145,1214,1272,1520,1617,1695,1858,1884,1955])assert.equal(entry(n).judgment,'partial',source(n).name);
- assert.equal(view.counts.ready,67);assert.equal(view.counts.partial,46);assert.equal(catalog.views.all.counts.ready,341);assert.equal(catalog.views.all.counts.partial,396);
+ assert.equal(view.counts.ready,67);assert.equal(view.counts.partial,46);assert.equal(catalog.views.all.counts.ready,364);assert.equal(catalog.views.all.counts.partial,408);
  assert.deepEqual(entry(666).remainingEffects,[]);assert.deepEqual(entry(666).remainingConditions,[]);
  assert(entry(425).remainingConditions.some(t=>t.includes('持续时间待确认')));
  assert.deepEqual(entry(717).remainingEffects,[]);assert.match(entry(717).remainingConditions.join(''),/自身处于异常状态/);
  assert.deepEqual(entry(777).remainingEffects,[]);
  assert.deepEqual(entry(1272).remainingEffects,[]);assert(entry(1272).remainingEffects.every(t=>!t.includes('必杀')));
  assert(entry(1955).remainingEffects.every(t=>t.includes('物理')&&!t.includes('必杀')));
- assert(!entry(1695).assignedTags.filter(tag=>tag!=='物理').includes('物理伤害增加'));assert(!entry(1695).assignedTags.filter(tag=>tag!=='物理').includes('伤害增加'));
+ assert(!entry(1695).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)).includes('物理伤害增加'));assert(!entry(1695).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)).includes('伤害增加'));
  const prior=structuredClone(registry);prior.tagPasses=prior.tagPasses.filter(p=>p.tag!=='必杀相关');assert.equal(resolveSkillLabels(prior).find(e=>e.id===source(883).id).judgment,'partial');
  for(const[n,key]of[[883,'fire'],[1264,'low-hp'],[777,'single-weapon'],[1884,'critical'],[985,'boss']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
 });

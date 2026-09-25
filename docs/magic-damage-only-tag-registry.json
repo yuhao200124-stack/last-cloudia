@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "label": "魔法伤害增加",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "ddccca9cf069a9ea",
+    "fca23d2a13780d62",
+    "bf684afd6ed9b3e1",
+    "ce7eb01498391d2c",
+    "ea2269dc8dbcfa74",
+    "bf0d04fe54be3b33",
+    "86ad4fdedf4c3869",
+    "da60418e1d1102bc",
+    "1773fd0e181f0d48",
+    "ef761252451c1b55",
+    "9c0bd935e13111e8",
+    "563cffc7c5fa9c59",
+    "2d772214490c52ba",
+    "8e6716f96c389e1d",
+    "911c90d5593ecf69",
+    "82bfa575b36bca5b",
+    "4810345440e1ca42",
+    "58197bb69bad678a",
+    "869205f984d49c10",
+    "e2016a861d776638",
+    "0b4cbcd7bc326038",
+    "29da106c453e0234"
+  ]
+}

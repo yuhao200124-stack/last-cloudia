@@ -1064,18 +1064,55 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "受到魔法伤害-20%，魔法屏障Buff。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "cf4cc4324d7b87b7:effect-3",
+              "group": "reduction",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 20,
+              "buffType": "received-magic-damage-down"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
         "战斗开始",
-        "物理"
+        "物理",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法屏障带来的魔法减伤"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -2654,22 +2691,60 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "魔法": {
+          "summary": "每个Wave开始，科学类攻击魔法威力+5%，最多累计10次；按实际次数计算，不默认满层。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-4"
+            ],
+            "conditionPartIds": [
+              "science-magic-condition"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "每个Wave开始，科学类攻击魔法威力+5%，最多累计10次；按实际次数计算，不默认满层。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "wave-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "spellSubtype": "science"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "5f6efbf8b35453d2:effect-4",
+              "group": "wave-science-damage",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "incrementPercent": 5,
+              "maxStacks": 10,
+              "stacksBase": "actual-wave-starts"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "魔抗提升",
-        "科学类攻击魔法威力提升"
+        "魔抗提升"
       ],
       "remainingConditions": [
-        "按Wave累计，最多叠加10次",
-        "威力加成仅限科学类攻击魔法"
+        "按Wave累计，最多叠加10次"
       ]
     },
     {
@@ -3417,11 +3492,44 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "魔法攻击伤害提高的效果。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害提高的效果",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "86ad4fdedf4c3869:effect-1",
+              "referenceStat": "STR",
+              "formulaStatus": "unconfirmed",
+              "group": "stat-scaled-damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -4756,17 +4864,57 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "三项效果由同一个激怒异常状态带来，分别列组；激怒不按普通攻击力Buff处理，不补造增减比例或持续时间。攻击力、防御力标签沿用，施法限制与异常机制仍待判断。"
+        },
+        "魔法": {
+          "summary": "其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "disable-magic",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "835e08fc4710e268:effect-2",
+              "group": "disable",
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "abnormal",
+              "statusDurationStatus": "unconfirmed",
+              "condition": {
+                "mode": "ally-death-trigger",
+                "subject": "other-ally",
+                "event": "became-incapacitated"
+              },
+              "whileStatus": "rage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "友军死亡"
+        "友军死亡",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "无法使用魔法"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "施加“激怒”异常状态，具体比例与持续时间待确认"
       ]
@@ -5350,6 +5498,49 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "开场判断攻击力＜魔力时，魔法攻击伤害+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场判断攻击力＜魔力时，魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "2d772214490c52ba:effect-2",
+              "group": "damage",
+              "mutuallyExclusiveBranch": true,
+              "trigger": {
+                "event": "wave-start",
+                "snapshot": true
+              },
+              "valuePercent": 20,
+              "condition": {
+                "left": "STR",
+                "operator": "lt",
+                "right": "INT",
+                "snapshot": "wave-start"
+              },
+              "mutuallyExclusiveWithPartId": "effect-1"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
@@ -5358,7 +5549,8 @@ export const ATTACK_TAG_CATALOG = {
         "物理伤害增加",
         "魔法伤害增加",
         "战斗开始",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -5519,18 +5711,55 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "受到魔法伤害-20%，魔法屏障Buff。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "7b7b9f7c806bbd9e:effect-3",
+              "group": "reduction",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 20,
+              "buffType": "received-magic-damage-down"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
         "战斗开始",
-        "物理"
+        "物理",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法屏障带来的魔法减伤"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -8044,16 +8273,56 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:effect-1",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "7611b3c1ae612f0e",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true
+              },
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "物理伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
         "从神秘之力【轮光】获得光属性伤害+10%"
       ],
       "remainingConditions": [
@@ -8915,18 +9184,60 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "魔法": {
+          "summary": "开场判断攻击力＜魔力时，魔法伤害上限+5,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场判断攻击力＜魔力时，魔法伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "07cab38a1e00eaa5:effect-2",
+              "group": "cap",
+              "mutuallyExclusiveBranch": true,
+              "trigger": {
+                "event": "wave-start",
+                "snapshot": true
+              },
+              "capPoints": 5000,
+              "condition": {
+                "left": "STR",
+                "operator": "lt",
+                "right": "INT",
+                "snapshot": "wave-start"
+              },
+              "mutuallyExclusiveWithPartId": "effect-1"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
         "战斗开始",
-        "特技相关"
+        "特技相关",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法伤害上限+5,000"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
       ]
@@ -9415,8 +9726,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 32,
-    "partial": 55,
+    "ready": 34,
+    "partial": 53,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

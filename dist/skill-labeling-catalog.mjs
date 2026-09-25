@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "physical",
+  "activeView": "magic-damage",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -973,18 +973,55 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "受到魔法伤害-20%，魔法屏障Buff。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "cf4cc4324d7b87b7:effect-3",
+              "group": "reduction",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 20,
+              "buffType": "received-magic-damage-down"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
         "战斗开始",
-        "物理"
+        "物理",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法屏障带来的魔法减伤"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -2563,22 +2600,60 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "魔法": {
+          "summary": "每个Wave开始，科学类攻击魔法威力+5%，最多累计10次；按实际次数计算，不默认满层。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-4"
+            ],
+            "conditionPartIds": [
+              "science-magic-condition"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "每个Wave开始，科学类攻击魔法威力+5%，最多累计10次；按实际次数计算，不默认满层。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "wave-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "spellSubtype": "science"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "5f6efbf8b35453d2:effect-4",
+              "group": "wave-science-damage",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "incrementPercent": 5,
+              "maxStacks": 10,
+              "stacksBase": "actual-wave-starts"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "魔抗提升",
-        "科学类攻击魔法威力提升"
+        "魔抗提升"
       ],
       "remainingConditions": [
-        "按Wave累计，最多叠加10次",
-        "威力加成仅限科学类攻击魔法"
+        "按Wave累计，最多叠加10次"
       ]
     },
     {
@@ -3326,11 +3401,44 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "魔法攻击伤害提高的效果。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害提高的效果",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "86ad4fdedf4c3869:effect-1",
+              "referenceStat": "STR",
+              "formulaStatus": "unconfirmed",
+              "group": "stat-scaled-damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -4665,17 +4773,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "三项效果由同一个激怒异常状态带来，分别列组；激怒不按普通攻击力Buff处理，不补造增减比例或持续时间。攻击力、防御力标签沿用，施法限制与异常机制仍待判断。"
+        },
+        "魔法": {
+          "summary": "其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "disable-magic",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "835e08fc4710e268:effect-2",
+              "group": "disable",
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "abnormal",
+              "statusDurationStatus": "unconfirmed",
+              "condition": {
+                "mode": "ally-death-trigger",
+                "subject": "other-ally",
+                "event": "became-incapacitated"
+              },
+              "whileStatus": "rage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "友军死亡"
+        "友军死亡",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "无法使用魔法"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "施加“激怒”异常状态，具体比例与持续时间待确认"
       ]
@@ -5259,6 +5407,49 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "开场判断攻击力＜魔力时，魔法攻击伤害+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场判断攻击力＜魔力时，魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "2d772214490c52ba:effect-2",
+              "group": "damage",
+              "mutuallyExclusiveBranch": true,
+              "trigger": {
+                "event": "wave-start",
+                "snapshot": true
+              },
+              "valuePercent": 20,
+              "condition": {
+                "left": "STR",
+                "operator": "lt",
+                "right": "INT",
+                "snapshot": "wave-start"
+              },
+              "mutuallyExclusiveWithPartId": "effect-1"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
@@ -5267,7 +5458,8 @@ export const SKILL_LABELING_CATALOG = {
         "物理伤害增加",
         "魔法伤害增加",
         "战斗开始",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -5428,18 +5620,55 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "受到魔法伤害-20%，魔法屏障Buff。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "7b7b9f7c806bbd9e:effect-3",
+              "group": "reduction",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 20,
+              "buffType": "received-magic-damage-down"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
         "战斗开始",
-        "物理"
+        "物理",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法屏障带来的魔法减伤"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -7953,16 +8182,56 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:effect-1",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "7611b3c1ae612f0e",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true
+              },
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "物理伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
         "从神秘之力【轮光】获得光属性伤害+10%"
       ],
       "remainingConditions": [
@@ -8824,18 +9093,60 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "魔法": {
+          "summary": "开场判断攻击力＜魔力时，魔法伤害上限+5,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场判断攻击力＜魔力时，魔法伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "07cab38a1e00eaa5:effect-2",
+              "group": "cap",
+              "mutuallyExclusiveBranch": true,
+              "trigger": {
+                "event": "wave-start",
+                "snapshot": true
+              },
+              "capPoints": 5000,
+              "condition": {
+                "left": "STR",
+                "operator": "lt",
+                "right": "INT",
+                "snapshot": "wave-start"
+              },
+              "mutuallyExclusiveWithPartId": "effect-1"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
         "战斗开始",
-        "特技相关"
+        "特技相关",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法伤害上限+5,000"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
       ]
@@ -15231,16 +15542,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "魔法": {
+          "summary": "魔法咏唱速度+30%，再吟唱Buff。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法咏唱速度+30%，再吟唱Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "cast-speed-up",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "484c7ab2b4b198dc:effect-1",
+              "group": "cast-speed",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 30,
+              "buffType": "recast",
+              "additionalCastCount": 0
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "再吟唱：魔法咏唱速度+30%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -16986,13 +17335,55 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "装备法杖时，魔法攻击伤害+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备法杖时，魔法攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "fca23d2a13780d62:effect-1",
+              "group": "damage",
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "staff",
+                "minimumMatchingWeaponCount": 1
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "魔法伤害增加",
         "杖",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -21121,18 +21512,86 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "装备法杖时，魔法攻击伤害+20%；装备法杖时，魔法攻击伤害上限+2000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备法杖时，魔法攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "da60418e1d1102bc:effect-1",
+              "group": "damage",
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "staff",
+                "minimumMatchingWeaponCount": 1
+              }
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "装备法杖时，魔法攻击伤害上限+2000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "da60418e1d1102bc:effect-2",
+              "group": "cap",
+              "perMatchingWeaponStacking": false,
+              "capPoints": 2000,
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "staff",
+                "minimumMatchingWeaponCount": 1
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "魔法伤害增加",
         "杖",
-        "物理"
+        "物理",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害上限+2,000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -21325,12 +21784,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "魔法攻击伤害+15%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害+15%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "9c0bd935e13111e8:effect-1",
+              "valuePercent": 15,
+              "condition": {
+                "otherAlliesWithSameSkill": {
+                  "operator": "eq",
+                  "count": 1
+                },
+                "excludeSelf": true
+              },
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "魔法伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -24289,13 +24787,60 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "自身复活后，魔法攻击伤害+20%，持续40秒。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身复活后，魔法攻击伤害+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "563cffc7c5fa9c59:effect-1",
+              "group": "damage",
+              "activationMode": "triggered-buff",
+              "phase": "after-revival",
+              "buffType": "magic-damage-up",
+              "valuePercent": 20,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "condition": {
+                "mode": "after-self-revival",
+                "actor": "self",
+                "revivedTarget": "self",
+                "event": "revived"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "revived"
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "魔法伤害增加",
         "复活",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -28420,12 +28965,55 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "魔法攻击伤害+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "4810345440e1ca42:effect-1",
+              "valuePercent": 20,
+              "condition": {
+                "otherAlliesWithSameSkill": {
+                  "operator": "eq",
+                  "count": 1
+                },
+                "pairedGenders": [
+                  "male",
+                  "female"
+                ],
+                "excludeSelf": true
+              },
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "魔法伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -29920,16 +30508,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "受到的魔法攻击伤害-10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "受到的魔法攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "92a57a934fb2eb2f:effect-1",
+              "valuePercent": 10,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "受到的魔法攻击伤害-10%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备衣服时生效"
       ]
@@ -30001,16 +30623,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "受到的魔法攻击伤害-20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "受到的魔法攻击伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "6df40a3227341ce3:effect-1",
+              "valuePercent": 20,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "受到的魔法攻击伤害-20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备衣服时生效"
       ]
@@ -30082,11 +30738,65 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 75
             }
           ]
+        },
+        "魔法": {
+          "summary": "攻击魔法MP消耗增加50%，同时该魔法伤害+75%；攻击魔法的MP消耗量+50%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "攻击魔法MP消耗增加50%，同时该魔法伤害+75%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "ddccca9cf069a9ea:magic-damage",
+              "group": "damage",
+              "damageType": "attack-magic",
+              "valuePercent": 75
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "攻击魔法的MP消耗量+50%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "adjust-spell-cost",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "ddccca9cf069a9ea:effect-1",
+              "group": "mp-cost",
+              "spellType": "attack-magic",
+              "costAdjustmentPercent": 50,
+              "costBase": "spell-MP-cost",
+              "resource": "MP"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "MP",
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -30124,10 +30834,46 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "装备长袍时，魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "bf684afd6ed9b3e1:magic-damage",
+              "valuePercent": 10,
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -30205,11 +30951,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "武器类型条件已贴标签；要求至少装备1把该类武器，不擅自增加单武器或双武器限制。同一技能不按武器数量重复叠加；其余效果、条件和机制沿用各自标签进度。"
+        },
+        "魔法": {
+          "summary": "装备法杖时，魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备法杖时，魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "ce7eb01498391d2c:magic-damage",
+              "group": "damage",
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "staff",
+                "minimumMatchingWeaponCount": 1
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "杖"
+        "杖",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -30247,10 +31035,46 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "装备长袍时，魔法攻击伤害+5%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+5%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "ea2269dc8dbcfa74:magic-damage",
+              "valuePercent": 5,
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -30312,16 +31136,68 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续30秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "魔法": {
+          "summary": "魔法攻击伤害+50%；战斗开始后的前30秒无法使用魔法；常驻魔法增伤不属于开场效果。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "魔法攻击伤害+50%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "bf0d04fe54be3b33:magic-damage",
+              "valuePercent": 50,
+              "group": "damage"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "战斗开始后的前30秒无法使用魔法；常驻魔法增伤不属于开场效果",
+              "target": "self",
+              "isBuff": false,
+              "operation": "disable-magic",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "bf0d04fe54be3b33:effect-1",
+              "group": "disable",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "lockDurationSeconds": 30
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "战斗开始后的前30秒无法使用魔法"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -30384,11 +31260,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "这是魔法伤害增加，不是魔力提高或无类型伤害。友军倒下时触发40秒Buff，同类型只计最高已生效一项；Buff机制仍待判断。"
+        },
+        "魔法": {
+          "summary": "其他友军倒下时，自身魔法攻击伤害+30%，持续40秒。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "其他友军倒下时，自身魔法攻击伤害+30%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "1773fd0e181f0d48:magic-damage",
+              "group": "damage",
+              "phase": "after-ally-death",
+              "activationMode": "triggered-buff",
+              "buffType": "magic-damage-up",
+              "valuePercent": 30,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "condition": {
+                "mode": "ally-death-trigger",
+                "subject": "other-ally",
+                "event": "became-incapacitated"
+              },
+              "trigger": {
+                "actor": "other-ally",
+                "event": "became-incapacitated"
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "友军死亡"
+        "友军死亡",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -30468,11 +31390,47 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "装备长袍时，魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "ef761252451c1b55:magic-damage",
+              "valuePercent": 10,
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -30549,11 +31507,47 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "装备长袍时，魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "8e6716f96c389e1d:magic-damage",
+              "valuePercent": 10,
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -30593,15 +31587,64 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "魔法攻击伤害+12%；魔法攻击伤害上限+1,200。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "魔法攻击伤害+12%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "911c90d5593ecf69:magic-damage",
+              "valuePercent": 12,
+              "group": "damage"
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "魔法攻击伤害上限+1,200",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "911c90d5593ecf69:effect-2",
+              "capPoints": 1200,
+              "group": "cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "类型追加“龙”",
-        "魔法攻击伤害上限+1,200"
+        "类型追加“龙”"
       ],
       "remainingConditions": []
     },
@@ -30675,11 +31718,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "另一项魔法攻击伤害+15%不限定属性，沿用已有魔法伤害标签；两项保留完整范围。"
+        },
+        "魔法": {
+          "summary": "魔法攻击伤害+15%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "魔法攻击伤害+15%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "82bfa575b36bca5b:magic-damage",
+              "valuePercent": 15,
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -30752,11 +31827,47 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "装备长袍时，魔法攻击伤害+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "58197bb69bad678a:magic-damage",
+              "valuePercent": 20,
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -30880,12 +31991,61 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "魔法": {
+          "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "group": "team-damage",
+              "trigger": {
+                "event": "wave-start",
+                "snapshot": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "eachUnitCountsOnce": true,
+                "maxCount": 4
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
         "战斗开始",
-        "特技相关"
+        "特技相关",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -30951,11 +32111,48 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续20秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "魔法": {
+          "summary": "战斗开始20秒后，魔法攻击伤害+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "战斗开始20秒后，魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "e2016a861d776638:magic-damage",
+              "valuePercent": 20,
+              "trigger": {
+                "event": "wave-start",
+                "delaySeconds": 20
+              },
+              "notBuffDurationSeconds": 20,
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -30992,10 +32189,42 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "魔法攻击伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "魔法攻击伤害+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "0b4cbcd7bc326038:magic-damage",
+              "valuePercent": 30,
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -31064,11 +32293,46 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "魔法": {
+          "summary": "魔法攻击伤害随战斗经过时间逐渐提高，40秒时最高+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "魔法攻击伤害随战斗经过时间逐渐提高，40秒时最高+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "time-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "29da106c453e0234:magic-damage",
+              "maxValuePercent": 30,
+              "reachesMaximumAtSeconds": 40,
+              "curveStatus": "unconfirmed",
+              "timeBase": "elapsed-wave-time",
+              "group": "time-damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -31683,10 +32947,43 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本标签覆盖完整的对Boss魔法增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "对Boss的魔法攻击伤害+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "对Boss的魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "79a377bec526c2d4:magic-damage",
+              "valuePercent": 20,
+              "group": "boss-damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "Boss魔法伤害增加"
+        "Boss魔法伤害增加",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -31730,15 +33027,65 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本标签覆盖完整的对Boss魔法增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "对Boss的魔法攻击伤害+20%；魔法攻击伤害上限+2,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "对Boss的魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "a97531c83b0073e7:magic-damage",
+              "valuePercent": 20,
+              "group": "boss-damage"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "a97531c83b0073e7:effect-1",
+              "capPoints": 2000,
+              "group": "boss-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "Boss魔法伤害增加"
+        "Boss魔法伤害增加",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害上限+2,000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -31779,15 +33126,65 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本标签覆盖完整的对Boss魔法增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "对Boss的魔法攻击伤害+20%；魔法攻击伤害上限+6,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "对Boss的魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "f49f17d3da2551a8:magic-damage",
+              "valuePercent": 20,
+              "group": "boss-damage"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害上限+6,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "f49f17d3da2551a8:effect-1",
+              "capPoints": 6000,
+              "group": "boss-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "Boss魔法伤害增加"
+        "Boss魔法伤害增加",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害上限+6,000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -31828,15 +33225,65 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本标签覆盖完整的对Boss魔法增伤。并列的其它攻击类型、伤害上限与额外效果各自判断，不复制为宽泛增伤标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "魔法": {
+          "summary": "对Boss的魔法攻击伤害+20%；魔法攻击伤害上限+4,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "对Boss的魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "42656c3afdc8103a:magic-damage",
+              "valuePercent": 20,
+              "group": "boss-damage"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害上限+4,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "42656c3afdc8103a:effect-1",
+              "capPoints": 4000,
+              "group": "boss-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "Boss魔法伤害增加"
+        "Boss魔法伤害增加",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击伤害上限+4,000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -32933,15 +34380,52 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "魔法": {
+          "summary": "受到魔法伤害-20%，魔法屏障Buff。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "b68b7c256efa0467:opening-effect-1",
+              "group": "reduction",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "wave-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 20,
+              "buffType": "received-magic-damage-down"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "受到魔法伤害-20%，魔法屏障Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -34579,15 +36063,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "魔法": {
+          "summary": "魔法咏唱速度+30%，再吟唱Buff。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "魔法咏唱速度+30%，再吟唱Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "cast-speed-up",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "6227c8886b43ceb0:opening-effect-1",
+              "group": "cast-speed",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "wave-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 30,
+              "buffType": "recast",
+              "additionalCastCount": 0
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法咏唱速度+30%，再吟唱Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -35341,16 +36863,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "魔法": {
+          "summary": "魔法咏唱速度+30%，再吟唱Buff。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "魔法咏唱速度+30%，再吟唱Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "cast-speed-up",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "e27f6e2a867c1a2e:opening-effect-2",
+              "group": "cast-speed",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "wave-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 30,
+              "buffType": "recast",
+              "additionalCastCount": 0
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "战斗开始",
-        "特技相关"
+        "特技相关",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法咏唱速度+30%，再吟唱Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -35495,15 +37055,52 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "魔法": {
+          "summary": "受到魔法伤害-35%，高阶魔法屏障Buff。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "受到魔法伤害-35%，高阶魔法屏障Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "18991b227c1fe30b:opening-effect-1",
+              "group": "reduction",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "wave-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 35,
+              "buffType": "received-magic-damage-down"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "受到魔法伤害-35%，高阶魔法屏障Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -37382,15 +38979,52 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        },
+        "魔法": {
+          "summary": "永久获得「魔法屏障」：自身受到魔法伤害-20%（无固定倒计时）。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「魔法屏障」：自身受到魔法伤害-20%（无固定倒计时）",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "d18db4372ea123a1:permanent-effect",
+              "group": "reduction",
+              "statusName": "魔法屏障",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "always-active"
+              },
+              "valuePercent": 20,
+              "buffType": "received-magic-damage-down"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法屏障：受到魔法伤害-20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -38487,15 +40121,52 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        },
+        "魔法": {
+          "summary": "永久获得「高阶魔法屏障」：自身受到魔法伤害-35%（无固定倒计时）。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得「高阶魔法屏障」：自身受到魔法伤害-35%（无固定倒计时）",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "5fae0db345fcff39:permanent-effect",
+              "group": "reduction",
+              "statusName": "高阶魔法屏障",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "always-active"
+              },
+              "valuePercent": 35,
+              "buffType": "received-magic-damage-down"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "高阶魔法屏障：受到魔法伤害-35%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -39024,15 +40695,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "自身濒死触发魔法屏障Buff：受到魔法伤害-20%，持续40秒。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "low-hp-effect-2"
+              ],
+              "summary": "自身濒死触发魔法屏障Buff：受到魔法伤害-20%，持续40秒",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "ecfc5e235fabef1a:low-hp-effect-2",
+              "group": "reduction",
+              "activationMode": "threshold-trigger",
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "condition": {
+                "mode": "threshold-trigger",
+                "subject": "self",
+                "metric": "current-hp-percent-of-max",
+                "operator": "lte",
+                "thresholdPercent": 30
+              },
+              "valuePercent": 20,
+              "buffType": "received-magic-damage-down",
+              "maxTriggersPerWave": 1,
+              "trigger": {
+                "actor": "self",
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "濒死",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "自身濒死触发魔法屏障Buff：受到魔法伤害-20%，持续40秒",
         "自身濒死触发速度Buff：移动速度+2，持续40秒",
         "自身濒死触发再生Buff：每6秒回复HP，持续30秒"
       ],
@@ -39083,15 +40803,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        },
+        "魔法": {
+          "summary": "自身HP≤30%时，魔法咏唱速度+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP≤30%时，魔法咏唱速度+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cast-speed-up",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "b709d054e274c5ce:low-hp-effect-1",
+              "group": "cast-speed",
+              "activationMode": "threshold-state",
+              "condition": {
+                "subject": "self",
+                "metric": "current-hp-percent-of-max",
+                "operator": "lte",
+                "thresholdPercent": 30
+              },
+              "valuePercent": 20,
+              "additionalCastCount": 0
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "濒死"
+        "濒死",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身HP≤30%时，魔法咏唱速度+20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -39904,16 +41662,47 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "受到敌人魔法攻击伤害-10%（常驻，不受濒死条件限制）。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "other-magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "other-magic-reduction"
+              ],
+              "summary": "受到敌人魔法攻击伤害-10%（常驻，不受濒死条件限制）",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "cf54afaf524eaef4:other-magic-reduction",
+              "valuePercent": 10,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "濒死",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "自身濒死时，从我方角色主动技能获得的HP回复量+15%",
-        "受到敌人魔法攻击伤害-10%（常驻，不受濒死条件限制）"
+        "自身濒死时，从我方角色主动技能获得的HP回复量+15%"
       ],
       "remainingConditions": []
     },
@@ -40597,15 +42386,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "需要装备「格挡」；这项装备技能前提仍单独待贴标签。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "魔法": {
+          "summary": "装备「格挡」时，受到魔法攻击也有概率自动格挡。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "guard"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard"
+              ],
+              "summary": "装备「格挡」时，受到魔法攻击也有概率自动格挡。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-magic-guard",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:34:guard",
+              "group": "guard",
+              "phase": "before-damage",
+              "activationMode": "per-hit-response",
+              "requiresSkillId": "全部技能:all:31",
+              "condition": {
+                "subject": "self",
+                "event": "attack-received",
+                "incomingType": "magic",
+                "requiresHpDamage": false
+              },
+              "chanceStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "受到攻击"
+        "受到攻击",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔法攻击也可被自动格挡"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备「格挡」技能时生效",
         "概率触发，具体概率待确认"
@@ -41466,15 +43294,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "回复量参照所受伤害，不是最大HP提高或按最大HP回血；触发概率尚未给出。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "魔法": {
+          "summary": "受到魔法伤害时，有概率回复相当于所受伤害10%的HP。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到魔法伤害时，有概率回复相当于所受伤害10%的HP。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "trigger-benefit",
+              "effectIdentity": "b2e58697ea88e464:heal",
+              "group": "received-heal",
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 10,
+              "condition": {
+                "subject": "self",
+                "event": "damage-received",
+                "incomingType": "magic",
+                "requiresHpDamage": true
+              },
+              "chanceStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "magic-damage-received"
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "受到攻击"
+        "受到攻击",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "回复相当于所受伤害10%的HP"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "概率触发，具体概率待确认"
       ]
@@ -41529,15 +43401,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "回复量参照所受伤害，不是最大HP提高或按最大HP回血；触发概率尚未给出。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "魔法": {
+          "summary": "受到魔法伤害时，有概率回复相当于所受伤害25%的HP。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到魔法伤害时，有概率回复相当于所受伤害25%的HP。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "trigger-benefit",
+              "effectIdentity": "全部技能:all:346:heal",
+              "group": "received-heal",
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 25,
+              "condition": {
+                "subject": "self",
+                "event": "damage-received",
+                "incomingType": "magic",
+                "requiresHpDamage": true
+              },
+              "chanceStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "magic-damage-received"
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "受到攻击"
+        "受到攻击",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "回复相当于所受伤害25%的HP"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "概率触发，具体概率待确认"
       ]
@@ -41592,15 +43508,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "回复量参照所受伤害，不是最大HP提高或按最大HP回血；触发概率尚未给出。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "魔法": {
+          "summary": "受到魔法伤害时，有概率回复相当于所受伤害40%的HP。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到魔法伤害时，有概率回复相当于所受伤害40%的HP。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "trigger-benefit",
+              "effectIdentity": "全部技能:all:389:heal",
+              "group": "received-heal",
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 40,
+              "condition": {
+                "subject": "self",
+                "event": "damage-received",
+                "incomingType": "magic",
+                "requiresHpDamage": true
+              },
+              "chanceStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "magic-damage-received"
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "受到攻击"
+        "受到攻击",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "回复相当于所受伤害40%的HP"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "概率触发，具体概率待确认"
       ]
@@ -43066,10 +45026,51 @@ export const SKILL_LABELING_CATALOG = {
               "ultimate-condition"
             ]
           }
+        },
+        "魔法": {
+          "summary": "必杀槽满时，受到的魔法攻击伤害-15%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "必杀槽满时，受到的魔法攻击伤害-15%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "9bde00a6ca77b552:magic-reduction",
+              "group": "reduction",
+              "activationMode": "ultimate-gauge-full",
+              "phase": "current-state",
+              "valuePercent": 15,
+              "condition": {
+                "mode": "ultimate-gauge-full",
+                "subject": "self",
+                "metric": "current-ultimate-gauge-percent",
+                "operator": "eq",
+                "thresholdPercent": 100
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "必杀相关"
+        "必杀相关",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -43848,11 +45849,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "沿用MP消耗标签；两项均只作用于冰属性攻击魔法，不能给所有魔法加伤或给特技增加MP消耗。"
+        },
+        "魔法": {
+          "summary": "冰属性攻击魔法MP消耗+25%；冰属性攻击魔法伤害+40%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-spell-cost",
+              "ice-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "ice-spell-cost"
+              ],
+              "summary": "冰属性攻击魔法MP消耗+25%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "adjust-spell-cost",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "1a004726593e801a:ice-spell-cost",
+              "group": "ice-mp-cost",
+              "costAdjustmentPercent": 25,
+              "costBase": "spell-MP-cost",
+              "resource": "MP"
+            },
+            {
+              "partIds": [
+                "ice-magic-damage"
+              ],
+              "summary": "冰属性攻击魔法伤害+40%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "1a004726593e801a:ice-magic-damage",
+              "group": "ice-damage",
+              "valuePercent": 40
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "MP",
-        "冰属性"
+        "冰属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -44199,15 +46254,58 @@ export const SKILL_LABELING_CATALOG = {
             "curveStatus": "unconfirmed",
             "scaleBaseStatus": "unconfirmed"
           }
+        },
+        "魔法": {
+          "summary": "MP越少，受到的魔法伤害越少，最多-15%；具体变化曲线待确认。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "MP越少，受到的魔法伤害越少，最多-15%；具体变化曲线待确认。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "mp-scaled-reduction",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "eeb9b0e6da9b7f7a:reduction",
+              "group": "low-mp-reduction",
+              "activationMode": "mp-scaling",
+              "damageType": "incoming-magic",
+              "maxReductionPercent": 15,
+              "condition": {
+                "mode": "mp-scaling",
+                "subject": "self",
+                "metric": "current-MP",
+                "direction": "lower-MP-stronger",
+                "curveStatus": "unconfirmed",
+                "scaleBaseStatus": "unconfirmed"
+              },
+              "curveStatus": "unconfirmed",
+              "scaleDirection": "lower-MP-stronger",
+              "scaleBaseStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "MP"
+        "MP",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "MP越少，受到的魔法伤害越少，最多-15%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "MP数值到减伤量的曲线、比例基数和端点条件待确认"
       ]
@@ -44272,15 +46370,58 @@ export const SKILL_LABELING_CATALOG = {
             "curveStatus": "unconfirmed",
             "scaleBaseStatus": "unconfirmed"
           }
+        },
+        "魔法": {
+          "summary": "MP越多，受到的魔法伤害越少，最多-15%；具体变化曲线待确认。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "MP越多，受到的魔法伤害越少，最多-15%；具体变化曲线待确认。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "mp-scaled-reduction",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "24ba29a7c86df4f3:reduction",
+              "group": "high-mp-reduction",
+              "activationMode": "mp-scaling",
+              "damageType": "incoming-magic",
+              "maxReductionPercent": 15,
+              "condition": {
+                "mode": "mp-scaling",
+                "subject": "self",
+                "metric": "current-MP",
+                "direction": "higher-MP-stronger",
+                "curveStatus": "unconfirmed",
+                "scaleBaseStatus": "unconfirmed"
+              },
+              "curveStatus": "unconfirmed",
+              "scaleDirection": "higher-MP-stronger",
+              "scaleBaseStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "MP"
+        "MP",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "MP越多，受到的魔法伤害越少，最多-15%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "MP数值到减伤量的曲线、比例基数和端点条件待确认"
       ]
@@ -45274,7 +47415,7 @@ export const SKILL_LABELING_CATALOG = {
               "guaranteedCritical": false
             }
           ],
-          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围沿用已完成的属性标签。"
         },
         "火属性": {
           "summary": "火属性攻击魔法获得暴击资格，不是必定暴击。",
@@ -45315,11 +47456,45 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "沿用暴击标签，补齐火属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
+        },
+        "魔法": {
+          "summary": "火属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "火属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "fire"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "12fb48061bb074e5:critical-permission",
+              "group": "fire-critical-permission",
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "暴击",
-        "火属性"
+        "火属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -45416,11 +47591,45 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "沿用暴击标签，补齐冰属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
+        },
+        "魔法": {
+          "summary": "冰属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "冰属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "2083b650aa52252c:critical-permission",
+              "group": "ice-critical-permission",
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "暴击",
-        "冰属性"
+        "冰属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -45517,11 +47726,45 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "沿用暴击标签，补齐树属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
+        },
+        "魔法": {
+          "summary": "树属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "树属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "earth"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "0b725106ff374bdf:critical-permission",
+              "group": "earth-critical-permission",
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "暴击",
-        "树属性"
+        "树属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -45618,11 +47861,45 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "沿用暴击标签，补齐雷属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
+        },
+        "魔法": {
+          "summary": "雷属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "雷属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "thunder"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "5db07a2caf842aae:critical-permission",
+              "group": "thunder-critical-permission",
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "暴击",
-        "雷属性"
+        "雷属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -45719,11 +47996,45 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "沿用暴击标签，补齐光属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
+        },
+        "魔法": {
+          "summary": "光属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "光属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "0631262b7e479c3a:critical-permission",
+              "group": "light-critical-permission",
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "暴击",
-        "光属性"
+        "光属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -45820,11 +48131,45 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "沿用暴击标签，补齐暗属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
+        },
+        "魔法": {
+          "summary": "暗属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "暗属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "06dbf722869d70c0:critical-permission",
+              "group": "dark-critical-permission",
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "暴击",
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -47465,10 +49810,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是火属性魔法攻击增伤，不计入所有魔法或火属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "火属性魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "fire-magic-damage"
+              ],
+              "summary": "火属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "fire"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "f871fed73e6326c3:fire-magic-damage",
+              "group": "fire-damage",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -47520,10 +49898,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是火属性魔法攻击增伤，不计入所有魔法或火属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "火属性魔法攻击伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "fire-magic-damage"
+              ],
+              "summary": "火属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "fire"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "f38969900a97ccd0:fire-magic-damage",
+              "group": "fire-damage",
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -47829,6 +50240,217 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "每次随机一种墙，不是全部同时生效；10秒是发动间隔，30秒是墙持续时间。各属性分支分别判断，随机、间隔和Buff机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "每10秒随机施加1种墙；获得冰墙时，自身受到火属性攻击伤害-20%，该墙持续30秒；每10秒随机施加1种墙；获得雷墙时，自身受到冰属性攻击伤害-20%，该墙持续30秒；每10秒随机施加1种墙；获得炎墙时，自身受到树属性攻击伤害-20%，该墙持续30秒；每10秒随机施加1种墙；获得石墙时，自身受到雷属性攻击伤害-20%，该墙持续30秒；每10秒随机施加1种墙；获得暗影墙时，自身受到光属性攻击伤害-20%，该墙持续30秒；每10秒随机施加1种墙；获得圣墙时，自身受到暗属性攻击伤害-20%，该墙持续30秒。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "wall-fire",
+              "wall-ice",
+              "wall-earth",
+              "wall-thunder",
+              "wall-light",
+              "wall-dark"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "wall-fire"
+              ],
+              "summary": "每10秒随机施加1种墙；获得冰墙时，自身受到火属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "magicRole": "spell-benefit",
+              "effectIdentity": "92bf2e44cf665bdf:wall-fire",
+              "group": "auto-wall-fire",
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-fire-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "ice-wall",
+              "activeByDefault": false,
+              "trigger": {
+                "event": "periodic-magic-cast",
+                "intervalSeconds": 10,
+                "selection": "random-one-of-six-walls"
+              }
+            },
+            {
+              "partIds": [
+                "wall-ice"
+              ],
+              "summary": "每10秒随机施加1种墙；获得雷墙时，自身受到冰属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "magicRole": "spell-benefit",
+              "effectIdentity": "92bf2e44cf665bdf:wall-ice",
+              "group": "auto-wall-ice",
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-ice-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "thunder-wall",
+              "activeByDefault": false,
+              "trigger": {
+                "event": "periodic-magic-cast",
+                "intervalSeconds": 10,
+                "selection": "random-one-of-six-walls"
+              }
+            },
+            {
+              "partIds": [
+                "wall-earth"
+              ],
+              "summary": "每10秒随机施加1种墙；获得炎墙时，自身受到树属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "magicRole": "spell-benefit",
+              "effectIdentity": "92bf2e44cf665bdf:wall-earth",
+              "group": "auto-wall-earth",
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-earth-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "flame-wall",
+              "activeByDefault": false,
+              "trigger": {
+                "event": "periodic-magic-cast",
+                "intervalSeconds": 10,
+                "selection": "random-one-of-six-walls"
+              }
+            },
+            {
+              "partIds": [
+                "wall-thunder"
+              ],
+              "summary": "每10秒随机施加1种墙；获得石墙时，自身受到雷属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "magicRole": "spell-benefit",
+              "effectIdentity": "92bf2e44cf665bdf:wall-thunder",
+              "group": "auto-wall-thunder",
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-thunder-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "stone-wall",
+              "activeByDefault": false,
+              "trigger": {
+                "event": "periodic-magic-cast",
+                "intervalSeconds": 10,
+                "selection": "random-one-of-six-walls"
+              }
+            },
+            {
+              "partIds": [
+                "wall-light"
+              ],
+              "summary": "每10秒随机施加1种墙；获得暗影墙时，自身受到光属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "magicRole": "spell-benefit",
+              "effectIdentity": "92bf2e44cf665bdf:wall-light",
+              "group": "auto-wall-light",
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-light-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "shadow-wall",
+              "activeByDefault": false,
+              "trigger": {
+                "event": "periodic-magic-cast",
+                "intervalSeconds": 10,
+                "selection": "random-one-of-six-walls"
+              }
+            },
+            {
+              "partIds": [
+                "wall-dark"
+              ],
+              "summary": "每10秒随机施加1种墙；获得圣墙时，自身受到暗属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "magicRole": "spell-benefit",
+              "effectIdentity": "92bf2e44cf665bdf:wall-dark",
+              "group": "auto-wall-dark",
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-dark-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "holy-wall",
+              "activeByDefault": false,
+              "trigger": {
+                "event": "periodic-magic-cast",
+                "intervalSeconds": 10,
+                "selection": "random-one-of-six-walls"
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
@@ -47837,7 +50459,8 @@ export const SKILL_LABELING_CATALOG = {
         "树属性",
         "雷属性",
         "光属性",
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -48492,10 +51115,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "伤害与上限分开；两项均限定火属性魔法攻击，不扩展为所有魔法。"
+        },
+        "魔法": {
+          "summary": "火属性魔法攻击伤害+30%；火属性魔法攻击伤害上限+2,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic-damage",
+              "fire-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "fire-magic-damage"
+              ],
+              "summary": "火属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "fire"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "25b961ea21f3b629:fire-magic-damage",
+              "group": "fire-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "fire-magic-cap"
+              ],
+              "summary": "火属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "fire"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "25b961ea21f3b629:fire-magic-cap",
+              "group": "fire-cap",
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -48736,13 +51411,103 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "魔法": {
+          "summary": "火属性魔法攻击伤害+10%；冰属性魔法攻击伤害+10%；树属性魔法攻击伤害+10%；雷属性魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic",
+              "ice-magic",
+              "earth-magic",
+              "thunder-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "fire-magic"
+              ],
+              "summary": "火属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "fire"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "71d9f5a3ea0a9660:fire-magic",
+              "group": "fire-damage",
+              "valuePercent": 10
+            },
+            {
+              "partIds": [
+                "ice-magic"
+              ],
+              "summary": "冰属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "71d9f5a3ea0a9660:ice-magic",
+              "group": "ice-damage",
+              "valuePercent": 10
+            },
+            {
+              "partIds": [
+                "earth-magic"
+              ],
+              "summary": "树属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "earth"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "71d9f5a3ea0a9660:earth-magic",
+              "group": "earth-damage",
+              "valuePercent": 10
+            },
+            {
+              "partIds": [
+                "thunder-magic"
+              ],
+              "summary": "雷属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "thunder"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "71d9f5a3ea0a9660:thunder-magic",
+              "group": "thunder-damage",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "火属性",
         "冰属性",
         "树属性",
-        "雷属性"
+        "雷属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -49789,13 +52554,103 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "魔法": {
+          "summary": "火属性魔法攻击伤害+30%；冰属性魔法攻击伤害+30%；树属性魔法攻击伤害+30%；雷属性魔法攻击伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic",
+              "ice-magic",
+              "earth-magic",
+              "thunder-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "fire-magic"
+              ],
+              "summary": "火属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "fire"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "789bffd5f1b5782a:fire-magic",
+              "group": "fire-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "ice-magic"
+              ],
+              "summary": "冰属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "789bffd5f1b5782a:ice-magic",
+              "group": "ice-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "earth-magic"
+              ],
+              "summary": "树属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "earth"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "789bffd5f1b5782a:earth-magic",
+              "group": "earth-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "thunder-magic"
+              ],
+              "summary": "雷属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "thunder"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "789bffd5f1b5782a:thunder-magic",
+              "group": "thunder-damage",
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "火属性",
         "冰属性",
         "树属性",
-        "雷属性"
+        "雷属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -51026,10 +53881,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是冰属性魔法攻击增伤，不计入所有魔法或冰属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "冰属性魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "ice-magic-damage"
+              ],
+              "summary": "冰属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "ccd9494e616a344d:ice-magic-damage",
+              "group": "ice-damage",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "冰属性"
+        "冰属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -51081,10 +53969,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是冰属性魔法攻击增伤，不计入所有魔法或冰属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "冰属性魔法攻击伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "ice-magic-damage"
+              ],
+              "summary": "冰属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "b6b66290a2c0176e:ice-magic-damage",
+              "group": "ice-damage",
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "冰属性"
+        "冰属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -51159,10 +54080,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "伤害与上限分开；两项均限定冰属性魔法攻击，不扩展为所有魔法。"
+        },
+        "魔法": {
+          "summary": "冰属性魔法攻击伤害+30%；冰属性魔法攻击伤害上限+2,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-magic-damage",
+              "ice-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "ice-magic-damage"
+              ],
+              "summary": "冰属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "2901b40ce3f38847:ice-magic-damage",
+              "group": "ice-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "ice-magic-cap"
+              ],
+              "summary": "冰属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "2901b40ce3f38847:ice-magic-cap",
+              "group": "ice-cap",
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "冰属性"
+        "冰属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -52361,16 +55334,46 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 10
             }
           ],
-          "calculationNote": "另一条受到魔法伤害-15%不限冰属性，保留待对应标签。"
+          "calculationNote": "另一条受到魔法伤害-15%不限冰属性，已由魔法标签覆盖。"
+        },
+        "魔法": {
+          "summary": "受到的魔法攻击伤害-15%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "received-magic"
+              ],
+              "summary": "受到的魔法攻击伤害-15%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "7699c0abda6d47a0:received-magic",
+              "valuePercent": 15,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "冰属性"
+        "冰属性",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "受到的魔法攻击伤害-15%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -53141,10 +56144,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是树属性魔法攻击增伤，不计入所有魔法或树属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "树属性魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "earth-magic-damage"
+              ],
+              "summary": "树属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "earth"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "2201afc0db4a340e:earth-magic-damage",
+              "group": "earth-damage",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "树属性"
+        "树属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -53196,10 +56232,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是树属性魔法攻击增伤，不计入所有魔法或树属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "树属性魔法攻击伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "earth-magic-damage"
+              ],
+              "summary": "树属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "earth"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "c334b7ddf4d78b15:earth-magic-damage",
+              "group": "earth-damage",
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "树属性"
+        "树属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -53274,10 +56343,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "伤害与上限分开；两项均限定树属性魔法攻击，不扩展为所有魔法。"
+        },
+        "魔法": {
+          "summary": "树属性魔法攻击伤害+30%；树属性魔法攻击伤害上限+2,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-magic-damage",
+              "earth-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "earth-magic-damage"
+              ],
+              "summary": "树属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "earth"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "0a92e3a07ca76013:earth-magic-damage",
+              "group": "earth-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "earth-magic-cap"
+              ],
+              "summary": "树属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "earth"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "0a92e3a07ca76013:earth-magic-cap",
+              "group": "earth-cap",
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "树属性"
+        "树属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -54759,10 +57880,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是雷属性魔法攻击增伤，不计入所有魔法或雷属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "雷属性魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "thunder-magic-damage"
+              ],
+              "summary": "雷属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "thunder"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "b9a13a0572f16699:thunder-magic-damage",
+              "group": "thunder-damage",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "雷属性"
+        "雷属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -54814,10 +57968,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是雷属性魔法攻击增伤，不计入所有魔法或雷属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "雷属性魔法攻击伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "thunder-magic-damage"
+              ],
+              "summary": "雷属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "thunder"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "fc921ccf05929ad6:thunder-magic-damage",
+              "group": "thunder-damage",
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "雷属性"
+        "雷属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -54892,10 +58079,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "伤害与上限分开；两项均限定雷属性魔法攻击，不扩展为所有魔法。"
+        },
+        "魔法": {
+          "summary": "雷属性魔法攻击伤害+30%；雷属性魔法攻击伤害上限+2,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-magic-damage",
+              "thunder-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "thunder-magic-damage"
+              ],
+              "summary": "雷属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "thunder"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:302:thunder-magic-damage",
+              "group": "thunder-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "thunder-magic-cap"
+              ],
+              "summary": "雷属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "thunder"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:302:thunder-magic-cap",
+              "group": "thunder-cap",
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "雷属性"
+        "雷属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -56407,10 +59646,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是光属性魔法攻击增伤，不计入所有魔法或光属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "光属性魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-magic-damage"
+              ],
+              "summary": "光属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "02ddf87727d6b287:light-magic-damage",
+              "group": "light-damage",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -56462,10 +59734,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是光属性魔法攻击增伤，不计入所有魔法或光属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "光属性魔法攻击伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-magic-damage"
+              ],
+              "summary": "光属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "dc3451f4b7d2a45b:light-magic-damage",
+              "group": "light-damage",
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -56540,10 +59845,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "伤害与上限分开；两项均限定光属性魔法攻击，不扩展为所有魔法。"
+        },
+        "魔法": {
+          "summary": "光属性魔法攻击伤害+30%；光属性魔法攻击伤害上限+2,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic-damage",
+              "light-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-magic-damage"
+              ],
+              "summary": "光属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "6e424e4ea062edd4:light-magic-damage",
+              "group": "light-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "light-magic-cap"
+              ],
+              "summary": "光属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "6e424e4ea062edd4:light-magic-cap",
+              "group": "light-cap",
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -58416,11 +61773,63 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        },
+        "魔法": {
+          "summary": "光属性魔法伤害+10%；暗属性魔法伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic",
+              "dark-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-magic"
+              ],
+              "summary": "光属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "41e5f848b9d300e9:light-magic",
+              "group": "light-damage",
+              "valuePercent": 10
+            },
+            {
+              "partIds": [
+                "dark-magic"
+              ],
+              "summary": "暗属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "41e5f848b9d300e9:dark-magic",
+              "group": "dark-damage",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "光属性",
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -58509,11 +61918,63 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        },
+        "魔法": {
+          "summary": "光属性魔法伤害+30%；暗属性魔法伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic",
+              "dark-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-magic"
+              ],
+              "summary": "光属性魔法伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "348f27fb6f68e198:light-magic",
+              "group": "light-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "dark-magic"
+              ],
+              "summary": "暗属性魔法伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "348f27fb6f68e198:dark-magic",
+              "group": "dark-damage",
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
         "光属性",
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -58883,10 +62344,48 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "现实时间条件加成，不是开场或限时Buff；现实时间标签仍待处理。"
+        },
+        "魔法": {
+          "summary": "现实白天6:00～17:59，光属性魔法伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-time-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-time-magic"
+              ],
+              "summary": "现实白天6:00～17:59，光属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "b63054ad34e97c0d:light-time-magic",
+              "group": "light-damage",
+              "valuePercent": 10,
+              "realTimeWindow": {
+                "start": "06:00",
+                "endExclusive": "18:00",
+                "crossesMidnight": false
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -58950,10 +62449,48 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "现实时间条件加成，不是开场或限时Buff；现实时间标签仍待处理。"
+        },
+        "魔法": {
+          "summary": "现实夜间18:00～次日5:59，光属性魔法伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-time-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-time-magic"
+              ],
+              "summary": "现实夜间18:00～次日5:59，光属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "e0f6942b8d0b10f7:light-time-magic",
+              "group": "light-damage",
+              "valuePercent": 10,
+              "realTimeWindow": {
+                "start": "18:00",
+                "endExclusive": "06:00",
+                "crossesMidnight": true
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -59105,16 +62642,48 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 20
             }
           ],
-          "calculationNote": "治疗魔法威力是独立效果，不是光属性魔法增伤，继续待判断。"
+          "calculationNote": "治疗魔法威力是独立效果，不是光属性魔法增伤，已由魔法标签覆盖。"
+        },
+        "魔法": {
+          "summary": "治疗魔法威力+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic"
+              ],
+              "summary": "治疗魔法威力+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-output-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "182731824b8599ca:healing-magic",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "valuePercent": 30,
+              "group": "healing"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "治疗魔法威力+30%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -59500,10 +63069,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是暗属性魔法攻击增伤，不计入所有魔法或暗属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "暗属性魔法攻击伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "dark-magic-damage"
+              ],
+              "summary": "暗属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "1a1043cd31293850:dark-magic-damage",
+              "group": "dark-damage",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -59555,10 +63157,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "完整词条是暗属性魔法攻击增伤，不计入所有魔法或暗属性物理／必杀。"
+        },
+        "魔法": {
+          "summary": "暗属性魔法攻击伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "dark-magic-damage"
+              ],
+              "summary": "暗属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "0c21dbbed7678df5:dark-magic-damage",
+              "group": "dark-damage",
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -59633,10 +63268,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "伤害与上限分开；两项均限定暗属性魔法攻击，不扩展为所有魔法。"
+        },
+        "魔法": {
+          "summary": "暗属性魔法攻击伤害+30%；暗属性魔法攻击伤害上限+2,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic-damage",
+              "dark-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "dark-magic-damage"
+              ],
+              "summary": "暗属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "eb948e43fefb658b:dark-magic-damage",
+              "group": "dark-damage",
+              "valuePercent": 30
+            },
+            {
+              "partIds": [
+                "dark-magic-cap"
+              ],
+              "summary": "暗属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "eb948e43fefb658b:dark-magic-cap",
+              "group": "dark-cap",
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -61508,10 +65195,48 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "现实时间条件属性加成，不是Buff；现实时间标签仍待处理。"
+        },
+        "魔法": {
+          "summary": "现实夜间18:00～次日5:59，暗属性魔法伤害+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-time-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "dark-time-magic"
+              ],
+              "summary": "现实夜间18:00～次日5:59，暗属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "713403dd798c7836:dark-time-magic",
+              "group": "dark-damage",
+              "valuePercent": 10,
+              "realTimeWindow": {
+                "start": "18:00",
+                "endExclusive": "06:00",
+                "crossesMidnight": true
+              }
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -61565,10 +65290,43 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "仅此技能的暗属性魔法效果，不需要三种脸同时装备。"
+        },
+        "魔法": {
+          "summary": "暗属性魔法伤害+15%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "dark-magic-damage"
+              ],
+              "summary": "暗属性魔法伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "88325a3c478ed329:dark-magic-damage",
+              "group": "dark-damage",
+              "valuePercent": 15
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -71389,16 +75147,50 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "魔法": {
+          "summary": "装备防具时，受到魔法伤害-20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "装备防具时，受到魔法伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorCount": 1,
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "c0fa524208139962:magic-reduction",
+              "valuePercent": 20,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "必杀相关"
+        "必杀相关",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "装备防具时，受到魔法伤害-20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "实际装备防具；防具栏放第二把武器不满足"
       ]
@@ -73963,16 +77755,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "魔法": {
+          "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-cap"
+              ],
+              "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "cb30f3c1c621732d:magic-cap",
+              "capPoints": 10000,
+              "condition": {
+                "subject": "other-allies",
+                "requireAnyLivingFemale": true,
+                "excludeSelf": true,
+                "requireAllFemale": false
+              },
+              "group": "boss-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关"
+        "特技相关",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "自身以外至少一名女性友方存活；不要求其余队友全为女性",
         "目标敌人为Boss"
@@ -76942,17 +80771,66 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "对空中敌人魔法伤害+10%；自身在空中时，受到魔法伤害-10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "对空中敌人魔法伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyState": "airborne"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "1475f35e571d3e09:magic-damage",
+              "valuePercent": 10,
+              "group": "airborne-enemy-damage"
+            },
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "自身在空中时，受到魔法伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "selfState": "airborne"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "1475f35e571d3e09:magic-reduction",
+              "valuePercent": 10,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "对空中敌人魔法伤害+10%",
-        "自身在空中时，受到魔法伤害-10%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "增伤要求目标敌人在空中",
         "减伤要求自身在空中"
@@ -77021,20 +80899,97 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "魔法咏唱中，受到物理伤害-10%；魔法咏唱中，受到魔法伤害-10%；魔法咏唱中，受到反击伤害-10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-reduction"
+            ],
+            "conditionPartIds": [
+              "casting"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-reduction"
+              ],
+              "summary": "魔法咏唱中，受到物理伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "magicRole": "condition-benefit",
+              "effectIdentity": "f2910193b70859f3:physical-reduction",
+              "valuePercent": 10,
+              "condition": {
+                "subject": "self",
+                "event": "casting-magic"
+              },
+              "group": "casting-physical-reduction"
+            },
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "魔法咏唱中，受到魔法伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "f2910193b70859f3:magic-reduction",
+              "valuePercent": 10,
+              "condition": {
+                "subject": "self",
+                "event": "casting-magic"
+              },
+              "group": "reduction"
+            },
+            {
+              "partIds": [
+                "counter-reduction"
+              ],
+              "summary": "魔法咏唱中，受到反击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "counter"
+              },
+              "magicRole": "condition-benefit",
+              "effectIdentity": "f2910193b70859f3:counter-reduction",
+              "valuePercent": 10,
+              "condition": {
+                "subject": "self",
+                "event": "casting-magic"
+              },
+              "group": "casting-counter-reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "魔法咏唱中，受到魔法伤害-10%",
         "魔法咏唱中，受到反击伤害-10%"
       ],
-      "remainingConditions": [
-        "自身正在咏唱魔法"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:806",
@@ -77094,16 +81049,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "实际穿戴盔甲时，受到魔法伤害-10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "实际穿戴盔甲时，受到魔法伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:806:magic-reduction",
+              "valuePercent": 10,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "实际穿戴盔甲时，受到魔法伤害-10%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "实际穿戴盔甲；防具栏装备武器不满足"
       ]
@@ -77166,16 +81155,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "自身以外恰好1名友方装备共犯者时，魔法上限+2,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-cap"
+              ],
+              "summary": "自身以外恰好1名友方装备共犯者时，魔法上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "85715ffd27c809f3:magic-cap",
+              "capPoints": 2000,
+              "condition": {
+                "otherAlliesWithSameSkill": {
+                  "operator": "eq",
+                  "count": 1
+                },
+                "excludeSelf": true
+              },
+              "group": "cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "自身以外恰好1名友方装备共犯者时，魔法上限+2,000"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "自身以外恰好1名友方装备共犯者"
       ]
@@ -77234,16 +81260,47 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "受到敌人魔法伤害-15%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "受到敌人魔法伤害-15%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "0cf4b314ecf1f25a:magic-reduction",
+              "valuePercent": 15,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "所有异常状态恢复速度-20%",
-        "受到敌人魔法伤害-15%"
+        "所有异常状态恢复速度-20%"
       ],
       "remainingConditions": []
     },
@@ -77296,16 +81353,46 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "受到敌人魔法伤害-20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "受到敌人魔法伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "7f9e93aba0dee0db:magic-reduction",
+              "valuePercent": 20,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "魔法"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "受到敌人魔法伤害-20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -77513,6 +81600,2358 @@ export const SKILL_LABELING_CATALOG = {
         "受益者须装备信仰且提供者为自身以外的神类型友方",
         "同名神秘之力【守护】只计一次，提供与接受不重复相加"
       ]
+    },
+    {
+      "id": "01f5167831d7b556",
+      "url": "https://altema.jp/lastcloudia/gino/133",
+      "name": "回复魔法增幅",
+      "text": "自身的回复魔法HP恢复量+10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "healing-magic-up",
+          "kind": "effect",
+          "text": "自身施放的回复魔法HP恢复量+10%"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "自身施放的回复魔法HP恢复量+10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic-up"
+              ],
+              "summary": "自身施放的回复魔法HP恢复量+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-output-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "01f5167831d7b556:healing-magic-up",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "valuePercent": 10,
+              "group": "healing"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1c52dcb1735c073a",
+      "url": "https://altema.jp/lastcloudia/gino/140",
+      "name": "回复魔法高阶增幅",
+      "text": "自身的回复魔法HP恢复量+30%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "healing-magic-up",
+          "kind": "effect",
+          "text": "自身施放的回复魔法HP恢复量+30%"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "自身施放的回复魔法HP恢复量+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic-up"
+              ],
+              "summary": "自身施放的回复魔法HP恢复量+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-output-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "1c52dcb1735c073a:healing-magic-up",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "valuePercent": 30,
+              "group": "healing"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:794",
+      "url": "https://altema.jp/lastcloudia/gino/1563",
+      "name": "回复魔法超阶增幅",
+      "text": "自身施放的回复魔法回复量+30%，回复量上限+2,000。",
+      "notes": "增加的是单次回复量的上限，不是受治疗目标的HP上限。",
+      "parts": [
+        {
+          "id": "healing-magic-up",
+          "kind": "effect",
+          "text": "自身施放的回复魔法HP恢复量+30%"
+        },
+        {
+          "id": "healing-magic-cap",
+          "kind": "effect",
+          "text": "自身施放的回复魔法单次HP恢复上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "自身施放的回复魔法HP恢复量+30%；自身施放的回复魔法单次HP恢复上限+2,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic-up",
+              "healing-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic-up"
+              ],
+              "summary": "自身施放的回复魔法HP恢复量+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-output-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:794:healing-magic-up",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "valuePercent": 30,
+              "group": "healing"
+            },
+            {
+              "partIds": [
+                "healing-magic-cap"
+              ],
+              "summary": "自身施放的回复魔法单次HP恢复上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-cap-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:794:healing-magic-cap",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "healingCapPoints": 2000,
+              "group": "healing-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "ce7f716ec611a6d3",
+      "url": "https://altema.jp/lastcloudia/gino/1982",
+      "name": "水边的天使",
+      "text": "魔抗+5%；自身回复魔法的HP恢复上限+1,500。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "mnd-up",
+          "kind": "effect",
+          "text": "魔抗+5%"
+        },
+        {
+          "id": "healing-magic-cap",
+          "kind": "effect",
+          "text": "自身施放的回复魔法单次HP恢复上限+1,500"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "自身施放的回复魔法单次HP恢复上限+1,500。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic-cap"
+              ],
+              "summary": "自身施放的回复魔法单次HP恢复上限+1,500",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-cap-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "ce7f716ec611a6d3:healing-magic-cap",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "healingCapPoints": 1500,
+              "group": "healing-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔抗+5%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "12a14456c62e0bcf",
+      "url": "https://altema.jp/lastcloudia/gino/167",
+      "name": "不动之阵",
+      "text": "魔法咏唱除部分攻击外不会被打断。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "casting-interruption",
+          "kind": "effect",
+          "text": "魔法咏唱除部分攻击外不会被打断"
+        },
+        {
+          "id": "casting",
+          "kind": "condition",
+          "text": "自身正在咏唱魔法"
+        },
+        {
+          "id": "exceptions-unconfirmed",
+          "kind": "condition",
+          "text": "仍可打断咏唱的特殊攻击范围待确认；不等于所有攻击免硬直或免伤"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法咏唱除部分攻击外不会被打断。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "casting-interruption"
+            ],
+            "conditionPartIds": [
+              "casting"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "casting-interruption"
+              ],
+              "summary": "魔法咏唱除部分攻击外不会被打断",
+              "target": "self",
+              "isBuff": false,
+              "operation": "prevent-cast-interruption",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "12a14456c62e0bcf:casting-interruption",
+              "hasExceptions": true,
+              "exceptionsStatus": "unconfirmed",
+              "grantsDamageImmunity": false,
+              "preventsAllStagger": false,
+              "group": "cast-interruption"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "仍可打断咏唱的特殊攻击范围待确认；不等于所有攻击免硬直或免伤"
+      ]
+    },
+    {
+      "id": "2cd47588ee660f4e",
+      "url": "https://altema.jp/lastcloudia/gino/197",
+      "name": "高位魔法咏唱阵",
+      "text": "所有魔法的咏唱速度+20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "casting-speed",
+          "kind": "effect",
+          "text": "所有魔法的咏唱速度+20%"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "所有魔法的咏唱速度+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "casting-speed"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "casting-speed"
+              ],
+              "summary": "所有魔法的咏唱速度+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cast-speed-up",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "2cd47588ee660f4e:casting-speed",
+              "valuePercent": 20,
+              "additionalCastCount": 0,
+              "group": "cast-speed"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "c0df2890cef86266",
+      "url": "https://altema.jp/lastcloudia/gino/221",
+      "name": "杰玛的骑士",
+      "text": "有几率无效化魔法伤害",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-nullify",
+          "kind": "effect",
+          "text": "有概率无效化受到的魔法伤害"
+        },
+        {
+          "id": "chance-unconfirmed",
+          "kind": "condition",
+          "text": "魔法伤害无效化概率与判定单位待确认"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "有概率无效化受到的魔法伤害。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-nullify"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-nullify"
+              ],
+              "summary": "有概率无效化受到的魔法伤害",
+              "target": "self",
+              "isBuff": false,
+              "operation": "nullify-magic-hit",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "c0df2890cef86266:magic-nullify",
+              "chanceStatus": "unconfirmed",
+              "rollUnitStatus": "unconfirmed",
+              "guaranteedImmunity": false,
+              "group": "nullify"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "魔法伤害无效化概率与判定单位待确认"
+      ]
+    },
+    {
+      "id": "3a0b205292a15907",
+      "url": "https://altema.jp/lastcloudia/gino/429",
+      "name": "魔法连锁",
+      "text": "连续使用相同的攻击魔法时，每次伤害提升（第一次+4%，最高+20%）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-chain-damage",
+          "kind": "effect",
+          "text": "连续使用相同攻击魔法时逐次增伤，首次+4%，最高+20%"
+        },
+        {
+          "id": "same-spell-chain",
+          "kind": "condition",
+          "text": "必须连续使用同一个攻击魔法"
+        },
+        {
+          "id": "chain-details-unconfirmed",
+          "kind": "condition",
+          "text": "各次施放对应增幅、重置条件与计数时点待确认，不直接使用最高20%"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "连续使用相同攻击魔法时逐次增伤，首次+4%，最高+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-chain-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-chain-damage"
+              ],
+              "summary": "连续使用相同攻击魔法时逐次增伤，首次+4%，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "chain-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "chainKey": "same-spell"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "3a0b205292a15907:magic-chain-damage",
+              "firstValuePercent": 4,
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "reset": {
+                "status": "unconfirmed"
+              },
+              "group": "same-spell-chain"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "必须连续使用同一个攻击魔法",
+        "各次施放对应增幅、重置条件与计数时点待确认，不直接使用最高20%"
+      ]
+    },
+    {
+      "id": "cf6437fca36082d9",
+      "url": "https://altema.jp/lastcloudia/gino/691",
+      "name": "元素连击",
+      "text": "连续使用相同属性的攻击魔法时，伤害逐渐提升（首次+5%，最高+20%）。效果在10秒后或使用不同属性的攻击魔法时重置。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "element-chain-damage",
+          "kind": "effect",
+          "text": "连续使用相同属性的攻击魔法时逐次增伤，首次+5%，最高+20%"
+        },
+        {
+          "id": "same-element-chain",
+          "kind": "condition",
+          "text": "要求攻击魔法属性相同，不要求法术名称相同；经过至少10秒或使用其他属性攻击魔法时重置"
+        },
+        {
+          "id": "chain-details-unconfirmed",
+          "kind": "condition",
+          "text": "各次施放对应增幅与10秒计时起点待确认，不直接使用最高20%"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "连续使用相同属性的攻击魔法时逐次增伤，首次+5%，最高+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "element-chain-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "element-chain-damage"
+              ],
+              "summary": "连续使用相同属性的攻击魔法时逐次增伤，首次+5%，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "chain-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "chainKey": "same-element"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "cf6437fca36082d9:element-chain-damage",
+              "firstValuePercent": 5,
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "reset": {
+                "elapsedSecondsAtLeast": 10,
+                "onDifferentMagicElement": true,
+                "timerOriginStatus": "unconfirmed"
+              },
+              "group": "same-element-chain"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "要求攻击魔法属性相同，不要求法术名称相同；经过至少10秒或使用其他属性攻击魔法时重置",
+        "各次施放对应增幅与10秒计时起点待确认，不直接使用最高20%"
+      ]
+    },
+    {
+      "id": "858365fd1fc6ea73",
+      "url": "https://altema.jp/lastcloudia/gino/656",
+      "name": "人类凝视者",
+      "text": "魔法攻击对人类系（士兵、骑士、狙击手、魔法师）敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为士兵／骑士／狙击手／魔法师中的任一"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "858365fd1fc6ea73:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-soldier-knight-sniper-sorcerer-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为士兵／骑士／狙击手／魔法师中的任一"
+      ]
+    },
+    {
+      "id": "全部技能:all:442",
+      "url": "https://altema.jp/lastcloudia/gino/665",
+      "name": "魔法生物凝视者",
+      "text": "魔法攻击对魔法生物类型敌人产生特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对魔法生物类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为魔法生物类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对魔法生物类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:442:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-creature-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为魔法生物类型"
+      ]
+    },
+    {
+      "id": "e677b6a7691dc515",
+      "url": "https://altema.jp/lastcloudia/gino/689",
+      "name": "龙族凝视者",
+      "text": "魔法攻击对龙系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对龙类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为龙类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对龙类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对龙类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "e677b6a7691dc515:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-dragon-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为龙类型"
+      ]
+    },
+    {
+      "id": "全部技能:all:459",
+      "url": "https://altema.jp/lastcloudia/gino/709",
+      "name": "不死生物凝视者",
+      "text": "魔法攻击对不死生物类型敌人产生特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对不死生物类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为不死生物类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对不死生物类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:459:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-undead-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为不死生物类型"
+      ]
+    },
+    {
+      "id": "01dd6357b37ee5ef",
+      "url": "https://altema.jp/lastcloudia/gino/714",
+      "name": "矿石凝视者",
+      "text": "魔法攻击对矿石系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对矿石类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为矿石类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对矿石类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对矿石类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "stone"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "01dd6357b37ee5ef:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-stone-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为矿石类型"
+      ]
+    },
+    {
+      "id": "85cce3de46a53780",
+      "url": "https://altema.jp/lastcloudia/gino/738",
+      "name": "机械凝视者",
+      "text": "魔法攻击对机械系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对机械类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为机械类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对机械类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对机械类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "machine"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "85cce3de46a53780:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-machine-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为机械类型"
+      ]
+    },
+    {
+      "id": "全部技能:all:478",
+      "url": "https://altema.jp/lastcloudia/gino/741",
+      "name": "魔法师凝视者",
+      "text": "魔法攻击对魔法师类型敌人产生特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对魔法师类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为魔法师类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对魔法师类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "sorcerer"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:478:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-sorcerer-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为魔法师类型"
+      ]
+    },
+    {
+      "id": "420153e0bbd5a460",
+      "url": "https://altema.jp/lastcloudia/gino/841",
+      "name": "神族凝视者",
+      "text": "魔法攻击对神系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对神类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为神类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对神类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对神类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "420153e0bbd5a460:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-god-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为神类型"
+      ]
+    },
+    {
+      "id": "7652b90251d97956",
+      "url": "https://altema.jp/lastcloudia/gino/896",
+      "name": "植物凝视者",
+      "text": "魔法攻击对植物系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对植物类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为植物类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对植物类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对植物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "plant"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "7652b90251d97956:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-plant-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为植物类型"
+      ]
+    },
+    {
+      "id": "f851cc57b094612a",
+      "url": "https://altema.jp/lastcloudia/gino/918",
+      "name": "鸟类凝视者",
+      "text": "魔法攻击对鸟系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对鸟类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为鸟类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对鸟类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对鸟类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "bird"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "f851cc57b094612a:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-bird-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为鸟类型"
+      ]
+    },
+    {
+      "id": "57d0535b82a9b33c",
+      "url": "https://altema.jp/lastcloudia/gino/947",
+      "name": "精灵凝视者",
+      "text": "魔法攻击对精灵系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对精灵类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为精灵类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对精灵类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对精灵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "spirit"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "57d0535b82a9b33c:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-spirit-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为精灵类型"
+      ]
+    },
+    {
+      "id": "8c2b1825c169cf3b",
+      "url": "https://altema.jp/lastcloudia/gino/964",
+      "name": "鱼类凝视者",
+      "text": "魔法攻击对鱼系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对鱼类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为鱼类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对鱼类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对鱼类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "8c2b1825c169cf3b:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-fish-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为鱼类型"
+      ]
+    },
+    {
+      "id": "b5a0235fc70d847c",
+      "url": "https://altema.jp/lastcloudia/gino/1343",
+      "name": "骑士凝视者",
+      "text": "魔法攻击对骑士系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对骑士类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为骑士类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对骑士类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对骑士类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "b5a0235fc70d847c:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-knight-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为骑士类型"
+      ]
+    },
+    {
+      "id": "全部技能:all:723",
+      "url": "https://altema.jp/lastcloudia/gino/1389",
+      "name": "兽族凝视者",
+      "text": "魔法攻击对兽系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对兽类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为兽类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对兽类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对兽类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:723:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-beast-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为兽类型"
+      ]
+    },
+    {
+      "id": "c978c292114505f1",
+      "url": "https://altema.jp/lastcloudia/gino/1439",
+      "name": "昆虫凝视者",
+      "text": "魔法攻击对昆虫系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对昆虫类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为昆虫类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对昆虫类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对昆虫类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "insect"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "c978c292114505f1:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-insect-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为昆虫类型"
+      ]
+    },
+    {
+      "id": "全部技能:all:769",
+      "url": "https://altema.jp/lastcloudia/gino/1499",
+      "name": "战士凝视者",
+      "text": "魔法攻击对士兵类型敌人产生特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对士兵类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为士兵类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对士兵类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对士兵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:769:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-soldier-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为士兵类型"
+      ]
+    },
+    {
+      "id": "全部技能:all:845",
+      "url": "https://altema.jp/lastcloudia/gino/1730",
+      "name": "射手凝视者",
+      "text": "魔法攻击对狙击类型敌人产生特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-killer",
+          "kind": "effect",
+          "text": "魔法攻击对狙击手类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为狙击手类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击对狙击手类型敌人触发特攻。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对狙击手类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:845:magic-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "group": "race-sniper-killer"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人为狙击手类型"
+      ]
+    },
+    {
+      "id": "12feb359b0670804",
+      "url": "https://altema.jp/lastcloudia/gino/836",
+      "name": "魔法弱点增幅",
+      "text": "使用魔法攻击命中弱点属性时，伤害+30%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-damage",
+          "kind": "effect",
+          "text": "魔法攻击命中目标属性弱点时，伤害+30%"
+        },
+        {
+          "id": "element-weakness",
+          "kind": "condition",
+          "text": "本次魔法属性命中目标属性弱点，不等同种族特攻"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击命中目标属性弱点时，伤害+30%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "魔法攻击命中目标属性弱点时，伤害+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "hitsElementWeakness": true
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "12feb359b0670804:magic-damage",
+              "valuePercent": 30,
+              "group": "weakness-damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次魔法属性命中目标属性弱点，不等同种族特攻"
+      ]
+    },
+    {
+      "id": "5f13abe1484bc2c7",
+      "url": "https://altema.jp/lastcloudia/gino/895",
+      "name": "魔法狙击",
+      "text": "攻击魔法触发特攻时，伤害+20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "killer-magic-damage",
+          "kind": "effect",
+          "text": "攻击魔法触发特攻时，伤害+20%"
+        },
+        {
+          "id": "killer-hit",
+          "kind": "condition",
+          "text": "本次攻击魔法必须实际触发特攻；本技能不额外赋予特攻资格"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "攻击魔法触发特攻时，伤害+20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-magic-damage"
+              ],
+              "summary": "攻击魔法触发特攻时，伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "requiresKillerHit": true
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "5f13abe1484bc2c7:killer-magic-damage",
+              "valuePercent": 20,
+              "grantsKillerEligibility": false,
+              "group": "killer-hit-damage"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次攻击魔法必须实际触发特攻；本技能不额外赋予特攻资格"
+      ]
+    },
+    {
+      "id": "全部技能:all:630",
+      "url": "https://altema.jp/lastcloudia/gino/1130",
+      "name": "魔法伤害抗性",
+      "text": "受到敌人的魔法伤害-5%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "magic-reduction",
+          "kind": "effect",
+          "text": "受到敌人魔法伤害-5%"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "受到敌人魔法伤害-5%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "受到敌人魔法伤害-5%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "全部技能:all:630:magic-reduction",
+              "valuePercent": 5,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "707484a903b7739e",
+      "url": "https://altema.jp/lastcloudia/gino/1307",
+      "name": "魔法弱点护罩",
+      "text": "受到敌人的弱点属性魔法攻击时，伤害-20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "weakness-magic-reduction",
+          "kind": "effect",
+          "text": "受到命中自身属性弱点的魔法攻击时，伤害-20%"
+        },
+        {
+          "id": "incoming-element-weakness",
+          "kind": "condition",
+          "text": "来袭魔法属性命中自身的属性弱点，不等同种族特攻"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "受到命中自身属性弱点的魔法攻击时，伤害-20%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "weakness-magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "weakness-magic-reduction"
+              ],
+              "summary": "受到命中自身属性弱点的魔法攻击时，伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "hitsSelfElementWeakness": true
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "707484a903b7739e:weakness-magic-reduction",
+              "valuePercent": 20,
+              "group": "incoming-weakness-reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "来袭魔法属性命中自身的属性弱点，不等同种族特攻"
+      ]
+    },
+    {
+      "id": "045d456028e01684",
+      "url": "https://altema.jp/lastcloudia/gino/1480",
+      "name": "OVERLORD",
+      "text": "自身类型追加“不死生物”。魔法攻击伤害上限+3,000；不可叠加魔法的伤害上限+3,000。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "type-undead",
+          "kind": "effect",
+          "text": "自身类型追加不死生物"
+        },
+        {
+          "id": "magic-cap",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+3,000"
+        },
+        {
+          "id": "exclusive-magic-cap",
+          "kind": "effect",
+          "text": "不可叠加魔法伤害上限额外+3,000"
+        },
+        {
+          "id": "nonstackable-spell",
+          "kind": "condition",
+          "text": "额外上限仅对标为不可叠加的攻击魔法生效；不是同类型Buff只计最高的规则"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击伤害上限+3,000；不可叠加魔法伤害上限额外+3,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-cap",
+              "exclusive-magic-cap"
+            ],
+            "conditionPartIds": [
+              "nonstackable-spell"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-cap"
+              ],
+              "summary": "魔法攻击伤害上限+3,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "045d456028e01684:magic-cap",
+              "capPoints": 3000,
+              "group": "cap"
+            },
+            {
+              "partIds": [
+                "exclusive-magic-cap"
+              ],
+              "summary": "不可叠加魔法伤害上限额外+3,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "spellSubtype": "nonstackable-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "045d456028e01684:exclusive-magic-cap",
+              "capPoints": 3000,
+              "addsToPartId": "magic-cap",
+              "requiresSpellClassification": true,
+              "group": "nonstackable-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身类型追加不死生物"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "a4d841b7ab1590f8",
+      "url": "https://altema.jp/lastcloudia/gino/1911",
+      "name": "沦落",
+      "text": "魔抗-20%，但魔法攻击伤害上限+5,000；不可叠加魔法的伤害上限另+5,000。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "mnd-down",
+          "kind": "effect",
+          "text": "魔抗-20%"
+        },
+        {
+          "id": "magic-cap",
+          "kind": "effect",
+          "text": "魔法攻击伤害上限+5,000"
+        },
+        {
+          "id": "exclusive-magic-cap",
+          "kind": "effect",
+          "text": "不可叠加魔法伤害上限额外+5,000"
+        },
+        {
+          "id": "nonstackable-spell",
+          "kind": "condition",
+          "text": "额外上限仅对标为不可叠加的攻击魔法生效；不是同类型Buff只计最高的规则"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "魔法攻击伤害上限+5,000；不可叠加魔法伤害上限额外+5,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-cap",
+              "exclusive-magic-cap"
+            ],
+            "conditionPartIds": [
+              "nonstackable-spell"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-cap"
+              ],
+              "summary": "魔法攻击伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "a4d841b7ab1590f8:magic-cap",
+              "capPoints": 5000,
+              "group": "cap"
+            },
+            {
+              "partIds": [
+                "exclusive-magic-cap"
+              ],
+              "summary": "不可叠加魔法伤害上限额外+5,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "spellSubtype": "nonstackable-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "a4d841b7ab1590f8:exclusive-magic-cap",
+              "capPoints": 5000,
+              "addsToPartId": "magic-cap",
+              "requiresSpellClassification": true,
+              "group": "nonstackable-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "魔抗-20%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "8545a75056e827a4",
+      "url": "https://altema.jp/lastcloudia/gino/1800",
+      "name": "人工精灵",
+      "text": "自身追加“精灵”类型；不可叠加魔法的伤害上限+5,000。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "type-spirit",
+          "kind": "effect",
+          "text": "自身类型追加精灵"
+        },
+        {
+          "id": "exclusive-magic-cap",
+          "kind": "effect",
+          "text": "不可叠加魔法伤害上限+5,000"
+        },
+        {
+          "id": "nonstackable-spell",
+          "kind": "condition",
+          "text": "上限仅对标为不可叠加的攻击魔法生效；不扩大到全部魔法"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "不可叠加魔法伤害上限+5,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "exclusive-magic-cap"
+            ],
+            "conditionPartIds": [
+              "nonstackable-spell"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "exclusive-magic-cap"
+              ],
+              "summary": "不可叠加魔法伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "spellSubtype": "nonstackable-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "8545a75056e827a4:exclusive-magic-cap",
+              "capPoints": 5000,
+              "requiresSpellClassification": true,
+              "group": "nonstackable-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身类型追加精灵"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "9a64344759c572ed",
+      "url": "https://altema.jp/lastcloudia/gino/2017",
+      "name": "布埃纳村的魔术师",
+      "text": "沉默耐性+1（若沉默为弱点，则消除弱点）。不可叠加魔法伤害上限+10,000。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "silence-resistance",
+          "kind": "effect",
+          "text": "沉默耐性+1；原为沉默弱点时消除弱点"
+        },
+        {
+          "id": "exclusive-magic-cap",
+          "kind": "effect",
+          "text": "不可叠加魔法伤害上限+10,000"
+        },
+        {
+          "id": "nonstackable-spell",
+          "kind": "condition",
+          "text": "上限仅对标为不可叠加的攻击魔法生效；不扩大到全部魔法"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "不可叠加魔法伤害上限+10,000。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "exclusive-magic-cap"
+            ],
+            "conditionPartIds": [
+              "nonstackable-spell"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "exclusive-magic-cap"
+              ],
+              "summary": "不可叠加魔法伤害上限+10,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "spellSubtype": "nonstackable-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "9a64344759c572ed:exclusive-magic-cap",
+              "capPoints": 10000,
+              "requiresSpellClassification": true,
+              "group": "nonstackable-cap"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "沉默耐性+1；原为沉默弱点时消除弱点"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "7611b3c1ae612f0e",
+      "url": "https://altema.jp/lastcloudia/gino/1755",
+      "name": "神秘之力【结界】",
+      "text": "自身为神类型时，使我方装备「信仰」的角色获得：受到的魔法攻击伤害-10%。同名「神秘之力」效果不会叠加。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "faith-magic-reduction",
+          "kind": "effect",
+          "text": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%"
+        },
+        {
+          "id": "provider-god",
+          "kind": "condition",
+          "text": "提供者必须为神类型"
+        },
+        {
+          "id": "recipient-faith",
+          "kind": "condition",
+          "text": "受益者须装备信仰且提供者为自身以外的神类型友方"
+        },
+        {
+          "id": "unique-source",
+          "kind": "condition",
+          "text": "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
+        }
+      ],
+      "tagDetails": {
+        "魔法": {
+          "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%。",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "faith-magic-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "faith-magic-reduction"
+              ],
+              "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%",
+              "target": "allies-with-faith",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "7611b3c1ae612f0e:faith-magic-reduction",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "7611b3c1ae612f0e",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "provide",
+                "countProviderAndRecipientOnce": true
+              },
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        }
+      },
+      "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
+      "assignedTags": [
+        "魔法"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "提供者必须为神类型",
+        "受益者须装备信仰且提供者为自身以外的神类型友方",
+        "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
+      ]
     }
   ],
   "views": {
@@ -77611,8 +84050,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 32,
-        "partial": 55,
+        "ready": 34,
+        "partial": 53,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -77802,8 +84241,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 51,
         "notRelatedUnique": 884,
-        "ready": 22,
-        "partial": 29,
+        "ready": 25,
+        "partial": 26,
         "unknown": 0,
         "previousBasicMagicUnique": 43,
         "additionalRelatedUnique": 8
@@ -78243,13 +84682,14 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 230,
         "notRelatedUnique": 705,
-        "ready": 90,
-        "partial": 140,
+        "ready": 94,
+        "partial": 136,
         "unknown": 0
       }
     },
     "magic-damage": {
-      "label": "魔法伤害增加",
+      "label": "魔法",
+      "passKind": "magic-effects-and-condition",
       "displayOrder": [
         "ddccca9cf069a9ea",
         "fca23d2a13780d62",
@@ -78272,14 +84712,198 @@ export const SKILL_LABELING_CATALOG = {
         "869205f984d49c10",
         "e2016a861d776638",
         "0b4cbcd7bc326038",
-        "29da106c453e0234"
+        "29da106c453e0234",
+        "全部技能:all:34",
+        "b68b7c256efa0467",
+        "d18db4372ea123a1",
+        "f871fed73e6326c3",
+        "ccd9494e616a344d",
+        "2201afc0db4a340e",
+        "b9a13a0572f16699",
+        "02ddf87727d6b287",
+        "1a1043cd31293850",
+        "01f5167831d7b556",
+        "f38969900a97ccd0",
+        "b6b66290a2c0176e",
+        "c334b7ddf4d78b15",
+        "fc921ccf05929ad6",
+        "dc3451f4b7d2a45b",
+        "0c21dbbed7678df5",
+        "1c52dcb1735c073a",
+        "12fb48061bb074e5",
+        "2083b650aa52252c",
+        "0b725106ff374bdf",
+        "5db07a2caf842aae",
+        "0631262b7e479c3a",
+        "06dbf722869d70c0",
+        "12a14456c62e0bcf",
+        "2cd47588ee660f4e",
+        "cf4cc4324d7b87b7",
+        "ecfc5e235fabef1a",
+        "c0df2890cef86266",
+        "b63054ad34e97c0d",
+        "713403dd798c7836",
+        "e0f6942b8d0b10f7",
+        "92bf2e44cf665bdf",
+        "5f6efbf8b35453d2",
+        "全部技能:all:302",
+        "1a004726593e801a",
+        "b2e58697ea88e464",
+        "6e424e4ea062edd4",
+        "eb948e43fefb658b",
+        "3a0b205292a15907",
+        "全部技能:all:346",
+        "b709d054e274c5ce",
+        "0a92e3a07ca76013",
+        "全部技能:all:389",
+        "484c7ab2b4b198dc",
+        "25b961ea21f3b629",
+        "6227c8886b43ceb0",
+        "858365fd1fc6ea73",
+        "71d9f5a3ea0a9660",
+        "全部技能:all:442",
+        "e677b6a7691dc515",
+        "cf6437fca36082d9",
+        "2901b40ce3f38847",
+        "全部技能:all:459",
+        "182731824b8599ca",
+        "01dd6357b37ee5ef",
+        "85cce3de46a53780",
+        "全部技能:all:478",
+        "12feb359b0670804",
+        "79a377bec526c2d4",
+        "420153e0bbd5a460",
+        "7699c0abda6d47a0",
+        "835e08fc4710e268",
+        "5f13abe1484bc2c7",
+        "7652b90251d97956",
+        "f851cc57b094612a",
+        "57d0535b82a9b33c",
+        "41e5f848b9d300e9",
+        "8c2b1825c169cf3b",
+        "e27f6e2a867c1a2e",
+        "18991b227c1fe30b",
+        "7b7b9f7c806bbd9e",
+        "全部技能:all:630",
+        "a97531c83b0073e7",
+        "707484a903b7739e",
+        "b5a0235fc70d847c",
+        "5fae0db345fcff39",
+        "1475f35e571d3e09",
+        "全部技能:all:723",
+        "c978c292114505f1",
+        "cf54afaf524eaef4",
+        "eeb9b0e6da9b7f7a",
+        "045d456028e01684",
+        "f2910193b70859f3",
+        "全部技能:all:769",
+        "348f27fb6f68e198",
+        "全部技能:all:794",
+        "88325a3c478ed329",
+        "全部技能:all:806",
+        "789bffd5f1b5782a",
+        "f49f17d3da2551a8",
+        "85715ffd27c809f3",
+        "0cf4b314ecf1f25a",
+        "7f9e93aba0dee0db",
+        "全部技能:all:845",
+        "5dbd4f977800ad88",
+        "7611b3c1ae612f0e",
+        "92a57a934fb2eb2f",
+        "8545a75056e827a4",
+        "42656c3afdc8103a",
+        "24ba29a7c86df4f3",
+        "6df40a3227341ce3",
+        "9bde00a6ca77b552",
+        "a4d841b7ab1590f8",
+        "07cab38a1e00eaa5",
+        "ce7f716ec611a6d3",
+        "c0fa524208139962",
+        "9a64344759c572ed",
+        "cb30f3c1c621732d"
       ],
+      "childKeys": [
+        "magic-damage-damage",
+        "magic-damage-cap",
+        "magic-damage-reduction",
+        "magic-damage-guard",
+        "magic-damage-fire-damage",
+        "magic-damage-ice-damage",
+        "magic-damage-earth-damage",
+        "magic-damage-thunder-damage",
+        "magic-damage-light-damage",
+        "magic-damage-dark-damage",
+        "magic-damage-healing",
+        "magic-damage-fire-critical-permission",
+        "magic-damage-ice-critical-permission",
+        "magic-damage-earth-critical-permission",
+        "magic-damage-thunder-critical-permission",
+        "magic-damage-light-critical-permission",
+        "magic-damage-dark-critical-permission",
+        "magic-damage-cast-interruption",
+        "magic-damage-mp-cost",
+        "magic-damage-cast-speed",
+        "magic-damage-nullify",
+        "magic-damage-auto-wall-fire",
+        "magic-damage-auto-wall-ice",
+        "magic-damage-auto-wall-earth",
+        "magic-damage-auto-wall-thunder",
+        "magic-damage-auto-wall-light",
+        "magic-damage-auto-wall-dark",
+        "magic-damage-wave-science-damage",
+        "magic-damage-thunder-cap",
+        "magic-damage-ice-mp-cost",
+        "magic-damage-received-heal",
+        "magic-damage-light-cap",
+        "magic-damage-dark-cap",
+        "magic-damage-same-spell-chain",
+        "magic-damage-earth-cap",
+        "magic-damage-disable",
+        "magic-damage-stat-scaled-damage",
+        "magic-damage-fire-cap",
+        "magic-damage-race-soldier-knight-sniper-sorcerer-killer",
+        "magic-damage-race-creature-killer",
+        "magic-damage-race-dragon-killer",
+        "magic-damage-same-element-chain",
+        "magic-damage-ice-cap",
+        "magic-damage-race-undead-killer",
+        "magic-damage-race-stone-killer",
+        "magic-damage-race-machine-killer",
+        "magic-damage-race-sorcerer-killer",
+        "magic-damage-weakness-damage",
+        "magic-damage-boss-damage",
+        "magic-damage-race-god-killer",
+        "magic-damage-killer-hit-damage",
+        "magic-damage-race-plant-killer",
+        "magic-damage-race-bird-killer",
+        "magic-damage-race-spirit-killer",
+        "magic-damage-race-fish-killer",
+        "magic-damage-boss-cap",
+        "magic-damage-incoming-weakness-reduction",
+        "magic-damage-race-knight-killer",
+        "magic-damage-airborne-enemy-damage",
+        "magic-damage-race-beast-killer",
+        "magic-damage-race-insect-killer",
+        "magic-damage-low-mp-reduction",
+        "magic-damage-nonstackable-cap",
+        "magic-damage-casting-physical-reduction",
+        "magic-damage-casting-counter-reduction",
+        "magic-damage-race-soldier-killer",
+        "magic-damage-healing-cap",
+        "magic-damage-race-sniper-killer",
+        "magic-damage-team-damage",
+        "magic-damage-high-mp-reduction",
+        "magic-damage-time-damage"
+      ],
+      "overviewLabel": "全部魔法（分组）",
+      "separateSections": true,
+      "scopeDescription": "魔法伤害增加是其中一项；上限、属性／目标限定、咏唱、回复魔法、暴击资格、特攻资格、承伤与触发效果分别分组。魔力另列；种族名不代表魔法攻击。共用既有标签，每组按完整、部分、无法判断排序，总数按技能去重。",
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 22,
-        "notRelatedUnique": 913,
-        "ready": 4,
-        "partial": 18,
+        "relatedUnique": 130,
+        "notRelatedUnique": 805,
+        "ready": 59,
+        "partial": 71,
         "unknown": 0
       }
     },
@@ -78331,8 +84955,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 1,
-        "partial": 3,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -78593,8 +85217,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
-        "ready": 60,
-        "partial": 57,
+        "ready": 70,
+        "partial": 47,
         "unknown": 0
       }
     },
@@ -78656,8 +85280,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 26,
         "notRelatedUnique": 909,
-        "ready": 11,
-        "partial": 15,
+        "ready": 12,
+        "partial": 14,
         "unknown": 0
       }
     },
@@ -79111,8 +85735,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 82,
         "notRelatedUnique": 853,
-        "ready": 37,
-        "partial": 45,
+        "ready": 38,
+        "partial": 44,
         "unknown": 0
       }
     },
@@ -79458,8 +86082,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 23,
-        "partial": 14,
+        "ready": 24,
+        "partial": 13,
         "unknown": 0
       }
     },
@@ -79680,8 +86304,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 39,
         "notRelatedUnique": 896,
-        "ready": 24,
-        "partial": 15,
+        "ready": 25,
+        "partial": 14,
         "unknown": 0
       }
     },
@@ -80141,8 +86765,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 3,
-        "partial": 3,
+        "ready": 4,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -80469,8 +87093,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 13,
         "notRelatedUnique": 922,
-        "ready": 7,
-        "partial": 6,
+        "ready": 10,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -80499,8 +87123,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 14,
         "notRelatedUnique": 921,
-        "ready": 4,
-        "partial": 10,
+        "ready": 6,
+        "partial": 8,
         "unknown": 0
       }
     },
@@ -80525,8 +87149,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 10,
         "notRelatedUnique": 925,
-        "ready": 4,
-        "partial": 6,
+        "ready": 7,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -80898,8 +87522,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 4,
-        "partial": 2,
+        "ready": 6,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -80920,8 +87544,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 0,
-        "partial": 6,
+        "ready": 6,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -81159,8 +87783,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 3,
         "notRelatedUnique": 932,
-        "ready": 0,
-        "partial": 3,
+        "ready": 3,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -81179,8 +87803,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 2,
-        "partial": 2,
+        "ready": 3,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -81441,8 +88065,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -81785,8 +88409,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -84769,8 +91393,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 3,
-        "partial": 1,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -86066,8 +92690,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 4,
-        "partial": 1,
+        "ready": 5,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -88990,8 +95614,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 1,
-        "partial": 1,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -89009,8 +95633,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 3,
         "notRelatedUnique": 932,
-        "ready": 2,
-        "partial": 1,
+        "ready": 3,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -89026,8 +95650,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -93097,8 +99721,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 7,
         "notRelatedUnique": 928,
-        "ready": 3,
-        "partial": 4,
+        "ready": 4,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -93306,8 +99930,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 74,
         "notRelatedUnique": 861,
-        "ready": 50,
-        "partial": 24,
+        "ready": 51,
+        "partial": 23,
         "unknown": 0
       }
     },
@@ -93414,8 +100038,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 11,
-        "partial": 26,
+        "ready": 13,
+        "partial": 24,
         "unknown": 0
       }
     },
@@ -94967,8 +101591,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 1,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -95303,6 +101927,1305 @@ export const SKILL_LABELING_CATALOG = {
       "effectGroup": "race-dragon-cap",
       "displayOrder": [
         "af2b1b7f6ebbb498"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-damage": {
+      "label": "魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "damage",
+      "displayOrder": [
+        "ddccca9cf069a9ea",
+        "fca23d2a13780d62",
+        "bf684afd6ed9b3e1",
+        "ce7eb01498391d2c",
+        "ea2269dc8dbcfa74",
+        "bf0d04fe54be3b33",
+        "da60418e1d1102bc",
+        "1773fd0e181f0d48",
+        "ef761252451c1b55",
+        "9c0bd935e13111e8",
+        "563cffc7c5fa9c59",
+        "2d772214490c52ba",
+        "8e6716f96c389e1d",
+        "911c90d5593ecf69",
+        "82bfa575b36bca5b",
+        "4810345440e1ca42",
+        "58197bb69bad678a",
+        "e2016a861d776638",
+        "0b4cbcd7bc326038"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 19,
+        "notRelatedUnique": 916,
+        "ready": 6,
+        "partial": 13,
+        "unknown": 0
+      }
+    },
+    "magic-damage-cap": {
+      "label": "魔法伤害上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "cap",
+      "displayOrder": [
+        "da60418e1d1102bc",
+        "911c90d5593ecf69",
+        "045d456028e01684",
+        "85715ffd27c809f3",
+        "a4d841b7ab1590f8",
+        "07cab38a1e00eaa5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 1,
+        "partial": 5,
+        "unknown": 0
+      }
+    },
+    "magic-damage-reduction": {
+      "label": "受到魔法伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "reduction",
+      "displayOrder": [
+        "b68b7c256efa0467",
+        "d18db4372ea123a1",
+        "cf4cc4324d7b87b7",
+        "ecfc5e235fabef1a",
+        "7699c0abda6d47a0",
+        "18991b227c1fe30b",
+        "7b7b9f7c806bbd9e",
+        "全部技能:all:630",
+        "5fae0db345fcff39",
+        "1475f35e571d3e09",
+        "cf54afaf524eaef4",
+        "f2910193b70859f3",
+        "全部技能:all:806",
+        "0cf4b314ecf1f25a",
+        "7f9e93aba0dee0db",
+        "5dbd4f977800ad88",
+        "7611b3c1ae612f0e",
+        "92a57a934fb2eb2f",
+        "6df40a3227341ce3",
+        "9bde00a6ca77b552",
+        "c0fa524208139962"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 21,
+        "notRelatedUnique": 914,
+        "ready": 10,
+        "partial": 11,
+        "unknown": 0
+      }
+    },
+    "magic-damage-guard": {
+      "label": "魔法攻击格挡",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "guard",
+      "displayOrder": [
+        "全部技能:all:34"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-fire-damage": {
+      "label": "火属性魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "fire-damage",
+      "displayOrder": [
+        "f871fed73e6326c3",
+        "f38969900a97ccd0",
+        "25b961ea21f3b629",
+        "71d9f5a3ea0a9660",
+        "789bffd5f1b5782a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-ice-damage": {
+      "label": "冰属性魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "ice-damage",
+      "displayOrder": [
+        "ccd9494e616a344d",
+        "b6b66290a2c0176e",
+        "1a004726593e801a",
+        "71d9f5a3ea0a9660",
+        "2901b40ce3f38847",
+        "789bffd5f1b5782a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 6,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-earth-damage": {
+      "label": "树属性魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "earth-damage",
+      "displayOrder": [
+        "2201afc0db4a340e",
+        "c334b7ddf4d78b15",
+        "0a92e3a07ca76013",
+        "71d9f5a3ea0a9660",
+        "789bffd5f1b5782a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-thunder-damage": {
+      "label": "雷属性魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "thunder-damage",
+      "displayOrder": [
+        "b9a13a0572f16699",
+        "fc921ccf05929ad6",
+        "全部技能:all:302",
+        "71d9f5a3ea0a9660",
+        "789bffd5f1b5782a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-light-damage": {
+      "label": "光属性魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "light-damage",
+      "displayOrder": [
+        "02ddf87727d6b287",
+        "dc3451f4b7d2a45b",
+        "b63054ad34e97c0d",
+        "e0f6942b8d0b10f7",
+        "6e424e4ea062edd4",
+        "41e5f848b9d300e9",
+        "348f27fb6f68e198"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 7,
+        "notRelatedUnique": 928,
+        "ready": 5,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "magic-damage-dark-damage": {
+      "label": "暗属性魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "dark-damage",
+      "displayOrder": [
+        "1a1043cd31293850",
+        "0c21dbbed7678df5",
+        "713403dd798c7836",
+        "eb948e43fefb658b",
+        "41e5f848b9d300e9",
+        "348f27fb6f68e198",
+        "88325a3c478ed329"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 7,
+        "notRelatedUnique": 928,
+        "ready": 6,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-healing": {
+      "label": "回复魔法恢复量增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "healing",
+      "displayOrder": [
+        "01f5167831d7b556",
+        "1c52dcb1735c073a",
+        "182731824b8599ca",
+        "全部技能:all:794"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 4,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-fire-critical-permission": {
+      "label": "火属性魔法：暴击资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "fire-critical-permission",
+      "displayOrder": [
+        "12fb48061bb074e5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-ice-critical-permission": {
+      "label": "冰属性魔法：暴击资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "ice-critical-permission",
+      "displayOrder": [
+        "2083b650aa52252c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-earth-critical-permission": {
+      "label": "树属性魔法：暴击资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "earth-critical-permission",
+      "displayOrder": [
+        "0b725106ff374bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-thunder-critical-permission": {
+      "label": "雷属性魔法：暴击资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "thunder-critical-permission",
+      "displayOrder": [
+        "5db07a2caf842aae"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-light-critical-permission": {
+      "label": "光属性魔法：暴击资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "light-critical-permission",
+      "displayOrder": [
+        "0631262b7e479c3a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-dark-critical-permission": {
+      "label": "暗属性魔法：暴击资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "dark-critical-permission",
+      "displayOrder": [
+        "06dbf722869d70c0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-cast-interruption": {
+      "label": "魔法咏唱抗打断",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "cast-interruption",
+      "displayOrder": [
+        "12a14456c62e0bcf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-mp-cost": {
+      "label": "攻击魔法MP消耗变化",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "mp-cost",
+      "displayOrder": [
+        "ddccca9cf069a9ea"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-cast-speed": {
+      "label": "魔法咏唱速度增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "cast-speed",
+      "displayOrder": [
+        "2cd47588ee660f4e",
+        "b709d054e274c5ce",
+        "484c7ab2b4b198dc",
+        "6227c8886b43ceb0",
+        "e27f6e2a867c1a2e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-nullify": {
+      "label": "概率无效化魔法伤害",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "nullify",
+      "displayOrder": [
+        "c0df2890cef86266"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-auto-wall-fire": {
+      "label": "自动墙魔法：受到火属性伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "auto-wall-fire",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-auto-wall-ice": {
+      "label": "自动墙魔法：受到冰属性伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "auto-wall-ice",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-auto-wall-earth": {
+      "label": "自动墙魔法：受到树属性伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "auto-wall-earth",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-auto-wall-thunder": {
+      "label": "自动墙魔法：受到雷属性伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "auto-wall-thunder",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-auto-wall-light": {
+      "label": "自动墙魔法：受到光属性伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "auto-wall-light",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-auto-wall-dark": {
+      "label": "自动墙魔法：受到暗属性伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "auto-wall-dark",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-wave-science-damage": {
+      "label": "按Wave累计：科学魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "wave-science-damage",
+      "displayOrder": [
+        "5f6efbf8b35453d2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-thunder-cap": {
+      "label": "雷属性魔法伤害上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "thunder-cap",
+      "displayOrder": [
+        "全部技能:all:302"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-ice-mp-cost": {
+      "label": "冰属性攻击魔法MP消耗变化",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "ice-mp-cost",
+      "displayOrder": [
+        "1a004726593e801a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-received-heal": {
+      "label": "受到魔法伤害：HP回复",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "received-heal",
+      "displayOrder": [
+        "b2e58697ea88e464",
+        "全部技能:all:346",
+        "全部技能:all:389"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "magic-damage-light-cap": {
+      "label": "光属性魔法伤害上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "light-cap",
+      "displayOrder": [
+        "6e424e4ea062edd4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-dark-cap": {
+      "label": "暗属性魔法伤害上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "dark-cap",
+      "displayOrder": [
+        "eb948e43fefb658b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-same-spell-chain": {
+      "label": "连续相同魔法：伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "same-spell-chain",
+      "displayOrder": [
+        "3a0b205292a15907"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-earth-cap": {
+      "label": "树属性魔法伤害上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "earth-cap",
+      "displayOrder": [
+        "0a92e3a07ca76013"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-disable": {
+      "label": "禁止使用魔法",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "disable",
+      "displayOrder": [
+        "bf0d04fe54be3b33",
+        "835e08fc4710e268"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 1,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-stat-scaled-damage": {
+      "label": "按攻击力提高：魔法增伤",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "stat-scaled-damage",
+      "displayOrder": [
+        "86ad4fdedf4c3869"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-fire-cap": {
+      "label": "火属性魔法伤害上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "fire-cap",
+      "displayOrder": [
+        "25b961ea21f3b629"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-soldier-knight-sniper-sorcerer-killer": {
+      "label": "对士兵／骑士／狙击手／魔法师：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-soldier-knight-sniper-sorcerer-killer",
+      "displayOrder": [
+        "858365fd1fc6ea73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-creature-killer": {
+      "label": "对魔法生物：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-creature-killer",
+      "displayOrder": [
+        "全部技能:all:442"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-dragon-killer": {
+      "label": "对龙：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-dragon-killer",
+      "displayOrder": [
+        "e677b6a7691dc515"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-same-element-chain": {
+      "label": "连续相同属性魔法：伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "same-element-chain",
+      "displayOrder": [
+        "cf6437fca36082d9"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-ice-cap": {
+      "label": "冰属性魔法伤害上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "ice-cap",
+      "displayOrder": [
+        "2901b40ce3f38847"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-undead-killer": {
+      "label": "对不死生物：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-undead-killer",
+      "displayOrder": [
+        "全部技能:all:459"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-stone-killer": {
+      "label": "对矿石：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-stone-killer",
+      "displayOrder": [
+        "01dd6357b37ee5ef"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-machine-killer": {
+      "label": "对机械：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-machine-killer",
+      "displayOrder": [
+        "85cce3de46a53780"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-sorcerer-killer": {
+      "label": "对魔法师：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-sorcerer-killer",
+      "displayOrder": [
+        "全部技能:all:478"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-weakness-damage": {
+      "label": "命中属性弱点：魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "weakness-damage",
+      "displayOrder": [
+        "12feb359b0670804"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-boss-damage": {
+      "label": "对Boss魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "boss-damage",
+      "displayOrder": [
+        "79a377bec526c2d4",
+        "a97531c83b0073e7",
+        "f49f17d3da2551a8",
+        "42656c3afdc8103a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 4,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-god-killer": {
+      "label": "对神：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-god-killer",
+      "displayOrder": [
+        "420153e0bbd5a460"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-killer-hit-damage": {
+      "label": "触发特攻：魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "killer-hit-damage",
+      "displayOrder": [
+        "5f13abe1484bc2c7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-plant-killer": {
+      "label": "对植物：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-plant-killer",
+      "displayOrder": [
+        "7652b90251d97956"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-bird-killer": {
+      "label": "对鸟：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-bird-killer",
+      "displayOrder": [
+        "f851cc57b094612a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-spirit-killer": {
+      "label": "对精灵：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-spirit-killer",
+      "displayOrder": [
+        "57d0535b82a9b33c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-fish-killer": {
+      "label": "对鱼：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-fish-killer",
+      "displayOrder": [
+        "8c2b1825c169cf3b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-boss-cap": {
+      "label": "对Boss魔法伤害上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "boss-cap",
+      "displayOrder": [
+        "a97531c83b0073e7",
+        "f49f17d3da2551a8",
+        "42656c3afdc8103a",
+        "cb30f3c1c621732d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 3,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-incoming-weakness-reduction": {
+      "label": "受到属性弱点魔法伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "incoming-weakness-reduction",
+      "displayOrder": [
+        "707484a903b7739e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-knight-killer": {
+      "label": "对骑士：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-knight-killer",
+      "displayOrder": [
+        "b5a0235fc70d847c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-airborne-enemy-damage": {
+      "label": "对空中敌人魔法伤害增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "airborne-enemy-damage",
+      "displayOrder": [
+        "1475f35e571d3e09"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-beast-killer": {
+      "label": "对兽：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-beast-killer",
+      "displayOrder": [
+        "全部技能:all:723"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-insect-killer": {
+      "label": "对昆虫：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-insect-killer",
+      "displayOrder": [
+        "c978c292114505f1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-low-mp-reduction": {
+      "label": "剩余MP越少：魔法减伤",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "low-mp-reduction",
+      "displayOrder": [
+        "eeb9b0e6da9b7f7a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-nonstackable-cap": {
+      "label": "不可叠加魔法伤害上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "nonstackable-cap",
+      "displayOrder": [
+        "045d456028e01684",
+        "8545a75056e827a4",
+        "a4d841b7ab1590f8",
+        "9a64344759c572ed"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 0,
+        "partial": 4,
+        "unknown": 0
+      }
+    },
+    "magic-damage-casting-physical-reduction": {
+      "label": "魔法咏唱中：受到物理伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "casting-physical-reduction",
+      "displayOrder": [
+        "f2910193b70859f3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-casting-counter-reduction": {
+      "label": "魔法咏唱中：受到反击伤害减少",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "casting-counter-reduction",
+      "displayOrder": [
+        "f2910193b70859f3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-soldier-killer": {
+      "label": "对士兵：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-soldier-killer",
+      "displayOrder": [
+        "全部技能:all:769"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-healing-cap": {
+      "label": "回复魔法恢复上限增加",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "healing-cap",
+      "displayOrder": [
+        "全部技能:all:794",
+        "ce7f716ec611a6d3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 1,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-race-sniper-killer": {
+      "label": "对狙击手：魔法特攻资格",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "race-sniper-killer",
+      "displayOrder": [
+        "全部技能:all:845"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-team-damage": {
+      "label": "按队伍人数：魔法增伤",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "team-damage",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-high-mp-reduction": {
+      "label": "剩余MP越多：魔法减伤",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "high-mp-reduction",
+      "displayOrder": [
+        "24ba29a7c86df4f3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-time-damage": {
+      "label": "随时间提升：魔法增伤",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "time-damage",
+      "displayOrder": [
+        "29da106c453e0234"
       ],
       "counts": {
         "reviewedUnique": 935,
@@ -96052,14 +103975,49 @@ export const SKILL_LABELING_CATALOG = {
         "7f9e93aba0dee0db",
         "89167ffb88d16e02",
         "4fe9e0277ebd677a",
-        "f063ab920fec3e4a"
+        "f063ab920fec3e4a",
+        "01f5167831d7b556",
+        "1c52dcb1735c073a",
+        "全部技能:all:794",
+        "ce7f716ec611a6d3",
+        "12a14456c62e0bcf",
+        "2cd47588ee660f4e",
+        "c0df2890cef86266",
+        "3a0b205292a15907",
+        "cf6437fca36082d9",
+        "858365fd1fc6ea73",
+        "全部技能:all:442",
+        "e677b6a7691dc515",
+        "全部技能:all:459",
+        "01dd6357b37ee5ef",
+        "85cce3de46a53780",
+        "全部技能:all:478",
+        "420153e0bbd5a460",
+        "7652b90251d97956",
+        "f851cc57b094612a",
+        "57d0535b82a9b33c",
+        "8c2b1825c169cf3b",
+        "b5a0235fc70d847c",
+        "全部技能:all:723",
+        "c978c292114505f1",
+        "全部技能:all:769",
+        "全部技能:all:845",
+        "12feb359b0670804",
+        "5f13abe1484bc2c7",
+        "全部技能:all:630",
+        "707484a903b7739e",
+        "045d456028e01684",
+        "a4d841b7ab1590f8",
+        "8545a75056e827a4",
+        "9a64344759c572ed",
+        "7611b3c1ae612f0e"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 737,
-        "notRelatedUnique": 198,
-        "ready": 341,
-        "partial": 396,
+        "relatedUnique": 772,
+        "notRelatedUnique": 163,
+        "ready": 364,
+        "partial": 408,
         "unknown": 0
       }
     }

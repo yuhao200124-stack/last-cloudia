@@ -16,8 +16,8 @@ test('MP expands the existing page across the entire library without mixing INT,
  for(const [g,ns] of Object.entries(mapping))assert.deepEqual(numbers(labelingView(catalog,'mp-'+g)),ns,g);
  assert.equal(view.childKeys.length,26);assert.equal(view.childKeys.reduce((n,k)=>n+catalog.views[k].counts.relatedUnique,0),41);
  for(const n of [17,18,19,20,29,110,112,119,120,121,164,1858,196,199,217,218,249,460,666,914,1163,1335,1768,1909])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
- assert.equal(registry.tagPasses.length,44);assert.equal(registry.tagPasses.filter(p=>p.tag==='MP').length,1);assert.equal(catalog.numericEffectInjection,false);
- assert.equal(catalog.entries.length,737);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,737);
+ assert.equal(registry.tagPasses.length,45);assert.equal(registry.tagPasses.filter(p=>p.tag==='MP').length,1);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(catalog.entries.length,772);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,772);
 });
 
 test('MP states preserve absolute points, percentages and unknown scaling curves while costs preserve their own bases',()=>{
@@ -41,12 +41,12 @@ test('MP covers resource fragments and MP conditions, preserves old MP maxima, a
  const pass=registry.tagPasses.find(p=>p.tag==='MP');
  for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId),d=e.tagDetails.MP;assert.deepEqual(a.partIds,[...d.coverage.resourcePartIds,...d.coverage.conditionPartIds]);for(const b of d.bindings.filter(b=>b.mpRole!=='resource-effect'))assert(b.partIds.every(id=>!a.partIds.includes(id)));}
  assert.deepEqual(numbers({...view,entries:view.entries.filter(e=>e.judgment==='ready')}),[5,6,7,8,185,262,380,412,433,561,753,787,1147,1555]);
- const before=structuredClone(registry);before.tagPasses.find(p=>p.tag==='MP').assignments=before.tagPasses.find(p=>p.tag==='MP').assignments.filter(a=>maxIds.some(n=>a.skillId===source(n).id));const prior=resolveSkillLabels(before);
+ const before=structuredClone(registry);before.tagPasses=before.tagPasses.filter(p=>p.tag!=='魔法');before.tagPasses.find(p=>p.tag==='MP').assignments=before.tagPasses.find(p=>p.tag==='MP').assignments.filter(a=>maxIds.some(n=>a.skillId===source(n).id));const prior=resolveSkillLabels(before);
  for(const n of [185,787,1147,1555]){assert.equal(prior.find(e=>e.id===source(n).id).judgment,'partial');assert.equal(entry(n).judgment,'ready');}
  assert.equal(entry(209).judgment,'partial');assert(entry(209).remainingEffects.includes('魔抗+20%'));assert.equal(entry(208).judgment,'partial');assert(entry(208).remainingConditions.some(c=>c.includes('Buff')));
- assert.deepEqual(entry(1214).assignedTags.filter(tag=>tag!=='物理'),['MP','必杀相关']);assert.deepEqual(entry(233).assignedTags.filter(tag=>tag!=='物理'),['MP','受到攻击']);
- for(const n of [202,1766])assert.equal(entry(n).judgment,'partial');assert(!entry(380).assignedTags.filter(tag=>tag!=='物理').includes('魔法伤害增加'));
- assert.equal(view.counts.ready,14);assert.equal(view.counts.partial,18);assert.equal(catalog.views.all.counts.ready,341);assert.equal(catalog.views.all.counts.partial,396);
+ assert.deepEqual(entry(1214).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)),['MP','必杀相关']);assert.deepEqual(entry(233).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)),['MP','受到攻击']);
+ for(const n of [202,1766])assert.equal(entry(n).judgment,'partial');assert(!entry(380).assignedTags.filter(tag=>!['物理','魔法'].includes(tag)).includes('魔法伤害增加'));
+ assert.equal(view.counts.ready,14);assert.equal(view.counts.partial,18);assert.equal(catalog.views.all.counts.ready,364);assert.equal(catalog.views.all.counts.partial,408);
  const ordered=skillLabelRows(data,view);assert(ordered.slice(0,14).every(e=>e.judgment==='ready'));assert(ordered.slice(14).every(e=>e.judgment==='partial'));
 });
 
