@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['revive','复活',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['revive','复活',null],['ally-death','友军死亡',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -143,6 +143,12 @@ for(const [key,view] of Object.entries(views)){
       if(condition.mode==='next-ultimate-use' && (condition.subject!=='self' || condition.requiresActiveBuff!==true))throw Error('Next ultimate requires the previously granted Buff.');
       if(condition.alternativeEvents && (condition.operator!=='or' || !condition.alternativeEvents.includes('ultimate-used') && !condition.alternativeEvents.includes('ice-ultimate-used')))throw Error('Ultimate alternatives must preserve OR semantics.');
     }
+    if(key==='ally-death'){
+      const c=detail.condition;
+      if(view.passKind!=='condition-only' || c?.subject!=='other-ally' || !['ally-death-trigger','ally-incapacitated-state'].includes(c.mode))throw Error('Ally death must identify another ally, not the skill holder.');
+      if(c.mode==='ally-death-trigger' && c.event!=='became-incapacitated')throw Error('Missing ally death event.');
+      if(c.mode==='ally-incapacitated-state' && (c.metric!=='incapacitated-ally-count' || c.operator!=='gte' || c.minimumCount!==1 || Object.hasOwn(c,'event')))throw Error('A downed ally state requires at least one currently incapacitated ally.');
+    }
     for(const binding of detail.bindings){
       if(!groups.has(binding.group) || !binding.summary || !binding.partIds?.length || binding.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='effect'))throw Error('Invalid opening effect binding.');
       if(key==='mp'){
@@ -152,6 +158,17 @@ for(const [key,view] of Object.entries(views)){
         if(binding.mpRole==='condition-benefit' && (!detail.condition || binding.isBuff))throw Error('Current MP conditions are not triggered Buffs.');
         if(binding.isBuff && (binding.operation!=='periodic-restore-current' || !(binding.durationSeconds>0) || !(binding.intervalSeconds>0) || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Invalid MP regeneration Buff.');
         if(!binding.isBuff && (Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'stacking')))throw Error('Non-Buff MP effects must not gain Buff duration or stacking.');
+      }
+      if(key==='ally-death'){
+        if(binding.target!=='self' || typeof binding.isBuff!=='boolean' || binding.partIds.some(id=>assignment.partIds.includes(id)))throw Error('Ally death conditions must not cover their effect tags or change the recipient.');
+        if(detail.condition.mode==='ally-incapacitated-state'){
+          if(binding.activationMode!=='conditional-stat' || binding.phase!=='current-state' || binding.isBuff || binding.scalesWithAllyCount!==false)throw Error('A current ally state is not a triggered Buff or a per-ally stack.');
+        }else if(binding.phase!=='after-ally-death' || !['triggered-buff','triggered-action','triggered-abnormal-status'].includes(binding.activationMode))throw Error('Missing ally death response phase.');
+        if(binding.isBuff){
+          if(binding.activationMode!=='triggered-buff' || binding.stacking!=='highest-active-buff-of-same-type-only' || !((binding.durationSeconds>0 && !binding.durationStatus) || (binding.durationStatus==='unconfirmed' && !Object.hasOwn(binding,'durationSeconds'))))throw Error('Ally death Buff duration and same-type limit must be explicit.');
+        }else if(Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'stacking'))throw Error('Ally state bonuses, recovery and rage are not ordinary timed Buffs.');
+        if(binding.activationMode==='triggered-abnormal-status' && (binding.isBuff || binding.statusId!=='rage' || binding.statusKind!=='abnormal' || binding.statusDurationStatus!=='unconfirmed'))throw Error('Rage must retain its abnormal-status semantics.');
+        if(binding.operation==='restore-stocks' && (binding.unit!=='skill-stock-count' || binding.amountSource!=='incapacitated-ally-stocks' || Object.hasOwn(binding,'restoreSeconds')))throw Error('Inherited stocks must not become SCT seconds.');
       }
       if(key==='revive'){
         if(binding.target!=='self' || typeof binding.isBuff!=='boolean')throw Error('Revival target and benefit recipient must be separate.');

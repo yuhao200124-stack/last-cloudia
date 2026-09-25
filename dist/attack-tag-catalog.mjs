@@ -2901,15 +2901,43 @@ export const ATTACK_TAG_CATALOG = {
             "basic:d0f3dc6c3cee545e:1"
           ],
           "relatedSkillIds": []
+        },
+        "友军死亡": {
+          "summary": "其他友军倒下时，获得自身攻击力Buff",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-death-trigger",
+            "subject": "other-ally",
+            "event": "became-incapacitated"
+          },
+          "bindings": [
+            {
+              "group": "attack-buff",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "其他友军倒下时，自身攻击力+30%；Buff持续时间待确认。",
+              "target": "self",
+              "isBuff": true,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-buff",
+              "buffType": "brave",
+              "valuePercent": 30,
+              "durationStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "来源确认攻击力+30%与友军死亡触发，但未给出持续时间，继续待确认；同类型Buff只计最高已生效一项，不累加每次倒下的30%。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "友军死亡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "一名盟友战斗不能时触发",
         "攻击力Buff；持续与同类叠加关系待确认"
       ]
     },
@@ -3431,18 +3459,80 @@ export const ATTACK_TAG_CATALOG = {
             "basic:835e08fc4710e268:1"
           ],
           "relatedSkillIds": []
+        },
+        "友军死亡": {
+          "summary": "其他友军倒下时，自身进入激怒状态",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-death-trigger",
+            "subject": "other-ally",
+            "event": "became-incapacitated"
+          },
+          "bindings": [
+            {
+              "group": "rage-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：攻击力提高，具体比例与持续时间待确认。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "abnormal",
+              "statusDurationStatus": "unconfirmed",
+              "stat": "STR",
+              "direction": "increase",
+              "amountStatus": "unconfirmed"
+            },
+            {
+              "group": "rage-defense",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：防御力降低，具体比例与持续时间待确认。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "abnormal",
+              "statusDurationStatus": "unconfirmed",
+              "stat": "DEF",
+              "direction": "decrease",
+              "amountStatus": "unconfirmed"
+            },
+            {
+              "group": "rage-magic-disable",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "abnormal",
+              "statusDurationStatus": "unconfirmed",
+              "operation": "disable-magic"
+            }
+          ],
+          "calculationNote": "三项效果由同一个激怒异常状态带来，分别列组；激怒不按普通攻击力Buff处理，不补造增减比例或持续时间。攻击力、防御力标签沿用，施法限制与异常机制仍待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "友军死亡"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "无法使用魔法"
       ],
       "remainingConditions": [
-        "我方角色战斗不能时触发",
         "施加“激怒”异常状态，具体比例与持续时间待确认"
       ]
     },
@@ -4387,16 +4477,44 @@ export const ATTACK_TAG_CATALOG = {
             "basic:7498b3dbd8ba7e5d:1"
           ],
           "relatedSkillIds": []
+        },
+        "友军死亡": {
+          "summary": "存在处于战斗不能状态的其他友军时生效",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-incapacitated-state",
+            "subject": "other-ally",
+            "metric": "incapacitated-ally-count",
+            "operator": "gte",
+            "minimumCount": 1
+          },
+          "bindings": [
+            {
+              "group": "attack-state",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "有至少1名其他友军处于战斗不能状态时，自身攻击力+20%；所有友军恢复行动后失效。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "current-state",
+              "activationMode": "conditional-stat",
+              "stat": "STR",
+              "valuePercent": 20,
+              "scalesWithAllyCount": false
+            }
+          ],
+          "calculationNote": "按当前是否存在倒下友军判断，不是死亡时赋予40秒Buff；不要求恰好只有1名，也不会按倒下人数重复叠加20%。攻击力和此条件均已贴标签，因此已完整判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "友军死亡"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "有一名友军处于战斗不能状态时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "92f18d0720224b23",
@@ -6685,8 +6803,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 25,
-    "partial": 62,
+    "ready": 26,
+    "partial": 61,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

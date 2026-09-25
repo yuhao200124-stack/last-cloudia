@@ -15,7 +15,7 @@ test('ultimate conditions audit all 935 skills and separate complete effect scop
  for(const [group,ns] of Object.entries(mapping))assert.deepEqual(numbers(labelingView(catalog,'ultimate-'+group)),ns,group);
  assert.equal(view.childKeys.length,17);assert.equal(view.childKeys.reduce((n,k)=>n+catalog.views[k].counts.relatedUnique,0),22);
  for(const n of [217,364,369,391,411,460,521,573,624,732,883,948,976,985,1037,1145,1180,1191,1264,1272,1284,1311,1520,1583,1607,1708,1884,1989,2026])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
- assert.equal(catalog.entries.length,410);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,410);
+ assert.equal(catalog.entries.length,411);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,411);
 });
 
 test('ultimate conditions distinguish full gauges, enemy and self use, single-use buffs, and exact damage and resource effects',()=>{
@@ -35,12 +35,12 @@ test('ultimate conditions distinguish full gauges, enemy and self use, single-us
 });
 
 test('ultimate pass completes only covered full-gauge attributes and preserves pending alternatives and other effect tags',()=>{
- assert.equal(registry.tagPasses.length,20);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,21);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='必杀相关');for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId);assert(a.partIds.every(id=>e.parts.find(p=>p.id===id).kind==='condition'));}
  const before=structuredClone(registry);before.tagPasses=before.tagPasses.filter(p=>p.tag!=='必杀相关');const prior=resolveSkillLabels(before);
  assert.deepEqual(numbers({...view,entries:view.entries.filter(e=>e.judgment==='ready')}),[218,249,914]);
  for(const [n,tag,key] of [[218,'攻击力','attack'],[249,'魔力','magic'],[914,'防御力','defense']]){assert.equal(prior.find(e=>e.id===source(n).id).judgment,'partial');assert.deepEqual(entry(n).assignedTags,[tag,'必杀相关']);assert.deepEqual(entry(n).remainingConditions,[]);assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));}
- assert.equal(view.counts.ready,3);assert.equal(view.counts.partial,12);assert.equal(catalog.views.all.counts.ready,79);assert.equal(catalog.views.all.counts.partial,331);
+ assert.equal(view.counts.ready,3);assert.equal(view.counts.partial,12);assert.equal(catalog.views.all.counts.ready,80);assert.equal(catalog.views.all.counts.partial,331);
  assert.deepEqual(entry(666).assignedTags,['防御力','生命力','必杀相关']);assert.equal(entry(666).remainingEffects.length,2);assert.match(entry(666).remainingEffects.join(''),/魔抗.*SCT/);
  assert.equal(entry(425).judgment,'partial');assert(entry(425).remainingConditions.some(t=>t.includes('持续时间待确认')));
  assert.deepEqual(entry(1695).assignedTags,['必杀相关']);assert(!entry(1695).assignedTags.includes('物理伤害增加'));assert(!entry(1695).assignedTags.includes('伤害增加'));
@@ -54,7 +54,7 @@ function page(edits={}){
 }
 test('ultimate view shows separate effects, synchronized status ordering, deduplicated search and previous views',()=>{
  const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*15.*920/);assert.match(get('#judgmentSummary').textContent,/3.*12.*0/);assert.match(get('#labelResultCount').textContent,/15 \/ 15/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,16);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,18);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,17);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,17);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,18);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,17);
  const def=get('#labelTable').innerHTML.split('<section ').find(s=>s.includes('id="section-ultimate-defense-up"'));assert(def.indexOf('护罩之力')<def.indexOf('能量循环'));
  const search=get('#labelSearch');search.value='万圣节派对';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 15/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,4);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','ultimate-ultimate-damage');assert(get('#labelTable').innerHTML.includes('万物尽灭'));assert(get('#labelTable').innerHTML.includes('鸣动之深渊'));assert(!get('#labelTable').innerHTML.includes('冲浪冲击'));assert(!get('#labelTable').innerHTML.includes('我想成为完美的存在'));

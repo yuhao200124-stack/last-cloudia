@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "revive",
+  "activeView": "ally-death",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -2810,15 +2810,43 @@ export const SKILL_LABELING_CATALOG = {
             "basic:d0f3dc6c3cee545e:1"
           ],
           "relatedSkillIds": []
+        },
+        "友军死亡": {
+          "summary": "其他友军倒下时，获得自身攻击力Buff",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-death-trigger",
+            "subject": "other-ally",
+            "event": "became-incapacitated"
+          },
+          "bindings": [
+            {
+              "group": "attack-buff",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "其他友军倒下时，自身攻击力+30%；Buff持续时间待确认。",
+              "target": "self",
+              "isBuff": true,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-buff",
+              "buffType": "brave",
+              "valuePercent": 30,
+              "durationStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "来源确认攻击力+30%与友军死亡触发，但未给出持续时间，继续待确认；同类型Buff只计最高已生效一项，不累加每次倒下的30%。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "友军死亡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "一名盟友战斗不能时触发",
         "攻击力Buff；持续与同类叠加关系待确认"
       ]
     },
@@ -3340,18 +3368,80 @@ export const SKILL_LABELING_CATALOG = {
             "basic:835e08fc4710e268:1"
           ],
           "relatedSkillIds": []
+        },
+        "友军死亡": {
+          "summary": "其他友军倒下时，自身进入激怒状态",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-death-trigger",
+            "subject": "other-ally",
+            "event": "became-incapacitated"
+          },
+          "bindings": [
+            {
+              "group": "rage-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：攻击力提高，具体比例与持续时间待确认。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "abnormal",
+              "statusDurationStatus": "unconfirmed",
+              "stat": "STR",
+              "direction": "increase",
+              "amountStatus": "unconfirmed"
+            },
+            {
+              "group": "rage-defense",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：防御力降低，具体比例与持续时间待确认。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "abnormal",
+              "statusDurationStatus": "unconfirmed",
+              "stat": "DEF",
+              "direction": "decrease",
+              "amountStatus": "unconfirmed"
+            },
+            {
+              "group": "rage-magic-disable",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "abnormal",
+              "statusDurationStatus": "unconfirmed",
+              "operation": "disable-magic"
+            }
+          ],
+          "calculationNote": "三项效果由同一个激怒异常状态带来，分别列组；激怒不按普通攻击力Buff处理，不补造增减比例或持续时间。攻击力、防御力标签沿用，施法限制与异常机制仍待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "友军死亡"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "无法使用魔法"
       ],
       "remainingConditions": [
-        "我方角色战斗不能时触发",
         "施加“激怒”异常状态，具体比例与持续时间待确认"
       ]
     },
@@ -4296,16 +4386,44 @@ export const SKILL_LABELING_CATALOG = {
             "basic:7498b3dbd8ba7e5d:1"
           ],
           "relatedSkillIds": []
+        },
+        "友军死亡": {
+          "summary": "存在处于战斗不能状态的其他友军时生效",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-incapacitated-state",
+            "subject": "other-ally",
+            "metric": "incapacitated-ally-count",
+            "operator": "gte",
+            "minimumCount": 1
+          },
+          "bindings": [
+            {
+              "group": "attack-state",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "有至少1名其他友军处于战斗不能状态时，自身攻击力+20%；所有友军恢复行动后失效。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "current-state",
+              "activationMode": "conditional-stat",
+              "stat": "STR",
+              "valuePercent": 20,
+              "scalesWithAllyCount": false
+            }
+          ],
+          "calculationNote": "按当前是否存在倒下友军判断，不是死亡时赋予40秒Buff；不要求恰好只有1名，也不会按倒下人数重复叠加20%。攻击力和此条件均已贴标签，因此已完整判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "友军死亡"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "有一名友军处于战斗不能状态时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "92f18d0720224b23",
@@ -8544,15 +8662,43 @@ export const SKILL_LABELING_CATALOG = {
             "basic:865f4f238437b7a5:1"
           ],
           "relatedSkillIds": []
+        },
+        "友军死亡": {
+          "summary": "其他友军倒下时，获得自身防御力Buff",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-death-trigger",
+            "subject": "other-ally",
+            "event": "became-incapacitated"
+          },
+          "bindings": [
+            {
+              "group": "defense-buff",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "其他友军倒下时，自身防御力+30%；Buff持续时间待确认。",
+              "target": "self",
+              "isBuff": true,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-buff",
+              "buffType": "fort",
+              "valuePercent": 30,
+              "durationStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "来源确认防御力+30%与友军死亡触发，但未给出持续时间，继续待确认；同类型Buff只计最高已生效一项。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "友军死亡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "一名盟友战斗不能时触发",
         "防御力Buff；持续时间与同类叠加关系待确认"
       ]
     },
@@ -10912,15 +11058,43 @@ export const SKILL_LABELING_CATALOG = {
             "basic:c68e5d899b2196da:1"
           ],
           "relatedSkillIds": []
+        },
+        "友军死亡": {
+          "summary": "其他友军倒下时，获得自身魔力Buff",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-death-trigger",
+            "subject": "other-ally",
+            "event": "became-incapacitated"
+          },
+          "bindings": [
+            {
+              "group": "magic-buff",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "其他友军倒下时，自身魔力+30%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-buff",
+              "buffType": "aura",
+              "valuePercent": 30,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "友军倒下是触发事件，获得的魔力Buff按40秒持续；同类型Buff只计最高已生效一项。魔力标签沿用，Buff机制仍待判断。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "友军死亡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "我方角色陷入战斗不能时触发",
         "魔力Buff持续40秒；同类型Buff同时只计已生效的最高一项"
       ]
     },
@@ -15482,15 +15656,43 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "友军死亡": {
+          "summary": "其他友军倒下时，获得自身魔法伤害Buff",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-death-trigger",
+            "subject": "other-ally",
+            "event": "became-incapacitated"
+          },
+          "bindings": [
+            {
+              "group": "magic-damage-buff",
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "其他友军倒下时，自身魔法攻击伤害+30%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-buff",
+              "buffType": "magic-damage-up",
+              "valuePercent": 30,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "这是魔法伤害增加，不是魔力提高或无类型伤害。友军倒下时触发40秒Buff，同类型只计最高已生效一项；Buff机制仍待判断。"
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "友军死亡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "我方角色陷入战斗不能时触发",
         "魔法增伤Buff持续40秒；同类型Buff同时只计一项"
       ]
     },
@@ -25109,6 +25311,95 @@ export const SKILL_LABELING_CATALOG = {
         "随机选择1个特技",
         "每个Wave最多触发1次"
       ]
+    },
+    {
+      "id": "387b6e052ad74bb1",
+      "name": "连接未来的接力棒",
+      "url": "https://altema.jp/lastcloudia/gino/493",
+      "text": "我方角色陷入战斗不能时，自身HP大幅恢复，并按照该角色已积攒的特技库存量恢复自身对应的特技库存（每Wave最多1次）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ally-death",
+          "kind": "condition",
+          "text": "其他友军陷入战斗不能时"
+        },
+        {
+          "id": "hp-restore",
+          "kind": "effect",
+          "text": "自身HP大幅回复，具体回复量待确认"
+        },
+        {
+          "id": "sct-stock",
+          "kind": "effect",
+          "text": "根据倒下友军已经积攒的特技库存，回复自身对应的特技库存"
+        },
+        {
+          "id": "once-per-wave",
+          "kind": "condition",
+          "text": "每个Wave最多触发1次"
+        }
+      ],
+      "tagDetails": {
+        "友军死亡": {
+          "summary": "其他友军陷入战斗不能时触发",
+          "relation": "ally-death-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ally-death-trigger",
+            "subject": "other-ally",
+            "event": "became-incapacitated"
+          },
+          "bindings": [
+            {
+              "group": "hp-restore",
+              "partIds": [
+                "hp-restore"
+              ],
+              "summary": "其他友军倒下时，自身HP大幅回复；回复量待确认，每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-action",
+              "resource": "HP",
+              "operation": "restore-current",
+              "amountStatus": "unconfirmed",
+              "maxTriggers": 1,
+              "resetScope": "wave"
+            },
+            {
+              "group": "sct-stock",
+              "partIds": [
+                "sct-stock"
+              ],
+              "summary": "其他友军倒下时，按该友军已积攒的特技库存回复自身对应库存；每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-action",
+              "resource": "SCT",
+              "operation": "restore-stocks",
+              "unit": "skill-stock-count",
+              "amountSource": "incapacitated-ally-stocks",
+              "maxTriggers": 1,
+              "resetScope": "wave"
+            }
+          ],
+          "calculationNote": "回复给仍能行动的自身，不复活倒下的友军。特技库存是次数，不是固定SCT秒数，也不是SCT回复速度；回复量和每Wave次数限制继续待判断。"
+        }
+      },
+      "assignedTags": [
+        "友军死亡"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身HP大幅回复，具体回复量待确认",
+        "根据倒下友军已经积攒的特技库存，回复自身对应的特技库存"
+      ],
+      "remainingConditions": [
+        "每个Wave最多触发1次"
+      ]
     }
   ],
   "views": {
@@ -25207,8 +25498,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 25,
-        "partial": 62,
+        "ready": 26,
+        "partial": 61,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -26155,6 +26446,42 @@ export const SKILL_LABELING_CATALOG = {
         "relatedUnique": 6,
         "notRelatedUnique": 929,
         "ready": 0,
+        "partial": 6,
+        "unknown": 0
+      }
+    },
+    "ally-death": {
+      "label": "友军死亡",
+      "childKeys": [
+        "ally-death-attack-state",
+        "ally-death-attack-buff",
+        "ally-death-defense-buff",
+        "ally-death-magic-buff",
+        "ally-death-magic-damage-buff",
+        "ally-death-hp-restore",
+        "ally-death-sct-stock",
+        "ally-death-rage-attack",
+        "ally-death-rage-defense",
+        "ally-death-rage-magic-disable"
+      ],
+      "overviewLabel": "全部友军死亡相关效果（分组）",
+      "separateSections": true,
+      "passKind": "condition-only",
+      "displayOrder": [
+        "387b6e052ad74bb1",
+        "c68e5d899b2196da",
+        "1773fd0e181f0d48",
+        "d0f3dc6c3cee545e",
+        "835e08fc4710e268",
+        "865f4f238437b7a5",
+        "7498b3dbd8ba7e5d"
+      ],
+      "scopeDescription": "友军死亡指自身以外的我方角色陷入战斗不能。倒下时触发的Buff、即时回复，以及有友军倒下期间的属性加成分别列组；激怒的攻击提高、防御降低和无法施法分别显示。同一技能跨组只计一次，已有标签和判断同步。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 7,
+        "notRelatedUnique": 928,
+        "ready": 1,
         "partial": 6,
         "unknown": 0
       }
@@ -28951,6 +29278,176 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "ally-death-attack-state": {
+      "label": "有友军倒下：攻击力增加",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "attack-state",
+      "displayOrder": [
+        "7498b3dbd8ba7e5d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ally-death-attack-buff": {
+      "label": "倒下时触发：攻击力Buff",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "attack-buff",
+      "displayOrder": [
+        "d0f3dc6c3cee545e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ally-death-defense-buff": {
+      "label": "倒下时触发：防御力Buff",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "defense-buff",
+      "displayOrder": [
+        "865f4f238437b7a5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ally-death-magic-buff": {
+      "label": "倒下时触发：魔力Buff",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "magic-buff",
+      "displayOrder": [
+        "c68e5d899b2196da"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ally-death-magic-damage-buff": {
+      "label": "倒下时触发：魔法伤害Buff",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "magic-damage-buff",
+      "displayOrder": [
+        "1773fd0e181f0d48"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ally-death-hp-restore": {
+      "label": "倒下时触发：HP回复",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "hp-restore",
+      "displayOrder": [
+        "387b6e052ad74bb1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ally-death-sct-stock": {
+      "label": "倒下时触发：特技库存回复",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "sct-stock",
+      "displayOrder": [
+        "387b6e052ad74bb1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ally-death-rage-attack": {
+      "label": "激怒状态：攻击力提高",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "rage-attack",
+      "displayOrder": [
+        "835e08fc4710e268"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ally-death-rage-defense": {
+      "label": "激怒状态：防御力降低",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "rage-defense",
+      "displayOrder": [
+        "835e08fc4710e268"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ally-death-rage-magic-disable": {
+      "label": "激怒状态：无法使用魔法",
+      "parent": "ally-death",
+      "conditionTag": "友军死亡",
+      "effectGroup": "rage-magic-disable",
+      "displayOrder": [
+        "835e08fc4710e268"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -29363,13 +29860,14 @@ export const SKILL_LABELING_CATALOG = {
         "e26ae95f251c91e0",
         "a8ee2e010b6e5d6c",
         "898c96e867704168",
-        "89a90b8df36a0475"
+        "89a90b8df36a0475",
+        "387b6e052ad74bb1"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 410,
-        "notRelatedUnique": 525,
-        "ready": 79,
+        "relatedUnique": 411,
+        "notRelatedUnique": 524,
+        "ready": 80,
         "partial": 331,
         "unknown": 0
       }
