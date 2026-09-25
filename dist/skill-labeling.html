@@ -6,8 +6,8 @@
     <meta name="description" content="按完整效果词条逐类贴标签，核对已有分类与未完成条件。" />
     <title>技能列表打标签用的｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260925-weapons" />
-    <link rel="stylesheet" href="./skill-labeling.css?v=20260925-weapons" />
+    <link rel="stylesheet" href="./styles.css?v=20260925-wield" />
+    <link rel="stylesheet" href="./skill-labeling.css?v=20260925-wield" />
   </head>
   <body>
     <header class="site-header">
@@ -22,18 +22,18 @@
     <main>
       <section class="workspace labeling-workspace" aria-label="技能标签核对列表">
         <nav class="sheet-tabs label-tabs" id="labelTabs" role="tablist" aria-label="技能标签分类" aria-orientation="horizontal"></nav>
-        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-axe">
-        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">斧</h2></div></div>
-        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="斧子分类" aria-orientation="horizontal" hidden></nav>
+        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-single-weapon">
+        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">单手</h2></div></div>
+        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="单手子分类" aria-orientation="horizontal" hidden></nav>
         <div class="labeling-overview">
           <p id="labelCoverage">正在读取全库核对结果…</p>
           <p id="judgmentSummary" aria-live="polite"></p>
           <p id="cumulativeCoverage"></p>
           <p>按完整效果词条分类：属性、Boss、种族、空中、弱点等限定增伤不拆成宽泛增伤标签。装备、队伍、自身状态、时间等启用条件继续独立判断；并列效果各自贴标签。</p>
-          <p id="conditionScope">按斧装备许可、装备斧、仅1把斧及实际存在的组合条件分别列组，再区分属性、伤害、上限和其他效果。只完成斧许可或类型条件；其他条件和效果按各自标签同步判断。同一技能跨组只计一次。</p>
+          <p id="conditionScope">单手按武器总数恰好1把判断。“两手剑／枪”等技能也属于这一类。按武器类型、伤害种类及附加条件分组；明确包含空武器的分支另写0或1把，绝不把0把当成1把。 所有效果和条件贴完标签才算完整；同一技能跨组去重。</p>
         </div>
         <div class="toolbar">
-          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索斧相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
+          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索单手相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
           <div id="labelResultCount" class="result-summary" aria-live="polite"></div>
         </div>
         <div id="labelTable" class="table-area"></div>
@@ -43,6 +43,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260925-weapons"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260925-wield"></script>
   </body>
 </html>

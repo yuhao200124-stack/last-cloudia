@@ -22,7 +22,7 @@ test('physical damage audits all 935 skills and excludes complete elemental and 
   assert(!entry(n),source(n).name);
   assert.equal(audit.rows.find(r=>r.id===source(n).id).decision,'not-related');
  }
- for(const n of [365,410,502,556,594,619,977]){assert(!entry(n).remainingEffects.includes('暴击率+10%'));assert(entry(n).assignedTags.includes('暴击'));assert(entry(n).remainingConditions.some(t=>/仅装备一把武器/.test(t)));}
+ for(const n of [365,410,502,556,594,619,977]){assert(!entry(n).remainingEffects.includes('暴击率+10%'));assert(entry(n).assignedTags.includes('暴击'));assert(entry(n).assignedTags.includes('单手'));assert.deepEqual(entry(n).remainingConditions,[]);}
  assert.equal(catalog.numericEffectInjection,false);
 });
 
@@ -36,21 +36,21 @@ test('physical bonuses remain distinct from caps, crits, killers, stat changes, 
  assert.equal(entry(1754).remainingEffects.length,3);
  for(const n of [357,441]){assert.deepEqual(entry(n).assignedTags,['魔力','物理伤害增加']);assert.deepEqual(entry(n).remainingEffects,[]);assert(entry(n).remainingConditions.some(t=>t.includes('公式')));}
  for(const n of [1113,1491])assert.match(entry(n).tagDetails['物理伤害增加'].calculationNote,/不直接填入最高值/);
- for(const n of [1073,1615])assert(entry(n).remainingConditions.some(t=>t.includes('类型相同')&&t.includes('不要求属性相同')));
+ for(const n of [1073,1615])assert.deepEqual(entry(n).remainingConditions,[]);
  assert.deepEqual(entry(1548).remainingConditions,[]);
  // The weapon has a fire requirement, but the physical damage itself has none.
  for(const n of [1548,717,1378,1462,1605])assert(entry(n),source(n).name);
 });
 
 test('physical tags accumulate and leave each unfinished effect/condition pending until its own pass',()=>{
- assert.equal(physical.counts.ready,11);assert.equal(physical.counts.partial,67);assert.equal(physical.counts.unknown,0);
- assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,62);
+ assert.equal(physical.counts.ready,12);assert.equal(physical.counts.partial,66);assert.equal(physical.counts.unknown,0);
+ assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,68);
  for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,[]);
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
- assert.equal(catalog.entries.length,587);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,587);
+ assert.equal(catalog.entries.length,608);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,608);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(allRows.slice(0,234).every(r=>r.judgment==='ready'));assert(allRows.slice(234).every(r=>r.judgment==='partial'));
+ assert(allRows.slice(0,240).every(r=>r.judgment==='ready'));assert(allRows.slice(240).every(r=>r.judgment==='partial'));
  // Removing the weapon type pass leaves its condition pending; restoring it completes the shared skill.
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='锤');
  assert.equal(resolveSkillLabels(earlier).find(e=>e.id===source(273).id).judgment,'partial');

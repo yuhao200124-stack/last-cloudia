@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "axe",
+  "activeView": "single-weapon",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -636,7 +636,12 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "作用于所装备武器自身的数值；装备两把武器时分别生效"
+          "text": "提升的是所装备武器自身的数值，不是角色最终面板"
+        },
+        {
+          "id": "dual-application",
+          "kind": "condition",
+          "text": "装备2把武器时，按每把武器分别应用数值提升"
         }
       ],
       "tagDetails": {
@@ -657,16 +662,81 @@ export const SKILL_LABELING_CATALOG = {
             "basic:1a101f308e1eaae6:1"
           ],
           "relatedSkillIds": []
+        },
+        "双手": {
+          "summary": "装备2把武器时，每把武器自身攻击力分别+25%；单武器时也可生效，此处说明双持应用。；装备2把武器时，每把武器自身魔力分别+25%；单武器时也可生效，此处说明双持应用。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "dual-application"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "each-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备2把武器时，每把武器自身攻击力分别+25%；单武器时也可生效，此处说明双持应用。",
+              "target": "each-equipped-weapon",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 25,
+              "base": "equipped-item-stat",
+              "applicationMode": "per-equipped-weapon",
+              "requiresDualForBaseEffect": false
+            },
+            {
+              "group": "each-weapon-int",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备2把武器时，每把武器自身魔力分别+25%；单武器时也可生效，此处说明双持应用。",
+              "target": "each-equipped-weapon",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 25,
+              "base": "equipped-item-stat",
+              "applicationMode": "per-equipped-weapon",
+              "requiresDualForBaseEffect": false
+            }
+          ],
+          "calculationNote": "通用武器数值强化，不是双武器限定加成。此处只标注原说明明确提到的双持分别应用规则；装备本体数值计算机制仍待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "双手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "作用于所装备武器自身的数值；装备两把武器时分别生效"
+        "提升的是所装备武器自身的数值，不是角色最终面板"
       ]
     },
     {
@@ -1839,7 +1909,12 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "武器栏和防具栏同时为空；饰品不影响此条件"
+          "text": "未装备武器；须与未装备防具同时满足，饰品不影响"
+        },
+        {
+          "id": "empty-armor",
+          "kind": "condition",
+          "text": "未装备防具；须与未装备武器同时满足，饰品不影响"
         }
       ],
       "tagDetails": {
@@ -1872,20 +1947,341 @@ export const SKILL_LABELING_CATALOG = {
             "basic:4633d985390976cc:1"
           ],
           "relatedSkillIds": []
+        },
+        "空武器": {
+          "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。；武器和防具都未装备时，自身防御力+10%；饰品不影响。；武器和防具都未装备时，自身魔力+10%；饰品不影响。；武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "both-empty-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，自身防御力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-int",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "武器和防具都未装备时，自身魔力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-mnd",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "MND",
+              "valuePercent": 10,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
+        },
+        "空防具": {
+          "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。；武器和防具都未装备时，自身防御力+10%；饰品不影响。；武器和防具都未装备时，自身魔力+10%；饰品不影响。；武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "empty-armor"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "both-empty-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，自身防御力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-int",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "武器和防具都未装备时，自身魔力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-mnd",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "MND",
+              "valuePercent": 10,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
+        },
+        "空武器+防具": {
+          "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。；武器和防具都未装备时，自身防御力+10%；饰品不影响。；武器和防具都未装备时，自身魔力+10%；饰品不影响。；武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1",
+              "empty-armor"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0,
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "both-empty-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，自身防御力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-int",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "武器和防具都未装备时，自身魔力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-mnd",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "MND",
+              "valuePercent": 10,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力"
+        "魔力",
+        "空武器",
+        "空防具",
+        "空武器+防具"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "魔抗+10%"
       ],
-      "remainingConditions": [
-        "武器栏和防具栏同时为空；饰品不影响此条件"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5f6efbf8b35453d2",
@@ -5428,16 +5824,54 @@ export const SKILL_LABELING_CATALOG = {
             "basic:f5c157dab48c38c7:1"
           ],
           "relatedSkillIds": []
+        },
+        "空防具": {
+          "summary": "未装备防具时，自身攻击力+20%；不要求空武器。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "stat-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "未装备防具时，自身攻击力+20%；不要求空武器。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 20,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "检查实际有没有装备防具，不把“防具栏里放了第二把武器”算作装备防具；饰品不影响，也不要求空武器。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "空防具"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "未装备防具时生效（空防具）"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0d0bdf3f7c6e0b5a",
@@ -6588,7 +7022,7 @@ export const SKILL_LABELING_CATALOG = {
               "requiresAttackElement": false
             }
           ],
-          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。弱雷与剑类型条件已覆盖，仅1把武器条件和物理上限仍待对应标签。"
+          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。弱雷、剑类型及仅1把武器条件已覆盖，物理上限仍待对应标签。"
         },
         "剑": {
           "summary": "仅装备1把剑时，自身攻击力+20%。；仅装备1把剑时，物理攻击伤害上限+3,000。；仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
@@ -6678,22 +7112,112 @@ export const SKILL_LABELING_CATALOG = {
               "addsToPartId": "effect-1"
             }
           ],
-          "calculationNote": "沿用攻击力和敌人弱雷标签；这里不是雷属性攻击限定。两个上限是基础+3,000和符合弱雷条件时再+3,000；本轮补剑类型，单武器数量及物理上限继续待判断。"
+          "calculationNote": "沿用攻击力和敌人弱雷标签；这里不是雷属性攻击限定。两个上限是基础+3,000和符合弱雷条件时再+3,000；剑类型和单武器数量已贴标签，物理上限继续待判断。"
+        },
+        "单手": {
+          "summary": "仅装备1把剑时，自身攻击力+20%。；仅装备1把剑时，物理攻击伤害上限+3,000。；仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "sword-single-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "仅装备1把剑时，自身攻击力+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 20,
+              "base": "character-stat",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-enemy-thunder-weak-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                },
+                "enemyWeakElement": "thunder"
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "requiresAttackElement": false,
+              "addsToPartId": "effect-1",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "雷属性",
-        "剑"
+        "剑",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+3,000",
         "对弱雷属性敌人的伤害上限+3,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "a5f24684f4b2911a",
@@ -7787,11 +8311,74 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "原文是物理攻击或必杀，任一满足即可；本轮只覆盖必杀分支，物理攻击分支仍保留待判断。这里不是必杀伤害直接+30%；Boss上限和单武器额外上限不挂在这条触发效果里。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        },
+        "单手": {
+          "summary": "仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。；仅1把武器时，对Boss的必杀伤害上限在基础+10,000之外再+10,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-4"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "boss-extra-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyType": "boss"
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 10000,
+              "addsToPartId": "effect-1"
+            },
+            {
+              "group": "boss-extra-ultimate-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅1把武器时，对Boss的必杀伤害上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyType": "boss"
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 10000,
+              "addsToPartId": "effect-1"
+            }
+          ],
+          "calculationNote": "只绑定单武器额外上限；STR参照修正和基础Boss上限不以单武器为条件。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "必杀相关"
+        "必杀相关",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -7801,8 +8388,7 @@ export const SKILL_LABELING_CATALOG = {
       "remainingConditions": [
         "发动物理攻击时（与发动必杀是“或”关系，任一满足）",
         "攻击力只在该次伤害计算中提高",
-        "对Boss时才有对应伤害上限加成",
-        "只装备一把武器时额外提高上限"
+        "对Boss时才有对应伤害上限加成"
       ]
     },
     {
@@ -10507,16 +11093,54 @@ export const SKILL_LABELING_CATALOG = {
             "basic:f1b5060bde17e0e8:1"
           ],
           "relatedSkillIds": []
+        },
+        "空防具": {
+          "summary": "未装备防具时，自身防御力+20%；不要求空武器。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "stat-def",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "未装备防具时，自身防御力+20%；不要求空武器。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "DEF",
+              "valuePercent": 20,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "检查实际有没有装备防具，不把“防具栏里放了第二把武器”算作装备防具；饰品不影响，也不要求空武器。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "空防具"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "未装备防具时生效（空防具）"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "448ba5ba48be6d12",
@@ -11627,7 +12251,18 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-2",
           "kind": "condition",
-          "text": "额外上限要求仅装备一把武器或未装备武器"
+          "text": "仅1把武器时额外上限生效，与空武器为OR关系",
+          "alternativeGroup": "zero-or-one-weapon",
+          "logicalOperator": "OR",
+          "weaponCount": 1
+        },
+        {
+          "id": "empty-weapon-branch",
+          "kind": "condition",
+          "text": "未装备武器时额外上限生效，与单武器为OR关系",
+          "alternativeGroup": "zero-or-one-weapon",
+          "logicalOperator": "OR",
+          "weaponCount": 0
         }
       ],
       "tagDetails": {
@@ -11640,10 +12275,102 @@ export const SKILL_LABELING_CATALOG = {
             "basic:d268368f04c8f840:1"
           ],
           "relatedSkillIds": []
+        },
+        "单手": {
+          "summary": "1把武器或未装备武器时，对Boss的物理上限在基础+3,000之外再+3,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "non-dual-boss-physical-extra-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "1把武器或未装备武器时，对Boss的物理上限在基础+3,000之外再+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyType": "boss",
+                "validWeaponCounts": [
+                  0,
+                  1
+                ]
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 3000,
+              "addsToPartId": "effect-1",
+              "effectIdentity": "d268368f04c8f840:effect-2"
+            }
+          ],
+          "calculationNote": "这里是再加3,000，与驱动极限突破的替换档位不同；HP上限-15%和基础Boss上限不要求单武器。"
+        },
+        "空武器": {
+          "summary": "1把武器或未装备武器时，对Boss的物理上限在基础+3,000之外再+3,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "empty-weapon-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "non-dual-boss-physical-extra-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "1把武器或未装备武器时，对Boss的物理上限在基础+3,000之外再+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 0
+                },
+                "enemyType": "boss",
+                "validWeaponCounts": [
+                  0,
+                  1
+                ]
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 3000,
+              "addsToPartId": "effect-1",
+              "effectIdentity": "d268368f04c8f840:effect-2"
+            }
+          ],
+          "calculationNote": "这里是再加3,000，与驱动极限突破的替换档位不同；HP上限-15%和基础Boss上限不要求单武器。"
         }
       },
       "assignedTags": [
-        "生命力"
+        "生命力",
+        "单手",
+        "空武器"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -11651,8 +12378,7 @@ export const SKILL_LABELING_CATALOG = {
         "单武器或空武器时，物理攻击伤害上限再+3,000"
       ],
       "remainingConditions": [
-        "伤害上限加成针对Boss",
-        "额外上限要求仅装备一把武器或未装备武器"
+        "伤害上限加成针对Boss"
       ]
     },
     {
@@ -13286,16 +14012,54 @@ export const SKILL_LABELING_CATALOG = {
             "basic:b01d5a17adf13b59:1"
           ],
           "relatedSkillIds": []
+        },
+        "空防具": {
+          "summary": "未装备防具时，自身魔力+20%；不要求空武器。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "stat-int",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "未装备防具时，自身魔力+20%；不要求空武器。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 20,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "检查实际有没有装备防具，不把“防具栏里放了第二把武器”算作装备防具；饰品不影响，也不要求空武器。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "空防具"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "空防具：未装备防具，不要求武器栏为空"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0618d7853a27d1e4",
@@ -14587,18 +15351,75 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "单手": {
+          "summary": "仅装备1把任意类型武器时，物理伤害+30%。；仅装备1把任意类型武器时，物理伤害上限+10,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "any-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把任意类型武器时，物理伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 30
+            },
+            {
+              "group": "any-physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把任意类型武器时，物理伤害上限+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 10000
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+10,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "a85d531b3bab38a1",
@@ -14840,21 +15661,108 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 5000
             }
           ],
-          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件及物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件现已贴标签，物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+        },
+        "单手": {
+          "summary": "仅装备1把枪时，物理攻击伤害+20%。；仅装备1把枪时，暴击率+10个百分点。；仅装备1把枪时，物理攻击伤害上限+5,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "spear-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把枪时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "spear-single-critical-rate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把枪时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "spear-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把枪时，物理攻击伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 5000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "暴击",
-        "枪"
+        "枪",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+5,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:320",
@@ -15097,21 +16005,108 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 5000
             }
           ],
-          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件及物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件现已贴标签，物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+        },
+        "单手": {
+          "summary": "仅装备1把锤时，物理攻击伤害+20%。；仅装备1把锤时，暴击率+10个百分点。；仅装备1把锤时，物理攻击伤害上限+5,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "hammer-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把锤时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "hammer-single-critical-rate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把锤时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "hammer-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把锤时，物理攻击伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 5000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "暴击",
-        "锤"
+        "锤",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+5,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f0a152f468c7e282",
@@ -15427,21 +16422,108 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 5000
             }
           ],
-          "calculationNote": "“两手剑”要求武器总数为1且该武器为剑，不是装备2把剑。暴击率与物理上限分开，后者不是暴击上限；单武器数量条件和上限效果继续待标签。"
+          "calculationNote": "“两手剑”要求武器总数为1且该武器为剑，不是装备2把剑。暴击率与物理上限分开，后者不是暴击上限；单武器数量条件现已贴标签，上限效果继续待标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把剑时，物理攻击伤害+20%。；仅装备1把剑时，暴击率+10个百分点。；仅装备1把剑时，物理攻击伤害上限+5,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "sword-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-critical-rate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把剑时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 5000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "暴击",
-        "剑"
+        "剑",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+5,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4bdba285c5859d95",
@@ -15790,21 +16872,108 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 5000
             }
           ],
-          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件及物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件现已贴标签，物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+        },
+        "单手": {
+          "summary": "仅装备1把斧时，物理攻击伤害+20%。；仅装备1把斧时，暴击率+10个百分点。；仅装备1把斧时，物理攻击伤害上限+5,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "axe-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把斧时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "axe-single-critical-rate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把斧时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "axe-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把斧时，物理攻击伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 5000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "暴击",
-        "斧"
+        "斧",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+5,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "ed504f94c8b57e47",
@@ -16013,21 +17182,108 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 5000
             }
           ],
-          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件及物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件现已贴标签，物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+        },
+        "单手": {
+          "summary": "仅装备1把爪时，物理攻击伤害+20%。；仅装备1把爪时，暴击率+10个百分点。；仅装备1把爪时，物理攻击伤害上限+5,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "claw-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把爪时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "claw-single-critical-rate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把爪时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "claw-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把爪时，物理攻击伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 5000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "暴击",
-        "爪"
+        "爪",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+5,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "8f742ab683b2018e",
@@ -16398,21 +17654,108 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 5000
             }
           ],
-          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件及物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件现已贴标签，物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+        },
+        "单手": {
+          "summary": "仅装备1把机械时，物理攻击伤害+20%。；仅装备1把机械时，暴击率+10个百分点。；仅装备1把机械时，物理攻击伤害上限+5,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "machine-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把机械时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "machine-single-critical-rate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把机械时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "machine-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把机械时，物理攻击伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 5000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "暴击",
-        "机械"
+        "机械",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+5,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "dcf1d5d6f7d50959",
@@ -16939,12 +18282,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 6000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。剑类型与仅1把武器是两个条件；本轮只完成剑类型，不顺便完成必杀增伤、上限或单武器标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。剑类型与仅1把武器是两个条件，现已分别贴标签；必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把剑时，物理攻击伤害+20%。；仅装备1把剑时，必杀伤害+20%。；仅装备1把剑时，物理攻击伤害上限+6,000。；仅装备1把剑时，必杀伤害上限+6,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "sword-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把剑时，必杀伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害上限+6,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 6000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把剑时，必杀伤害上限+6,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 6000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "剑"
+        "剑",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -16952,9 +18406,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+6,000",
         "必杀伤害上限+6,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "ce4c7604e001b0ed",
@@ -17110,12 +18562,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。剑类型与仅1把武器是两个条件；本轮只完成剑类型，不顺便完成必杀增伤、上限或单武器标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。剑类型与仅1把武器是两个条件，现已分别贴标签；必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把剑时，物理攻击伤害+10%。；仅装备1把剑时，必杀伤害+10%。；仅装备1把剑时，物理攻击伤害上限+3,000。；仅装备1把剑时，必杀伤害上限+3,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "sword-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把剑时，必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把剑时，必杀伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "剑"
+        "剑",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -17123,9 +18686,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+3,000",
         "必杀伤害上限+3,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "9808082700eee5b8",
@@ -17344,12 +18905,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 9000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。剑类型与仅1把武器是两个条件；本轮只完成剑类型，不顺便完成必杀增伤、上限或单武器标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。剑类型与仅1把武器是两个条件，现已分别贴标签；必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把剑时，物理攻击伤害+30%。；仅装备1把剑时，必杀伤害+30%。；仅装备1把剑时，物理攻击伤害上限+9,000。；仅装备1把剑时，必杀伤害上限+9,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "sword-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 30,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把剑时，必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 30,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害上限+9,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 9000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把剑时，必杀伤害上限+9,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 9000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "剑"
+        "剑",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -17357,9 +19029,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+9,000",
         "必杀伤害上限+9,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "105171fcac173ed9",
@@ -17515,12 +19185,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。只完成武器类型条件，单武器、必杀增伤和上限继续待对应标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。武器类型和单武器条件均已贴标签，必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把枪时，物理攻击伤害+10%。；仅装备1把枪时，必杀伤害+10%。；仅装备1把枪时，物理攻击伤害上限+3000。；仅装备1把枪时，必杀伤害上限+3000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "spear-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把枪时，物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "spear-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把枪时，必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "spear-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把枪时，物理攻击伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "spear-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把枪时，必杀伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "枪"
+        "枪",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -17528,9 +19309,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+3,000",
         "必杀伤害上限+3,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "22db4d8dd8dbfd9c",
@@ -17695,21 +19474,108 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 5000
             }
           ],
-          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件及物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+          "calculationNote": "“两手”要求武器总数恰好1，并非装备2把武器。武器类型本轮完成；数量条件现已贴标签，物理上限仍待对应标签。暴击率是10个百分点，上限不限定暴击。"
+        },
+        "单手": {
+          "summary": "仅装备1把弓时，物理攻击伤害+20%。；仅装备1把弓时，暴击率+10个百分点。；仅装备1把弓时，物理攻击伤害上限+5,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "bow-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把弓时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "bow",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "bow-single-critical-rate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把弓时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "bow",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "bow-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把弓时，物理攻击伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "bow",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 5000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "暴击",
-        "弓"
+        "弓",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+5,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "8ee1d245f7b403bc",
@@ -17865,12 +19731,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。只完成武器类型条件，单武器、必杀增伤和上限继续待对应标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。武器类型和单武器条件均已贴标签，必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把机械时，物理攻击伤害+10%。；仅装备1把机械时，必杀伤害+10%。；仅装备1把机械时，物理攻击伤害上限+3000。；仅装备1把机械时，必杀伤害上限+3000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "machine-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把机械时，物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "machine-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把机械时，必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "machine-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把机械时，物理攻击伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "machine-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把机械时，必杀伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "机械"
+        "机械",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -17878,9 +19855,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+3,000",
         "必杀伤害上限+3,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "71ac299474a52c86",
@@ -18207,19 +20182,78 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "双手": {
+          "summary": "装备2把同种类武器时，物理伤害+10%。；装备2把同种类武器时，物理上限+2000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "same-type-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "装备2把同种类武器时，物理伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponType": true
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 10
+            },
+            {
+              "group": "same-type-physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备2把同种类武器时，物理上限+2000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponType": true
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "本轮双武器同种类子类同时完成数量和同种类条件；不要求两把属性相同或为同一件物品。"
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "双手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+2,000"
       ],
-      "remainingConditions": [
-        "装备两把武器",
-        "两把武器的类型相同，不要求属性相同或是同一件物品"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5e9e49987bc80109",
@@ -18375,12 +20409,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 6000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。只完成武器类型条件，单武器、必杀增伤和上限继续待对应标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。武器类型和单武器条件均已贴标签，必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把锤时，物理攻击伤害+20%。；仅装备1把锤时，必杀伤害+20%。；仅装备1把锤时，物理攻击伤害上限+6000。；仅装备1把锤时，必杀伤害上限+6000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "hammer-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把锤时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "hammer-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把锤时，必杀伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "hammer-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把锤时，物理攻击伤害上限+6000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 6000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "hammer-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把锤时，必杀伤害上限+6000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 6000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "锤"
+        "锤",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -18388,9 +20533,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+6,000",
         "必杀伤害上限+6,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "9db66f54c49b4f7a",
@@ -18468,18 +20611,75 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "空武器": {
+          "summary": "未装备武器时，物理伤害+30%；不要求空防具。；未装备武器时，物理上限+10000；不要求空防具。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "未装备武器时，物理伤害+30%；不要求空防具。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 30
+            },
+            {
+              "group": "physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "未装备武器时，物理上限+10000；不要求空防具。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 10000
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "空武器"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+10,000"
       ],
-      "remainingConditions": [
-        "空武器：未装备武器，不要求防具栏为空"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4a53a2ac6b74cd04",
@@ -18947,12 +21147,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。只完成武器类型条件，单武器、必杀增伤和上限继续待对应标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。武器类型和单武器条件均已贴标签，必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把爪时，物理攻击伤害+10%。；仅装备1把爪时，必杀伤害+10%。；仅装备1把爪时，物理攻击伤害上限+3000。；仅装备1把爪时，必杀伤害上限+3000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "claw-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把爪时，物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "claw-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把爪时，必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "claw-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把爪时，物理攻击伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "claw-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把爪时，必杀伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "爪"
+        "爪",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -18960,9 +21271,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+3,000",
         "必杀伤害上限+3,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "fc3ee7900740acc8",
@@ -19251,12 +21560,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。只完成武器类型条件，单武器、必杀增伤和上限继续待对应标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。武器类型和单武器条件均已贴标签，必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把锤时，物理攻击伤害+10%。；仅装备1把锤时，必杀伤害+10%。；仅装备1把锤时，物理攻击伤害上限+3000。；仅装备1把锤时，必杀伤害上限+3000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "hammer-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把锤时，物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "hammer-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把锤时，必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "hammer-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把锤时，物理攻击伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "hammer-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把锤时，必杀伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "锤"
+        "锤",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -19264,9 +21684,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+3,000",
         "必杀伤害上限+3,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "ef62dd0cf4192724",
@@ -19366,16 +21784,53 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "空武器": {
+          "summary": "未装备武器时，物理伤害+30%；不要求空防具。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "未装备武器时，物理伤害+30%；不要求空防具。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "空武器"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "空武器：未装备武器，不要求防具栏为空"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f80a686243715fb5",
@@ -19531,12 +21986,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 6000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。只完成武器类型条件，单武器、必杀增伤和上限继续待对应标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。武器类型和单武器条件均已贴标签，必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把枪时，物理攻击伤害+20%。；仅装备1把枪时，必杀伤害+20%。；仅装备1把枪时，物理攻击伤害上限+6000。；仅装备1把枪时，必杀伤害上限+6000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "spear-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把枪时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "spear-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把枪时，必杀伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "spear-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把枪时，物理攻击伤害上限+6000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 6000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "spear-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把枪时，必杀伤害上限+6000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 6000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "枪"
+        "枪",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -19544,9 +22110,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+6,000",
         "必杀伤害上限+6,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "9d60989a10027525",
@@ -19580,18 +22144,75 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "空武器": {
+          "summary": "未装备武器时，物理伤害+30%；不要求空防具。；未装备武器时，物理上限+2000；不要求空防具。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "未装备武器时，物理伤害+30%；不要求空防具。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 30
+            },
+            {
+              "group": "physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "未装备武器时，物理上限+2000；不要求空防具。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "空武器"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+2,000"
       ],
-      "remainingConditions": [
-        "空武器：未装备武器，不要求防具栏为空"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "d291d901e1625ee2",
@@ -19810,12 +22431,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 6000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。只完成武器类型条件，单武器、必杀增伤和上限继续待对应标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。武器类型和单武器条件均已贴标签，必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把斧时，物理攻击伤害+20%。；仅装备1把斧时，必杀伤害+20%。；仅装备1把斧时，物理攻击伤害上限+6000。；仅装备1把斧时，必杀伤害上限+6000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "axe-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把斧时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "axe-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把斧时，必杀伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "axe-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把斧时，物理攻击伤害上限+6000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 6000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "axe-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把斧时，必杀伤害上限+6000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 6000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "斧"
+        "斧",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -19823,9 +22555,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+6,000",
         "必杀伤害上限+6,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "e14f43b83a6fcb01",
@@ -20102,6 +22832,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "paired-claw",
           "kind": "condition",
           "text": "另一把武器为爪，必须同时装备剑和爪"
+        },
+        {
+          "id": "dual-weapon-count",
+          "kind": "condition",
+          "text": "剑和爪必须同时装备，因此武器数量为2"
         }
       ],
       "tagDetails": {
@@ -20256,12 +22991,85 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "复用剑页同一个技能及另一把爪条件；剑和爪必须同时装备，不要求同属性。两种武器条件均已贴标签，物理上限继续待判断；跨页不重复计算技能。"
+        },
+        "双手": {
+          "summary": "同时装备1把剑和1把爪时，物理攻击伤害+20%。；同时装备1把剑和1把爪时，物理攻击伤害上限+2,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "dual-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "sword-claw-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "同时装备1把剑和1把爪时，物理攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 2,
+                  "weaponTypesAllOf": [
+                    "sword",
+                    "claw"
+                  ]
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-claw-physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备1把剑和1把爪时，物理攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 2,
+                  "weaponTypesAllOf": [
+                    "sword",
+                    "claw"
+                  ]
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 2000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "剑＋爪组合的两种类型条件已各自贴标签，本轮补数量关系；不要求同种类或同属性，物理上限仍待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "剑",
-        "爪"
+        "爪",
+        "双手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -20588,19 +23396,78 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "双手": {
+          "summary": "装备2把同种类武器时，物理伤害+5%。；装备2把同种类武器时，物理上限+1000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "same-type-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "装备2把同种类武器时，物理伤害+5%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponType": true
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 5
+            },
+            {
+              "group": "same-type-physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备2把同种类武器时，物理上限+1000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponType": true
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 1000
+            }
+          ],
+          "calculationNote": "本轮双武器同种类子类同时完成数量和同种类条件；不要求两把属性相同或为同一件物品。"
         }
       },
       "assignedTags": [
-        "物理伤害增加"
+        "物理伤害增加",
+        "双手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+1,000"
       ],
-      "remainingConditions": [
-        "装备两把武器",
-        "两把武器的类型相同，不要求属性相同或是同一件物品"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "ca339383e4f1f6f6",
@@ -20756,12 +23623,123 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "物理与必杀、伤害与上限分别列组。只完成武器类型条件，单武器、必杀增伤和上限继续待对应标签。"
+          "calculationNote": "物理与必杀、伤害与上限分别列组。武器类型和单武器条件均已贴标签，必杀增伤和上限继续待对应标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把斧时，物理攻击伤害+10%。；仅装备1把斧时，必杀伤害+10%。；仅装备1把斧时，物理攻击伤害上限+3000。；仅装备1把斧时，必杀伤害上限+3000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "axe-single-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "仅装备1把斧时，物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "axe-single-ultimate-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把斧时，必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 10,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "axe-single-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把斧时，物理攻击伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "axe-single-ultimate-cap",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "仅装备1把斧时，必杀伤害上限+3000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "斧"
+        "斧",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -20769,9 +23747,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理攻击伤害上限+3,000",
         "必杀伤害上限+3,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "8c11c64768072670",
@@ -21993,19 +24969,201 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖自身整体造成伤害增加；不含限定攻击类型、属性、敌人目标或攻击方位的增伤。自身、队伍或战况条件仍单独待判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "空武器": {
+          "summary": "武器和防具都未装备时，对敌人造成的伤害+20%。；武器和防具都未装备时，受到敌人的伤害-20%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "both-empty-damage",
+              "partIds": [
+                "damage"
+              ],
+              "summary": "武器和防具都未装备时，对敌人造成的伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20
+            },
+            {
+              "group": "both-empty-reduction",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，受到敌人的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-reduction",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
+        },
+        "空防具": {
+          "summary": "武器和防具都未装备时，对敌人造成的伤害+20%。；武器和防具都未装备时，受到敌人的伤害-20%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "both-empty-damage",
+              "partIds": [
+                "damage"
+              ],
+              "summary": "武器和防具都未装备时，对敌人造成的伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20
+            },
+            {
+              "group": "both-empty-reduction",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，受到敌人的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-reduction",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
+        },
+        "空武器+防具": {
+          "summary": "武器和防具都未装备时，对敌人造成的伤害+20%。；武器和防具都未装备时，受到敌人的伤害-20%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0,
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "both-empty-damage",
+              "partIds": [
+                "damage"
+              ],
+              "summary": "武器和防具都未装备时，对敌人造成的伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20
+            },
+            {
+              "group": "both-empty-reduction",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，受到敌人的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-reduction",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
         }
       },
       "assignedTags": [
-        "伤害增加"
+        "伤害增加",
+        "空武器",
+        "空防具",
+        "空武器+防具"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "受到的伤害-20%"
       ],
-      "remainingConditions": [
-        "空武器：未装备武器",
-        "空防具：未装备防具；须与空武器同时满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "a1166f16d23a209d",
@@ -28962,19 +32120,69 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        },
+        "单手": {
+          "summary": "自身濒死时发动特技，上限基础+15,000；仅1把武器时改为+30,000，不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "self-low-hp-skill-cap",
+              "partIds": [
+                "low-hp-effect-2"
+              ],
+              "summary": "自身濒死时发动特技，上限基础+15,000；仅1把武器时改为+30,000，不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "selfHpPercentLte": 30
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 30000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 15000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "只绑定受武器数量影响的特技上限；前半段濒死特技伤害+30%不要求单武器。"
         }
       },
       "assignedTags": [
-        "濒死"
+        "濒死",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "自身濒死时发动特技，特技伤害+30%",
         "自身濒死时发动特技，伤害上限+15,000；仅一把武器时改为+30,000（替代15,000）"
       ],
-      "remainingConditions": [
-        "仅装备一把武器时，特技伤害上限改为+30,000；不与原+15,000相加"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "cf54afaf524eaef4",
@@ -29098,19 +32306,78 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "判断目标敌人的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        },
+        "单手": {
+          "summary": "仅1把武器，对濒死敌人的物理伤害+30%。；仅1把武器，对濒死敌人的物理伤害上限+15,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "enemy-low-hp-physical-damage",
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "仅1把武器，对濒死敌人的物理伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyHpPercentLte": 30
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 30
+            },
+            {
+              "group": "enemy-low-hp-physical-cap",
+              "partIds": [
+                "low-hp-effect-2"
+              ],
+              "summary": "仅1把武器，对濒死敌人的物理伤害上限+15,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyHpPercentLte": 30
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 15000
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
         }
       },
       "assignedTags": [
-        "濒死"
+        "濒死",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "仅装备一把武器时，对濒死敌人的物理攻击伤害+30%",
         "仅装备一把武器时，对濒死敌人的物理攻击伤害上限+15,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "386458aa75f9df1d",
@@ -37194,17 +40461,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "火属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "fire-weakness-cap",
+              "partIds": [
+                "fire-weakness-cap"
+              ],
+              "summary": "火属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次火属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次火属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -37275,17 +40594,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "火属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "fire-weakness-cap",
+              "partIds": [
+                "fire-weakness-cap"
+              ],
+              "summary": "火属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次火属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次火属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -37356,17 +40727,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "火属性命中弱点时，上限+3,000；仅1把武器时改为+6,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "fire-weakness-cap",
+              "partIds": [
+                "fire-weakness-cap"
+              ],
+              "summary": "火属性命中弱点时，上限+3,000；仅1把武器时改为+6,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次火属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次火属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -38511,17 +41934,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "冰属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "ice-weakness-cap",
+              "partIds": [
+                "ice-weakness-cap"
+              ],
+              "summary": "冰属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "冰属性"
+        "冰属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次冰属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次冰属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -38592,17 +42067,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "冰属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "ice-weakness-cap",
+              "partIds": [
+                "ice-weakness-cap"
+              ],
+              "summary": "冰属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "冰属性"
+        "冰属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次冰属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次冰属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -38833,7 +42360,18 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "weapon-count-branch",
           "kind": "condition",
-          "text": "未装备武器或只装备1把武器时用较高档，两档互斥"
+          "text": "仅1把武器时使用高档上限；与空武器为OR关系",
+          "alternativeGroup": "zero-or-one-weapon",
+          "logicalOperator": "OR",
+          "weaponCount": 1
+        },
+        {
+          "id": "empty-weapon-branch",
+          "kind": "condition",
+          "text": "未装备武器时使用高档上限；与单武器为OR关系",
+          "alternativeGroup": "zero-or-one-weapon",
+          "logicalOperator": "OR",
+          "weaponCount": 0
         }
       ],
       "tagDetails": {
@@ -38915,17 +42453,201 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "本词条明确包含空手，不能套用弱点突破的仅1把武器条件；两档替换不相加。装备数量条件待判断。"
+          "calculationNote": "本词条明确包含空武器；0把或1把用高档，2把用基础档，两档替换不相加。单武器与空武器条件已分别贴标签。"
+        },
+        "单手": {
+          "summary": "冰属性物理上限+1,500；0或1把武器时改为+3,000。；冰属性必杀上限+1,500；0或1把武器时改为+3,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "ice-physical-cap",
+              "partIds": [
+                "ice-physical-cap"
+              ],
+              "summary": "冰属性物理上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "72987eef01fbda4b:ice-physical-cap"
+            },
+            {
+              "group": "ice-ultimate-cap",
+              "partIds": [
+                "ice-ultimate-cap"
+              ],
+              "summary": "冰属性必杀上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "72987eef01fbda4b:ice-ultimate-cap"
+            }
+          ],
+          "calculationNote": "1把武器或0把武器都用+3,000，2把用+1,500；两档替换不相加，单武器与空武器为OR，跨页是同一效果。"
+        },
+        "空武器": {
+          "summary": "冰属性物理上限+1,500；0或1把武器时改为+3,000。；冰属性必杀上限+1,500；0或1把武器时改为+3,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "empty-weapon-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "ice-physical-cap",
+              "partIds": [
+                "ice-physical-cap"
+              ],
+              "summary": "冰属性物理上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "72987eef01fbda4b:ice-physical-cap"
+            },
+            {
+              "group": "ice-ultimate-cap",
+              "partIds": [
+                "ice-ultimate-cap"
+              ],
+              "summary": "冰属性必杀上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "72987eef01fbda4b:ice-ultimate-cap"
+            }
+          ],
+          "calculationNote": "1把武器或0把武器都用+3,000，2把用+1,500；两档替换不相加，单武器与空武器为OR，跨页是同一效果。"
         }
       },
       "assignedTags": [
-        "冰属性"
+        "冰属性",
+        "单手",
+        "空武器"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "未装备武器或只装备1把武器时用较高档，两档互斥"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "6f69f24a14887fe1",
@@ -39901,17 +43623,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "树属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "earth-weakness-cap",
+              "partIds": [
+                "earth-weakness-cap"
+              ],
+              "summary": "树属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "树属性"
+        "树属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次树属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次树属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -39982,17 +43756,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "树属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "earth-weakness-cap",
+              "partIds": [
+                "earth-weakness-cap"
+              ],
+              "summary": "树属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "树属性"
+        "树属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次树属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次树属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -41204,17 +45030,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "雷属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "thunder-weakness-cap",
+              "partIds": [
+                "thunder-weakness-cap"
+              ],
+              "summary": "雷属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "雷属性"
+        "雷属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次雷属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次雷属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -41285,17 +45163,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "雷属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "thunder-weakness-cap",
+              "partIds": [
+                "thunder-weakness-cap"
+              ],
+              "summary": "雷属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "雷属性"
+        "雷属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次雷属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次雷属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -42568,17 +46498,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "光属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "light-weakness-cap",
+              "partIds": [
+                "light-weakness-cap"
+              ],
+              "summary": "光属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次光属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次光属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -42649,17 +46631,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "光属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "light-weakness-cap",
+              "partIds": [
+                "light-weakness-cap"
+              ],
+              "summary": "光属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次光属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次光属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -42730,17 +46764,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "光属性命中弱点时，上限+3,000；仅1把武器时改为+6,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "light-weakness-cap",
+              "partIds": [
+                "light-weakness-cap"
+              ],
+              "summary": "光属性命中弱点时，上限+3,000；仅1把武器时改为+6,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次光属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次光属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -44851,17 +48937,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "暗属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "dark-weakness-cap",
+              "partIds": [
+                "dark-weakness-cap"
+              ],
+              "summary": "暗属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次暗属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次暗属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -44932,17 +49070,69 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+          "calculationNote": "单武器条件已贴标签；把原提升量替换成较高一档，不是两档相加，0把武器不满足1把武器条件。属性弱点仍待对应标签。"
+        },
+        "单手": {
+          "summary": "暗属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "dark-weakness-cap",
+              "partIds": [
+                "dark-weakness-cap"
+              ],
+              "summary": "暗属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "hitsElementWeakness": true,
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅1把武器使用高档上限，0把或2把仍用基础档；属性弱点条件保持独立，不直接取最高值。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "本次暗属性攻击命中敌人的属性弱点",
-        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        "本次暗属性攻击命中敌人的属性弱点"
       ]
     },
     {
@@ -45178,7 +49368,18 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "weapon-count-branch",
           "kind": "condition",
-          "text": "未装备武器或只装备1把武器时用较高档，两档互斥"
+          "text": "仅1把武器时使用高档上限；与空武器为OR关系",
+          "alternativeGroup": "zero-or-one-weapon",
+          "logicalOperator": "OR",
+          "weaponCount": 1
+        },
+        {
+          "id": "empty-weapon-branch",
+          "kind": "condition",
+          "text": "未装备武器时使用高档上限；与单武器为OR关系",
+          "alternativeGroup": "zero-or-one-weapon",
+          "logicalOperator": "OR",
+          "weaponCount": 0
         }
       ],
       "tagDetails": {
@@ -45260,17 +49461,201 @@ export const SKILL_LABELING_CATALOG = {
               "branches": "mutually-exclusive"
             }
           ],
-          "calculationNote": "本词条明确包含空手，不能套用弱点突破的仅1把武器条件；两档替换不相加。装备数量条件待判断。"
+          "calculationNote": "本词条明确包含空武器；0把或1把用高档，2把用基础档，两档替换不相加。单武器与空武器条件已分别贴标签。"
+        },
+        "单手": {
+          "summary": "暗属性物理上限+1,500；0或1把武器时改为+3,000。；暗属性必杀上限+1,500；0或1把武器时改为+3,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "dark-physical-cap",
+              "partIds": [
+                "dark-physical-cap"
+              ],
+              "summary": "暗属性物理上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "492069f33fad559b:dark-physical-cap"
+            },
+            {
+              "group": "dark-ultimate-cap",
+              "partIds": [
+                "dark-ultimate-cap"
+              ],
+              "summary": "暗属性必杀上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "492069f33fad559b:dark-ultimate-cap"
+            }
+          ],
+          "calculationNote": "1把武器或0把武器都用+3,000，2把用+1,500；两档替换不相加，单武器与空武器为OR，跨页是同一效果。"
+        },
+        "空武器": {
+          "summary": "暗属性物理上限+1,500；0或1把武器时改为+3,000。；暗属性必杀上限+1,500；0或1把武器时改为+3,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "empty-weapon-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "dark-physical-cap",
+              "partIds": [
+                "dark-physical-cap"
+              ],
+              "summary": "暗属性物理上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "492069f33fad559b:dark-physical-cap"
+            },
+            {
+              "group": "dark-ultimate-cap",
+              "partIds": [
+                "dark-ultimate-cap"
+              ],
+              "summary": "暗属性必杀上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "492069f33fad559b:dark-ultimate-cap"
+            }
+          ],
+          "calculationNote": "1把武器或0把武器都用+3,000，2把用+1,500；两档替换不相加，单武器与空武器为OR，跨页是同一效果。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "单手",
+        "空武器"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "未装备武器或只装备1把武器时用较高档，两档互斥"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "fb6d9a18f0c64a74",
@@ -46396,18 +50781,60 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 15
             }
           ],
-          "calculationNote": "属性取决于实际装备的剑，不固定为火、冰等任一属性；这里比较的是攻击与武器属性，不是两把武器之间比较。单武器、属性匹配与对应增伤效果继续待标签。"
+          "calculationNote": "属性取决于实际装备的剑，不固定为火、冰等任一属性；这里比较的是攻击与武器属性，不是两把武器之间比较。单武器条件已贴标签，属性匹配与对应增伤效果继续待标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把剑，且本次攻击属性与该剑相同时，攻击伤害+15%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "sword-single-matching-element-damage",
+              "partIds": [
+                "matching-element-damage"
+              ],
+              "summary": "仅装备1把剑，且本次攻击属性与该剑相同时，攻击伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                },
+                "attackElementRelation": "same-as-equipped-sword"
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 15,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
-        "剑"
+        "剑",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "仅装备一把剑且攻击属性与该剑相同时，伤害+15%"
       ],
       "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足",
         "本次攻击属性与所装备剑的属性相同"
       ]
     },
@@ -46856,18 +51283,60 @@ export const SKILL_LABELING_CATALOG = {
               "automaticallyEquipsWeapon": false
             }
           ],
-          "calculationNote": "这里只完成锤装备许可。后半段上限效果的条件是仅1把任意类型武器，不要求锤；单武器、概率命中与物理上限分别保留待标签。"
+          "calculationNote": "这里只完成锤装备许可。后半段上限效果要求1把任意武器，不要求锤；单武器条件现已贴标签，概率命中与物理上限待标签。"
+        },
+        "单手": {
+          "summary": "仅1把任意武器时，物理攻击命中有概率使该次上限+20,000；原补充说明为17%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "chance-physical-cap",
+              "partIds": [
+                "single-physical-cap"
+              ],
+              "summary": "仅1把任意武器时，物理攻击命中有概率使该次上限+20,000；原补充说明为17%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 20000,
+              "chancePercent": 17,
+              "chanceSource": "existing-reviewed-notes",
+              "rollUnit": "physical-hit",
+              "activeByDefault": false
+            }
+          ],
+          "calculationNote": "锤装备许可与此效果分开；这一项不要求锤。概率命中与物理上限仍待对应标签。"
         }
       },
       "assignedTags": [
-        "锤"
+        "锤",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "仅装备一把任意类型武器时，有概率使该次物理攻击伤害上限+20,000"
       ],
       "remainingConditions": [
-        "仅装备一把任意类型武器，不限定锤",
         "概率按物理攻击每次命中判定；原补充说明为17%，概率机制待对应标签"
       ]
     },
@@ -46975,11 +51444,78 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 20
             }
           ],
-          "calculationNote": "特攻与弱点属性是两个独立分支，不互相代替，也不并成无条件伤害+40%。本轮只贴枪条件；各分支增伤、单武器及命中条件待各自标签。"
+          "calculationNote": "特攻与弱点属性是两个独立分支，不互相代替，也不并成无条件伤害+40%。本轮只贴枪条件；单武器条件已贴标签，各分支增伤及命中条件待各自标签。"
+        },
+        "单手": {
+          "summary": "仅装备1把枪，且本次攻击触发特攻时，伤害+20%。；仅装备1把枪，且本次攻击命中敌人弱点属性时，伤害+20%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "spear-single-killer-damage",
+              "partIds": [
+                "killer-damage"
+              ],
+              "summary": "仅装备1把枪，且本次攻击触发特攻时，伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                },
+                "requiresKillerHit": true
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "spear-single-weak-element-damage",
+              "partIds": [
+                "weak-element-damage"
+              ],
+              "summary": "仅装备1把枪，且本次攻击命中敌人弱点属性时，伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                },
+                "requiresElementWeakHit": true
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
-        "枪"
+        "枪",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -46987,7 +51523,6 @@ export const SKILL_LABELING_CATALOG = {
         "仅装备1把枪时，攻击弱点属性的伤害+20%"
       ],
       "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足",
         "本次攻击触发特攻，仅限制特攻增伤分支",
         "本次攻击命中敌人弱点属性，仅限制弱点属性增伤分支"
       ]
@@ -47098,7 +51633,7 @@ export const SKILL_LABELING_CATALOG = {
               "weaponBranch": "axe"
             }
           ],
-          "calculationNote": "同一技能在斧、枪、机械三页共享记录；三种武器是OR选项，不要求同时装备。伤害属性取实际武器，不固定到火冰等属性；只算同一项15%，不因三个标签叠成45%。单武器、动态属性匹配及对应增伤仍待标签。"
+          "calculationNote": "同一技能在斧、枪、机械三页共享记录；三种武器是OR选项，不要求同时装备。伤害属性取实际武器，不固定到火冰等属性；只算同一项15%，不因三个标签叠成45%。单武器已贴标签，动态属性匹配及对应增伤仍待标签。"
         },
         "枪": {
           "summary": "仅装备1把枪，且本次攻击属性与所装备武器相同时，伤害+15%。斧、枪、机械三类任选其一。",
@@ -47157,7 +51692,7 @@ export const SKILL_LABELING_CATALOG = {
               "weaponBranch": "spear"
             }
           ],
-          "calculationNote": "同一技能在斧、枪、机械三页共享记录；三种武器是OR选项，不要求同时装备。伤害属性取实际武器，不固定到火冰等属性；只算同一项15%，不因三个标签叠成45%。单武器、动态属性匹配及对应增伤仍待标签。"
+          "calculationNote": "同一技能在斧、枪、机械三页共享记录；三种武器是OR选项，不要求同时装备。伤害属性取实际武器，不固定到火冰等属性；只算同一项15%，不因三个标签叠成45%。单武器已贴标签，动态属性匹配及对应增伤仍待标签。"
         },
         "机械": {
           "summary": "仅装备1把机械，且本次攻击属性与所装备武器相同时，伤害+15%。斧、枪、机械三类任选其一。",
@@ -47216,22 +51751,1996 @@ export const SKILL_LABELING_CATALOG = {
               "weaponBranch": "machine"
             }
           ],
-          "calculationNote": "同一技能在斧、枪、机械三页共享记录；三种武器是OR选项，不要求同时装备。伤害属性取实际武器，不固定到火冰等属性；只算同一项15%，不因三个标签叠成45%。单武器、动态属性匹配及对应增伤仍待标签。"
+          "calculationNote": "同一技能在斧、枪、机械三页共享记录；三种武器是OR选项，不要求同时装备。伤害属性取实际武器，不固定到火冰等属性；只算同一项15%，不因三个标签叠成45%。单武器已贴标签，动态属性匹配及对应增伤仍待标签。"
+        },
+        "单手": {
+          "summary": "斧、枪、机械三选一且只装备1把，攻击与武器属性相同时，伤害+15%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "axe-spear-machine-matching-damage",
+              "partIds": [
+                "matching-element-damage"
+              ],
+              "summary": "斧、枪、机械三选一且只装备1把，攻击与武器属性相同时，伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1,
+                  "weaponTypesAnyOf": [
+                    "axe",
+                    "spear",
+                    "machine"
+                  ]
+                },
+                "attackElementRelation": "same-as-equipped-weapon"
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 15,
+              "effectIdentity": "ee807560b8e94ab2:matching-element-damage"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
         }
       },
       "assignedTags": [
         "斧",
         "枪",
-        "机械"
+        "机械",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "仅装备斧、枪、机械三选一的1把武器，且攻击属性与该武器相同时，伤害+15%"
       ],
       "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足",
         "本次攻击属性与所装备武器的属性相同"
       ]
+    },
+    {
+      "id": "6952af1368802c34",
+      "name": "一刀破坏者",
+      "url": "https://altema.jp/lastcloudia/gino/850",
+      "text": "仅装备1把武器时，物理攻击的Break值+100%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "physical-break",
+          "kind": "effect",
+          "text": "仅装备1把武器时，物理攻击Break值+100%"
+        },
+        {
+          "id": "single-weapon-count",
+          "kind": "condition",
+          "text": "仅装备1把武器"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "仅装备1把武器时，物理攻击Break值+100%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "any-physical-break",
+              "partIds": [
+                "physical-break"
+              ],
+              "summary": "仅装备1把武器时，物理攻击Break值+100%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 100
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "仅装备1把武器时，物理攻击Break值+100%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "4c3d40e4148fa790",
+      "name": "特技1极限突破",
+      "url": "https://altema.jp/lastcloudia/gino/866",
+      "text": "第1个特技伤害上限+2,000；仅装备一把武器时，效果提升至+4,000（左上方特技）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "特技1上限+2000；仅1把武器时替换为+4000"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "特技1上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "skill1-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技1上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "skillSlot": 1
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特技1上限+2000；仅1把武器时替换为+4000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "e822e4450ab4dcad",
+      "name": "特技2极限突破",
+      "url": "https://altema.jp/lastcloudia/gino/965",
+      "text": "第2个特技伤害上限+2,000；仅装备一把武器时，效果提升至+4,000（右上方特技）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "特技2上限+2000；仅1把武器时替换为+4000"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "特技2上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "skill2-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技2上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "skillSlot": 2
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特技2上限+2000；仅1把武器时替换为+4000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "21cb7e642833caf7",
+      "name": "特技3极限突破",
+      "url": "https://altema.jp/lastcloudia/gino/1046",
+      "text": "第3个特技伤害上限+2,000；仅装备一把武器时，效果提升至+4,000（左下方特技）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "特技3上限+2000；仅1把武器时替换为+4000"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "特技3上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "skill3-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技3上限：基础+2000，仅1把武器时改为+4000，两档不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "skillSlot": 3
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特技3上限+2000；仅1把武器时替换为+4000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "c5f213214da57548",
+      "name": "特技1极限突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1352",
+      "text": "第1个特技伤害上限+3,000；仅装备一把武器时，效果提升至+6,000（左上方特技）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "特技1上限+3000；仅1把武器时替换为+6000"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "特技1上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "skill1-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技1上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "skillSlot": 1
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特技1上限+3000；仅1把武器时替换为+6000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "2ae3c62f62930431",
+      "name": "特技2极限突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1637",
+      "text": "第2个特技伤害上限+3,000；仅装备一把武器时，效果提升至+6,000（右上方特技）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "特技2上限+3000；仅1把武器时替换为+6000"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "特技2上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "skill2-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技2上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "skillSlot": 2
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特技2上限+3000；仅1把武器时替换为+6000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "03a679c6deeb2898",
+      "name": "特技3极限突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1846",
+      "text": "第3个特技伤害上限+3,000；仅装备一把武器时，效果提升至+6,000（左下方特技）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "特技3上限+3000；仅1把武器时替换为+6000"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "特技3上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "skill3-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "特技3上限：基础+3000，仅1把武器时改为+6000，两档不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "skillSlot": 3
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特技3上限+3000；仅1把武器时替换为+6000"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "f00b7298670734fe",
+      "name": "特攻极限突破",
+      "url": "https://altema.jp/lastcloudia/gino/1030",
+      "text": "触发特攻时，伤害上限+1,000；仅装备一把武器时，效果提升至+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "killer-cap",
+          "kind": "effect",
+          "text": "特攻时上限+1000；仅1把武器时替换为+2000"
+        },
+        {
+          "id": "killer-hit",
+          "kind": "condition",
+          "text": "本次攻击触发特攻"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "触发特攻时，上限基础+1000；仅1把武器时改为+2000，不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "killer-cap",
+              "partIds": [
+                "killer-cap"
+              ],
+              "summary": "触发特攻时，上限基础+1000；仅1把武器时改为+2000，不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "requiresKillerHit": true
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特攻时上限+1000；仅1把武器时替换为+2000"
+      ],
+      "remainingConditions": [
+        "本次攻击触发特攻"
+      ]
+    },
+    {
+      "id": "0f9fbe87a80cc013",
+      "name": "特攻极限突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1071",
+      "text": "触发特攻时，伤害上限+2,000；仅装备一把武器时，效果提升至+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "killer-cap",
+          "kind": "effect",
+          "text": "特攻时上限+2000；仅1把武器时替换为+4000"
+        },
+        {
+          "id": "killer-hit",
+          "kind": "condition",
+          "text": "本次攻击触发特攻"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "触发特攻时，上限基础+2000；仅1把武器时改为+4000，不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "killer-cap",
+              "partIds": [
+                "killer-cap"
+              ],
+              "summary": "触发特攻时，上限基础+2000；仅1把武器时改为+4000，不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "requiresKillerHit": true
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特攻时上限+2000；仅1把武器时替换为+4000"
+      ],
+      "remainingConditions": [
+        "本次攻击触发特攻"
+      ]
+    },
+    {
+      "id": "cc874bcc3159e258",
+      "name": "特攻极限突破3",
+      "url": "https://altema.jp/lastcloudia/gino/1320",
+      "text": "特攻触发时，伤害上限+3,000；仅装备一把武器时，效果提升至+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "killer-cap",
+          "kind": "effect",
+          "text": "特攻时上限+3000；仅1把武器时替换为+6000"
+        },
+        {
+          "id": "killer-hit",
+          "kind": "condition",
+          "text": "本次攻击触发特攻"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "触发特攻时，上限基础+3000；仅1把武器时改为+6000，不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "killer-cap",
+              "partIds": [
+                "killer-cap"
+              ],
+              "summary": "触发特攻时，上限基础+3000；仅1把武器时改为+6000，不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "requiresKillerHit": true
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特攻时上限+3000；仅1把武器时替换为+6000"
+      ],
+      "remainingConditions": [
+        "本次攻击触发特攻"
+      ]
+    },
+    {
+      "id": "0725be276a780aef",
+      "name": "特攻极限突破4",
+      "url": "https://altema.jp/lastcloudia/gino/1655",
+      "text": "触发特攻时，伤害上限+5,000；仅装备一把武器时，效果提升至+10,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "killer-cap",
+          "kind": "effect",
+          "text": "特攻时上限+5000；仅1把武器时替换为+10000"
+        },
+        {
+          "id": "killer-hit",
+          "kind": "condition",
+          "text": "本次攻击触发特攻"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅1把武器时使用较高上限，否则使用基础档；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "触发特攻时，上限基础+5000；仅1把武器时改为+10000，不相加。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "weapon-count-branch"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "killer-cap",
+              "partIds": [
+                "killer-cap"
+              ],
+              "summary": "触发特攻时，上限基础+5000；仅1把武器时改为+10000，不相加。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "requiresKillerHit": true
+              },
+              "effectStacking": "once-per-skill",
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 10000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 5000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特攻时上限+5000；仅1把武器时替换为+10000"
+      ],
+      "remainingConditions": [
+        "本次攻击触发特攻"
+      ]
+    },
+    {
+      "id": "810e5630e720f446",
+      "name": "VISIONS of MANA",
+      "url": "https://altema.jp/lastcloudia/gino/1573",
+      "text": "当只装备一把武器时，与所装备武器属性相同的攻击 伤害增加 20%，伤害上限增加 2,000",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "matching-damage",
+          "kind": "effect",
+          "text": "仅1把武器、攻击与武器属性相同时伤害+20%"
+        },
+        {
+          "id": "matching-cap",
+          "kind": "effect",
+          "text": "仅1把武器、攻击与武器属性相同时上限+2,000"
+        },
+        {
+          "id": "single-weapon-count",
+          "kind": "condition",
+          "text": "仅装备1把武器"
+        },
+        {
+          "id": "attack-matches-weapon-element",
+          "kind": "condition",
+          "text": "本次攻击属性与装备武器的属性相同"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "仅1把武器，且攻击与武器属性相同时，伤害+20%。；仅1把武器，且攻击与武器属性相同时，上限+2,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "any-matching-element-damage",
+              "partIds": [
+                "matching-damage"
+              ],
+              "summary": "仅1把武器，且攻击与武器属性相同时，伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "attackElementRelation": "same-as-equipped-weapon"
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20
+            },
+            {
+              "group": "any-matching-element-cap",
+              "partIds": [
+                "matching-cap"
+              ],
+              "summary": "仅1把武器，且攻击与武器属性相同时，上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "attackElementRelation": "same-as-equipped-weapon"
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "仅1把武器、攻击与武器属性相同时伤害+20%",
+        "仅1把武器、攻击与武器属性相同时上限+2,000"
+      ],
+      "remainingConditions": [
+        "本次攻击属性与装备武器的属性相同"
+      ]
+    },
+    {
+      "id": "73530ee6f38ccc34",
+      "name": "谨慎且大胆！",
+      "url": "https://altema.jp/lastcloudia/gino/1764",
+      "text": "移动速度-1，特技的Break值+30%；仅装备1把武器时，Break值再+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "speed-down",
+          "kind": "effect",
+          "text": "移动速度-1"
+        },
+        {
+          "id": "skill-break",
+          "kind": "effect",
+          "text": "特技Break值+30%"
+        },
+        {
+          "id": "extra-skill-break",
+          "kind": "effect",
+          "text": "仅1把武器时，特技Break值再+30%"
+        },
+        {
+          "id": "single-weapon-count",
+          "kind": "condition",
+          "text": "仅装备1把武器时获得额外Break值"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "仅1把武器时，特技Break值在基础+30%之外再+30%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "extra-skill-break",
+              "partIds": [
+                "extra-skill-break"
+              ],
+              "summary": "仅1把武器时，特技Break值在基础+30%之外再+30%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 30,
+              "addsToPartId": "skill-break"
+            }
+          ],
+          "calculationNote": "基础Break+30%及移动速度-1不受单武器条件限制，只把额外Break分支放入本组。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "移动速度-1",
+        "特技Break值+30%",
+        "仅1把武器时，特技Break值再+30%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "9efcdc31fa117787",
+      "name": "无法抗拒的力量洪流",
+      "url": "https://altema.jp/lastcloudia/gino/1914",
+      "text": "使用攻击型特技时，消耗最大HP的15%，使伤害上限+5,000；仅装备一把武器时，再+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-cost",
+          "kind": "effect",
+          "text": "使用攻击型特技时消耗最大HP的15%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "对应特技伤害上限+5,000"
+        },
+        {
+          "id": "extra-skill-cap",
+          "kind": "effect",
+          "text": "仅1把武器时对应特技上限再+5,000"
+        },
+        {
+          "id": "attack-skill-used",
+          "kind": "condition",
+          "text": "发动攻击型特技并支付HP代价"
+        },
+        {
+          "id": "single-weapon-count",
+          "kind": "condition",
+          "text": "仅1把武器时获得额外上限"
+        }
+      ],
+      "tagDetails": {
+        "单手": {
+          "summary": "使用攻击型特技并消耗最大HP15%时，基础上限+5,000；仅1把武器时再+5,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "hp-cost-extra-skill-cap",
+              "partIds": [
+                "extra-skill-cap"
+              ],
+              "summary": "使用攻击型特技并消耗最大HP15%时，基础上限+5,000；仅1把武器时再+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "requiresHpCost": true,
+                "hpCostPercentOfMaximum": 15
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 5000,
+              "addsToPartId": "skill-cap"
+            }
+          ],
+          "calculationNote": "单武器只限制额外5,000；HP消耗及基础上限不擅自附加单武器条件。"
+        }
+      },
+      "assignedTags": [
+        "单手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "使用攻击型特技时消耗最大HP的15%",
+        "对应特技伤害上限+5,000",
+        "仅1把武器时对应特技上限再+5,000"
+      ],
+      "remainingConditions": [
+        "发动攻击型特技并支付HP代价"
+      ]
+    },
+    {
+      "id": "5ac756efac795660",
+      "name": "二刀流",
+      "url": "https://altema.jp/lastcloudia/gino/181",
+      "text": "允许在防具栏位装备武器。装备两把武器时，物理攻击命中次数翻倍（单次伤害降至60%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dual-wield-permission",
+          "kind": "effect",
+          "text": "允许在防具栏位装备武器"
+        },
+        {
+          "id": "physical-hit-count",
+          "kind": "effect",
+          "text": "装备2把武器时物理攻击命中次数翻倍"
+        },
+        {
+          "id": "physical-hit-damage",
+          "kind": "effect",
+          "text": "装备2把武器时，每次命中伤害降为60%"
+        },
+        {
+          "id": "dual-weapon-count",
+          "kind": "condition",
+          "text": "实际装备2把武器"
+        }
+      ],
+      "tagDetails": {
+        "双手": {
+          "summary": "允许在防具栏位装备武器；需实际装备2把武器才满足双武器条件。；实际装备2把武器时，物理Hit数变为2倍。；实际装备2把武器时，每次物理命中伤害为原来的60%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [
+              "dual-wield-permission"
+            ],
+            "conditionPartIds": [
+              "dual-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "permission",
+              "partIds": [
+                "dual-wield-permission"
+              ],
+              "summary": "允许在防具栏位装备武器；需实际装备2把武器才满足双武器条件。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "permission-effect",
+              "operation": "allow-weapon-in-armor-slot",
+              "scope": {
+                "direction": "self"
+              },
+              "effectStacking": "once-per-skill",
+              "slot": "armor",
+              "allows": "weapon",
+              "automaticallyEquipsWeapon": false
+            },
+            {
+              "group": "physical-hit-count",
+              "partIds": [
+                "physical-hit-count"
+              ],
+              "summary": "实际装备2把武器时，物理Hit数变为2倍。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "hit-count-multiplier",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "hitMultiplier": 2
+            },
+            {
+              "group": "physical-hit-damage",
+              "partIds": [
+                "physical-hit-damage"
+              ],
+              "summary": "实际装备2把武器时，每次物理命中伤害为原来的60%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "hit-damage-multiplier",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "damageMultiplier": 0.6
+            }
+          ],
+          "calculationNote": "许可与实际装备数量分开；不把Hit翻倍直接写成伤害翻倍，单次伤害系数与Hit数分别待对应标签。"
+        }
+      },
+      "assignedTags": [
+        "双手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "装备2把武器时物理攻击命中次数翻倍",
+        "装备2把武器时，每次命中伤害降为60%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "0257679d2708509b",
+      "name": "和谐节拍",
+      "url": "https://altema.jp/lastcloudia/gino/1272",
+      "text": "装备两把相同属性的武器时，所装备武器属性的特技和必杀伤害+15%，伤害上限+1,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "matching-skill-damage",
+          "kind": "effect",
+          "text": "双武器同属性且本次特技为该属性时，特技伤害+15%"
+        },
+        {
+          "id": "matching-ultimate-damage",
+          "kind": "effect",
+          "text": "双武器同属性且本次必杀为该属性时，必杀伤害+15%"
+        },
+        {
+          "id": "matching-skill-cap",
+          "kind": "effect",
+          "text": "对应属性特技上限+1,500"
+        },
+        {
+          "id": "matching-ultimate-cap",
+          "kind": "effect",
+          "text": "对应属性必杀上限+1,500"
+        },
+        {
+          "id": "dual-weapon-count",
+          "kind": "condition",
+          "text": "装备2把武器"
+        },
+        {
+          "id": "same-weapon-element",
+          "kind": "condition",
+          "text": "2把武器属性相同，不要求种类相同"
+        },
+        {
+          "id": "attack-matches-weapon-element",
+          "kind": "condition",
+          "text": "本次特技／必杀属性等于这2把武器的共同属性"
+        }
+      ],
+      "tagDetails": {
+        "双手": {
+          "summary": "2把武器同属性，且本次特技为该属性时，伤害+15%。；2把武器同属性，且本次特技为该属性时，上限+1,500。；2把武器同属性，且本次必杀为该属性时，伤害+15%。；2把武器同属性，且本次必杀为该属性时，上限+1,500。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "dual-weapon-count",
+              "same-weapon-element"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "same-element-skill-damage",
+              "partIds": [
+                "matching-skill-damage"
+              ],
+              "summary": "2把武器同属性，且本次特技为该属性时，伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponElement": true
+                },
+                "attackElementRelation": "same-as-both-equipped-weapons"
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 15
+            },
+            {
+              "group": "same-element-skill-cap",
+              "partIds": [
+                "matching-skill-cap"
+              ],
+              "summary": "2把武器同属性，且本次特技为该属性时，上限+1,500。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponElement": true
+                },
+                "attackElementRelation": "same-as-both-equipped-weapons"
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 1500
+            },
+            {
+              "group": "same-element-ultimate-damage",
+              "partIds": [
+                "matching-ultimate-damage"
+              ],
+              "summary": "2把武器同属性，且本次必杀为该属性时，伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponElement": true
+                },
+                "attackElementRelation": "same-as-both-equipped-weapons"
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 15
+            },
+            {
+              "group": "same-element-ultimate-cap",
+              "partIds": [
+                "matching-ultimate-cap"
+              ],
+              "summary": "2把武器同属性，且本次必杀为该属性时，上限+1,500。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponCount": 2,
+                  "sameWeaponElement": true
+                },
+                "attackElementRelation": "same-as-both-equipped-weapons"
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 1500
+            }
+          ],
+          "calculationNote": "双武器同属性与同种类是不同条件；只完成武器数及武器之间同属性，攻击与武器的动态属性匹配及效果继续待标签。"
+        }
+      },
+      "assignedTags": [
+        "双手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "双武器同属性且本次特技为该属性时，特技伤害+15%",
+        "双武器同属性且本次必杀为该属性时，必杀伤害+15%",
+        "对应属性特技上限+1,500",
+        "对应属性必杀上限+1,500"
+      ],
+      "remainingConditions": [
+        "本次特技／必杀属性等于这2把武器的共同属性"
+      ]
+    },
+    {
+      "id": "1519299bec222fca",
+      "name": "立体机动心得",
+      "url": "https://altema.jp/lastcloudia/gino/1295",
+      "text": "装备两把武器时，特技伤害+10%；从敌人背后攻击时，再+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "双武器时特技伤害+10%"
+        },
+        {
+          "id": "back-skill-damage",
+          "kind": "effect",
+          "text": "双武器且从敌人背后发动对应攻击时，特技伤害再+20%"
+        },
+        {
+          "id": "dual-weapon-count",
+          "kind": "condition",
+          "text": "装备2把武器"
+        },
+        {
+          "id": "attack-from-behind",
+          "kind": "condition",
+          "text": "对应特技从目标背后攻击"
+        }
+      ],
+      "tagDetails": {
+        "双手": {
+          "summary": "装备2把武器时，特技伤害+10%。；装备2把武器并从敌人背后发动对应攻击时，特技伤害在基础+10%之外再+20%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "dual-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "any-skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "装备2把武器时，特技伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 10
+            },
+            {
+              "group": "behind-skill-damage",
+              "partIds": [
+                "back-skill-damage"
+              ],
+              "summary": "装备2把武器并从敌人背后发动对应攻击时，特技伤害在基础+10%之外再+20%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                },
+                "requiresAttackFromBehind": true
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20,
+              "addsToPartId": "skill-damage"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "双手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "双武器时特技伤害+10%",
+        "双武器且从敌人背后发动对应攻击时，特技伤害再+20%"
+      ],
+      "remainingConditions": [
+        "对应特技从目标背后攻击"
+      ]
+    },
+    {
+      "id": "7fae80d83cb7551a",
+      "name": "Zero之骑士",
+      "url": "https://altema.jp/lastcloudia/gino/1658",
+      "text": "装备两把武器时，特技和必杀伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "双武器时特技伤害+15%"
+        },
+        {
+          "id": "ultimate-damage",
+          "kind": "effect",
+          "text": "双武器时必杀伤害+15%"
+        },
+        {
+          "id": "dual-weapon-count",
+          "kind": "condition",
+          "text": "装备2把武器"
+        }
+      ],
+      "tagDetails": {
+        "双手": {
+          "summary": "装备2把武器时，特技伤害+15%。；装备2把武器时，必杀伤害+15%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "dual-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "any-skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "装备2把武器时，特技伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 15
+            },
+            {
+              "group": "any-ultimate-damage",
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "装备2把武器时，必杀伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 15
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "双手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "双武器时特技伤害+15%",
+        "双武器时必杀伤害+15%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "bc94425edcde5d97",
+      "name": "霸幻双刃",
+      "url": "https://altema.jp/lastcloudia/gino/1830",
+      "text": "装备两把武器时，特技伤害+20%、伤害上限+5,000；对Boss的特技伤害上限另+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "双武器时特技伤害+20%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "双武器时特技伤害上限+5,000"
+        },
+        {
+          "id": "boss-skill-extra-cap",
+          "kind": "effect",
+          "text": "双武器时对Boss的特技伤害上限再+5,000"
+        },
+        {
+          "id": "dual-weapon-count",
+          "kind": "condition",
+          "text": "装备2把武器"
+        },
+        {
+          "id": "boss-target",
+          "kind": "condition",
+          "text": "额外特技上限要求目标为Boss"
+        }
+      ],
+      "tagDetails": {
+        "双手": {
+          "summary": "装备2把武器时，特技伤害+20%。；装备2把武器时，特技上限+5,000。；装备2把武器对Boss时，特技上限在基础+5,000之外再+5,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "dual-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "any-skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "装备2把武器时，特技伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 20
+            },
+            {
+              "group": "any-skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "装备2把武器时，特技上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 5000
+            },
+            {
+              "group": "boss-skill-extra-cap",
+              "partIds": [
+                "boss-skill-extra-cap"
+              ],
+              "summary": "装备2把武器对Boss时，特技上限在基础+5,000之外再+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                },
+                "enemyType": "boss"
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 5000,
+              "addsToPartId": "skill-cap"
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "双手"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "双武器时特技伤害+20%",
+        "双武器时特技伤害上限+5,000",
+        "双武器时对Boss的特技伤害上限再+5,000"
+      ],
+      "remainingConditions": [
+        "额外特技上限要求目标为Boss"
+      ]
+    },
+    {
+      "id": "5b4ee2cab67374b7",
+      "name": "拳破坏者",
+      "url": "https://altema.jp/lastcloudia/gino/1458",
+      "text": "未装备武器时，Break值+100%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "break-up",
+          "kind": "effect",
+          "text": "未装备武器时Break值+100%"
+        },
+        {
+          "id": "empty-weapon",
+          "kind": "condition",
+          "text": "未装备武器，不要求空防具"
+        }
+      ],
+      "tagDetails": {
+        "空武器": {
+          "summary": "未装备武器时，Break值+100%。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "empty-weapon"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "break",
+              "partIds": [
+                "break-up"
+              ],
+              "summary": "未装备武器时，Break值+100%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 100
+            }
+          ],
+          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        }
+      },
+      "assignedTags": [
+        "空武器"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "未装备武器时Break值+100%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "1bb6b460e8a6c297",
+      "name": "裸身心智",
+      "url": "https://altema.jp/lastcloudia/gino/1306",
+      "text": "未装备防具时，魔抗+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mnd",
+          "kind": "effect",
+          "text": "未装备防具时魔抗+20%"
+        },
+        {
+          "id": "empty-armor",
+          "kind": "condition",
+          "text": "未装备防具，不要求空武器"
+        }
+      ],
+      "tagDetails": {
+        "空防具": {
+          "summary": "未装备防具时，自身魔抗+20%；不要求空武器。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "empty-armor"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "stat-mnd",
+              "partIds": [
+                "mnd"
+              ],
+              "summary": "未装备防具时，自身魔抗+20%；不要求空武器。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "MND",
+              "valuePercent": 20,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "检查实际有没有装备防具，不把“防具栏里放了第二把武器”算作装备防具；饰品不影响，也不要求空武器。"
+        }
+      },
+      "assignedTags": [
+        "空防具"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "未装备防具时魔抗+20%"
+      ],
+      "remainingConditions": []
     }
   ],
   "views": {
@@ -47330,8 +53839,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 29,
-        "partial": 58,
+        "ready": 30,
+        "partial": 57,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -47415,8 +53924,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 70,
         "notRelatedUnique": 865,
-        "ready": 18,
-        "partial": 52,
+        "ready": 19,
+        "partial": 51,
         "unknown": 0,
         "previousBasicDefenseUnique": 64,
         "additionalRelatedUnique": 6
@@ -47521,8 +54030,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 51,
         "notRelatedUnique": 884,
-        "ready": 21,
-        "partial": 30,
+        "ready": 22,
+        "partial": 29,
         "unknown": 0,
         "previousBasicMagicUnique": 43,
         "additionalRelatedUnique": 8
@@ -47693,8 +54202,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 78,
         "notRelatedUnique": 857,
-        "ready": 11,
-        "partial": 67,
+        "ready": 12,
+        "partial": 66,
         "unknown": 0
       }
     },
@@ -48590,8 +55099,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 22,
-        "partial": 15,
+        "ready": 23,
+        "partial": 14,
         "unknown": 0
       }
     },
@@ -48903,8 +55412,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 41,
         "notRelatedUnique": 894,
-        "ready": 28,
-        "partial": 13,
+        "ready": 29,
+        "partial": 12,
         "unknown": 0
       }
     },
@@ -49275,6 +55784,300 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 929,
         "ready": 3,
         "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon": {
+      "label": "单手",
+      "childKeys": [
+        "single-weapon-spear-single-physical-damage",
+        "single-weapon-spear-single-critical-rate",
+        "single-weapon-spear-single-physical-cap",
+        "single-weapon-hammer-single-physical-damage",
+        "single-weapon-hammer-single-critical-rate",
+        "single-weapon-hammer-single-physical-cap",
+        "single-weapon-sword-single-physical-damage",
+        "single-weapon-sword-single-critical-rate",
+        "single-weapon-sword-single-physical-cap",
+        "single-weapon-axe-single-physical-damage",
+        "single-weapon-axe-single-critical-rate",
+        "single-weapon-axe-single-physical-cap",
+        "single-weapon-claw-single-physical-damage",
+        "single-weapon-claw-single-critical-rate",
+        "single-weapon-claw-single-physical-cap",
+        "single-weapon-machine-single-physical-damage",
+        "single-weapon-machine-single-critical-rate",
+        "single-weapon-machine-single-physical-cap",
+        "single-weapon-sword-single-ultimate-damage",
+        "single-weapon-sword-single-ultimate-cap",
+        "single-weapon-spear-single-ultimate-damage",
+        "single-weapon-spear-single-ultimate-cap",
+        "single-weapon-sword-single-matching-element-damage",
+        "single-weapon-bow-single-physical-damage",
+        "single-weapon-bow-single-critical-rate",
+        "single-weapon-bow-single-physical-cap",
+        "single-weapon-machine-single-ultimate-damage",
+        "single-weapon-machine-single-ultimate-cap",
+        "single-weapon-hammer-single-ultimate-damage",
+        "single-weapon-hammer-single-ultimate-cap",
+        "single-weapon-claw-single-ultimate-damage",
+        "single-weapon-claw-single-ultimate-cap",
+        "single-weapon-axe-single-ultimate-damage",
+        "single-weapon-axe-single-ultimate-cap",
+        "single-weapon-spear-single-killer-damage",
+        "single-weapon-spear-single-weak-element-damage",
+        "single-weapon-sword-single-attack",
+        "single-weapon-sword-single-enemy-thunder-weak-cap",
+        "single-weapon-any-physical-damage",
+        "single-weapon-any-physical-cap",
+        "single-weapon-any-physical-break",
+        "single-weapon-skill1-cap",
+        "single-weapon-skill2-cap",
+        "single-weapon-skill3-cap",
+        "single-weapon-killer-cap",
+        "single-weapon-light-weakness-cap",
+        "single-weapon-dark-weakness-cap",
+        "single-weapon-fire-weakness-cap",
+        "single-weapon-earth-weakness-cap",
+        "single-weapon-ice-weakness-cap",
+        "single-weapon-thunder-weakness-cap",
+        "single-weapon-self-low-hp-skill-cap",
+        "single-weapon-enemy-low-hp-physical-damage",
+        "single-weapon-enemy-low-hp-physical-cap",
+        "single-weapon-chance-physical-cap",
+        "single-weapon-any-matching-element-damage",
+        "single-weapon-any-matching-element-cap",
+        "single-weapon-axe-spear-machine-matching-damage",
+        "single-weapon-extra-skill-break",
+        "single-weapon-hp-cost-extra-skill-cap",
+        "single-weapon-boss-extra-physical-cap",
+        "single-weapon-boss-extra-ultimate-cap",
+        "single-weapon-dark-physical-cap",
+        "single-weapon-dark-ultimate-cap",
+        "single-weapon-ice-physical-cap",
+        "single-weapon-ice-ultimate-cap",
+        "single-weapon-non-dual-boss-physical-extra-cap"
+      ],
+      "overviewLabel": "全部单手相关效果（分组）",
+      "separateSections": true,
+      "passKind": "equipment-state-and-permission",
+      "displayOrder": [
+        "28ccf85b5f31c394",
+        "全部技能:all:304",
+        "全部技能:all:329",
+        "15ef9e047319adc5",
+        "05dffc8daf9a5872",
+        "9d7ec20e8780822b",
+        "bde3ce8d694af2ab",
+        "3f364d1ae44f839e",
+        "ce4c7604e001b0ed",
+        "6952af1368802c34",
+        "4c3d40e4148fa790",
+        "5837c3c5bd19cc83",
+        "105171fcac173ed9",
+        "d71dfc1292e7c678",
+        "e822e4450ab4dcad",
+        "22db4d8dd8dbfd9c",
+        "4b11acd40f6ed44f",
+        "8ee1d245f7b403bc",
+        "448a81c14ac59549",
+        "f00b7298670734fe",
+        "98c68a157e1b55ff",
+        "21cb7e642833caf7",
+        "0f9fbe87a80cc013",
+        "2d36845d899106f0",
+        "5e9e49987bc80109",
+        "ac908d277528e5bc",
+        "19e3a03542e896a2",
+        "282565f2d071ec9c",
+        "cc874bcc3159e258",
+        "14f13262fec9119e",
+        "c5f213214da57548",
+        "f88bb6ec201988e8",
+        "9bba0f584207868a",
+        "7535b75bf589a4de",
+        "f80a686243715fb5",
+        "0909ef13d95c0497",
+        "f28fd4eede5caea4",
+        "835e1d7e70f4a6d3",
+        "b59538669bf4ade7",
+        "3323da6f1691908a",
+        "全部技能:all:791",
+        "810e5630e720f446",
+        "492069f33fad559b",
+        "2ae3c62f62930431",
+        "d268368f04c8f840",
+        "0725be276a780aef",
+        "ca339383e4f1f6f6",
+        "a92f6001f2419fda",
+        "2832becd6721150f",
+        "ee807560b8e94ab2",
+        "73530ee6f38ccc34",
+        "72987eef01fbda4b",
+        "44a3d9148279023c",
+        "03a679c6deeb2898",
+        "16e16b5e64f54f5c",
+        "3159ed767f08fdf1",
+        "9efcdc31fa117787",
+        "899aa4edeab83540"
+      ],
+      "scopeDescription": "单手按武器总数恰好1把判断。“两手剑／枪”等技能也属于这一类。按武器类型、伤害种类及附加条件分组；明确包含空武器的分支另写0或1把，绝不把0把当成1把。 所有效果和条件贴完标签才算完整；同一技能跨组去重。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 58,
+        "notRelatedUnique": 877,
+        "ready": 2,
+        "partial": 56,
+        "unknown": 0
+      }
+    },
+    "dual-weapon": {
+      "label": "双手",
+      "childKeys": [
+        "dual-weapon-permission",
+        "dual-weapon-physical-hit-count",
+        "dual-weapon-physical-hit-damage",
+        "dual-weapon-each-weapon-str",
+        "dual-weapon-each-weapon-int",
+        "dual-weapon-same-type-physical-damage",
+        "dual-weapon-same-type-physical-cap",
+        "dual-weapon-sword-claw-physical-damage",
+        "dual-weapon-sword-claw-physical-cap",
+        "dual-weapon-same-element-skill-damage",
+        "dual-weapon-same-element-skill-cap",
+        "dual-weapon-same-element-ultimate-damage",
+        "dual-weapon-same-element-ultimate-cap",
+        "dual-weapon-any-skill-damage",
+        "dual-weapon-behind-skill-damage",
+        "dual-weapon-any-ultimate-damage",
+        "dual-weapon-any-skill-cap",
+        "dual-weapon-boss-skill-extra-cap"
+      ],
+      "overviewLabel": "全部双手相关效果（分组）",
+      "separateSections": true,
+      "passKind": "equipment-state-and-permission",
+      "displayOrder": [
+        "1a101f308e1eaae6",
+        "5ac756efac795660",
+        "9187edab58fd1e6b",
+        "0257679d2708509b",
+        "1519299bec222fca",
+        "c8018a23d827d656",
+        "4c25a005372c0d24",
+        "7fae80d83cb7551a",
+        "bc94425edcde5d97"
+      ],
+      "scopeDescription": "双手按实际装备2把武器判断。任意双武器、同种类、同属性、剑＋爪和双持应用说明分别列组；同种类与同属性互不代替。二刀流装备许可不等于已经装备2把武器。 所有效果和条件贴完标签才算完整；同一技能跨组去重。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 9,
+        "notRelatedUnique": 926,
+        "ready": 0,
+        "partial": 9,
+        "unknown": 0
+      }
+    },
+    "empty-weapon": {
+      "label": "空武器",
+      "childKeys": [
+        "empty-weapon-dark-physical-cap",
+        "empty-weapon-dark-ultimate-cap",
+        "empty-weapon-ice-physical-cap",
+        "empty-weapon-ice-ultimate-cap",
+        "empty-weapon-non-dual-boss-physical-extra-cap",
+        "empty-weapon-physical-damage",
+        "empty-weapon-physical-cap",
+        "empty-weapon-break",
+        "empty-weapon-both-empty-str",
+        "empty-weapon-both-empty-def",
+        "empty-weapon-both-empty-int",
+        "empty-weapon-both-empty-mnd",
+        "empty-weapon-both-empty-damage",
+        "empty-weapon-both-empty-reduction"
+      ],
+      "overviewLabel": "全部空武器相关效果（分组）",
+      "separateSections": true,
+      "passKind": "equipment-state-and-permission",
+      "displayOrder": [
+        "4633d985390976cc",
+        "ee8769b3f842d317",
+        "298a75e27246a317",
+        "980fc3c099f855ab",
+        "5b4ee2cab67374b7",
+        "9d60989a10027525",
+        "492069f33fad559b",
+        "d268368f04c8f840",
+        "72987eef01fbda4b"
+      ],
+      "scopeDescription": "空武器要求没有装备任何武器，不要求没有防具。额外要求空防具的技能放在“武器和防具都空”子组；明确0或1把生效的分支单独列出。 所有效果和条件贴完标签才算完整；同一技能跨组去重。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 9,
+        "notRelatedUnique": 926,
+        "ready": 3,
+        "partial": 6,
+        "unknown": 0
+      }
+    },
+    "empty-armor": {
+      "label": "空防具",
+      "childKeys": [
+        "empty-armor-stat-def",
+        "empty-armor-stat-mnd",
+        "empty-armor-stat-str",
+        "empty-armor-stat-int",
+        "empty-armor-both-empty-str",
+        "empty-armor-both-empty-def",
+        "empty-armor-both-empty-int",
+        "empty-armor-both-empty-mnd",
+        "empty-armor-both-empty-damage",
+        "empty-armor-both-empty-reduction"
+      ],
+      "overviewLabel": "全部空防具相关效果（分组）",
+      "separateSections": true,
+      "passKind": "equipment-state-and-permission",
+      "displayOrder": [
+        "4633d985390976cc",
+        "ee8769b3f842d317",
+        "f1b5060bde17e0e8",
+        "1bb6b460e8a6c297",
+        "f5c157dab48c38c7",
+        "b01d5a17adf13b59"
+      ],
+      "scopeDescription": "空防具要求没有装备防具，不要求空武器；防具栏放第二把武器仍属于未装备防具。额外要求空武器的技能单独列为“武器和防具都空”。饰品不影响。 所有效果和条件贴完标签才算完整；同一技能跨组去重。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 3,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "empty-gear": {
+      "label": "空武器+防具",
+      "childKeys": [
+        "empty-gear-both-empty-str",
+        "empty-gear-both-empty-def",
+        "empty-gear-both-empty-int",
+        "empty-gear-both-empty-mnd",
+        "empty-gear-both-empty-damage",
+        "empty-gear-both-empty-reduction"
+      ],
+      "overviewLabel": "全部空武器+防具相关效果（分组）",
+      "separateSections": true,
+      "passKind": "equipment-state-and-permission",
+      "displayOrder": [
+        "4633d985390976cc",
+        "ee8769b3f842d317"
+      ],
+      "scopeDescription": "武器和防具都未装备，两个条件同时满足；只空其中一个不生效，饰品不影响。各项属性、造成伤害和受到伤害分开列组。 所有效果和条件贴完标签才算完整；同一技能跨组去重。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -54014,8 +60817,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -54031,8 +60834,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -55733,8 +62536,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -55750,8 +62553,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -57904,6 +64707,2015 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "single-weapon-spear-single-physical-damage": {
+      "label": "仅1把枪：物理伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "spear-single-physical-damage",
+      "displayOrder": [
+        "全部技能:all:304",
+        "105171fcac173ed9",
+        "f80a686243715fb5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-spear-single-critical-rate": {
+      "label": "仅1把枪：暴击率增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "spear-single-critical-rate",
+      "displayOrder": [
+        "全部技能:all:304"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-spear-single-physical-cap": {
+      "label": "仅1把枪：物理伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "spear-single-physical-cap",
+      "displayOrder": [
+        "全部技能:all:304",
+        "105171fcac173ed9",
+        "f80a686243715fb5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-hammer-single-physical-damage": {
+      "label": "仅1把锤：物理伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "hammer-single-physical-damage",
+      "displayOrder": [
+        "全部技能:all:329",
+        "5e9e49987bc80109",
+        "f88bb6ec201988e8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-hammer-single-critical-rate": {
+      "label": "仅1把锤：暴击率增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "hammer-single-critical-rate",
+      "displayOrder": [
+        "全部技能:all:329"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-hammer-single-physical-cap": {
+      "label": "仅1把锤：物理伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "hammer-single-physical-cap",
+      "displayOrder": [
+        "全部技能:all:329",
+        "5e9e49987bc80109",
+        "f88bb6ec201988e8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-sword-single-physical-damage": {
+      "label": "仅1把剑：物理伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "sword-single-physical-damage",
+      "displayOrder": [
+        "15ef9e047319adc5",
+        "3f364d1ae44f839e",
+        "ce4c7604e001b0ed",
+        "5837c3c5bd19cc83"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 0,
+        "partial": 4,
+        "unknown": 0
+      }
+    },
+    "single-weapon-sword-single-critical-rate": {
+      "label": "仅1把剑：暴击率增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "sword-single-critical-rate",
+      "displayOrder": [
+        "15ef9e047319adc5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-sword-single-physical-cap": {
+      "label": "仅1把剑：物理伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "sword-single-physical-cap",
+      "displayOrder": [
+        "15ef9e047319adc5",
+        "3f364d1ae44f839e",
+        "ce4c7604e001b0ed",
+        "5837c3c5bd19cc83",
+        "a92f6001f2419fda"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 0,
+        "partial": 5,
+        "unknown": 0
+      }
+    },
+    "single-weapon-axe-single-physical-damage": {
+      "label": "仅1把斧：物理伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "axe-single-physical-damage",
+      "displayOrder": [
+        "05dffc8daf9a5872",
+        "835e1d7e70f4a6d3",
+        "ca339383e4f1f6f6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-axe-single-critical-rate": {
+      "label": "仅1把斧：暴击率增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "axe-single-critical-rate",
+      "displayOrder": [
+        "05dffc8daf9a5872"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-axe-single-physical-cap": {
+      "label": "仅1把斧：物理伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "axe-single-physical-cap",
+      "displayOrder": [
+        "05dffc8daf9a5872",
+        "835e1d7e70f4a6d3",
+        "ca339383e4f1f6f6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-claw-single-physical-damage": {
+      "label": "仅1把爪：物理伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "claw-single-physical-damage",
+      "displayOrder": [
+        "9d7ec20e8780822b",
+        "282565f2d071ec9c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-claw-single-critical-rate": {
+      "label": "仅1把爪：暴击率增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "claw-single-critical-rate",
+      "displayOrder": [
+        "9d7ec20e8780822b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-claw-single-physical-cap": {
+      "label": "仅1把爪：物理伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "claw-single-physical-cap",
+      "displayOrder": [
+        "9d7ec20e8780822b",
+        "282565f2d071ec9c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-machine-single-physical-damage": {
+      "label": "仅1把机械：物理伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "machine-single-physical-damage",
+      "displayOrder": [
+        "bde3ce8d694af2ab",
+        "8ee1d245f7b403bc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-machine-single-critical-rate": {
+      "label": "仅1把机械：暴击率增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "machine-single-critical-rate",
+      "displayOrder": [
+        "bde3ce8d694af2ab"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-machine-single-physical-cap": {
+      "label": "仅1把机械：物理伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "machine-single-physical-cap",
+      "displayOrder": [
+        "bde3ce8d694af2ab",
+        "8ee1d245f7b403bc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-sword-single-ultimate-damage": {
+      "label": "仅1把剑：必杀伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "sword-single-ultimate-damage",
+      "displayOrder": [
+        "3f364d1ae44f839e",
+        "ce4c7604e001b0ed",
+        "5837c3c5bd19cc83"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-sword-single-ultimate-cap": {
+      "label": "仅1把剑：必杀伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "sword-single-ultimate-cap",
+      "displayOrder": [
+        "3f364d1ae44f839e",
+        "ce4c7604e001b0ed",
+        "5837c3c5bd19cc83"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-spear-single-ultimate-damage": {
+      "label": "仅1把枪：必杀伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "spear-single-ultimate-damage",
+      "displayOrder": [
+        "105171fcac173ed9",
+        "f80a686243715fb5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-spear-single-ultimate-cap": {
+      "label": "仅1把枪：必杀伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "spear-single-ultimate-cap",
+      "displayOrder": [
+        "105171fcac173ed9",
+        "f80a686243715fb5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-sword-single-matching-element-damage": {
+      "label": "仅1把剑＋攻击同属性：伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "sword-single-matching-element-damage",
+      "displayOrder": [
+        "d71dfc1292e7c678"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-bow-single-physical-damage": {
+      "label": "仅1把弓：物理伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "bow-single-physical-damage",
+      "displayOrder": [
+        "22db4d8dd8dbfd9c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-bow-single-critical-rate": {
+      "label": "仅1把弓：暴击率增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "bow-single-critical-rate",
+      "displayOrder": [
+        "22db4d8dd8dbfd9c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-bow-single-physical-cap": {
+      "label": "仅1把弓：物理伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "bow-single-physical-cap",
+      "displayOrder": [
+        "22db4d8dd8dbfd9c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-machine-single-ultimate-damage": {
+      "label": "仅1把机械：必杀伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "machine-single-ultimate-damage",
+      "displayOrder": [
+        "8ee1d245f7b403bc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-machine-single-ultimate-cap": {
+      "label": "仅1把机械：必杀伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "machine-single-ultimate-cap",
+      "displayOrder": [
+        "8ee1d245f7b403bc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-hammer-single-ultimate-damage": {
+      "label": "仅1把锤：必杀伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "hammer-single-ultimate-damage",
+      "displayOrder": [
+        "5e9e49987bc80109",
+        "f88bb6ec201988e8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-hammer-single-ultimate-cap": {
+      "label": "仅1把锤：必杀伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "hammer-single-ultimate-cap",
+      "displayOrder": [
+        "5e9e49987bc80109",
+        "f88bb6ec201988e8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-claw-single-ultimate-damage": {
+      "label": "仅1把爪：必杀伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "claw-single-ultimate-damage",
+      "displayOrder": [
+        "282565f2d071ec9c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-claw-single-ultimate-cap": {
+      "label": "仅1把爪：必杀伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "claw-single-ultimate-cap",
+      "displayOrder": [
+        "282565f2d071ec9c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-axe-single-ultimate-damage": {
+      "label": "仅1把斧：必杀伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "axe-single-ultimate-damage",
+      "displayOrder": [
+        "835e1d7e70f4a6d3",
+        "ca339383e4f1f6f6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-axe-single-ultimate-cap": {
+      "label": "仅1把斧：必杀伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "axe-single-ultimate-cap",
+      "displayOrder": [
+        "835e1d7e70f4a6d3",
+        "ca339383e4f1f6f6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-spear-single-killer-damage": {
+      "label": "仅1把枪＋特攻：伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "spear-single-killer-damage",
+      "displayOrder": [
+        "b59538669bf4ade7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-spear-single-weak-element-damage": {
+      "label": "仅1把枪＋弱点属性：伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "spear-single-weak-element-damage",
+      "displayOrder": [
+        "b59538669bf4ade7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-sword-single-attack": {
+      "label": "仅1把剑：角色攻击力",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "sword-single-attack",
+      "displayOrder": [
+        "a92f6001f2419fda"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-sword-single-enemy-thunder-weak-cap": {
+      "label": "仅1把剑＋敌人弱雷：物理额外上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "sword-single-enemy-thunder-weak-cap",
+      "displayOrder": [
+        "a92f6001f2419fda"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-any-physical-damage": {
+      "label": "任意1把武器：物理伤害增加",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "any-physical-damage",
+      "displayOrder": [
+        "28ccf85b5f31c394"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-any-physical-cap": {
+      "label": "任意1把武器：物理伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "any-physical-cap",
+      "displayOrder": [
+        "28ccf85b5f31c394"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-any-physical-break": {
+      "label": "任意1把武器：物理Break值",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "any-physical-break",
+      "displayOrder": [
+        "6952af1368802c34"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-skill1-cap": {
+      "label": "任意1把武器：特技1上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "skill1-cap",
+      "displayOrder": [
+        "4c3d40e4148fa790",
+        "c5f213214da57548"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-skill2-cap": {
+      "label": "任意1把武器：特技2上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "skill2-cap",
+      "displayOrder": [
+        "e822e4450ab4dcad",
+        "2ae3c62f62930431"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-skill3-cap": {
+      "label": "任意1把武器：特技3上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "skill3-cap",
+      "displayOrder": [
+        "21cb7e642833caf7",
+        "03a679c6deeb2898"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-killer-cap": {
+      "label": "任意1把武器＋特攻：伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "killer-cap",
+      "displayOrder": [
+        "f00b7298670734fe",
+        "0f9fbe87a80cc013",
+        "cc874bcc3159e258",
+        "0725be276a780aef"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 0,
+        "partial": 4,
+        "unknown": 0
+      }
+    },
+    "single-weapon-light-weakness-cap": {
+      "label": "任意1把武器＋光属性弱点：伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "light-weakness-cap",
+      "displayOrder": [
+        "4b11acd40f6ed44f",
+        "全部技能:all:791",
+        "16e16b5e64f54f5c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-dark-weakness-cap": {
+      "label": "任意1把武器＋暗属性弱点：伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "dark-weakness-cap",
+      "displayOrder": [
+        "448a81c14ac59549",
+        "0909ef13d95c0497"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-fire-weakness-cap": {
+      "label": "任意1把武器＋火属性弱点：伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "fire-weakness-cap",
+      "displayOrder": [
+        "98c68a157e1b55ff",
+        "9bba0f584207868a",
+        "3159ed767f08fdf1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "single-weapon-earth-weakness-cap": {
+      "label": "任意1把武器＋树属性弱点：伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "earth-weakness-cap",
+      "displayOrder": [
+        "2d36845d899106f0",
+        "44a3d9148279023c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-ice-weakness-cap": {
+      "label": "任意1把武器＋冰属性弱点：伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "ice-weakness-cap",
+      "displayOrder": [
+        "ac908d277528e5bc",
+        "7535b75bf589a4de"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-thunder-weakness-cap": {
+      "label": "任意1把武器＋雷属性弱点：伤害上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "thunder-weakness-cap",
+      "displayOrder": [
+        "19e3a03542e896a2",
+        "14f13262fec9119e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "single-weapon-self-low-hp-skill-cap": {
+      "label": "任意1把武器＋自身濒死：特技上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "self-low-hp-skill-cap",
+      "displayOrder": [
+        "f28fd4eede5caea4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-enemy-low-hp-physical-damage": {
+      "label": "任意1把武器＋敌人濒死：物理伤害",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "enemy-low-hp-physical-damage",
+      "displayOrder": [
+        "2832becd6721150f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-enemy-low-hp-physical-cap": {
+      "label": "任意1把武器＋敌人濒死：物理上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "enemy-low-hp-physical-cap",
+      "displayOrder": [
+        "2832becd6721150f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-chance-physical-cap": {
+      "label": "任意1把武器＋概率命中：物理上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "chance-physical-cap",
+      "displayOrder": [
+        "3323da6f1691908a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-any-matching-element-damage": {
+      "label": "任意1把武器＋攻击同属性：伤害",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "any-matching-element-damage",
+      "displayOrder": [
+        "810e5630e720f446"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-any-matching-element-cap": {
+      "label": "任意1把武器＋攻击同属性：上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "any-matching-element-cap",
+      "displayOrder": [
+        "810e5630e720f446"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-axe-spear-machine-matching-damage": {
+      "label": "仅1把斧／枪／机械＋攻击同属性：伤害",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "axe-spear-machine-matching-damage",
+      "displayOrder": [
+        "ee807560b8e94ab2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-extra-skill-break": {
+      "label": "任意1把武器：特技额外Break值",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "extra-skill-break",
+      "displayOrder": [
+        "73530ee6f38ccc34"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-hp-cost-extra-skill-cap": {
+      "label": "任意1把武器＋HP代价特技：额外上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "hp-cost-extra-skill-cap",
+      "displayOrder": [
+        "9efcdc31fa117787"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-boss-extra-physical-cap": {
+      "label": "任意1把武器＋Boss：物理额外上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "boss-extra-physical-cap",
+      "displayOrder": [
+        "899aa4edeab83540"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-boss-extra-ultimate-cap": {
+      "label": "任意1把武器＋Boss：必杀额外上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "boss-extra-ultimate-cap",
+      "displayOrder": [
+        "899aa4edeab83540"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "single-weapon-dark-physical-cap": {
+      "label": "1把武器或空武器：暗属性物理上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "dark-physical-cap",
+      "displayOrder": [
+        "492069f33fad559b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "single-weapon-dark-ultimate-cap": {
+      "label": "1把武器或空武器：暗属性必杀上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "dark-ultimate-cap",
+      "displayOrder": [
+        "492069f33fad559b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "single-weapon-ice-physical-cap": {
+      "label": "1把武器或空武器：冰属性物理上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "ice-physical-cap",
+      "displayOrder": [
+        "72987eef01fbda4b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "single-weapon-ice-ultimate-cap": {
+      "label": "1把武器或空武器：冰属性必杀上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "ice-ultimate-cap",
+      "displayOrder": [
+        "72987eef01fbda4b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "single-weapon-non-dual-boss-physical-extra-cap": {
+      "label": "1把武器或空武器＋Boss：物理额外上限",
+      "parent": "single-weapon",
+      "conditionTag": "单手",
+      "effectGroup": "non-dual-boss-physical-extra-cap",
+      "displayOrder": [
+        "d268368f04c8f840"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-permission": {
+      "label": "双武器：防具栏装备武器许可",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "permission",
+      "displayOrder": [
+        "5ac756efac795660"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-physical-hit-count": {
+      "label": "双武器：物理Hit数",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "physical-hit-count",
+      "displayOrder": [
+        "5ac756efac795660"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-physical-hit-damage": {
+      "label": "双武器：物理单次命中伤害",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "physical-hit-damage",
+      "displayOrder": [
+        "5ac756efac795660"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-each-weapon-str": {
+      "label": "双武器应用说明：每把武器自身攻击力",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "each-weapon-str",
+      "displayOrder": [
+        "1a101f308e1eaae6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-each-weapon-int": {
+      "label": "双武器应用说明：每把武器自身魔力",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "each-weapon-int",
+      "displayOrder": [
+        "1a101f308e1eaae6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-same-type-physical-damage": {
+      "label": "双武器同种类：物理伤害",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "same-type-physical-damage",
+      "displayOrder": [
+        "9187edab58fd1e6b",
+        "4c25a005372c0d24"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-same-type-physical-cap": {
+      "label": "双武器同种类：物理上限",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "same-type-physical-cap",
+      "displayOrder": [
+        "9187edab58fd1e6b",
+        "4c25a005372c0d24"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-sword-claw-physical-damage": {
+      "label": "剑＋爪：物理伤害增加",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "sword-claw-physical-damage",
+      "displayOrder": [
+        "c8018a23d827d656"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-sword-claw-physical-cap": {
+      "label": "剑＋爪：物理伤害上限",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "sword-claw-physical-cap",
+      "displayOrder": [
+        "c8018a23d827d656"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-same-element-skill-damage": {
+      "label": "双武器同属性＋攻击同属性：特技伤害",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "same-element-skill-damage",
+      "displayOrder": [
+        "0257679d2708509b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-same-element-skill-cap": {
+      "label": "双武器同属性＋攻击同属性：特技上限",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "same-element-skill-cap",
+      "displayOrder": [
+        "0257679d2708509b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-same-element-ultimate-damage": {
+      "label": "双武器同属性＋攻击同属性：必杀伤害",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "same-element-ultimate-damage",
+      "displayOrder": [
+        "0257679d2708509b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-same-element-ultimate-cap": {
+      "label": "双武器同属性＋攻击同属性：必杀上限",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "same-element-ultimate-cap",
+      "displayOrder": [
+        "0257679d2708509b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-any-skill-damage": {
+      "label": "任意双武器：特技伤害",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "any-skill-damage",
+      "displayOrder": [
+        "1519299bec222fca",
+        "7fae80d83cb7551a",
+        "bc94425edcde5d97"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-behind-skill-damage": {
+      "label": "任意双武器＋背后攻击：特技额外伤害",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "behind-skill-damage",
+      "displayOrder": [
+        "1519299bec222fca"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-any-ultimate-damage": {
+      "label": "任意双武器：必杀伤害",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "any-ultimate-damage",
+      "displayOrder": [
+        "7fae80d83cb7551a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-any-skill-cap": {
+      "label": "任意双武器：特技上限",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "any-skill-cap",
+      "displayOrder": [
+        "bc94425edcde5d97"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dual-weapon-boss-skill-extra-cap": {
+      "label": "任意双武器＋Boss：特技额外上限",
+      "parent": "dual-weapon",
+      "conditionTag": "双手",
+      "effectGroup": "boss-skill-extra-cap",
+      "displayOrder": [
+        "bc94425edcde5d97"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-dark-physical-cap": {
+      "label": "空武器或1把武器：暗属性物理上限",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "dark-physical-cap",
+      "displayOrder": [
+        "492069f33fad559b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-dark-ultimate-cap": {
+      "label": "空武器或1把武器：暗属性必杀上限",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "dark-ultimate-cap",
+      "displayOrder": [
+        "492069f33fad559b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-ice-physical-cap": {
+      "label": "空武器或1把武器：冰属性物理上限",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "ice-physical-cap",
+      "displayOrder": [
+        "72987eef01fbda4b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-ice-ultimate-cap": {
+      "label": "空武器或1把武器：冰属性必杀上限",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "ice-ultimate-cap",
+      "displayOrder": [
+        "72987eef01fbda4b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-non-dual-boss-physical-extra-cap": {
+      "label": "1把武器或空武器＋Boss：物理额外上限",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "non-dual-boss-physical-extra-cap",
+      "displayOrder": [
+        "d268368f04c8f840"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-physical-damage": {
+      "label": "空武器：物理伤害",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "physical-damage",
+      "displayOrder": [
+        "298a75e27246a317",
+        "980fc3c099f855ab",
+        "9d60989a10027525"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 1,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-physical-cap": {
+      "label": "空武器：物理上限",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "physical-cap",
+      "displayOrder": [
+        "298a75e27246a317",
+        "9d60989a10027525"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-break": {
+      "label": "空武器：Break值",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "break",
+      "displayOrder": [
+        "5b4ee2cab67374b7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-both-empty-str": {
+      "label": "武器和防具都空：攻击力",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "both-empty-str",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-both-empty-def": {
+      "label": "武器和防具都空：防御力",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "both-empty-def",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-both-empty-int": {
+      "label": "武器和防具都空：魔力",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "both-empty-int",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-both-empty-mnd": {
+      "label": "武器和防具都空：魔抗",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "both-empty-mnd",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-both-empty-damage": {
+      "label": "武器和防具都空：造成伤害",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "both-empty-damage",
+      "displayOrder": [
+        "ee8769b3f842d317"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-weapon-both-empty-reduction": {
+      "label": "武器和防具都空：受到伤害减少",
+      "parent": "empty-weapon",
+      "conditionTag": "空武器",
+      "effectGroup": "both-empty-reduction",
+      "displayOrder": [
+        "ee8769b3f842d317"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-armor-stat-def": {
+      "label": "空防具：防御力",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "stat-def",
+      "displayOrder": [
+        "f1b5060bde17e0e8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "empty-armor-stat-mnd": {
+      "label": "空防具：魔抗",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "stat-mnd",
+      "displayOrder": [
+        "1bb6b460e8a6c297"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-armor-stat-str": {
+      "label": "空防具：攻击力",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "stat-str",
+      "displayOrder": [
+        "f5c157dab48c38c7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "empty-armor-stat-int": {
+      "label": "空防具：魔力",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "stat-int",
+      "displayOrder": [
+        "b01d5a17adf13b59"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "empty-armor-both-empty-str": {
+      "label": "武器和防具都空：攻击力",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "both-empty-str",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-armor-both-empty-def": {
+      "label": "武器和防具都空：防御力",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "both-empty-def",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-armor-both-empty-int": {
+      "label": "武器和防具都空：魔力",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "both-empty-int",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-armor-both-empty-mnd": {
+      "label": "武器和防具都空：魔抗",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "both-empty-mnd",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-armor-both-empty-damage": {
+      "label": "武器和防具都空：造成伤害",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "both-empty-damage",
+      "displayOrder": [
+        "ee8769b3f842d317"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-armor-both-empty-reduction": {
+      "label": "武器和防具都空：受到伤害减少",
+      "parent": "empty-armor",
+      "conditionTag": "空防具",
+      "effectGroup": "both-empty-reduction",
+      "displayOrder": [
+        "ee8769b3f842d317"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-gear-both-empty-str": {
+      "label": "武器和防具都空：攻击力",
+      "parent": "empty-gear",
+      "conditionTag": "空武器+防具",
+      "effectGroup": "both-empty-str",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-gear-both-empty-def": {
+      "label": "武器和防具都空：防御力",
+      "parent": "empty-gear",
+      "conditionTag": "空武器+防具",
+      "effectGroup": "both-empty-def",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-gear-both-empty-int": {
+      "label": "武器和防具都空：魔力",
+      "parent": "empty-gear",
+      "conditionTag": "空武器+防具",
+      "effectGroup": "both-empty-int",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-gear-both-empty-mnd": {
+      "label": "武器和防具都空：魔抗",
+      "parent": "empty-gear",
+      "conditionTag": "空武器+防具",
+      "effectGroup": "both-empty-mnd",
+      "displayOrder": [
+        "4633d985390976cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-gear-both-empty-damage": {
+      "label": "武器和防具都空：造成伤害",
+      "parent": "empty-gear",
+      "conditionTag": "空武器+防具",
+      "effectGroup": "both-empty-damage",
+      "displayOrder": [
+        "ee8769b3f842d317"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "empty-gear-both-empty-reduction": {
+      "label": "武器和防具都空：受到伤害减少",
+      "parent": "empty-gear",
+      "conditionTag": "空武器+防具",
+      "effectGroup": "both-empty-reduction",
+      "displayOrder": [
+        "ee8769b3f842d317"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -58493,14 +67305,35 @@ export const SKILL_LABELING_CATALOG = {
         "7c8b474b201e5298",
         "3323da6f1691908a",
         "b59538669bf4ade7",
-        "ee807560b8e94ab2"
+        "ee807560b8e94ab2",
+        "6952af1368802c34",
+        "4c3d40e4148fa790",
+        "e822e4450ab4dcad",
+        "21cb7e642833caf7",
+        "c5f213214da57548",
+        "2ae3c62f62930431",
+        "03a679c6deeb2898",
+        "f00b7298670734fe",
+        "0f9fbe87a80cc013",
+        "cc874bcc3159e258",
+        "0725be276a780aef",
+        "810e5630e720f446",
+        "73530ee6f38ccc34",
+        "9efcdc31fa117787",
+        "5ac756efac795660",
+        "0257679d2708509b",
+        "1519299bec222fca",
+        "7fae80d83cb7551a",
+        "bc94425edcde5d97",
+        "5b4ee2cab67374b7",
+        "1bb6b460e8a6c297"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 587,
-        "notRelatedUnique": 348,
-        "ready": 234,
-        "partial": 353,
+        "relatedUnique": 608,
+        "notRelatedUnique": 327,
+        "ready": 240,
+        "partial": 368,
         "unknown": 0
       }
     }

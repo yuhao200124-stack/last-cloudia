@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "label": "空防具",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "4633d985390976cc",
+    "ee8769b3f842d317",
+    "f1b5060bde17e0e8",
+    "1bb6b460e8a6c297",
+    "f5c157dab48c38c7",
+    "b01d5a17adf13b59"
+  ]
+}

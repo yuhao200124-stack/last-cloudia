@@ -727,7 +727,12 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "作用于所装备武器自身的数值；装备两把武器时分别生效"
+          "text": "提升的是所装备武器自身的数值，不是角色最终面板"
+        },
+        {
+          "id": "dual-application",
+          "kind": "condition",
+          "text": "装备2把武器时，按每把武器分别应用数值提升"
         }
       ],
       "tagDetails": {
@@ -748,16 +753,81 @@ export const ATTACK_TAG_CATALOG = {
             "basic:1a101f308e1eaae6:1"
           ],
           "relatedSkillIds": []
+        },
+        "双手": {
+          "summary": "装备2把武器时，每把武器自身攻击力分别+25%；单武器时也可生效，此处说明双持应用。；装备2把武器时，每把武器自身魔力分别+25%；单武器时也可生效，此处说明双持应用。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "dual-application"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 2
+          },
+          "bindings": [
+            {
+              "group": "each-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备2把武器时，每把武器自身攻击力分别+25%；单武器时也可生效，此处说明双持应用。",
+              "target": "each-equipped-weapon",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 25,
+              "base": "equipped-item-stat",
+              "applicationMode": "per-equipped-weapon",
+              "requiresDualForBaseEffect": false
+            },
+            {
+              "group": "each-weapon-int",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备2把武器时，每把武器自身魔力分别+25%；单武器时也可生效，此处说明双持应用。",
+              "target": "each-equipped-weapon",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 2
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 25,
+              "base": "equipped-item-stat",
+              "applicationMode": "per-equipped-weapon",
+              "requiresDualForBaseEffect": false
+            }
+          ],
+          "calculationNote": "通用武器数值强化，不是双武器限定加成。此处只标注原说明明确提到的双持分别应用规则；装备本体数值计算机制仍待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "双手"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "作用于所装备武器自身的数值；装备两把武器时分别生效"
+        "提升的是所装备武器自身的数值，不是角色最终面板"
       ]
     },
     {
@@ -1930,7 +2000,12 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "武器栏和防具栏同时为空；饰品不影响此条件"
+          "text": "未装备武器；须与未装备防具同时满足，饰品不影响"
+        },
+        {
+          "id": "empty-armor",
+          "kind": "condition",
+          "text": "未装备防具；须与未装备武器同时满足，饰品不影响"
         }
       ],
       "tagDetails": {
@@ -1963,20 +2038,341 @@ export const ATTACK_TAG_CATALOG = {
             "basic:4633d985390976cc:1"
           ],
           "relatedSkillIds": []
+        },
+        "空武器": {
+          "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。；武器和防具都未装备时，自身防御力+10%；饰品不影响。；武器和防具都未装备时，自身魔力+10%；饰品不影响。；武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0
+          },
+          "bindings": [
+            {
+              "group": "both-empty-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，自身防御力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-int",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "武器和防具都未装备时，自身魔力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-mnd",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "MND",
+              "valuePercent": 10,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
+        },
+        "空防具": {
+          "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。；武器和防具都未装备时，自身防御力+10%；饰品不影响。；武器和防具都未装备时，自身魔力+10%；饰品不影响。；武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "empty-armor"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "both-empty-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，自身防御力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-int",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "武器和防具都未装备时，自身魔力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-mnd",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "MND",
+              "valuePercent": 10,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
+        },
+        "空武器+防具": {
+          "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。；武器和防具都未装备时，自身防御力+10%；饰品不影响。；武器和防具都未装备时，自身魔力+10%；饰品不影响。；武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1",
+              "empty-armor"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 0,
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "both-empty-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "武器和防具都未装备时，自身攻击力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，自身防御力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-int",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "武器和防具都未装备时，自身魔力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "both-empty-mnd",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "MND",
+              "valuePercent": 10,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力"
+        "魔力",
+        "空武器",
+        "空防具",
+        "空武器+防具"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "魔抗+10%"
       ],
-      "remainingConditions": [
-        "武器栏和防具栏同时为空；饰品不影响此条件"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5f6efbf8b35453d2",
@@ -5519,16 +5915,54 @@ export const ATTACK_TAG_CATALOG = {
             "basic:f5c157dab48c38c7:1"
           ],
           "relatedSkillIds": []
+        },
+        "空防具": {
+          "summary": "未装备防具时，自身攻击力+20%；不要求空武器。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "armorCount": 0
+          },
+          "bindings": [
+            {
+              "group": "stat-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "未装备防具时，自身攻击力+20%；不要求空武器。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 20,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "检查实际有没有装备防具，不把“防具栏里放了第二把武器”算作装备防具；饰品不影响，也不要求空武器。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "空防具"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "未装备防具时生效（空防具）"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0d0bdf3f7c6e0b5a",
@@ -6679,7 +7113,7 @@ export const ATTACK_TAG_CATALOG = {
               "requiresAttackElement": false
             }
           ],
-          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。弱雷与剑类型条件已覆盖，仅1把武器条件和物理上限仍待对应标签。"
+          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。弱雷、剑类型及仅1把武器条件已覆盖，物理上限仍待对应标签。"
         },
         "剑": {
           "summary": "仅装备1把剑时，自身攻击力+20%。；仅装备1把剑时，物理攻击伤害上限+3,000。；仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
@@ -6769,22 +7203,112 @@ export const ATTACK_TAG_CATALOG = {
               "addsToPartId": "effect-1"
             }
           ],
-          "calculationNote": "沿用攻击力和敌人弱雷标签；这里不是雷属性攻击限定。两个上限是基础+3,000和符合弱雷条件时再+3,000；本轮补剑类型，单武器数量及物理上限继续待判断。"
+          "calculationNote": "沿用攻击力和敌人弱雷标签；这里不是雷属性攻击限定。两个上限是基础+3,000和符合弱雷条件时再+3,000；剑类型和单武器数量已贴标签，物理上限继续待判断。"
+        },
+        "单手": {
+          "summary": "仅装备1把剑时，自身攻击力+20%。；仅装备1把剑时，物理攻击伤害上限+3,000。；仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "single-weapon-count"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "sword-single-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "仅装备1把剑时，自身攻击力+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 20,
+              "base": "character-stat",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "sword-single-enemy-thunder-weak-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                },
+                "enemyWeakElement": "thunder"
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "requiresAttackElement": false,
+              "addsToPartId": "effect-1",
+              "equipmentRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "雷属性",
-        "剑"
+        "剑",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+3,000",
         "对弱雷属性敌人的伤害上限+3,000"
       ],
-      "remainingConditions": [
-        "仅装备一把武器；装备第二把武器时不满足"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "a5f24684f4b2911a",
@@ -7878,11 +8402,74 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "原文是物理攻击或必杀，任一满足即可；本轮只覆盖必杀分支，物理攻击分支仍保留待判断。这里不是必杀伤害直接+30%；Boss上限和单武器额外上限不挂在这条触发效果里。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        },
+        "单手": {
+          "summary": "仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。；仅1把武器时，对Boss的必杀伤害上限在基础+10,000之外再+10,000。",
+          "relation": "equipment-state-or-permission",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-4"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "weaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "boss-extra-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyType": "boss"
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 10000,
+              "addsToPartId": "effect-1"
+            },
+            {
+              "group": "boss-extra-ultimate-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅1把武器时，对Boss的必杀伤害上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyType": "boss"
+              },
+              "effectStacking": "once-per-skill",
+              "capPoints": 10000,
+              "addsToPartId": "effect-1"
+            }
+          ],
+          "calculationNote": "只绑定单武器额外上限；STR参照修正和基础Boss上限不以单武器为条件。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "必杀相关"
+        "必杀相关",
+        "单手"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -7892,8 +8479,7 @@ export const ATTACK_TAG_CATALOG = {
       "remainingConditions": [
         "发动物理攻击时（与发动必杀是“或”关系，任一满足）",
         "攻击力只在该次伤害计算中提高",
-        "对Boss时才有对应伤害上限加成",
-        "只装备一把武器时额外提高上限"
+        "对Boss时才有对应伤害上限加成"
       ]
     },
     {
@@ -8049,8 +8635,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 29,
-    "partial": 58,
+    "ready": 30,
+    "partial": 57,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

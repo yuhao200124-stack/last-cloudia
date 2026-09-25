@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 2,
+  "label": "空武器",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "4633d985390976cc",
+    "ee8769b3f842d317",
+    "298a75e27246a317",
+    "980fc3c099f855ab",
+    "5b4ee2cab67374b7",
+    "9d60989a10027525",
+    "492069f33fad559b",
+    "d268368f04c8f840",
+    "72987eef01fbda4b"
+  ]
+}

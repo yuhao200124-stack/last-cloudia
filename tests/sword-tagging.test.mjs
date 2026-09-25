@@ -23,10 +23,10 @@ test('sword element matching and enemy weakness preserve their separate conditio
  const weak=detail(1727).bindings.find(b=>b.scope.enemyWeakElement);assert.equal(weak.scope.enemyWeakElement,'thunder');assert.equal(weak.requiresAttackElement,false);assert.equal(weak.scope.element,undefined);assert.equal(weak.capPoints,3000);assert.equal(weak.addsToPartId,'effect-1');
  for(const a of registry.tagPasses.find(p=>p.tag==='剑').assignments){const e=catalog.entries.find(e=>e.id===a.skillId),d=e.tagDetails['剑'];assert.deepEqual(a.partIds,[...d.coverage.permissionPartIds,...d.coverage.conditionPartIds]);for(const b of d.bindings.filter(b=>b.swordRole==='condition-benefit'))assert(b.partIds.every(id=>!a.partIds.includes(id)));}
  assert.deepEqual(view.entries.filter(e=>e.judgment==='ready').map(e=>+e.url.split('/').pop()).sort((a,b)=>a-b),[79,215,222]);
- for(const n of[502,777,829,901,938,1727])assert(entry(n).remainingConditions.some(x=>x.includes('仅装备一把武器')));
+ for(const n of[502,777,829,901,938,1727])assert(!entry(n).remainingConditions.some(x=>x.includes('仅装备一把武器')));assert(entry(938).remainingConditions.some(x=>x.includes('属性')));
  for(const n of[293,775])assert(entry(n).remainingConditions.some(x=>x.includes('盔甲')));for(const n of[823,828]){assert(entry(n).remainingConditions.some(x=>x.includes('衣服')));assert(entry(n).remainingEffects.some(x=>x.includes('魔抗')));}
  assert.deepEqual(entry(1538).remainingConditions,[]);assert.deepEqual(entry(1548).remainingConditions,[]);assert.equal(entry(1548).judgment,'partial');assert(entry(1548).remainingEffects.some(x=>x.includes('HP')));assert(entry(1548).remainingEffects.some(x=>x.includes('上限')));
- assert.equal(catalog.views.physical.counts.ready,11);assert.equal(catalog.views.fire.counts.ready,20);assert.equal(catalog.views.all.counts.relatedUnique,587);
+ assert.equal(catalog.views.physical.counts.ready,12);assert.equal(catalog.views.fire.counts.ready,20);assert.equal(catalog.views.all.counts.relatedUnique,608);
  // Claw now completes the paired condition, while the cap remains pending.
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='爪');assert(resolveSkillLabels(earlier).find(e=>e.id===source(1538).id).remainingConditions.some(x=>x.includes('爪')));
  assert.equal(entry(1538).judgment,'partial');assert(entry(1538).assignedTags.includes('剑'));assert(entry(1538).assignedTags.includes('爪'));
