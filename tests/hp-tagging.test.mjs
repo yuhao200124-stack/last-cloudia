@@ -34,16 +34,16 @@ test('HP attribute tags do not cover healing, recovery caps, current-HP costs/lo
 
 test('HP merges earlier attribute tags, completes six compounds, and leaves other effects/Buff conditions pending',()=>{
  assert.equal(hp.counts.ready,25);assert.equal(hp.counts.partial,0);
- assert.equal(hp.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,14);
- for(const n of [387,393,528,725]){assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','生命力']);assert.equal(entry(n).judgment,'ready');}
- for(const n of [796,986]){assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','防御力','生命力']);assert.equal(entry(n).judgment,'ready');}
+ assert.equal(hp.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,14);
+ for(const n of [387,393,528,725]){assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','生命力']);assert.equal(entry(n).judgment,'ready');}
+ for(const n of [796,986]){assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','防御力','生命力']);assert.equal(entry(n).judgment,'ready');}
  assert.deepEqual(entry(1177).remainingEffects,[]);
  for(const n of [778,874]){assert.equal(entry(n).judgment,'ready');assert.deepEqual(entry(n).remainingConditions,[]);}
  assert.equal(entry(666).judgment,'ready');assert.deepEqual(entry(666).remainingEffects,[]);assert.deepEqual(entry(666).remainingConditions,[]);
  assert.equal(entry(402).judgment,'ready');assert.deepEqual(entry(402).remainingConditions,[]);
  assert.deepEqual(entry(402).remainingEffects,[]);
  for(const n of [387,796])for(const key of ['attack',...(n===796?['defense']:[])])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
- const allView=labelingView(catalog,'all');assert.equal(allView.entries.length,902);assert.equal(allView.counts.ready,622);assert.equal(allView.counts.partial,280);
+ const allView=labelingView(catalog,'all');assert.equal(allView.entries.length,920);assert.equal(allView.counts.ready,644);assert.equal(allView.counts.partial,276);
  for(const key of ['all','attack','defense','hp','magic','mp','physical']){
   const rows=skillLabelRows(data,labelingView(catalog,key));const rank={ready:0,partial:1,unknown:2};
   assert(rows.every((r,i)=>!i||rank[rows[i-1].judgment]<=rank[r.judgment]));

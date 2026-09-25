@@ -429,6 +429,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "low-hp-trigger",
           "kind": "condition",
           "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -635,6 +640,68 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "group": "low-hp",
+              "combatRole": "direct-effect",
+              "effectIdentity": "4cb37bd11ae3b17f:effect-1",
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "effect-4",
+                "condition-1",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
@@ -642,15 +709,16 @@ export const SKILL_LABELING_CATALOG = {
         "防御力",
         "濒死",
         "防御",
-        "魔抗"
+        "魔抗",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "回复HP",
         "移动速度提升"
       ],
       "remainingConditions": [
-        "每个Wave最多触发1次"
+        "每个Wave最多触发1次",
+        "HP回复的具体数值与计算公式待确认"
       ]
     },
     {
@@ -9575,6 +9643,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "攻击力Buff持续20秒"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复量、每10秒判定的触发概率待确认"
         }
       ],
       "tagDetails": {
@@ -9587,18 +9660,77 @@ export const SKILL_LABELING_CATALOG = {
             "basic:403a540b2ffa9519:1"
           ],
           "relatedSkillIds": []
+        },
+        "HP回复": {
+          "summary": "战斗开始后每10秒概率判定，触发时大幅回复HP，每Wave最多1次；回复量与概率待确认。攻击力Buff的20秒时长不套用到这次即时回复。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "战斗开始后每10秒概率判定，触发时大幅回复HP，每Wave最多1次；回复量与概率待确认。攻击力Buff的20秒时长不套用到这次即时回复。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "intervalSeconds": 10,
+              "trigger": {
+                "actor": "self",
+                "event": "periodic-after-battle-start"
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "chanceStatus": "unconfirmed",
+              "amountStatus": "unconfirmed",
+              "group": "periodic-once",
+              "combatRole": "direct-effect",
+              "effectIdentity": "403a540b2ffa9519:effect-1",
+              "sourceClause": "从战斗开始后每 10 秒，有一定几率大幅恢复生命 值，并获得 攻击力 +100% 的增益效果，持续 20 秒（每 波最多一次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始后每10秒判定，概率触发，每个Wave最多1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力Buff持续20秒"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复量、每10秒判定的触发概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1",
+                "condition-2",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "大幅恢复HP"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "战斗开始后每10秒判定，概率触发，每个Wave最多1次",
-        "攻击力Buff持续20秒"
+        "攻击力Buff持续20秒",
+        "HP回复量、每10秒判定的触发概率待确认"
       ]
     },
     {
@@ -12361,6 +12493,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "只适用于主动技能的HP恢复，部分特殊恢复除外"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "攻击力与主动HP回复量的换算公式、排除的特殊回复技能名单待确认"
         }
       ],
       "tagDetails": {
@@ -12371,18 +12508,73 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "HP回复": {
+          "summary": "参照自身攻击力，略微提高主动技能的HP回复量，部分特殊回复除外；换算公式与完整例外名单待确认，不增加攻击力。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "参照自身攻击力，略微提高主动技能的HP回复量，部分特殊回复除外；换算公式与完整例外名单待确认，不增加攻击力。",
+              "operation": "stat-scaled-healing-output-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "source": "active-skill"
+              },
+              "referenceStat": "STR",
+              "changesStat": false,
+              "formulaStatus": "unconfirmed",
+              "specialHealingExceptionsStatus": "unconfirmed",
+              "group": "str-scaling",
+              "combatRole": "direct-effect",
+              "effectIdentity": "127eab1363110062:effect-1",
+              "sourceClause": "攻击力越高，自身主动技能的HP恢复量略微提升（部分特殊恢复效果除外）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "以攻击力作为主动技能HP恢复量的参照"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "只适用于主动技能的HP恢复，部分特殊恢复除外"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "攻击力与主动HP回复量的换算公式、排除的特殊回复技能名单待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1",
+                "condition-2",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "主动技能HP恢复量提升及其例外"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "以攻击力作为主动技能HP恢复量的参照",
-        "只适用于主动技能的HP恢复，部分特殊恢复除外"
+        "只适用于主动技能的HP恢复，部分特殊恢复除外",
+        "攻击力与主动HP回复量的换算公式、排除的特殊回复技能名单待确认"
       ]
     },
     {
@@ -19225,6 +19417,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "low-hp-trigger",
           "kind": "condition",
           "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -19431,6 +19628,68 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "group": "low-hp",
+              "combatRole": "direct-effect",
+              "effectIdentity": "faa4c35ca794565a:effect-1",
+              "sourceClause": "濒死时，HP大幅恢复，魔力、防御力、魔抗+50%，移动速度提升（每个Wave最多触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "魔导觉醒Buff持续40秒"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "effect-4",
+                "condition-1",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
@@ -19438,15 +19697,16 @@ export const SKILL_LABELING_CATALOG = {
         "魔力",
         "濒死",
         "防御",
-        "魔抗"
+        "魔抗",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "大幅回复HP",
         "移动速度+2"
       ],
       "remainingConditions": [
-        "每个Wave最多触发1次"
+        "每个Wave最多触发1次",
+        "HP回复的具体数值与计算公式待确认"
       ]
     },
     {
@@ -23323,15 +23583,57 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "魔力在此作为参照量，不直接提供魔力百分比加成。换算或比较机制另待对应标签。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "普通攻击": {
+          "summary": "参照自身魔力提高普通攻击伤害；换算公式待确认，不改变魔力数值。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "参照自身魔力提高普通攻击伤害；换算公式待确认，不改变魔力数值。",
+              "operation": "stat-scaled-damage-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack"
+              },
+              "referenceStat": "INT",
+              "formulaStatus": "unconfirmed",
+              "changesStat": false,
+              "group": "int-scaling",
+              "combatRole": "direct-effect",
+              "effectIdentity": "240bff829bf6cbe6:effect-1",
+              "sourceClause": "魔力越高，普通攻击伤害越高。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "魔力与伤害提升量的换算公式尚待判断"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "普通攻击"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "随魔力提高而提升普通攻击伤害"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "魔力与伤害提升量的换算公式尚待判断"
       ]
@@ -27991,13 +28293,63 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "有概率解除敌人格挡。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "有概率解除敌人格挡",
+              "target": "target-enemy",
+              "isBuff": false,
+              "operation": "release-enemy-guard",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "effectIdentity": "f0a152f468c7e282:effect-1",
+              "chanceStatus": "unconfirmed",
+              "sourceClause": "装备枪时，物理攻击伤害+15%，并有概率解除敌人的格挡。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备枪时生效"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "解除格挡的概率与判定机制待确认"
+                }
+              ],
+              "group": "release-spear",
+              "combatRole": "direct-effect",
+              "pendingPartIds": [
+                "condition-2"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "枪",
         "物理",
-        "防御"
+        "防御",
+        "格挡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -48225,13 +48577,63 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        },
+        "HP回复": {
+          "summary": "Boss Wave开始时，自身HP回复50%。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "Boss Wave开始时，自身HP回复50%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "resource",
+                "resource": "HP"
+              },
+              "resource": "HP",
+              "restorePercent": 50,
+              "restoreBase": "maximum-HP",
+              "trigger": {
+                "event": "boss-wave-start"
+              },
+              "effectIdentity": "3797f19e9c516ee7:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "group": "boss-wave",
+              "combatRole": "direct-effect",
+              "sourceClause": "Boss Wave开始时，HP恢复50%，SCT恢复30秒，必杀槽恢复10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "start-trigger",
+                  "text": "Boss Wave开始时触发"
+                },
+                {
+                  "partId": "condition-1",
+                  "text": "只在Boss Wave开始时触发"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "战斗开始",
         "必杀相关",
         "特技相关",
-        "Boss"
+        "Boss",
+        "HP回复"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -50113,6 +50515,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "mnd-healing-reference",
           "kind": "effect",
           "text": "HP回复量使用自身魔抗作为计算参照；不改变魔抗，具体回复公式待确认"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -50176,17 +50583,73 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "每Wave开始获得再生：每6秒回复自身HP，持续40秒；具体回复量与公式待确认，同类型再生Buff只取当前最高一项。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始获得再生：每6秒回复自身HP，持续40秒；具体回复量与公式待确认，同类型再生Buff只取当前最高一项。",
+              "operation": "periodic-restore-hp",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "intervalSeconds": 6,
+              "amountStatus": "unconfirmed",
+              "formulaStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "wave-start"
+              },
+              "buffType": "hp-regeneration",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "referenceStat": "MND",
+              "durationSeconds": 40,
+              "group": "opening-regen",
+              "combatRole": "direct-effect",
+              "effectIdentity": "f177a34c939a2dfc:opening-effect-1",
+              "sourceClause": "战斗开始时自动获得「再生」效果：持续小幅恢复HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "start-trigger",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "战斗开始",
-        "魔抗"
+        "魔抗",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "再生：每6秒回复HP，回复量受魔抗等回复因素影响"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "HP回复的具体数值与计算公式待确认"
+      ]
     },
     {
       "id": "2945983140d158af",
@@ -52799,6 +53262,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "mnd-healing-reference",
           "kind": "effect",
           "text": "HP回复量使用自身魔抗作为计算参照；不改变魔抗，具体回复公式待确认"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -52864,17 +53332,73 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "永久再生：每6秒回复自身HP，无固定倒计时；具体回复量与公式待确认，同类型再生Buff只取当前最高一项。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久再生：每6秒回复自身HP，无固定倒计时；具体回复量与公式待确认，同类型再生Buff只取当前最高一项。",
+              "operation": "periodic-restore-hp",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "intervalSeconds": 6,
+              "amountStatus": "unconfirmed",
+              "formulaStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "always-active"
+              },
+              "buffType": "hp-regeneration",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "referenceStat": "MND",
+              "lifetime": "permanent",
+              "group": "permanent-regen",
+              "combatRole": "direct-effect",
+              "effectIdentity": "6daaeb2654b05955:permanent-effect",
+              "sourceClause": "永久获得「再生」效果：持续自动恢复HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "permanent-status",
+                  "text": "永久获得再生，作用于自身，无固定倒计时；与限时同类型Buff同时只计已生效的最高一项"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "战斗开始",
-        "魔抗"
+        "魔抗",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "再生：每6秒回复一次HP，回复量受自身魔抗等回复计算因素影响"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "HP回复的具体数值与计算公式待确认"
+      ]
     },
     {
       "id": "0bcbd8a4dc9889d5",
@@ -54552,6 +55076,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-1",
           "kind": "condition",
           "text": "每个Wave最多触发1次"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -54837,6 +55366,70 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "自身濒死触发再生：每6秒回复自身HP，持续30秒；具体回复量与公式待确认，同类型再生Buff只取当前最高一项。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-4"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "low-hp-effect-4"
+              ],
+              "summary": "自身濒死触发再生：每6秒回复自身HP，持续30秒；具体回复量与公式待确认，同类型再生Buff只取当前最高一项。",
+              "operation": "periodic-restore-hp",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "intervalSeconds": 6,
+              "amountStatus": "unconfirmed",
+              "formulaStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "buffType": "hp-regeneration",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "durationSeconds": 30,
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "persistsAfterHpRecovery": true,
+              "group": "low-regen",
+              "combatRole": "direct-effect",
+              "effectIdentity": "ecfc5e235fabef1a:low-hp-effect-4",
+              "sourceClause": "当濒死时，保护、魔法屏障、速度和再生效果会自动激活一次。",
+              "skillReviewConditions": [
+                {
+                  "partId": "low-hp-condition",
+                  "text": "自身HP≤最大HP的30%时触发"
+                },
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "low-hp-effect-3",
+                "condition-1",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
@@ -54844,15 +55437,16 @@ export const SKILL_LABELING_CATALOG = {
         "物理",
         "魔法",
         "防御",
-        "魔抗"
+        "魔抗",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "自身濒死触发速度Buff：移动速度+2，持续40秒",
-        "自身濒死触发再生Buff：每6秒回复HP，持续30秒"
+        "自身濒死触发速度Buff：移动速度+2，持续40秒"
       ],
       "remainingConditions": [
-        "每个Wave最多触发1次"
+        "每个Wave最多触发1次",
+        "HP回复的具体数值与计算公式待确认"
       ]
     },
     {
@@ -55044,15 +55638,60 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "判断接受治疗的友方角色的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        },
+        "HP回复": {
+          "summary": "治疗当前HP≤最大HP30%的友方角色时，该次HP回复量+30%；检查接受治疗者的HP。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "治疗当前HP≤最大HP30%的友方角色时，该次HP回复量+30%；检查接受治疗者的HP。",
+              "operation": "healing-output-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "valuePercent": 30,
+              "condition": {
+                "subject": "healing-target-ally",
+                "metric": "current-hp-percent-of-max",
+                "operator": "lte",
+                "thresholdPercent": 30
+              },
+              "affectsRecipientMaximumHP": false,
+              "group": "recipient-low",
+              "combatRole": "direct-effect",
+              "effectIdentity": "b6f2ae8c19bf5c76:low-hp-effect-1",
+              "sourceClause": "治疗濒死的我方角色时，HP恢复量+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "low-hp-condition",
+                  "text": "接受治疗的友方角色HP≤最大HP的30%时生效"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "濒死"
+        "濒死",
+        "HP回复"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "治疗濒死的友方角色时，该次HP回复量+30%；判断接受治疗者的HP"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -55082,6 +55721,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-1",
           "kind": "condition",
           "text": "每个Wave最多回复1次"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -55151,18 +55795,75 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "HP回复": {
+          "summary": "自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "group": "low-hp",
+              "combatRole": "direct-effect",
+              "effectIdentity": "1f5b1ff3daa03f19:low-hp-effect-1",
+              "sourceClause": "新增魔法生物类型。\n濒死时，生命值大幅恢复（每波最多恢复一次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "low-hp-condition",
+                  "text": "自身HP≤最大HP的30%时触发"
+                },
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多回复1次"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "濒死",
-        "魔法生物"
+        "魔法生物",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "自身濒死时大幅回复HP"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "每个Wave最多回复1次"
+        "每个Wave最多回复1次",
+        "HP回复的具体数值与计算公式待确认"
       ]
     },
     {
@@ -55208,15 +55909,61 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "判断自身的当前HP比例；离开对应HP范围即不再满足此条件。这是条件加成，不自动当成Buff。"
+        },
+        "HP回复": {
+          "summary": "自身HP≤最大HP30%时，受到我方角色主动技能的HP回复量+30%；不含被动再生。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP≤最大HP30%时，受到我方角色主动技能的HP回复量+30%；不含被动再生。",
+              "operation": "healing-received-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "source": "allied-active-skill"
+              },
+              "valuePercent": 30,
+              "condition": {
+                "subject": "self",
+                "metric": "current-hp-percent-of-max",
+                "operator": "lte",
+                "thresholdPercent": 30
+              },
+              "affectsRecipientMaximumHP": false,
+              "group": "self-low-received",
+              "combatRole": "direct-effect",
+              "effectIdentity": "719fae43ca4bfa72:low-hp-effect-1",
+              "sourceClause": "当使用者濒死时，从盟友处获得的主动技能的生命值 恢复量增加 30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "low-hp-condition",
+                  "text": "自身HP≤最大HP的30%时生效"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "濒死"
+        "濒死",
+        "HP回复"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身濒死时，从盟友主动技能获得的HP回复量+30%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -55909,6 +56656,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "自身HP≤最大HP30%时，受到我方角色主动技能的HP回复量+15%；不含被动再生。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "low-hp-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "low-hp-effect-1"
+              ],
+              "summary": "自身HP≤最大HP30%时，受到我方角色主动技能的HP回复量+15%；不含被动再生。",
+              "operation": "healing-received-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "source": "allied-active-skill"
+              },
+              "valuePercent": 15,
+              "condition": {
+                "subject": "self",
+                "metric": "current-hp-percent-of-max",
+                "operator": "lte",
+                "thresholdPercent": 30
+              },
+              "affectsRecipientMaximumHP": false,
+              "group": "self-low-received",
+              "combatRole": "direct-effect",
+              "effectIdentity": "cf54afaf524eaef4:low-hp-effect-1",
+              "sourceClause": "受到敌人物理、魔法攻击的伤害-10%；自身濒死时，从我方角色的主动技能获得的HP恢复量+15%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "low-hp-condition",
+                  "text": "自身HP≤最大HP的30%时生效"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
@@ -55916,12 +56710,11 @@ export const SKILL_LABELING_CATALOG = {
         "物理",
         "魔法",
         "防御",
-        "魔抗"
+        "魔抗",
+        "HP回复"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身濒死时，从我方角色主动技能获得的HP回复量+15%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -56593,12 +57386,72 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "受到物理攻击时，有概率自动格挡并减轻该次伤害。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "guard"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard"
+              ],
+              "summary": "受到物理攻击时，有概率自动格挡并减轻该次伤害。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-guard",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "effectIdentity": "全部技能:all:31:guard",
+              "phase": "before-damage",
+              "activationMode": "per-hit-response",
+              "condition": {
+                "subject": "self",
+                "event": "attack-received",
+                "incomingType": "physical",
+                "requiresHpDamage": false
+              },
+              "chanceStatus": "unconfirmed",
+              "mitigationStatus": "unconfirmed",
+              "sourceClause": "受到物理攻击时，有概率自动格挡，减轻伤害。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到物理攻击时"
+                },
+                {
+                  "partId": "activation-chance",
+                  "text": "概率触发，具体概率待确认"
+                },
+                {
+                  "partId": "guard-amount-unconfirmed",
+                  "text": "格挡减伤的具体数值待确认"
+                }
+              ],
+              "group": "enable-physical",
+              "combatRole": "direct-effect",
+              "pendingPartIds": [
+                "activation-chance",
+                "guard-amount-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
         "受到攻击",
         "物理",
-        "防御"
+        "防御",
+        "格挡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -56660,7 +57513,7 @@ export const SKILL_LABELING_CATALOG = {
               "requiresSkillId": "全部技能:all:31"
             }
           ],
-          "calculationNote": "需要装备「格挡」；这项装备技能前提仍单独待贴标签。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+          "calculationNote": "需要装备「格挡」；该技能装备前提已由格挡标签完成，触发概率仍待确认。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         },
         "魔法": {
           "summary": "装备「格挡」时，受到魔法攻击也有概率自动格挡。",
@@ -56757,17 +57610,77 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "装备「格挡」时，受到魔法攻击也有概率自动格挡。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "guard"
+            ],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard"
+              ],
+              "summary": "装备「格挡」时，受到魔法攻击也有概率自动格挡。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-magic-guard",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "effectIdentity": "全部技能:all:34:guard",
+              "phase": "before-damage",
+              "activationMode": "per-hit-response",
+              "requiresSkillId": "全部技能:all:31",
+              "condition": {
+                "subject": "self",
+                "event": "attack-received",
+                "incomingType": "magic",
+                "requiresHpDamage": false
+              },
+              "chanceStatus": "unconfirmed",
+              "sourceClause": "装备「格挡」技能时，魔法攻击也有概率被自动格挡。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到魔法攻击时"
+                },
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能时生效"
+                },
+                {
+                  "partId": "activation-chance",
+                  "text": "概率触发，具体概率待确认"
+                }
+              ],
+              "group": "enable-magic",
+              "combatRole": "direct-effect",
+              "pendingPartIds": [
+                "activation-chance"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
         "受到攻击",
         "魔法",
-        "魔抗"
+        "魔抗",
+        "格挡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "装备「格挡」技能时生效",
         "概率触发，具体概率待确认"
       ]
     },
@@ -57120,11 +58033,76 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "反击": {
+          "summary": "受到敌人物理攻击时，有概率发动强力反击。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter"
+              ],
+              "summary": "受到敌人物理攻击时，有概率发动强力反击。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "trigger-counter",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "effectIdentity": "9304cda80e847537:counter",
+              "phase": "on-attack",
+              "activationMode": "triggered-action",
+              "condition": {
+                "subject": "self",
+                "event": "attack-received",
+                "incomingType": "physical",
+                "requiresHpDamage": false,
+                "source": "enemy"
+              },
+              "chanceStatus": "unconfirmed",
+              "counterPowerStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "physical-attack-received"
+              },
+              "group": "enable",
+              "combatRole": "direct-effect",
+              "sourceClause": "受到敌人物理攻击时，有概率发动强力反击。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到敌人物理攻击时"
+                },
+                {
+                  "partId": "activation-chance",
+                  "text": "概率触发，具体概率待确认"
+                },
+                {
+                  "partId": "counter-power-unconfirmed",
+                  "text": "反击具体伤害倍率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "activation-chance",
+                "counter-power-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
         "受到攻击",
-        "物理"
+        "物理",
+        "反击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -57233,11 +58211,78 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "HP回复": {
+          "summary": "受到物理伤害时，有概率回复HP。原描述的10%基数待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到物理伤害时，有概率回复HP。原描述的10%基数待确认。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "effectIdentity": "6606b1627076dda2:heal",
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "unconfirmed",
+              "condition": {
+                "subject": "self",
+                "event": "damage-received",
+                "incomingType": "physical",
+                "requiresHpDamage": true
+              },
+              "chanceStatus": "unconfirmed",
+              "restorePercent": 10,
+              "restoreBase": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "physical-damage-received"
+              },
+              "resource": "HP",
+              "group": "physical-received-unknown-base",
+              "combatRole": "direct-effect",
+              "sourceClause": "受到物理伤害时，有概率恢复10%的HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到物理伤害时"
+                },
+                {
+                  "partId": "activation-chance",
+                  "text": "概率触发，具体概率待确认"
+                },
+                {
+                  "partId": "heal-base-unconfirmed",
+                  "text": "HP回复10%所参照的基数待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "activation-chance",
+                "heal-base-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "受到攻击",
-        "物理"
+        "物理",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -57273,6 +58318,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "once",
           "kind": "condition",
           "text": "仅可存活一次；次数重置范围待确认"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -57310,18 +58360,81 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "致命伤害存活与HP回复分别列组；不按已倒下后的复活处理，不补写原文未给出的回血量或每Wave重置。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "HP回复": {
+          "summary": "受到致命伤害并触发存活效果时，恢复少量HP。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到致命伤害并触发存活效果时，恢复少量HP。",
+              "isBuff": false,
+              "phase": "lethal-damage-resolution",
+              "activationMode": "triggered-action",
+              "operation": "restore-hp",
+              "resource": "HP",
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "lethal-damage-received"
+              },
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "doesRevive": false,
+              "maxTriggers": 1,
+              "resetScopeStatus": "unconfirmed",
+              "requiresSurvivalEffect": true,
+              "group": "lethal-184",
+              "combatRole": "direct-effect",
+              "effectIdentity": "6b975fa167e7e3e6:heal",
+              "sourceClause": "受到致命伤害时，存活一次并恢复少量生命值。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到致命伤害时"
+                },
+                {
+                  "partId": "once",
+                  "text": "仅可存活一次；次数重置范围待确认"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "target": "self",
+              "pendingPartIds": [
+                "survive",
+                "once",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "受到攻击"
+        "受到攻击",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "承受致命伤害后存活",
-        "恢复少量HP，具体回复量待确认"
+        "承受致命伤害后存活"
       ],
       "remainingConditions": [
-        "仅可存活一次；次数重置范围待确认"
+        "仅可存活一次；次数重置范围待确认",
+        "HP回复的具体数值与计算公式待确认"
       ]
     },
     {
@@ -57679,11 +58792,74 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "HP回复": {
+          "summary": "受到物理伤害时，有概率回复相当于所受伤害25%的HP。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到物理伤害时，有概率回复相当于所受伤害25%的HP。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "effectIdentity": "全部技能:all:307:heal",
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 25,
+              "condition": {
+                "subject": "self",
+                "event": "damage-received",
+                "incomingType": "physical",
+                "requiresHpDamage": true
+              },
+              "chanceStatus": "unconfirmed",
+              "restorePercent": 25,
+              "restoreBase": "received-physical-damage",
+              "trigger": {
+                "actor": "self",
+                "event": "physical-damage-received"
+              },
+              "resource": "HP",
+              "group": "physical-received",
+              "combatRole": "direct-effect",
+              "sourceClause": "受到物理伤害时，有几率恢复相当于伤害值 25% 的生 命值。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到物理伤害时"
+                },
+                {
+                  "partId": "activation-chance",
+                  "text": "概率触发，具体概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "activation-chance"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "受到攻击",
-        "物理"
+        "物理",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -57786,11 +58962,72 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "HP回复": {
+          "summary": "受到魔法伤害时，有概率回复相当于所受伤害10%的HP。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到魔法伤害时，有概率回复相当于所受伤害10%的HP。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "effectIdentity": "b2e58697ea88e464:heal",
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 10,
+              "condition": {
+                "subject": "self",
+                "event": "damage-received",
+                "incomingType": "magic",
+                "requiresHpDamage": true
+              },
+              "chanceStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "magic-damage-received"
+              },
+              "resource": "HP",
+              "group": "magic-received",
+              "combatRole": "direct-effect",
+              "sourceClause": "受到魔法伤害时，有概率恢复相当于所受伤害10%的HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到魔法伤害时"
+                },
+                {
+                  "partId": "activation-chance",
+                  "text": "概率触发，具体概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "activation-chance"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "受到攻击",
-        "魔法"
+        "魔法",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -57893,11 +59130,72 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "HP回复": {
+          "summary": "受到魔法伤害时，有概率回复相当于所受伤害25%的HP。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到魔法伤害时，有概率回复相当于所受伤害25%的HP。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "effectIdentity": "全部技能:all:346:heal",
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 25,
+              "condition": {
+                "subject": "self",
+                "event": "damage-received",
+                "incomingType": "magic",
+                "requiresHpDamage": true
+              },
+              "chanceStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "magic-damage-received"
+              },
+              "resource": "HP",
+              "group": "magic-received",
+              "combatRole": "direct-effect",
+              "sourceClause": "受到魔法伤害时，有几率恢复相当于所受伤害值 25% 的生命值。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到魔法伤害时"
+                },
+                {
+                  "partId": "activation-chance",
+                  "text": "概率触发，具体概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "activation-chance"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "受到攻击",
-        "魔法"
+        "魔法",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -58000,11 +59298,72 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "HP回复": {
+          "summary": "受到魔法伤害时，有概率回复相当于所受伤害40%的HP。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到魔法伤害时，有概率回复相当于所受伤害40%的HP。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "effectIdentity": "全部技能:all:389:heal",
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 40,
+              "condition": {
+                "subject": "self",
+                "event": "damage-received",
+                "incomingType": "magic",
+                "requiresHpDamage": true
+              },
+              "chanceStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "magic-damage-received"
+              },
+              "resource": "HP",
+              "group": "magic-received",
+              "combatRole": "direct-effect",
+              "sourceClause": "当你受到魔法伤害时，有几率恢复相当于所受伤害值 40% 的生命值。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到魔法伤害时"
+                },
+                {
+                  "partId": "activation-chance",
+                  "text": "概率触发，具体概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "activation-chance"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "受到攻击",
-        "魔法"
+        "魔法",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -58049,6 +59408,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "buff-lifetime",
           "kind": "condition",
           "text": "减伤持续10秒；与同类型Buff只计最高一项"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -58186,20 +59550,86 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "受到致命伤害并触发时，HP大幅恢复，具体量待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到致命伤害并触发时，HP大幅恢复，具体量待确认。",
+              "isBuff": false,
+              "phase": "lethal-damage-resolution",
+              "activationMode": "triggered-action",
+              "operation": "restore-hp",
+              "resource": "HP",
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "lethal-damage-received"
+              },
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "doesRevive": false,
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "requiresMpSetToZero": true,
+              "group": "lethal-389",
+              "combatRole": "direct-effect",
+              "effectIdentity": "29f04fa2a0ffb9fb:heal",
+              "sourceClause": "当你受到致命伤害时，你的魔法值会降至零，但你的 生命值会大幅恢复，并且在接下来的 10 秒内（每波 一次）受到的伤害会减少 50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到致命伤害时"
+                },
+                {
+                  "partId": "once-per-wave",
+                  "text": "每Wave仅一次"
+                },
+                {
+                  "partId": "buff-lifetime",
+                  "text": "减伤持续10秒；与同类型Buff只计最高一项"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "target": "self",
+              "pendingPartIds": [
+                "once-per-wave",
+                "buff-lifetime",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "MP",
         "受到攻击",
-        "伤害减少"
+        "伤害减少",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "HP大幅恢复，具体回复量待确认"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "每Wave仅一次",
-        "减伤持续10秒；与同类型Buff只计最高一项"
+        "减伤持续10秒；与同类型Buff只计最高一项",
+        "HP回复的具体数值与计算公式待确认"
       ]
     },
     {
@@ -59878,11 +61308,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "装备「格挡」且格挡成功时，回复少量MP；具体回复值待确认。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped",
+              "guard-success"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "mp-restore"
+              ],
+              "summary": "装备「格挡」且格挡成功时，回复少量MP；具体回复值待确认。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-current",
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "event": "guard-success"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "scope": {
+                "direction": "resource",
+                "resource": "MP"
+              },
+              "effectIdentity": "全部技能:all:36:mp-restore",
+              "sourceClause": "装备「格挡」技能时，格挡成功会回复少量MP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能时"
+                },
+                {
+                  "partId": "guard-success",
+                  "text": "成功格挡时触发"
+                }
+              ],
+              "group": "success-mp",
+              "combatRole": "condition-benefit",
+              "pendingPartIds": [
+                "mp-restore-amount"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
         "MP",
-        "防御"
+        "防御",
+        "格挡"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -59942,15 +61423,67 @@ export const SKILL_LABELING_CATALOG = {
               "amountPercent": 2
             }
           ]
+        },
+        "普通攻击": {
+          "summary": "普通攻击时，有概率将造成伤害的2%转为MP。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-attack"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "mp-absorb"
+              ],
+              "summary": "普通攻击时，有概率将造成伤害的2%转为MP。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-current",
+              "amountBase": "damage-dealt",
+              "amountPercent": 2,
+              "scope": {
+                "direction": "resource",
+                "resource": "MP",
+                "sourceAttackType": "normal-attack"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "chanceStatus": "unconfirmed",
+              "group": "mp-absorb",
+              "combatRole": "condition-benefit",
+              "effectIdentity": "5974289453db7347:mp-absorb",
+              "sourceClause": "普通攻击时，有概率吸收造成伤害的2%并转化为MP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-attack",
+                  "text": "普通攻击时触发"
+                },
+                {
+                  "partId": "probability",
+                  "text": "概率触发，具体概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "probability"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "MP"
+        "MP",
+        "普通攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "普通攻击时触发",
         "概率触发，具体概率待确认"
       ]
     },
@@ -61751,10 +63284,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "10%是复活后的HP值，不是最大HP增加10%，也不是保持存活时的濒死回血。复活本身不等于已完成死亡触发和次数限制标签。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
+        },
+        "HP回复": {
+          "summary": "自身HP降至0并战斗不能时自动复活，复活后HP为10%；每Wave最多一次。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "revival"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "revival"
+              ],
+              "summary": "自身HP降至0并战斗不能时自动复活，复活后HP为10%；每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "revive-self",
+              "initialHpPercent": 10,
+              "hpBase": "maximum-HP",
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "method": "self-revival"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "became-incapacitated"
+              },
+              "requiresIncapacitated": true,
+              "healingMode": "revival-initial-hp",
+              "group": "revival-hp",
+              "combatRole": "direct-effect",
+              "effectIdentity": "898c96e867704168:revival",
+              "sourceClause": "当生命值降至 0 时，自动复活并略微恢复生命值（每 波最多一次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "incapacitated",
+                  "text": "自身HP降至0、进入战斗不能时"
+                },
+                {
+                  "partId": "once-per-wave",
+                  "text": "每个Wave最多自动复活1次"
+                }
+              ],
+              "pendingPartIds": [
+                "incapacitated",
+                "once-per-wave"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "复活"
+        "复活",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -61907,6 +63497,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "once-per-wave",
           "kind": "condition",
           "text": "每个Wave最多触发1次"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -61997,17 +63592,72 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "HP回复": {
+          "summary": "其他友军倒下时，自身HP大幅回复；回复量待确认，每Wave最多一次。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "hp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-restore"
+              ],
+              "summary": "其他友军倒下时，自身HP大幅回复；回复量待确认，每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-action",
+              "resource": "HP",
+              "operation": "restore-hp",
+              "amountStatus": "unconfirmed",
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "group": "ally-death",
+              "combatRole": "direct-effect",
+              "effectIdentity": "387b6e052ad74bb1:hp-restore",
+              "sourceClause": "我方角色陷入战斗不能时，自身HP大幅恢复，并按照该角色已积攒的特技库存量恢复自身对应的特技库存（每Wave最多1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "ally-death",
+                  "text": "其他友军陷入战斗不能时"
+                },
+                {
+                  "partId": "once-per-wave",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "友军死亡",
-        "特技相关"
+        "特技相关",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "自身HP大幅回复，具体回复量待确认"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "HP回复的具体数值与计算公式待确认"
+      ]
     },
     {
       "id": "e4203cbe63a20722",
@@ -62298,6 +63948,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "hp-restore",
           "kind": "effect",
           "text": "暴击后回复自身HP，具体回复量与计算公式待确认"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -62335,17 +63990,70 @@ export const SKILL_LABELING_CATALOG = {
               "amountStatus": "unconfirmed"
             }
           ],
-          "calculationNote": "本轮仅完成“发生暴击”条件，HP回复效果仍待判断；不是吸血比例、受到暴击回血或必定暴击。"
+          "calculationNote": "本轮仅完成“发生暴击”条件，HP回复操作已归入HP回复标签，具体量与计算公式仍待确认；不是吸血比例、受到暴击回血或必定暴击。"
+        },
+        "HP回复": {
+          "summary": "自身攻击暴击后回复自身HP，具体回复量与公式待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "hp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-restore"
+              ],
+              "summary": "自身攻击暴击后回复自身HP，具体回复量与公式待确认。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "phase": "after-critical-hit",
+              "resource": "HP",
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "critical-hit"
+              },
+              "requiresCriticalHit": true,
+              "group": "critical",
+              "combatRole": "direct-effect",
+              "effectIdentity": "全部技能:all:30:hp-restore",
+              "sourceClause": "发生暴击时，恢复HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "critical-hit",
+                  "text": "自身攻击实际发生暴击时"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "暴击后回复自身HP，具体回复量与计算公式待确认"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "HP回复的具体数值与计算公式待确认"
+      ]
     },
     {
       "id": "12fb48061bb074e5",
@@ -64526,17 +66234,59 @@ export const SKILL_LABELING_CATALOG = {
               "grantsCriticalEligibility": false
             }
           ],
-          "calculationNote": "只提高反击的暴伤，不提高反击概率或暴击率，不能并入所有物理攻击或普通攻击暴伤；反击范围仍待对应标签。"
+          "calculationNote": "只提高反击的暴伤，不提高反击概率或暴击率，不能并入所有物理攻击或普通攻击暴伤；反击范围已由反击标签完成。"
+        },
+        "反击": {
+          "summary": "反击发生暴击时，暴击伤害+20%。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-damage"
+            ],
+            "conditionPartIds": [
+              "counter-only"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "反击发生暴击时，暴击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter"
+              },
+              "valuePercent": 20,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false,
+              "group": "critical-damage",
+              "combatRole": "direct-effect",
+              "effectIdentity": "4d81b9b6cd7cb7fe:critical-damage",
+              "sourceClause": "反击发生暴击时，暴击伤害+20%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "counter-only",
+                  "text": "仅限反击攻击"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "反击"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "仅限反击攻击"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "a5ace74d23269296",
@@ -78296,11 +80046,48 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "HP回复": {
+          "summary": "治疗魔法威力+30%。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic"
+              ],
+              "summary": "治疗魔法威力+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-output-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "effectIdentity": "182731824b8599ca:healing-magic",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "valuePercent": 30,
+              "group": "magic-output",
+              "combatRole": "direct-effect",
+              "sourceClause": "光属性攻击伤害+20%，治疗魔法威力+30%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
         "光属性",
-        "魔法"
+        "魔法",
+        "HP回复"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -87819,13 +89606,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对神类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对神类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "99a9a562aa4868a1:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-god",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀、反击对神系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为神类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "神"
+        "神",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -88040,13 +89881,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对机械类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对机械类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "edaa295f9aa089b8:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "machine"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-machine",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀、反击对机械系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为机械类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "机械种族"
+        "机械种族",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -88261,13 +90156,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对鱼类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对鱼类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "e60d08454c99c899:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-fish",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀、反击对鱼系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为鱼类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "鱼"
+        "鱼",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -88482,13 +90431,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对魔法生物类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "全部技能:all:538:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-creature",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀和反击对魔法生物类型敌人产生特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为魔法生物类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "魔法生物"
+        "魔法生物",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -89027,13 +91030,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对不死生物类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "全部技能:all:626:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-undead",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀和反击对不死生物类型敌人产生特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为不死生物类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "不死生物"
+        "不死生物",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -89248,13 +91305,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对士兵类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对士兵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "全部技能:all:632:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-soldier",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀和反击对士兵类型敌人产生特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为士兵类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "士兵"
+        "士兵",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -89808,13 +91919,70 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "每名机械类型我方单位使反击上限+1,000，最多4名。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-cap"
+              ],
+              "summary": "每名机械类型我方单位使反击上限+1,000，最多4名",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "4aafd29a15ad98c4:counter-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "count-scaled-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-race",
+                "race": "machine",
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capPerUnit": 1000,
+              "maxCapPoints": 4000,
+              "matchingMultipleRaces": "apply-once",
+              "group": "machine-count-cap",
+              "combatRole": "direct-effect",
+              "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "ally-race-count",
+                  "text": "统计我方机械类型单位，包含自身，最多4名"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "特技相关",
-        "机械种族"
+        "机械种族",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -90607,13 +92775,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对狙击手类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对狙击手类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "全部技能:all:704:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-sniper",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀和反击对狙击类型敌人产生特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为狙击手类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "狙击手"
+        "狙击手",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -91406,13 +93628,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对魔法师类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "全部技能:all:738:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-sorcerer",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀和反击对魔法师类型敌人产生特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为魔法师类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "魔法师"
+        "魔法师",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -92532,13 +94808,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对龙类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对龙类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "75d1684f4522a2de:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-dragon",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀、反击对龙系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为龙类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "龙"
+        "龙",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -94050,13 +96380,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对兽类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对兽类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "全部技能:all:876:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-beast",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀和反击对兽类型敌人产生特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为兽类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "兽"
+        "兽",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -94560,13 +96944,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "反击": {
+          "summary": "反击对骑士类型敌人触发特攻。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对骑士类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "1142a097127c9dee:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-knight",
+              "combatRole": "direct-effect",
+              "sourceClause": "物理攻击、必杀、反击对骑士系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为骑士类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "骑士"
+        "骑士",
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -96398,17 +98836,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "HP回复": {
+          "summary": "受到可恢复HP的主动技能效果时，SCT恢复3秒。（回复的是SCT秒数。）。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "sct-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 3,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "active-skill-healing-received",
+                "actor": "self",
+                "source": "active-skill",
+                "requiresHpRecoveryCapability": true,
+                "passiveRegenCounts": false
+              },
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "受到可恢复HP的主动技能效果时，SCT恢复3秒。（回复的是SCT秒数。）",
+              "operation": "restore-sct-seconds",
+              "effectIdentity": "3e4595947b5c48f3:sct-restore",
+              "group": "active-heal-sct",
+              "combatRole": "condition-benefit",
+              "sourceClause": "受到可恢复HP的主动技能效果时，SCT恢复3秒。",
+              "skillReviewConditions": [
+                {
+                  "partId": "sct-trigger",
+                  "text": "受到具有HP恢复效果的主动技能；不是自然回复或持续再生"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关"
+        "特技相关",
+        "HP回复"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "受到具有HP恢复效果的主动技能；不是自然回复或持续再生"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:197",
@@ -96527,12 +99012,68 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "装备「格挡」技能并成功格挡时，SCT少量回复；回复量待确认。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped",
+              "guard-success"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "event": "guard-success"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "装备「格挡」技能并成功格挡时，SCT少量回复；回复量待确认。",
+              "operation": "restore-sct-unconfirmed",
+              "effectIdentity": "全部技能:all:197:sct-restore",
+              "sourceClause": "[仅装备防御时生效] 防御会略微恢复 SCT",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "要求装备的是格挡技能，不是防具"
+                },
+                {
+                  "partId": "guard-success",
+                  "text": "成功格挡时触发"
+                },
+                {
+                  "partId": "sct-amount",
+                  "text": "具体SCT回复量待确认"
+                }
+              ],
+              "group": "success-sct",
+              "combatRole": "condition-benefit",
+              "pendingPartIds": [
+                "sct-amount"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "特技相关",
-        "防御"
+        "防御",
+        "格挡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -97248,17 +99789,61 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "反击": {
+          "summary": "发动反击时，SCT恢复1秒。（回复的是SCT秒数。）。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "sct-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 1,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "counter-used",
+                "actor": "self"
+              },
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "发动反击时，SCT恢复1秒。（回复的是SCT秒数。）",
+              "operation": "restore-sct-seconds",
+              "effectIdentity": "5950c82ca13345b0:sct-restore",
+              "group": "sct",
+              "combatRole": "condition-benefit",
+              "sourceClause": "发动反击时，SCT恢复1秒。",
+              "skillReviewConditions": [
+                {
+                  "partId": "sct-trigger",
+                  "text": "自身发动反击时"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关"
+        "特技相关",
+        "反击"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "自身发动反击时"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "a0e9ad8c974ebca1",
@@ -97843,6 +100428,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "sct-restore",
           "kind": "effect",
           "text": "存活的配对角色全部特技SCT回复15秒"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -97889,20 +100479,88 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "HP回复": {
+          "summary": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "hp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "paired-living-ally",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "resource": "HP",
+              "trigger": {
+                "event": "became-incapacitated",
+                "actor": "self"
+              },
+              "pair": {
+                "otherEquippedCount": 1,
+                "requiredSkillId": "6958b9c4d7aad7cb",
+                "targetMustBeAlive": true
+              },
+              "maxTriggers": 1,
+              "resetScope": "pair",
+              "partIds": [
+                "hp-restore"
+              ],
+              "summary": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认。",
+              "operation": "restore-hp",
+              "amountStatus": "unconfirmed",
+              "group": "paired-ally",
+              "combatRole": "direct-effect",
+              "effectIdentity": "6958b9c4d7aad7cb:hp-restore",
+              "sourceClause": "除自身外，若刚好只有1名友方角色也装备“Dear Hearts”，则自身战斗不能时，使仍存活的配对角色HP大幅恢复，并使其所有特技的SCT恢复15秒（每对角色仅限触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "paired-skill",
+                  "text": "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
+                },
+                {
+                  "partId": "self-death",
+                  "text": "技能持有者自身陷入战斗不能时触发"
+                },
+                {
+                  "partId": "once-per-pair",
+                  "text": "每对角色最多触发1次，不是每个角色各1次"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "paired-skill",
+                "self-death",
+                "once-per-pair",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关"
+        "特技相关",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "自身倒下时，使仍存活的配对角色HP大幅回复，具体回复量待确认"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活",
         "技能持有者自身陷入战斗不能时触发",
-        "每对角色最多触发1次，不是每个角色各1次"
+        "每对角色最多触发1次，不是每个角色各1次",
+        "HP回复的具体数值与计算公式待确认"
       ]
     },
     {
@@ -98225,17 +100883,68 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "反击": {
+          "summary": "目标敌人正在发动特技或反击时，对其特技伤害+20%。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-action"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyActionAnyOf": [
+                  "skill",
+                  "counter"
+                ]
+              },
+              "valuePercent": 20,
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "目标敌人正在发动特技或反击时，对其特技伤害+20%。",
+              "operation": "damage-up",
+              "effectIdentity": "74710ff77dbf0cb0:skill-damage",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "actionsAnyOf": [
+                  "skill",
+                  "counter"
+                ],
+                "logicalOperator": "OR"
+              },
+              "matchingMultipleActions": "apply-once",
+              "group": "enemy-action-skill",
+              "combatRole": "condition-benefit",
+              "sourceClause": "敌人正在发动特技或反击时，对该敌人的特技伤害+20%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-action",
+                  "text": "判断目标敌人正在发动特技或反击，二者为OR；不是自身反击"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关"
+        "特技相关",
+        "反击"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "判断目标敌人正在发动特技或反击，二者为OR；不是自身反击"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "7fa993c76e14f621",
@@ -101929,12 +104638,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "物理攻击时，有概率解除目标格挡。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "guard-release"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-release"
+              ],
+              "summary": "物理攻击时，有概率解除目标格挡",
+              "target": "target-enemy",
+              "isBuff": false,
+              "operation": "release-enemy-guard",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "effectIdentity": "b840eb80f22ef78e:guard-release",
+              "chanceStatus": "unconfirmed",
+              "sourceClause": "物理攻击时，有概率解除敌人的格挡。",
+              "skillReviewConditions": [
+                {
+                  "partId": "physical-used",
+                  "text": "发动物理攻击时"
+                },
+                {
+                  "partId": "chance-unconfirmed",
+                  "text": "解除格挡的概率与判定时点待确认"
+                }
+              ],
+              "group": "release-physical",
+              "combatRole": "direct-effect",
+              "pendingPartIds": [
+                "chance-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "防御"
+        "防御",
+        "格挡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -102275,19 +105030,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击每次命中有3%概率给目标施加受到物理伤害+20%的减益，持续40秒；不把它当作自身常驻增伤。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-vulnerability"
+              ],
+              "summary": "普通攻击每次命中有3%概率给目标施加受到物理伤害+20%的减益，持续40秒；不把它当作自身常驻增伤。",
+              "target": "target-enemy",
+              "isBuff": false,
+              "operation": "apply-physical-vulnerability",
+              "scope": {
+                "direction": "target-incoming",
+                "attackType": "physical"
+              },
+              "effectIdentity": "1032f88be503dbb8:physical-vulnerability",
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationSeconds": 40,
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "sourceClause": "普通攻击时，概率赋予敌人物理受到伤害+20%的减益效果，持续一定时间。",
+              "group": "hit-physical-vulnerability",
+              "combatRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-hit",
+                  "text": "普通攻击每次命中判定，不扩大到特技、反击或必杀"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
         "防御",
-        "异常"
+        "异常",
+        "普通攻击"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "普通攻击每次命中判定，不扩大到特技、反击或必杀"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c18e2156cd295689",
@@ -104529,17 +107330,73 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "反击": {
+          "summary": "实际装备自由之翼的我方单位2／3／4名时，受到反击伤害分别-5%／-10%／-15%；按当前人数取一档。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-reduction"
+              ],
+              "summary": "实际装备自由之翼的我方单位2／3／4名时，受到反击伤害分别-5%／-10%／-15%；按当前人数取一档。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "tiered-incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "counter"
+              },
+              "effectIdentity": "7791e2dcb32f7841:counter-reduction",
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 5
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 15
+                }
+              ],
+              "minimumCount": 2,
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "7791e2dcb32f7841",
+              "group": "same-skill-count-incoming",
+              "combatRole": "direct-effect",
+              "sourceClause": "技能“自由之翼”装备于友方单位。根据装备此技能的 友方单位数量，受到的来自敌人的物理攻击和反击的 伤害降低 （2 个单位：-5%，3 个单位：-10%，4 个单位：-15%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "same-skill-count",
+                  "text": "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
+                }
+              ],
+              "pendingPartIds": [
+                "same-skill-count"
+              ]
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "防御"
+        "防御",
+        "反击"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "同技能我方单位2／3／4名时，受到反击伤害分别-5%／-10%／-15%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
       ]
@@ -105022,6 +107879,49 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "反击": {
+          "summary": "魔法咏唱中，受到反击伤害-10%。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-reduction"
+              ],
+              "summary": "魔法咏唱中，受到反击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "counter"
+              },
+              "effectIdentity": "f2910193b70859f3:counter-reduction",
+              "valuePercent": 10,
+              "condition": {
+                "subject": "self",
+                "event": "casting-magic"
+              },
+              "group": "casting-incoming",
+              "combatRole": "direct-effect",
+              "sourceClause": "魔法咏唱中，受到的物理、魔法和反击伤害-10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "casting",
+                  "text": "自身正在咏唱魔法"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
@@ -105029,12 +107929,11 @@ export const SKILL_LABELING_CATALOG = {
         "物理",
         "魔法",
         "防御",
-        "魔抗"
+        "魔抗",
+        "反击"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔法咏唱中，受到反击伤害-10%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -106213,11 +109112,48 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "HP回复": {
+          "summary": "自身施放的回复魔法HP恢复量+10%。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic-up"
+              ],
+              "summary": "自身施放的回复魔法HP恢复量+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-output-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "effectIdentity": "01f5167831d7b556:healing-magic-up",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "valuePercent": 10,
+              "group": "magic-output",
+              "combatRole": "direct-effect",
+              "sourceClause": "自身的回复魔法HP恢复量+10%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "HP回复"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -106269,11 +109205,48 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "HP回复": {
+          "summary": "自身施放的回复魔法HP恢复量+30%。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic-up"
+              ],
+              "summary": "自身施放的回复魔法HP恢复量+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-output-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "effectIdentity": "1c52dcb1735c073a:healing-magic-up",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "valuePercent": 30,
+              "group": "magic-output",
+              "combatRole": "direct-effect",
+              "sourceClause": "自身的回复魔法HP恢复量+30%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "HP回复"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -106350,11 +109323,71 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "HP回复": {
+          "summary": "自身施放的回复魔法HP恢复量+30%；自身施放的回复魔法单次HP恢复上限+2,000。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic-up",
+              "healing-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic-up"
+              ],
+              "summary": "自身施放的回复魔法HP恢复量+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-output-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "effectIdentity": "全部技能:all:794:healing-magic-up",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "valuePercent": 30,
+              "group": "magic-output",
+              "combatRole": "direct-effect",
+              "sourceClause": "自身施放的回复魔法回复量+30%，回复量上限+2,000。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "healing-magic-cap"
+              ],
+              "summary": "自身施放的回复魔法单次HP恢复上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-cap-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "effectIdentity": "全部技能:all:794:healing-magic-cap",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "healingCapPoints": 2000,
+              "group": "magic-cap",
+              "combatRole": "direct-effect",
+              "sourceClause": "自身施放的回复魔法回复量+30%，回复量上限+2,000。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "HP回复"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -106444,12 +109477,49 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "自身施放的回复魔法单次HP恢复上限+1,500。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-magic-cap"
+              ],
+              "summary": "自身施放的回复魔法单次HP恢复上限+1,500",
+              "target": "self",
+              "isBuff": false,
+              "operation": "healing-cap-up",
+              "scope": {
+                "direction": "healing",
+                "spellType": "healing-magic"
+              },
+              "effectIdentity": "ce7f716ec611a6d3:healing-magic-cap",
+              "affectsRecipientMaximumHP": false,
+              "appliesTo": "self-cast-healing-magic",
+              "healingCapPoints": 1500,
+              "group": "magic-cap",
+              "combatRole": "direct-effect",
+              "sourceClause": "魔抗+5%；自身回复魔法的HP恢复上限+1,500。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
         "魔法",
-        "魔抗"
+        "魔抗",
+        "HP回复"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -110038,11 +113108,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对鸟类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对鸟类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "cd58d19d280ac44f:normal-killer",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "bird"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "bird"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "enable-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "guaranteedCritical": false,
+              "group": "killer-bird",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对鸟系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为鸟类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "鸟相关效果保留攻击种类和种族主体；多种族为OR，同一效果只计一次。特攻资格不擅自补造倍率。",
       "assignedTags": [
-        "鸟"
+        "鸟",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -110590,6 +113714,89 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "dda1c38d5e1c90f8:normal-killer",
+              "effectStacking": "once-per-skill",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "condition": {
+                "subject": "target-enemy",
+                "raceAnyOf": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ],
+                "operator": "OR"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "operation": "enable-killer",
+              "grantsKillerEligibility": true,
+              "guaranteedInstantKill": false,
+              "guaranteedCritical": false,
+              "group": "killer-beast-plant-insect-bird-fish-creature",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race-beast",
+                  "text": "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
+                },
+                {
+                  "partId": "enemy-race-plant",
+                  "text": "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
+                },
+                {
+                  "partId": "enemy-race-insect",
+                  "text": "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
+                },
+                {
+                  "partId": "enemy-race",
+                  "text": "目标类型选项：鸟（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
+                },
+                {
+                  "partId": "enemy-race-fish",
+                  "text": "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
+                },
+                {
+                  "partId": "enemy-race-creature",
+                  "text": "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "鸟相关效果保留攻击种类和种族主体；多种族为OR，同一效果只计一次。特攻资格不擅自补造倍率。",
@@ -110599,7 +113806,8 @@ export const SKILL_LABELING_CATALOG = {
         "植物",
         "昆虫",
         "魔法生物",
-        "鱼"
+        "鱼",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -110671,11 +113879,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对兽类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对兽类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "35eec30328c81b5c:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-beast",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对兽系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为兽类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "兽"
+        "兽",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -110747,11 +114009,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对植物类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对植物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "ad2eadc4169ea477:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "plant"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-plant",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对植物系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为植物类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "植物"
+        "植物",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -110823,11 +114139,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对昆虫类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对昆虫类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "25fa2b5f258876bd:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "insect"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-insect",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对昆虫系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为昆虫类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "昆虫"
+        "昆虫",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -110899,11 +114269,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对魔法生物类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "f613b94a7fe3eac3:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-creature",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对魔法生物系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为魔法生物类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "魔法生物"
+        "魔法生物",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -110975,11 +114399,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对不死生物类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "6439186351318d8f:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-undead",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对不死生物系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为不死生物类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "不死生物"
+        "不死生物",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111051,11 +114529,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对矿石类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对矿石类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "c3f6df4b71e94a5f:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "stone"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-stone",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对矿石系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为矿石类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "矿石"
+        "矿石",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111127,11 +114659,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对机械类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对机械类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "32babdfb0554ed43:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "machine"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-machine",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对机械系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为机械类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "机械种族"
+        "机械种族",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111203,11 +114789,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对鱼类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对鱼类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "1549fe8ad94d1f32:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-fish",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对鱼系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为鱼类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "鱼"
+        "鱼",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111279,11 +114919,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对精灵类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对精灵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "e6e5ad9aa042cbb4:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-spirit",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对精灵系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为精灵类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "精灵"
+        "精灵",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111355,11 +115049,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对龙类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对龙类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "2b30173ab0d7d7f6:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-dragon",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对龙系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为龙类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "龙"
+        "龙",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111431,11 +115179,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对神类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对神类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "517660b4dbea46e3:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-god",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对神系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为神类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "神"
+        "神",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111507,11 +115309,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对士兵类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对士兵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "全部技能:all:66:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-soldier",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对士兵类型敌人产生特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为士兵类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "士兵"
+        "士兵",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111583,11 +115439,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对骑士类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对骑士类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "b1b5416e553b19cd:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-knight",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对骑士系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为骑士类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "骑士"
+        "骑士",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111659,11 +115569,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对狙击手类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对狙击手类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "全部技能:all:70:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-sniper",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对狙击类型敌人产生特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为狙击手类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "狙击手"
+        "狙击手",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111735,11 +115699,65 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对魔法师类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "034b0063a9477540:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-sorcerer",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对魔法师系敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标敌人为魔法师类型"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "魔法师"
+        "魔法师",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -112010,6 +116028,77 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "ae4a9316a61a0384:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-soldier-knight-sniper-sorcerer",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对人类系（士兵、骑士、狙击手、魔法师）敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标类型选项：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                },
+                {
+                  "partId": "enemy-race-knight",
+                  "text": "目标类型选项：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                },
+                {
+                  "partId": "enemy-race-sniper",
+                  "text": "目标类型选项：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                },
+                {
+                  "partId": "enemy-race-sorcerer",
+                  "text": "目标类型选项：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
@@ -112017,7 +116106,8 @@ export const SKILL_LABELING_CATALOG = {
         "士兵",
         "骑士",
         "狙击手",
-        "魔法师"
+        "魔法师",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -112288,6 +116378,77 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "08ba2a63471cced7:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "killer-god-dragon-spirit-undead",
+              "combatRole": "direct-effect",
+              "sourceClause": "普通攻击对天灵系（神、龙、精灵、不死生物）敌人触发特攻。",
+              "skillReviewConditions": [
+                {
+                  "partId": "enemy-race",
+                  "text": "目标类型选项：神（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）"
+                },
+                {
+                  "partId": "enemy-race-dragon",
+                  "text": "目标类型选项：龙（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）"
+                },
+                {
+                  "partId": "enemy-race-spirit",
+                  "text": "目标类型选项：精灵（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）"
+                },
+                {
+                  "partId": "enemy-race-undead",
+                  "text": "目标类型选项：不死生物（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
@@ -112295,7 +116456,8 @@ export const SKILL_LABELING_CATALOG = {
         "不死生物",
         "精灵",
         "龙",
-        "神"
+        "神",
+        "普通攻击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -117345,18 +121507,73 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "HP回复": {
+          "summary": "装备衣服并受到可回复HP的主动技能时，自身受到的HP回复量+10%。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "healing-received"
+            ],
+            "conditionPartIds": [
+              "active-heal-received"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-received"
+              ],
+              "summary": "装备衣服并受到可回复HP的主动技能时，自身受到的HP回复量+10%。",
+              "target": "self",
+              "operation": "healing-received-up",
+              "scope": {
+                "direction": "incoming-healing",
+                "healingSource": "active-skill",
+                "resource": "HP",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "valuePercent": 10,
+              "trigger": {
+                "event": "active-hp-recovery-received"
+              },
+              "increasesHealingDealt": false,
+              "appliesToPassiveRegeneration": false,
+              "isBuff": false,
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "98771021cfbaa2c3:healing-received",
+              "applicability": "specific-armor",
+              "group": "clothes-received",
+              "combatRole": "direct-effect",
+              "sourceClause": "装备衣服时，受到可恢复HP的主动技能时，自身HP恢复量+10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "clothes-equipped",
+                  "text": "实际装备衣服"
+                },
+                {
+                  "partId": "active-heal-received",
+                  "text": "自身受到可回复HP的主动技能"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "衣服"
+        "衣服",
+        "HP回复"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "受到可回复HP的主动技能时，自身受到的HP回复量+10%"
-      ],
-      "remainingConditions": [
-        "自身受到可回复HP的主动技能"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "bb32fdca7184f7b8",
@@ -118414,10 +122631,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "装备格挡时，格挡伤害减免提高；具体幅度待确认。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "guard-effect"
+            ],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-effect"
+              ],
+              "summary": "装备格挡时，格挡伤害减免提高；具体幅度待确认",
+              "target": "self",
+              "isBuff": false,
+              "operation": "guard-mitigation-up",
+              "scope": {
+                "direction": "guard"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "magnitudeStatus": "unconfirmed",
+              "effectIdentity": "全部技能:all:32:guard-effect",
+              "sourceClause": "装备「格挡」技能时，格挡的伤害减免效果提高。",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能"
+                },
+                {
+                  "partId": "guard-unknown",
+                  "text": "具体幅度或概率待确认"
+                }
+              ],
+              "group": "mitigation",
+              "combatRole": "direct-effect",
+              "pendingPartIds": [
+                "guard-unknown"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "防御"
+        "防御",
+        "格挡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -118493,10 +122758,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "装备格挡时，格挡概率略微提高；具体概率待确认。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "guard-effect"
+            ],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-effect"
+              ],
+              "summary": "装备格挡时，格挡概率略微提高；具体概率待确认",
+              "target": "self",
+              "isBuff": false,
+              "operation": "guard-chance-up",
+              "scope": {
+                "direction": "guard"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "magnitudeStatus": "unconfirmed",
+              "effectIdentity": "e7ce580c0a8ae126:guard-effect",
+              "sourceClause": "【仅装备「格挡」时生效】格挡概率略微提升。",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能"
+                },
+                {
+                  "partId": "guard-unknown",
+                  "text": "具体幅度或概率待确认"
+                }
+              ],
+              "group": "chance",
+              "combatRole": "direct-effect",
+              "pendingPartIds": [
+                "guard-unknown"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "防御"
+        "防御",
+        "格挡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -118572,10 +122885,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "装备格挡时，更不容易被破防；具体机制与幅度待确认。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "guard-effect"
+            ],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-effect"
+              ],
+              "summary": "装备格挡时，更不容易被破防；具体机制与幅度待确认",
+              "target": "self",
+              "isBuff": false,
+              "operation": "guard-break-resistance-up",
+              "scope": {
+                "direction": "guard"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "magnitudeStatus": "unconfirmed",
+              "effectIdentity": "全部技能:all:37:guard-effect",
+              "sourceClause": "装备「格挡」技能时，更不容易被破防。",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能"
+                },
+                {
+                  "partId": "guard-unknown",
+                  "text": "具体幅度或概率待确认"
+                }
+              ],
+              "group": "break-resistance",
+              "combatRole": "direct-effect",
+              "pendingPartIds": [
+                "guard-unknown"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "防御"
+        "防御",
+        "格挡"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -118605,6 +122966,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "guard-success",
           "kind": "condition",
           "text": "成功格挡时触发"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -118653,16 +123019,124 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "格挡": {
+          "summary": "装备「格挡」技能时，格挡成功会回复少量HP。",
+          "relation": "guard-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped",
+              "guard-success"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-heal"
+              ],
+              "summary": "装备「格挡」技能时，格挡成功会回复少量HP。",
+              "target": "self",
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "healing"
+              },
+              "amountStatus": "unconfirmed",
+              "isBuff": false,
+              "trigger": {
+                "event": "guard-success"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "effectIdentity": "全部技能:all:35:guard-heal",
+              "sourceClause": "装备「格挡」技能时，格挡成功会回复少量HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能"
+                },
+                {
+                  "partId": "guard-success",
+                  "text": "成功格挡时触发"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "group": "success-hp",
+              "combatRole": "condition-benefit",
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "HP回复": {
+          "summary": "装备「格挡」技能时，格挡成功会回复少量HP。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "guard-heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-heal"
+              ],
+              "summary": "装备「格挡」技能时，格挡成功会回复少量HP。",
+              "target": "self",
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "healing"
+              },
+              "amountStatus": "unconfirmed",
+              "isBuff": false,
+              "trigger": {
+                "event": "guard-success"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "effectIdentity": "全部技能:all:35:guard-heal",
+              "sourceClause": "装备「格挡」技能时，格挡成功会回复少量HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能"
+                },
+                {
+                  "partId": "guard-success",
+                  "text": "成功格挡时触发"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "resource": "HP",
+              "group": "guard",
+              "combatRole": "direct-effect",
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "防御"
+        "防御",
+        "格挡",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "成功格挡时回复少量HP；回复量待确认"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "HP回复的具体数值与计算公式待确认"
+      ]
     },
     {
       "id": "1a90145b6d33a6c2",
@@ -119073,6 +123547,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "mnd-healing-reference",
           "kind": "effect",
           "text": "HP回复量使用自身魔抗作为计算参照；不改变魔抗，具体回复公式待确认"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -119110,16 +123589,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "每6秒进行一次30%概率的HP回复判定；回复量参照自身魔抗等因素，公式待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "heal"
+              ],
+              "summary": "每6秒进行一次30%概率的HP回复判定；回复量参照自身魔抗等因素，公式待确认。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "intervalSeconds": 6,
+              "chancePercent": 30,
+              "amountStatus": "unconfirmed",
+              "formulaStatus": "unconfirmed",
+              "referenceStat": "MND",
+              "trigger": {
+                "actor": "self",
+                "event": "periodic-tick"
+              },
+              "guaranteedEveryTick": false,
+              "group": "periodic-chance",
+              "combatRole": "direct-effect",
+              "effectIdentity": "e2018b4f235f4bc5:heal",
+              "sourceClause": "偶尔恢复少量生命值。",
+              "skillReviewConditions": [
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "魔抗"
+        "魔抗",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "每6秒进行一次30%概率的HP回复判定；回复量公式待确认"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "HP回复的具体数值与计算公式待确认"
+      ]
     },
     {
       "id": "4cd3c0b3112e088e",
@@ -119182,16 +123712,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "反击": {
+          "summary": "反击发动期间，受到敌人的伤害-35%。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "counter-active"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "反击发动期间，受到敌人的伤害-35%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 35,
+              "condition": {
+                "subject": "self",
+                "event": "counter-active"
+              },
+              "effectIdentity": "4cd3c0b3112e088e:reduction",
+              "sourceClause": "反击发动期间，受到敌人的伤害-35%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "counter-active",
+                  "text": "仅自身反击发动期间生效"
+                }
+              ],
+              "statePredicate": {
+                "subject": "self",
+                "state": "counter-active"
+              },
+              "group": "during-reduction",
+              "combatRole": "condition-benefit",
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "伤害减少"
+        "伤害减少",
+        "反击"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "仅自身反击发动期间生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "35faadc54c8092f6",
@@ -119254,16 +123830,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "反击": {
+          "summary": "反击发动期间，受到敌人的伤害-50%。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "counter-active"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "反击发动期间，受到敌人的伤害-50%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 50,
+              "condition": {
+                "subject": "self",
+                "event": "counter-active"
+              },
+              "effectIdentity": "35faadc54c8092f6:reduction",
+              "sourceClause": "反击发动期间，受到敌人的伤害-50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "counter-active",
+                  "text": "仅自身反击发动期间生效"
+                }
+              ],
+              "statePredicate": {
+                "subject": "self",
+                "state": "counter-active"
+              },
+              "group": "during-reduction",
+              "combatRole": "condition-benefit",
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "伤害减少"
+        "伤害减少",
+        "反击"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "仅自身反击发动期间生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5985cead77169d18",
@@ -120366,15 +124988,69 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击每次命中有3%概率尝试施加毒；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加毒；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "poison",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "effectIdentity": "495762124c3a416e:apply-status",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人中毒。",
+              "group": "hit-poison",
+              "combatRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-hit",
+                  "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+                },
+                {
+                  "partId": "status-duration",
+                  "text": "施加异常的持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "status-duration"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "异常"
+        "异常",
+        "普通攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "普通攻击每次命中判定；不是特技、必杀或反击",
         "施加异常的持续时间待确认"
       ]
     },
@@ -120443,15 +125119,69 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击每次命中有3%概率尝试施加暗盲；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加暗盲；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "blindness",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "effectIdentity": "全部技能:all:148:apply-status",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人陷入暗盲（失明）状态。",
+              "group": "hit-blindness",
+              "combatRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-hit",
+                  "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+                },
+                {
+                  "partId": "status-duration",
+                  "text": "施加异常的持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "status-duration"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "异常"
+        "异常",
+        "普通攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "普通攻击每次命中判定；不是特技、必杀或反击",
         "施加异常的持续时间待确认"
       ]
     },
@@ -120520,15 +125250,69 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击每次命中有3%概率尝试施加沉默；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加沉默；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "silence",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "effectIdentity": "bf042a386e6e2017:apply-status",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人沉默。",
+              "group": "hit-silence",
+              "combatRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-hit",
+                  "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+                },
+                {
+                  "partId": "status-duration",
+                  "text": "施加异常的持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "status-duration"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "异常"
+        "异常",
+        "普通攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "普通攻击每次命中判定；不是特技、必杀或反击",
         "施加异常的持续时间待确认"
       ]
     },
@@ -120597,15 +125381,69 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击每次命中有3%概率尝试施加诅咒；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加诅咒；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "curse",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "effectIdentity": "20ce0d18f81796ba:apply-status",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人陷入诅咒。",
+              "group": "hit-curse",
+              "combatRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-hit",
+                  "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+                },
+                {
+                  "partId": "status-duration",
+                  "text": "施加异常的持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "status-duration"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "异常"
+        "异常",
+        "普通攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "普通攻击每次命中判定；不是特技、必杀或反击",
         "施加异常的持续时间待确认"
       ]
     },
@@ -120674,15 +125512,69 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击每次命中有3%概率尝试施加麻痹；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加麻痹；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "paralysis",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "effectIdentity": "e012b3fe60fe4932:apply-status",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人麻痹。",
+              "group": "hit-paralysis",
+              "combatRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-hit",
+                  "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+                },
+                {
+                  "partId": "status-duration",
+                  "text": "施加异常的持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "status-duration"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "异常"
+        "异常",
+        "普通攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "普通攻击每次命中判定；不是特技、必杀或反击",
         "施加异常的持续时间待确认"
       ]
     },
@@ -120786,15 +125678,71 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "普通攻击": {
+          "summary": "普通攻击时有概率尝试施加沉默；概率与持续时间待确认，不套用沉默研究的3%。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-silence"
+              ],
+              "summary": "普通攻击时有概率尝试施加沉默；概率与持续时间待确认，不套用沉默研究的3%。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "silence",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chanceStatus": "unconfirmed",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "effectIdentity": "dbc649cdc993f070:apply-silence",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人沉默；对沉默状态的敌人，伤害+30%。",
+              "group": "hit-silence",
+              "combatRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-hit",
+                  "text": "普通攻击命中时判定施加沉默"
+                },
+                {
+                  "partId": "silenced-target",
+                  "text": "伤害加成要求当前目标敌人处于沉默状态"
+                },
+                {
+                  "partId": "proc-unconfirmed",
+                  "text": "沉默施加概率、持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "proc-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "异常"
+        "异常",
+        "普通攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "普通攻击命中时判定施加沉默",
         "沉默施加概率、持续时间待确认"
       ]
     },
@@ -120861,15 +125809,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "反击": {
+          "summary": "自身反击时，有概率使目标中毒；概率与持续时间待确认。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "counter-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-poison"
+              ],
+              "summary": "自身反击时，有概率使目标中毒；概率与持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "poison",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "counter-hit"
+              },
+              "chanceStatus": "unconfirmed",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "effectIdentity": "9baca3cad5fd7f6e:apply-poison",
+              "isBuff": false,
+              "sourceClause": "反击时，有概率使敌人中毒。",
+              "group": "poison",
+              "combatRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "counter-trigger",
+                  "text": "自身反击时触发异常施加"
+                },
+                {
+                  "partId": "proc-unconfirmed",
+                  "text": "中毒触发概率、持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "proc-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
         }
       },
       "assignedTags": [
-        "异常"
+        "异常",
+        "反击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "自身反击时触发异常施加",
         "中毒触发概率、持续时间待确认"
       ]
     },
@@ -120895,6 +125895,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "proc-unconfirmed",
           "kind": "condition",
           "text": "疾病赋予概率、持续时间待确认"
+        },
+        {
+          "id": "combat-disease-hp-block",
+          "kind": "effect",
+          "text": "复仇病毒施加的疾病状态持续期间，该敌人无法回复HP"
         }
       ],
       "tagDetails": {
@@ -120937,10 +125942,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "自身被敌人击败后，若复仇病毒成功使击败自己的敌人陷入疾病，则疾病期间该敌人无法回复HP；施加概率及持续时间仍待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "combat-disease-hp-block"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "combat-disease-hp-block"
+              ],
+              "summary": "自身被敌人击败后，若复仇病毒成功使击败自己的敌人陷入疾病，则疾病期间该敌人无法回复HP；施加概率及持续时间仍待确认。",
+              "operation": "prevent-hp-recovery",
+              "target": "enemy-who-defeated-self",
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "incapacitated-by-enemy"
+              },
+              "chanceStatus": "unconfirmed",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "statusMeaning": "prevents-HP-recovery",
+              "effectIdentity": "c9165a184c124aab:combat-disease-hp-block",
+              "isBuff": false,
+              "sourceClause": "自身被敌人击败时，有概率使击败自己的敌人陷入疾病状态（疾病状态下无法恢复生命值）。",
+              "relatedEffectIdentity": "c9165a184c124aab:apply-disease",
+              "requiresStatus": "disease",
+              "sourceEffectPartId": "apply-disease",
+              "group": "disease-block",
+              "combatRole": "direct-effect",
+              "skillReviewConditions": [
+                {
+                  "partId": "self-death",
+                  "text": "自身被敌人击败时，仅针对击败自己的敌人"
+                },
+                {
+                  "partId": "proc-unconfirmed",
+                  "text": "疾病赋予概率、持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "self-death",
+                "proc-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "异常"
+        "异常",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -121812,6 +126874,1739 @@ export const SKILL_LABELING_CATALOG = {
       "judgment": "ready",
       "remainingEffects": [],
       "remainingConditions": []
+    },
+    {
+      "id": "9c2dddda058377e7",
+      "name": "反击增幅",
+      "url": "https://altema.jp/lastcloudia/gino/40",
+      "text": "反击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "counter-damage",
+          "kind": "effect",
+          "text": "反击伤害+50%"
+        }
+      ],
+      "tagDetails": {
+        "反击": {
+          "summary": "反击伤害+50%。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-damage"
+              ],
+              "summary": "反击伤害+50%。",
+              "operation": "damage-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter"
+              },
+              "valuePercent": 50,
+              "group": "damage",
+              "combatRole": "direct-effect",
+              "effectIdentity": "9c2dddda058377e7:counter-damage",
+              "sourceClause": "反击伤害+50%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "反击"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "6436af4db7e5b1b5",
+      "name": "反击增幅2",
+      "url": "https://altema.jp/lastcloudia/gino/814",
+      "text": "反击伤害+50%，反击伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "counter-damage",
+          "kind": "effect",
+          "text": "反击伤害+50%"
+        },
+        {
+          "id": "counter-cap",
+          "kind": "effect",
+          "text": "反击伤害上限+5000"
+        }
+      ],
+      "tagDetails": {
+        "反击": {
+          "summary": "反击伤害+50%；反击伤害上限+5000。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-damage",
+              "counter-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-damage"
+              ],
+              "summary": "反击伤害+50%。",
+              "operation": "damage-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter"
+              },
+              "valuePercent": 50,
+              "group": "damage",
+              "combatRole": "direct-effect",
+              "effectIdentity": "6436af4db7e5b1b5:counter-damage",
+              "sourceClause": "反击伤害+50%，反击伤害上限+5,000。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "counter-cap"
+              ],
+              "summary": "反击伤害上限+5000。",
+              "operation": "cap-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter"
+              },
+              "capPoints": 5000,
+              "group": "cap",
+              "combatRole": "direct-effect",
+              "effectIdentity": "6436af4db7e5b1b5:counter-cap",
+              "sourceClause": "反击伤害+50%，反击伤害上限+5,000。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "反击"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1054c6df9acd81f8",
+      "name": "反击增幅3",
+      "url": "https://altema.jp/lastcloudia/gino/815",
+      "text": "反击伤害+75%，反击伤害上限+7,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "counter-damage",
+          "kind": "effect",
+          "text": "反击伤害+75%"
+        },
+        {
+          "id": "counter-cap",
+          "kind": "effect",
+          "text": "反击伤害上限+7500"
+        }
+      ],
+      "tagDetails": {
+        "反击": {
+          "summary": "反击伤害+75%；反击伤害上限+7500。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-damage",
+              "counter-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-damage"
+              ],
+              "summary": "反击伤害+75%。",
+              "operation": "damage-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter"
+              },
+              "valuePercent": 75,
+              "group": "damage",
+              "combatRole": "direct-effect",
+              "effectIdentity": "1054c6df9acd81f8:counter-damage",
+              "sourceClause": "反击伤害+75%，反击伤害上限+7,500。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "counter-cap"
+              ],
+              "summary": "反击伤害上限+7500。",
+              "operation": "cap-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter"
+              },
+              "capPoints": 7500,
+              "group": "cap",
+              "combatRole": "direct-effect",
+              "effectIdentity": "1054c6df9acd81f8:counter-cap",
+              "sourceClause": "反击伤害+75%，反击伤害上限+7,500。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "反击"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "fef501333a6f411a",
+      "name": "治愈反击",
+      "url": "https://altema.jp/lastcloudia/gino/816",
+      "text": "发动反击时，恢复少量HP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "counter-heal",
+          "kind": "effect",
+          "text": "发动反击时少量回复HP"
+        },
+        {
+          "id": "counter-trigger",
+          "kind": "condition",
+          "text": "自身发动反击时"
+        },
+        {
+          "id": "healing-amount",
+          "kind": "condition",
+          "text": "HP回复量待确认"
+        }
+      ],
+      "tagDetails": {
+        "反击": {
+          "summary": "自身发动反击时少量回复HP，具体回复量待确认。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "counter-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-heal"
+              ],
+              "summary": "自身发动反击时少量回复HP，具体回复量待确认。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "counter-used"
+              },
+              "group": "heal",
+              "combatRole": "condition-benefit",
+              "effectIdentity": "fef501333a6f411a:counter-heal",
+              "sourceClause": "发动反击时，恢复少量HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "counter-trigger",
+                  "text": "自身发动反击时"
+                },
+                {
+                  "partId": "healing-amount",
+                  "text": "HP回复量待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "healing-amount"
+              ]
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "HP回复": {
+          "summary": "自身发动反击时少量回复HP，具体量待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-heal"
+              ],
+              "summary": "自身发动反击时少量回复HP，具体量待确认。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "counter-used"
+              },
+              "group": "counter",
+              "combatRole": "direct-effect",
+              "effectIdentity": "fef501333a6f411a:counter-heal",
+              "sourceClause": "发动反击时，恢复少量HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "counter-trigger",
+                  "text": "自身发动反击时"
+                },
+                {
+                  "partId": "healing-amount",
+                  "text": "HP回复量待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "healing-amount"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        }
+      },
+      "assignedTags": [
+        "反击",
+        "HP回复"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "HP回复量待确认"
+      ]
+    },
+    {
+      "id": "465c19e17eb0cb01",
+      "name": "坚固反击",
+      "url": "https://altema.jp/lastcloudia/gino/1189",
+      "text": "反击发动期间，不会因敌人的攻击而陷入气绝。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "counter-stun-prevention",
+          "kind": "effect",
+          "text": "自身反击期间，不会因敌人的攻击而气绝"
+        },
+        {
+          "id": "counter-active",
+          "kind": "condition",
+          "text": "仅自身反击发动期间"
+        }
+      ],
+      "tagDetails": {
+        "反击": {
+          "summary": "自身反击发动期间，不会因敌人攻击而气绝；不扩大为全部异常免疫。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-stun-prevention"
+            ],
+            "conditionPartIds": [
+              "counter-active"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-stun-prevention"
+              ],
+              "summary": "自身反击发动期间，不会因敌人攻击而气绝；不扩大为全部异常免疫。",
+              "operation": "prevent-attack-induced-stun",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "source": "enemy-attack"
+              },
+              "statePredicate": {
+                "subject": "self",
+                "state": "counter-active"
+              },
+              "prevents": "stun",
+              "grantsAllAilmentImmunity": false,
+              "group": "during-stun",
+              "combatRole": "direct-effect",
+              "effectIdentity": "465c19e17eb0cb01:counter-stun-prevention",
+              "sourceClause": "反击发动期间，不会因敌人的攻击而陷入气绝。",
+              "skillReviewConditions": [
+                {
+                  "partId": "counter-active",
+                  "text": "仅自身反击发动期间"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "反击"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "39d40acb62cf41cb",
+      "name": "反击护罩",
+      "url": "https://altema.jp/lastcloudia/gino/1281",
+      "text": "受到反击的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "counter-reduction",
+          "kind": "effect",
+          "text": "受到反击伤害-20%"
+        }
+      ],
+      "tagDetails": {
+        "反击": {
+          "summary": "受到的反击伤害-20%。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-reduction"
+              ],
+              "summary": "受到的反击伤害-20%。",
+              "operation": "incoming-damage-down",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "counter"
+              },
+              "valuePercent": 20,
+              "group": "incoming",
+              "combatRole": "direct-effect",
+              "effectIdentity": "39d40acb62cf41cb:counter-reduction",
+              "sourceClause": "受到反击的伤害-20%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "反击"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "46213cf7e16bd862",
+      "name": "反击护罩2",
+      "url": "https://altema.jp/lastcloudia/gino/1417",
+      "text": "受到反击的伤害-30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "counter-reduction",
+          "kind": "effect",
+          "text": "受到反击伤害-30%"
+        }
+      ],
+      "tagDetails": {
+        "反击": {
+          "summary": "受到的反击伤害-30%。",
+          "relation": "counter-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "counter-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "counter-reduction"
+              ],
+              "summary": "受到的反击伤害-30%。",
+              "operation": "incoming-damage-down",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "counter"
+              },
+              "valuePercent": 30,
+              "group": "incoming",
+              "combatRole": "direct-effect",
+              "effectIdentity": "46213cf7e16bd862:counter-reduction",
+              "sourceClause": "受到反击的伤害-30%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "反击"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1c99ce8a75970850",
+      "name": "追击",
+      "url": "https://altema.jp/lastcloudia/gino/177",
+      "text": "普通攻击时，概率造成追加伤害。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "follow-up",
+          "kind": "effect",
+          "text": "普通攻击触发1次追击"
+        },
+        {
+          "id": "normal-trigger",
+          "kind": "condition",
+          "text": "自身发起普通攻击时"
+        },
+        {
+          "id": "follow-up-parameters",
+          "kind": "condition",
+          "text": "追击触发概率、追击伤害倍率待确认"
+        }
+      ],
+      "tagDetails": {
+        "普通攻击": {
+          "summary": "普通攻击时有概率追加1次伤害，触发概率和追击伤害倍率待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up"
+              ],
+              "summary": "普通攻击时有概率追加1次伤害，触发概率和追击伤害倍率待确认。",
+              "operation": "trigger-follow-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "follow-up"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "additionalHitCount": 1,
+              "changesMainHitDamage": false,
+              "changesMainHitCount": false,
+              "chanceStatus": "unconfirmed",
+              "powerStatus": "unconfirmed",
+              "group": "follow-up-177",
+              "combatRole": "condition-benefit",
+              "effectIdentity": "1c99ce8a75970850:follow-up",
+              "sourceClause": "普通攻击时，概率造成追加伤害。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身发起普通攻击时"
+                },
+                {
+                  "partId": "follow-up-parameters",
+                  "text": "追击触发概率、追击伤害倍率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "follow-up-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "追击": {
+          "summary": "普通攻击时有概率追加1次伤害，触发概率和追击伤害倍率待确认。",
+          "relation": "follow-up-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "follow-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up"
+              ],
+              "summary": "普通攻击时有概率追加1次伤害，触发概率和追击伤害倍率待确认。",
+              "operation": "trigger-follow-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "follow-up"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "additionalHitCount": 1,
+              "changesMainHitDamage": false,
+              "changesMainHitCount": false,
+              "chanceStatus": "unconfirmed",
+              "powerStatus": "unconfirmed",
+              "group": "normal-177",
+              "combatRole": "direct-effect",
+              "effectIdentity": "1c99ce8a75970850:follow-up",
+              "sourceClause": "普通攻击时，概率造成追加伤害。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身发起普通攻击时"
+                },
+                {
+                  "partId": "follow-up-parameters",
+                  "text": "追击触发概率、追击伤害倍率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "follow-up-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "追击次数、概率和倍率分支、追击增伤、受到追击或二刀流第二击减伤分别列组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "普通攻击",
+        "追击"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "追击触发概率、追击伤害倍率待确认"
+      ]
+    },
+    {
+      "id": "8e05ac250af36f65",
+      "name": "双重冲击",
+      "url": "https://altema.jp/lastcloudia/gino/178",
+      "text": "普通攻击时，造成追加伤害。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "follow-up",
+          "kind": "effect",
+          "text": "普通攻击触发1次追击"
+        },
+        {
+          "id": "normal-trigger",
+          "kind": "condition",
+          "text": "自身发起普通攻击时"
+        },
+        {
+          "id": "follow-up-parameters",
+          "kind": "condition",
+          "text": "追击伤害倍率待确认"
+        }
+      ],
+      "tagDetails": {
+        "普通攻击": {
+          "summary": "普通攻击时追加1次伤害，追击伤害倍率待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up"
+              ],
+              "summary": "普通攻击时追加1次伤害，追击伤害倍率待确认。",
+              "operation": "trigger-follow-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "follow-up"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "additionalHitCount": 1,
+              "changesMainHitDamage": false,
+              "changesMainHitCount": false,
+              "powerStatus": "unconfirmed",
+              "group": "follow-up-178",
+              "combatRole": "condition-benefit",
+              "effectIdentity": "8e05ac250af36f65:follow-up",
+              "sourceClause": "普通攻击时，造成追加伤害。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身发起普通攻击时"
+                },
+                {
+                  "partId": "follow-up-parameters",
+                  "text": "追击伤害倍率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "follow-up-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "追击": {
+          "summary": "普通攻击时追加1次伤害，追击伤害倍率待确认。",
+          "relation": "follow-up-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "follow-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up"
+              ],
+              "summary": "普通攻击时追加1次伤害，追击伤害倍率待确认。",
+              "operation": "trigger-follow-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "follow-up"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "additionalHitCount": 1,
+              "changesMainHitDamage": false,
+              "changesMainHitCount": false,
+              "powerStatus": "unconfirmed",
+              "group": "normal-178",
+              "combatRole": "direct-effect",
+              "effectIdentity": "8e05ac250af36f65:follow-up",
+              "sourceClause": "普通攻击时，造成追加伤害。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身发起普通攻击时"
+                },
+                {
+                  "partId": "follow-up-parameters",
+                  "text": "追击伤害倍率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "follow-up-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "追击次数、概率和倍率分支、追击增伤、受到追击或二刀流第二击减伤分别列组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "普通攻击",
+        "追击"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "追击伤害倍率待确认"
+      ]
+    },
+    {
+      "id": "df4a1ab1f77f9899",
+      "name": "三重冲击",
+      "url": "https://altema.jp/lastcloudia/gino/179",
+      "text": "普通攻击时，造成2次追加伤害。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "follow-up",
+          "kind": "effect",
+          "text": "普通攻击触发2次追击"
+        },
+        {
+          "id": "normal-trigger",
+          "kind": "condition",
+          "text": "自身发起普通攻击时"
+        },
+        {
+          "id": "follow-up-parameters",
+          "kind": "condition",
+          "text": "追击伤害倍率待确认"
+        }
+      ],
+      "tagDetails": {
+        "普通攻击": {
+          "summary": "普通攻击时追加2次伤害，各次追击伤害倍率待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up"
+              ],
+              "summary": "普通攻击时追加2次伤害，各次追击伤害倍率待确认。",
+              "operation": "trigger-follow-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "follow-up"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "additionalHitCount": 2,
+              "changesMainHitDamage": false,
+              "changesMainHitCount": false,
+              "powerStatus": "unconfirmed",
+              "group": "follow-up-179",
+              "combatRole": "condition-benefit",
+              "effectIdentity": "df4a1ab1f77f9899:follow-up",
+              "sourceClause": "普通攻击时，造成2次追加伤害。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身发起普通攻击时"
+                },
+                {
+                  "partId": "follow-up-parameters",
+                  "text": "追击伤害倍率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "follow-up-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "追击": {
+          "summary": "普通攻击时追加2次伤害，各次追击伤害倍率待确认。",
+          "relation": "follow-up-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "follow-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up"
+              ],
+              "summary": "普通攻击时追加2次伤害，各次追击伤害倍率待确认。",
+              "operation": "trigger-follow-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "follow-up"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "additionalHitCount": 2,
+              "changesMainHitDamage": false,
+              "changesMainHitCount": false,
+              "powerStatus": "unconfirmed",
+              "group": "normal-179",
+              "combatRole": "direct-effect",
+              "effectIdentity": "df4a1ab1f77f9899:follow-up",
+              "sourceClause": "普通攻击时，造成2次追加伤害。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身发起普通攻击时"
+                },
+                {
+                  "partId": "follow-up-parameters",
+                  "text": "追击伤害倍率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "follow-up-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "追击次数、概率和倍率分支、追击增伤、受到追击或二刀流第二击减伤分别列组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "普通攻击",
+        "追击"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "追击伤害倍率待确认"
+      ]
+    },
+    {
+      "id": "8b462538923994eb",
+      "name": "滑轮原理",
+      "url": "https://altema.jp/lastcloudia/gino/314",
+      "text": "普通攻击时，低概率造成威力为普通攻击4倍或8倍的追加伤害。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "follow-up",
+          "kind": "effect",
+          "text": "普通攻击触发4倍或8倍威力的追击"
+        },
+        {
+          "id": "normal-trigger",
+          "kind": "condition",
+          "text": "自身发起普通攻击时"
+        },
+        {
+          "id": "follow-up-parameters",
+          "kind": "condition",
+          "text": "追击触发概率与4倍／8倍分支分布待确认"
+        }
+      ],
+      "tagDetails": {
+        "普通攻击": {
+          "summary": "普通攻击时低概率产生4倍或8倍威力的追击；两种倍率互斥，概率与分支分布待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up"
+              ],
+              "summary": "普通攻击时低概率产生4倍或8倍威力的追击；两种倍率互斥，概率与分支分布待确认。",
+              "operation": "trigger-follow-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "follow-up"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "additionalHitCount": 1,
+              "changesMainHitDamage": false,
+              "changesMainHitCount": false,
+              "chanceStatus": "unconfirmed",
+              "multiplierCases": [
+                4,
+                8
+              ],
+              "branchMode": "mutually-exclusive",
+              "multiplierBase": "ordinary-attack-power",
+              "outcomeDistributionStatus": "unconfirmed",
+              "group": "follow-up-314",
+              "combatRole": "condition-benefit",
+              "effectIdentity": "8b462538923994eb:follow-up",
+              "sourceClause": "普通攻击时，低概率造成威力为普通攻击4倍或8倍的追加伤害。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身发起普通攻击时"
+                },
+                {
+                  "partId": "follow-up-parameters",
+                  "text": "追击触发概率与4倍／8倍分支分布待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "follow-up-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "追击": {
+          "summary": "普通攻击时低概率产生4倍或8倍威力的追击；两种倍率互斥，概率与分支分布待确认。",
+          "relation": "follow-up-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "follow-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up"
+              ],
+              "summary": "普通攻击时低概率产生4倍或8倍威力的追击；两种倍率互斥，概率与分支分布待确认。",
+              "operation": "trigger-follow-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "follow-up"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "additionalHitCount": 1,
+              "changesMainHitDamage": false,
+              "changesMainHitCount": false,
+              "chanceStatus": "unconfirmed",
+              "multiplierCases": [
+                4,
+                8
+              ],
+              "branchMode": "mutually-exclusive",
+              "multiplierBase": "ordinary-attack-power",
+              "outcomeDistributionStatus": "unconfirmed",
+              "group": "normal-314",
+              "combatRole": "direct-effect",
+              "effectIdentity": "8b462538923994eb:follow-up",
+              "sourceClause": "普通攻击时，低概率造成威力为普通攻击4倍或8倍的追加伤害。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身发起普通攻击时"
+                },
+                {
+                  "partId": "follow-up-parameters",
+                  "text": "追击触发概率与4倍／8倍分支分布待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "follow-up-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "追击次数、概率和倍率分支、追击增伤、受到追击或二刀流第二击减伤分别列组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "普通攻击",
+        "追击"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "追击触发概率与4倍／8倍分支分布待确认"
+      ]
+    },
+    {
+      "id": "e14285f5ee6071bf",
+      "name": "追击护罩",
+      "url": "https://altema.jp/lastcloudia/gino/776",
+      "text": "后续攻击或双持技能的第二次命中所受到的伤害 -30%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "follow-up-reduction",
+          "kind": "effect",
+          "text": "受到追击或二刀流类技能产生的第二次攻击伤害-30%"
+        }
+      ],
+      "tagDetails": {
+        "追击": {
+          "summary": "受到追击，或二刀流类技能产生的第二次攻击伤害-30%；满足任一项只计算一次。",
+          "relation": "follow-up-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "follow-up-reduction"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up-reduction"
+              ],
+              "summary": "受到追击，或二刀流类技能产生的第二次攻击伤害-30%；满足任一项只计算一次。",
+              "operation": "incoming-damage-down",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "incoming",
+                "attackTypeAnyOf": [
+                  "follow-up",
+                  "dual-wield-skill-second-hit"
+                ]
+              },
+              "valuePercent": 30,
+              "branchMode": "OR",
+              "matchingMultipleAttackTypes": "apply-once",
+              "appliesToAllNormalAttacks": false,
+              "group": "incoming-or-dual",
+              "combatRole": "direct-effect",
+              "effectIdentity": "e14285f5ee6071bf:follow-up-reduction",
+              "sourceClause": "后续攻击或双持技能的第二次命中所受到的伤害 -30%",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "追击次数、概率和倍率分支、追击增伤、受到追击或二刀流第二击减伤分别列组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "追击"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "7d13ccbe8866b38d",
+      "name": "追击增幅",
+      "url": "https://altema.jp/lastcloudia/gino/865",
+      "text": "追击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "follow-up-damage",
+          "kind": "effect",
+          "text": "追击伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "追击": {
+          "summary": "追击伤害+10%。",
+          "relation": "follow-up-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "follow-up-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "follow-up-damage"
+              ],
+              "summary": "追击伤害+10%。",
+              "operation": "damage-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "follow-up"
+              },
+              "valuePercent": 10,
+              "changesMainHitDamage": false,
+              "group": "damage",
+              "combatRole": "direct-effect",
+              "effectIdentity": "7d13ccbe8866b38d:follow-up-damage",
+              "sourceClause": "追击伤害+10%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "追击次数、概率和倍率分支、追击增伤、受到追击或二刀流第二击减伤分别列组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "追击"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "762601798c6e023a",
+      "name": "血之力",
+      "url": "https://altema.jp/lastcloudia/gino/153",
+      "text": "普通攻击时，概率吸收相当于伤害20%的HP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-drain",
+          "kind": "effect",
+          "text": "吸收普通攻击造成伤害的20%并转为自身HP"
+        },
+        {
+          "id": "normal-trigger",
+          "kind": "condition",
+          "text": "自身普通攻击时判定"
+        },
+        {
+          "id": "drain-chance",
+          "kind": "condition",
+          "text": "吸血触发概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "普通攻击": {
+          "summary": "普通攻击时，有概率吸收本次造成伤害的20%并回复自身HP；概率待确认。",
+          "relation": "normal-attack-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "normal-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-drain"
+              ],
+              "summary": "普通攻击时，有概率吸收本次造成伤害的20%并回复自身HP；概率待确认。",
+              "operation": "drain-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "sourceAttackType": "normal-attack"
+              },
+              "restorePercent": 20,
+              "restoreBase": "damage-dealt",
+              "chanceStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "grantsHealingToTarget": false,
+              "group": "hp-absorb",
+              "combatRole": "condition-benefit",
+              "effectIdentity": "762601798c6e023a:hp-drain",
+              "sourceClause": "普通攻击时，概率吸收相当于伤害20%的HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身普通攻击时判定"
+                },
+                {
+                  "partId": "drain-chance",
+                  "text": "吸血触发概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "drain-chance"
+              ]
+            }
+          ],
+          "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "HP回复": {
+          "summary": "普通攻击时，有概率吸收本次造成伤害的20%并回复自身HP；概率待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "hp-drain"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-drain"
+              ],
+              "summary": "普通攻击时，有概率吸收本次造成伤害的20%并回复自身HP；概率待确认。",
+              "operation": "drain-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "sourceAttackType": "normal-attack"
+              },
+              "restorePercent": 20,
+              "restoreBase": "damage-dealt",
+              "chanceStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "grantsHealingToTarget": false,
+              "group": "lifesteal",
+              "combatRole": "direct-effect",
+              "effectIdentity": "762601798c6e023a:hp-drain",
+              "sourceClause": "普通攻击时，概率吸收相当于伤害20%的HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身普通攻击时判定"
+                },
+                {
+                  "partId": "drain-chance",
+                  "text": "吸血触发概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "drain-chance"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        },
+        "吸血": {
+          "summary": "普通攻击时，有概率吸收本次造成伤害的20%并回复自身HP；概率待确认。",
+          "relation": "lifesteal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "hp-drain"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-drain"
+              ],
+              "summary": "普通攻击时，有概率吸收本次造成伤害的20%并回复自身HP；概率待确认。",
+              "operation": "drain-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "sourceAttackType": "normal-attack"
+              },
+              "restorePercent": 20,
+              "restoreBase": "damage-dealt",
+              "chanceStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-used"
+              },
+              "grantsHealingToTarget": false,
+              "group": "normal-hp-drain",
+              "combatRole": "direct-effect",
+              "effectIdentity": "762601798c6e023a:hp-drain",
+              "sourceClause": "普通攻击时，概率吸收相当于伤害20%的HP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "normal-trigger",
+                  "text": "自身普通攻击时判定"
+                },
+                {
+                  "partId": "drain-chance",
+                  "text": "吸血触发概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "drain-chance"
+              ]
+            }
+          ],
+          "calculationNote": "仅HP吸血；保留普通攻击来源、造成伤害基数与未知触发概率。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        }
+      },
+      "assignedTags": [
+        "普通攻击",
+        "HP回复",
+        "吸血"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "吸血触发概率待确认"
+      ]
+    },
+    {
+      "id": "全部技能:all:154",
+      "name": "胜利姿势",
+      "url": "https://altema.jp/lastcloudia/gino/155",
+      "text": "当你击败敌人时，你的生命值恢复10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-restore",
+          "kind": "effect",
+          "text": "击败敌人时回复10%HP"
+        },
+        {
+          "id": "heal-trigger",
+          "kind": "condition",
+          "text": "击败敌人时"
+        },
+        {
+          "id": "healing-base",
+          "kind": "condition",
+          "text": "HP回复百分比所参照的基数待确认"
+        }
+      ],
+      "tagDetails": {
+        "HP回复": {
+          "summary": "击败敌人时回复10%HP；原文未明确百分比基数，暂不代入最大HP。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "hp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-restore"
+              ],
+              "summary": "击败敌人时回复10%HP；原文未明确百分比基数，暂不代入最大HP。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "restorePercent": 10,
+              "restoreBase": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "enemy-defeated"
+              },
+              "amountBaseStatus": "unconfirmed",
+              "group": "enemy-defeated",
+              "combatRole": "direct-effect",
+              "effectIdentity": "全部技能:all:154:hp-restore",
+              "sourceClause": "当你击败敌人时，你的生命值恢复10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "heal-trigger",
+                  "text": "击败敌人时"
+                },
+                {
+                  "partId": "healing-base",
+                  "text": "HP回复百分比所参照的基数待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "heal-trigger",
+                "healing-base"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        }
+      },
+      "assignedTags": [
+        "HP回复"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "击败敌人时",
+        "HP回复百分比所参照的基数待确认"
+      ]
+    },
+    {
+      "id": "7c71d42c909d455a",
+      "name": "胜利美酒",
+      "url": "https://altema.jp/lastcloudia/gino/158",
+      "text": "战斗结束后，HP恢复20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "hp-restore",
+          "kind": "effect",
+          "text": "战斗结束时回复20%HP"
+        },
+        {
+          "id": "heal-trigger",
+          "kind": "condition",
+          "text": "战斗结束时"
+        },
+        {
+          "id": "healing-base",
+          "kind": "condition",
+          "text": "HP回复百分比所参照的基数待确认"
+        }
+      ],
+      "tagDetails": {
+        "HP回复": {
+          "summary": "战斗结束时回复20%HP；原文未明确百分比基数，暂不代入最大HP。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "hp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-restore"
+              ],
+              "summary": "战斗结束时回复20%HP；原文未明确百分比基数，暂不代入最大HP。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "restorePercent": 20,
+              "restoreBase": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "battle-end"
+              },
+              "amountBaseStatus": "unconfirmed",
+              "group": "battle-end",
+              "combatRole": "direct-effect",
+              "effectIdentity": "7c71d42c909d455a:hp-restore",
+              "sourceClause": "战斗结束后，HP恢复20%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "heal-trigger",
+                  "text": "战斗结束时"
+                },
+                {
+                  "partId": "healing-base",
+                  "text": "HP回复百分比所参照的基数待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "heal-trigger",
+                "healing-base"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        }
+      },
+      "assignedTags": [
+        "HP回复"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "战斗结束时",
+        "HP回复百分比所参照的基数待确认"
+      ]
+    },
+    {
+      "id": "ac61a8ca4991b577",
+      "name": "天使祝福",
+      "url": "https://altema.jp/lastcloudia/gino/1438",
+      "text": "从我方角色的主动技能获得的HP恢复量+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-heal",
+          "kind": "effect",
+          "text": "从我方角色的主动技能获得的HP恢复量+10%。"
+        }
+      ],
+      "tagDetails": {
+        "HP回复": {
+          "summary": "从我方角色的主动技能获得的HP恢复量+10%。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-heal"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "received-heal"
+              ],
+              "summary": "从我方角色的主动技能获得的HP恢复量+10%。",
+              "operation": "healing-received-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "source": "allied-active-skill"
+              },
+              "affectsRecipientMaximumHP": false,
+              "valuePercent": 10,
+              "group": "received-amount",
+              "combatRole": "direct-effect",
+              "effectIdentity": "ac61a8ca4991b577:received-heal",
+              "sourceClause": "从我方角色的主动技能获得的HP恢复量+10%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        }
+      },
+      "assignedTags": [
+        "HP回复"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "905d840fb88b54ae",
+      "name": "菲的治愈",
+      "url": "https://altema.jp/lastcloudia/gino/1537",
+      "text": "从我方角色的主动技能获得的HP恢复上限+1,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-heal-cap",
+          "kind": "effect",
+          "text": "从我方角色的主动技能获得的HP恢复上限+1,000。"
+        }
+      ],
+      "tagDetails": {
+        "HP回复": {
+          "summary": "从我方角色的主动技能获得的HP恢复上限+1,000。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-heal-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "received-heal-cap"
+              ],
+              "summary": "从我方角色的主动技能获得的HP恢复上限+1,000。",
+              "operation": "healing-received-cap-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "source": "allied-active-skill"
+              },
+              "affectsRecipientMaximumHP": false,
+              "healingCapPoints": 1000,
+              "group": "received-cap",
+              "combatRole": "direct-effect",
+              "effectIdentity": "905d840fb88b54ae:received-heal-cap",
+              "sourceClause": "从我方角色的主动技能获得的HP恢复上限+1,000。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        }
+      },
+      "assignedTags": [
+        "HP回复"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     }
   ],
   "views": {
@@ -122109,8 +128904,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 123,
         "notRelatedUnique": 812,
-        "ready": 63,
-        "partial": 60,
+        "ready": 66,
+        "partial": 57,
         "unknown": 0
       }
     },
@@ -122241,8 +129036,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 77,
         "notRelatedUnique": 858,
-        "ready": 40,
-        "partial": 37,
+        "ready": 42,
+        "partial": 35,
         "unknown": 0
       }
     },
@@ -122282,8 +129077,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 14,
         "notRelatedUnique": 921,
-        "ready": 6,
-        "partial": 8,
+        "ready": 8,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -122429,8 +129224,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 65,
         "notRelatedUnique": 870,
-        "ready": 37,
-        "partial": 28,
+        "ready": 38,
+        "partial": 27,
         "unknown": 0
       }
     },
@@ -122492,6 +129287,342 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 914,
         "ready": 18,
         "partial": 3,
+        "unknown": 0
+      }
+    },
+    "guard": {
+      "label": "格挡",
+      "passKind": "guard-effects-and-condition",
+      "displayOrder": [
+        "全部技能:all:31",
+        "全部技能:all:32",
+        "e7ce580c0a8ae126",
+        "全部技能:all:34",
+        "全部技能:all:35",
+        "全部技能:all:36",
+        "全部技能:all:37",
+        "b840eb80f22ef78e",
+        "全部技能:all:197",
+        "f0a152f468c7e282"
+      ],
+      "childKeys": [
+        "guard-enable-physical",
+        "guard-mitigation",
+        "guard-chance",
+        "guard-enable-magic",
+        "guard-break-resistance",
+        "guard-release-physical",
+        "guard-release-spear",
+        "guard-success-hp",
+        "guard-success-mp",
+        "guard-success-sct"
+      ],
+      "overviewLabel": "全部格挡（分组）",
+      "separateSections": true,
+      "scopeDescription": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 10,
+        "notRelatedUnique": 925,
+        "ready": 0,
+        "partial": 10,
+        "unknown": 0
+      }
+    },
+    "counter": {
+      "label": "反击",
+      "passKind": "counter-effects-and-condition",
+      "displayOrder": [
+        "9304cda80e847537",
+        "9c2dddda058377e7",
+        "5950c82ca13345b0",
+        "99a9a562aa4868a1",
+        "4cd3c0b3112e088e",
+        "edaa295f9aa089b8",
+        "6436af4db7e5b1b5",
+        "1054c6df9acd81f8",
+        "fef501333a6f411a",
+        "e60d08454c99c899",
+        "全部技能:all:538",
+        "9baca3cad5fd7f6e",
+        "35faadc54c8092f6",
+        "全部技能:all:626",
+        "全部技能:all:632",
+        "465c19e17eb0cb01",
+        "4aafd29a15ad98c4",
+        "4d81b9b6cd7cb7fe",
+        "39d40acb62cf41cb",
+        "7791e2dcb32f7841",
+        "全部技能:all:704",
+        "46213cf7e16bd862",
+        "全部技能:all:738",
+        "f2910193b70859f3",
+        "75d1684f4522a2de",
+        "74710ff77dbf0cb0",
+        "全部技能:all:876",
+        "1142a097127c9dee"
+      ],
+      "childKeys": [
+        "counter-enable",
+        "counter-damage",
+        "counter-cap",
+        "counter-sct",
+        "counter-during-reduction",
+        "counter-heal",
+        "counter-during-stun",
+        "counter-poison",
+        "counter-machine-count-cap",
+        "counter-critical-damage",
+        "counter-incoming",
+        "counter-same-skill-count-incoming",
+        "counter-casting-incoming",
+        "counter-enemy-action-skill",
+        "counter-killer-god",
+        "counter-killer-machine",
+        "counter-killer-fish",
+        "counter-killer-creature",
+        "counter-killer-undead",
+        "counter-killer-soldier",
+        "counter-killer-sniper",
+        "counter-killer-sorcerer",
+        "counter-killer-dragon",
+        "counter-killer-beast",
+        "counter-killer-knight"
+      ],
+      "overviewLabel": "全部反击（分组）",
+      "separateSections": true,
+      "scopeDescription": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 28,
+        "notRelatedUnique": 907,
+        "ready": 24,
+        "partial": 4,
+        "unknown": 0
+      }
+    },
+    "normal-attack": {
+      "label": "普通攻击",
+      "passKind": "normal-attack-effects-and-condition",
+      "displayOrder": [
+        "35eec30328c81b5c",
+        "ad2eadc4169ea477",
+        "25fa2b5f258876bd",
+        "cd58d19d280ac44f",
+        "f613b94a7fe3eac3",
+        "6439186351318d8f",
+        "c3f6df4b71e94a5f",
+        "32babdfb0554ed43",
+        "1549fe8ad94d1f32",
+        "e6e5ad9aa042cbb4",
+        "2b30173ab0d7d7f6",
+        "517660b4dbea46e3",
+        "全部技能:all:66",
+        "b1b5416e553b19cd",
+        "全部技能:all:70",
+        "034b0063a9477540",
+        "495762124c3a416e",
+        "全部技能:all:148",
+        "bf042a386e6e2017",
+        "20ce0d18f81796ba",
+        "e012b3fe60fe4932",
+        "762601798c6e023a",
+        "5974289453db7347",
+        "240bff829bf6cbe6",
+        "1c99ce8a75970850",
+        "8e05ac250af36f65",
+        "df4a1ab1f77f9899",
+        "1032f88be503dbb8",
+        "dbc649cdc993f070",
+        "8b462538923994eb",
+        "ae4a9316a61a0384",
+        "08ba2a63471cced7",
+        "dda1c38d5e1c90f8"
+      ],
+      "childKeys": [
+        "normal-attack-killer-beast",
+        "normal-attack-killer-plant",
+        "normal-attack-killer-insect",
+        "normal-attack-killer-bird",
+        "normal-attack-killer-creature",
+        "normal-attack-killer-undead",
+        "normal-attack-killer-stone",
+        "normal-attack-killer-machine",
+        "normal-attack-killer-fish",
+        "normal-attack-killer-spirit",
+        "normal-attack-killer-dragon",
+        "normal-attack-killer-god",
+        "normal-attack-killer-soldier",
+        "normal-attack-killer-knight",
+        "normal-attack-killer-sniper",
+        "normal-attack-killer-sorcerer",
+        "normal-attack-killer-soldier-knight-sniper-sorcerer",
+        "normal-attack-killer-god-dragon-spirit-undead",
+        "normal-attack-killer-beast-plant-insect-bird-fish-creature",
+        "normal-attack-hit-poison",
+        "normal-attack-hit-blindness",
+        "normal-attack-hit-silence",
+        "normal-attack-hit-curse",
+        "normal-attack-hit-paralysis",
+        "normal-attack-hit-physical-vulnerability",
+        "normal-attack-mp-absorb",
+        "normal-attack-int-scaling",
+        "normal-attack-follow-up-177",
+        "normal-attack-follow-up-178",
+        "normal-attack-follow-up-179",
+        "normal-attack-follow-up-314",
+        "normal-attack-hp-absorb"
+      ],
+      "overviewLabel": "全部普通攻击（分组）",
+      "separateSections": true,
+      "scopeDescription": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 33,
+        "notRelatedUnique": 902,
+        "ready": 20,
+        "partial": 13,
+        "unknown": 0
+      }
+    },
+    "follow-up": {
+      "label": "追击",
+      "passKind": "follow-up-effects-and-condition",
+      "displayOrder": [
+        "1c99ce8a75970850",
+        "8e05ac250af36f65",
+        "df4a1ab1f77f9899",
+        "8b462538923994eb",
+        "e14285f5ee6071bf",
+        "7d13ccbe8866b38d"
+      ],
+      "childKeys": [
+        "follow-up-normal-177",
+        "follow-up-normal-178",
+        "follow-up-normal-179",
+        "follow-up-normal-314",
+        "follow-up-incoming-or-dual",
+        "follow-up-damage"
+      ],
+      "overviewLabel": "全部追击（分组）",
+      "separateSections": true,
+      "scopeDescription": "追击次数、概率和倍率分支、追击增伤、受到追击或二刀流第二击减伤分别列组。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 2,
+        "partial": 4,
+        "unknown": 0
+      }
+    },
+    "hp-recovery": {
+      "label": "HP回复",
+      "passKind": "hp-recovery-effects-and-condition",
+      "displayOrder": [
+        "全部技能:all:30",
+        "全部技能:all:35",
+        "6daaeb2654b05955",
+        "4cb37bd11ae3b17f",
+        "01f5167831d7b556",
+        "1c52dcb1735c073a",
+        "762601798c6e023a",
+        "全部技能:all:154",
+        "7c71d42c909d455a",
+        "6606b1627076dda2",
+        "898c96e867704168",
+        "6b975fa167e7e3e6",
+        "3e4595947b5c48f3",
+        "ecfc5e235fabef1a",
+        "e2018b4f235f4bc5",
+        "全部技能:all:307",
+        "29f04fa2a0ffb9fb",
+        "b2e58697ea88e464",
+        "全部技能:all:346",
+        "3797f19e9c516ee7",
+        "387b6e052ad74bb1",
+        "全部技能:all:389",
+        "b6f2ae8c19bf5c76",
+        "182731824b8599ca",
+        "fef501333a6f411a",
+        "faa4c35ca794565a",
+        "98771021cfbaa2c3",
+        "1f5b1ff3daa03f19",
+        "f177a34c939a2dfc",
+        "719fae43ca4bfa72",
+        "6958b9c4d7aad7cb",
+        "c9165a184c124aab",
+        "403a540b2ffa9519",
+        "ac61a8ca4991b577",
+        "cf54afaf524eaef4",
+        "905d840fb88b54ae",
+        "全部技能:all:794",
+        "127eab1363110062",
+        "ce7f716ec611a6d3"
+      ],
+      "childKeys": [
+        "hp-recovery-lifesteal",
+        "hp-recovery-critical",
+        "hp-recovery-guard",
+        "hp-recovery-physical-received-unknown-base",
+        "hp-recovery-physical-received",
+        "hp-recovery-magic-received",
+        "hp-recovery-boss-wave",
+        "hp-recovery-ally-death",
+        "hp-recovery-enemy-defeated",
+        "hp-recovery-battle-end",
+        "hp-recovery-lethal-184",
+        "hp-recovery-lethal-389",
+        "hp-recovery-revival-hp",
+        "hp-recovery-permanent-regen",
+        "hp-recovery-low-regen",
+        "hp-recovery-opening-regen",
+        "hp-recovery-periodic-chance",
+        "hp-recovery-low-hp",
+        "hp-recovery-counter",
+        "hp-recovery-paired-ally",
+        "hp-recovery-periodic-once",
+        "hp-recovery-magic-output",
+        "hp-recovery-magic-cap",
+        "hp-recovery-recipient-low",
+        "hp-recovery-self-low-received",
+        "hp-recovery-clothes-received",
+        "hp-recovery-received-amount",
+        "hp-recovery-received-cap",
+        "hp-recovery-str-scaling",
+        "hp-recovery-active-heal-sct",
+        "hp-recovery-disease-block"
+      ],
+      "overviewLabel": "全部HP回复（分组）",
+      "separateSections": true,
+      "scopeDescription": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 39,
+        "notRelatedUnique": 896,
+        "ready": 13,
+        "partial": 26,
+        "unknown": 0
+      }
+    },
+    "lifesteal": {
+      "label": "吸血",
+      "passKind": "lifesteal-effects-and-condition",
+      "displayOrder": [
+        "762601798c6e023a"
+      ],
+      "childKeys": [
+        "lifesteal-normal-hp-drain"
+      ],
+      "overviewLabel": "全部吸血（分组）",
+      "separateSections": true,
+      "scopeDescription": "仅HP吸血；保留普通攻击来源、造成伤害基数与未知触发概率。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -123035,8 +130166,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 230,
         "notRelatedUnique": 705,
-        "ready": 166,
-        "partial": 64,
+        "ready": 169,
+        "partial": 61,
         "unknown": 0
       }
     },
@@ -123255,8 +130386,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 130,
         "notRelatedUnique": 805,
-        "ready": 93,
-        "partial": 37,
+        "ready": 95,
+        "partial": 35,
         "unknown": 0
       }
     },
@@ -123602,8 +130733,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 26,
         "notRelatedUnique": 909,
-        "ready": 13,
-        "partial": 13,
+        "ready": 16,
+        "partial": 10,
         "unknown": 0
       }
     },
@@ -124057,8 +131188,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 82,
         "notRelatedUnique": 853,
-        "ready": 48,
-        "partial": 34,
+        "ready": 51,
+        "partial": 31,
         "unknown": 0
       }
     },
@@ -124240,8 +131371,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 45,
         "notRelatedUnique": 890,
-        "ready": 37,
-        "partial": 8,
+        "ready": 38,
+        "partial": 7,
         "unknown": 0
       }
     },
@@ -125216,8 +132347,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 23,
         "notRelatedUnique": 912,
-        "ready": 16,
-        "partial": 7,
+        "ready": 17,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -127879,8 +135010,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -127896,8 +135027,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -130173,8 +137304,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -138626,8 +145757,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -139010,8 +146141,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 2,
-        "partial": 4,
+        "ready": 4,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -139454,8 +146585,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 24,
-        "partial": 13,
+        "ready": 26,
+        "partial": 11,
         "unknown": 0
       }
     },
@@ -139946,8 +147077,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -141442,8 +148573,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 21,
         "notRelatedUnique": 914,
-        "ready": 15,
-        "partial": 6,
+        "ready": 17,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -142527,8 +149658,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -142544,8 +149675,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -148235,8 +155366,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -149094,8 +156225,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 16,
         "notRelatedUnique": 919,
-        "ready": 6,
-        "partial": 10,
+        "ready": 8,
+        "partial": 8,
         "unknown": 0
       }
     },
@@ -150120,8 +157251,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 4,
-        "partial": 1,
+        "ready": 5,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -150278,8 +157409,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -150540,8 +157671,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -150591,8 +157722,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -151488,8 +158619,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -152040,6 +159171,1806 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 934,
         "ready": 1,
         "partial": 0,
+        "unknown": 0
+      }
+    },
+    "guard-enable-physical": {
+      "label": "物理攻击格挡",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "enable-physical",
+      "displayOrder": [
+        "全部技能:all:31"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "guard-mitigation": {
+      "label": "格挡伤害减免提升",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "mitigation",
+      "displayOrder": [
+        "全部技能:all:32"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "guard-chance": {
+      "label": "格挡概率提升",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "chance",
+      "displayOrder": [
+        "e7ce580c0a8ae126"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "guard-enable-magic": {
+      "label": "魔法攻击格挡",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "enable-magic",
+      "displayOrder": [
+        "全部技能:all:34"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "guard-break-resistance": {
+      "label": "格挡破防抵抗",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "break-resistance",
+      "displayOrder": [
+        "全部技能:all:37"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "guard-release-physical": {
+      "label": "物理攻击解除敌人格挡",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "release-physical",
+      "displayOrder": [
+        "b840eb80f22ef78e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "guard-release-spear": {
+      "label": "装备枪 · 物理攻击解除敌人格挡",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "release-spear",
+      "displayOrder": [
+        "f0a152f468c7e282"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "guard-success-hp": {
+      "label": "成功格挡 · HP回复",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "success-hp",
+      "displayOrder": [
+        "全部技能:all:35"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "guard-success-mp": {
+      "label": "成功格挡 · MP回复",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "success-mp",
+      "displayOrder": [
+        "全部技能:all:36"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "guard-success-sct": {
+      "label": "成功格挡 · SCT回复",
+      "parent": "guard",
+      "conditionTag": "格挡",
+      "effectGroup": "success-sct",
+      "displayOrder": [
+        "全部技能:all:197"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "counter-enable": {
+      "label": "受到物理攻击 · 发动反击",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "enable",
+      "displayOrder": [
+        "9304cda80e847537"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "counter-damage": {
+      "label": "反击伤害提升",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "damage",
+      "displayOrder": [
+        "9c2dddda058377e7",
+        "6436af4db7e5b1b5",
+        "1054c6df9acd81f8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-cap": {
+      "label": "反击伤害上限提升",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "cap",
+      "displayOrder": [
+        "6436af4db7e5b1b5",
+        "1054c6df9acd81f8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-sct": {
+      "label": "发动反击 · SCT回复",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "sct",
+      "displayOrder": [
+        "5950c82ca13345b0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-during-reduction": {
+      "label": "自身反击期间 · 通用减伤",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "during-reduction",
+      "displayOrder": [
+        "4cd3c0b3112e088e",
+        "35faadc54c8092f6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-heal": {
+      "label": "发动反击 · HP回复",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "heal",
+      "displayOrder": [
+        "fef501333a6f411a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "counter-during-stun": {
+      "label": "自身反击期间 · 抵抗攻击气绝",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "during-stun",
+      "displayOrder": [
+        "465c19e17eb0cb01"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-poison": {
+      "label": "反击命中 · 概率中毒",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "poison",
+      "displayOrder": [
+        "9baca3cad5fd7f6e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "counter-machine-count-cap": {
+      "label": "机械我方人数 · 反击上限",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "machine-count-cap",
+      "displayOrder": [
+        "4aafd29a15ad98c4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-critical-damage": {
+      "label": "反击暴击伤害提升",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "critical-damage",
+      "displayOrder": [
+        "4d81b9b6cd7cb7fe"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-incoming": {
+      "label": "受到反击 · 伤害减少",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "incoming",
+      "displayOrder": [
+        "39d40acb62cf41cb",
+        "46213cf7e16bd862"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-same-skill-count-incoming": {
+      "label": "同技能人数 · 受到反击减伤",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "same-skill-count-incoming",
+      "displayOrder": [
+        "7791e2dcb32f7841"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "counter-casting-incoming": {
+      "label": "魔法咏唱中 · 受到反击减伤",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "casting-incoming",
+      "displayOrder": [
+        "f2910193b70859f3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-enemy-action-skill": {
+      "label": "敌人发动特技或反击 · 特技增伤",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "enemy-action-skill",
+      "displayOrder": [
+        "74710ff77dbf0cb0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-god": {
+      "label": "反击特攻 · 神族",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-god",
+      "displayOrder": [
+        "99a9a562aa4868a1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-machine": {
+      "label": "反击特攻 · 机械",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-machine",
+      "displayOrder": [
+        "edaa295f9aa089b8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-fish": {
+      "label": "反击特攻 · 鱼类",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-fish",
+      "displayOrder": [
+        "e60d08454c99c899"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-creature": {
+      "label": "反击特攻 · 魔法生物",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-creature",
+      "displayOrder": [
+        "全部技能:all:538"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-undead": {
+      "label": "反击特攻 · 不死生物",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-undead",
+      "displayOrder": [
+        "全部技能:all:626"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-soldier": {
+      "label": "反击特攻 · 战士",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-soldier",
+      "displayOrder": [
+        "全部技能:all:632"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-sniper": {
+      "label": "反击特攻 · 射手",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-sniper",
+      "displayOrder": [
+        "全部技能:all:704"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-sorcerer": {
+      "label": "反击特攻 · 魔法师",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-sorcerer",
+      "displayOrder": [
+        "全部技能:all:738"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-dragon": {
+      "label": "反击特攻 · 龙族",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-dragon",
+      "displayOrder": [
+        "75d1684f4522a2de"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-beast": {
+      "label": "反击特攻 · 兽族",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-beast",
+      "displayOrder": [
+        "全部技能:all:876"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "counter-killer-knight": {
+      "label": "反击特攻 · 骑士",
+      "parent": "counter",
+      "conditionTag": "反击",
+      "effectGroup": "killer-knight",
+      "displayOrder": [
+        "1142a097127c9dee"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-beast": {
+      "label": "普通攻击对兽类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-beast",
+      "displayOrder": [
+        "35eec30328c81b5c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-plant": {
+      "label": "普通攻击对植物类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-plant",
+      "displayOrder": [
+        "ad2eadc4169ea477"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-insect": {
+      "label": "普通攻击对昆虫类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-insect",
+      "displayOrder": [
+        "25fa2b5f258876bd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-bird": {
+      "label": "普通攻击对鸟类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-bird",
+      "displayOrder": [
+        "cd58d19d280ac44f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-creature": {
+      "label": "普通攻击对魔法生物类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-creature",
+      "displayOrder": [
+        "f613b94a7fe3eac3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-undead": {
+      "label": "普通攻击对不死生物类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-undead",
+      "displayOrder": [
+        "6439186351318d8f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-stone": {
+      "label": "普通攻击对矿石类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-stone",
+      "displayOrder": [
+        "c3f6df4b71e94a5f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-machine": {
+      "label": "普通攻击对机械类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-machine",
+      "displayOrder": [
+        "32babdfb0554ed43"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-fish": {
+      "label": "普通攻击对鱼类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-fish",
+      "displayOrder": [
+        "1549fe8ad94d1f32"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-spirit": {
+      "label": "普通攻击对精灵类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-spirit",
+      "displayOrder": [
+        "e6e5ad9aa042cbb4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-dragon": {
+      "label": "普通攻击对龙类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-dragon",
+      "displayOrder": [
+        "2b30173ab0d7d7f6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-god": {
+      "label": "普通攻击对神类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-god",
+      "displayOrder": [
+        "517660b4dbea46e3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-soldier": {
+      "label": "普通攻击对士兵类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-soldier",
+      "displayOrder": [
+        "全部技能:all:66"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-knight": {
+      "label": "普通攻击对骑士类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-knight",
+      "displayOrder": [
+        "b1b5416e553b19cd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-sniper": {
+      "label": "普通攻击对狙击手类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-sniper",
+      "displayOrder": [
+        "全部技能:all:70"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-sorcerer": {
+      "label": "普通攻击对魔法师类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-sorcerer",
+      "displayOrder": [
+        "034b0063a9477540"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-soldier-knight-sniper-sorcerer": {
+      "label": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-soldier-knight-sniper-sorcerer",
+      "displayOrder": [
+        "ae4a9316a61a0384"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-god-dragon-spirit-undead": {
+      "label": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-god-dragon-spirit-undead",
+      "displayOrder": [
+        "08ba2a63471cced7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-killer-beast-plant-insect-bird-fish-creature": {
+      "label": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "killer-beast-plant-insect-bird-fish-creature",
+      "displayOrder": [
+        "dda1c38d5e1c90f8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-hit-poison": {
+      "label": "普通攻击命中 · 施加毒",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "hit-poison",
+      "displayOrder": [
+        "495762124c3a416e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-hit-blindness": {
+      "label": "普通攻击命中 · 施加暗盲",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "hit-blindness",
+      "displayOrder": [
+        "全部技能:all:148"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-hit-silence": {
+      "label": "普通攻击命中 · 施加沉默",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "hit-silence",
+      "displayOrder": [
+        "bf042a386e6e2017",
+        "dbc649cdc993f070"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "normal-attack-hit-curse": {
+      "label": "普通攻击命中 · 施加诅咒",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "hit-curse",
+      "displayOrder": [
+        "20ce0d18f81796ba"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-hit-paralysis": {
+      "label": "普通攻击命中 · 施加麻痹",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "hit-paralysis",
+      "displayOrder": [
+        "e012b3fe60fe4932"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-hit-physical-vulnerability": {
+      "label": "普通攻击命中 · 施加物理易伤",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "hit-physical-vulnerability",
+      "displayOrder": [
+        "1032f88be503dbb8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "normal-attack-mp-absorb": {
+      "label": "普通攻击 · 概率吸收MP",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "mp-absorb",
+      "displayOrder": [
+        "5974289453db7347"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-int-scaling": {
+      "label": "魔力参照 · 普通攻击增伤",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "int-scaling",
+      "displayOrder": [
+        "240bff829bf6cbe6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-follow-up-177": {
+      "label": "普通攻击时有概率追加1次伤害，触发概率和追击伤害倍率待确认。",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "follow-up-177",
+      "displayOrder": [
+        "1c99ce8a75970850"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-follow-up-178": {
+      "label": "普通攻击时追加1次伤害，追击伤害倍率待确认。",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "follow-up-178",
+      "displayOrder": [
+        "8e05ac250af36f65"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-follow-up-179": {
+      "label": "普通攻击时追加2次伤害，各次追击伤害倍率待确认。",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "follow-up-179",
+      "displayOrder": [
+        "df4a1ab1f77f9899"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-follow-up-314": {
+      "label": "普通攻击时低概率产生4倍或8倍威力的追击；两种倍率互斥，概率与分支分布待确认。",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "follow-up-314",
+      "displayOrder": [
+        "8b462538923994eb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "normal-attack-hp-absorb": {
+      "label": "普通攻击 · 概率吸血",
+      "parent": "normal-attack",
+      "conditionTag": "普通攻击",
+      "effectGroup": "hp-absorb",
+      "displayOrder": [
+        "762601798c6e023a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "follow-up-normal-177": {
+      "label": "普通攻击时有概率追加1次伤害，触发概率和追击伤害倍率待确认。",
+      "parent": "follow-up",
+      "conditionTag": "追击",
+      "effectGroup": "normal-177",
+      "displayOrder": [
+        "1c99ce8a75970850"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "follow-up-normal-178": {
+      "label": "普通攻击时追加1次伤害，追击伤害倍率待确认。",
+      "parent": "follow-up",
+      "conditionTag": "追击",
+      "effectGroup": "normal-178",
+      "displayOrder": [
+        "8e05ac250af36f65"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "follow-up-normal-179": {
+      "label": "普通攻击时追加2次伤害，各次追击伤害倍率待确认。",
+      "parent": "follow-up",
+      "conditionTag": "追击",
+      "effectGroup": "normal-179",
+      "displayOrder": [
+        "df4a1ab1f77f9899"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "follow-up-normal-314": {
+      "label": "普通攻击时低概率产生4倍或8倍威力的追击；两种倍率互斥，概率与分支分布待确认。",
+      "parent": "follow-up",
+      "conditionTag": "追击",
+      "effectGroup": "normal-314",
+      "displayOrder": [
+        "8b462538923994eb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "follow-up-incoming-or-dual": {
+      "label": "受到追击或二刀流第二击 · 减伤",
+      "parent": "follow-up",
+      "conditionTag": "追击",
+      "effectGroup": "incoming-or-dual",
+      "displayOrder": [
+        "e14285f5ee6071bf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "follow-up-damage": {
+      "label": "追击伤害提升",
+      "parent": "follow-up",
+      "conditionTag": "追击",
+      "effectGroup": "damage",
+      "displayOrder": [
+        "7d13ccbe8866b38d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-lifesteal": {
+      "label": "普通攻击 · 按造成伤害吸血",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "lifesteal",
+      "displayOrder": [
+        "762601798c6e023a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-critical": {
+      "label": "暴击 · HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "critical",
+      "displayOrder": [
+        "全部技能:all:30"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-guard": {
+      "label": "成功格挡 · HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "guard",
+      "displayOrder": [
+        "全部技能:all:35"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-physical-received-unknown-base": {
+      "label": "受到物理伤害 · 回复基数待确认",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "physical-received-unknown-base",
+      "displayOrder": [
+        "6606b1627076dda2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-physical-received": {
+      "label": "受到物理伤害 · 按所受伤害回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "physical-received",
+      "displayOrder": [
+        "全部技能:all:307"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-magic-received": {
+      "label": "受到魔法伤害 · 按所受伤害回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "magic-received",
+      "displayOrder": [
+        "b2e58697ea88e464",
+        "全部技能:all:346",
+        "全部技能:all:389"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-boss-wave": {
+      "label": "Boss Wave开始 · HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "boss-wave",
+      "displayOrder": [
+        "3797f19e9c516ee7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-ally-death": {
+      "label": "其他友军倒下 · 自身HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "ally-death",
+      "displayOrder": [
+        "387b6e052ad74bb1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-enemy-defeated": {
+      "label": "击败敌人时 · HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "enemy-defeated",
+      "displayOrder": [
+        "全部技能:all:154"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-battle-end": {
+      "label": "战斗结束时 · HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "battle-end",
+      "displayOrder": [
+        "7c71d42c909d455a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-lethal-184": {
+      "label": "致命伤害 · 存活并回复HP",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "lethal-184",
+      "displayOrder": [
+        "6b975fa167e7e3e6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-lethal-389": {
+      "label": "致命伤害 · MP归零并回复HP",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "lethal-389",
+      "displayOrder": [
+        "29f04fa2a0ffb9fb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-revival-hp": {
+      "label": "自动复活 · 初始HP",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "revival-hp",
+      "displayOrder": [
+        "898c96e867704168"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-permanent-regen": {
+      "label": "永久再生",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "permanent-regen",
+      "displayOrder": [
+        "6daaeb2654b05955"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-low-regen": {
+      "label": "濒死触发 · 限时再生",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "low-regen",
+      "displayOrder": [
+        "ecfc5e235fabef1a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-opening-regen": {
+      "label": "Wave开始 · 限时再生",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "opening-regen",
+      "displayOrder": [
+        "f177a34c939a2dfc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-periodic-chance": {
+      "label": "定期概率 · HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "periodic-chance",
+      "displayOrder": [
+        "e2018b4f235f4bc5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-low-hp": {
+      "label": "自身濒死 · 即时HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "low-hp",
+      "displayOrder": [
+        "4cb37bd11ae3b17f",
+        "faa4c35ca794565a",
+        "1f5b1ff3daa03f19"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-counter": {
+      "label": "发动反击 · HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "counter",
+      "displayOrder": [
+        "fef501333a6f411a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-paired-ally": {
+      "label": "自身倒下 · 存活配对友军HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "paired-ally",
+      "displayOrder": [
+        "6958b9c4d7aad7cb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-periodic-once": {
+      "label": "定期概率 · 每Wave一次HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "periodic-once",
+      "displayOrder": [
+        "403a540b2ffa9519"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-magic-output": {
+      "label": "自身回复魔法 · HP回复量提升",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "magic-output",
+      "displayOrder": [
+        "01f5167831d7b556",
+        "1c52dcb1735c073a",
+        "182731824b8599ca",
+        "全部技能:all:794"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 4,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-magic-cap": {
+      "label": "自身回复魔法 · 单次HP回复上限",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "magic-cap",
+      "displayOrder": [
+        "全部技能:all:794",
+        "ce7f716ec611a6d3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-recipient-low": {
+      "label": "治疗濒死友军 · 回复量提升",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "recipient-low",
+      "displayOrder": [
+        "b6f2ae8c19bf5c76"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-self-low-received": {
+      "label": "自身濒死 · 收到主动治疗量提升",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "self-low-received",
+      "displayOrder": [
+        "719fae43ca4bfa72",
+        "cf54afaf524eaef4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-clothes-received": {
+      "label": "装备衣服 · 收到主动治疗量提升",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "clothes-received",
+      "displayOrder": [
+        "98771021cfbaa2c3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-received-amount": {
+      "label": "收到我方主动治疗 · 回复量提升",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "received-amount",
+      "displayOrder": [
+        "ac61a8ca4991b577"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-received-cap": {
+      "label": "收到我方主动治疗 · 回复上限提升",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "received-cap",
+      "displayOrder": [
+        "905d840fb88b54ae"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-str-scaling": {
+      "label": "攻击力参照 · 主动HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "str-scaling",
+      "displayOrder": [
+        "127eab1363110062"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-active-heal-sct": {
+      "label": "受到主动治疗 · SCT回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "active-heal-sct",
+      "displayOrder": [
+        "3e4595947b5c48f3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "hp-recovery-disease-block": {
+      "label": "疾病状态 · 禁止HP回复",
+      "parent": "hp-recovery",
+      "conditionTag": "HP回复",
+      "effectGroup": "disease-block",
+      "displayOrder": [
+        "c9165a184c124aab"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "lifesteal-normal-hp-drain": {
+      "label": "普通攻击 · HP吸收",
+      "parent": "lifesteal",
+      "conditionTag": "吸血",
+      "effectGroup": "normal-hp-drain",
+      "displayOrder": [
+        "762601798c6e023a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -152947,14 +161878,32 @@ export const SKILL_LABELING_CATALOG = {
         "68bd1c7efd3638c0",
         "c66066248ff15c7b",
         "3462e35ad13a8f2f",
-        "4db25889525ff54a"
+        "4db25889525ff54a",
+        "9c2dddda058377e7",
+        "6436af4db7e5b1b5",
+        "1054c6df9acd81f8",
+        "fef501333a6f411a",
+        "465c19e17eb0cb01",
+        "39d40acb62cf41cb",
+        "46213cf7e16bd862",
+        "1c99ce8a75970850",
+        "8e05ac250af36f65",
+        "df4a1ab1f77f9899",
+        "8b462538923994eb",
+        "e14285f5ee6071bf",
+        "7d13ccbe8866b38d",
+        "762601798c6e023a",
+        "全部技能:all:154",
+        "7c71d42c909d455a",
+        "ac61a8ca4991b577",
+        "905d840fb88b54ae"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 902,
-        "notRelatedUnique": 33,
-        "ready": 622,
-        "partial": 280,
+        "relatedUnique": 920,
+        "notRelatedUnique": 15,
+        "ready": 644,
+        "partial": 276,
         "unknown": 0
       }
     }

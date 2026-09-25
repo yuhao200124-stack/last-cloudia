@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "label": "追击",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "follow-up-effects-and-condition",
+  "skillIds": [
+    "1c99ce8a75970850",
+    "8e05ac250af36f65",
+    "df4a1ab1f77f9899",
+    "8b462538923994eb",
+    "e14285f5ee6071bf",
+    "7d13ccbe8866b38d"
+  ]
+}

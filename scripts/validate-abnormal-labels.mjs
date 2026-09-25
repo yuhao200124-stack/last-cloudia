@@ -1,5 +1,6 @@
+import {partsBeforeCombat} from './combat-preservation-helpers.mjs';
 export const abnormalAddedPartIds=['abnormal-parameters','abnormal-slow-amount','abnormal-opening-str-down','abnormal-random-str-down'];
-export const partsBeforeAbnormal=entry=>entry.parts.filter(p=>!abnormalAddedPartIds.includes(p.id));
+export const partsBeforeAbnormal=entry=>partsBeforeCombat(entry).filter(p=>!abnormalAddedPartIds.includes(p.id));
 
 export function validateAbnormalCoverage(view,d,a,e){
  const c=d.coverage;

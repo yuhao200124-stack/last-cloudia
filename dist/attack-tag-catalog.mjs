@@ -520,6 +520,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "low-hp-trigger",
           "kind": "condition",
           "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认"
         }
       ],
       "tagDetails": {
@@ -726,6 +731,68 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "HP回复": {
+          "summary": "自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "group": "low-hp",
+              "combatRole": "direct-effect",
+              "effectIdentity": "4cb37bd11ae3b17f:effect-1",
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "effect-4",
+                "condition-1",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
@@ -733,15 +800,16 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "濒死",
         "防御",
-        "魔抗"
+        "魔抗",
+        "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "回复HP",
         "移动速度提升"
       ],
       "remainingConditions": [
-        "每个Wave最多触发1次"
+        "每个Wave最多触发1次",
+        "HP回复的具体数值与计算公式待确认"
       ]
     },
     {
@@ -9666,6 +9734,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "攻击力Buff持续20秒"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复量、每10秒判定的触发概率待确认"
         }
       ],
       "tagDetails": {
@@ -9678,18 +9751,77 @@ export const ATTACK_TAG_CATALOG = {
             "basic:403a540b2ffa9519:1"
           ],
           "relatedSkillIds": []
+        },
+        "HP回复": {
+          "summary": "战斗开始后每10秒概率判定，触发时大幅回复HP，每Wave最多1次；回复量与概率待确认。攻击力Buff的20秒时长不套用到这次即时回复。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "战斗开始后每10秒概率判定，触发时大幅回复HP，每Wave最多1次；回复量与概率待确认。攻击力Buff的20秒时长不套用到这次即时回复。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "intervalSeconds": 10,
+              "trigger": {
+                "actor": "self",
+                "event": "periodic-after-battle-start"
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "chanceStatus": "unconfirmed",
+              "amountStatus": "unconfirmed",
+              "group": "periodic-once",
+              "combatRole": "direct-effect",
+              "effectIdentity": "403a540b2ffa9519:effect-1",
+              "sourceClause": "从战斗开始后每 10 秒，有一定几率大幅恢复生命 值，并获得 攻击力 +100% 的增益效果，持续 20 秒（每 波最多一次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始后每10秒判定，概率触发，每个Wave最多1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力Buff持续20秒"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复量、每10秒判定的触发概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1",
+                "condition-2",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "大幅恢复HP"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "战斗开始后每10秒判定，概率触发，每个Wave最多1次",
-        "攻击力Buff持续20秒"
+        "攻击力Buff持续20秒",
+        "HP回复量、每10秒判定的触发概率待确认"
       ]
     },
     {
@@ -12452,6 +12584,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "只适用于主动技能的HP恢复，部分特殊恢复除外"
+        },
+        {
+          "id": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "攻击力与主动HP回复量的换算公式、排除的特殊回复技能名单待确认"
         }
       ],
       "tagDetails": {
@@ -12462,18 +12599,73 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "HP回复": {
+          "summary": "参照自身攻击力，略微提高主动技能的HP回复量，部分特殊回复除外；换算公式与完整例外名单待确认，不增加攻击力。",
+          "relation": "hp-recovery-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "参照自身攻击力，略微提高主动技能的HP回复量，部分特殊回复除外；换算公式与完整例外名单待确认，不增加攻击力。",
+              "operation": "stat-scaled-healing-output-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "source": "active-skill"
+              },
+              "referenceStat": "STR",
+              "changesStat": false,
+              "formulaStatus": "unconfirmed",
+              "specialHealingExceptionsStatus": "unconfirmed",
+              "group": "str-scaling",
+              "combatRole": "direct-effect",
+              "effectIdentity": "127eab1363110062:effect-1",
+              "sourceClause": "攻击力越高，自身主动技能的HP恢复量略微提升（部分特殊恢复效果除外）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "以攻击力作为主动技能HP恢复量的参照"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "只适用于主动技能的HP恢复，部分特殊恢复除外"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "攻击力与主动HP回复量的换算公式、排除的特殊回复技能名单待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1",
+                "condition-2",
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "HP回复"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "主动技能HP恢复量提升及其例外"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "以攻击力作为主动技能HP恢复量的参照",
-        "只适用于主动技能的HP恢复，部分特殊恢复除外"
+        "只适用于主动技能的HP恢复，部分特殊恢复除外",
+        "攻击力与主动HP回复量的换算公式、排除的特殊回复技能名单待确认"
       ]
     },
     {

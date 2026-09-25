@@ -1,3 +1,4 @@
+import {registryBeforeCombat} from '../scripts/combat-preservation-helpers.mjs';
 import {tagDetailsBeforeBreak} from './break-preservation-helpers.mjs';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{createHash}from'node:crypto';
 import{SKILL_LABELING_CATALOG as catalog}from'../dist/skill-labeling-catalog.mjs';import{canonicalSkillRows,labelingView,skillLabelRows,filterLabelRows,resolveSkillLabels}from'../dist/skill-labeling-model.mjs';import{partsBeforeAbnormal,validateAbnormalCoverage,validateAbnormalBinding}from'../scripts/validate-abnormal-labels.mjs';
@@ -9,7 +10,7 @@ test('abnormal audit covers every canonical source and all resistance, inflictio
  for(const row of rows){const a=audit.rows.find(x=>x.id===row.id);assert.equal(a.sourceHash,hash([row.id,row.url,row.name,row.effect,row.notes||'']));assert.equal(a.decision==='related',view.entries.some(e=>e.id===row.id));}
  assert.deepEqual([...new Set(view.childKeys.flatMap(k=>labelingView(catalog,k).entries.map(e=>e.id)))].sort(),view.entries.map(e=>e.id).sort());
  for(const n of[234,244,471,508,639,830,906,1250,1312,1616,1753,1879,175,398,418,570])assert(!entry(n).assignedTags.includes('异常'));
- assert.deepEqual(view.counts,{reviewedUnique:935,relatedUnique:65,notRelatedUnique:870,ready:37,partial:28,unknown:0});assert.equal(catalog.entries.length,902);assert.equal(r.tagPasses.length,71);assert.equal(catalog.views.all.counts.ready,622);assert.equal(catalog.views.all.counts.partial,280);
+ assert.deepEqual(view.counts,{reviewedUnique:935,relatedUnique:65,notRelatedUnique:870,ready:38,partial:27,unknown:0});assert.equal(catalog.entries.length,920);assert.equal(r.tagPasses.length,77);assert.equal(catalog.views.all.counts.ready,644);assert.equal(catalog.views.all.counts.partial,276);
 });
 
 test('all 866 prior records, 69 passes, identities, source text, bindings and calculator files remain unchanged',()=>{
@@ -18,8 +19,8 @@ test('all 866 prior records, 69 passes, identities, source text, bindings and ca
  for(const p of preserved.tagPassHashes)assert.equal(hash(r.tagPasses.find(x=>x.tag===p.tag)),p.hash,p.tag);
  for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h,p);
  assert.deepEqual(r.views.all.displayOrder.slice(0,866),preserved.previousDisplayOrder);assert.equal(catalog.numericEffectInjection,false);
- const before={...r,entries:r.entries.filter(e=>preserved.entries.some(p=>p.id===e.id)).map(e=>({...e,parts:partsBeforeAbnormal(e)})),tagPasses:r.tagPasses.filter(p=>!['异常','Break'].includes(p.tag))};const prior=resolveSkillLabels(before);assert.equal(prior.filter(e=>e.judgment==='ready').length,571);
- const currentBeforeBreak=resolveSkillLabels({...r,tagPasses:r.tagPasses.filter(p=>p.tag!=='Break')});const promoted=prior.filter(e=>e.judgment==='partial'&&currentBeforeBreak.find(x=>x.id===e.id).judgment==='ready').map(e=>+e.url.split('/').pop()).sort((a,b)=>a-b);assert.deepEqual(promoted,[173,324,717,902,924,940,1026,1045,1227,1463,1517,1667,1729,1990,2017]);for(const e of prior.filter(e=>e.judgment==='ready'))assert.equal(entry(+e.url.split('/').pop()).judgment,'ready');
+ const before={...r,entries:r.entries.filter(e=>preserved.entries.some(p=>p.id===e.id)).map(e=>({...e,parts:partsBeforeAbnormal(e)})),tagPasses:r.tagPasses.filter(p=>!['异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血'].includes(p.tag))};const prior=resolveSkillLabels(before);assert.equal(prior.filter(e=>e.judgment==='ready').length,571);
+ const currentBeforeBreak=resolveSkillLabels({...registryBeforeCombat(r),tagPasses:registryBeforeCombat(r).tagPasses.filter(p=>p.tag!=='Break')});const promoted=prior.filter(e=>e.judgment==='partial'&&currentBeforeBreak.find(x=>x.id===e.id).judgment==='ready').map(e=>+e.url.split('/').pop()).sort((a,b)=>a-b);assert.deepEqual(promoted,[173,324,717,902,924,940,1026,1045,1227,1463,1517,1667,1729,1990,2017]);for(const e of prior.filter(e=>e.judgment==='ready'))assert.equal(entry(+e.url.split('/').pop()).judgment,'ready');
 });
 
 test('resistance grades, weakness removal, conditional armor, cured-type Buff and single-use barrier retain distinct semantics',()=>{
@@ -32,7 +33,7 @@ test('resistance grades, weakness removal, conditional armor, cured-type Buff an
 });
 
 test('status applications preserve proc attempts, attack/event sources, recipients and unresolved magnitudes',()=>{
- for(const n of[147,148,149,150,151]){const b=bs(n)[0];assert.equal(b.chancePercent,3);assert.equal(b.chanceMeaning,'application-attempt');assert.equal(b.trigger.event,'normal-attack-hit');assert.equal(b.respectsTargetStatusResistance,true);assert.equal(b.statusDurationStatus,'unconfirmed');assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingConditions.some(t=>t.includes('普通攻击')));}
+ for(const n of[147,148,149,150,151]){const b=bs(n)[0];assert.equal(b.chancePercent,3);assert.equal(b.chanceMeaning,'application-attempt');assert.equal(b.trigger.event,'normal-attack-hit');assert.equal(b.respectsTargetStatusResistance,true);assert.equal(b.statusDurationStatus,'unconfirmed');assert.equal(entry(n).judgment,'partial');assert(!entry(n).remainingConditions.some(t=>t.includes('普通攻击')));assert(entry(n).assignedTags.includes('普通攻击'));}
  assert.equal(bs(226)[0].chancePercent,undefined);assert.equal(bs(226)[0].chanceStatus,'unconfirmed');assert.equal(bs(923)[0].trigger.event,'counter-hit');assert.equal(bs(1305)[0].target,'enemy-who-defeated-self');assert.equal(bs(1305)[0].statusMeaning,'prevents-HP-recovery');assert.equal(bs(1316)[0].scope.direction,'target-incoming');
  assert.equal(bs(1873)[0].periodicDamage.minimumRemainingHP,1);assert.equal(entry(1873).judgment,'partial');assert.equal(bs(126)[0].changesParalysisResistance,false);assert.equal(bs(126)[0].changesBreakDamage,false);
  assert.equal(bs(193)[0].operation,'status-recovery-time-down');assert.equal(bs(224)[0].operation,'status-recovery-speed-up');assert.equal(bs(1667)[0].operation,'status-recovery-speed-down');assert.equal(bs(1667)[0].valuePercent,20);assert.equal(bs(1667)[0].convertsToDurationPercent,false);
@@ -57,7 +58,7 @@ test('validation rejects false immunity, wrong resistance units, expanded state 
 
 function page(){const elements=new Map(),get=k=>{if(!elements.has(k))elements.set(k,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(k,v){this.listeners[k]=v},setAttribute(){},focus(){}});return elements.get(k)};vm.runInNewContext(read('dist/skill-labeling.mjs').replace(/^import .*;\n/gm,'').replace('export function renderLabelTable','function renderLabelTable'),{catalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,location:{search:'?tag=abnormal'},addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Preserve user saves')}}});return get;}
 test('abnormal page renders every group with stable judgment sorting, unique search counts and edited-description invalidation',()=>{
- const get=page();assert.equal(get('#activeTagTitle').textContent,'异常');assert.match(get('#judgmentSummary').textContent,/37.*28.*0/);assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,63);const sections=get('#labelTable').innerHTML.split('<section ').slice(1);assert.equal(sections.length,63);for(const s of sections){const ranks=[...s.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(m=>({ready:0,partial:1,unknown:2})[m[1]]);assert.deepEqual(ranks,[...ranks].sort((a,b)=>a-b));}
+ const get=page();assert.equal(get('#activeTagTitle').textContent,'异常');assert.match(get('#judgmentSummary').textContent,/38.*27.*0/);assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,69);const sections=get('#labelTable').innerHTML.split('<section ').slice(1);assert.equal(sections.length,63);for(const s of sections){const ranks=[...s.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(m=>({ready:0,partial:1,unknown:2})[m[1]]);assert.deepEqual(ranks,[...ranks].sort((a,b)=>a-b));}
  get('#labelSearch').value=entry(761).name;get('#labelSearch').listeners.input();assert.match(get('#labelResultCount').textContent,/显示 1 \//);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,2);
  const edited=skillLabelRows(data,view,{['skill:'+entry(90).id]:{effect:'新效果'}}).find(e=>e.id===entry(90).id);assert.equal(edited.judgment,'unknown');assert.deepEqual(edited.assignedTags,[]);
 });

@@ -1,3 +1,4 @@
+import {combatKeys,validateCombatCoverage,validateCombatBinding} from './validate-combat-labels.mjs';
 import {validateBreakCoverage,validateBreakBinding} from './validate-break-labels.mjs';
 import {validateAbnormalCoverage,validateAbnormalBinding} from './validate-abnormal-labels.mjs';
 import {defensiveKeys,validateDefensiveCoverage,validateDefensiveBinding} from './validate-defensive-labels.mjs';
@@ -42,7 +43,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense-stat','防御力','previousBasicDefenseUnique'],['defense','防御',null],['mnd','魔抗',null],['damage-reduction','伤害减少',null],['abnormal','异常',null],['break','Break',null],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical-damage','物理伤害增加',null],['physical','物理',null],['magic-damage-only','魔法伤害增加',null],['magic-damage','魔法',null],['damage','伤害增加',null],['boss','Boss',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['technique','特技相关',null],['revive','复活',null],['ally-death','友军死亡',null],['critical','暴击',null],['fire','火属性',null],['ice','冰属性',null],['earth','树属性',null],['thunder','雷属性',null],['light','光属性',null],['dark','暗属性',null],['neutral','无属性',null],['sword','剑',null],['axe','斧',null],['spear','枪',null],['hammer','锤',null],['bow','弓',null],['machine','机械',null],['claw','爪',null],['staff','杖',null],['armor','铠甲',null],['clothes','衣服',null],['robe','法袍',null],['single-weapon','单手',null],['dual-weapon','双手',null],['empty-weapon','空武器',null],['empty-armor','空防具',null],['empty-gear','空武器+防具',null],['bird','鸟',null],...racePassDefinitions.map(d=>[d.key,d.label,null])]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense-stat','防御力','previousBasicDefenseUnique'],['defense','防御',null],['mnd','魔抗',null],['damage-reduction','伤害减少',null],['abnormal','异常',null],['break','Break',null],['guard','格挡',null],['counter','反击',null],['normal-attack','普通攻击',null],['follow-up','追击',null],['hp-recovery','HP回复',null],['lifesteal','吸血',null],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical-damage','物理伤害增加',null],['physical','物理',null],['magic-damage-only','魔法伤害增加',null],['magic-damage','魔法',null],['damage','伤害增加',null],['boss','Boss',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['technique','特技相关',null],['revive','复活',null],['ally-death','友军死亡',null],['critical','暴击',null],['fire','火属性',null],['ice','冰属性',null],['earth','树属性',null],['thunder','雷属性',null],['light','光属性',null],['dark','暗属性',null],['neutral','无属性',null],['sword','剑',null],['axe','斧',null],['spear','枪',null],['hammer','锤',null],['bow','弓',null],['machine','机械',null],['claw','爪',null],['staff','杖',null],['armor','铠甲',null],['clothes','衣服',null],['robe','法袍',null],['single-weapon','单手',null],['dual-weapon','双手',null],['empty-weapon','空武器',null],['empty-armor','空防具',null],['empty-gear','空武器+防具',null],['bird','鸟',null],...racePassDefinitions.map(d=>[d.key,d.label,null])]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -130,6 +131,8 @@ for(const [key,view] of Object.entries(views)){
       validateSwordCoverage(view,detail,assignment,entry);
     }else if(equipmentStateKeys.includes(key)){
       validateEquipmentStateCoverage(key,view,detail,assignment,entry);
+    }else if(combatKeys.includes(key)){
+      validateCombatCoverage(key,view,detail,assignment,entry);
     }else if(key==='break'){
       validateBreakCoverage(view,detail,assignment,entry);
     }else if(key==='abnormal'){
@@ -228,6 +231,7 @@ for(const [key,view] of Object.entries(views)){
           if(binding.activationMode==='random-periodic-buff' && (binding.selection!=='random-one-of-six-walls' || binding.requiredSelectedStatus!=='ice-wall' || binding.intervalSeconds!==10 || binding.durationSeconds!==30 || binding.activeByDefault!==false))throw Error('Random Ice Wall must not be active unconditionally.');
         }else if(Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'lifetime') || Object.hasOwn(binding,'stacking'))throw Error('Passive fire effects and equipment conditions are not timed Buffs.');
       }
+      if(combatKeys.includes(key))validateCombatBinding(key,detail,assignment,binding);
       if(key==='sword')validateSwordBinding(detail,assignment,binding);
       if(additionalWeapons.includes(key))validateWeaponBinding(key,detail,assignment,binding);
       if(equipmentStateKeys.includes(key))validateEquipmentStateBinding(key,detail,assignment,binding);
