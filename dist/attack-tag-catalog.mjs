@@ -801,15 +801,43 @@ export const ATTACK_TAG_CATALOG = {
             "basic:b480695aa2840e5c:1"
           ],
           "relatedSkillIds": []
+        },
+        "受到攻击": {
+          "summary": "受到伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "any",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "受到伤害时，获得攻击力+20%的勇敢Buff，持续40秒。",
+              "isBuff": true,
+              "phase": "after-damage",
+              "activationMode": "triggered-buff",
+              "buffType": "brave",
+              "valuePercent": 20,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "沿用用户指定条件“受到伤害时”；条件栏不加入概率。按当前已经生效的Buff计算，40秒结束后失效，同类型Buff同时只计最高一项。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "受到攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "受到伤害时",
         "勇敢Buff：持续40秒，同类型Buff同时只计一项"
       ]
     },
@@ -4077,15 +4105,43 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "受到攻击": {
+          "summary": "受到敌人物理攻击时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "physical",
+            "requiresHpDamage": false,
+            "source": "enemy"
+          },
+          "bindings": [
+            {
+              "group": "enemy-attack-reference",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "受到敌人物理攻击时，该次伤害按敌人攻击力降低5%计算。",
+              "isBuff": false,
+              "phase": "damage-calculation",
+              "activationMode": "per-hit-stat-reference",
+              "referenceTarget": "attacking-enemy",
+              "referenceStat": "STR",
+              "referencePercent": -5
+            }
+          ],
+          "calculationNote": "修改的是该次受伤计算参照的敌人攻击力；不减少自身攻击力，也不对敌人施加持续降攻减益。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "受到攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "受到敌人物理攻击时生效",
         "只修正该次受伤计算中的敌人攻击力，不施加持续减益"
       ]
     },

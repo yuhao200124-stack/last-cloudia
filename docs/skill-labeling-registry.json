@@ -634,6 +634,34 @@
             "basic:b480695aa2840e5c:1"
           ],
           "relatedSkillIds": []
+        },
+        "受到攻击": {
+          "summary": "受到伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "any",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "受到伤害时，获得攻击力+20%的勇敢Buff，持续40秒。",
+              "isBuff": true,
+              "phase": "after-damage",
+              "activationMode": "triggered-buff",
+              "buffType": "brave",
+              "valuePercent": 20,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "沿用用户指定条件“受到伤害时”；条件栏不加入概率。按当前已经生效的Buff计算，40秒结束后失效，同类型Buff同时只计最高一项。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         }
       }
     },
@@ -3482,6 +3510,34 @@
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "受到攻击": {
+          "summary": "受到敌人物理攻击时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "physical",
+            "requiresHpDamage": false,
+            "source": "enemy"
+          },
+          "bindings": [
+            {
+              "group": "enemy-attack-reference",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "受到敌人物理攻击时，该次伤害按敌人攻击力降低5%计算。",
+              "isBuff": false,
+              "phase": "damage-calculation",
+              "activationMode": "per-hit-stat-reference",
+              "referenceTarget": "attacking-enemy",
+              "referenceStat": "STR",
+              "referencePercent": -5
+            }
+          ],
+          "calculationNote": "修改的是该次受伤计算参照的敌人攻击力；不减少自身攻击力，也不对敌人施加持续降攻减益。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         }
       }
     },
@@ -7103,12 +7159,17 @@
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "受到敌人物理攻击时，概率触发"
+          "text": "受到敌人物理攻击时"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "只在该次受伤计算中提高防御力"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
         }
       ],
       "tagDetails": {
@@ -7121,6 +7182,34 @@
             "basic:da17e674beb5ac5b:1"
           ],
           "relatedSkillIds": []
+        },
+        "受到攻击": {
+          "summary": "受到敌人物理攻击时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "physical",
+            "requiresHpDamage": false,
+            "source": "enemy"
+          },
+          "bindings": [
+            {
+              "group": "defense-reference",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "受到敌人物理攻击时，有概率按自身防御力+100%计算该次受到的伤害。",
+              "isBuff": false,
+              "phase": "damage-calculation",
+              "activationMode": "per-hit-stat-reference",
+              "referenceTarget": "self",
+              "referenceStat": "DEF",
+              "referencePercent": 100
+            }
+          ],
+          "calculationNote": "只在该次受伤计算中提高防御力，不作为角色常驻防御或持续Buff；具体概率仍待确认。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         }
       }
     },
@@ -8450,6 +8539,11 @@
           "id": "condition-2",
           "kind": "condition",
           "text": "受伤Buff持续40秒；同类型Buff同时只计已生效的最高一项"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "原补充说明：受到伤害时有5%概率触发"
         }
       ],
       "tagDetails": {
@@ -8462,6 +8556,35 @@
             "basic:6c8bc1de0d7802c2:1"
           ],
           "relatedSkillIds": []
+        },
+        "受到攻击": {
+          "summary": "受到伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "any",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "受到伤害时，触发后魔力+20%，持续40秒；原说明触发概率5%。",
+              "isBuff": true,
+              "phase": "after-damage",
+              "activationMode": "triggered-buff",
+              "buffType": "aura",
+              "valuePercent": 20,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "chancePercent": 5
+            }
+          ],
+          "calculationNote": "触发判定与已生效Buff分开：生效后取完整20%，不把20%乘以触发概率；同类型Buff同时只计最高一项。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         }
       }
     },
@@ -14744,6 +14867,11 @@
           "id": "start-trigger",
           "kind": "condition",
           "text": "战斗开始时触发"
+        },
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到敌人的冰属性攻击时结束减伤Buff"
         }
       ],
       "tagDetails": {
@@ -14766,6 +14894,33 @@
             }
           ],
           "calculationNote": "受到敌人的冰属性攻击时结束。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "受到攻击": {
+          "summary": "受到敌人的冰属性攻击时，结束开场减伤Buff",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "any",
+            "requiresHpDamage": false,
+            "source": "enemy",
+            "element": "ice"
+          },
+          "bindings": [
+            {
+              "group": "damage-reduction-end",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场获得受到伤害-5%的Buff；受到敌人的冰属性攻击时，该Buff结束。",
+              "isBuff": true,
+              "phase": "end-effect",
+              "activationMode": "effect-termination",
+              "endsOn": "hit-by-enemy-ice-attack"
+            }
+          ],
+          "calculationNote": "受冰属性攻击是开场Buff的结束条件，不是获得减伤的触发条件，也不是冰属性伤害减少5%。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         }
       }
     },
@@ -17696,6 +17851,931 @@
             }
           ],
           "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:31",
+      "name": "格挡",
+      "url": "https://altema.jp/lastcloudia/gino/30",
+      "text": "受到物理攻击时，有概率自动格挡，减轻伤害。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到物理攻击时"
+        },
+        {
+          "id": "guard",
+          "kind": "effect",
+          "text": "自动格挡，减轻伤害；减免量待确认"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到物理攻击时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "physical",
+            "requiresHpDamage": false
+          },
+          "bindings": [
+            {
+              "group": "guard-physical",
+              "partIds": [
+                "guard"
+              ],
+              "summary": "受到物理攻击时，有概率自动格挡并减轻该次伤害。",
+              "isBuff": false,
+              "phase": "before-damage",
+              "activationMode": "per-hit-response"
+            }
+          ],
+          "calculationNote": "格挡响应来袭物理攻击，不要求先扣除HP；不是受伤后获得持续减伤Buff。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:34",
+      "name": "魔法格挡",
+      "url": "https://altema.jp/lastcloudia/gino/33",
+      "text": "装备「格挡」技能时，魔法攻击也有概率被自动格挡。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到魔法攻击时"
+        },
+        {
+          "id": "guard",
+          "kind": "effect",
+          "text": "魔法攻击也可被自动格挡"
+        },
+        {
+          "id": "guard-equipped",
+          "kind": "condition",
+          "text": "装备「格挡」技能时生效"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到魔法攻击时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "magic",
+            "requiresHpDamage": false
+          },
+          "bindings": [
+            {
+              "group": "guard-magic",
+              "partIds": [
+                "guard"
+              ],
+              "summary": "装备「格挡」时，受到魔法攻击也有概率自动格挡。",
+              "isBuff": false,
+              "phase": "before-damage",
+              "activationMode": "per-hit-response",
+              "requiresSkillId": "全部技能:all:31"
+            }
+          ],
+          "calculationNote": "需要装备「格挡」；这项装备技能前提仍单独待贴标签。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "934b1ed28e293547",
+      "name": "皇家铠甲",
+      "url": "https://altema.jp/lastcloudia/gino/37",
+      "text": "受到暴击时，有概率将该次暴击转为普通伤害。",
+      "notes": "触发概率为50%。成功时仍承受普通伤害，并非免疫整次攻击。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到暴击攻击时"
+        },
+        {
+          "id": "critical-conversion",
+          "kind": "effect",
+          "text": "将该次暴击转为普通伤害"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "触发概率50%"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到暴击时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "any",
+            "requiresHpDamage": false,
+            "criticalOnly": true
+          },
+          "bindings": [
+            {
+              "group": "critical-to-normal",
+              "partIds": [
+                "critical-conversion"
+              ],
+              "summary": "受到暴击时，50%概率将该次暴击转为普通伤害；仍承受普通伤害。",
+              "isBuff": false,
+              "phase": "before-damage",
+              "activationMode": "per-hit-response",
+              "chancePercent": 50
+            }
+          ],
+          "calculationNote": "仅改变该次暴击的伤害判定，不是免疫攻击，也不是暴击伤害固定减少50%。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "a7a71ca92112f23d",
+      "name": "海市蜃楼",
+      "url": "https://altema.jp/lastcloudia/gino/38",
+      "text": "有几率躲避物理攻击。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "来袭物理攻击的闪避判定"
+        },
+        {
+          "id": "physical-dodge",
+          "kind": "effect",
+          "text": "有几率躲避物理攻击"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到物理攻击时，判定闪避",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "physical",
+            "requiresHpDamage": false
+          },
+          "bindings": [
+            {
+              "group": "dodge-physical",
+              "partIds": [
+                "physical-dodge"
+              ],
+              "summary": "受到物理攻击时，有几率躲避；成功时不按已受到伤害处理。",
+              "isBuff": false,
+              "phase": "before-damage",
+              "activationMode": "per-hit-response"
+            }
+          ],
+          "calculationNote": "海市蜃楼原文为躲避物理攻击，属于来袭攻击的响应；闪避成功不触发要求实际受伤的效果。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "9304cda80e847537",
+      "name": "反击",
+      "url": "https://altema.jp/lastcloudia/gino/39",
+      "text": "受到敌人物理攻击时，有概率发动强力反击。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到敌人物理攻击时"
+        },
+        {
+          "id": "counter",
+          "kind": "effect",
+          "text": "发动强力反击；具体倍率待确认"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到敌人物理攻击时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "physical",
+            "requiresHpDamage": false,
+            "source": "enemy"
+          },
+          "bindings": [
+            {
+              "group": "counter",
+              "partIds": [
+                "counter"
+              ],
+              "summary": "受到敌人物理攻击时，有概率发动强力反击。",
+              "isBuff": false,
+              "phase": "on-attack",
+              "activationMode": "triggered-action"
+            }
+          ],
+          "calculationNote": "这里是发动反击的触发条件；反击伤害增加、反击中减伤和反击后回复属于其他完整词条。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "6606b1627076dda2",
+      "name": "物理伤害回复",
+      "url": "https://altema.jp/lastcloudia/gino/172",
+      "text": "受到物理伤害时，有概率恢复10%的HP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到物理伤害时"
+        },
+        {
+          "id": "heal",
+          "kind": "effect",
+          "text": "HP回复10%；10%所参照的基数待确认"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到物理伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "physical",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到物理伤害时，有概率回复HP。原描述的10%基数待确认。",
+              "isBuff": false,
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "unconfirmed"
+            }
+          ],
+          "calculationNote": "不将原文10%擅自解释为最大HP的10%或本次伤害的10%。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "6b975fa167e7e3e6",
+      "name": "根性",
+      "url": "https://altema.jp/lastcloudia/gino/184",
+      "text": "受到致命伤害时，存活一次并恢复少量生命值。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到致命伤害时"
+        },
+        {
+          "id": "survive",
+          "kind": "effect",
+          "text": "承受致命伤害后存活"
+        },
+        {
+          "id": "heal",
+          "kind": "effect",
+          "text": "恢复少量HP，具体回复量待确认"
+        },
+        {
+          "id": "once",
+          "kind": "condition",
+          "text": "仅可存活一次；次数重置范围待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到致命伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "any",
+            "requiresHpDamage": true,
+            "lethalOnly": true
+          },
+          "bindings": [
+            {
+              "group": "survive-lethal",
+              "partIds": [
+                "survive"
+              ],
+              "summary": "受到致命伤害时，存活一次。",
+              "isBuff": false,
+              "phase": "lethal-damage-resolution",
+              "activationMode": "triggered-action"
+            },
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到致命伤害并触发存活效果时，恢复少量HP。",
+              "isBuff": false,
+              "phase": "lethal-damage-resolution",
+              "activationMode": "triggered-action"
+            }
+          ],
+          "calculationNote": "致命伤害存活与HP回复分别列组；不按已倒下后的复活处理，不补写原文未给出的回血量或每Wave重置。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "66fe90eebb9e2461",
+      "name": "天块",
+      "url": "https://altema.jp/lastcloudia/gino/233",
+      "text": "受到物理伤害时，消耗3点MP，使该次受到的伤害减半。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到物理伤害时"
+        },
+        {
+          "id": "mp-cost",
+          "kind": "effect",
+          "text": "消耗3点MP"
+        },
+        {
+          "id": "physical-reduction",
+          "kind": "effect",
+          "text": "使该次受到的物理伤害减半"
+        },
+        {
+          "id": "mp-cost-gate",
+          "kind": "condition",
+          "text": "须支付3点MP；MP不足时的处理待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到物理伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "physical",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "mp-cost",
+              "partIds": [
+                "mp-cost"
+              ],
+              "summary": "受到物理伤害时，消耗3点MP。",
+              "isBuff": false,
+              "phase": "damage-calculation",
+              "activationMode": "per-hit-response",
+              "resource": "MP",
+              "amount": 3
+            },
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "physical-reduction"
+              ],
+              "summary": "消耗3点MP，使该次受到的物理伤害减半。",
+              "isBuff": false,
+              "phase": "damage-calculation",
+              "activationMode": "per-hit-response",
+              "multiplier": 0.5
+            }
+          ],
+          "calculationNote": "只影响该次物理伤害；MP消耗和减伤分别列组。不能当作永久减伤，也不能扣减最大MP。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:307",
+      "name": "物理伤害回复2",
+      "url": "https://altema.jp/lastcloudia/gino/372",
+      "text": "受到物理伤害时，有几率恢复相当于伤害值 25% 的生 命值。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到物理伤害时"
+        },
+        {
+          "id": "heal",
+          "kind": "effect",
+          "text": "回复相当于所受伤害25%的HP"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到物理伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "physical",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到物理伤害时，有概率回复相当于所受伤害25%的HP。",
+              "isBuff": false,
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 25
+            }
+          ],
+          "calculationNote": "回复量参照所受伤害，不是最大HP提高或按最大HP回血；触发概率尚未给出。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "b2e58697ea88e464",
+      "name": "魔法伤害回复",
+      "url": "https://altema.jp/lastcloudia/gino/401",
+      "text": "受到魔法伤害时，有概率恢复相当于所受伤害10%的HP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到魔法伤害时"
+        },
+        {
+          "id": "heal",
+          "kind": "effect",
+          "text": "回复相当于所受伤害10%的HP"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到魔法伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "magic",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到魔法伤害时，有概率回复相当于所受伤害10%的HP。",
+              "isBuff": false,
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 10
+            }
+          ],
+          "calculationNote": "回复量参照所受伤害，不是最大HP提高或按最大HP回血；触发概率尚未给出。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:346",
+      "name": "魔法伤害回复2",
+      "url": "https://altema.jp/lastcloudia/gino/440",
+      "text": "受到魔法伤害时，有几率恢复相当于所受伤害值 25% 的生命值。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到魔法伤害时"
+        },
+        {
+          "id": "heal",
+          "kind": "effect",
+          "text": "回复相当于所受伤害25%的HP"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到魔法伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "magic",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到魔法伤害时，有概率回复相当于所受伤害25%的HP。",
+              "isBuff": false,
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 25
+            }
+          ],
+          "calculationNote": "回复量参照所受伤害，不是最大HP提高或按最大HP回血；触发概率尚未给出。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:389",
+      "name": "魔法伤害回复3",
+      "url": "https://altema.jp/lastcloudia/gino/553",
+      "text": "当你受到魔法伤害时，有几率恢复相当于所受伤害值 40% 的生命值。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到魔法伤害时"
+        },
+        {
+          "id": "heal",
+          "kind": "effect",
+          "text": "回复相当于所受伤害40%的HP"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到魔法伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "magic",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到魔法伤害时，有概率回复相当于所受伤害40%的HP。",
+              "isBuff": false,
+              "phase": "after-damage",
+              "activationMode": "triggered-action",
+              "healingBase": "damage-received",
+              "healingPercent": 40
+            }
+          ],
+          "calculationNote": "回复量参照所受伤害，不是最大HP提高或按最大HP回血；触发概率尚未给出。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "29f04fa2a0ffb9fb",
+      "name": "从零开始",
+      "url": "https://altema.jp/lastcloudia/gino/389",
+      "text": "当你受到致命伤害时，你的魔法值会降至零，但你的 生命值会大幅恢复，并且在接下来的 10 秒内（每波 一次）受到的伤害会减少 50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到致命伤害时"
+        },
+        {
+          "id": "mp-zero",
+          "kind": "effect",
+          "text": "当前MP降至0"
+        },
+        {
+          "id": "heal",
+          "kind": "effect",
+          "text": "HP大幅恢复，具体回复量待确认"
+        },
+        {
+          "id": "reduction",
+          "kind": "effect",
+          "text": "随后10秒受到伤害-50%"
+        },
+        {
+          "id": "once-per-wave",
+          "kind": "condition",
+          "text": "每Wave仅一次"
+        },
+        {
+          "id": "buff-lifetime",
+          "kind": "condition",
+          "text": "减伤持续10秒；与同类型Buff只计最高一项"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到致命伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "any",
+            "requiresHpDamage": true,
+            "lethalOnly": true
+          },
+          "bindings": [
+            {
+              "group": "mp-cost",
+              "partIds": [
+                "mp-zero"
+              ],
+              "summary": "受到致命伤害并触发时，当前MP降至0。",
+              "isBuff": false,
+              "phase": "lethal-damage-resolution",
+              "activationMode": "triggered-action",
+              "resource": "MP",
+              "operation": "set-current",
+              "value": 0
+            },
+            {
+              "group": "hp-heal",
+              "partIds": [
+                "heal"
+              ],
+              "summary": "受到致命伤害并触发时，HP大幅恢复，具体量待确认。",
+              "isBuff": false,
+              "phase": "lethal-damage-resolution",
+              "activationMode": "triggered-action"
+            },
+            {
+              "group": "damage-reduction-buff",
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "受到致命伤害并触发后，接下来的10秒受到伤害-50%；每Wave一次。",
+              "isBuff": true,
+              "phase": "after-damage",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 10,
+              "valuePercent": -50,
+              "buffTypeStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "清空的是当前MP；限时减伤作用于触发后的10秒，不倒用于触发这次致命伤害。具体Buff同组归属待确认。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "4ab8df2c073b5bf0",
+      "name": "爆速店主",
+      "url": "https://altema.jp/lastcloudia/gino/617",
+      "text": "受到伤害前，移动速度提升。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到伤害时，先前的速度提升条件结束"
+        },
+        {
+          "id": "speed",
+          "kind": "effect",
+          "text": "受到伤害前移动速度提升；具体提升量待确认"
+        },
+        {
+          "id": "speed-reset",
+          "kind": "condition",
+          "text": "受伤后的恢复／重置范围待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到伤害时，结束先前的移动速度加成",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "any",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "speed-end",
+              "partIds": [
+                "speed"
+              ],
+              "summary": "受到伤害前移动速度提升；受伤后该加成结束。具体提升量及恢复条件待确认。",
+              "isBuff": false,
+              "phase": "end-effect",
+              "activationMode": "effect-termination",
+              "endsOn": "damage-received"
+            }
+          ],
+          "calculationNote": "这是受伤结束效果，不是受伤后加速；原文没有给出恢复或重置细节。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "9dbce7c7fe7e59f0",
+      "name": "连续伤害防止",
+      "url": "https://altema.jp/lastcloudia/gino/628",
+      "text": "当受到一系列连续攻击时，受到的伤害会随着攻击次数的增加而减少\n（最多减少 50%，攻击次数达到 50 次）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "连续受到攻击时"
+        },
+        {
+          "id": "reduction",
+          "kind": "effect",
+          "text": "受到的伤害随连续受击次数增加而减少，50次时最多-50%"
+        },
+        {
+          "id": "consecutive-hits",
+          "kind": "condition",
+          "text": "按连续受击次数变化；中间各档数值及连击重置规则待确认"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "连续受到攻击时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "attack-received",
+            "incomingType": "any",
+            "requiresHpDamage": false
+          },
+          "bindings": [
+            {
+              "group": "consecutive-reduction",
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "连续受到攻击时，随受击次数增加逐步减伤；50次时最多-50%。",
+              "isBuff": false,
+              "phase": "damage-calculation",
+              "activationMode": "hit-count-scaling",
+              "maxReductionPercent": 50,
+              "hitsAtMaximum": 50,
+              "curveStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "使用自身受到的连续攻击次数，不使用自身打出的Hit数；不能从第一次受击就直接套用最高50%，不推定线性曲线。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        }
+      }
+    },
+    {
+      "id": "e97879470b786304",
+      "name": "复仇振奋",
+      "url": "https://altema.jp/lastcloudia/gino/740",
+      "text": "受到伤害时，有概率提升魔抗。",
+      "notes": "受到伤害时有5%概率给自身施加魔抗+20%，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-trigger",
+          "kind": "condition",
+          "text": "受到伤害时"
+        },
+        {
+          "id": "mnd",
+          "kind": "effect",
+          "text": "触发后魔抗+20%，持续40秒"
+        },
+        {
+          "id": "activation-chance",
+          "kind": "condition",
+          "text": "受到伤害时有5%概率触发"
+        },
+        {
+          "id": "buff-lifetime",
+          "kind": "condition",
+          "text": "魔抗Buff持续40秒，同类型Buff同时只计最高一项"
+        }
+      ],
+      "tagDetails": {
+        "受到攻击": {
+          "summary": "受到伤害时",
+          "relation": "received-attack-condition",
+          "target": "bound-effects",
+          "condition": {
+            "subject": "self",
+            "event": "damage-received",
+            "incomingType": "any",
+            "requiresHpDamage": true
+          },
+          "bindings": [
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "mnd"
+              ],
+              "summary": "受到伤害时，触发后魔抗+20%，持续40秒；原说明触发概率5%。",
+              "isBuff": true,
+              "phase": "after-damage",
+              "activationMode": "triggered-buff",
+              "buffType": "mnd-up",
+              "valuePercent": 20,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "chancePercent": 5
+            }
+          ],
+          "calculationNote": "魔抗与魔力分别列组；生效后使用完整20%加成，不按概率折算属性；同类型Buff同时只计最高一项。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         }
       }
     }
@@ -20908,6 +21988,137 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "受到攻击",
+      "assignments": [
+        {
+          "skillId": "全部技能:all:31",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:34",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "934b1ed28e293547",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "a7a71ca92112f23d",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "9304cda80e847537",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "6606b1627076dda2",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "6b975fa167e7e3e6",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "b480695aa2840e5c",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "6c8bc1de0d7802c2",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "66fe90eebb9e2461",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:307",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "29f04fa2a0ffb9fb",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "b2e58697ea88e464",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:346",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:389",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "4ab8df2c073b5bf0",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "9dbce7c7fe7e59f0",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "e97879470b786304",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "9ec9d27fcaa3d0a4",
+          "partIds": [
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "da17e674beb5ac5b",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "202ccad96f292698",
+          "partIds": [
+            "condition-1"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -21449,7 +22660,23 @@
         "386458aa75f9df1d",
         "ccfbbcc9f91d8332",
         "0599f84fed5320a1",
-        "483798470761efdf"
+        "483798470761efdf",
+        "全部技能:all:31",
+        "全部技能:all:34",
+        "934b1ed28e293547",
+        "a7a71ca92112f23d",
+        "9304cda80e847537",
+        "6606b1627076dda2",
+        "6b975fa167e7e3e6",
+        "66fe90eebb9e2461",
+        "全部技能:all:307",
+        "b2e58697ea88e464",
+        "全部技能:all:346",
+        "全部技能:all:389",
+        "29f04fa2a0ffb9fb",
+        "4ab8df2c073b5bf0",
+        "9dbce7c7fe7e59f0",
+        "e97879470b786304"
       ]
     },
     "hp": {
@@ -22882,7 +24109,225 @@
         "483798470761efdf"
       ],
       "scopeDescription": "满HP要求当前HP等于最大HP；攻击力、魔力、移动速度、暴击率、特技伤害与特技上限分别列组。不满HP时失效，恢复满HP后重新生效；这些是条件加成，不是限时Buff。已做过的效果标签同步保留，所有效果和条件完成后才算完整判断。"
+    },
+    "received-attack-attack-up": {
+      "label": "攻击力增加",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "attack-up",
+      "displayOrder": [
+        "b480695aa2840e5c"
+      ]
+    },
+    "received-attack-magic-up": {
+      "label": "魔力增加",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "magic-up",
+      "displayOrder": [
+        "6c8bc1de0d7802c2"
+      ]
+    },
+    "received-attack-mnd-up": {
+      "label": "魔抗增加",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "mnd-up",
+      "displayOrder": [
+        "e97879470b786304"
+      ]
+    },
+    "received-attack-defense-reference": {
+      "label": "该次受伤计算：自身防御力提高",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "defense-reference",
+      "displayOrder": [
+        "da17e674beb5ac5b"
+      ]
+    },
+    "received-attack-enemy-attack-reference": {
+      "label": "该次受伤计算：敌人攻击力降低",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "enemy-attack-reference",
+      "displayOrder": [
+        "202ccad96f292698"
+      ]
+    },
+    "received-attack-hp-heal": {
+      "label": "HP回复",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "hp-heal",
+      "displayOrder": [
+        "6606b1627076dda2",
+        "6b975fa167e7e3e6",
+        "全部技能:all:307",
+        "29f04fa2a0ffb9fb",
+        "b2e58697ea88e464",
+        "全部技能:all:346",
+        "全部技能:all:389"
+      ]
+    },
+    "received-attack-mp-cost": {
+      "label": "MP消耗／清空",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "mp-cost",
+      "displayOrder": [
+        "66fe90eebb9e2461",
+        "29f04fa2a0ffb9fb"
+      ]
+    },
+    "received-attack-physical-reduction": {
+      "label": "该次物理伤害减少",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "physical-reduction",
+      "displayOrder": [
+        "66fe90eebb9e2461"
+      ]
+    },
+    "received-attack-damage-reduction-buff": {
+      "label": "受伤后限时减伤",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "damage-reduction-buff",
+      "displayOrder": [
+        "29f04fa2a0ffb9fb"
+      ]
+    },
+    "received-attack-consecutive-reduction": {
+      "label": "连续受击减伤",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "consecutive-reduction",
+      "displayOrder": [
+        "9dbce7c7fe7e59f0"
+      ]
+    },
+    "received-attack-guard-physical": {
+      "label": "物理格挡",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "guard-physical",
+      "displayOrder": [
+        "全部技能:all:31"
+      ]
+    },
+    "received-attack-guard-magic": {
+      "label": "魔法格挡",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "guard-magic",
+      "displayOrder": [
+        "全部技能:all:34"
+      ]
+    },
+    "received-attack-dodge-physical": {
+      "label": "物理闪避",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "dodge-physical",
+      "displayOrder": [
+        "a7a71ca92112f23d"
+      ]
+    },
+    "received-attack-critical-to-normal": {
+      "label": "暴击转普通伤害",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "critical-to-normal",
+      "displayOrder": [
+        "934b1ed28e293547"
+      ]
+    },
+    "received-attack-counter": {
+      "label": "发动反击",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "counter",
+      "displayOrder": [
+        "9304cda80e847537"
+      ]
+    },
+    "received-attack-survive-lethal": {
+      "label": "承受致命伤害后存活",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "survive-lethal",
+      "displayOrder": [
+        "6b975fa167e7e3e6"
+      ]
+    },
+    "received-attack-speed-end": {
+      "label": "受伤后移动速度加成结束",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "speed-end",
+      "displayOrder": [
+        "4ab8df2c073b5bf0"
+      ]
+    },
+    "received-attack-damage-reduction-end": {
+      "label": "受击后减伤Buff结束",
+      "parent": "received-attack",
+      "conditionTag": "受到攻击",
+      "effectGroup": "damage-reduction-end",
+      "displayOrder": [
+        "9ec9d27fcaa3d0a4"
+      ]
+    },
+    "received-attack": {
+      "label": "受到攻击",
+      "childKeys": [
+        "received-attack-attack-up",
+        "received-attack-magic-up",
+        "received-attack-mnd-up",
+        "received-attack-defense-reference",
+        "received-attack-enemy-attack-reference",
+        "received-attack-hp-heal",
+        "received-attack-mp-cost",
+        "received-attack-physical-reduction",
+        "received-attack-damage-reduction-buff",
+        "received-attack-consecutive-reduction",
+        "received-attack-guard-physical",
+        "received-attack-guard-magic",
+        "received-attack-dodge-physical",
+        "received-attack-critical-to-normal",
+        "received-attack-counter",
+        "received-attack-survive-lethal",
+        "received-attack-speed-end",
+        "received-attack-damage-reduction-end"
+      ],
+      "overviewLabel": "全部受到攻击效果（分组）",
+      "separateSections": true,
+      "displayOrder": [
+        "全部技能:all:31",
+        "全部技能:all:34",
+        "934b1ed28e293547",
+        "a7a71ca92112f23d",
+        "9304cda80e847537",
+        "6606b1627076dda2",
+        "6b975fa167e7e3e6",
+        "b480695aa2840e5c",
+        "6c8bc1de0d7802c2",
+        "66fe90eebb9e2461",
+        "全部技能:all:307",
+        "29f04fa2a0ffb9fb",
+        "b2e58697ea88e464",
+        "全部技能:all:346",
+        "全部技能:all:389",
+        "4ab8df2c073b5bf0",
+        "9dbce7c7fe7e59f0",
+        "e97879470b786304",
+        "9ec9d27fcaa3d0a4",
+        "da17e674beb5ac5b",
+        "202ccad96f292698"
+      ],
+      "scopeDescription": "受击触发、该次伤害计算和受击后效果结束分别说明；攻击力、魔力、魔抗、回复、MP消耗、格挡、反击等各自列组。“受到攻击”与必须实际“受到伤害”的条件分开记录。单纯受到某类伤害减少的完整词条留给对应减伤标签。已有标签同步保留，未完成的效果和机制继续待判断。"
     }
   },
-  "activeView": "full-hp"
+  "activeView": "received-attack"
 }

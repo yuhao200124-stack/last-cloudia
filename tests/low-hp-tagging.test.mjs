@@ -24,8 +24,8 @@ test('low HP audits every canonical skill, including explicit 25% HP and untagge
  for(const row of all){const d=audit.rows.find(d=>d.id===row.id);assert.equal(d.sourceHash,createHash('sha256').update(JSON.stringify([row.id,row.url,row.name,row.effect,row.notes||''])).digest('hex'));assert.equal(d.decision==='related',view.entries.some(e=>e.id===row.id));}
  assert.equal(view.entries.filter(e=>e.assignedTags.length===1).length,14);
  assert(view.entries.filter(e=>e.assignedTags.length===1).every(e=>e.assignedTags[0]==='濒死'));
- assert.equal(catalog.entries.length,369);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,369);
- assert.equal(catalog.views.all.counts.ready,72);assert.equal(catalog.views.all.counts.partial,297);
+ assert.equal(catalog.entries.length,385);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,385);
+ assert.equal(catalog.views.all.counts.ready,72);assert.equal(catalog.views.all.counts.partial,313);
  assert.equal(catalog.numericEffectInjection,false);
 });
 
@@ -99,7 +99,7 @@ function page(edits={}){
 test('low HP page separates effect tables, keeps status ordering and search, and switches cleanly to opening and Boss views',()=>{
  const {get,click}=page();
  assert.match(get('#labelCoverage').textContent,/935.*26.*909/);assert.match(get('#judgmentSummary').textContent,/6.*20.*0/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,13);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,14);
  assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,20);
  assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,19);
  assert.match(get('#labelResultCount').textContent,/26 \/ 26/);

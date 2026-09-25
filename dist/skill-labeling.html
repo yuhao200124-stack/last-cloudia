@@ -6,8 +6,8 @@
     <meta name="description" content="按完整效果词条逐类贴标签，核对已有分类与未完成条件。" />
     <title>技能列表打标签用的｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260924-full-hp" />
-    <link rel="stylesheet" href="./skill-labeling.css?v=20260924-full-hp" />
+    <link rel="stylesheet" href="./styles.css?v=20260925-received-attack" />
+    <link rel="stylesheet" href="./skill-labeling.css?v=20260925-received-attack" />
   </head>
   <body>
     <header class="site-header">
@@ -22,18 +22,18 @@
     <main>
       <section class="workspace labeling-workspace" aria-label="技能标签核对列表">
         <nav class="sheet-tabs label-tabs" id="labelTabs" role="tablist" aria-label="技能标签分类" aria-orientation="horizontal"></nav>
-        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-full-hp">
-        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">满HP</h2></div></div>
-        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="满HP子分类" aria-orientation="horizontal" hidden></nav>
+        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-received-attack">
+        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">受到攻击</h2></div></div>
+        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="受到攻击子分类" aria-orientation="horizontal" hidden></nav>
         <div class="labeling-overview">
           <p id="labelCoverage">正在读取全库核对结果…</p>
           <p id="judgmentSummary" aria-live="polite"></p>
           <p id="cumulativeCoverage"></p>
           <p>按完整效果词条分类：属性、Boss、种族、空中、弱点等限定增伤不拆成宽泛增伤标签。装备、队伍、自身状态、时间等启用条件继续独立判断；并列效果各自贴标签。</p>
-          <p id="conditionScope">满HP要求当前HP等于最大HP，各种效果分别列组。不满HP时失效，恢复满HP后重新生效；已有标签和判断同步更新。</p>
+          <p id="conditionScope">受击触发、该次伤害计算和受击后效果结束分别说明；攻击力、魔力、魔抗、回复、MP消耗、格挡、反击等各自列组。“受到攻击”与必须实际“受到伤害”的条件分开记录。单纯受到某类伤害减少的完整词条留给对应减伤标签。已有标签同步保留，未完成的效果和机制继续待判断。</p>
         </div>
         <div class="toolbar">
-          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索满HP相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
+          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索受到攻击相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
           <div id="labelResultCount" class="result-summary" aria-live="polite"></div>
         </div>
         <div id="labelTable" class="table-area"></div>
@@ -43,6 +43,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260924-full-hp"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260925-received-attack"></script>
   </body>
 </html>

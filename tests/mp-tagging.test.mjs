@@ -37,8 +37,8 @@ test('MP completes three existing magic compounds without losing their labels or
  }
  for(const n of [5,6,7,8,262])assert.deepEqual(entry(n).assignedTags,['MP']);
  assert.equal(catalog.views.magic.counts.ready,20);assert.equal(catalog.views.magic.counts.partial,31);
- assert.equal(catalog.entries.length,369);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,369);
- assert.equal(catalog.views.all.counts.ready,72);assert.equal(catalog.views.all.counts.partial,297);
+ assert.equal(catalog.entries.length,385);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,385);
+ assert.equal(catalog.views.all.counts.ready,72);assert.equal(catalog.views.all.counts.partial,313);
  const rows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
  assert(rows.slice(0,72).every(r=>r.judgment==='ready'));assert(rows.slice(72).every(r=>r.judgment==='partial'));
 });

@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -97,6 +97,10 @@ for(const [key,view] of Object.entries(views)){
       const condition=detail.condition;
       if(condition?.mode!=='full-hp-state' || condition.subject!=='self' || condition.metric!=='current-hp-percent-of-max' || condition.operator!=='eq' || condition.thresholdPercent!==100)throw Error('Full HP requires current HP equal to maximum HP.');
     }
+    if(key==='received-attack'){
+      const condition=detail.condition;
+      if(condition?.subject!=='self' || !['attack-received','damage-received'].includes(condition.event) || !['any','physical','magic'].includes(condition.incomingType) || condition.requiresHpDamage!==(condition.event==='damage-received'))throw Error('Received attack and actual received damage must be distinguished.');
+    }
     for(const binding of detail.bindings){
       if(!groups.has(binding.group) || !binding.summary || !binding.partIds?.length || binding.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='effect'))throw Error('Invalid opening effect binding.');
       if(permanent && (binding.lifetime!=='permanent' || Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'endsOn') || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Permanent state must have no timed expiry and must preserve same-type Buff limits.');
@@ -106,6 +110,15 @@ for(const [key,view] of Object.entries(views)){
         if(!binding.isBuff && Object.hasOwn(binding,'durationSeconds'))throw Error('Conditional attributes are not timed buffs.');
       }
       if(key==='full-hp' && (binding.activationMode!=='full-hp-state' || binding.isBuff!==false || Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'persistsAfterHpRecovery')))throw Error('Full HP bonuses are current-state conditions, not timed buffs.');
+      if(key==='received-attack'){
+        if(typeof binding.isBuff!=='boolean' || !['before-damage','on-attack','after-damage','damage-calculation','lethal-damage-resolution','end-effect'].includes(binding.phase))throw Error('Missing received attack effect phase.');
+        if(binding.activationMode==='effect-termination'){
+          if(binding.phase!=='end-effect' || !binding.endsOn || Object.hasOwn(binding,'durationSeconds'))throw Error('Receiving a hit must end, not reapply, this effect.');
+        }else if(binding.isBuff){
+          if(binding.activationMode!=='triggered-buff' || binding.phase!=='after-damage' || !(binding.durationSeconds>0) || binding.stacking!=='highest-active-buff-of-same-type-only')throw Error('Received damage Buff must have its own lifetime and stacking rule.');
+        }else if(Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'stacking'))throw Error('Per-hit effects are not lasting Buffs.');
+        if(binding.activationMode==='per-hit-stat-reference' && (binding.phase!=='damage-calculation' || binding.isBuff || !['self','attacking-enemy'].includes(binding.referenceTarget)))throw Error('Invalid incoming damage stat reference.');
+      }
     }
   }
 }
