@@ -41,8 +41,8 @@ test('defense keeps pure damage reduction, guard, armor names and unprovided fai
 });
 
 test('cumulative judgments agree across views and do not claim unfinished conditions or other stats are tagged',()=>{
- assert.equal(defense.counts.ready,15);assert.equal(defense.counts.partial,55);
- assert.deepEqual(defense.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[13,14,15,16,114,254,473,507,636,796,914,986,1205,1571,1969]);
+ assert.equal(defense.counts.ready,16);assert.equal(defense.counts.partial,54);
+ assert.deepEqual(defense.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[13,14,15,16,114,254,473,507,636,796,914,986,1205,1555,1571,1969]);
  const shared=defense.entries.filter(e=>e.assignedTags.includes('攻击力'));
  assert.equal(shared.length,26);
  for(const e of shared){
@@ -53,11 +53,11 @@ test('cumulative judgments agree across views and do not claim unfinished condit
  assert.equal(entry(1571).judgment,'ready');assert.deepEqual(entry(1571).remainingEffects,[]);
  assert.deepEqual(entry(796).remainingEffects,[]);
  assert.deepEqual(entry(304).remainingEffects,['魔抗+10%']);
- for(const n of [118,284,293,304,666,788,890,1133,1171,1256,1555]){
+ for(const n of [118,284,293,304,666,788,890,1133,1171,1256]){
   assert.equal(entry(n).judgment,'partial',entry(n).name);assert(entry(n).remainingConditions.length,entry(n).name);
  }
  assert.deepEqual(entry(419).remainingEffects,['魔抗+8%']);
- assert.equal(catalog.entries.length,393);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,393);
+ assert.equal(catalog.entries.length,408);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,408);
  assert.deepEqual(catalog.views.all.displayOrder.slice(0,87),catalog.views.attack.displayOrder);
  const rows=skillLabelRows(data,defense);
  const single=filterLabelRows(rows,'御子与守护者');assert.equal(single.length,1);

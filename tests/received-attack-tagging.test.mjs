@@ -53,8 +53,8 @@ test('one condition pass accumulates on stable identities without marking future
  assert(entry(1133).remainingConditions.includes('概率触发，具体概率待确认'));
  assert.match(entry(195).remainingConditions.join(''),/持续40秒/);assert.match(entry(1176).remainingConditions.join(''),/该次受伤计算/);
  assert.deepEqual(entry(740).assignedTags,['受到攻击']);assert.match(entry(740).remainingEffects.join(''),/魔抗\+20%/);
- assert.equal(view.counts.ready,0);assert.equal(view.counts.partial,21);assert.equal(catalog.entries.length,393);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,393);
- assert.equal(catalog.views.all.counts.ready,75);assert.equal(catalog.views.all.counts.partial,318);
+ assert.equal(view.counts.ready,0);assert.equal(view.counts.partial,21);assert.equal(catalog.entries.length,408);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,408);
+ assert.equal(catalog.views.all.counts.ready,79);assert.equal(catalog.views.all.counts.partial,329);
 });
 
 function page(edits={}){

@@ -14,7 +14,7 @@ test('full HP audits the whole library and separates six actual effects from ful
  for(const [n,group] of mapping){const groupView=labelingView(catalog,'full-hp-'+group);assert.deepEqual(groupView.entries.map(e=>e.id),[source(n).id]);assert.equal(groupView.parent,'full-hp');}
  for(const n of [218,249,456,914,1163,1909,353,402,666,867,1221,1768,113,1264,267,788,1164,1390,1779])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
  assert.equal(view.childKeys.length,6);assert.equal(view.childKeys.reduce((sum,k)=>sum+catalog.views[k].counts.relatedUnique,0),6);
- assert.equal(catalog.entries.length,393);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,393);
+ assert.equal(catalog.entries.length,408);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,408);
 });
 
 test('full HP is equality with current maximum HP, not a persistent Buff, and completes only covered effects',()=>{
@@ -27,7 +27,7 @@ test('full HP is equality with current maximum HP, not a persistent Buff, and co
  for(const n of [121,237,843,1448]){assert.deepEqual(entry(n).assignedTags,['满HP']);assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,1);}
  assert.match(entry(121).remainingEffects[0],/具体提升量待确认/);assert.match(entry(237).remainingEffects[0],/暴击率\+10%/);assert.match(entry(1448).remainingEffects[0],/上限\+1,500/);
  const pass=registry.tagPasses.find(p=>p.tag==='满HP');for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId);assert(a.partIds.every(id=>e.parts.find(p=>p.id===id).kind==='condition'));}
- assert.equal(catalog.views.all.counts.ready,75);assert.equal(catalog.views.all.counts.partial,318);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(catalog.views.all.counts.ready,79);assert.equal(catalog.views.all.counts.partial,329);assert.equal(catalog.numericEffectInjection,false);
 });
 
 function page(edits={}){

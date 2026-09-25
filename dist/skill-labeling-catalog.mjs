@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "ultimate",
+  "activeView": "mp",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -2956,16 +2956,48 @@ export const SKILL_LABELING_CATALOG = {
             "basic:c97e9b651d9192d2:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "当前MP≤20点时，攻击力+15%。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "阈值为20点，不是20%。按当前值判断，不是Buff；MP超过20点失效。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "low-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "当前MP≤20点时，攻击力+15%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "current-state"
+            }
+          ],
+          "condition": {
+            "mode": "mp-threshold",
+            "subject": "self",
+            "metric": "current-MP-points",
+            "operator": "lte",
+            "thresholdPoints": 20
+          }
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "MP"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "当前MP≤20时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "db1b48cd6af48689",
@@ -4040,16 +4072,48 @@ export const SKILL_LABELING_CATALOG = {
             "basic:5f4d9cbfb64a5e02:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "当前MP等于最大MP时，攻击力+30%。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "满MP为当前MP等于最大MP；不是Buff，不满时失效、回复满后重新生效。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "full-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "当前MP等于最大MP时，攻击力+30%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "current-state"
+            }
+          ],
+          "condition": {
+            "mode": "mp-full",
+            "subject": "self",
+            "metric": "current-MP-percent-of-maximum",
+            "operator": "eq",
+            "thresholdPercent": 100
+          }
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "MP"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "满MP时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "202ccad96f292698",
@@ -6641,18 +6705,61 @@ export const SKILL_LABELING_CATALOG = {
             "basic:5dffae1637c7cc0f:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "当前MP等于最大MP时，防御力+20%。；当前MP等于最大MP时，魔抗+20%。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "满MP是100%当前状态；消耗后不满即失效、回满重新生效。不是Buff。防御与魔抗分开，魔抗效果仍待相应标签。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "full-defense",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "当前MP等于最大MP时，防御力+20%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "current-state"
+            },
+            {
+              "group": "full-mnd",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "当前MP等于最大MP时，魔抗+20%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "current-state"
+            }
+          ],
+          "condition": {
+            "mode": "mp-full",
+            "subject": "self",
+            "metric": "current-MP-percent-of-maximum",
+            "operator": "eq",
+            "thresholdPercent": 100
+          }
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "MP"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "魔抗+20%"
       ],
-      "remainingConditions": [
-        "满MP时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:235",
@@ -8929,16 +9036,48 @@ export const SKILL_LABELING_CATALOG = {
             "basic:a53fde03adbf4fb8:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "当前MP≤20点时，防御力+15%。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "阈值为固定20点，不是20%，也不是只有MP清零才生效。非Buff条件属性。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "low-defense",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "当前MP≤20点时，防御力+15%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "current-state"
+            }
+          ],
+          "condition": {
+            "mode": "mp-threshold",
+            "subject": "self",
+            "metric": "current-MP-points",
+            "operator": "lte",
+            "thresholdPoints": 20
+          }
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "MP"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "当前MP≤20时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "704d27924f2c43d1",
@@ -10414,7 +10553,28 @@ export const SKILL_LABELING_CATALOG = {
           "existingRuleIds": [
             "basic:c9a348f962867ee9:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "max",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身MP上限+5%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-maximum",
+              "valuePercent": 5
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -10463,7 +10623,28 @@ export const SKILL_LABELING_CATALOG = {
           "existingRuleIds": [
             "basic:0d7aece94701db3d:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "max",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身MP上限+8%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-maximum",
+              "valuePercent": 8
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -10597,7 +10778,28 @@ export const SKILL_LABELING_CATALOG = {
           "existingRuleIds": [
             "basic:ad7d118adbe024cf:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "max",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身MP上限+3%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-maximum",
+              "valuePercent": 3
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -11377,7 +11579,28 @@ export const SKILL_LABELING_CATALOG = {
           "existingRuleIds": [
             "basic:29fd4154c6181e8e:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-stat"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "max",
+              "partIds": [
+                "mp-stat"
+              ],
+              "summary": "自身MP上限+5%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-maximum",
+              "valuePercent": 5
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -11410,7 +11633,28 @@ export const SKILL_LABELING_CATALOG = {
           "existingRuleIds": [
             "basic:e090015d178e09d2:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-stat"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "max",
+              "partIds": [
+                "mp-stat"
+              ],
+              "summary": "自身MP上限+8%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-maximum",
+              "valuePercent": 8
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -11443,7 +11687,28 @@ export const SKILL_LABELING_CATALOG = {
           "existingRuleIds": [
             "basic:e2bf25ca0a166200:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-stat"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "max",
+              "partIds": [
+                "mp-stat"
+              ],
+              "summary": "自身MP上限+12%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-maximum",
+              "valuePercent": 12
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -11476,7 +11741,28 @@ export const SKILL_LABELING_CATALOG = {
           "existingRuleIds": [
             "basic:3ab5e4ec857b4879:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-stat"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "max",
+              "partIds": [
+                "mp-stat"
+              ],
+              "summary": "自身MP上限+20%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-maximum",
+              "valuePercent": 20
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -11509,7 +11795,28 @@ export const SKILL_LABELING_CATALOG = {
           "existingRuleIds": [
             "basic:5d075eee96d5531f:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-stat"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "max",
+              "partIds": [
+                "mp-stat"
+              ],
+              "summary": "自身MP上限+15%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-maximum",
+              "valuePercent": 15
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -14781,15 +15088,54 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "攻击魔法的MP消耗量+50%。；攻击魔法MP消耗增加50%，同时该魔法伤害+75%。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "消耗量变化与MP上限分开；伤害75%沿用已完成的魔法伤害标签，不额外重复注入。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "spell-cost",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "攻击魔法的MP消耗量+50%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "adjust-spell-cost",
+              "spellType": "attack-magic",
+              "costAdjustmentPercent": 50
+            },
+            {
+              "group": "cost-magic-damage",
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "攻击魔法MP消耗增加50%，同时该魔法伤害+75%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "cost-benefit",
+              "damageType": "attack-magic",
+              "valuePercent": 75
+            }
+          ]
         }
       },
       "assignedTags": [
+        "MP",
         "魔法伤害增加"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "攻击魔法的MP消耗+50%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -16858,6 +17204,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "start-trigger",
           "kind": "condition",
           "text": "战斗开始时触发"
+        },
+        {
+          "id": "mp-buff-lifetime",
+          "kind": "condition",
+          "text": "中级魔法阵Buff持续40秒，同类型只计最高已生效一项"
         }
       ],
       "tagDetails": {
@@ -16881,16 +17232,48 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "MP": {
+          "summary": "战斗开始时获得中级魔法阵：每6秒回复1＋最大MP的0.7%，持续40秒。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "回复的是当前MP，不提高上限；40秒是持续时间，6秒是回复间隔。开场条件沿用旧标签，Buff机制继续单独待判断。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "regen",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时获得中级魔法阵：每6秒回复1＋最大MP的0.7%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "mpRole": "resource-effect",
+              "operation": "periodic-restore-current",
+              "intervalSeconds": 6,
+              "flatPerTick": 1,
+              "percentOfMaximumPerTick": 0.7,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ]
         }
       },
       "assignedTags": [
+        "MP",
         "战斗开始"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "中级魔法阵：每6秒回复1＋最大MP的0.7%"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "中级魔法阵Buff持续40秒，同类型只计最高已生效一项"
+      ]
     },
     {
       "id": "865730759d5fd514",
@@ -21997,14 +22380,55 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "只影响该次物理伤害；MP消耗和减伤分别列组。不能当作永久减伤，也不能扣减最大MP。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "MP": {
+          "summary": "受到物理伤害时消耗3点当前MP。；支付3点MP，使该次受到的物理伤害减半。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "MP不足处理继续待确认；不减少最大MP。该次物理减伤仍待对应效果标签，受伤条件沿用旧标签。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-cost"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cost-fixed",
+              "partIds": [
+                "mp-cost"
+              ],
+              "summary": "受到物理伤害时消耗3点当前MP。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "consume-current",
+              "costBase": "fixed-points",
+              "costPoints": 3
+            },
+            {
+              "group": "cost-physical-reduction",
+              "partIds": [
+                "physical-reduction"
+              ],
+              "summary": "支付3点MP，使该次受到的物理伤害减半。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "cost-benefit",
+              "damageType": "incoming-physical",
+              "multiplier": 0.5,
+              "costGateStatus": "unconfirmed"
+            }
+          ]
         }
       },
       "assignedTags": [
+        "MP",
         "受到攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "消耗3点MP",
         "使该次受到的物理伤害减半"
       ],
       "remainingConditions": [
@@ -22354,14 +22778,41 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "清空的是当前MP；限时减伤作用于触发后的10秒，不倒用于触发这次致命伤害。具体Buff同组归属待确认。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "MP": {
+          "summary": "受到致命伤害并触发时，当前MP降至0。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "清空的是当前MP，不是MP上限；HP回复、减伤与每Wave一次等另行保留，不能因为MP片段完成就标记整个技能完成。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-zero"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "zero",
+              "partIds": [
+                "mp-zero"
+              ],
+              "summary": "受到致命伤害并触发时，当前MP降至0。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "set-current",
+              "value": 0
+            }
+          ]
         }
       },
       "assignedTags": [
+        "MP",
         "受到攻击"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "当前MP降至0",
         "HP大幅恢复，具体回复量待确认",
         "随后10秒受到伤害-50%"
       ],
@@ -22768,14 +23219,68 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "只限攻击型必杀，MP消耗按最大MP计算，不按当前剩余MP的20%。三项效果都绑定该次必杀，不是之后持续的Buff。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        },
+        "MP": {
+          "summary": "发动攻击型必杀时，消耗相当于最大MP20%的当前MP。；攻击型必杀并支付MP时，该次必杀伤害+20%。；攻击型必杀并支付MP时，该次必杀伤害上限+5,000。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "MP消耗按最大值计算；必杀发动条件沿用旧标签，伤害和上限仍是独立效果，MP不足规则继续待确认。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-cost"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cost-max-percent",
+              "partIds": [
+                "mp-cost"
+              ],
+              "summary": "发动攻击型必杀时，消耗相当于最大MP20%的当前MP。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "consume-current",
+              "costBase": "maximum-MP",
+              "costPercent": 20
+            },
+            {
+              "group": "cost-ultimate-damage",
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "攻击型必杀并支付MP时，该次必杀伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "cost-benefit",
+              "damageType": "ultimate",
+              "valuePercent": 20,
+              "costGateStatus": "unconfirmed"
+            },
+            {
+              "group": "cost-ultimate-cap",
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "攻击型必杀并支付MP时，该次必杀伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "cost-benefit",
+              "damageType": "ultimate",
+              "flatValue": 5000,
+              "costGateStatus": "unconfirmed"
+            }
+          ]
         }
       },
       "assignedTags": [
+        "MP",
         "必杀相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "消耗最大MP的20%",
         "该次必杀伤害+20%",
         "该次必杀伤害上限+5,000"
       ],
@@ -23159,6 +23664,1094 @@ export const SKILL_LABELING_CATALOG = {
         "受到的魔法攻击伤害-15%"
       ],
       "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:36",
+      "name": "魔力格挡",
+      "url": "https://altema.jp/lastcloudia/gino/35",
+      "text": "装备「格挡」技能时，格挡成功会回复少量MP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-restore",
+          "kind": "effect",
+          "text": "格挡成功时回复MP"
+        },
+        {
+          "id": "mp-restore-amount",
+          "kind": "effect",
+          "text": "少量MP的具体回复值待确认"
+        },
+        {
+          "id": "guard-equipped",
+          "kind": "condition",
+          "text": "装备「格挡」技能时"
+        },
+        {
+          "id": "guard-success",
+          "kind": "condition",
+          "text": "成功格挡时触发"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "装备「格挡」且格挡成功时，回复少量MP；具体回复值待确认。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "回复当前MP，不能提高MP上限，也不能把少量套成固定数值。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "restore",
+              "partIds": [
+                "mp-restore"
+              ],
+              "summary": "装备「格挡」且格挡成功时，回复少量MP；具体回复值待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "restore-current",
+              "amountStatus": "unconfirmed"
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "少量MP的具体回复值待确认"
+      ],
+      "remainingConditions": [
+        "装备「格挡」技能时",
+        "成功格挡时触发"
+      ]
+    },
+    {
+      "id": "5974289453db7347",
+      "name": "女神之吻",
+      "url": "https://altema.jp/lastcloudia/gino/154",
+      "text": "普通攻击时，有概率吸收造成伤害的2%并转化为MP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-absorb",
+          "kind": "effect",
+          "text": "吸收普通攻击造成伤害的2%并转为MP"
+        },
+        {
+          "id": "normal-attack",
+          "kind": "condition",
+          "text": "普通攻击时触发"
+        },
+        {
+          "id": "probability",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "普通攻击时，有概率将造成伤害的2%转为MP。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "参照普通攻击实际造成的伤害，不是最大MP的2%；触发概率尚未确认。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-absorb"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "restore",
+              "partIds": [
+                "mp-absorb"
+              ],
+              "summary": "普通攻击时，有概率将造成伤害的2%转为MP。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "restore-current",
+              "amountBase": "damage-dealt",
+              "amountPercent": 2
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "普通攻击时触发",
+        "概率触发，具体概率待确认"
+      ]
+    },
+    {
+      "id": "a3f5014e9e2e4526",
+      "name": "荣誉姿势",
+      "url": "https://altema.jp/lastcloudia/gino/157",
+      "text": "击败敌人时，恢复5% MP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-restore",
+          "kind": "effect",
+          "text": "回复5% MP"
+        },
+        {
+          "id": "mp-restore-base",
+          "kind": "effect",
+          "text": "原文未说明百分比回复的参照基数，待确认"
+        },
+        {
+          "id": "restore-trigger",
+          "kind": "condition",
+          "text": "击败敌人时"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "击败敌人时回复5% MP；百分比参照基数待确认。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "原描述没有写出回复比例的计算基数，保留待确认；触发条件单独待贴标签。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "restore",
+              "partIds": [
+                "mp-restore"
+              ],
+              "summary": "击败敌人时回复5% MP；百分比参照基数待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "restore-current",
+              "trigger": {
+                "event": "enemy-defeated"
+              },
+              "amountPercent": 5,
+              "amountBase": "unconfirmed"
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "原文未说明百分比回复的参照基数，待确认"
+      ],
+      "remainingConditions": [
+        "击败敌人时"
+      ]
+    },
+    {
+      "id": "2285673ba939a4cd",
+      "name": "荣誉美酒",
+      "url": "https://altema.jp/lastcloudia/gino/160",
+      "text": "战斗结束后，恢复10% MP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-restore",
+          "kind": "effect",
+          "text": "回复10% MP"
+        },
+        {
+          "id": "mp-restore-base",
+          "kind": "effect",
+          "text": "原文未说明百分比回复的参照基数，待确认"
+        },
+        {
+          "id": "restore-trigger",
+          "kind": "condition",
+          "text": "战斗结束后"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "战斗结束后回复10% MP；百分比参照基数待确认。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "原描述没有写出回复比例的计算基数，保留待确认；触发条件单独待贴标签。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "restore",
+              "partIds": [
+                "mp-restore"
+              ],
+              "summary": "战斗结束后回复10% MP；百分比参照基数待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "restore-current",
+              "trigger": {
+                "event": "battle-end"
+              },
+              "amountPercent": 10,
+              "amountBase": "unconfirmed"
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "原文未说明百分比回复的参照基数，待确认"
+      ],
+      "remainingConditions": [
+        "战斗结束后"
+      ]
+    },
+    {
+      "id": "823e207d2daf7750",
+      "name": "大天使的加护",
+      "url": "https://altema.jp/lastcloudia/gino/161",
+      "text": "战斗结束后，恢复30% MP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-restore",
+          "kind": "effect",
+          "text": "回复30% MP"
+        },
+        {
+          "id": "mp-restore-base",
+          "kind": "effect",
+          "text": "原文未说明百分比回复的参照基数，待确认"
+        },
+        {
+          "id": "restore-trigger",
+          "kind": "condition",
+          "text": "战斗结束后"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "战斗结束后回复30% MP；百分比参照基数待确认。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "原描述没有写出回复比例的计算基数，保留待确认；触发条件单独待贴标签。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "restore",
+              "partIds": [
+                "mp-restore"
+              ],
+              "summary": "战斗结束后回复30% MP；百分比参照基数待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "restore-current",
+              "trigger": {
+                "event": "battle-end"
+              },
+              "amountPercent": 30,
+              "amountBase": "unconfirmed"
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "原文未说明百分比回复的参照基数，待确认"
+      ],
+      "remainingConditions": [
+        "战斗结束后"
+      ]
+    },
+    {
+      "id": "285014848e2b2862",
+      "name": "鼓励",
+      "url": "https://altema.jp/lastcloudia/gino/821",
+      "text": "战斗结束后，恢复5% MP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-restore",
+          "kind": "effect",
+          "text": "回复5% MP"
+        },
+        {
+          "id": "mp-restore-base",
+          "kind": "effect",
+          "text": "原文未说明百分比回复的参照基数，待确认"
+        },
+        {
+          "id": "restore-trigger",
+          "kind": "condition",
+          "text": "战斗结束后"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "战斗结束后回复5% MP；百分比参照基数待确认。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "原描述没有写出回复比例的计算基数，保留待确认；触发条件单独待贴标签。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "restore",
+              "partIds": [
+                "mp-restore"
+              ],
+              "summary": "战斗结束后回复5% MP；百分比参照基数待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "restore-current",
+              "trigger": {
+                "event": "battle-end"
+              },
+              "amountPercent": 5,
+              "amountBase": "unconfirmed"
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "原文未说明百分比回复的参照基数，待确认"
+      ],
+      "remainingConditions": [
+        "战斗结束后"
+      ]
+    },
+    {
+      "id": "7983e8b7c5f6eceb",
+      "name": "剧药",
+      "url": "https://altema.jp/lastcloudia/gino/173",
+      "text": "处于异常状态时，MP自动恢复速度和SCT恢复速度+25%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-regen-speed",
+          "kind": "effect",
+          "text": "MP自动恢复速度+25%"
+        },
+        {
+          "id": "sct-speed",
+          "kind": "effect",
+          "text": "SCT恢复速度+25%"
+        },
+        {
+          "id": "abnormal-state",
+          "kind": "condition",
+          "text": "自身处于异常状态时"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "自身处于异常状态时，MP自动恢复速度+25%。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "提高的是MP自动回复速度，不是瞬间回复MP、提高MP上限或降低消耗；同句SCT速度是独立效果。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-regen-speed"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "regen-speed",
+              "partIds": [
+                "mp-regen-speed"
+              ],
+              "summary": "自身处于异常状态时，MP自动恢复速度+25%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-regen-speed",
+              "valuePercent": 25
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "SCT恢复速度+25%"
+      ],
+      "remainingConditions": [
+        "自身处于异常状态时"
+      ]
+    },
+    {
+      "id": "84d23b82f37b1490",
+      "name": "星眼",
+      "url": "https://altema.jp/lastcloudia/gino/202",
+      "text": "使用攻击型特技时，消耗最大MP的3%，使伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-cost",
+          "kind": "effect",
+          "text": "消耗最大MP的3%"
+        },
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "该次攻击型特技伤害+50%"
+        },
+        {
+          "id": "attack-skill",
+          "kind": "condition",
+          "text": "使用攻击型特技时"
+        },
+        {
+          "id": "mp-cost-gate",
+          "kind": "condition",
+          "text": "须支付最大MP的3%；MP不足时处理待确认"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "使用攻击型特技时，消耗相当于最大MP3%的当前MP。；使用攻击型特技并消耗MP时，该次特技伤害+50%。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "以最大MP算消耗量，不是剩余MP的3%；不将该次特技增伤改为通用物理伤害或持续Buff。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-cost"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cost-max-percent",
+              "partIds": [
+                "mp-cost"
+              ],
+              "summary": "使用攻击型特技时，消耗相当于最大MP3%的当前MP。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "consume-current",
+              "costBase": "maximum-MP",
+              "costPercent": 3
+            },
+            {
+              "group": "cost-skill-damage",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "使用攻击型特技并消耗MP时，该次特技伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "cost-benefit",
+              "damageType": "skill",
+              "valuePercent": 50,
+              "costGateStatus": "unconfirmed"
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "该次攻击型特技伤害+50%"
+      ],
+      "remainingConditions": [
+        "使用攻击型特技时",
+        "须支付最大MP的3%；MP不足时处理待确认"
+      ]
+    },
+    {
+      "id": "1a004726593e801a",
+      "name": "与帕克的契约",
+      "url": "https://altema.jp/lastcloudia/gino/380",
+      "text": "冰属性攻击魔法的MP消耗量+25%，伤害+40%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-spell-cost",
+          "kind": "effect",
+          "text": "冰属性攻击魔法的MP消耗量+25%"
+        },
+        {
+          "id": "ice-magic-damage",
+          "kind": "effect",
+          "text": "冰属性攻击魔法伤害+40%"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "冰属性攻击魔法MP消耗量+25%。；冰属性攻击魔法MP消耗增加25%，同时伤害+40%。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "保留冰属性攻击魔法的完整限定，不能放入通用魔法增伤。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "ice-spell-cost"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "ice-spell-cost",
+              "partIds": [
+                "ice-spell-cost"
+              ],
+              "summary": "冰属性攻击魔法MP消耗量+25%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "adjust-spell-cost",
+              "spellType": "attack-magic",
+              "element": "ice",
+              "costAdjustmentPercent": 25
+            },
+            {
+              "group": "cost-ice-magic-damage",
+              "partIds": [
+                "ice-magic-damage"
+              ],
+              "summary": "冰属性攻击魔法MP消耗增加25%，同时伤害+40%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "cost-benefit",
+              "damageType": "attack-magic",
+              "element": "ice",
+              "valuePercent": 40
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "冰属性攻击魔法伤害+40%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "4170fcd45f772a61",
+      "name": "守护至今的约定",
+      "url": "https://altema.jp/lastcloudia/gino/753",
+      "text": "使用自身的主动技能复活我方角色时，自身MP恢复30，SCT恢复15秒（每Wave最多1次）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-restore",
+          "kind": "effect",
+          "text": "自身当前MP回复固定30点"
+        },
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "自身SCT回复15秒"
+        },
+        {
+          "id": "revive-ally",
+          "kind": "condition",
+          "text": "使用自身的主动技能复活我方角色时"
+        },
+        {
+          "id": "once-per-wave",
+          "kind": "condition",
+          "text": "每Wave最多一次"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "用自身主动技能复活我方角色时，自身回复固定30点MP；每Wave最多一次。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "固定30点，不是30%；SCT15秒是独立效果，不写成MP回复。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-restore"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "restore",
+              "partIds": [
+                "mp-restore"
+              ],
+              "summary": "用自身主动技能复活我方角色时，自身回复固定30点MP；每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "restore-current",
+              "amountBase": "fixed-points",
+              "amountPoints": 30
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "自身SCT回复15秒"
+      ],
+      "remainingConditions": [
+        "使用自身的主动技能复活我方角色时",
+        "每Wave最多一次"
+      ]
+    },
+    {
+      "id": "d97a22bd801e515c",
+      "name": "守护者岩石士兵",
+      "url": "https://altema.jp/lastcloudia/gino/915",
+      "text": "剩余的MP越多，受到的敌人物理伤害就越少（最多减 少15%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-scaling",
+          "kind": "condition",
+          "text": "剩余MP越多，加成越强"
+        },
+        {
+          "id": "reduction",
+          "kind": "effect",
+          "text": "MP越多，受到的物理伤害越少，最多-15%"
+        },
+        {
+          "id": "scaling-curve",
+          "kind": "condition",
+          "text": "MP数值到减伤量的曲线、比例基数和端点条件待确认"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "MP越多，受到的物理伤害越少，最多-15%；具体变化曲线待确认。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "按剩余MP动态变化，不等于MP≤20点，也不能无条件使用最高15%或自行假设线性曲线。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [],
+            "conditionPartIds": [
+              "mp-scaling"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "more-physical-reduction",
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "MP越多，受到的物理伤害越少，最多-15%；具体变化曲线待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "mp-scaling",
+              "damageType": "incoming-physical",
+              "maxReductionPercent": 15
+            }
+          ],
+          "condition": {
+            "mode": "mp-scaling",
+            "subject": "self",
+            "metric": "current-MP",
+            "direction": "higher-MP-stronger",
+            "curveStatus": "unconfirmed",
+            "scaleBaseStatus": "unconfirmed"
+          }
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "MP越多，受到的物理伤害越少，最多-15%"
+      ],
+      "remainingConditions": [
+        "MP数值到减伤量的曲线、比例基数和端点条件待确认"
+      ]
+    },
+    {
+      "id": "eeb9b0e6da9b7f7a",
+      "name": "隐藏的心意",
+      "url": "https://altema.jp/lastcloudia/gino/1449",
+      "text": "剩余魔法值越低，受到的敌方魔法攻击伤害就越少（最多减少 15%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-scaling",
+          "kind": "condition",
+          "text": "剩余MP越少，加成越强"
+        },
+        {
+          "id": "reduction",
+          "kind": "effect",
+          "text": "MP越少，受到的魔法伤害越少，最多-15%"
+        },
+        {
+          "id": "scaling-curve",
+          "kind": "condition",
+          "text": "MP数值到减伤量的曲线、比例基数和端点条件待确认"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "MP越少，受到的魔法伤害越少，最多-15%；具体变化曲线待确认。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "按剩余MP动态变化，不等于MP≤20点，也不能无条件使用最高15%或自行假设线性曲线。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [],
+            "conditionPartIds": [
+              "mp-scaling"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "less-magic-reduction",
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "MP越少，受到的魔法伤害越少，最多-15%；具体变化曲线待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "mp-scaling",
+              "damageType": "incoming-magic",
+              "maxReductionPercent": 15
+            }
+          ],
+          "condition": {
+            "mode": "mp-scaling",
+            "subject": "self",
+            "metric": "current-MP",
+            "direction": "lower-MP-stronger",
+            "curveStatus": "unconfirmed",
+            "scaleBaseStatus": "unconfirmed"
+          }
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "MP越少，受到的魔法伤害越少，最多-15%"
+      ],
+      "remainingConditions": [
+        "MP数值到减伤量的曲线、比例基数和端点条件待确认"
+      ]
+    },
+    {
+      "id": "24ba29a7c86df4f3",
+      "name": "守护方阵",
+      "url": "https://altema.jp/lastcloudia/gino/1847",
+      "text": "自身剩余魔法值越多，受到的敌方魔法攻击伤害越低（最多减少15%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-scaling",
+          "kind": "condition",
+          "text": "剩余MP越多，加成越强"
+        },
+        {
+          "id": "reduction",
+          "kind": "effect",
+          "text": "MP越多，受到的魔法伤害越少，最多-15%"
+        },
+        {
+          "id": "scaling-curve",
+          "kind": "condition",
+          "text": "MP数值到减伤量的曲线、比例基数和端点条件待确认"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "MP越多，受到的魔法伤害越少，最多-15%；具体变化曲线待确认。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "按剩余MP动态变化，不等于MP≤20点，也不能无条件使用最高15%或自行假设线性曲线。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [],
+            "conditionPartIds": [
+              "mp-scaling"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "more-magic-reduction",
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "MP越多，受到的魔法伤害越少，最多-15%；具体变化曲线待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "mp-scaling",
+              "damageType": "incoming-magic",
+              "maxReductionPercent": 15
+            }
+          ],
+          "condition": {
+            "mode": "mp-scaling",
+            "subject": "self",
+            "metric": "current-MP",
+            "direction": "higher-MP-stronger",
+            "curveStatus": "unconfirmed",
+            "scaleBaseStatus": "unconfirmed"
+          }
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "MP越多，受到的魔法伤害越少，最多-15%"
+      ],
+      "remainingConditions": [
+        "MP数值到减伤量的曲线、比例基数和端点条件待确认"
+      ]
+    },
+    {
+      "id": "e26ae95f251c91e0",
+      "name": "结界纹章",
+      "url": "https://altema.jp/lastcloudia/gino/1145",
+      "text": "MP持续减少，但受到敌人必杀伤害-30%（剩余MP低于1%时，该减伤效果不生效）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-drain",
+          "kind": "effect",
+          "text": "持续消耗当前MP"
+        },
+        {
+          "id": "mp-drain-rate",
+          "kind": "effect",
+          "text": "MP持续消耗速率待确认"
+        },
+        {
+          "id": "ultimate-reduction",
+          "kind": "effect",
+          "text": "受到敌人必杀伤害-30%"
+        },
+        {
+          "id": "mp-threshold",
+          "kind": "condition",
+          "text": "当前MP不少于最大MP的1%时减伤生效"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "持续消耗当前MP；具体消耗速率待确认。；当前MP≥最大MP的1%时，受到敌人必杀伤害-30%；低于1%时减伤失效。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "1%是减伤启用阈值，不是每秒MP消耗量；原文没有说明低于1%后是否停止消耗，不能补写。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-drain"
+            ],
+            "conditionPartIds": [
+              "mp-threshold"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "drain",
+              "partIds": [
+                "mp-drain"
+              ],
+              "summary": "持续消耗当前MP；具体消耗速率待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "drain-current",
+              "rateStatus": "unconfirmed"
+            },
+            {
+              "group": "threshold-ultimate-reduction",
+              "partIds": [
+                "ultimate-reduction"
+              ],
+              "summary": "当前MP≥最大MP的1%时，受到敌人必杀伤害-30%；低于1%时减伤失效。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "current-state"
+            }
+          ],
+          "condition": {
+            "mode": "mp-threshold",
+            "subject": "self",
+            "metric": "current-MP-percent-of-maximum",
+            "operator": "gte",
+            "thresholdPercent": 1
+          }
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "MP持续消耗速率待确认",
+        "受到敌人必杀伤害-30%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "a8ee2e010b6e5d6c",
+      "name": "炼金术资质",
+      "url": "https://altema.jp/lastcloudia/gino/1766",
+      "text": "使用攻击型特技时，消耗最大MP的3%，使伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "mp-cost",
+          "kind": "effect",
+          "text": "消耗最大MP的3%"
+        },
+        {
+          "id": "skill-cap",
+          "kind": "effect",
+          "text": "该次攻击型特技伤害上限+5,000"
+        },
+        {
+          "id": "attack-skill",
+          "kind": "condition",
+          "text": "使用攻击型特技时"
+        },
+        {
+          "id": "mp-cost-gate",
+          "kind": "condition",
+          "text": "须支付最大MP的3%；MP不足时处理待确认"
+        }
+      ],
+      "tagDetails": {
+        "MP": {
+          "summary": "使用攻击型特技时，消耗相当于最大MP3%的当前MP。；使用攻击型特技并消耗MP时，该次特技伤害上限+5,000。",
+          "relation": "mp-resource",
+          "target": "self",
+          "calculationNote": "增加的是该次特技上限，不是伤害增加5000；MP不足时的处理继续待确认。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [
+              "mp-cost"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cost-max-percent",
+              "partIds": [
+                "mp-cost"
+              ],
+              "summary": "使用攻击型特技时，消耗相当于最大MP3%的当前MP。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "consume-current",
+              "costBase": "maximum-MP",
+              "costPercent": 3
+            },
+            {
+              "group": "cost-skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "使用攻击型特技并消耗MP时，该次特技伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "cost-benefit",
+              "damageType": "skill",
+              "flatValue": 5000,
+              "costGateStatus": "unconfirmed"
+            }
+          ]
+        }
+      },
+      "assignedTags": [
+        "MP"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "该次攻击型特技伤害上限+5,000"
+      ],
+      "remainingConditions": [
+        "使用攻击型特技时",
+        "须支付最大MP的3%；MP不足时处理待确认"
+      ]
     }
   ],
   "views": {
@@ -23257,8 +24850,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 23,
-        "partial": 64,
+        "ready": 25,
+        "partial": 62,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -23342,8 +24935,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 70,
         "notRelatedUnique": 865,
-        "ready": 15,
-        "partial": 55,
+        "ready": 16,
+        "partial": 54,
         "unknown": 0,
         "previousBasicDefenseUnique": 64,
         "additionalRelatedUnique": 6
@@ -23457,6 +25050,37 @@ export const SKILL_LABELING_CATALOG = {
     },
     "mp": {
       "label": "MP",
+      "childKeys": [
+        "mp-max",
+        "mp-restore",
+        "mp-regen",
+        "mp-regen-speed",
+        "mp-cost-fixed",
+        "mp-cost-max-percent",
+        "mp-zero",
+        "mp-drain",
+        "mp-spell-cost",
+        "mp-ice-spell-cost",
+        "mp-full-attack",
+        "mp-full-defense",
+        "mp-full-mnd",
+        "mp-low-attack",
+        "mp-low-defense",
+        "mp-more-physical-reduction",
+        "mp-more-magic-reduction",
+        "mp-less-magic-reduction",
+        "mp-threshold-ultimate-reduction",
+        "mp-cost-physical-reduction",
+        "mp-cost-skill-damage",
+        "mp-cost-skill-cap",
+        "mp-cost-ultimate-damage",
+        "mp-cost-ultimate-cap",
+        "mp-cost-magic-damage",
+        "mp-cost-ice-magic-damage"
+      ],
+      "overviewLabel": "全部MP相关效果（分组）",
+      "separateSections": true,
+      "passKind": "resource-and-condition",
       "displayOrder": [
         "29fd4154c6181e8e",
         "e090015d178e09d2",
@@ -23465,17 +25089,42 @@ export const SKILL_LABELING_CATALOG = {
         "5d075eee96d5531f",
         "c9a348f962867ee9",
         "0d7aece94701db3d",
-        "ad7d118adbe024cf"
+        "ad7d118adbe024cf",
+        "全部技能:all:36",
+        "5974289453db7347",
+        "a3f5014e9e2e4526",
+        "2285673ba939a4cd",
+        "823e207d2daf7750",
+        "7983e8b7c5f6eceb",
+        "ddccca9cf069a9ea",
+        "84d23b82f37b1490",
+        "2547e056f12aa5c8",
+        "5dffae1637c7cc0f",
+        "66fe90eebb9e2461",
+        "1a004726593e801a",
+        "29f04fa2a0ffb9fb",
+        "4170fcd45f772a61",
+        "c97e9b651d9192d2",
+        "285014848e2b2862",
+        "d97a22bd801e515c",
+        "e26ae95f251c91e0",
+        "5f4d9cbfb64a5e02",
+        "f16297127305bf04",
+        "eeb9b0e6da9b7f7a",
+        "a53fde03adbf4fb8",
+        "a8ee2e010b6e5d6c",
+        "24ba29a7c86df4f3"
       ],
+      "scopeDescription": "MP上限、当前MP回复、回复速度、消耗，以及满MP／低MP／剩余MP变化条件分别列组。MP≤20指20点，MP≥1%按最大MP比例；固定值和百分比不混用。伴随消耗的增伤、上限、减伤单独展示，未完成的其他效果和条件继续待判断。",
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 8,
-        "notRelatedUnique": 927,
-        "ready": 8,
-        "partial": 0,
+        "relatedUnique": 32,
+        "notRelatedUnique": 903,
+        "ready": 12,
+        "partial": 20,
         "unknown": 0,
         "previousBasicMpUnique": 8,
-        "additionalRelatedUnique": 0
+        "additionalRelatedUnique": 24
       }
     },
     "physical": {
@@ -23599,8 +25248,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 22,
         "notRelatedUnique": 913,
-        "ready": 0,
-        "partial": 22,
+        "ready": 1,
+        "partial": 21,
         "unknown": 0
       }
     },
@@ -26300,6 +27949,463 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "mp-max": {
+      "label": "MP上限增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "max",
+      "displayOrder": [
+        "29fd4154c6181e8e",
+        "e090015d178e09d2",
+        "e2bf25ca0a166200",
+        "3ab5e4ec857b4879",
+        "5d075eee96d5531f",
+        "c9a348f962867ee9",
+        "0d7aece94701db3d",
+        "ad7d118adbe024cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 8,
+        "notRelatedUnique": 927,
+        "ready": 8,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "mp-restore": {
+      "label": "MP回复",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "restore",
+      "displayOrder": [
+        "全部技能:all:36",
+        "5974289453db7347",
+        "a3f5014e9e2e4526",
+        "2285673ba939a4cd",
+        "823e207d2daf7750",
+        "4170fcd45f772a61",
+        "285014848e2b2862"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 7,
+        "notRelatedUnique": 928,
+        "ready": 0,
+        "partial": 7,
+        "unknown": 0
+      }
+    },
+    "mp-regen": {
+      "label": "MP持续回复",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "regen",
+      "displayOrder": [
+        "2547e056f12aa5c8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-regen-speed": {
+      "label": "MP自动回复速度增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "regen-speed",
+      "displayOrder": [
+        "7983e8b7c5f6eceb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-cost-fixed": {
+      "label": "MP消耗：固定值",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "cost-fixed",
+      "displayOrder": [
+        "66fe90eebb9e2461"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-cost-max-percent": {
+      "label": "MP消耗：按最大MP比例",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "cost-max-percent",
+      "displayOrder": [
+        "84d23b82f37b1490",
+        "f16297127305bf04",
+        "a8ee2e010b6e5d6c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "mp-zero": {
+      "label": "当前MP清空",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "zero",
+      "displayOrder": [
+        "29f04fa2a0ffb9fb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-drain": {
+      "label": "MP持续消耗",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "drain",
+      "displayOrder": [
+        "e26ae95f251c91e0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-spell-cost": {
+      "label": "攻击魔法MP消耗增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "spell-cost",
+      "displayOrder": [
+        "ddccca9cf069a9ea"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "mp-ice-spell-cost": {
+      "label": "冰属性攻击魔法MP消耗增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "ice-spell-cost",
+      "displayOrder": [
+        "1a004726593e801a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-full-attack": {
+      "label": "满MP：攻击力增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "full-attack",
+      "displayOrder": [
+        "5f4d9cbfb64a5e02"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "mp-full-defense": {
+      "label": "满MP：防御力增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "full-defense",
+      "displayOrder": [
+        "5dffae1637c7cc0f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-full-mnd": {
+      "label": "满MP：魔抗增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "full-mnd",
+      "displayOrder": [
+        "5dffae1637c7cc0f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-low-attack": {
+      "label": "MP≤20点：攻击力增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "low-attack",
+      "displayOrder": [
+        "c97e9b651d9192d2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "mp-low-defense": {
+      "label": "MP≤20点：防御力增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "low-defense",
+      "displayOrder": [
+        "a53fde03adbf4fb8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "mp-more-physical-reduction": {
+      "label": "MP越多：物理减伤",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "more-physical-reduction",
+      "displayOrder": [
+        "d97a22bd801e515c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-more-magic-reduction": {
+      "label": "MP越多：魔法减伤",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "more-magic-reduction",
+      "displayOrder": [
+        "24ba29a7c86df4f3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-less-magic-reduction": {
+      "label": "MP越少：魔法减伤",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "less-magic-reduction",
+      "displayOrder": [
+        "eeb9b0e6da9b7f7a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-threshold-ultimate-reduction": {
+      "label": "MP≥1%：必杀减伤",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "threshold-ultimate-reduction",
+      "displayOrder": [
+        "e26ae95f251c91e0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-cost-physical-reduction": {
+      "label": "消耗MP：该次物理减伤",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "cost-physical-reduction",
+      "displayOrder": [
+        "66fe90eebb9e2461"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-cost-skill-damage": {
+      "label": "消耗MP：特技伤害增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "cost-skill-damage",
+      "displayOrder": [
+        "84d23b82f37b1490"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-cost-skill-cap": {
+      "label": "消耗MP：特技伤害上限增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "cost-skill-cap",
+      "displayOrder": [
+        "a8ee2e010b6e5d6c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-cost-ultimate-damage": {
+      "label": "消耗MP：必杀伤害增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "cost-ultimate-damage",
+      "displayOrder": [
+        "f16297127305bf04"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-cost-ultimate-cap": {
+      "label": "消耗MP：必杀伤害上限增加",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "cost-ultimate-cap",
+      "displayOrder": [
+        "f16297127305bf04"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "mp-cost-magic-damage": {
+      "label": "增加MP消耗：攻击魔法增伤",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "cost-magic-damage",
+      "displayOrder": [
+        "ddccca9cf069a9ea"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "mp-cost-ice-magic-damage": {
+      "label": "增加MP消耗：冰属性攻击魔法增伤",
+      "parent": "mp",
+      "conditionTag": "MP",
+      "effectGroup": "cost-ice-magic-damage",
+      "displayOrder": [
+        "1a004726593e801a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -26695,14 +28801,29 @@ export const SKILL_LABELING_CATALOG = {
         "8a5d23a0f83cd5f5",
         "ed00d6c7e726b8ce",
         "77ca049322fad0af",
-        "9bde00a6ca77b552"
+        "9bde00a6ca77b552",
+        "全部技能:all:36",
+        "5974289453db7347",
+        "a3f5014e9e2e4526",
+        "2285673ba939a4cd",
+        "823e207d2daf7750",
+        "285014848e2b2862",
+        "7983e8b7c5f6eceb",
+        "84d23b82f37b1490",
+        "1a004726593e801a",
+        "4170fcd45f772a61",
+        "d97a22bd801e515c",
+        "eeb9b0e6da9b7f7a",
+        "24ba29a7c86df4f3",
+        "e26ae95f251c91e0",
+        "a8ee2e010b6e5d6c"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 393,
-        "notRelatedUnique": 542,
-        "ready": 75,
-        "partial": 318,
+        "relatedUnique": 408,
+        "notRelatedUnique": 527,
+        "ready": 79,
+        "partial": 329,
         "unknown": 0
       }
     }

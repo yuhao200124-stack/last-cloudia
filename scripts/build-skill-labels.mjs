@@ -82,7 +82,27 @@ for(const [key,view] of Object.entries(views)){
   const pass=shared.tagPasses.find(pass=>pass.tag===view.label);
   for(const assignment of pass.assignments){
     const entry=resolved.find(entry=>entry.id===assignment.skillId),detail=entry.tagDetails[view.label];
-    if(assignment.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='condition'))throw Error('Condition pass must not cover unreviewed effect tags.');
+    // MP is an existing resource tag expanded in place. Its resource effects
+    // and MP-state conditions can be covered; displayed benefits keep their
+    // own effect tags. All other grouped passes remain condition-only.
+    if(key==='mp'){
+      const coverage=detail.coverage;
+      if(view.passKind!=='resource-and-condition' || detail.resource!=='MP' || !Array.isArray(coverage?.resourcePartIds) || !Array.isArray(coverage?.conditionPartIds))throw Error('MP resource coverage is missing.');
+      const ids=[...coverage.resourcePartIds,...coverage.conditionPartIds];
+      if(new Set(ids).size!==ids.length || ids.length!==assignment.partIds.length || ids.some(id=>!assignment.partIds.includes(id)))throw Error('MP must cover only reviewed MP fragments.');
+      if(coverage.resourcePartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='effect') || coverage.conditionPartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='condition'))throw Error('MP resource and condition fragments are mixed.');
+      const condition=detail.condition;
+      if(coverage.conditionPartIds.length){
+        if(condition?.subject!=='self' || !['mp-full','mp-threshold','mp-scaling'].includes(condition.mode))throw Error('Missing MP condition.');
+        if(condition.mode==='mp-full' && (condition.metric!=='current-MP-percent-of-maximum' || condition.operator!=='eq' || condition.thresholdPercent!==100))throw Error('Full MP must equal current maximum MP.');
+        if(condition.mode==='mp-threshold'){
+          if(condition.metric==='current-MP-points'){
+            if(!(condition.thresholdPoints>=0) || Object.hasOwn(condition,'thresholdPercent'))throw Error('MP point thresholds are not percentages.');
+          }else if(condition.metric!=='current-MP-percent-of-maximum' || !(condition.thresholdPercent>=0 && condition.thresholdPercent<=100) || Object.hasOwn(condition,'thresholdPoints'))throw Error('MP percent threshold is invalid.');
+        }
+        if(condition.mode==='mp-scaling' && (condition.metric!=='current-MP' || !['higher-MP-stronger','lower-MP-stronger'].includes(condition.direction) || condition.curveStatus!=='unconfirmed' || Object.hasOwn(condition,'thresholdPoints') || Object.hasOwn(condition,'thresholdPercent')))throw Error('MP scaling must not become a fixed threshold.');
+      }
+    }else if(assignment.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='condition'))throw Error('Condition pass must not cover unreviewed effect tags.');
     if(!detail.bindings?.length)throw Error('Missing condition effect bindings.');
     const permanent=detail.activationMode==='permanent-status';
     if(key==='battle-start' && (permanent ? detail.trigger?.event!=='always-active' || Object.hasOwn(detail.trigger,'delaySeconds') : detail.trigger?.delaySeconds!==0))throw Error('Invalid opening trigger or permanent state.');
@@ -111,6 +131,14 @@ for(const [key,view] of Object.entries(views)){
     }
     for(const binding of detail.bindings){
       if(!groups.has(binding.group) || !binding.summary || !binding.partIds?.length || binding.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='effect'))throw Error('Invalid opening effect binding.');
+      if(key==='mp'){
+        if(binding.target!=='self' || typeof binding.isBuff!=='boolean' || !['resource-effect','condition-benefit','cost-benefit'].includes(binding.mpRole))throw Error('Missing MP binding role.');
+        if(binding.mpRole==='resource-effect' && (binding.partIds.some(id=>!detail.coverage.resourcePartIds.includes(id)) || !binding.operation))throw Error('MP resource binding must cover an actual resource effect.');
+        if(binding.mpRole!=='resource-effect' && binding.partIds.some(id=>assignment.partIds.includes(id)))throw Error('Displaying a benefit must not complete another effect tag.');
+        if(binding.mpRole==='condition-benefit' && (!detail.condition || binding.isBuff))throw Error('Current MP conditions are not triggered Buffs.');
+        if(binding.isBuff && (binding.operation!=='periodic-restore-current' || !(binding.durationSeconds>0) || !(binding.intervalSeconds>0) || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Invalid MP regeneration Buff.');
+        if(!binding.isBuff && (Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'stacking')))throw Error('Non-Buff MP effects must not gain Buff duration or stacking.');
+      }
       if(permanent && (binding.lifetime!=='permanent' || Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'endsOn') || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Permanent state must have no timed expiry and must preserve same-type Buff limits.');
       if(key==='low-hp'){
         if(binding.activationMode!==detail.condition.mode || typeof binding.isBuff!=='boolean')throw Error('Invalid low HP effect activation.');

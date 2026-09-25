@@ -20,7 +20,7 @@ test('magic damage audits the full library and separates damage from INT, castin
   assert(!entry(n),source(n).name);assert.equal(audit.rows.find(r=>r.id===source(n).id).decision,'not-related');
  }
  for(const n of [17,74,103,105,109,133,140,141,142,143,144,145,146,197,490,523,592,649,656,665,689,711,841,939,994,1130,1164,1480,1563,1666,1694,1754,1755,1756,1800,1911,1941,2000,2017,2028])assert(!entry(n),source(n).name);
- assert.deepEqual(entry(185).remainingEffects,['攻击魔法的MP消耗+50%']);
+ assert.deepEqual(entry(185).remainingEffects,[]);assert(entry(185).assignedTags.includes('MP'));
  assert.deepEqual(entry(1839).remainingEffects,['自身当前HP持续下降']);
  assert.equal(catalog.numericEffectInjection,false);
 });
@@ -41,8 +41,8 @@ test('magic damage preserves target, timing, Buff, reference and special attack 
 });
 
 test('magic damage accumulates across old views and only finishes after remaining effect and condition passes',()=>{
- assert.equal(magicDamage.counts.ready,0);assert.equal(magicDamage.counts.partial,22);assert.equal(magicDamage.counts.unknown,0);
- assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,11);
+ assert.equal(magicDamage.counts.ready,1);assert.equal(magicDamage.counts.partial,21);assert.equal(magicDamage.counts.unknown,0);
+ assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,12);
  for(const [n,key] of [[593,'attack'],[1066,'physical'],[241,'physical'],[658,'physical'],[754,'physical'],[1060,'physical'],[1507,'physical']])
   assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  const science=catalog.entries.find(e=>e.id===source(305).id);
@@ -59,8 +59,8 @@ test('magic damage accumulates across old views and only finishes after remainin
  future.tagPasses.push({tag:'装备法杖',assignments:[{skillId:source(241).id,partIds:['condition-1']}]});
  const updated=resolveSkillLabels(future).find(e=>e.id===source(241).id);
  assert.equal(updated.judgment,'ready');assert.equal(entry(241).judgment,'partial');
- assert.equal(catalog.entries.length,393);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,393);
- assert.equal(catalog.views.all.counts.ready,75);assert.equal(catalog.views.all.counts.partial,318);
+ assert.equal(catalog.entries.length,408);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,408);
+ assert.equal(catalog.views.all.counts.ready,79);assert.equal(catalog.views.all.counts.partial,329);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,75).every(r=>r.judgment==='ready'));assert(sorted.slice(75).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,79).every(r=>r.judgment==='ready'));assert(sorted.slice(79).every(r=>r.judgment==='partial'));
 });

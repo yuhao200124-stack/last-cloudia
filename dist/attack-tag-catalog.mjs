@@ -3047,16 +3047,48 @@ export const ATTACK_TAG_CATALOG = {
             "basic:c97e9b651d9192d2:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "当前MP≤20点时，攻击力+15%。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "阈值为20点，不是20%。按当前值判断，不是Buff；MP超过20点失效。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "low-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "当前MP≤20点时，攻击力+15%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "current-state"
+            }
+          ],
+          "condition": {
+            "mode": "mp-threshold",
+            "subject": "self",
+            "metric": "current-MP-points",
+            "operator": "lte",
+            "thresholdPoints": 20
+          }
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "MP"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "当前MP≤20时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "db1b48cd6af48689",
@@ -4131,16 +4163,48 @@ export const ATTACK_TAG_CATALOG = {
             "basic:5f4d9cbfb64a5e02:1"
           ],
           "relatedSkillIds": []
+        },
+        "MP": {
+          "summary": "当前MP等于最大MP时，攻击力+30%。",
+          "relation": "mp-condition",
+          "target": "self",
+          "calculationNote": "满MP为当前MP等于最大MP；不是Buff，不满时失效、回复满后重新生效。 MP页只覆盖MP资源与MP条件本身；同组展示的其他效果仍沿用各自标签，未完成内容继续待判断。",
+          "resource": "MP",
+          "coverage": {
+            "resourcePartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "full-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "当前MP等于最大MP时，攻击力+30%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "condition-benefit",
+              "activationMode": "current-state"
+            }
+          ],
+          "condition": {
+            "mode": "mp-full",
+            "subject": "self",
+            "metric": "current-MP-percent-of-maximum",
+            "operator": "eq",
+            "thresholdPercent": 100
+          }
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "MP"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "满MP时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "202ccad96f292698",
@@ -6553,8 +6617,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 23,
-    "partial": 64,
+    "ready": 25,
+    "partial": 62,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

@@ -54,8 +54,8 @@ test('scope correction preserves old tags and source skills while unfinished con
  future.tagPasses.push({tag:'连续Hit达到50',assignments:[{skillId:source(186).id,partIds:['condition-1']}]});
  const updated=resolveSkillLabels(future).find(e=>e.id===source(186).id);
  assert.equal(updated.judgment,'ready');assert.equal(entry(186).judgment,'partial');
- assert.equal(catalog.entries.length,393);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,393);
- assert.equal(catalog.views.all.counts.ready,75);assert.equal(catalog.views.all.counts.partial,318);
+ assert.equal(catalog.entries.length,408);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,408);
+ assert.equal(catalog.views.all.counts.ready,79);assert.equal(catalog.views.all.counts.partial,329);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,75).every(r=>r.judgment==='ready'));assert(sorted.slice(75).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,79).every(r=>r.judgment==='ready'));assert(sorted.slice(79).every(r=>r.judgment==='partial'));
 });

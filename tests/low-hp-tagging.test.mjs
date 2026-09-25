@@ -24,8 +24,8 @@ test('low HP audits every canonical skill, including explicit 25% HP and untagge
  for(const row of all){const d=audit.rows.find(d=>d.id===row.id);assert.equal(d.sourceHash,createHash('sha256').update(JSON.stringify([row.id,row.url,row.name,row.effect,row.notes||''])).digest('hex'));assert.equal(d.decision==='related',view.entries.some(e=>e.id===row.id));}
  assert.equal(view.entries.filter(e=>e.assignedTags.length===1).length,14);
  assert(view.entries.filter(e=>e.assignedTags.length===1).every(e=>e.assignedTags[0]==='濒死'));
- assert.equal(catalog.entries.length,393);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,393);
- assert.equal(catalog.views.all.counts.ready,75);assert.equal(catalog.views.all.counts.partial,318);
+ assert.equal(catalog.entries.length,408);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,408);
+ assert.equal(catalog.views.all.counts.ready,79);assert.equal(catalog.views.all.counts.partial,329);
  assert.equal(catalog.numericEffectInjection,false);
 });
 

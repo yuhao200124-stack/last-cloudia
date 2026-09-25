@@ -30,8 +30,8 @@ test('opening pass audits the full 935-skill library, including previously untag
  }
  assert.deepEqual(numbers('battle-start').filter(n=>!permanentNumbers.includes(n)),[102,103,104,105,164,201,203,207,208,210,214,234,243,256,305,324,353,358,381,390,402,431,460,471,473,508,512,524,560,592,620,627,639,649,692,696,699,746,830,831,851,859,867,886,906,916,984,992,994,1009,1028,1066,1074,1092,1103,1144,1205,1231,1241,1256,1365,1378,1425,1432,1459,1462,1482,1604,1605,1616,1629,1674,1693,1706,1747,1753,1776,1799,1801,1802,1812,1813,1873,1879,1884,1941,1954,1981,1987,1988,2016]);
  const newEntries=opening.entries.filter(e=>e.assignedTags.length===1);
- assert.equal(newEntries.length,69);assert(newEntries.every(e=>e.assignedTags[0]==='战斗开始'));
- assert.equal(catalog.views.all.counts.relatedUnique,393);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(newEntries.length,68);assert(newEntries.every(e=>e.assignedTags[0]==='战斗开始'));
+ assert.equal(catalog.views.all.counts.relatedUnique,408);assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('attack and magic opening clauses occupy different groups while compound skills share stable labels',()=>{
@@ -48,7 +48,7 @@ test('attack and magic opening clauses occupy different groups while compound sk
  const union=new Set(opening.childKeys.flatMap(k=>labelingView(catalog,k).entries.map(e=>e.id)));
  assert.deepEqual([...union].sort(),opening.entries.map(e=>e.id).sort());
  assert.equal(opening.childKeys.length,59);
- assert.equal(catalog.views.all.counts.ready,75);assert.equal(catalog.views.all.counts.partial,318);
+ assert.equal(catalog.views.all.counts.ready,79);assert.equal(catalog.views.all.counts.partial,329);
 });
 
 test('opening grouping follows its own clause, never passive stats, comparison operands, delayed damage or a maximum',()=>{
