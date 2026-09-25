@@ -25,7 +25,7 @@ test('MP maximum attribute pass covers all eight modifiers after a full-library 
  for(const n of [35,154,157,160,161,173,185,202,208,209,233,380,389,753,787,821,915,1145,1147,1214,1449,1555,1766,1847])assert(!entry(n),source(n).name);
  for(const n of [209,787,1147,1555]){
   const e=catalog.entries.find(e=>e.id===source(n).id);
-  assert(e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('MP'));
+  assert(e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('MP'));
   if(n===209){assert.equal(e.judgment,'ready');assert.deepEqual(e.remainingEffects,[]);}
   else {assert.equal(e.judgment,'ready');assert.deepEqual(e.remainingConditions,[]);}
  }
@@ -35,14 +35,14 @@ test('MP maximum attribute pass covers all eight modifiers after a full-library 
 test('MP completes three existing magic compounds without losing their labels or duplicating skills',()=>{
  assert.equal(mp.counts.ready,8);assert.equal(mp.counts.partial,0);assert.equal(mp.counts.unknown,0);
  for(const n of [412,433,561]){
-  assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','MP']);assert.equal(entry(n).judgment,'ready');
+  assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','MP']);assert.equal(entry(n).judgment,'ready');
   assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).remainingConditions,[]);
   assert.deepEqual(labelingView(catalog,'magic').entries.find(e=>e.id===source(n).id),entry(n));
  }
- for(const n of [5,6,7,8,262])assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP']);
+ for(const n of [5,6,7,8,262])assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP']);
  assert.equal(catalog.views.magic.counts.ready,27);assert.equal(catalog.views.magic.counts.partial,24);
- assert.equal(catalog.entries.length,866);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,866);
- assert.equal(catalog.views.all.counts.ready,571);assert.equal(catalog.views.all.counts.partial,295);
+ assert.equal(catalog.entries.length,898);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,898);
+ assert.equal(catalog.views.all.counts.ready,605);assert.equal(catalog.views.all.counts.partial,293);
  const rows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(rows.slice(0,571).every(r=>r.judgment==='ready'));assert(rows.slice(571).every(r=>r.judgment==='partial'));
+ assert(rows.slice(0,605).every(r=>r.judgment==='ready'));assert(rows.slice(605).every(r=>r.judgment==='partial'));
 });

@@ -1,3 +1,4 @@
+import {partsBeforeAbnormal} from '../scripts/validate-abnormal-labels.mjs';
 import fs from 'node:fs';
 const read=p=>JSON.parse(fs.readFileSync(new URL(p,import.meta.url),'utf8'));
 export const ADDITIONAL_RACE_TAGS=read('../docs/races-pass-definitions.json').map(d=>d.label);
@@ -10,7 +11,7 @@ export function partsBeforeRaces(entry){
 
 const bossSplits=read('../docs/boss-preservation-2026-09-25.json').conditionSplits;
 export function partsBeforeBoss(entry){
- let parts=entry.parts.filter(p=>p.id!=='mnd-healing-reference');
+ let parts=partsBeforeAbnormal(entry).filter(p=>p.id!=='mnd-healing-reference');
  for(const split of bossSplits.filter(s=>s.skillId===entry.id))parts=parts.flatMap(p=>p.id===split.originalPart.id?[split.originalPart]:split.replacementParts.some(x=>x.id===p.id)?[]:[p]);
  return parts;
 }

@@ -43,21 +43,21 @@ test('general damage retains its own activation conditions and keeps Buff timing
 
 test('scope correction preserves old tags and source skills while unfinished conditions remain partial',()=>{
  assert.equal(damage.counts.ready,1);assert.equal(damage.counts.partial,6);assert.equal(damage.counts.unknown,0);
- assert.equal(damage.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,1);
+ assert.equal(damage.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,1);
  const shadow=catalog.entries.find(e=>e.id===source(1479).id),faith=catalog.entries.find(e=>e.id===source(1754).id);
- assert.deepEqual(shadow.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔法伤害增加','暗属性']);
+ assert.deepEqual(shadow.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔法伤害增加','暗属性']);
  assert.deepEqual(shadow.remainingEffects,[]);assert.equal(shadow.remainingConditions.length,0);
- assert.deepEqual(faith.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','物理伤害增加']);
+ assert.deepEqual(faith.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','物理伤害增加']);
  assert.deepEqual(faith.remainingEffects,[]);assert(faith.assignedTags.includes('神'));assert(faith.remainingConditions.some(t=>t.includes('神秘之力')));
- for(const n of [1316,122]){assert(source(n));assert(!catalog.entries.some(e=>e.id===source(n).id));}
- assert.deepEqual(catalog.entries.find(e=>e.id===source(1608).id).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss伤害增加']);
- assert.deepEqual(catalog.entries.find(e=>e.id===source(73).id).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)),['火属性']);assert(!entry(73));
+ assert(source(122));assert(!catalog.entries.some(e=>e.id===source(122).id));assert(catalog.entries.find(e=>e.id===source(1316).id).assignedTags.includes('异常'));assert(!entry(1316));
+ assert.deepEqual(catalog.entries.find(e=>e.id===source(1608).id).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss伤害增加']);
+ assert.deepEqual(catalog.entries.find(e=>e.id===source(73).id).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['火属性']);assert(!entry(73));
  const future=structuredClone(registry);
  future.tagPasses.push({tag:'连续Hit达到50',assignments:[{skillId:source(186).id,partIds:['condition-1']}]});
  const updated=resolveSkillLabels(future).find(e=>e.id===source(186).id);
  assert.equal(updated.judgment,'ready');assert.equal(entry(186).judgment,'partial');
- assert.equal(catalog.entries.length,866);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,866);
- assert.equal(catalog.views.all.counts.ready,571);assert.equal(catalog.views.all.counts.partial,295);
+ assert.equal(catalog.entries.length,898);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,898);
+ assert.equal(catalog.views.all.counts.ready,605);assert.equal(catalog.views.all.counts.partial,293);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,571).every(r=>r.judgment==='ready'));assert(sorted.slice(571).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,605).every(r=>r.judgment==='ready'));assert(sorted.slice(605).every(r=>r.judgment==='partial'));
 });

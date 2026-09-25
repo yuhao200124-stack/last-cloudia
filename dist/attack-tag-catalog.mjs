@@ -5569,6 +5569,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "开场减益持续40秒，与常驻加成分开判断"
+        },
+        {
+          "id": "abnormal-opening-str-down",
+          "kind": "effect",
+          "text": "开场自身攻击力-20%的40秒减益；原常驻+10%独立"
         }
       ],
       "tagDetails": {
@@ -5621,12 +5626,76 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "开场自身攻击力-20%；持续40秒，独立于常驻属性加成。；开场自身魔力-20%；持续40秒，独立于常驻属性加成。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "abnormal-opening-str-down",
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "abnormal-opening-str-down"
+              ],
+              "summary": "开场自身攻击力-20%；持续40秒，独立于常驻属性加成。",
+              "operation": "apply-stat-down",
+              "scope": {
+                "direction": "self-debuff",
+                "stat": "STR"
+              },
+              "stat": "STR",
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "self-str-down",
+              "effectIdentity": "8400b28b0f6069d3:abnormal-opening-str-down",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "攻击力、魔力+10%；战斗开始时，自身会受到攻击力-20%和魔力-20%的减益效果。"
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场自身魔力-20%；持续40秒，独立于常驻属性加成。",
+              "operation": "apply-stat-down",
+              "scope": {
+                "direction": "self-debuff",
+                "stat": "INT"
+              },
+              "stat": "INT",
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "self-int-down",
+              "effectIdentity": "8400b28b0f6069d3:effect-2",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "攻击力、魔力+10%；战斗开始时，自身会受到攻击力-20%和魔力-20%的减益效果。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -7071,6 +7140,106 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "异常": {
+          "summary": "其他友军倒下时，自身获得激怒：攻击力提高，具体比例与持续时间待确认。；其他友军倒下时，自身获得激怒：防御力降低，具体比例与持续时间待确认。；其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rage-abnormal-stat-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：攻击力提高，具体比例与持续时间待确认。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "special-status",
+              "statusDurationStatus": "unconfirmed",
+              "stat": "STR",
+              "direction": "increase",
+              "amountStatus": "unconfirmed",
+              "operation": "abnormal-stat-up",
+              "scope": {
+                "direction": "self-stat"
+              },
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-status",
+                "status": "rage"
+              },
+              "effectIdentity": "835e08fc4710e268:attack",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "我方角色陷入战斗不能时，赋予自身“激怒”效果（攻击力提高、防御力降低，且无法使用魔法）"
+            },
+            {
+              "group": "rage-abnormal-stat-down",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：防御力降低，具体比例与持续时间待确认。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "special-status",
+              "statusDurationStatus": "unconfirmed",
+              "stat": "DEF",
+              "direction": "decrease",
+              "amountStatus": "unconfirmed",
+              "operation": "abnormal-stat-down",
+              "scope": {
+                "direction": "self-stat"
+              },
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-status",
+                "status": "rage"
+              },
+              "effectIdentity": "835e08fc4710e268:effect-1",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "我方角色陷入战斗不能时，赋予自身“激怒”效果（攻击力提高、防御力降低，且无法使用魔法）"
+            },
+            {
+              "group": "rage-disable-magic",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "special-status",
+              "statusDurationStatus": "unconfirmed",
+              "operation": "disable-magic",
+              "scope": {
+                "direction": "casting"
+              },
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-status",
+                "status": "rage"
+              },
+              "effectIdentity": "835e08fc4710e268:effect-2",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "我方角色陷入战斗不能时，赋予自身“激怒”效果（攻击力提高、防御力降低，且无法使用魔法）"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
@@ -7078,7 +7247,8 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "友军死亡",
         "魔法",
-        "防御"
+        "防御",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -7427,10 +7597,45 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "异常": {
+          "summary": "有概率使主动技能施加的攻击力下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "有概率使主动技能施加的攻击力下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+              "operation": "prevent-stat-down",
+              "stat": "STR",
+              "isBuff": false,
+              "scope": {
+                "direction": "incoming-debuff",
+                "source": "active-skill"
+              },
+              "chanceStatus": "unconfirmed",
+              "guaranteedImmunity": false,
+              "group": "prevent-str",
+              "effectIdentity": "be64f3014d49d50d:attack",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "sourceClause": "有概率使主动技能造成的攻击力下降减益无效。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -8834,6 +9039,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-3",
           "kind": "condition",
           "text": "效果持续40秒，按实际抽中的结果判断"
+        },
+        {
+          "id": "abnormal-random-str-down",
+          "kind": "effect",
+          "text": "随机抽中攻击力-35%的减益分支，持续40秒；不与正面结果共存"
         }
       ],
       "tagDetails": {
@@ -8876,11 +9086,58 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "开场随机抽中攻击力-35%分支时，持续40秒；不与+50%、+35%、+20%的结果同时获得。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "abnormal-random-str-down"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "abnormal-random-str-down"
+              ],
+              "summary": "开场随机抽中攻击力-35%分支时，持续40秒；不与+50%、+35%、+20%的结果同时获得。",
+              "operation": "apply-stat-down",
+              "scope": {
+                "direction": "self-debuff",
+                "stat": "STR"
+              },
+              "stat": "STR",
+              "valuePercent": 35,
+              "isDebuff": true,
+              "appliedDurationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "randomBranch": "STR-minus-35",
+              "mutuallyExclusiveWith": [
+                "STR-plus-50",
+                "STR-plus-35",
+                "STR-plus-20"
+              ],
+              "selectionChanceStatus": "unconfirmed",
+              "activeByDefault": false,
+              "group": "self-str-down",
+              "effectIdentity": "92f18d0720224b23:abnormal-random-str-down",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，随机赋予攻击力增益或减益效果（+50%、+35%、+20%或-35%）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -12382,6 +12639,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-1",
           "kind": "condition",
           "text": "战斗开始时对自身施加猛毒"
+        },
+        {
+          "id": "abnormal-parameters",
+          "kind": "condition",
+          "text": "猛毒的扣血量、间隔和持续时间待确认"
         }
       ],
       "tagDetails": {
@@ -12413,17 +12675,59 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "每个Wave开场对自身施加猛毒；周期扣HP且该扣血本身不致死（保留至少1HP）。攻击力+20%独立常驻；猛毒扣血量、间隔和持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "每个Wave开场对自身施加猛毒；周期扣HP且该扣血本身不致死（保留至少1HP）。攻击力+20%独立常驻；猛毒扣血量、间隔和持续时间待确认。",
+              "operation": "apply-status",
+              "target": "self",
+              "scope": {
+                "direction": "self-status",
+                "status": "severe-poison",
+                "statusKind": "special-status"
+              },
+              "trigger": {
+                "event": "wave-start"
+              },
+              "periodicDamage": {
+                "minimumRemainingHP": 1,
+                "amountStatus": "unconfirmed",
+                "intervalStatus": "unconfirmed"
+              },
+              "statusDurationStatus": "unconfirmed",
+              "group": "self-severe-poison",
+              "effectIdentity": "1f04cd2da53994eb:effect-1",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "攻击力+20%。战斗开始时，对自身赋予猛毒。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "开场对自身赋予猛毒"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "猛毒的扣血量、间隔和持续时间待确认"
+      ]
     },
     {
       "id": "86c11809d76a7959",

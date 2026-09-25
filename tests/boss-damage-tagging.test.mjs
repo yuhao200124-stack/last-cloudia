@@ -32,7 +32,7 @@ test('Hero Soul preserves its outgoing-only legacy tag and completes incoming mi
  assert.equal(hero.name,'勇者之魂');
  assert.deepEqual(hero.tagDetails['Boss伤害增加'].scope,{boss:true});
  assert.equal(hero.tagDetails['Boss伤害增加'].summary,'对Boss造成的伤害+20%');
- assert.deepEqual(hero.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss伤害增加']);
+ assert.deepEqual(hero.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss伤害增加']);
  assert.deepEqual(hero.remainingEffects,[]);
  assert.deepEqual(hero.remainingConditions,[]);
  assert.equal(hero.judgment,'ready');
@@ -47,9 +47,9 @@ test('specific Boss bonuses enter neither broad damage view while source skills 
   assert(source(n));
   for(const key of ['physical-damage','magic-damage-damage','damage','boss-damage'])assert(!labelingView(catalog,key).entries.some(e=>e.id===source(n).id));
  }
- assert.equal(catalog.views['magic-damage'].counts.ready,91);
- assert.equal(catalog.views['magic-damage'].counts.partial,39);
+ assert.equal(catalog.views['magic-damage'].counts.ready,93);
+ assert.equal(catalog.views['magic-damage'].counts.partial,37);
  assert.equal(catalog.views.damage.counts.relatedUnique,7);
- assert.equal(catalog.entries.length,866);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,866);
- assert.equal(catalog.views.all.counts.ready,571);assert.equal(catalog.views.all.counts.partial,295);
+ assert.equal(catalog.entries.length,898);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,898);
+ assert.equal(catalog.views.all.counts.ready,605);assert.equal(catalog.views.all.counts.partial,293);
 });

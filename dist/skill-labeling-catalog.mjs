@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "defense",
+  "activeView": "abnormal",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -5478,6 +5478,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "开场减益持续40秒，与常驻加成分开判断"
+        },
+        {
+          "id": "abnormal-opening-str-down",
+          "kind": "effect",
+          "text": "开场自身攻击力-20%的40秒减益；原常驻+10%独立"
         }
       ],
       "tagDetails": {
@@ -5530,12 +5535,76 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "开场自身攻击力-20%；持续40秒，独立于常驻属性加成。；开场自身魔力-20%；持续40秒，独立于常驻属性加成。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "abnormal-opening-str-down",
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "abnormal-opening-str-down"
+              ],
+              "summary": "开场自身攻击力-20%；持续40秒，独立于常驻属性加成。",
+              "operation": "apply-stat-down",
+              "scope": {
+                "direction": "self-debuff",
+                "stat": "STR"
+              },
+              "stat": "STR",
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "self-str-down",
+              "effectIdentity": "8400b28b0f6069d3:abnormal-opening-str-down",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "攻击力、魔力+10%；战斗开始时，自身会受到攻击力-20%和魔力-20%的减益效果。"
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场自身魔力-20%；持续40秒，独立于常驻属性加成。",
+              "operation": "apply-stat-down",
+              "scope": {
+                "direction": "self-debuff",
+                "stat": "INT"
+              },
+              "stat": "INT",
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "self-int-down",
+              "effectIdentity": "8400b28b0f6069d3:effect-2",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "攻击力、魔力+10%；战斗开始时，自身会受到攻击力-20%和魔力-20%的减益效果。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -6980,6 +7049,106 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "异常": {
+          "summary": "其他友军倒下时，自身获得激怒：攻击力提高，具体比例与持续时间待确认。；其他友军倒下时，自身获得激怒：防御力降低，具体比例与持续时间待确认。；其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rage-abnormal-stat-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：攻击力提高，具体比例与持续时间待确认。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "special-status",
+              "statusDurationStatus": "unconfirmed",
+              "stat": "STR",
+              "direction": "increase",
+              "amountStatus": "unconfirmed",
+              "operation": "abnormal-stat-up",
+              "scope": {
+                "direction": "self-stat"
+              },
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-status",
+                "status": "rage"
+              },
+              "effectIdentity": "835e08fc4710e268:attack",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "我方角色陷入战斗不能时，赋予自身“激怒”效果（攻击力提高、防御力降低，且无法使用魔法）"
+            },
+            {
+              "group": "rage-abnormal-stat-down",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：防御力降低，具体比例与持续时间待确认。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "special-status",
+              "statusDurationStatus": "unconfirmed",
+              "stat": "DEF",
+              "direction": "decrease",
+              "amountStatus": "unconfirmed",
+              "operation": "abnormal-stat-down",
+              "scope": {
+                "direction": "self-stat"
+              },
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-status",
+                "status": "rage"
+              },
+              "effectIdentity": "835e08fc4710e268:effect-1",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "我方角色陷入战斗不能时，赋予自身“激怒”效果（攻击力提高、防御力降低，且无法使用魔法）"
+            },
+            {
+              "group": "rage-disable-magic",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "其他友军倒下时，自身获得激怒：激怒期间无法使用魔法。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "special-status",
+              "statusDurationStatus": "unconfirmed",
+              "operation": "disable-magic",
+              "scope": {
+                "direction": "casting"
+              },
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-status",
+                "status": "rage"
+              },
+              "effectIdentity": "835e08fc4710e268:effect-2",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "我方角色陷入战斗不能时，赋予自身“激怒”效果（攻击力提高、防御力降低，且无法使用魔法）"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
@@ -6987,7 +7156,8 @@ export const SKILL_LABELING_CATALOG = {
         "防御力",
         "友军死亡",
         "魔法",
-        "防御"
+        "防御",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -7336,10 +7506,45 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "异常": {
+          "summary": "有概率使主动技能施加的攻击力下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "有概率使主动技能施加的攻击力下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+              "operation": "prevent-stat-down",
+              "stat": "STR",
+              "isBuff": false,
+              "scope": {
+                "direction": "incoming-debuff",
+                "source": "active-skill"
+              },
+              "chanceStatus": "unconfirmed",
+              "guaranteedImmunity": false,
+              "group": "prevent-str",
+              "effectIdentity": "be64f3014d49d50d:attack",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "sourceClause": "有概率使主动技能造成的攻击力下降减益无效。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -8743,6 +8948,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-3",
           "kind": "condition",
           "text": "效果持续40秒，按实际抽中的结果判断"
+        },
+        {
+          "id": "abnormal-random-str-down",
+          "kind": "effect",
+          "text": "随机抽中攻击力-35%的减益分支，持续40秒；不与正面结果共存"
         }
       ],
       "tagDetails": {
@@ -8785,11 +8995,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "开场随机抽中攻击力-35%分支时，持续40秒；不与+50%、+35%、+20%的结果同时获得。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "abnormal-random-str-down"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "abnormal-random-str-down"
+              ],
+              "summary": "开场随机抽中攻击力-35%分支时，持续40秒；不与+50%、+35%、+20%的结果同时获得。",
+              "operation": "apply-stat-down",
+              "scope": {
+                "direction": "self-debuff",
+                "stat": "STR"
+              },
+              "stat": "STR",
+              "valuePercent": 35,
+              "isDebuff": true,
+              "appliedDurationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "randomBranch": "STR-minus-35",
+              "mutuallyExclusiveWith": [
+                "STR-plus-50",
+                "STR-plus-35",
+                "STR-plus-20"
+              ],
+              "selectionChanceStatus": "unconfirmed",
+              "activeByDefault": false,
+              "group": "self-str-down",
+              "effectIdentity": "92f18d0720224b23:abnormal-random-str-down",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，随机赋予攻击力增益或减益效果（+50%、+35%、+20%或-35%）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -12291,6 +12548,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-1",
           "kind": "condition",
           "text": "战斗开始时对自身施加猛毒"
+        },
+        {
+          "id": "abnormal-parameters",
+          "kind": "condition",
+          "text": "猛毒的扣血量、间隔和持续时间待确认"
         }
       ],
       "tagDetails": {
@@ -12322,17 +12584,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "每个Wave开场对自身施加猛毒；周期扣HP且该扣血本身不致死（保留至少1HP）。攻击力+20%独立常驻；猛毒扣血量、间隔和持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "每个Wave开场对自身施加猛毒；周期扣HP且该扣血本身不致死（保留至少1HP）。攻击力+20%独立常驻；猛毒扣血量、间隔和持续时间待确认。",
+              "operation": "apply-status",
+              "target": "self",
+              "scope": {
+                "direction": "self-status",
+                "status": "severe-poison",
+                "statusKind": "special-status"
+              },
+              "trigger": {
+                "event": "wave-start"
+              },
+              "periodicDamage": {
+                "minimumRemainingHP": 1,
+                "amountStatus": "unconfirmed",
+                "intervalStatus": "unconfirmed"
+              },
+              "statusDurationStatus": "unconfirmed",
+              "group": "self-severe-poison",
+              "effectIdentity": "1f04cd2da53994eb:effect-1",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "攻击力+20%。战斗开始时，对自身赋予猛毒。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "开场对自身赋予猛毒"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "猛毒的扣血量、间隔和持续时间待确认"
+      ]
     },
     {
       "id": "86c11809d76a7959",
@@ -17439,11 +17743,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "异常": {
+          "summary": "有概率使主动技能施加的防御力下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "defense"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "defense"
+              ],
+              "summary": "有概率使主动技能施加的防御力下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+              "effectIdentity": "b3ceb563be9052e5:defense",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "incoming-debuff",
+                "source": "active-skill"
+              },
+              "stat": "DEF",
+              "operation": "prevent-stat-down",
+              "chanceStatus": "unconfirmed",
+              "guaranteedImmunity": false,
+              "familyRole": "direct-effect",
+              "sourceClause": "有概率使主动技能造成的防御力下降减益无效。",
+              "group": "prevent-def",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "主动技能造成防御力下降减益时，概率使其无效"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "防御下降减益保护机制"
+                }
+              ],
+              "abnormalRole": "direct-effect"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "防御力",
-        "防御"
+        "防御",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -24086,10 +24436,45 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "防止魔力下降，不按魔力提升处理。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "异常": {
+          "summary": "有概率使主动技能施加的魔力下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic"
+              ],
+              "summary": "有概率使主动技能施加的魔力下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+              "operation": "prevent-stat-down",
+              "stat": "INT",
+              "isBuff": false,
+              "scope": {
+                "direction": "incoming-debuff",
+                "source": "active-skill"
+              },
+              "chanceStatus": "unconfirmed",
+              "guaranteedImmunity": false,
+              "group": "prevent-int",
+              "effectIdentity": "ea3ec6051efc1995:magic",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "sourceClause": "有概率使主动技能造成的魔力下降减益无效。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -30413,18 +30798,85 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "异常": {
+          "summary": "自身处于异常状态时，物理攻击伤害+20%；必杀伤害+20%",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "自身处于异常状态时，物理攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "63eeda796250122a:physical-damage",
+              "valuePercent": 20,
+              "condition": {
+                "subject": "self",
+                "state": "abnormal-status"
+              },
+              "group": "self-ailment-damage-upphysical",
+              "abnormalRole": "condition-benefit",
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-ailment"
+              },
+              "sourceClause": "自身处于异常状态时，物理攻击和必杀伤害+20%。"
+            },
+            {
+              "group": "self-ailment-damage-upultimate",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "必杀伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate"
+              },
+              "valuePercent": 20,
+              "condition": {
+                "subject": "self",
+                "state": "abnormal-status-active"
+              },
+              "ultimateRole": "direct-effect",
+              "effectIdentity": "63eeda796250122a:effect-1",
+              "abnormalRole": "condition-benefit",
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-ailment"
+              },
+              "sourceClause": "自身处于异常状态时，物理攻击和必杀伤害+20%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "必杀相关",
-        "物理"
+        "物理",
+        "异常"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "自身处于异常状态时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "9c0bd935e13111e8",
@@ -35964,6 +36416,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "自身处于移动速度降低状态；部分特殊减益不计入"
+        },
+        {
+          "id": "abnormal-slow-amount",
+          "kind": "condition",
+          "text": "开场移动速度降低减益的具体数值待确认"
         }
       ],
       "tagDetails": {
@@ -36029,19 +36486,84 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "异常": {
+          "summary": "开场对自身施加移动速度降低减益，持续到自身战斗不能；具体减速数值待确认。；处于符合要求的移动速度降低状态时，物理攻击伤害+20%",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场对自身施加移动速度降低减益，持续到自身战斗不能；具体减速数值待确认。",
+              "operation": "apply-movement-speed-down",
+              "scope": {
+                "direction": "self-debuff",
+                "stat": "movement-speed"
+              },
+              "isDebuff": true,
+              "endsOn": "self-incapacitated",
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "self-speed-down",
+              "effectIdentity": "ef62dd0cf4192724:effect-1",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，赋予自身“移动速度降低”减益效果（持续至战斗不能）；处于移动速度降低状态时，物理攻击伤害+20%（部分特殊减益效果不计入触发条件）。"
+            },
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "处于符合要求的移动速度降低状态时，物理攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "ef62dd0cf4192724:physical-damage",
+              "valuePercent": 20,
+              "condition": {
+                "status": "movement-speed-down",
+                "excludeSpecialDebuffs": true
+              },
+              "group": "slow-physical-benefit",
+              "abnormalRole": "context-only",
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "movement-speed-down",
+                "excludesSpecialDebuffs": true
+              },
+              "sourceClause": "战斗开始时，赋予自身“移动速度降低”减益效果（持续至战斗不能）；处于移动速度降低状态时，物理攻击伤害+20%（部分特殊减益效果不计入触发条件）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "战斗开始",
-        "物理"
+        "物理",
+        "异常"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "开场赋予自身移动速度降低减益"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "自身处于移动速度降低状态；部分特殊减益不计入"
+        "自身处于移动速度降低状态；部分特殊减益不计入",
+        "开场移动速度降低减益的具体数值待确认"
       ]
     },
     {
@@ -40703,12 +41225,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "异常": {
+          "summary": "战斗开始后的前30秒无法使用魔法；常驻魔法增伤不属于开场效果",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "战斗开始后的前30秒无法使用魔法；常驻魔法增伤不属于开场效果",
+              "target": "self",
+              "isBuff": false,
+              "operation": "disable-magic",
+              "scope": {
+                "direction": "casting",
+                "spellType": "all-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "bf0d04fe54be3b33:effect-1",
+              "group": "debuff-560",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "lockDurationSeconds": 30,
+              "abnormalRole": "direct-effect",
+              "sourceClause": "战斗开始后的前30秒无法使用魔法，但魔法攻击伤害+50%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
         "战斗开始",
-        "魔法"
+        "魔法",
+        "异常"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -42727,17 +43287,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "异常": {
+          "summary": "开场自身受到伤害+20%的减益，持续20秒；20秒后魔法增伤是另一效果。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场自身受到伤害+20%的减益，持续20秒；20秒后魔法增伤是另一效果。",
+              "operation": "apply-self-vulnerability",
+              "scope": {
+                "direction": "self-incoming",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationSeconds": 20,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "self-vulnerability",
+              "effectIdentity": "e2016a861d776638:effect-1",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，自身获得“受到伤害+20%”的减益效果，持续20秒；战斗开始20秒后，魔法攻击伤害+20%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
         "战斗开始",
-        "魔法"
+        "魔法",
+        "异常"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "开场获得自身受到伤害+20%的减益效果，持续20秒"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "魔法增伤在战斗开始20秒后生效；该20秒不是魔法增伤的持续时间"
       ]
@@ -42959,13 +43555,52 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "异常": {
+          "summary": "开场自身魔抗-20%；持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场自身魔抗-20%；持续时间待确认。",
+              "operation": "apply-stat-down",
+              "scope": {
+                "direction": "self-debuff",
+                "stat": "MND"
+              },
+              "stat": "MND",
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationStatus": "unconfirmed",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "self-mnd-down",
+              "effectIdentity": "29da106c453e0234:effect-1",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，自身获得魔抗-20%的减益效果；随后魔法攻击伤害随时间逐渐提升，40秒时最高+30%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
         "战斗开始",
         "魔法",
-        "魔抗"
+        "魔抗",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -46901,15 +47536,60 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "屏障无固定倒计时，抵挡1次基本异常状态后消耗。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "每个Wave开始获得可抵挡1次基本异常的屏障；没有固定倒计时，抵挡一次后消耗，不是整场无限免疫。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每个Wave开始获得可抵挡1次基本异常的屏障；没有固定倒计时，抵挡一次后消耗，不是整场无限免疫。",
+              "operation": "block-basic-ailment-once",
+              "scope": {
+                "direction": "incoming-status",
+                "statuses": [
+                  "poison",
+                  "blindness",
+                  "silence",
+                  "curse",
+                  "paralysis",
+                  "disease"
+                ]
+              },
+              "blocks": 1,
+              "lifetime": "until-first-blocked-abnormal-status",
+              "persistentBuff": false,
+              "consumedOn": "first-blocked-basic-ailment",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "includesSpecialStatuses": false,
+              "group": "one-use-barrier",
+              "effectIdentity": "717087fe75ab851b:opening-effect-1",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，赋予可使基本异常状态无效1次的屏障（永久效果）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "获得可抵挡1次基本异常状态的永久屏障"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -47057,16 +47737,77 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "开场向所有敌人概率施加诅咒；概率和持续时间待确认。；开场向所有敌人施加全属性耐性-10的减益；降低的是元素耐性点数，不是异常耐性，持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-2",
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "开场向所有敌人概率施加诅咒；概率和持续时间待确认。",
+              "operation": "apply-status",
+              "target": "all-enemies",
+              "scope": {
+                "direction": "target-status",
+                "status": "curse",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "event": "wave-start"
+              },
+              "chanceStatus": "unconfirmed",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "group": "opening-curse",
+              "effectIdentity": "6133882f233d82ce:opening-effect-2",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，对所有敌人施加全属性耐性-10的减益效果，并有概率赋予诅咒。"
+            },
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场向所有敌人施加全属性耐性-10的减益；降低的是元素耐性点数，不是异常耐性，持续时间待确认。",
+              "operation": "apply-element-resistance-down",
+              "target": "all-enemies",
+              "isDebuff": true,
+              "scope": {
+                "direction": "target-element-resistance",
+                "elementSet": "all-elemental-resistances"
+              },
+              "resistancePoints": 10,
+              "changesAilmentResistance": false,
+              "appliedDurationStatus": "unconfirmed",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "debuff-element-resistance",
+              "effectIdentity": "6133882f233d82ce:opening-effect-1",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，对所有敌人施加全属性耐性-10的减益效果，并有概率赋予诅咒。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "对所有敌人施加全属性耐性-10的减益",
-        "对敌人概率赋予诅咒"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "诅咒赋予概率与减益持续时间待确认"
       ]
@@ -47689,15 +48430,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "开场随机1名敌人获得破灭歌声减益，定期伤害该敌人附近的同阵营单位；周期、伤害、持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场随机1名敌人获得破灭歌声减益，定期伤害该敌人附近的同阵营单位；周期、伤害、持续时间待确认。",
+              "operation": "apply-periodic-damage-aura",
+              "target": "one-random-enemy",
+              "scope": {
+                "direction": "target-debuff",
+                "status": "ruin-song"
+              },
+              "isDebuff": true,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "damageRecipients": "nearby-allies-of-target-enemy",
+              "intervalStatus": "unconfirmed",
+              "damageStatus": "unconfirmed",
+              "appliedDurationStatus": "unconfirmed",
+              "group": "ruin-song",
+              "effectIdentity": "b5afb5f0a6e375bb:opening-effect-1",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，对任意1名敌人施加「破灭歌声」减益效果；该敌人会定期对其附近的友军造成伤害。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "随机1名敌人获得破灭歌声减益，定期对其附近的友军造成伤害"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "随机选择1名敌人",
         "周期、伤害量、持续时间待确认"
@@ -48301,11 +49080,48 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "异常": {
+          "summary": "战斗开始后的前30秒无法使用特技；独立的特技增伤30%不受这30秒限制。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "control",
+                "attackType": "skill"
+              },
+              "trigger": {
+                "event": "battle-start"
+              },
+              "lockSeconds": 30,
+              "group": "debuff-831",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始后的前30秒无法使用特技；独立的特技增伤30%不受这30秒限制。",
+              "operation": "disable-skills",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "68c1f4b9c51cb15f:opening-effect-1",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "战斗开始后的前30秒无法使用特技，但特技伤害+30%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "战斗开始",
-        "特技相关"
+        "特技相关",
+        "异常"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -49745,16 +50561,77 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "异常": {
+          "summary": "开场向所有敌人概率施加沉默；概率和持续时间待确认。；开场向所有敌人施加全属性耐性-10的减益；降低的是元素耐性点数，不是异常耐性，持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-2",
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "开场向所有敌人概率施加沉默；概率和持续时间待确认。",
+              "operation": "apply-status",
+              "target": "all-enemies",
+              "scope": {
+                "direction": "target-status",
+                "status": "silence",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "event": "wave-start"
+              },
+              "chanceStatus": "unconfirmed",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "group": "opening-silence",
+              "effectIdentity": "ad3aebbcb3299841:opening-effect-2",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，对所有敌人施加全属性耐性-10的减益效果，并有概率赋予沉默。"
+            },
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场向所有敌人施加全属性耐性-10的减益；降低的是元素耐性点数，不是异常耐性，持续时间待确认。",
+              "operation": "apply-element-resistance-down",
+              "target": "all-enemies",
+              "isDebuff": true,
+              "scope": {
+                "direction": "target-element-resistance",
+                "elementSet": "all-elemental-resistances"
+              },
+              "resistancePoints": 10,
+              "changesAilmentResistance": false,
+              "appliedDurationStatus": "unconfirmed",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "debuff-element-resistance",
+              "effectIdentity": "ad3aebbcb3299841:opening-effect-1",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，对所有敌人施加全属性耐性-10的减益效果，并有概率赋予沉默。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "异常"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "对所有敌人施加全属性耐性-10的减益",
-        "对敌人概率赋予沉默"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "沉默赋予概率与减益持续时间待确认"
       ]
@@ -59306,17 +60183,81 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "异常": {
+          "summary": "自身处于异常状态时，MP自动恢复速度+25%。；自身处于异常状态时，SCT恢复速度+25%；MP恢复速度是另一条效果。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "abnormal-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "self-ailment-increase-regen-speedMP",
+              "partIds": [
+                "mp-regen-speed"
+              ],
+              "summary": "自身处于异常状态时，MP自动恢复速度+25%。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "increase-regen-speed",
+              "valuePercent": 25,
+              "abnormalRole": "condition-benefit",
+              "scope": {
+                "direction": "resource",
+                "resource": "MP"
+              },
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-ailment"
+              },
+              "effectIdentity": "7983e8b7c5f6eceb:mp-regen-speed",
+              "sourceClause": "处于异常状态时，MP自动恢复速度和SCT恢复速度+25%。"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "valuePercent": 25,
+              "condition": {
+                "subject": "self",
+                "state": "abnormal-status-active"
+              },
+              "group": "self-ailment-sct-speed-upSCT",
+              "partIds": [
+                "sct-speed"
+              ],
+              "summary": "自身处于异常状态时，SCT恢复速度+25%；MP恢复速度是另一条效果。",
+              "operation": "sct-speed-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "7983e8b7c5f6eceb:sct-speed",
+              "abnormalRole": "condition-benefit",
+              "statusPredicate": {
+                "subject": "self",
+                "mode": "has-ailment"
+              },
+              "sourceClause": "处于异常状态时，MP自动恢复速度和SCT恢复速度+25%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "MP",
-        "特技相关"
+        "特技相关",
+        "异常"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "自身处于异常状态时"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "84d23b82f37b1490",
@@ -96130,17 +97071,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "异常": {
+          "summary": "目标敌人拥有至少2个减益效果时，特技伤害+15%。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-debuff-count"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyDebuffCountGte": 2
+              },
+              "valuePercent": 15,
+              "group": "enemy-two-debuffs-damage-upskill",
+              "partIds": [
+                "skill-damage"
+              ],
+              "summary": "目标敌人拥有至少2个减益效果时，特技伤害+15%。",
+              "operation": "damage-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "2d7be6839ef276d6:skill-damage",
+              "abnormalRole": "condition-benefit",
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "debuff-count",
+                "operator": "gte",
+                "count": 2,
+                "meansAilmentCount": false
+              },
+              "sourceClause": "对带有2个以上减益效果的敌人，特技伤害+15%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关"
+        "特技相关",
+        "异常"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人当前带有至少2个减益效果；不等同于2种基础异常状态"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "27978c00d7374193",
@@ -100300,12 +101281,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "使敌方承受的物理伤害增加，作为目标易伤单独列组；不降低其DEF面板，不计作自身增伤或通用减伤。原普通攻击触发、3%概率和40秒持续时间完整保留。"
+        },
+        "异常": {
+          "summary": "普通攻击每次命中有3%概率给目标施加受到物理伤害+20%的减益，持续40秒；不把它当作自身常驻增伤。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-vulnerability"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-vulnerability"
+              ],
+              "summary": "普通攻击每次命中有3%概率给目标施加受到物理伤害+20%的减益，持续40秒；不把它当作自身常驻增伤。",
+              "target": "target-enemy",
+              "isBuff": false,
+              "operation": "apply-physical-vulnerability",
+              "scope": {
+                "direction": "target-incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "1032f88be503dbb8:physical-vulnerability",
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationSeconds": 40,
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "group": "debuff-212",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "普通攻击时，概率赋予敌人物理受到伤害+20%的减益效果，持续一定时间。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "防御"
+        "防御",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -101121,17 +102144,80 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "异常": {
+          "summary": "对未受异常状态影响的敌人物理伤害+20%；对未受异常状态影响的敌人物理上限+2,000",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-no-ailment"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对未受异常状态影响的敌人物理伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyState": "no-abnormal-status"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "f0d4e2e81fd7c665:physical-damage",
+              "valuePercent": 20,
+              "group": "enemy-no-ailment-damage-upphysical",
+              "abnormalRole": "condition-benefit",
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "has-no-ailment",
+                "meansNoDebuffs": false
+              },
+              "sourceClause": "对未受异常状态影响的敌人造成物理攻击伤害+20%， 伤害上限+2000。"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对未受异常状态影响的敌人物理上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyState": "no-abnormal-status"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "f0d4e2e81fd7c665:physical-cap",
+              "capPoints": 2000,
+              "group": "enemy-no-ailment-cap-upphysical",
+              "abnormalRole": "condition-benefit",
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "has-no-ailment",
+                "meansNoDebuffs": false
+              },
+              "sourceClause": "对未受异常状态影响的敌人造成物理攻击伤害+20%， 伤害上限+2000。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "异常"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标未处于异常状态；不等同没有任何减益"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "9c82b39e02ae7e14",
@@ -101183,17 +102269,55 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "异常": {
+          "summary": "对中毒敌人物理伤害+30%",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-poison"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对中毒敌人物理伤害+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyState": "poison"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "9c82b39e02ae7e14:physical-damage",
+              "valuePercent": 30,
+              "group": "enemy-poison-damage-upphysical",
+              "abnormalRole": "condition-benefit",
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "has-status",
+                "status": "poison"
+              },
+              "sourceClause": "对中毒状态敌人的物理攻击伤害+30%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "异常"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于中毒状态"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "21895cf9028407dd",
@@ -102232,11 +103356,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "异常": {
+          "summary": "向击败自身的敌人赋予物理攻击伤害-20%的减益",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "enemy-physical-down"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "enemy-physical-down"
+              ],
+              "summary": "向击败自身的敌人赋予物理攻击伤害-20%的减益",
+              "target": "enemy-who-defeated-self",
+              "isBuff": false,
+              "operation": "apply-enemy-physical-damage-down",
+              "scope": {
+                "direction": "enemy-outgoing",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "d1a7d320c0eb0224:enemy-physical-down",
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "incapacitated-by-enemy"
+              },
+              "group": "debuff-1270",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "对击败你的敌人施加减益效果，使其物理攻击伤害降 低 20%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -103403,6 +104567,40 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "异常": {
+          "summary": "自身所有异常状态恢复速度-20%；是恢复变慢，不是异常耐性降低20%，也不直接改写为持续时间+20%。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ailment-recovery-down"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "ailment-recovery-down"
+              ],
+              "summary": "自身所有异常状态恢复速度-20%；是恢复变慢，不是异常耐性降低20%，也不直接改写为持续时间+20%。",
+              "operation": "status-recovery-speed-down",
+              "scope": {
+                "direction": "self-status-recovery",
+                "status": "all-ailments"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "convertsToDurationPercent": false,
+              "group": "recovery-down",
+              "effectIdentity": "0cf4b314ecf1f25a:ailment-recovery-down",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "所有异常状态的恢复速度降低20%，但受到来自敌人的物理攻击和魔法攻击伤害减少15%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
@@ -103410,12 +104608,11 @@ export const SKILL_LABELING_CATALOG = {
         "物理",
         "魔法",
         "防御",
-        "魔抗"
+        "魔抗",
+        "异常"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "所有异常状态恢复速度-20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -103629,17 +104826,55 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "异常": {
+          "summary": "对中毒敌人物理伤害上限+3,000",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-poison"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对中毒敌人物理伤害上限+3,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyState": "poison"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "89167ffb88d16e02:physical-cap",
+              "capPoints": 3000,
+              "group": "enemy-poison-cap-upphysical",
+              "abnormalRole": "condition-benefit",
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "has-status",
+                "status": "poison"
+              },
+              "sourceClause": "对中毒状态敌人的物理攻击伤害上限+3,000。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "异常"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于中毒状态"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4fe9e0277ebd677a",
@@ -107503,16 +108738,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "异常": {
+          "summary": "沉默耐性+1；原为弱点时消除弱点。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "silence-resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "silence-resistance"
+              ],
+              "summary": "沉默耐性+1；原为弱点时消除弱点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "silence",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-normal",
+              "group": "resistance-silence",
+              "effectIdentity": "9a64344759c572ed:silence-resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "沉默耐性+1（若沉默为弱点，则消除弱点）。不可叠加魔法伤害上限+10,000。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "异常"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "沉默耐性+1；原为沉默弱点时消除弱点"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -112585,17 +113854,72 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "异常": {
+          "summary": "疾病耐性+1；原为弱点时消除弱点。；诅咒耐性+1；原为弱点时消除弱点。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "disease-resistance",
+              "curse-resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "disease-resistance"
+              ],
+              "summary": "疾病耐性+1；原为弱点时消除弱点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "disease",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-normal",
+              "group": "resistance-disease",
+              "effectIdentity": "92c0f8785ea384d7:disease-resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "类型追加「植物」。疾病耐性、诅咒耐性+1。"
+            },
+            {
+              "partIds": [
+                "curse-resistance"
+              ],
+              "summary": "诅咒耐性+1；原为弱点时消除弱点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "curse",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-normal",
+              "group": "resistance-curse",
+              "effectIdentity": "92c0f8785ea384d7:curse-resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "类型追加「植物」。疾病耐性、诅咒耐性+1。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
-        "植物"
+        "植物",
+        "异常"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "疾病耐性+1",
-        "诅咒耐性+1"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -114893,17 +116217,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "异常": {
+          "summary": "装备任意防具时，暗盲耐性+1；不是直接无效或减伤。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "status-resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，暗盲耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "blindness",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "armor-resistance-blindness",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "554267b802fb480e:status-resistance",
+              "applicability": "any-armor",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "装备防具时，暗盲异常耐性+1。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "铠甲",
         "衣服",
-        "法袍"
+        "法袍",
+        "异常"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "暗盲耐性+1"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -115183,17 +116552,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "异常": {
+          "summary": "装备任意防具时，沉默耐性+1；不是直接无效或减伤。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "status-resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，沉默耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "silence",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "armor-resistance-silence",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "bb32fdca7184f7b8:status-resistance",
+              "applicability": "any-armor",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "装备防具时，沉默耐性+1。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "铠甲",
         "衣服",
-        "法袍"
+        "法袍",
+        "异常"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "沉默耐性+1"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -115385,17 +116799,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "异常": {
+          "summary": "装备任意防具时，毒耐性+1；不是直接无效或减伤。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "status-resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，毒耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "poison",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "armor-resistance-poison",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "dd01efc0419e5a40:status-resistance",
+              "applicability": "any-armor",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "装备防具时，毒耐性+1。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "铠甲",
         "衣服",
-        "法袍"
+        "法袍",
+        "异常"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "毒耐性+1"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -115587,17 +117046,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "异常": {
+          "summary": "装备任意防具时，诅咒耐性+1；不是直接无效或减伤。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "status-resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，诅咒耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "curse",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "armor-resistance-curse",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "723dc4cfe45b43e1:status-resistance",
+              "applicability": "any-armor",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "装备防具时，诅咒耐性+1。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "铠甲",
         "衣服",
-        "法袍"
+        "法袍",
+        "异常"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "诅咒耐性+1"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -115789,17 +117293,62 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "异常": {
+          "summary": "装备任意防具时，麻痹耐性+1；不是直接无效或减伤。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "status-resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，麻痹耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "paralysis",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "armor-resistance-paralysis",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:929:status-resistance",
+              "applicability": "any-armor",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "装备防具时，麻痹异常耐性+1。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "铠甲",
         "衣服",
-        "法袍"
+        "法袍",
+        "异常"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "麻痹耐性+1"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -116459,10 +118008,52 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "异常": {
+          "summary": "有概率使主动技能施加的魔抗下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "mnd-protection"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "mnd-protection"
+              ],
+              "summary": "有概率使主动技能施加的魔抗下降减益无效；概率待确认，不提高属性或基础异常耐性。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "prevent-stat-down",
+              "stat": "MND",
+              "scope": {
+                "direction": "incoming-debuff",
+                "source": "active-skill"
+              },
+              "chanceStatus": "unconfirmed",
+              "guaranteedImmunity": false,
+              "effectIdentity": "全部技能:all:580:mnd-protection",
+              "familyRole": "direct-effect",
+              "sourceClause": "受到主动技能施加的魔抗下降减益时，有概率使该减益无效。",
+              "group": "prevent-mnd",
+              "skillReviewConditions": [
+                {
+                  "partId": "chance-unknown",
+                  "text": "魔抗下降回避的具体触发概率待确认"
+                }
+              ],
+              "abnormalRole": "direct-effect"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
-        "魔抗"
+        "魔抗",
+        "异常"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -116751,6 +118342,2178 @@ export const SKILL_LABELING_CATALOG = {
       "remainingEffects": [],
       "remainingConditions": [
         "自身以外恰好1名友方装备「拉钩约定」"
+      ]
+    },
+    {
+      "id": "1ca9daa17fe1efd4",
+      "name": "毒耐性",
+      "url": "https://altema.jp/lastcloudia/gino/90",
+      "text": "毒耐性+1（若毒为弱点，则消除弱点）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "毒异常耐性+1级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "毒耐性+1；原为弱点时消除弱点。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "毒耐性+1；原为弱点时消除弱点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "poison",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-normal",
+              "group": "resistance-poison",
+              "effectIdentity": "1ca9daa17fe1efd4:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "毒耐性+1（若毒为弱点，则消除弱点）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b90293c967a8e54a",
+      "name": "毒无效",
+      "url": "https://altema.jp/lastcloudia/gino/96",
+      "text": "毒耐性+2（若毒为弱点，则变为毒耐性）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "毒异常耐性+2级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "毒耐性+2；原为弱点时变为耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "毒耐性+2；原为弱点时变为耐性。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "poison",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 2,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-resistant",
+              "group": "resistance-poison",
+              "effectIdentity": "b90293c967a8e54a:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "毒耐性+2（若毒为弱点，则变为毒耐性）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:92",
+      "name": "暗盲耐性",
+      "url": "https://altema.jp/lastcloudia/gino/91",
+      "text": "暗盲异常耐性+1（若原本为弱点，则消除该弱点）。",
+      "notes": "这里的暗盲是降低命中能力的异常状态，不是暗属性耐性。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "暗盲异常耐性+1级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "暗盲耐性+1；原为弱点时消除弱点。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "暗盲耐性+1；原为弱点时消除弱点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "blindness",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-normal",
+              "group": "resistance-blindness",
+              "effectIdentity": "全部技能:all:92:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "暗盲异常耐性+1（若原本为弱点，则消除该弱点）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:98",
+      "name": "暗盲无效",
+      "url": "https://altema.jp/lastcloudia/gino/97",
+      "text": "暗盲异常耐性+2（若原本为弱点，则变为耐性）。",
+      "notes": "这里的暗盲指失明异常，不是暗属性；耐性等级提高不等于对任何降耐性后的暗盲都永久免疫。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "暗盲异常耐性+2级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "暗盲耐性+2；原为弱点时变为耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "暗盲耐性+2；原为弱点时变为耐性。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "blindness",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 2,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-resistant",
+              "group": "resistance-blindness",
+              "effectIdentity": "全部技能:all:98:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "暗盲异常耐性+2（若原本为弱点，则变为耐性）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "2620fcbb2ad95922",
+      "name": "沉默耐性",
+      "url": "https://altema.jp/lastcloudia/gino/92",
+      "text": "沉默耐性+1（若沉默为弱点，则消除弱点）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "沉默异常耐性+1级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "沉默耐性+1；原为弱点时消除弱点。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "沉默耐性+1；原为弱点时消除弱点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "silence",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-normal",
+              "group": "resistance-silence",
+              "effectIdentity": "2620fcbb2ad95922:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "沉默耐性+1（若沉默为弱点，则消除弱点）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1739768b74889ad7",
+      "name": "沉默无效",
+      "url": "https://altema.jp/lastcloudia/gino/98",
+      "text": "沉默耐性+2（若沉默为弱点，则变为沉默耐性）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "沉默异常耐性+2级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "沉默耐性+2；原为弱点时变为耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "沉默耐性+2；原为弱点时变为耐性。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "silence",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 2,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-resistant",
+              "group": "resistance-silence",
+              "effectIdentity": "1739768b74889ad7:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "沉默耐性+2（若沉默为弱点，则变为沉默耐性）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "89d77d4240c9f0f6",
+      "name": "诅咒耐性",
+      "url": "https://altema.jp/lastcloudia/gino/93",
+      "text": "诅咒耐性+1（若诅咒为弱点，则消除弱点）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "诅咒异常耐性+1级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "诅咒耐性+1；原为弱点时消除弱点。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "诅咒耐性+1；原为弱点时消除弱点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "curse",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-normal",
+              "group": "resistance-curse",
+              "effectIdentity": "89d77d4240c9f0f6:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "诅咒耐性+1（若诅咒为弱点，则消除弱点）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "cd454e708f9b0ead",
+      "name": "诅咒无效",
+      "url": "https://altema.jp/lastcloudia/gino/99",
+      "text": "诅咒耐性+2（若诅咒为弱点，则变为诅咒耐性）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "诅咒异常耐性+2级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "诅咒耐性+2；原为弱点时变为耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "诅咒耐性+2；原为弱点时变为耐性。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "curse",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 2,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-resistant",
+              "group": "resistance-curse",
+              "effectIdentity": "cd454e708f9b0ead:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "诅咒耐性+2（若诅咒为弱点，则变为诅咒耐性）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "4906c19142db2e32",
+      "name": "麻痹耐性",
+      "url": "https://altema.jp/lastcloudia/gino/94",
+      "text": "麻痹耐性+1（若麻痹为弱点，则消除弱点）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "麻痹异常耐性+1级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "麻痹耐性+1；原为弱点时消除弱点。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "麻痹耐性+1；原为弱点时消除弱点。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "paralysis",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-normal",
+              "group": "resistance-paralysis",
+              "effectIdentity": "4906c19142db2e32:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "麻痹耐性+1（若麻痹为弱点，则消除弱点）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "91eb7a5369b466e1",
+      "name": "麻痹无效",
+      "url": "https://altema.jp/lastcloudia/gino/100",
+      "text": "麻痹耐性+2（若麻痹为弱点，则变为麻痹耐性）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "麻痹异常耐性+2级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "麻痹耐性+2；原为弱点时变为耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "麻痹耐性+2；原为弱点时变为耐性。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "paralysis",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 2,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-resistant",
+              "group": "resistance-paralysis",
+              "effectIdentity": "91eb7a5369b466e1:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "麻痹耐性+2（若麻痹为弱点，则变为麻痹耐性）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "463ed2cf276c2462",
+      "name": "疾病无效",
+      "url": "https://altema.jp/lastcloudia/gino/101",
+      "text": "疾病耐性+2（若疾病为弱点，则变为疾病耐性）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "疾病异常耐性+2级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "疾病耐性+2；原为弱点时变为耐性。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "疾病耐性+2；原为弱点时变为耐性。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "disease",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceSteps": 2,
+              "guaranteesImmunity": false,
+              "weaknessTransition": "weak-to-resistant",
+              "group": "resistance-disease",
+              "effectIdentity": "463ed2cf276c2462:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "疾病耐性+2（若疾病为弱点，则变为疾病耐性）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "58d075ac5ebc3560",
+      "name": "疾病耐性",
+      "url": "https://altema.jp/lastcloudia/gino/95",
+      "text": "更不容易陷入疾病状态（若疾病为弱点，则消除弱点）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "更不容易陷入疾病；原为疾病弱点时消除该弱点"
+        },
+        {
+          "id": "grade-unconfirmed",
+          "kind": "condition",
+          "text": "资料未给出疾病耐性提升的明确等级或概率，不根据技能名字补数值"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "更不容易陷入疾病；原为疾病弱点时消除弱点。具体提升等级未明确。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "更不容易陷入疾病；原为疾病弱点时消除弱点。具体提升等级未明确。",
+              "operation": "status-resistance-up-unquantified",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "disease",
+                "statusKind": "basic-ailment"
+              },
+              "resistanceStepsStatus": "unconfirmed",
+              "removesExistingWeakness": true,
+              "guaranteesImmunity": false,
+              "group": "resistance-disease",
+              "effectIdentity": "58d075ac5ebc3560:resistance",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "更不容易陷入疾病状态（若疾病为弱点，则消除弱点）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "资料未给出疾病耐性提升的明确等级或概率，不根据技能名字补数值"
+      ]
+    },
+    {
+      "id": "0cda12fbfe897946",
+      "name": "冻结耐性",
+      "url": "https://altema.jp/lastcloudia/gino/1836",
+      "text": "冻结耐性+1。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "冻结异常耐性+1级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "冻结耐性+1；特殊异常独立记录。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "冻结耐性+1；特殊异常独立记录。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "freeze",
+                "statusKind": "special-status"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "resistance-freeze",
+              "effectIdentity": "0cda12fbfe897946:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "冻结耐性+1。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "e6814f6fa095b711",
+      "name": "激怒耐性",
+      "url": "https://altema.jp/lastcloudia/gino/1999",
+      "text": "激怒耐性+1。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "resistance",
+          "kind": "effect",
+          "text": "激怒异常耐性+1级；不是百分比，也不保证降耐性后仍免疫"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "激怒耐性+1；特殊异常独立记录。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "resistance"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "resistance"
+              ],
+              "summary": "激怒耐性+1；特殊异常独立记录。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "rage",
+                "statusKind": "special-status"
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "resistance-rage",
+              "effectIdentity": "e6814f6fa095b711:resistance",
+              "abnormalRole": "direct-effect",
+              "sourceClause": "激怒耐性+1。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "f541d26ea30ba20e",
+      "name": "百物语",
+      "url": "https://altema.jp/lastcloudia/gino/492",
+      "text": "自身存在基本异常状态弱点时，消除全部基本异常状态弱点。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "remove-weakness",
+          "kind": "effect",
+          "text": "消除自身全部六种基本异常状态弱点；不提高原本正常或有耐性的项目"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "仅消除自身已有的六种基本异常弱点；不等于全部异常耐性+1，也不包括冻结、激怒、眩晕。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "remove-weakness"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "remove-weakness"
+              ],
+              "summary": "仅消除自身已有的六种基本异常弱点；不等于全部异常耐性+1，也不包括冻结、激怒、眩晕。",
+              "operation": "remove-basic-ailment-weakness",
+              "scope": {
+                "direction": "self-resistance",
+                "statuses": [
+                  "poison",
+                  "blindness",
+                  "silence",
+                  "curse",
+                  "paralysis",
+                  "disease"
+                ]
+              },
+              "appliesOnlyToExistingWeakness": true,
+              "resultingState": "normal",
+              "changesNonWeakResistances": false,
+              "includesSpecialStatuses": false,
+              "group": "remove-weakness",
+              "effectIdentity": "f541d26ea30ba20e:remove-weakness",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "自身存在基本异常状态弱点时，消除全部基本异常状态弱点。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "7a7778d6bbe21995",
+      "name": "卡姆伊诺米",
+      "url": "https://altema.jp/lastcloudia/gino/200",
+      "text": "自身的异常状态被治愈时，自动获得对应异常状态耐性+1的增益效果。",
+      "notes": "被治愈的是哪种基本异常，就提高对应异常耐性1级，持续40秒。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "cured-resistance",
+          "kind": "effect",
+          "text": "被治愈的基本异常对应耐性+1，持续40秒"
+        },
+        {
+          "id": "ailment-cured",
+          "kind": "condition",
+          "text": "自身的基本异常状态被治愈时触发，只提高此次被治愈的种类"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "自身基本异常被治愈后，仅对应异常耐性+1，持续40秒；不是六种同时提升，也不负责治疗异常。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "cured-resistance"
+            ],
+            "conditionPartIds": [
+              "ailment-cured"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "cured-resistance"
+              ],
+              "summary": "自身基本异常被治愈后，仅对应异常耐性+1，持续40秒；不是六种同时提升，也不负责治疗异常。",
+              "operation": "status-resistance-up",
+              "isBuff": true,
+              "buffType": "resistance-for-cured-status",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "just-cured-basic-status",
+                "allowedStatuses": [
+                  "poison",
+                  "blindness",
+                  "silence",
+                  "curse",
+                  "paralysis",
+                  "disease"
+                ]
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "trigger": {
+                "subject": "self",
+                "event": "basic-ailment-cured"
+              },
+              "removesAilment": false,
+              "simultaneouslyRaisesAllStatuses": false,
+              "group": "cured-resistance",
+              "effectIdentity": "7a7778d6bbe21995:cured-resistance",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "sourceClause": "自身的异常状态被治愈时，自动获得对应异常状态耐性+1的增益效果。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "495762124c3a416e",
+      "name": "毒研究",
+      "url": "https://altema.jp/lastcloudia/gino/147",
+      "text": "普通攻击时，有概率使敌人中毒。",
+      "notes": "普通攻击每次命中有3%概率尝试施加毒，是否成功仍受目标异常耐性影响。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "apply-status",
+          "kind": "effect",
+          "text": "普通攻击每次命中有3%概率尝试施加毒，仍受目标异常耐性影响"
+        },
+        {
+          "id": "normal-hit",
+          "kind": "condition",
+          "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+        },
+        {
+          "id": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "普通攻击每次命中有3%概率尝试施加毒；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "apply-status"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加毒；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "poison",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "group": "normal-apply-poison",
+              "effectIdentity": "495762124c3a416e:apply-status",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人中毒。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "普通攻击每次命中判定；不是特技、必杀或反击",
+        "施加异常的持续时间待确认"
+      ]
+    },
+    {
+      "id": "全部技能:all:148",
+      "name": "暗盲研究",
+      "url": "https://altema.jp/lastcloudia/gino/148",
+      "text": "普通攻击时，有概率使敌人陷入暗盲（失明）状态。",
+      "notes": "普通攻击每次命中有3%概率尝试施加暗盲，是否成功仍受目标异常耐性影响。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "apply-status",
+          "kind": "effect",
+          "text": "普通攻击每次命中有3%概率尝试施加暗盲，仍受目标异常耐性影响"
+        },
+        {
+          "id": "normal-hit",
+          "kind": "condition",
+          "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+        },
+        {
+          "id": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "普通攻击每次命中有3%概率尝试施加暗盲；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "apply-status"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加暗盲；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "blindness",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "group": "normal-apply-blindness",
+              "effectIdentity": "全部技能:all:148:apply-status",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人陷入暗盲（失明）状态。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "普通攻击每次命中判定；不是特技、必杀或反击",
+        "施加异常的持续时间待确认"
+      ]
+    },
+    {
+      "id": "bf042a386e6e2017",
+      "name": "沉默研究",
+      "url": "https://altema.jp/lastcloudia/gino/149",
+      "text": "普通攻击时，有概率使敌人沉默。",
+      "notes": "普通攻击每次命中有3%概率尝试施加沉默，是否成功仍受目标异常耐性影响。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "apply-status",
+          "kind": "effect",
+          "text": "普通攻击每次命中有3%概率尝试施加沉默，仍受目标异常耐性影响"
+        },
+        {
+          "id": "normal-hit",
+          "kind": "condition",
+          "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+        },
+        {
+          "id": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "普通攻击每次命中有3%概率尝试施加沉默；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "apply-status"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加沉默；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "silence",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "group": "normal-apply-silence",
+              "effectIdentity": "bf042a386e6e2017:apply-status",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人沉默。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "普通攻击每次命中判定；不是特技、必杀或反击",
+        "施加异常的持续时间待确认"
+      ]
+    },
+    {
+      "id": "20ce0d18f81796ba",
+      "name": "诅咒研究",
+      "url": "https://altema.jp/lastcloudia/gino/150",
+      "text": "普通攻击时，有概率使敌人陷入诅咒。",
+      "notes": "普通攻击每次命中有3%概率尝试施加诅咒，是否成功仍受目标异常耐性影响。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "apply-status",
+          "kind": "effect",
+          "text": "普通攻击每次命中有3%概率尝试施加诅咒，仍受目标异常耐性影响"
+        },
+        {
+          "id": "normal-hit",
+          "kind": "condition",
+          "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+        },
+        {
+          "id": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "普通攻击每次命中有3%概率尝试施加诅咒；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "apply-status"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加诅咒；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "curse",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "group": "normal-apply-curse",
+              "effectIdentity": "20ce0d18f81796ba:apply-status",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人陷入诅咒。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "普通攻击每次命中判定；不是特技、必杀或反击",
+        "施加异常的持续时间待确认"
+      ]
+    },
+    {
+      "id": "e012b3fe60fe4932",
+      "name": "麻痹研究",
+      "url": "https://altema.jp/lastcloudia/gino/151",
+      "text": "普通攻击时，有概率使敌人麻痹。",
+      "notes": "普通攻击每次命中有3%概率尝试施加麻痹，是否成功仍受目标异常耐性影响。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "apply-status",
+          "kind": "effect",
+          "text": "普通攻击每次命中有3%概率尝试施加麻痹，仍受目标异常耐性影响"
+        },
+        {
+          "id": "normal-hit",
+          "kind": "condition",
+          "text": "普通攻击每次命中判定；不是特技、必杀或反击"
+        },
+        {
+          "id": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "普通攻击每次命中有3%概率尝试施加麻痹；目标异常耐性仍参与成功判定，持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "apply-status"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-status"
+              ],
+              "summary": "普通攻击每次命中有3%概率尝试施加麻痹；目标异常耐性仍参与成功判定，持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "paralysis",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chancePercent": 3,
+              "chanceUnit": "normal-attack-hit",
+              "chanceMeaning": "application-attempt",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "group": "normal-apply-paralysis",
+              "effectIdentity": "e012b3fe60fe4932:apply-status",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人麻痹。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "普通攻击每次命中判定；不是特技、必杀或反击",
+        "施加异常的持续时间待确认"
+      ]
+    },
+    {
+      "id": "dbc649cdc993f070",
+      "name": "猴宝宝",
+      "url": "https://altema.jp/lastcloudia/gino/226",
+      "text": "普通攻击时，有概率使敌人沉默；对沉默状态的敌人，伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "apply-silence",
+          "kind": "effect",
+          "text": "普通攻击时有概率使敌人沉默"
+        },
+        {
+          "id": "silence-damage",
+          "kind": "effect",
+          "text": "对沉默状态敌人的伤害+30%"
+        },
+        {
+          "id": "normal-hit",
+          "kind": "condition",
+          "text": "普通攻击命中时判定施加沉默"
+        },
+        {
+          "id": "silenced-target",
+          "kind": "condition",
+          "text": "伤害加成要求当前目标敌人处于沉默状态"
+        },
+        {
+          "id": "proc-unconfirmed",
+          "kind": "condition",
+          "text": "沉默施加概率、持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "普通攻击时有概率尝试施加沉默；概率与持续时间待确认，不套用沉默研究的3%。；对沉默状态敌人伤害+30%；不要求这次沉默由自身施加，也不限定普通攻击的伤害。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "apply-silence",
+              "silence-damage"
+            ],
+            "conditionPartIds": [
+              "silenced-target"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-silence"
+              ],
+              "summary": "普通攻击时有概率尝试施加沉默；概率与持续时间待确认，不套用沉默研究的3%。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "silence",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "normal-attack-hit"
+              },
+              "chanceStatus": "unconfirmed",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "group": "normal-apply-silence",
+              "effectIdentity": "dbc649cdc993f070:apply-silence",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人沉默；对沉默状态的敌人，伤害+30%。"
+            },
+            {
+              "partIds": [
+                "silence-damage"
+              ],
+              "summary": "对沉默状态敌人伤害+30%；不要求这次沉默由自身施加，也不限定普通攻击的伤害。",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyState": "silence"
+              },
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "has-status",
+                "status": "silence"
+              },
+              "valuePercent": 30,
+              "group": "enemy-silence-damage",
+              "effectIdentity": "dbc649cdc993f070:silence-damage",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "普通攻击时，有概率使敌人沉默；对沉默状态的敌人，伤害+30%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "普通攻击命中时判定施加沉默",
+        "沉默施加概率、持续时间待确认"
+      ]
+    },
+    {
+      "id": "9baca3cad5fd7f6e",
+      "name": "中毒反击",
+      "url": "https://altema.jp/lastcloudia/gino/923",
+      "text": "反击时，有概率使敌人中毒。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "apply-poison",
+          "kind": "effect",
+          "text": "反击时有概率使目标中毒"
+        },
+        {
+          "id": "counter-trigger",
+          "kind": "condition",
+          "text": "自身反击时触发异常施加"
+        },
+        {
+          "id": "proc-unconfirmed",
+          "kind": "condition",
+          "text": "中毒触发概率、持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "自身反击时，有概率使目标中毒；概率与持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "apply-poison"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-poison"
+              ],
+              "summary": "自身反击时，有概率使目标中毒；概率与持续时间待确认。",
+              "operation": "apply-status",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "poison",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "counter-hit"
+              },
+              "chanceStatus": "unconfirmed",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "group": "counter-poison",
+              "effectIdentity": "9baca3cad5fd7f6e:apply-poison",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "反击时，有概率使敌人中毒。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "自身反击时触发异常施加",
+        "中毒触发概率、持续时间待确认"
+      ]
+    },
+    {
+      "id": "c9165a184c124aab",
+      "name": "复仇病毒",
+      "url": "https://altema.jp/lastcloudia/gino/1305",
+      "text": "自身被敌人击败时，有概率使击败自己的敌人陷入疾病状态（疾病状态下无法恢复生命值）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "apply-disease",
+          "kind": "effect",
+          "text": "有概率使击败自身的敌人陷入疾病，疾病期间无法恢复HP"
+        },
+        {
+          "id": "self-death",
+          "kind": "condition",
+          "text": "自身被敌人击败时，仅针对击败自己的敌人"
+        },
+        {
+          "id": "proc-unconfirmed",
+          "kind": "condition",
+          "text": "疾病赋予概率、持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "自身被敌人击败时，有概率使该敌人陷入疾病；疾病期间无法恢复HP。概率与持续时间待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "apply-disease"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-disease"
+              ],
+              "summary": "自身被敌人击败时，有概率使该敌人陷入疾病；疾病期间无法恢复HP。概率与持续时间待确认。",
+              "operation": "apply-status",
+              "target": "enemy-who-defeated-self",
+              "scope": {
+                "direction": "target-status",
+                "status": "disease",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "incapacitated-by-enemy"
+              },
+              "chanceStatus": "unconfirmed",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "statusMeaning": "prevents-HP-recovery",
+              "group": "death-disease",
+              "effectIdentity": "c9165a184c124aab:apply-disease",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "自身被敌人击败时，有概率使击败自己的敌人陷入疾病状态（疾病状态下无法恢复生命值）。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "自身被敌人击败时，仅针对击败自己的敌人",
+        "疾病赋予概率、持续时间待确认"
+      ]
+    },
+    {
+      "id": "全部技能:all:126",
+      "name": "皮约林",
+      "url": "https://altema.jp/lastcloudia/gino/126",
+      "text": "敌人更容易被击晕。",
+      "notes": "这里的眩晕是攻击造成的气绝状态，不是麻痹异常。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "stun-up",
+          "kind": "effect",
+          "text": "使敌人更容易眩晕（气绝），不是麻痹，也不是Break伤害提升"
+        },
+        {
+          "id": "stun-parameters",
+          "kind": "condition",
+          "text": "提高眩晕的具体幅度与判定机制待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "使敌人更容易眩晕（气绝）；不是麻痹耐性降低，也不是Break伤害加成。具体幅度和机制待确认。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "stun-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "stun-up"
+              ],
+              "summary": "使敌人更容易眩晕（气绝）；不是麻痹耐性降低，也不是Break伤害加成。具体幅度和机制待确认。",
+              "operation": "stun-ease-up",
+              "target": "target-enemy",
+              "scope": {
+                "direction": "target-status",
+                "status": "stun",
+                "statusKind": "special-status"
+              },
+              "amountStatus": "unconfirmed",
+              "changesBreakDamage": false,
+              "changesParalysisResistance": false,
+              "group": "stun",
+              "effectIdentity": "全部技能:all:126:stun-up",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "敌人更容易被击晕。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "提高眩晕的具体幅度与判定机制待确认"
+      ]
+    },
+    {
+      "id": "034bfcf926753388",
+      "name": "急速回复",
+      "url": "https://altema.jp/lastcloudia/gino/193",
+      "text": "缩短从异常状态中恢复所需的时间。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "recovery",
+          "kind": "effect",
+          "text": "缩短异常自然恢复所需时间；幅度待确认"
+        },
+        {
+          "id": "recovery-parameters",
+          "kind": "condition",
+          "text": "异常恢复的具体变化幅度待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "缩短异常自然恢复所需时间；幅度待确认",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "recovery"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "recovery"
+              ],
+              "summary": "缩短异常自然恢复所需时间；幅度待确认",
+              "operation": "status-recovery-time-down",
+              "scope": {
+                "direction": "self-status-recovery",
+                "status": "all-ailments"
+              },
+              "amountStatus": "unconfirmed",
+              "clearsImmediately": false,
+              "group": "recovery-all-ailments",
+              "effectIdentity": "034bfcf926753388:recovery",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "缩短从异常状态中恢复所需的时间。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "异常恢复的具体变化幅度待确认"
+      ]
+    },
+    {
+      "id": "0eaadb437c882ccc",
+      "name": "阿曼达之血",
+      "url": "https://altema.jp/lastcloudia/gino/224",
+      "text": "诅咒恢复速度提升。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "recovery",
+          "kind": "effect",
+          "text": "诅咒自然恢复速度提高；幅度待确认"
+        },
+        {
+          "id": "recovery-parameters",
+          "kind": "condition",
+          "text": "异常恢复的具体变化幅度待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "诅咒自然恢复速度提高；幅度待确认",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "recovery"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "recovery"
+              ],
+              "summary": "诅咒自然恢复速度提高；幅度待确认",
+              "operation": "status-recovery-speed-up",
+              "scope": {
+                "direction": "self-status-recovery",
+                "status": "curse"
+              },
+              "amountStatus": "unconfirmed",
+              "clearsImmediately": false,
+              "group": "recovery-curse",
+              "effectIdentity": "0eaadb437c882ccc:recovery",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "诅咒恢复速度提升。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "异常恢复的具体变化幅度待确认"
+      ]
+    },
+    {
+      "id": "全部技能:all:124",
+      "name": "异常痛击",
+      "url": "https://altema.jp/lastcloudia/gino/124",
+      "text": "对带有异常状态的敌人造成的伤害+20%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "status-damage",
+          "kind": "effect",
+          "text": "对异常状态敌人的伤害+20%"
+        },
+        {
+          "id": "enemy-ailment",
+          "kind": "condition",
+          "text": "当前目标敌人处于异常状态；不等同拥有任意属性下降减益"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "对当前处于异常状态的敌人，伤害+20%；不扩大成通用伤害增加。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "status-damage"
+            ],
+            "conditionPartIds": [
+              "enemy-ailment"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-damage"
+              ],
+              "summary": "对当前处于异常状态的敌人，伤害+20%；不扩大成通用伤害增加。",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyState": "abnormal-status"
+              },
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "has-ailment"
+              },
+              "valuePercent": 20,
+              "group": "enemy-ailment-damage",
+              "effectIdentity": "全部技能:all:124:status-damage",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "对带有异常状态的敌人造成的伤害+20%"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:284",
+      "name": "异常痛击2",
+      "url": "https://altema.jp/lastcloudia/gino/331",
+      "text": "对带有异常状态的敌人造成额外30%伤害",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "status-damage",
+          "kind": "effect",
+          "text": "对异常状态敌人的伤害+30%"
+        },
+        {
+          "id": "enemy-ailment",
+          "kind": "condition",
+          "text": "当前目标敌人处于异常状态；不等同拥有任意属性下降减益"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "对当前处于异常状态的敌人，伤害+30%；不扩大成通用伤害增加。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "status-damage"
+            ],
+            "conditionPartIds": [
+              "enemy-ailment"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-damage"
+              ],
+              "summary": "对当前处于异常状态的敌人，伤害+30%；不扩大成通用伤害增加。",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyState": "abnormal-status"
+              },
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "has-ailment"
+              },
+              "valuePercent": 30,
+              "group": "enemy-ailment-damage",
+              "effectIdentity": "全部技能:all:284:status-damage",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "对带有异常状态的敌人造成额外30%伤害"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1545ff2f2bc10672",
+      "name": "异常痛击3",
+      "url": "https://altema.jp/lastcloudia/gino/761",
+      "text": "对处于异常状态的敌人，伤害+30%，伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "status-damage",
+          "kind": "effect",
+          "text": "对异常状态敌人的伤害+30%"
+        },
+        {
+          "id": "status-cap",
+          "kind": "effect",
+          "text": "对异常状态敌人的伤害上限+2000"
+        },
+        {
+          "id": "enemy-ailment",
+          "kind": "condition",
+          "text": "当前目标敌人处于异常状态；不等同拥有任意属性下降减益"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "对当前处于异常状态的敌人，伤害+30%；不扩大成通用伤害增加。；对当前处于异常状态的敌人，伤害上限+2000。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "status-damage",
+              "status-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-ailment"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-damage"
+              ],
+              "summary": "对当前处于异常状态的敌人，伤害+30%；不扩大成通用伤害增加。",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyState": "abnormal-status"
+              },
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "has-ailment"
+              },
+              "valuePercent": 30,
+              "group": "enemy-ailment-damage",
+              "effectIdentity": "1545ff2f2bc10672:status-damage",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "对处于异常状态的敌人，伤害+30%，伤害上限+2,000。"
+            },
+            {
+              "partIds": [
+                "status-cap"
+              ],
+              "summary": "对当前处于异常状态的敌人，伤害上限+2000。",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyState": "abnormal-status"
+              },
+              "statusPredicate": {
+                "subject": "target-enemy",
+                "mode": "has-ailment"
+              },
+              "capPoints": 2000,
+              "group": "enemy-ailment-cap",
+              "effectIdentity": "1545ff2f2bc10672:status-cap",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "对处于异常状态的敌人，伤害+30%，伤害上限+2,000。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "a5b8aa9bc0f4d0b8",
+      "name": "恐怖牢狱",
+      "url": "https://altema.jp/lastcloudia/gino/873",
+      "text": "受到处于异常状态的敌人攻击时，伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "reduction",
+          "kind": "effect",
+          "text": "受到处于异常状态的敌人攻击时，伤害-10%"
+        },
+        {
+          "id": "attacker-ailment",
+          "kind": "condition",
+          "text": "伤害来源敌人当前处于异常状态；不是自身异常"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "受到当前处于异常状态的敌人的攻击时，伤害-10%；限定攻击来源，不归通用减伤。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-ailment"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "reduction"
+              ],
+              "summary": "受到当前处于异常状态的敌人的攻击时，伤害-10%；限定攻击来源，不归通用减伤。",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerState": "abnormal-status"
+              },
+              "statusPredicate": {
+                "subject": "attacking-enemy",
+                "mode": "has-ailment"
+              },
+              "valuePercent": 10,
+              "group": "attacker-ailment-reduction",
+              "effectIdentity": "a5b8aa9bc0f4d0b8:reduction",
+              "abnormalRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "受到处于异常状态的敌人攻击时，伤害-10%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "01b4b9edd30c865e",
+      "name": "恨死咒缚",
+      "url": "https://altema.jp/lastcloudia/gino/1316",
+      "text": "对击败你的敌人施加减益效果，使受到的伤害增加 20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "enemy-vulnerability",
+          "kind": "effect",
+          "text": "向击败自身的敌人施加受到伤害+20%的减益"
+        },
+        {
+          "id": "self-death",
+          "kind": "condition",
+          "text": "自身被敌人击败时，仅作用于击败自己的敌人"
+        },
+        {
+          "id": "debuff-duration",
+          "kind": "condition",
+          "text": "易伤减益的持续时间待确认"
+        }
+      ],
+      "tagDetails": {
+        "异常": {
+          "summary": "自身被敌人击败时，给击败自己的敌人施加受到伤害+20%的减益；持续时间待确认。不是自身伤害+20%。",
+          "relation": "abnormal-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "enemy-vulnerability"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "enemy-vulnerability"
+              ],
+              "summary": "自身被敌人击败时，给击败自己的敌人施加受到伤害+20%的减益；持续时间待确认。不是自身伤害+20%。",
+              "operation": "apply-target-vulnerability",
+              "target": "enemy-who-defeated-self",
+              "scope": {
+                "direction": "target-incoming",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationStatus": "unconfirmed",
+              "trigger": {
+                "event": "incapacitated-by-enemy",
+                "actor": "self"
+              },
+              "group": "death-vulnerability",
+              "effectIdentity": "01b4b9edd30c865e:enemy-vulnerability",
+              "abnormalRole": "direct-effect",
+              "isBuff": false,
+              "sourceClause": "对击败你的敌人施加减益效果，使受到的伤害增加 20%。"
+            }
+          ],
+          "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        }
+      },
+      "assignedTags": [
+        "异常"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "自身被敌人击败时，仅作用于击败自己的敌人",
+        "易伤减益的持续时间待确认"
       ]
     }
   ],
@@ -117049,8 +120812,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 123,
         "notRelatedUnique": 812,
-        "ready": 62,
-        "partial": 61,
+        "ready": 63,
+        "partial": 60,
         "unknown": 0
       }
     },
@@ -117181,8 +120944,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 77,
         "notRelatedUnique": 858,
-        "ready": 39,
-        "partial": 38,
+        "ready": 40,
+        "partial": 37,
         "unknown": 0
       }
     },
@@ -117224,6 +120987,153 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 921,
         "ready": 6,
         "partial": 8,
+        "unknown": 0
+      }
+    },
+    "abnormal": {
+      "label": "异常",
+      "passKind": "abnormal-effects-and-condition",
+      "displayOrder": [
+        "1ca9daa17fe1efd4",
+        "全部技能:all:92",
+        "2620fcbb2ad95922",
+        "89d77d4240c9f0f6",
+        "4906c19142db2e32",
+        "58d075ac5ebc3560",
+        "b90293c967a8e54a",
+        "全部技能:all:98",
+        "1739768b74889ad7",
+        "cd454e708f9b0ead",
+        "91eb7a5369b466e1",
+        "463ed2cf276c2462",
+        "全部技能:all:124",
+        "全部技能:all:126",
+        "495762124c3a416e",
+        "全部技能:all:148",
+        "bf042a386e6e2017",
+        "20ce0d18f81796ba",
+        "e012b3fe60fe4932",
+        "7983e8b7c5f6eceb",
+        "034bfcf926753388",
+        "7a7778d6bbe21995",
+        "1032f88be503dbb8",
+        "0eaadb437c882ccc",
+        "dbc649cdc993f070",
+        "717087fe75ab851b",
+        "全部技能:all:284",
+        "6133882f233d82ce",
+        "f541d26ea30ba20e",
+        "bf0d04fe54be3b33",
+        "b5afb5f0a6e375bb",
+        "b3ceb563be9052e5",
+        "63eeda796250122a",
+        "8400b28b0f6069d3",
+        "1545ff2f2bc10672",
+        "68c1f4b9c51cb15f",
+        "835e08fc4710e268",
+        "a5b8aa9bc0f4d0b8",
+        "f0d4e2e81fd7c665",
+        "9baca3cad5fd7f6e",
+        "9c82b39e02ae7e14",
+        "554267b802fb480e",
+        "ea3ec6051efc1995",
+        "be64f3014d49d50d",
+        "全部技能:all:580",
+        "bb32fdca7184f7b8",
+        "dd01efc0419e5a40",
+        "723dc4cfe45b43e1",
+        "92f18d0720224b23",
+        "d1a7d320c0eb0224",
+        "c9165a184c124aab",
+        "01b4b9edd30c865e",
+        "ef62dd0cf4192724",
+        "2d7be6839ef276d6",
+        "92c0f8785ea384d7",
+        "ad3aebbcb3299841",
+        "0cf4b314ecf1f25a",
+        "89167ffb88d16e02",
+        "e2016a861d776638",
+        "0cda12fbfe897946",
+        "1f04cd2da53994eb",
+        "全部技能:all:929",
+        "e6814f6fa095b711",
+        "29da106c453e0234",
+        "9a64344759c572ed"
+      ],
+      "childKeys": [
+        "abnormal-resistance-poison",
+        "abnormal-resistance-blindness",
+        "abnormal-resistance-silence",
+        "abnormal-resistance-curse",
+        "abnormal-resistance-paralysis",
+        "abnormal-resistance-disease",
+        "abnormal-resistance-freeze",
+        "abnormal-resistance-rage",
+        "abnormal-armor-resistance-blindness",
+        "abnormal-armor-resistance-silence",
+        "abnormal-armor-resistance-poison",
+        "abnormal-armor-resistance-curse",
+        "abnormal-armor-resistance-paralysis",
+        "abnormal-remove-weakness",
+        "abnormal-cured-resistance",
+        "abnormal-one-use-barrier",
+        "abnormal-normal-apply-poison",
+        "abnormal-normal-apply-blindness",
+        "abnormal-normal-apply-silence",
+        "abnormal-normal-apply-curse",
+        "abnormal-normal-apply-paralysis",
+        "abnormal-counter-poison",
+        "abnormal-death-disease",
+        "abnormal-opening-curse",
+        "abnormal-debuff-element-resistance",
+        "abnormal-opening-silence",
+        "abnormal-self-severe-poison",
+        "abnormal-stun",
+        "abnormal-recovery-all-ailments",
+        "abnormal-recovery-curse",
+        "abnormal-recovery-down",
+        "abnormal-self-ailment-increase-regen-speedMP",
+        "abnormal-self-ailment-sct-speed-upSCT",
+        "abnormal-self-ailment-damage-upphysical",
+        "abnormal-self-ailment-damage-upultimate",
+        "abnormal-enemy-no-ailment-damage-upphysical",
+        "abnormal-enemy-no-ailment-cap-upphysical",
+        "abnormal-enemy-poison-damage-upphysical",
+        "abnormal-enemy-poison-cap-upphysical",
+        "abnormal-enemy-two-debuffs-damage-upskill",
+        "abnormal-enemy-ailment-damage",
+        "abnormal-enemy-ailment-cap",
+        "abnormal-enemy-silence-damage",
+        "abnormal-attacker-ailment-reduction",
+        "abnormal-rage-abnormal-stat-up",
+        "abnormal-rage-abnormal-stat-down",
+        "abnormal-rage-disable-magic",
+        "abnormal-prevent-def",
+        "abnormal-prevent-int",
+        "abnormal-prevent-str",
+        "abnormal-prevent-mnd",
+        "abnormal-debuff-212",
+        "abnormal-debuff-1270",
+        "abnormal-debuff-560",
+        "abnormal-debuff-831",
+        "abnormal-death-vulnerability",
+        "abnormal-ruin-song",
+        "abnormal-self-str-down",
+        "abnormal-self-int-down",
+        "abnormal-self-mnd-down",
+        "abnormal-self-vulnerability",
+        "abnormal-self-speed-down",
+        "abnormal-slow-physical-benefit"
+      ],
+      "overviewLabel": "全部异常（分组）",
+      "separateSections": true,
+      "scopeDescription": "异常耐性／无效、弱点消除、屏障、施加与恢复、异常条件收益；特殊异常、能力下降减益和使用限制单独分组。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 65,
+        "notRelatedUnique": 870,
+        "ready": 37,
+        "partial": 28,
         "unknown": 0
       }
     },
@@ -117405,8 +121315,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 32,
         "notRelatedUnique": 903,
-        "ready": 15,
-        "partial": 17,
+        "ready": 16,
+        "partial": 16,
         "unknown": 0,
         "previousBasicMpUnique": 8,
         "additionalRelatedUnique": 24
@@ -117767,8 +121677,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 230,
         "notRelatedUnique": 705,
-        "ready": 158,
-        "partial": 72,
+        "ready": 163,
+        "partial": 67,
         "unknown": 0
       }
     },
@@ -117987,8 +121897,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 130,
         "notRelatedUnique": 805,
-        "ready": 91,
-        "partial": 39,
+        "ready": 93,
+        "partial": 37,
         "unknown": 0
       }
     },
@@ -118271,8 +122181,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
-        "ready": 79,
-        "partial": 38,
+        "ready": 80,
+        "partial": 37,
         "unknown": 0
       }
     },
@@ -118633,8 +122543,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 113,
         "notRelatedUnique": 822,
-        "ready": 99,
-        "partial": 14,
+        "ready": 100,
+        "partial": 13,
         "unknown": 0
       }
     },
@@ -118789,8 +122699,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 82,
         "notRelatedUnique": 853,
-        "ready": 46,
-        "partial": 36,
+        "ready": 48,
+        "partial": 34,
         "unknown": 0
       }
     },
@@ -119875,8 +123785,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 18,
         "notRelatedUnique": 917,
-        "ready": 10,
-        "partial": 8,
+        "ready": 15,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -119948,8 +123858,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 23,
         "notRelatedUnique": 912,
-        "ready": 11,
-        "partial": 12,
+        "ready": 16,
+        "partial": 7,
         "unknown": 0
       }
     },
@@ -119998,8 +123908,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 16,
         "notRelatedUnique": 919,
-        "ready": 9,
-        "partial": 7,
+        "ready": 14,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -120428,8 +124338,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 10,
         "notRelatedUnique": 925,
-        "ready": 9,
-        "partial": 1,
+        "ready": 10,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -122093,8 +126003,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -123326,8 +127236,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 26,
         "notRelatedUnique": 909,
-        "ready": 21,
-        "partial": 5,
+        "ready": 22,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -123519,8 +127429,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -133341,8 +137251,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -133869,8 +137779,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 7,
         "notRelatedUnique": 928,
-        "ready": 5,
-        "partial": 2,
+        "ready": 6,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -134078,8 +137988,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 74,
         "notRelatedUnique": 861,
-        "ready": 58,
-        "partial": 16,
+        "ready": 59,
+        "partial": 15,
         "unknown": 0
       }
     },
@@ -134186,8 +138096,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 23,
-        "partial": 14,
+        "ready": 24,
+        "partial": 13,
         "unknown": 0
       }
     },
@@ -135208,8 +139118,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -135225,8 +139135,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -135259,8 +139169,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -135808,8 +139718,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -136174,8 +140084,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 21,
         "notRelatedUnique": 914,
-        "ready": 14,
-        "partial": 7,
+        "ready": 15,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -137242,8 +141152,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 3,
-        "partial": 1,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -137960,8 +141870,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 1,
-        "partial": 1,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -142528,8 +146438,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -142545,8 +146455,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -142562,8 +146472,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -142579,8 +146489,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -142715,8 +146625,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -142950,8 +146860,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -142984,8 +146894,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -143001,8 +146911,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -143069,8 +146979,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -143257,8 +147167,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -143402,8 +147312,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -143419,8 +147329,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -143436,8 +147346,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -143453,8 +147363,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -143521,8 +147431,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -143826,8 +147736,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 16,
         "notRelatedUnique": 919,
-        "ready": 5,
-        "partial": 11,
+        "ready": 6,
+        "partial": 10,
         "unknown": 0
       }
     },
@@ -144852,8 +148762,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 3,
-        "partial": 2,
+        "ready": 4,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -145318,6 +149228,1091 @@ export const SKILL_LABELING_CATALOG = {
       "effectGroup": "apply-physical-vulnerability",
       "displayOrder": [
         "1032f88be503dbb8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-resistance-poison": {
+      "label": "毒耐性／无效",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "resistance-poison",
+      "displayOrder": [
+        "1ca9daa17fe1efd4",
+        "b90293c967a8e54a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-resistance-blindness": {
+      "label": "暗盲耐性／无效",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "resistance-blindness",
+      "displayOrder": [
+        "全部技能:all:92",
+        "全部技能:all:98"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-resistance-silence": {
+      "label": "沉默耐性／无效",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "resistance-silence",
+      "displayOrder": [
+        "2620fcbb2ad95922",
+        "1739768b74889ad7",
+        "9a64344759c572ed"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-resistance-curse": {
+      "label": "诅咒耐性／无效",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "resistance-curse",
+      "displayOrder": [
+        "89d77d4240c9f0f6",
+        "cd454e708f9b0ead",
+        "92c0f8785ea384d7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-resistance-paralysis": {
+      "label": "麻痹耐性／无效",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "resistance-paralysis",
+      "displayOrder": [
+        "4906c19142db2e32",
+        "91eb7a5369b466e1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-resistance-disease": {
+      "label": "疾病耐性／无效",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "resistance-disease",
+      "displayOrder": [
+        "58d075ac5ebc3560",
+        "463ed2cf276c2462",
+        "92c0f8785ea384d7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 2,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-resistance-freeze": {
+      "label": "冻结耐性／无效",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "resistance-freeze",
+      "displayOrder": [
+        "0cda12fbfe897946"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-resistance-rage": {
+      "label": "激怒耐性／无效",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "resistance-rage",
+      "displayOrder": [
+        "e6814f6fa095b711"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-armor-resistance-blindness": {
+      "label": "任意防具 · 暗盲耐性",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "armor-resistance-blindness",
+      "displayOrder": [
+        "554267b802fb480e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-armor-resistance-silence": {
+      "label": "任意防具 · 沉默耐性",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "armor-resistance-silence",
+      "displayOrder": [
+        "bb32fdca7184f7b8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-armor-resistance-poison": {
+      "label": "任意防具 · 毒耐性",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "armor-resistance-poison",
+      "displayOrder": [
+        "dd01efc0419e5a40"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-armor-resistance-curse": {
+      "label": "任意防具 · 诅咒耐性",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "armor-resistance-curse",
+      "displayOrder": [
+        "723dc4cfe45b43e1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-armor-resistance-paralysis": {
+      "label": "任意防具 · 麻痹耐性",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "armor-resistance-paralysis",
+      "displayOrder": [
+        "全部技能:all:929"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-remove-weakness": {
+      "label": "消除基本异常弱点",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "remove-weakness",
+      "displayOrder": [
+        "f541d26ea30ba20e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-cured-resistance": {
+      "label": "异常治愈后 · 对应耐性",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "cured-resistance",
+      "displayOrder": [
+        "7a7778d6bbe21995"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-one-use-barrier": {
+      "label": "一次性基本异常屏障",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "one-use-barrier",
+      "displayOrder": [
+        "717087fe75ab851b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-normal-apply-poison": {
+      "label": "普通攻击 · 施加毒",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "normal-apply-poison",
+      "displayOrder": [
+        "495762124c3a416e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-normal-apply-blindness": {
+      "label": "普通攻击 · 施加暗盲",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "normal-apply-blindness",
+      "displayOrder": [
+        "全部技能:all:148"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-normal-apply-silence": {
+      "label": "普通攻击 · 施加沉默",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "normal-apply-silence",
+      "displayOrder": [
+        "bf042a386e6e2017",
+        "dbc649cdc993f070"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "abnormal-normal-apply-curse": {
+      "label": "普通攻击 · 施加诅咒",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "normal-apply-curse",
+      "displayOrder": [
+        "20ce0d18f81796ba"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-normal-apply-paralysis": {
+      "label": "普通攻击 · 施加麻痹",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "normal-apply-paralysis",
+      "displayOrder": [
+        "e012b3fe60fe4932"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-counter-poison": {
+      "label": "反击 · 施加毒",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "counter-poison",
+      "displayOrder": [
+        "9baca3cad5fd7f6e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-death-disease": {
+      "label": "被击败后 · 向击败者施加疾病",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "death-disease",
+      "displayOrder": [
+        "c9165a184c124aab"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-opening-curse": {
+      "label": "开场 · 施加诅咒",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "opening-curse",
+      "displayOrder": [
+        "6133882f233d82ce"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-debuff-element-resistance": {
+      "label": "减益 · 全属性耐性降低（非异常耐性）",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "debuff-element-resistance",
+      "displayOrder": [
+        "6133882f233d82ce",
+        "ad3aebbcb3299841"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "abnormal-opening-silence": {
+      "label": "开场 · 施加沉默",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "opening-silence",
+      "displayOrder": [
+        "ad3aebbcb3299841"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-severe-poison": {
+      "label": "开场 · 自身猛毒",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-severe-poison",
+      "displayOrder": [
+        "1f04cd2da53994eb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-stun": {
+      "label": "眩晕（气绝）相关",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "stun",
+      "displayOrder": [
+        "全部技能:all:126"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-recovery-all-ailments": {
+      "label": "异常恢复时间",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "recovery-all-ailments",
+      "displayOrder": [
+        "034bfcf926753388"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-recovery-curse": {
+      "label": "诅咒恢复速度",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "recovery-curse",
+      "displayOrder": [
+        "0eaadb437c882ccc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-recovery-down": {
+      "label": "异常恢复速度降低",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "recovery-down",
+      "displayOrder": [
+        "0cf4b314ecf1f25a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-ailment-increase-regen-speedMP": {
+      "label": "自身异常 · MP恢复速度",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-ailment-increase-regen-speedMP",
+      "displayOrder": [
+        "7983e8b7c5f6eceb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-ailment-sct-speed-upSCT": {
+      "label": "自身异常 · SCT恢复速度",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-ailment-sct-speed-upSCT",
+      "displayOrder": [
+        "7983e8b7c5f6eceb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-ailment-damage-upphysical": {
+      "label": "自身异常 · 物理伤害",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-ailment-damage-upphysical",
+      "displayOrder": [
+        "63eeda796250122a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-ailment-damage-upultimate": {
+      "label": "自身异常 · 必杀伤害",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-ailment-damage-upultimate",
+      "displayOrder": [
+        "63eeda796250122a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-enemy-no-ailment-damage-upphysical": {
+      "label": "目标无异常 · 物理伤害",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "enemy-no-ailment-damage-upphysical",
+      "displayOrder": [
+        "f0d4e2e81fd7c665"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-enemy-no-ailment-cap-upphysical": {
+      "label": "目标无异常 · 物理上限",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "enemy-no-ailment-cap-upphysical",
+      "displayOrder": [
+        "f0d4e2e81fd7c665"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-enemy-poison-damage-upphysical": {
+      "label": "目标中毒 · 物理伤害",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "enemy-poison-damage-upphysical",
+      "displayOrder": [
+        "9c82b39e02ae7e14"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-enemy-poison-cap-upphysical": {
+      "label": "目标中毒 · 物理上限",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "enemy-poison-cap-upphysical",
+      "displayOrder": [
+        "89167ffb88d16e02"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-enemy-two-debuffs-damage-upskill": {
+      "label": "目标至少2个减益 · 特技伤害",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "enemy-two-debuffs-damage-upskill",
+      "displayOrder": [
+        "2d7be6839ef276d6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-enemy-ailment-damage": {
+      "label": "目标异常 · 伤害增加",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "enemy-ailment-damage",
+      "displayOrder": [
+        "全部技能:all:124",
+        "全部技能:all:284",
+        "1545ff2f2bc10672"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-enemy-ailment-cap": {
+      "label": "目标异常 · 伤害上限",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "enemy-ailment-cap",
+      "displayOrder": [
+        "1545ff2f2bc10672"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-enemy-silence-damage": {
+      "label": "目标沉默 · 伤害增加",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "enemy-silence-damage",
+      "displayOrder": [
+        "dbc649cdc993f070"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-attacker-ailment-reduction": {
+      "label": "攻击者异常 · 受到伤害减少",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "attacker-ailment-reduction",
+      "displayOrder": [
+        "a5b8aa9bc0f4d0b8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-rage-abnormal-stat-up": {
+      "label": "激怒 · 攻击力提升",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "rage-abnormal-stat-up",
+      "displayOrder": [
+        "835e08fc4710e268"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-rage-abnormal-stat-down": {
+      "label": "激怒 · 防御力降低",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "rage-abnormal-stat-down",
+      "displayOrder": [
+        "835e08fc4710e268"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-rage-disable-magic": {
+      "label": "激怒 · 禁止魔法",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "rage-disable-magic",
+      "displayOrder": [
+        "835e08fc4710e268"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-prevent-def": {
+      "label": "减益回避 · 防御力下降",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "prevent-def",
+      "displayOrder": [
+        "b3ceb563be9052e5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-prevent-int": {
+      "label": "减益回避 · 魔力下降",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "prevent-int",
+      "displayOrder": [
+        "ea3ec6051efc1995"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-prevent-str": {
+      "label": "减益回避 · 攻击力下降",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "prevent-str",
+      "displayOrder": [
+        "be64f3014d49d50d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-prevent-mnd": {
+      "label": "减益回避 · 魔抗下降",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "prevent-mnd",
+      "displayOrder": [
+        "全部技能:all:580"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-debuff-212": {
+      "label": "减益 · 目标物理易伤",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "debuff-212",
+      "displayOrder": [
+        "1032f88be503dbb8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-debuff-1270": {
+      "label": "减益 · 击败者物理伤害降低",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "debuff-1270",
+      "displayOrder": [
+        "d1a7d320c0eb0224"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-debuff-560": {
+      "label": "使用限制 · 开场禁止魔法",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "debuff-560",
+      "displayOrder": [
+        "bf0d04fe54be3b33"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-debuff-831": {
+      "label": "使用限制 · 开场禁止特技",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "debuff-831",
+      "displayOrder": [
+        "68c1f4b9c51cb15f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-death-vulnerability": {
+      "label": "减益 · 击败者受到伤害增加",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "death-vulnerability",
+      "displayOrder": [
+        "01b4b9edd30c865e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-ruin-song": {
+      "label": "特殊减益 · 破灭歌声",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "ruin-song",
+      "displayOrder": [
+        "b5afb5f0a6e375bb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-str-down": {
+      "label": "减益 · 自身攻击力下降",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-str-down",
+      "displayOrder": [
+        "8400b28b0f6069d3",
+        "92f18d0720224b23"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 1,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-int-down": {
+      "label": "减益 · 自身魔力下降",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-int-down",
+      "displayOrder": [
+        "8400b28b0f6069d3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-mnd-down": {
+      "label": "减益 · 自身魔抗下降",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-mnd-down",
+      "displayOrder": [
+        "29da106c453e0234"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-vulnerability": {
+      "label": "减益 · 自身受到伤害增加",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-vulnerability",
+      "displayOrder": [
+        "e2016a861d776638"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-self-speed-down": {
+      "label": "减益 · 自身移动速度降低",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "self-speed-down",
+      "displayOrder": [
+        "ef62dd0cf4192724"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "abnormal-slow-physical-benefit": {
+      "label": "自身减速 · 物理伤害增加",
+      "parent": "abnormal",
+      "conditionTag": "异常",
+      "effectGroup": "slow-physical-benefit",
+      "displayOrder": [
+        "ef62dd0cf4192724"
       ],
       "counts": {
         "reviewedUnique": 935,
@@ -146196,14 +151191,46 @@ export const SKILL_LABELING_CATALOG = {
         "e2018b4f235f4bc5",
         "4cd3c0b3112e088e",
         "35faadc54c8092f6",
-        "5985cead77169d18"
+        "5985cead77169d18",
+        "1ca9daa17fe1efd4",
+        "b90293c967a8e54a",
+        "全部技能:all:92",
+        "全部技能:all:98",
+        "2620fcbb2ad95922",
+        "1739768b74889ad7",
+        "89d77d4240c9f0f6",
+        "cd454e708f9b0ead",
+        "4906c19142db2e32",
+        "91eb7a5369b466e1",
+        "463ed2cf276c2462",
+        "58d075ac5ebc3560",
+        "0cda12fbfe897946",
+        "e6814f6fa095b711",
+        "f541d26ea30ba20e",
+        "7a7778d6bbe21995",
+        "495762124c3a416e",
+        "全部技能:all:148",
+        "bf042a386e6e2017",
+        "20ce0d18f81796ba",
+        "e012b3fe60fe4932",
+        "dbc649cdc993f070",
+        "9baca3cad5fd7f6e",
+        "c9165a184c124aab",
+        "全部技能:all:126",
+        "034bfcf926753388",
+        "0eaadb437c882ccc",
+        "全部技能:all:124",
+        "全部技能:all:284",
+        "1545ff2f2bc10672",
+        "a5b8aa9bc0f4d0b8",
+        "01b4b9edd30c865e"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 866,
-        "notRelatedUnique": 69,
-        "ready": 571,
-        "partial": 295,
+        "relatedUnique": 898,
+        "notRelatedUnique": 37,
+        "ready": 605,
+        "partial": 293,
         "unknown": 0
       }
     }
