@@ -29,8 +29,8 @@
           <p id="labelCoverage">正在读取全库核对结果…</p>
           <p id="judgmentSummary" aria-live="polite"></p>
           <p id="cumulativeCoverage"></p>
-          <p>按完整效果词条分类：属性、Boss、种族、空中、弱点等限定增伤不拆成宽泛增伤标签。装备、队伍、自身状态、时间等启用条件继续独立判断；并列效果各自贴标签。</p>
-          <p id="conditionScope">单手按武器总数恰好1把判断。“两手剑／枪”等技能也属于这一类。按武器类型、伤害种类及附加条件分组；明确包含空武器的分支另写0或1把，绝不把0把当成1把。 所有效果和条件贴完标签才算完整；同一技能跨组去重。</p>
+          <p>按效果与影响归属的条件分类。保留武器、攻击类型、属性、对象及触发限定；具体概率、Buff时长、数值曲线、回复公式等机制细节不单独拆分，也不影响分类完成。</p>
+          <p id="conditionScope">单手按武器总数恰好1把判断。“两手剑／枪”等技能也属于这一类。按武器类型、伤害种类及附加条件分组；明确包含空武器的分支另写0或1把，绝不把0把当成1把。效果与影响归属的条件完成分类即可；同一技能跨组去重。</p>
         </div>
         <div class="toolbar">
           <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索单手相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
@@ -43,6 +43,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260925-supplements"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260926-classification-scope"></script>
   </body>
 </html>

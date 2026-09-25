@@ -1,5 +1,5 @@
-import {SKILL_LABELING_CATALOG as catalog} from './skill-labeling-catalog.mjs?v=20260925-supplements';
-import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260925-supplements';
+import {SKILL_LABELING_CATALOG as catalog} from './skill-classification-catalog.mjs?v=20260926-classification-scope';
+import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260926-classification-scope';
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const statusLabels = {ready:'已完整判断', partial:'判断部分', unknown:'没办法判断'};
 const pendingList = (title, texts) => texts.length ? `<div class="remaining-effects"><b>${title}</b><ul>${texts.map(text => `<li>${escape(text)}</li>`).join('')}</ul></div>` : '';
@@ -34,7 +34,7 @@ if (typeof document !== 'undefined') {
     document.querySelector('#labelPanel').setAttribute('aria-labelledby', `label-${childKeys ? 'subtab' : 'tab'}-${activeView}`);
     rows = skillLabelRows(window.SKILL_DATA, view, edits);
     document.querySelector('#activeTagTitle').textContent = view.effectGroup ? `${group.label} · ${view.label}` : view.label;
-    document.querySelector('#conditionScope').textContent = group.scopeDescription || '所有效果和条件都贴完标签，才算已完整判断。同一技能可出现在多个分类，总数按技能去重；未处理的效果和条件继续待判断。每组按已完整判断、判断部分、没办法判断排序。';
+    document.querySelector('#conditionScope').textContent = group.scopeDescription || '效果与影响归属的条件完成分类即可；数值与机制细节不单独拆分。同一技能可出现在多个分类，总数按技能去重。每组按已完整判断、判断部分、没办法判断排序。';
     search.setAttribute('aria-label', `搜索${view.label}技能`);
     document.querySelector('#labelCoverage').textContent = `已核对全库 ${count.reviewedUnique} 个技能（去重） · ${view.label} ${count.relatedUnique} 个 · 此列表未纳入 ${count.notRelatedUnique} 个`;
     document.querySelector('#cumulativeCoverage').textContent = `累计已贴标签 ${catalog.views.all.counts.relatedUnique} 个技能（去重）；同一技能的标签和判断在各列表同步。`;

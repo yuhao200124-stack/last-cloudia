@@ -1,0 +1,2368 @@
+{
+  "schemaVersion": 1,
+  "basis": "effects-and-classification-qualifiers",
+  "date": "2026-09-26",
+  "baselineCommit": "3592f06beaaba0355f979f960417b0b564df55d6",
+  "numericEffectInjection": false,
+  "userRule": "不影响效果分类的概率、Buff持续与叠加、数值曲线、公式、回复量、扣血细节等，不单独拆分，不出现在待判断条件／机制，也不阻塞分类完成。保留效果、武器、攻击类型、作用对象及实际生效范围。",
+  "entries": [
+    {
+      "skillId": "4cb37bd11ae3b17f",
+      "skillNumber": 118,
+      "sourceSignature": "[\"4cb37bd11ae3b17f\",\"https://altema.jp/lastcloudia/gino/118\",\"觉醒\",\"濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。\",\"HP降至30%及以下时触发，每个Wave最多1次。回复HP后，攻击力、防御力、魔抗各+50%，移动速度+2；这组增益持续40秒。\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "b480695aa2840e5c",
+      "skillNumber": 195,
+      "sourceSignature": "[\"b480695aa2840e5c\",\"https://altema.jp/lastcloudia/gino/195\",\"复仇鼓舞\",\"受到伤害时，有概率提升攻击力。\",\"攻击力+20%，持续40秒。计算器条件栏选择“受到伤害时”，表示该受伤Buff当前有效；与鼓舞类同组只计一项。\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "勇敢Buff：持续40秒，同类型Buff同时只计一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "a805be70edade9bf",
+      "skillNumber": 267,
+      "sourceSignature": "[\"a805be70edade9bf\",\"https://altema.jp/lastcloudia/gino/267\",\"生命鼓舞\",\"自身剩余HP越低，攻击力提升越高（最高+50%）。\",\"\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "ee6342cbdb0251e7",
+      "skillNumber": 272,
+      "sourceSignature": "[\"ee6342cbdb0251e7\",\"https://altema.jp/lastcloudia/gino/272\",\"黄泉之理\",\"复活时，攻击力和魔力+30%，暴击率+15%。\",\"复活后攻击力、法强+30%，暴击率+15%，持续40秒。同组属性Buff只计一项；本轮接入攻击力与法强，暴击率待暴击分类接入。\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "复活Buff持续40秒，同类型属性Buff同时只计一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "7caf7c48fe8b8715",
+      "skillNumber": 425,
+      "sourceSignature": "[\"7caf7c48fe8b8715\",\"https://altema.jp/lastcloudia/gino/425\",\"能量循环\",\"敌人使用必杀时，自身自动获得「勇敢」「堡垒」效果。\",\"勇敢使攻击力+20%，堡垒使防御力+20%；增益作用于自身。\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "duration-unconfirmed",
+          "kind": "condition",
+          "text": "勇敢和堡垒Buff持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "86ad4fdedf4c3869",
+      "skillNumber": 593,
+      "sourceSignature": "[\"86ad4fdedf4c3869\",\"https://altema.jp/lastcloudia/gino/593\",\"斗智转轮\",\"攻击力越高，魔法攻击伤害越高。\",\"\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "conversion-formula-unconfirmed",
+          "kind": "condition",
+          "text": "攻击力与魔法伤害提升量的具体换算关系待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "8ba52a420286cb67",
+      "skillNumber": 627,
+      "sourceSignature": "[\"8ba52a420286cb67\",\"https://altema.jp/lastcloudia/gino/627\",\"人类模仿\",\"战斗开始时，随机为自身追加士兵、骑士、魔法师、狙击手中的1种类型（战斗结束时消失）。\\n【限时】攻击力、防御力+10%。\",\"\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "攻击力与防御力加成为限时效果，适用活动时间待确认",
+          "disposition": "non-blocking",
+          "reason": "event-schedule"
+        }
+      ]
+    },
+    {
+      "skillId": "d0f3dc6c3cee545e",
+      "skillNumber": 726,
+      "sourceSignature": "[\"d0f3dc6c3cee545e\",\"https://altema.jp/lastcloudia/gino/726\",\"美丽而残酷的世界\",\"当一名盟友死亡时，给自己施加攻击力+30%的增益效 果。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "攻击力Buff；持续与同类叠加关系待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "835e08fc4710e268",
+      "skillNumber": 849,
+      "sourceSignature": "[\"835e08fc4710e268\",\"https://altema.jp/lastcloudia/gino/849\",\"怒气\",\"我方角色陷入战斗不能时，赋予自身“激怒”效果（攻击力提高、防御力降低，且无法使用魔法）\",\"激怒属于异常状态：提高攻击力、降低防御力，并禁止使用魔法。具体增减比例与持续时间尚无交叉确认值。\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "施加“激怒”异常状态，具体比例与持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "be64f3014d49d50d",
+      "skillNumber": 983,
+      "sourceSignature": "[\"be64f3014d49d50d\",\"https://altema.jp/lastcloudia/gino/983\",\"攻击下降回避\",\"有概率使主动技能造成的攻击力下降减益无效。\",\"\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "主动技能造成攻击力下降减益时，概率使其无效",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        },
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "攻击力下降减益保护，不是攻击力加成",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "92f18d0720224b23",
+      "skillNumber": 1231,
+      "sourceSignature": "[\"92f18d0720224b23\",\"https://altema.jp/lastcloudia/gino/1231\",\"命运抽签\",\"战斗开始时，随机赋予攻击力增益或减益效果（+50%、+35%、+20%或-35%）。\",\"触发后施加于自身，持续40秒。\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "随机选择一种攻击力增益／减益结果",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        },
+        {
+          "partId": "condition-3",
+          "kind": "condition",
+          "text": "效果持续40秒，按实际抽中的结果判断",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "403a540b2ffa9519",
+      "skillNumber": 1370,
+      "sourceSignature": "[\"403a540b2ffa9519\",\"https://altema.jp/lastcloudia/gino/1370\",\"混沌翡翠\",\"从战斗开始后每 10 秒，有一定几率大幅恢复生命 值，并获得 攻击力 +100% 的增益效果，持续 20 秒（每 波最多一次）。\",\"\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复量、每10秒判定的触发概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "8486ea2eb21efd2c",
+      "skillNumber": 1380,
+      "sourceSignature": "[\"8486ea2eb21efd2c\",\"https://altema.jp/lastcloudia/gino/1380\",\"垂直回环\",\"当处于移动速度增益效果下时，攻击力和防御力+10% （某些特殊增益效果除外）\",\"\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "处于移动速度增益效果下时生效；部分特殊增益不计",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "daa5fb62f2887078",
+      "skillNumber": 1629,
+      "sourceSignature": "[\"daa5fb62f2887078\",\"https://altema.jp/lastcloudia/gino/1629\",\"崛起鼓舞\",\"随着时间经过，攻击力逐渐提高（最高+20%，每个Wave开始时重置）。\",\"\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "随战斗时间经过逐渐提升；具体变化曲线待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "b782149b137d2614",
+      "skillNumber": 1765,
+      "sourceSignature": "[\"b782149b137d2614\",\"https://altema.jp/lastcloudia/gino/1765\",\"寻找“有趣的东西”\",\"魔力、魔抗-20%；随着时间经过，攻击力、防御力逐渐提升（最多40秒，最高+20%）。\",\"\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "remaining-time-curve",
+          "kind": "condition",
+          "text": "40秒之前攻击力与防御力增长的具体曲线待确认，不能直接按线性换算",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "127eab1363110062",
+      "skillNumber": 1779,
+      "sourceSignature": "[\"127eab1363110062\",\"https://altema.jp/lastcloudia/gino/1779\",\"强力治愈\",\"攻击力越高，自身主动技能的HP恢复量略微提升（部分特殊恢复效果除外）。\",\"\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "攻击力与主动HP回复量的换算公式、排除的特殊回复技能名单待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "1f04cd2da53994eb",
+      "skillNumber": 1873,
+      "sourceSignature": "[\"1f04cd2da53994eb\",\"https://altema.jp/lastcloudia/gino/1873\",\"紫苑的料理难吃透了\",\"攻击力+20%。战斗开始时，对自身赋予猛毒。\",\"猛毒会周期性造成较大的HP损失，但该扣血本身不会使HP降至1以下。它属于异常状态，不是单纯降低防御的减益。\"]",
+      "userExample": true,
+      "fragments": [
+        {
+          "partId": "abnormal-parameters",
+          "kind": "condition",
+          "text": "猛毒的扣血量、间隔和持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "b3ceb563be9052e5",
+      "skillNumber": 632,
+      "sourceSignature": "[\"b3ceb563be9052e5\",\"https://altema.jp/lastcloudia/gino/632\",\"防御下降回避\",\"有概率使主动技能造成的防御力下降减益无效。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "主动技能造成防御力下降减益时，概率使其无效",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        },
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "防御下降减益保护机制",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "6edebfe26dbf6ef3",
+      "skillNumber": 788,
+      "sourceSignature": "[\"6edebfe26dbf6ef3\",\"https://altema.jp/lastcloudia/gino/788\",\"生命堡垒\",\"你的剩余生命值越低，你的防御力就越高（最高+50%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "faa4c35ca794565a",
+      "skillNumber": 890,
+      "sourceSignature": "[\"faa4c35ca794565a\",\"https://altema.jp/lastcloudia/gino/890\",\"魔导觉醒\",\"濒死时，HP大幅恢复，魔力、防御力、魔抗+50%，移动速度提升（每个Wave最多触发1次）。\",\"HP降至30%及以下时触发。魔力（法强）、防御力、魔抗各+50%，移动速度+2，持续40秒；每个Wave最多1次。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "865f4f238437b7a5",
+      "skillNumber": 1015,
+      "sourceSignature": "[\"865f4f238437b7a5\",\"https://altema.jp/lastcloudia/gino/1015\",\"过于年轻的炼金术师\",\"当一名盟友死亡时，给自己施加防御力+30%的增益效 果。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "防御力Buff；持续时间与同类叠加关系待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "da17e674beb5ac5b",
+      "skillNumber": 1133,
+      "sourceSignature": "[\"da17e674beb5ac5b\",\"https://altema.jp/lastcloudia/gino/1133\",\"气功\",\"受到敌人物理攻击时，有概率在该次伤害计算时使自身防御力+100%，并以提高后的防御力承受该次伤害。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "c059571f370020f5",
+      "skillNumber": 1390,
+      "sourceSignature": "[\"c059571f370020f5\",\"https://altema.jp/lastcloudia/gino/1390\",\"秘传斗法\",\"特技伤害+10%。剩余HP越低，防御力和魔抗提升越多（最高+15%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "HP与实际属性提升量的变化曲线待确认，不能直接采用最高值",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "240bff829bf6cbe6",
+      "skillNumber": 169,
+      "sourceSignature": "[\"240bff829bf6cbe6\",\"https://altema.jp/lastcloudia/gino/169\",\"魔转相\",\"魔力越高，普通攻击伤害越高。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "魔力与伤害提升量的换算公式尚待判断",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "6c8bc1de0d7802c2",
+      "skillNumber": 196,
+      "sourceSignature": "[\"6c8bc1de0d7802c2\",\"https://altema.jp/lastcloudia/gino/196\",\"复仇增魔\",\"受到伤害时，有概率提升魔力。\",\"受到伤害时有5%概率给自身施加魔力（法强）+20%，持续40秒。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "受伤Buff持续40秒；同类型Buff同时只计已生效的最高一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        },
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "原补充说明：受到伤害时有5%概率触发",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "762fb2ff5d9381f0",
+      "skillNumber": 357,
+      "sourceSignature": "[\"762fb2ff5d9381f0\",\"https://altema.jp/lastcloudia/gino/357\",\"魔武转轮\",\"魔力越高，物理攻击伤害越高。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "魔力与伤害提升量的换算公式尚待判断",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "96db78d77cedf5cf",
+      "skillNumber": 441,
+      "sourceSignature": "[\"96db78d77cedf5cf\",\"https://altema.jp/lastcloudia/gino/441\",\"魔武转轮·改\",\"魔力越高，物理攻击伤害大幅提升。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "魔力与伤害提升量的换算公式尚待判断",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "c68e5d899b2196da",
+      "skillNumber": 584,
+      "sourceSignature": "[\"c68e5d899b2196da\",\"https://altema.jp/lastcloudia/gino/584\",\"不，是雨啦\",\"我方角色陷入战斗不能时，自身获得魔力+30%的增益效果。\",\"触发后施加于自身，持续40秒。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "魔力Buff持续40秒；同类型Buff同时只计已生效的最高一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "ea3ec6051efc1995",
+      "skillNumber": 954,
+      "sourceSignature": "[\"ea3ec6051efc1995\",\"https://altema.jp/lastcloudia/gino/954\",\"魔力下降回避\",\"有概率使主动技能造成的魔力下降减益无效。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "限主动技能造成的魔力下降减益",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        },
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "减益无效的概率和判定机制尚待判断",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "f62b7d309ec81f27",
+      "skillNumber": 1164,
+      "sourceSignature": "[\"f62b7d309ec81f27\",\"https://altema.jp/lastcloudia/gino/1164\",\"生命光环\",\"剩余HP越低，魔力提升越多（最高+50%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "HP与魔力提升量的变化公式待确认，不能直接按最高50%计入",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "a85d531b3bab38a1",
+      "skillNumber": 346,
+      "sourceSignature": "[\"a85d531b3bab38a1\",\"https://altema.jp/lastcloudia/gino/346\",\"凭依（伊弗利特）\",\"HP持续下降，但物理攻击伤害+20%，受到的炎属性攻击伤害-20%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-hp-cost-parameters",
+          "kind": "condition",
+          "text": "持续扣除HP的数值、间隔、计算基数与最低保留HP规则待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "f0a152f468c7e282",
+      "skillNumber": 482,
+      "sourceSignature": "[\"f0a152f468c7e282\",\"https://altema.jp/lastcloudia/gino/482\",\"贯流枪术\",\"装备枪时，物理攻击伤害+15%，并有概率解除敌人的格挡。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "解除格挡的概率与判定机制待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "85e41007552fa429",
+      "skillNumber": 499,
+      "sourceSignature": "[\"85e41007552fa429\",\"https://altema.jp/lastcloudia/gino/499\",\"狂战士\",\"生命值持续下降，但物理攻击伤害+30%\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-hp-cost-parameters",
+          "kind": "condition",
+          "text": "持续扣除HP的数值、间隔、计算基数与最低保留HP规则待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "4a7788e083ce9ea1",
+      "skillNumber": 603,
+      "sourceSignature": "[\"4a7788e083ce9ea1\",\"https://altema.jp/lastcloudia/gino/603\",\"狂烈一击\",\"命中率略微降低，但物理攻击伤害+50%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "accuracy-amount-unconfirmed",
+          "kind": "condition",
+          "text": "命中率降低的具体幅度待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "563cffc7c5fa9c59",
+      "skillNumber": 1060,
+      "sourceSignature": "[\"563cffc7c5fa9c59\",\"https://altema.jp/lastcloudia/gino/1060\",\"英灵凭依\",\"复活时，获得物理攻击和魔法攻击伤害+20%的增益效果。\",\"触发后施加于自身，持续40秒。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "增伤Buff持续40秒；各同类型Buff同时只计一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "9db66f54c49b4f7a",
+      "skillNumber": 1113,
+      "sourceSignature": "[\"9db66f54c49b4f7a\",\"https://altema.jp/lastcloudia/gino/1113\",\"夏日训练营\",\"每个Wave中，物理攻击伤害随时间逐渐提升（最高+20%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "实际增幅与时间的对应关系待确认，不能直接取最高20%",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "ef62dd0cf4192724",
+      "skillNumber": 1378,
+      "sourceSignature": "[\"ef62dd0cf4192724\",\"https://altema.jp/lastcloudia/gino/1378\",\"深度冲击\",\"战斗开始时，赋予自身“移动速度降低”减益效果（持续至战斗不能）；处于移动速度降低状态时，物理攻击伤害+20%（部分特殊减益效果不计入触发条件）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "自身处于移动速度降低状态；部分特殊减益不计入",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        },
+        {
+          "partId": "abnormal-slow-amount",
+          "kind": "condition",
+          "text": "开场移动速度降低减益的具体数值待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "0e47720e7aaba94f",
+      "skillNumber": 1491,
+      "sourceSignature": "[\"0e47720e7aaba94f\",\"https://altema.jp/lastcloudia/gino/1491\",\"真祖\",\"自身魔抗-20%，但随时间经过，物理攻击伤害和伤害上限逐渐提升（最高：伤害+50%、伤害上限+5,000）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "实际伤害增幅与上限的变化公式待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "f6bc920aeccd81d4",
+      "skillNumber": 1548,
+      "sourceSignature": "[\"f6bc920aeccd81d4\",\"https://altema.jp/lastcloudia/gino/1548\",\"炎之剑\",\"装备火属性剑时，HP持续下降，但物理攻击伤害+30%、伤害上限+2,000。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-hp-cost-parameters",
+          "kind": "condition",
+          "text": "持续扣除HP的数值、间隔、计算基数与最低保留HP规则待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "1773fd0e181f0d48",
+      "skillNumber": 690,
+      "sourceSignature": "[\"1773fd0e181f0d48\",\"https://altema.jp/lastcloudia/gino/690\",\"灵魂狩猎\",\"我方角色陷入战斗不能时，自身获得魔法攻击伤害+30%的增益效果。\",\"触发后施加于自身，持续40秒。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "魔法增伤Buff持续40秒；同类型Buff同时只计一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "869205f984d49c10",
+      "skillNumber": 1799,
+      "sourceSignature": "[\"869205f984d49c10\",\"https://altema.jp/lastcloudia/gino/1799\",\"圣诞派对！\",\"战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-3",
+          "kind": "condition",
+          "text": "各人数对应的增幅待确认，不能无条件取最高20%",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "0b4cbcd7bc326038",
+      "skillNumber": 1839,
+      "sourceSignature": "[\"0b4cbcd7bc326038\",\"https://altema.jp/lastcloudia/gino/1839\",\"疯狂魔法师\",\"HP持续减少，但魔法攻击伤害+30%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-hp-cost-parameters",
+          "kind": "condition",
+          "text": "持续扣除HP的数值、间隔、计算基数与最低保留HP规则待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "29da106c453e0234",
+      "skillNumber": 2016,
+      "sourceSignature": "[\"29da106c453e0234\",\"https://altema.jp/lastcloudia/gino/2016\",\"男人的自信\",\"战斗开始时，自身获得魔抗-20%的减益效果；随后魔法攻击伤害随时间逐渐提升，40秒时最高+30%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "魔抗降低减益的持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        },
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "魔法增伤随时间变化，40秒达到最高30%；此前的具体换算关系待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "d451135c6dde31c4",
+      "skillNumber": 1478,
+      "sourceSignature": "[\"d451135c6dde31c4\",\"https://altema.jp/lastcloudia/gino/1478\",\"纳萨力克的统治者\",\"全队只有自身装备此技能时，根据其他装备“纳萨力克阶层守护者”的友方角色人数，使自身造成的伤害提高、受到的伤害降低（3名时达到最大：伤害+36%，受到的伤害-15%）\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-3",
+          "kind": "condition",
+          "text": "1名、2名对应的具体增减幅待确认，不直接取最高值",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "2547e056f12aa5c8",
+      "skillNumber": 208,
+      "sourceSignature": "[\"2547e056f12aa5c8\",\"https://altema.jp/lastcloudia/gino/208\",\"快速中级魔法阵\",\"战斗开始时自动发动“中级魔法阵展开”效果，持续少量恢复MP。\",\"状态持续40秒；每6秒回复1＋最大MP的0.7%。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-buff-lifetime",
+          "kind": "condition",
+          "text": "中级魔法阵Buff持续40秒，同类型只计最高已生效一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "6133882f233d82ce",
+      "skillNumber": 381,
+      "sourceSignature": "[\"6133882f233d82ce\",\"https://altema.jp/lastcloudia/gino/381\",\"终结的凝视\",\"战斗开始时，对所有敌人施加全属性耐性-10的减益效果，并有概率赋予诅咒。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "诅咒赋予概率与减益持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "b5afb5f0a6e375bb",
+      "skillNumber": 620,
+      "sourceSignature": "[\"b5afb5f0a6e375bb\",\"https://altema.jp/lastcloudia/gino/620\",\"破灭歌声\",\"战斗开始时，对任意1名敌人施加「破灭歌声」减益效果；该敌人会定期对其附近的友军造成伤害。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "随机选择1名敌人",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        },
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "周期、伤害量、持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "719b23004e804e89",
+      "skillNumber": 916,
+      "sourceSignature": "[\"719b23004e804e89\",\"https://altema.jp/lastcloudia/gino/916\",\"变装！\",\"战斗开始时，随机为自身追加1种类型（持续至战斗不能）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "随机追加类型的候选范围待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "f177a34c939a2dfc",
+      "skillNumber": 1092,
+      "sourceSignature": "[\"f177a34c939a2dfc\",\"https://altema.jp/lastcloudia/gino/1092\",\"快速自愈\",\"战斗开始时自动获得「再生」效果：持续小幅恢复HP。\",\"每个Wave开始获得再生，持续40秒，每6秒回复一次HP；回复量受自身魔抗等回复计算因素影响。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "ad3aebbcb3299841",
+      "skillNumber": 1604,
+      "sourceSignature": "[\"ad3aebbcb3299841\",\"https://altema.jp/lastcloudia/gino/1604\",\"魔断之楔\",\"战斗开始时，对所有敌人施加全属性耐性-10的减益效果，并有概率赋予沉默。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "沉默赋予概率与减益持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "b50f1be94e5ec002",
+      "skillNumber": 1776,
+      "sourceSignature": "[\"b50f1be94e5ec002\",\"https://altema.jp/lastcloudia/gino/1776\",\"不为人知的决战\",\"战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-2",
+          "kind": "condition",
+          "text": "各人数对应的具体增幅待确认，不能直接取最高20%",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:924",
+      "skillNumber": 1981,
+      "sourceSignature": "[\"全部技能:all:924\",\"https://altema.jp/lastcloudia/gino/1981\",\"冰属性渐增\",\"每个Wave内，冰属性伤害随经过时间逐渐提高，90秒时达到最高+20%；进入下一Wave重新计时。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "冰属性增伤随经过时间提高，90秒达到最高20%；此前的具体曲线待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "c3b83f342aaa5c37",
+      "skillNumber": 1987,
+      "sourceSignature": "[\"c3b83f342aaa5c37\",\"https://altema.jp/lastcloudia/gino/1987\",\"栖居云海的神兽\",\"每击败1名敌人，特技伤害提升；最多累计6名，最高+30%，每个Wave重置。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "condition-1",
+          "kind": "condition",
+          "text": "每击败1名敌人提高特技伤害，最多累计6名；各层具体增幅待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "6daaeb2654b05955",
+      "skillNumber": 110,
+      "sourceSignature": "[\"6daaeb2654b05955\",\"https://altema.jp/lastcloudia/gino/110\",\"自动再生\",\"永久获得「再生」效果：持续自动恢复HP。\",\"再生每6秒回复一次HP，作用于自身；回复量受自身魔抗等回复计算因素影响。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "ecfc5e235fabef1a",
+      "skillNumber": 219,
+      "sourceSignature": "[\"ecfc5e235fabef1a\",\"https://altema.jp/lastcloudia/gino/219\",\"玛娜的加护\",\"当濒死时，保护、魔法屏障、速度和再生效果会自动激活一次。\",\"HP降至30%及以下时触发，每个Wave最多1次。自身受到物理、魔法伤害各-20%，移动速度+2，持续40秒；再生每6秒回复HP，持续30秒。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "dd2669fcbcbc5696",
+      "skillNumber": 615,
+      "sourceSignature": "[\"dd2669fcbcbc5696\",\"https://altema.jp/lastcloudia/gino/615\",\"逃足\",\"濒死时，移动速度提升。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-movement-amount",
+          "kind": "condition",
+          "text": "移动速度变化的具体数值待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "1f5b1ff3daa03f19",
+      "skillNumber": 1022,
+      "sourceSignature": "[\"1f5b1ff3daa03f19\",\"https://altema.jp/lastcloudia/gino/1022\",\"被创造的生命\",\"新增魔法生物类型。\\n濒死时，生命值大幅恢复（每波最多恢复一次）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "386458aa75f9df1d",
+      "skillNumber": 121,
+      "sourceSignature": "[\"386458aa75f9df1d\",\"https://altema.jp/lastcloudia/gino/121\",\"飞影\",\"HP达到最大值时，移动速度提升。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-movement-amount",
+          "kind": "condition",
+          "text": "移动速度变化的具体数值待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:31",
+      "skillNumber": 30,
+      "sourceSignature": "[\"全部技能:all:31\",\"https://altema.jp/lastcloudia/gino/30\",\"格挡\",\"受到物理攻击时，有概率自动格挡，减轻伤害。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        },
+        {
+          "partId": "guard-amount-unconfirmed",
+          "kind": "condition",
+          "text": "格挡减伤的具体数值待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:34",
+      "skillNumber": 33,
+      "sourceSignature": "[\"全部技能:all:34\",\"https://altema.jp/lastcloudia/gino/33\",\"魔法格挡\",\"装备「格挡」技能时，魔法攻击也有概率被自动格挡。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "934b1ed28e293547",
+      "skillNumber": 37,
+      "sourceSignature": "[\"934b1ed28e293547\",\"https://altema.jp/lastcloudia/gino/37\",\"皇家铠甲\",\"受到暴击时，有概率将该次暴击转为普通伤害。\",\"触发概率为50%。成功时仍承受普通伤害，并非免疫整次攻击。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "触发概率50%",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "a7a71ca92112f23d",
+      "skillNumber": 38,
+      "sourceSignature": "[\"a7a71ca92112f23d\",\"https://altema.jp/lastcloudia/gino/38\",\"海市蜃楼\",\"有几率躲避物理攻击。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "9304cda80e847537",
+      "skillNumber": 39,
+      "sourceSignature": "[\"9304cda80e847537\",\"https://altema.jp/lastcloudia/gino/39\",\"反击\",\"受到敌人物理攻击时，有概率发动强力反击。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        },
+        {
+          "partId": "counter-power-unconfirmed",
+          "kind": "condition",
+          "text": "反击具体伤害倍率待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "6606b1627076dda2",
+      "skillNumber": 172,
+      "sourceSignature": "[\"6606b1627076dda2\",\"https://altema.jp/lastcloudia/gino/172\",\"物理伤害回复\",\"受到物理伤害时，有概率恢复10%的HP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        },
+        {
+          "partId": "heal-base-unconfirmed",
+          "kind": "condition",
+          "text": "HP回复10%所参照的基数待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "6b975fa167e7e3e6",
+      "skillNumber": 184,
+      "sourceSignature": "[\"6b975fa167e7e3e6\",\"https://altema.jp/lastcloudia/gino/184\",\"根性\",\"受到致命伤害时，存活一次并恢复少量生命值。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "once",
+          "kind": "condition",
+          "text": "仅可存活一次；次数重置范围待确认",
+          "disposition": "non-blocking",
+          "reason": "reset-details"
+        },
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "66fe90eebb9e2461",
+      "skillNumber": 233,
+      "sourceSignature": "[\"66fe90eebb9e2461\",\"https://altema.jp/lastcloudia/gino/233\",\"天块\",\"受到物理伤害时，消耗3点MP，使该次受到的伤害减半。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-cost-gate",
+          "kind": "condition",
+          "text": "须支付3点MP；MP不足时的处理待确认",
+          "disposition": "non-blocking",
+          "reason": "resource-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:307",
+      "skillNumber": 372,
+      "sourceSignature": "[\"全部技能:all:307\",\"https://altema.jp/lastcloudia/gino/372\",\"物理伤害回复2\",\"受到物理伤害时，有几率恢复相当于伤害值 25% 的生 命值。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "b2e58697ea88e464",
+      "skillNumber": 401,
+      "sourceSignature": "[\"b2e58697ea88e464\",\"https://altema.jp/lastcloudia/gino/401\",\"魔法伤害回复\",\"受到魔法伤害时，有概率恢复相当于所受伤害10%的HP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:346",
+      "skillNumber": 440,
+      "sourceSignature": "[\"全部技能:all:346\",\"https://altema.jp/lastcloudia/gino/440\",\"魔法伤害回复2\",\"受到魔法伤害时，有几率恢复相当于所受伤害值 25% 的生命值。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:389",
+      "skillNumber": 553,
+      "sourceSignature": "[\"全部技能:all:389\",\"https://altema.jp/lastcloudia/gino/553\",\"魔法伤害回复3\",\"当你受到魔法伤害时，有几率恢复相当于所受伤害值 40% 的生命值。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "29f04fa2a0ffb9fb",
+      "skillNumber": 389,
+      "sourceSignature": "[\"29f04fa2a0ffb9fb\",\"https://altema.jp/lastcloudia/gino/389\",\"从零开始\",\"当你受到致命伤害时，你的魔法值会降至零，但你的 生命值会大幅恢复，并且在接下来的 10 秒内（每波 一次）受到的伤害会减少 50%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "buff-lifetime",
+          "kind": "condition",
+          "text": "减伤持续10秒；与同类型Buff只计最高一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        },
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "4ab8df2c073b5bf0",
+      "skillNumber": 617,
+      "sourceSignature": "[\"4ab8df2c073b5bf0\",\"https://altema.jp/lastcloudia/gino/617\",\"爆速店主\",\"受到伤害前，移动速度提升。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "speed-reset",
+          "kind": "condition",
+          "text": "受伤后的恢复／重置范围待确认",
+          "disposition": "non-blocking",
+          "reason": "reset-details"
+        },
+        {
+          "partId": "remaining-movement-amount",
+          "kind": "condition",
+          "text": "移动速度变化的具体数值待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "9dbce7c7fe7e59f0",
+      "skillNumber": 628,
+      "sourceSignature": "[\"9dbce7c7fe7e59f0\",\"https://altema.jp/lastcloudia/gino/628\",\"连续伤害防止\",\"当受到一系列连续攻击时，受到的伤害会随着攻击次数的增加而减少\\n（最多减少 50%，攻击次数达到 50 次）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "consecutive-hits",
+          "kind": "condition",
+          "text": "按连续受击次数变化；中间各档数值及连击重置规则待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "e97879470b786304",
+      "skillNumber": 740,
+      "sourceSignature": "[\"e97879470b786304\",\"https://altema.jp/lastcloudia/gino/740\",\"复仇振奋\",\"受到伤害时，有概率提升魔抗。\",\"受到伤害时有5%概率给自身施加魔抗+20%，持续40秒。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "activation-chance",
+          "kind": "condition",
+          "text": "受到伤害时有5%概率触发",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        },
+        {
+          "partId": "buff-lifetime",
+          "kind": "condition",
+          "text": "魔抗Buff持续40秒，同类型Buff同时只计最高一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "f16297127305bf04",
+      "skillNumber": 1214,
+      "sourceSignature": "[\"f16297127305bf04\",\"https://altema.jp/lastcloudia/gino/1214\",\"万物尽灭\",\"发动攻击型必杀时，消耗最大MP的20%，使该必杀伤害+20%、伤害上限+5,000。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-payment",
+          "kind": "condition",
+          "text": "须消耗最大MP的20%；MP不足时的处理待确认",
+          "disposition": "non-blocking",
+          "reason": "resource-details"
+        }
+      ]
+    },
+    {
+      "skillId": "8a5d23a0f83cd5f5",
+      "skillNumber": 1617,
+      "sourceSignature": "[\"8a5d23a0f83cd5f5\",\"https://altema.jp/lastcloudia/gino/1617\",\"鸣动之深渊\",\"战斗开始后，每20秒获得增益效果，使下一次发动的必杀伤害+30%、伤害上限+10,000。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "buff-refresh",
+          "kind": "condition",
+          "text": "再次获得同类Buff时的刷新方式待确认；同类型只计最高一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "ed00d6c7e726b8ce",
+      "skillNumber": 1695,
+      "sourceSignature": "[\"ed00d6c7e726b8ce\",\"https://altema.jp/lastcloudia/gino/1695\",\"冲浪冲击\",\"装备冰属性武器时，发动冰属性特技或必杀时，该次伤害随机+10%～40%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "random-value",
+          "kind": "condition",
+          "text": "伤害加成在10%～40%间随机；分布待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "77ca049322fad0af",
+      "skillNumber": 1858,
+      "sourceSignature": "[\"77ca049322fad0af\",\"https://altema.jp/lastcloudia/gino/1858\",\"全身全灵的一击\",\"发动必杀时，赋予自身物理攻击伤害上限+10,000的增益效果（每Wave最多1次）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "buff-duration",
+          "kind": "condition",
+          "text": "Buff持续时间待确认；同类型Buff只计最高一项",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:36",
+      "skillNumber": 35,
+      "sourceSignature": "[\"全部技能:all:36\",\"https://altema.jp/lastcloudia/gino/35\",\"魔力格挡\",\"装备「格挡」技能时，格挡成功会回复少量MP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-restore-amount",
+          "kind": "effect",
+          "text": "少量MP的具体回复值待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details",
+          "supportingEffectPartIds": [
+            "mp-restore"
+          ]
+        }
+      ]
+    },
+    {
+      "skillId": "5974289453db7347",
+      "skillNumber": 154,
+      "sourceSignature": "[\"5974289453db7347\",\"https://altema.jp/lastcloudia/gino/154\",\"女神之吻\",\"普通攻击时，有概率吸收造成伤害的2%并转化为MP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "probability",
+          "kind": "condition",
+          "text": "概率触发，具体概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "a3f5014e9e2e4526",
+      "skillNumber": 157,
+      "sourceSignature": "[\"a3f5014e9e2e4526\",\"https://altema.jp/lastcloudia/gino/157\",\"荣誉姿势\",\"击败敌人时，恢复5% MP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-restore-base",
+          "kind": "effect",
+          "text": "原文未说明百分比回复的参照基数，待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details",
+          "supportingEffectPartIds": [
+            "mp-restore"
+          ]
+        }
+      ]
+    },
+    {
+      "skillId": "2285673ba939a4cd",
+      "skillNumber": 160,
+      "sourceSignature": "[\"2285673ba939a4cd\",\"https://altema.jp/lastcloudia/gino/160\",\"荣誉美酒\",\"战斗结束后，恢复10% MP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-restore-base",
+          "kind": "effect",
+          "text": "原文未说明百分比回复的参照基数，待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details",
+          "supportingEffectPartIds": [
+            "mp-restore"
+          ]
+        }
+      ]
+    },
+    {
+      "skillId": "823e207d2daf7750",
+      "skillNumber": 161,
+      "sourceSignature": "[\"823e207d2daf7750\",\"https://altema.jp/lastcloudia/gino/161\",\"大天使的加护\",\"战斗结束后，恢复30% MP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-restore-base",
+          "kind": "effect",
+          "text": "原文未说明百分比回复的参照基数，待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details",
+          "supportingEffectPartIds": [
+            "mp-restore"
+          ]
+        }
+      ]
+    },
+    {
+      "skillId": "285014848e2b2862",
+      "skillNumber": 821,
+      "sourceSignature": "[\"285014848e2b2862\",\"https://altema.jp/lastcloudia/gino/821\",\"鼓励\",\"战斗结束后，恢复5% MP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-restore-base",
+          "kind": "effect",
+          "text": "原文未说明百分比回复的参照基数，待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details",
+          "supportingEffectPartIds": [
+            "mp-restore"
+          ]
+        }
+      ]
+    },
+    {
+      "skillId": "84d23b82f37b1490",
+      "skillNumber": 202,
+      "sourceSignature": "[\"84d23b82f37b1490\",\"https://altema.jp/lastcloudia/gino/202\",\"星眼\",\"使用攻击型特技时，消耗最大MP的3%，使伤害+50%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-cost-gate",
+          "kind": "condition",
+          "text": "须支付最大MP的3%；MP不足时处理待确认",
+          "disposition": "non-blocking",
+          "reason": "resource-details"
+        }
+      ]
+    },
+    {
+      "skillId": "d97a22bd801e515c",
+      "skillNumber": 915,
+      "sourceSignature": "[\"d97a22bd801e515c\",\"https://altema.jp/lastcloudia/gino/915\",\"守护者岩石士兵\",\"剩余的MP越多，受到的敌人物理伤害就越少（最多减 少15%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "scaling-curve",
+          "kind": "condition",
+          "text": "MP数值到减伤量的曲线、比例基数和端点条件待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "eeb9b0e6da9b7f7a",
+      "skillNumber": 1449,
+      "sourceSignature": "[\"eeb9b0e6da9b7f7a\",\"https://altema.jp/lastcloudia/gino/1449\",\"隐藏的心意\",\"剩余魔法值越低，受到的敌方魔法攻击伤害就越少（最多减少 15%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "scaling-curve",
+          "kind": "condition",
+          "text": "MP数值到减伤量的曲线、比例基数和端点条件待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "24ba29a7c86df4f3",
+      "skillNumber": 1847,
+      "sourceSignature": "[\"24ba29a7c86df4f3\",\"https://altema.jp/lastcloudia/gino/1847\",\"守护方阵\",\"自身剩余魔法值越多，受到的敌方魔法攻击伤害越低（最多减少15%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "scaling-curve",
+          "kind": "condition",
+          "text": "MP数值到减伤量的曲线、比例基数和端点条件待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "e26ae95f251c91e0",
+      "skillNumber": 1145,
+      "sourceSignature": "[\"e26ae95f251c91e0\",\"https://altema.jp/lastcloudia/gino/1145\",\"结界纹章\",\"MP持续减少，但受到敌人必杀伤害-30%（剩余MP低于1%时，该减伤效果不生效）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-drain-rate",
+          "kind": "effect",
+          "text": "MP持续消耗速率待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics",
+          "supportingEffectPartIds": [
+            "mp-drain"
+          ]
+        }
+      ]
+    },
+    {
+      "skillId": "a8ee2e010b6e5d6c",
+      "skillNumber": 1766,
+      "sourceSignature": "[\"a8ee2e010b6e5d6c\",\"https://altema.jp/lastcloudia/gino/1766\",\"炼金术资质\",\"使用攻击型特技时，消耗最大MP的3%，使伤害上限+5,000。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "mp-cost-gate",
+          "kind": "condition",
+          "text": "须支付最大MP的3%；MP不足时处理待确认",
+          "disposition": "non-blocking",
+          "reason": "resource-details"
+        }
+      ]
+    },
+    {
+      "skillId": "387b6e052ad74bb1",
+      "skillNumber": 493,
+      "sourceSignature": "[\"387b6e052ad74bb1\",\"https://altema.jp/lastcloudia/gino/493\",\"连接未来的接力棒\",\"我方角色陷入战斗不能时，自身HP大幅恢复，并按照该角色已积攒的特技库存量恢复自身对应的特技库存（每Wave最多1次）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:30",
+      "skillNumber": 29,
+      "sourceSignature": "[\"全部技能:all:30\",\"https://altema.jp/lastcloudia/gino/29\",\"骄傲之力\",\"发生暴击时，恢复HP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "9e9ea3affb033550",
+      "skillNumber": 1659,
+      "sourceSignature": "[\"9e9ea3affb033550\",\"https://altema.jp/lastcloudia/gino/1659\",\"辐射波动\",\"使用火属性特技时，距离敌人越近，伤害与伤害上限越高（最高伤害+25%、伤害上限+2,000）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "distance-scaling",
+          "kind": "condition",
+          "text": "发动火属性特技时按与敌人的距离计算；具体距离阈值与增幅曲线待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "658df1f2c3e3e424",
+      "skillNumber": 1798,
+      "sourceSignature": "[\"658df1f2c3e3e424\",\"https://altema.jp/lastcloudia/gino/1798\",\"发魔期\",\"每个Wave中，随着时间经过，冰属性伤害逐渐提升（30秒时达到最高+20%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "wave-time-scaling",
+          "kind": "condition",
+          "text": "每Wave重新计时；30秒达最高值，具体增长曲线待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "085a66c6930d7fa6",
+      "skillNumber": 1961,
+      "sourceSignature": "[\"085a66c6930d7fa6\",\"https://altema.jp/lastcloudia/gino/1961\",\"神圣增益\",\"每个Wave中，随着时间经过，光属性伤害逐渐提升（90秒时达到最高+20%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "wave-time-scaling",
+          "kind": "condition",
+          "text": "每Wave重新计时；90秒达最高值，具体增长曲线待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "d4e534dddd1aed24",
+      "skillNumber": 325,
+      "sourceSignature": "[\"d4e534dddd1aed24\",\"https://altema.jp/lastcloudia/gino/325\",\"女神琉小姐\",\"被敌人锁定的优先度+1；定期对靠近自身的敌人造成暗属性伤害。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "periodic-unknown",
+          "kind": "condition",
+          "text": "发动间隔、范围、倍率和攻击类型待确认",
+          "disposition": "classification-required",
+          "reason": "attack-type",
+          "remainingText": "周期暗属性伤害的攻击类型待确认（物理、魔法等归属）"
+        }
+      ]
+    },
+    {
+      "skillId": "3323da6f1691908a",
+      "skillNumber": 1518,
+      "sourceSignature": "[\"3323da6f1691908a\",\"https://altema.jp/lastcloudia/gino/1518\",\"捣年糕大师\",\"允许装备锤。只装备一把武器时，有概率使物理攻击伤害上限+20,000。\",\"只装备一把武器时，物理攻击每次命中有17%概率获得该次伤害上限+20,000。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "per-hit-chance",
+          "kind": "condition",
+          "text": "概率按物理攻击每次命中判定；原补充说明为17%，概率机制待对应标签",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "9efcdc31fa117787",
+      "skillNumber": 1914,
+      "sourceSignature": "[\"9efcdc31fa117787\",\"https://altema.jp/lastcloudia/gino/1914\",\"无法抗拒的力量洪流\",\"使用攻击型特技时，消耗最大HP的15%，使伤害上限+5,000；仅装备一把武器时，再+5,000。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "hp-payment-unconfirmed",
+          "kind": "condition",
+          "text": "当前HP不足最大HP的15%时，消耗与加成的处理待确认",
+          "disposition": "non-blocking",
+          "reason": "resource-details"
+        }
+      ]
+    },
+    {
+      "skillId": "70ec71c2f309be8a",
+      "skillNumber": 217,
+      "sourceSignature": "[\"70ec71c2f309be8a\",\"https://altema.jp/lastcloudia/gino/217\",\"冲刺\",\"必杀槽积攒速度降低，但移动速度提升。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "gauge-rate-unconfirmed",
+          "kind": "condition",
+          "text": "必杀槽积攒速度的具体降低量待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        },
+        {
+          "partId": "remaining-movement-amount",
+          "kind": "condition",
+          "text": "移动速度变化的具体数值待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:197",
+      "skillNumber": 204,
+      "sourceSignature": "[\"全部技能:all:197\",\"https://altema.jp/lastcloudia/gino/204\",\"格挡充能\",\"[仅装备防御时生效] 防御会略微恢复 SCT\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "sct-amount",
+          "kind": "condition",
+          "text": "具体SCT回复量待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "43675d5d0ba943ae",
+      "skillNumber": 458,
+      "sourceSignature": "[\"43675d5d0ba943ae\",\"https://altema.jp/lastcloudia/gino/458\",\"这就是力量！\",\"使用特技时，该特技剩余库存越多，伤害越高（库存为6时最高+20%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "stock-curve",
+          "kind": "condition",
+          "text": "各库存对应增幅及库存读取时点待确认，不能把最高20%当作固定值",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "e61761228b58bde4",
+      "skillNumber": 510,
+      "sourceSignature": "[\"e61761228b58bde4\",\"https://altema.jp/lastcloudia/gino/510\",\"跑者亢奋\",\"连续移动每满2秒，获得“特技伤害+10%”效果，最高可叠加至+100%；发动特技攻击后或经过一定时间后解除。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "timeout",
+          "kind": "condition",
+          "text": "停止或经过时间后的Buff解除时长待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "7597b164f4387ec7",
+      "skillNumber": 1257,
+      "sourceSignature": "[\"7597b164f4387ec7\",\"https://altema.jp/lastcloudia/gino/1257\",\"一击入魂\",\"使用攻击型特技时，消耗最大HP的15%，使伤害+25%、伤害上限+2,000。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "hp-payment-unconfirmed",
+          "kind": "condition",
+          "text": "当前HP不足最大HP的15%时，消耗与加成的处理待确认",
+          "disposition": "non-blocking",
+          "reason": "resource-details"
+        }
+      ]
+    },
+    {
+      "skillId": "6958b9c4d7aad7cb",
+      "skillNumber": 1271,
+      "sourceSignature": "[\"6958b9c4d7aad7cb\",\"https://altema.jp/lastcloudia/gino/1271\",\"Dear Hearts\",\"除自身外，若刚好只有1名友方角色也装备“Dear Hearts”，则自身战斗不能时，使仍存活的配对角色HP大幅恢复，并使其所有特技的SCT恢复15秒（每对角色仅限触发1次）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "f838f311a82579e0",
+      "skillNumber": 1773,
+      "sourceSignature": "[\"f838f311a82579e0\",\"https://altema.jp/lastcloudia/gino/1773\",\"桶～子\",\"战斗开始后每10秒，有概率获得增益效果，使下一次发动的特技伤害+30%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "grant-chance",
+          "kind": "condition",
+          "text": "每10秒尝试赋予的概率及已有Buff刷新规则待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "fac8318ca53f2e7b",
+      "skillNumber": 1816,
+      "sourceSignature": "[\"fac8318ca53f2e7b\",\"https://altema.jp/lastcloudia/gino/1816\",\"凶兽之爪\",\"特技发动时，向目标敌人累积裂伤值。裂伤值达到一定值时触发裂伤，使目标HP减少最大HP的15%（HP减少上限30,000,000）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "laceration-parameters",
+          "kind": "condition",
+          "text": "每次裂伤累积量及裂伤触发阈值待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "f4bf8f6c759cece0",
+      "skillNumber": 125,
+      "sourceSignature": "[\"f4bf8f6c759cece0\",\"https://altema.jp/lastcloudia/gino/125\",\"马格里昂\",\"物理攻击时，与敌人的距离越远，伤害越高（最高+50%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "curve-unconfirmed",
+          "kind": "condition",
+          "text": "具体距离阈值与增幅曲线待确认，不能固定取最高50%",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "b840eb80f22ef78e",
+      "skillNumber": 182,
+      "sourceSignature": "[\"b840eb80f22ef78e\",\"https://altema.jp/lastcloudia/gino/182\",\"冲击波\",\"物理攻击时，有概率解除敌人的格挡。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "chance-unconfirmed",
+          "kind": "condition",
+          "text": "解除格挡的概率与判定时点待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "0f5accc66c3d4ea0",
+      "skillNumber": 192,
+      "sourceSignature": "[\"0f5accc66c3d4ea0\",\"https://altema.jp/lastcloudia/gino/192\",\"死神\",\"进行物理攻击时，有几率立即杀死目标（对首领和竞 技场无效）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "arena-exclusion",
+          "kind": "condition",
+          "text": "即死效果在竞技场无效",
+          "disposition": "non-blocking",
+          "reason": "implementation-details"
+        },
+        {
+          "partId": "chance-unconfirmed",
+          "kind": "condition",
+          "text": "即死概率与目标免疫判定待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "0a0c2255a5f2eeeb",
+      "skillNumber": 366,
+      "sourceSignature": "[\"0a0c2255a5f2eeeb\",\"https://altema.jp/lastcloudia/gino/366\",\"天空之路\",\"敌人在空中的高度越高，物理攻击伤害越高（最高+50%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "curve-unconfirmed",
+          "kind": "condition",
+          "text": "高度阈值与增幅曲线待确认，不能固定取最高50%",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "0d636daacfa3516a",
+      "skillNumber": 546,
+      "sourceSignature": "[\"0d636daacfa3516a\",\"https://altema.jp/lastcloudia/gino/546\",\"坚牢\",\"移动速度降低，但受到的来自敌人的物理伤害降低 10%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-movement-amount",
+          "kind": "condition",
+          "text": "移动速度变化的具体数值待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:426",
+      "skillNumber": 634,
+      "sourceSignature": "[\"全部技能:all:426\",\"https://altema.jp/lastcloudia/gino/634\",\"马格里昂护罩\",\"受到物理攻击时，与敌人的距离越远，受到的伤害越低（最多-30%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "curve-unconfirmed",
+          "kind": "condition",
+          "text": "距离阈值与减伤曲线待确认，不能固定取最大减伤30%",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "d1a7d320c0eb0224",
+      "skillNumber": 1270,
+      "sourceSignature": "[\"d1a7d320c0eb0224\",\"https://altema.jp/lastcloudia/gino/1270\",\"爱之监狱\",\"对击败你的敌人施加减益效果，使其物理攻击伤害降 低 20%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "duration-unconfirmed",
+          "kind": "condition",
+          "text": "物理攻击伤害降低减益的持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "12a14456c62e0bcf",
+      "skillNumber": 167,
+      "sourceSignature": "[\"12a14456c62e0bcf\",\"https://altema.jp/lastcloudia/gino/167\",\"不动之阵\",\"魔法咏唱除部分攻击外不会被打断。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "exceptions-unconfirmed",
+          "kind": "condition",
+          "text": "仍可打断咏唱的特殊攻击范围待确认；不等于所有攻击免硬直或免伤",
+          "disposition": "non-blocking",
+          "reason": "implementation-details"
+        }
+      ]
+    },
+    {
+      "skillId": "c0df2890cef86266",
+      "skillNumber": 221,
+      "sourceSignature": "[\"c0df2890cef86266\",\"https://altema.jp/lastcloudia/gino/221\",\"杰玛的骑士\",\"有几率无效化魔法伤害\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "chance-unconfirmed",
+          "kind": "condition",
+          "text": "魔法伤害无效化概率与判定单位待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "3a0b205292a15907",
+      "skillNumber": 429,
+      "sourceSignature": "[\"3a0b205292a15907\",\"https://altema.jp/lastcloudia/gino/429\",\"魔法连锁\",\"连续使用相同的攻击魔法时，每次伤害提升（第一次+4%，最高+20%）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "chain-details-unconfirmed",
+          "kind": "condition",
+          "text": "各次施放对应增幅、重置条件与计数时点待确认，不直接使用最高20%",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "cf6437fca36082d9",
+      "skillNumber": 691,
+      "sourceSignature": "[\"cf6437fca36082d9\",\"https://altema.jp/lastcloudia/gino/691\",\"元素连击\",\"连续使用相同属性的攻击魔法时，伤害逐渐提升（首次+5%，最高+20%）。效果在10秒后或使用不同属性的攻击魔法时重置。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "chain-details-unconfirmed",
+          "kind": "condition",
+          "text": "各次施放对应增幅与10秒计时起点待确认，不直接使用最高20%",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:32",
+      "skillNumber": 31,
+      "sourceSignature": "[\"全部技能:all:32\",\"https://altema.jp/lastcloudia/gino/31\",\"铁壁格挡\",\"装备「格挡」技能时，格挡的伤害减免效果提高。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "guard-unknown",
+          "kind": "condition",
+          "text": "具体幅度或概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "e7ce580c0a8ae126",
+      "skillNumber": 32,
+      "sourceSignature": "[\"e7ce580c0a8ae126\",\"https://altema.jp/lastcloudia/gino/32\",\"警戒\",\"【仅装备「格挡」时生效】格挡概率略微提升。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "guard-unknown",
+          "kind": "condition",
+          "text": "具体幅度或概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:37",
+      "skillNumber": 36,
+      "sourceSignature": "[\"全部技能:all:37\",\"https://altema.jp/lastcloudia/gino/36\",\"坚固格挡\",\"装备「格挡」技能时，更不容易被破防。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "guard-unknown",
+          "kind": "condition",
+          "text": "具体幅度或概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:35",
+      "skillNumber": 34,
+      "sourceSignature": "[\"全部技能:all:35\",\"https://altema.jp/lastcloudia/gino/34\",\"治疗格挡\",\"装备「格挡」技能时，格挡成功会回复少量HP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:580",
+      "skillNumber": 993,
+      "sourceSignature": "[\"全部技能:all:580\",\"https://altema.jp/lastcloudia/gino/993\",\"魔抗下降回避\",\"受到主动技能施加的魔抗下降减益时，有概率使该减益无效。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "chance-unknown",
+          "kind": "condition",
+          "text": "魔抗下降回避的具体触发概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "e2018b4f235f4bc5",
+      "skillNumber": 220,
+      "sourceSignature": "[\"e2018b4f235f4bc5\",\"https://altema.jp/lastcloudia/gino/220\",\"交谈\",\"偶尔恢复少量生命值。\",\"每6秒进行一次30%概率的HP回复判定；回复量受自身魔抗等回复计算因素影响。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "combat-healing-parameters",
+          "kind": "condition",
+          "text": "HP回复的具体数值与计算公式待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "58d075ac5ebc3560",
+      "skillNumber": 95,
+      "sourceSignature": "[\"58d075ac5ebc3560\",\"https://altema.jp/lastcloudia/gino/95\",\"疾病耐性\",\"更不容易陷入疾病状态（若疾病为弱点，则消除弱点）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "grade-unconfirmed",
+          "kind": "condition",
+          "text": "资料未给出疾病耐性提升的明确等级或概率，不根据技能名字补数值",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "495762124c3a416e",
+      "skillNumber": 147,
+      "sourceSignature": "[\"495762124c3a416e\",\"https://altema.jp/lastcloudia/gino/147\",\"毒研究\",\"普通攻击时，有概率使敌人中毒。\",\"普通攻击每次命中有3%概率尝试施加毒，是否成功仍受目标异常耐性影响。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:148",
+      "skillNumber": 148,
+      "sourceSignature": "[\"全部技能:all:148\",\"https://altema.jp/lastcloudia/gino/148\",\"暗盲研究\",\"普通攻击时，有概率使敌人陷入暗盲（失明）状态。\",\"普通攻击每次命中有3%概率尝试施加暗盲，是否成功仍受目标异常耐性影响。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "bf042a386e6e2017",
+      "skillNumber": 149,
+      "sourceSignature": "[\"bf042a386e6e2017\",\"https://altema.jp/lastcloudia/gino/149\",\"沉默研究\",\"普通攻击时，有概率使敌人沉默。\",\"普通攻击每次命中有3%概率尝试施加沉默，是否成功仍受目标异常耐性影响。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "20ce0d18f81796ba",
+      "skillNumber": 150,
+      "sourceSignature": "[\"20ce0d18f81796ba\",\"https://altema.jp/lastcloudia/gino/150\",\"诅咒研究\",\"普通攻击时，有概率使敌人陷入诅咒。\",\"普通攻击每次命中有3%概率尝试施加诅咒，是否成功仍受目标异常耐性影响。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "e012b3fe60fe4932",
+      "skillNumber": 151,
+      "sourceSignature": "[\"e012b3fe60fe4932\",\"https://altema.jp/lastcloudia/gino/151\",\"麻痹研究\",\"普通攻击时，有概率使敌人麻痹。\",\"普通攻击每次命中有3%概率尝试施加麻痹，是否成功仍受目标异常耐性影响。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "status-duration",
+          "kind": "condition",
+          "text": "施加异常的持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "dbc649cdc993f070",
+      "skillNumber": 226,
+      "sourceSignature": "[\"dbc649cdc993f070\",\"https://altema.jp/lastcloudia/gino/226\",\"猴宝宝\",\"普通攻击时，有概率使敌人沉默；对沉默状态的敌人，伤害+30%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "proc-unconfirmed",
+          "kind": "condition",
+          "text": "沉默施加概率、持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "9baca3cad5fd7f6e",
+      "skillNumber": 923,
+      "sourceSignature": "[\"9baca3cad5fd7f6e\",\"https://altema.jp/lastcloudia/gino/923\",\"中毒反击\",\"反击时，有概率使敌人中毒。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "proc-unconfirmed",
+          "kind": "condition",
+          "text": "中毒触发概率、持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "c9165a184c124aab",
+      "skillNumber": 1305,
+      "sourceSignature": "[\"c9165a184c124aab\",\"https://altema.jp/lastcloudia/gino/1305\",\"复仇病毒\",\"自身被敌人击败时，有概率使击败自己的敌人陷入疾病状态（疾病状态下无法恢复生命值）。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "proc-unconfirmed",
+          "kind": "condition",
+          "text": "疾病赋予概率、持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:126",
+      "skillNumber": 126,
+      "sourceSignature": "[\"全部技能:all:126\",\"https://altema.jp/lastcloudia/gino/126\",\"皮约林\",\"敌人更容易被击晕。\",\"这里的眩晕是攻击造成的气绝状态，不是麻痹异常。\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "stun-parameters",
+          "kind": "condition",
+          "text": "提高眩晕的具体幅度与判定机制待确认",
+          "disposition": "non-blocking",
+          "reason": "implementation-details"
+        }
+      ]
+    },
+    {
+      "skillId": "034bfcf926753388",
+      "skillNumber": 193,
+      "sourceSignature": "[\"034bfcf926753388\",\"https://altema.jp/lastcloudia/gino/193\",\"急速回复\",\"缩短从异常状态中恢复所需的时间。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "recovery-parameters",
+          "kind": "condition",
+          "text": "异常恢复的具体变化幅度待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "0eaadb437c882ccc",
+      "skillNumber": 224,
+      "sourceSignature": "[\"0eaadb437c882ccc\",\"https://altema.jp/lastcloudia/gino/224\",\"阿曼达之血\",\"诅咒恢复速度提升。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "recovery-parameters",
+          "kind": "condition",
+          "text": "异常恢复的具体变化幅度待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    },
+    {
+      "skillId": "01b4b9edd30c865e",
+      "skillNumber": 1316,
+      "sourceSignature": "[\"01b4b9edd30c865e\",\"https://altema.jp/lastcloudia/gino/1316\",\"恨死咒缚\",\"对击败你的敌人施加减益效果，使受到的伤害增加 20%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "debuff-duration",
+          "kind": "condition",
+          "text": "易伤减益的持续时间待确认",
+          "disposition": "non-blocking",
+          "reason": "status-mechanics"
+        }
+      ]
+    },
+    {
+      "skillId": "c66066248ff15c7b",
+      "skillNumber": 809,
+      "sourceSignature": "[\"c66066248ff15c7b\",\"https://altema.jp/lastcloudia/gino/809\",\"就是那里！\",\"攻击敌人的弱点属性时，敌人更容易气绝，Break值+50%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "stun-parameters",
+          "kind": "condition",
+          "text": "气绝提升的具体幅度和机制待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "fef501333a6f411a",
+      "skillNumber": 816,
+      "sourceSignature": "[\"fef501333a6f411a\",\"https://altema.jp/lastcloudia/gino/816\",\"治愈反击\",\"发动反击时，恢复少量HP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "healing-amount",
+          "kind": "condition",
+          "text": "HP回复量待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "1c99ce8a75970850",
+      "skillNumber": 177,
+      "sourceSignature": "[\"1c99ce8a75970850\",\"https://altema.jp/lastcloudia/gino/177\",\"追击\",\"普通攻击时，概率造成追加伤害。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "follow-up-parameters",
+          "kind": "condition",
+          "text": "追击触发概率、追击伤害倍率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "8e05ac250af36f65",
+      "skillNumber": 178,
+      "sourceSignature": "[\"8e05ac250af36f65\",\"https://altema.jp/lastcloudia/gino/178\",\"双重冲击\",\"普通攻击时，造成追加伤害。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "follow-up-parameters",
+          "kind": "condition",
+          "text": "追击伤害倍率待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "df4a1ab1f77f9899",
+      "skillNumber": 179,
+      "sourceSignature": "[\"df4a1ab1f77f9899\",\"https://altema.jp/lastcloudia/gino/179\",\"三重冲击\",\"普通攻击时，造成2次追加伤害。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "follow-up-parameters",
+          "kind": "condition",
+          "text": "追击伤害倍率待确认",
+          "disposition": "non-blocking",
+          "reason": "magnitude-details"
+        }
+      ]
+    },
+    {
+      "skillId": "8b462538923994eb",
+      "skillNumber": 314,
+      "sourceSignature": "[\"8b462538923994eb\",\"https://altema.jp/lastcloudia/gino/314\",\"滑轮原理\",\"普通攻击时，低概率造成威力为普通攻击4倍或8倍的追加伤害。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "follow-up-parameters",
+          "kind": "condition",
+          "text": "追击触发概率与4倍／8倍分支分布待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "762601798c6e023a",
+      "skillNumber": 153,
+      "sourceSignature": "[\"762601798c6e023a\",\"https://altema.jp/lastcloudia/gino/153\",\"血之力\",\"普通攻击时，概率吸收相当于伤害20%的HP。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "drain-chance",
+          "kind": "condition",
+          "text": "吸血触发概率待确认",
+          "disposition": "non-blocking",
+          "reason": "chance-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:154",
+      "skillNumber": 155,
+      "sourceSignature": "[\"全部技能:all:154\",\"https://altema.jp/lastcloudia/gino/155\",\"胜利姿势\",\"当你击败敌人时，你的生命值恢复10%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "healing-base",
+          "kind": "condition",
+          "text": "HP回复百分比所参照的基数待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "7c71d42c909d455a",
+      "skillNumber": 158,
+      "sourceSignature": "[\"7c71d42c909d455a\",\"https://altema.jp/lastcloudia/gino/158\",\"胜利美酒\",\"战斗结束后，HP恢复20%。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "healing-base",
+          "kind": "condition",
+          "text": "HP回复百分比所参照的基数待确认",
+          "disposition": "non-blocking",
+          "reason": "formula-details"
+        }
+      ]
+    },
+    {
+      "skillId": "f4301787035b8551",
+      "skillNumber": 194,
+      "sourceSignature": "[\"f4301787035b8551\",\"https://altema.jp/lastcloudia/gino/194\",\"意识集中\",\"缩短气绝时间。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-stun-parameters",
+          "kind": "condition",
+          "text": "具体缩短幅度、抗性数值或判定机制待确认",
+          "disposition": "non-blocking",
+          "reason": "implementation-details"
+        }
+      ]
+    },
+    {
+      "skillId": "全部技能:all:294",
+      "skillNumber": 348,
+      "sourceSignature": "[\"全部技能:all:294\",\"https://altema.jp/lastcloudia/gino/348\",\"眩晕耐性\",\"更不容易进入气绝状态。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-stun-parameters",
+          "kind": "condition",
+          "text": "具体缩短幅度、抗性数值或判定机制待确认",
+          "disposition": "non-blocking",
+          "reason": "implementation-details"
+        }
+      ]
+    },
+    {
+      "skillId": "f504f03347fe02ac",
+      "skillNumber": 174,
+      "sourceSignature": "[\"f504f03347fe02ac\",\"https://altema.jp/lastcloudia/gino/174\",\"韦驮天\",\"移动速度提升。\",\"\"]",
+      "userExample": false,
+      "fragments": [
+        {
+          "partId": "remaining-movement-amount",
+          "kind": "condition",
+          "text": "移动速度变化的具体数值待确认",
+          "disposition": "non-blocking",
+          "reason": "scaling-details"
+        }
+      ]
+    }
+  ]
+}
