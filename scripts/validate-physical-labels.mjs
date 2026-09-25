@@ -1,3 +1,4 @@
+import {validateClassificationContext} from './validate-classification-supplements.mjs';
 export function validatePhysicalCoverage(view,detail,assignment,entry){
  const c=detail.coverage;
  if(view.passKind!=='physical-effects-and-condition'||!Array.isArray(c?.effectPartIds)||!Array.isArray(c?.conditionPartIds))throw Error('Missing physical coverage');
@@ -9,6 +10,7 @@ export function validatePhysicalCoverage(view,detail,assignment,entry){
  if(new Set(detail.bindings.map(b=>b.effectIdentity)).size!==detail.bindings.length)throw Error('Physical effect duplicated within pass');
 }
 export function validatePhysicalBinding(detail,assignment,b){
+ if(b.classificationContext)return validateClassificationContext('物理',detail,assignment,b);
  if(b.scope?.attackType!=='physical'||!['outgoing','incoming','target-incoming','enemy-outgoing'].includes(b.scope.direction)||typeof b.isBuff!=='boolean'||!b.effectIdentity||!b.operation||!b.target)throw Error('Missing physical semantics '+b.summary);
  if(!['direct-effect','trigger-benefit'].includes(b.physicalRole)||b.partIds.some(id=>!detail.coverage.effectPartIds.includes(id)))throw Error('Unreviewed physical effect');
  if(['damage-up','incoming-damage-up','incoming-damage-down','break-up','apply-physical-vulnerability','apply-enemy-physical-damage-down','enemy-defense-reference-reduction'].includes(b.operation)&&!(b.valuePercent>0))throw Error('Missing physical magnitude '+b.summary);

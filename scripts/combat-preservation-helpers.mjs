@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {registryBeforeClassificationSupplements} from './classification-supplement-preservation-helpers.mjs';
 import {partsBeforeRemaining,tagDetailsBeforeRemaining,passBeforeRemaining} from './remaining-preservation-helpers.mjs';
 const manifest=JSON.parse(fs.readFileSync(new URL('../docs/combat-preservation-2026-09-25.json',import.meta.url),'utf8'));
 const newTags=new Set(manifest.newTags),oldIds=new Set(manifest.entries.map(e=>e.id));
@@ -17,5 +18,6 @@ export function tagDetailsBeforeCombat(entry){
  return details;
 }
 export function registryBeforeCombat(registry){
+ registry=registryBeforeClassificationSupplements(registry);
  return {...registry,entries:registry.entries.filter(e=>oldIds.has(e.id)).map(e=>({...e,parts:partsBeforeCombat(e),tagDetails:tagDetailsBeforeCombat(e)})),tagPasses:registry.tagPasses.filter(p=>!newTags.has(p.tag)&&!['杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置'].includes(p.tag)).map(passBeforeRemaining)};
 }

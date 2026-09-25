@@ -16,7 +16,7 @@ test('technique scans all 935 skills and separates whole clauses into 55 effect 
  const generic=numbers(labelingView(catalog,'technique-skill-damage'));for(const n of [411,624,1272,1582,1659,1695,760,1526,1204,1463,1743,1816,1931])assert(!generic.includes(n),source(n).name);
  assert.deepEqual(numbers(labelingView(catalog,'technique-boss-skill-damage')),[411,624,1041,1311]);assert.deepEqual(numbers(labelingView(catalog,'technique-non-boss-skill-damage')),[760,1526]);
  for(const n of [117,406,917,1021])assert(!numbers(view).includes(n));
- assert.deepEqual(entry(1021).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['物理伤害增加','必杀相关']);assert(entry(1335).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('必杀相关'));assert(entry(1335).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('特技相关'));
+ assert.deepEqual(entry(1021).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)),['物理伤害增加','必杀相关']);assert(entry(1335).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('必杀相关'));assert(entry(1335).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('特技相关'));
 });
 
 test('SCT recovery preserves seconds, stocks, capacity, trigger and recipient',()=>{
@@ -45,10 +45,10 @@ test('technique caps, costs, buffs and special effects retain their calculation 
 });
 
 test('technique completes only reviewed fragments and shares the resulting status with earlier pages',()=>{
- assert.equal(registry.tagPasses.length,90);assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,935);assert.equal(view.counts.ready,64);assert.equal(view.counts.partial,18);assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
+ assert.equal(registry.tagPasses.length,93);assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,935);assert.equal(view.counts.ready,66);assert.equal(view.counts.partial,16);assert.equal(catalog.views.all.counts.ready,787);assert.equal(catalog.views.all.counts.partial,148);
  for(const n of[173,1463,112,164,213,243,583,604,626,721,753,827,831,843,866,1041,1311,1349,1427,1448,1658,1931,1998,968,1191,1607])assert.equal(entry(n).judgment,'ready',source(n).name);
- for(const n of[202,204,458,510,1257,1271,1272,1695,1773,1799,1816,1914,1987])assert.equal(entry(n).judgment,'partial',source(n).name);
- assert.deepEqual(entry(1272).remainingEffects,[]);assert.match(entry(1272).remainingConditions.join(''),/共同属性/);assert.deepEqual(entry(1695).remainingEffects,[]);assert.deepEqual(entry(1695).remainingConditions,['伤害加成在10%～40%间随机；分布待确认']);
+ for(const n of[202,204,458,510,1257,1271,1695,1773,1799,1816,1914,1987])assert.equal(entry(n).judgment,'partial',source(n).name);
+ assert.deepEqual(entry(1272).remainingEffects,[]);assert.deepEqual(entry(1272).remainingConditions,[]);assert.deepEqual(entry(1695).remainingEffects,[]);assert.deepEqual(entry(1695).remainingConditions,['伤害加成在10%～40%间随机；分布待确认']);
  for(const[n,key]of[[624,'boss'],[666,'ultimate'],[753,'revive'],[843,'full-hp'],[1427,'low-hp'],[866,'single-weapon'],[1658,'dual-weapon']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
 });
 
@@ -59,8 +59,8 @@ function page(edits={}){
  return {get,click:(nav,tag)=>get(nav).listeners.click({target:{closest:()=>({dataset:{tag}})}})};
 }
 test('technique page renders grouped and deduplicated results, updates search, and invalidates edited descriptions',()=>{
- const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*82.*853/);assert.match(get('#judgmentSummary').textContent,/64.*18.*0/);assert.match(get('#labelResultCount').textContent,/82 \/ 82/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,82);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,56);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,55);
+ const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*82.*853/);assert.match(get('#judgmentSummary').textContent,/66.*16.*0/);assert.match(get('#labelResultCount').textContent,/82 \/ 82/);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,85);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,56);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,55);
  const search=get('#labelSearch');search.value='循环';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 82/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,1);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','technique-skill-damage');const html=get('#labelTable').innerHTML;assert(html.includes('神式-技-'));assert(!html.includes('巨人杀手'));assert(!html.includes('冲浪冲击'));assert(html.indexOf('神式-技-')<html.indexOf('星眼'));
  click('#labelTabs','ultimate');assert.match(get('#labelResultCount').textContent,/113 \/ 113/);

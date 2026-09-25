@@ -1,3 +1,4 @@
+import {supplementKeys,supplementTags,validateSupplementCoverage,validateSupplementBinding,validateClassificationContext} from './validate-classification-supplements.mjs';
 import {remainingKeys,remainingTags,validateRemainingCoverage,validateRemainingBinding} from './validate-remaining-labels.mjs';
 import {validateEffectConditions} from './validate-effect-conditions.mjs';
 import {combatKeys,validateCombatCoverage,validateCombatBinding} from './validate-combat-labels.mjs';
@@ -25,7 +26,7 @@ const shared = read('docs/skill-labeling-registry.json');
 const racePassDefinitions=read('docs/races-pass-definitions.json');
 if (shared.numericEffectInjection !== false) throw Error('Label metadata must not inject calculator effects.');
 const resolved = resolveSkillLabels(shared);
-for(const pass of shared.tagPasses)for(const a of pass.assignments){const e=shared.entries.find(e=>e.id===a.skillId);validateEffectConditions(e,pass.tag,e.tagDetails[pass.tag],a);}
+for(const pass of shared.tagPasses)for(const a of pass.assignments){const e=shared.entries.find(e=>e.id===a.skillId);validateEffectConditions(e,pass.tag,e.tagDetails[pass.tag],a);for(const b of e.tagDetails[pass.tag].bindings||[])validateClassificationContext(pass.tag,e.tagDetails[pass.tag],a,b);}
 const box = {window:{}};
 vm.runInNewContext(fs.readFileSync(new URL('dist/data.js', root), 'utf8'), box);
 const rows = canonicalSkillRows(box.window.SKILL_DATA);
@@ -46,7 +47,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense-stat','防御力','previousBasicDefenseUnique'],['defense','防御',null],['mnd','魔抗',null],['damage-reduction','伤害减少',null],['abnormal','异常',null],['break','Break',null],['guard','格挡',null],['counter','反击',null],['normal-attack','普通攻击',null],['follow-up','追击',null],['hp-recovery','HP回复',null],['lifesteal','吸血',null],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical-damage','物理伤害增加',null],['physical','物理',null],['magic-damage-only','魔法伤害增加',null],['magic-damage','魔法',null],['damage','伤害增加',null],['boss','Boss',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['technique','特技相关',null],['revive','复活',null],['ally-death','友军死亡',null],['critical','暴击',null],['fire','火属性',null],['ice','冰属性',null],['earth','树属性',null],['thunder','雷属性',null],['light','光属性',null],['dark','暗属性',null],['neutral','无属性',null],['sword','剑',null],['axe','斧',null],['spear','枪',null],['hammer','锤',null],['bow','弓',null],['machine','机械',null],['claw','爪',null],['staff','杖',null],['armor','铠甲',null],['clothes','衣服',null],['robe','法袍',null],['single-weapon','单手',null],['dual-weapon','双手',null],['empty-weapon','空武器',null],['empty-armor','空防具',null],['empty-gear','空武器+防具',null],['bird','鸟',null],...racePassDefinitions.map(d=>[d.key,d.label,null]),...remainingKeys.map(k=>[k,remainingTags[k],null])]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense-stat','防御力','previousBasicDefenseUnique'],['defense','防御',null],['mnd','魔抗',null],['damage-reduction','伤害减少',null],['abnormal','异常',null],['break','Break',null],['guard','格挡',null],['counter','反击',null],['normal-attack','普通攻击',null],['follow-up','追击',null],['hp-recovery','HP回复',null],['lifesteal','吸血',null],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical-damage','物理伤害增加',null],['physical','物理',null],['magic-damage-only','魔法伤害增加',null],['magic-damage','魔法',null],['damage','伤害增加',null],['boss','Boss',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['technique','特技相关',null],['revive','复活',null],['ally-death','友军死亡',null],['critical','暴击',null],['fire','火属性',null],['ice','冰属性',null],['earth','树属性',null],['thunder','雷属性',null],['light','光属性',null],['dark','暗属性',null],['neutral','无属性',null],['sword','剑',null],['axe','斧',null],['spear','枪',null],['hammer','锤',null],['bow','弓',null],['machine','机械',null],['claw','爪',null],['staff','杖',null],['armor','铠甲',null],['clothes','衣服',null],['robe','法袍',null],['single-weapon','单手',null],['dual-weapon','双手',null],['empty-weapon','空武器',null],['empty-armor','空防具',null],['empty-gear','空武器+防具',null],['bird','鸟',null],...racePassDefinitions.map(d=>[d.key,d.label,null]),...remainingKeys.map(k=>[k,remainingTags[k],null]),...supplementKeys.map(k=>[k,supplementTags[k],null])]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -134,6 +135,8 @@ for(const [key,view] of Object.entries(views)){
       validateSwordCoverage(view,detail,assignment,entry);
     }else if(equipmentStateKeys.includes(key)){
       validateEquipmentStateCoverage(key,view,detail,assignment,entry);
+    }else if(supplementKeys.includes(key)){
+      validateSupplementCoverage(key,view,detail,assignment,entry);
     }else if(remainingKeys.includes(key)){
       validateRemainingCoverage(key,view,detail,assignment,entry);
     }else if(combatKeys.includes(key)){
@@ -212,6 +215,8 @@ for(const [key,view] of Object.entries(views)){
     }
     for(const binding of detail.bindings){
       if(!groups.has(binding.group) || !binding.summary || !binding.partIds?.length || binding.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='effect'))throw Error('Invalid opening effect binding.');
+      if(binding.classificationContext){validateClassificationContext(view.label,detail,assignment,binding);continue;}
+      if(supplementKeys.includes(key)){validateSupplementBinding(key,detail,assignment,binding);continue;}
       if(key==='mp'){
         if(binding.target!=='self' || typeof binding.isBuff!=='boolean' || !['resource-effect','condition-benefit','cost-benefit'].includes(binding.mpRole))throw Error('Missing MP binding role.');
         if(binding.mpRole==='resource-effect' && (binding.partIds.some(id=>!detail.coverage.resourcePartIds.includes(id)) || !binding.operation))throw Error('MP resource binding must cover an actual resource effect.');

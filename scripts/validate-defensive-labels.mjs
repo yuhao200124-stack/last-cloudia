@@ -1,3 +1,4 @@
+import {validateClassificationContext} from './validate-classification-supplements.mjs';
 export const defensiveKeys=['defense','mnd','damage-reduction'];
 export function validateDefensiveCoverage(view,d,a,e){
  const c=d.coverage;if(view.passKind!=='defensive-effects-and-condition'||!Array.isArray(c?.effectPartIds)||!Array.isArray(c?.conditionPartIds))throw Error('Missing defensive coverage');
@@ -8,6 +9,7 @@ export function validateDefensiveCoverage(view,d,a,e){
  if(new Set(d.bindings.map(b=>b.effectIdentity)).size!==d.bindings.length)throw Error('Duplicate defensive effect');
 }
 export function validateDefensiveBinding(key,d,a,b){
+ if(b.classificationContext)return validateClassificationContext(key==='defense'?'防御':'魔抗',d,a,b);
  if(!b.operation||!b.effectIdentity||!b.target||typeof b.isBuff!=='boolean'||!b.scope||!b.sourceClause||!Array.isArray(b.skillReviewConditions))throw Error('Missing defensive semantics');
  if(b.familyRole==='condition-benefit'){
   if(!d.coverage.conditionPartIds.length||b.partIds.some(id=>a.partIds.includes(id))||b.trigger?.event!=='guard-success'||!b.requiresEquippedSkillId)throw Error('Guard benefits cannot complete independent healing/resource effects');

@@ -25,7 +25,7 @@ test('each Boss attack-type pass audits the full library and keeps the complete 
   assert.equal(audit.rows.filter(r=>r.decision==='related').length,numbers.length);
   assert.equal(view.parent,'boss');
   for(const n of [760,1289,1526,1608,1651,1708,1830,1955,2028])assert(!view.entries.some(e=>e.id===source(n).id),`${key}/${n}`);
-  for(const e of view.entries)assert(!e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).some(t=>['Boss伤害增加','物理伤害增加','魔法伤害增加','伤害增加'].includes(t)));
+  for(const e of view.entries)assert(!e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)).some(t=>['Boss伤害增加','物理伤害增加','魔法伤害增加','伤害增加'].includes(t)));
  }
  assert.deepEqual(entry(720).tagDetails['Boss物理伤害增加'].scope,{boss:true,damageType:'physical'});
  assert.deepEqual(entry(837).tagDetails['Boss魔法伤害增加'].scope,{boss:true,attackKinds:['magic']});
@@ -35,7 +35,7 @@ test('each Boss attack-type pass audits the full library and keeps the complete 
 
 test('parallel skill and ultimate clauses share one record and finish only after both type labels',()=>{
  const giant=entry(411),skill=labelingView(catalog,'boss-skill-damage'),ultimate=labelingView(catalog,'boss-ultimate-damage');
- assert.deepEqual(giant.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss特技伤害增加','Boss必杀伤害增加','必杀相关','特技相关']);
+ assert.deepEqual(giant.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss特技伤害增加','Boss必杀伤害增加','必杀相关','特技相关']);
  assert.strictEqual(skill.entries.find(e=>e.id===giant.id),ultimate.entries.find(e=>e.id===giant.id));
  assert.equal(giant.judgment,'ready');assert.deepEqual(giant.remainingEffects,[]);assert.deepEqual(giant.remainingConditions,[]);
  const beforeUltimate=structuredClone(registry);beforeUltimate.tagPasses=beforeUltimate.tagPasses.filter(p=>!['Boss必杀伤害增加','必杀相关','Boss'].includes(p.tag));
@@ -59,7 +59,7 @@ test('Boss family preserves old subroutes and shares all 31 skill judgments',()=
  assert.equal(boss.counts.ready,30);assert.equal(boss.counts.partial,1);assert.equal(boss.childKeys.length,20);
  const rows=skillLabelRows(box.window.SKILL_DATA,boss);
  assert(rows.slice(0,30).every(r=>r.judgment==='ready'));assert(rows.slice(30).every(r=>r.judgment==='partial'));
- assert.equal(catalog.views.all.counts.relatedUnique,935);assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
+ assert.equal(catalog.views.all.counts.relatedUnique,935);assert.equal(catalog.views.all.counts.ready,787);assert.equal(catalog.views.all.counts.partial,148);
 });
 
 test('Boss critical damage retains its scope while the critical pass completes its cap',()=>{
@@ -68,7 +68,7 @@ test('Boss critical damage retains its scope while the critical pass completes i
  assert.equal(audit.rows.filter(r=>r.decision==='related').length,1);
  assert.deepEqual(view.entries.map(e=>e.name),['锐利一击']);
  const sharp=entry(1289),detail=sharp.tagDetails['Boss暴击伤害增加'];
- assert.deepEqual(sharp.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss暴击伤害增加','暴击']);
+ assert.deepEqual(sharp.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss暴击伤害增加','暴击']);
  assert.deepEqual(detail.scope,{boss:true,criticalOnly:true});
  assert.equal(detail.relation,'boss-critical-damage-increase');
  assert.match(detail.calculationNote,/不提高暴击率.*不赋予魔法暴击资格/);
@@ -80,7 +80,7 @@ test('Boss critical damage retains its scope while the critical pass completes i
 
 test('requested Dragon Awakening grouping preserves the STR effect and does not grant a physical damage multiplier',()=>{
  const dragon=entry(1883),detail=dragon.tagDetails['Boss物理伤害增加'];
- assert.deepEqual(dragon.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','Boss物理伤害增加']);
+ assert.deepEqual(dragon.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','Boss物理伤害增加']);
  assert.equal(detail.relation,'boss-wave-attribute-change');assert.equal(detail.groupingOnly,true);
  assert.deepEqual(detail.scope,{bossWave:true,stat:'STR'});
  assert.match(detail.calculationNote,/不能按物理伤害直接\+20%计算/);

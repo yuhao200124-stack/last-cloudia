@@ -25,7 +25,7 @@ test('MP maximum attribute pass covers all eight modifiers after a full-library 
  for(const n of [35,154,157,160,161,173,185,202,208,209,233,380,389,753,787,821,915,1145,1147,1214,1449,1555,1766,1847])assert(!entry(n),source(n).name);
  for(const n of [209,787,1147,1555]){
   const e=catalog.entries.find(e=>e.id===source(n).id);
-  assert(e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('MP'));
+  assert(e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('MP'));
   if(n===209){assert.equal(e.judgment,'ready');assert.deepEqual(e.remainingEffects,[]);}
   else {assert.equal(e.judgment,'ready');assert.deepEqual(e.remainingConditions,[]);}
  }
@@ -35,14 +35,14 @@ test('MP maximum attribute pass covers all eight modifiers after a full-library 
 test('MP completes three existing magic compounds without losing their labels or duplicating skills',()=>{
  assert.equal(mp.counts.ready,8);assert.equal(mp.counts.partial,0);assert.equal(mp.counts.unknown,0);
  for(const n of [412,433,561]){
-  assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','MP']);assert.equal(entry(n).judgment,'ready');
+  assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','MP']);assert.equal(entry(n).judgment,'ready');
   assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).remainingConditions,[]);
   assert.deepEqual(labelingView(catalog,'magic').entries.find(e=>e.id===source(n).id),entry(n));
  }
- for(const n of [5,6,7,8,262])assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP']);
- assert.equal(catalog.views.magic.counts.ready,32);assert.equal(catalog.views.magic.counts.partial,19);
+ for(const n of [5,6,7,8,262])assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP']);
+ assert.equal(catalog.views.magic.counts.ready,41);assert.equal(catalog.views.magic.counts.partial,10);
  assert.equal(catalog.entries.length,935);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
- assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
+ assert.equal(catalog.views.all.counts.ready,787);assert.equal(catalog.views.all.counts.partial,148);
  const rows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(rows.slice(0,757).every(r=>r.judgment==='ready'));assert(rows.slice(757).every(r=>r.judgment==='partial'));
+ assert(rows.slice(0,787).every(r=>r.judgment==='ready'));assert(rows.slice(787).every(r=>r.judgment==='partial'));
 });

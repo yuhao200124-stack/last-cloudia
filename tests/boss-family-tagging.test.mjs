@@ -1,3 +1,4 @@
+import {entryBeforeClassificationSupplements} from '../scripts/classification-supplement-preservation-helpers.mjs';
 import {passBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import {createHash} from 'node:crypto';
 import {SKILL_LABELING_CATALOG as catalog} from '../dist/skill-labeling-catalog.mjs';
@@ -11,15 +12,15 @@ const expected=[192,246,290,411,460,624,638,640,720,760,837,888,941,985,1041,109
 test('Boss audits every one of 935 sources and expands the original route into 20 complete effect groups',()=>{
  assert.deepEqual(nums(view.entries),expected);assert.equal(audit.rows.length,935);assert.equal(new Set(audit.rows.map(a=>a.id)).size,935);
  for(const s of rows){const a=audit.rows.find(a=>a.id===s.id);assert.equal(a.sourceHash,hash([s.id,s.url,s.name,s.effect,s.notes||'']));assert.equal(a.decision==='related',expected.includes(+s.url.split('/').pop()));}
- assert.equal(view.label,'Boss');assert.equal(view.childKeys.length,20);assert.equal(view.counts.ready,30);assert.equal(view.counts.partial,1);assert.equal(catalog.entries.length,935);assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
+ assert.equal(view.label,'Boss');assert.equal(view.childKeys.length,20);assert.equal(view.counts.ready,30);assert.equal(view.counts.partial,1);assert.equal(catalog.entries.length,935);assert.equal(catalog.views.all.counts.ready,787);assert.equal(catalog.views.all.counts.partial,148);
  assert.deepEqual([...new Set(view.childKeys.flatMap(k=>labelingView(catalog,k).entries.map(e=>e.id)))].sort(),view.entries.map(e=>e.id).sort());
  assert(!view.entries.includes(entry(731)));assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('Boss keeps all 838 prior source records, bindings and 62 tag passes; only two uncovered compound conditions split',()=>{
- assert.equal(preserved.entries.length,838);assert.equal(preserved.tagPassHashes.length,62);assert.equal(r.tagPasses.length,90);
+ assert.equal(preserved.entries.length,838);assert.equal(preserved.tagPassHashes.length,62);assert.equal(r.tagPasses.length,93);
  for(const p of preserved.tagPassHashes)assert.equal(hash(passBeforeRemaining(r.tagPasses.find(t=>t.tag===p.tag))),p.hash,p.tag);
- for(const p of preserved.entries){const e=r.entries.find(e=>e.id===p.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeBoss(e)]),p.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(e.tagDetails).filter(([t,d])=>!['Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置'].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),p.bindingsHash,e.name);}
+ for(const p of preserved.entries){const e=r.entries.find(e=>e.id===p.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeBoss(e)]),p.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(entryBeforeClassificationSupplements(e).tagDetails).filter(([t,d])=>!['Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能'].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),p.bindingsHash,e.name);}
  assert.equal(preserved.conditionSplits.length,2);
  for(const s of preserved.conditionSplits){const e=r.entries.find(e=>e.id===s.skillId);assert.deepEqual(e.parts.filter(p=>s.replacementParts.some(x=>x.id===p.id)),s.replacementParts);for(const pass of r.tagPasses.filter(t=>t.tag!=='Boss'))assert(!pass.assignments.some(a=>a.skillId===e.id&&a.partIds.includes(s.originalPart.id)));}
  for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h);
@@ -67,7 +68,7 @@ test('Boss validators reject reversed subjects, forced maxima, invalid wave timi
 
 function page(key){const elements=new Map(),get=k=>{if(!elements.has(k))elements.set(k,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(k,v){this.listeners[k]=v;},setAttribute(){},focus(){}});return elements.get(k);};vm.runInNewContext(read('dist/skill-labeling.mjs').replace(/^import .*;\n/gm,'').replace('export function renderLabelTable','function renderLabelTable'),{catalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,location:{search:'?tag='+key},addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Do not change user saves');}}});return get;}
 test('original Boss route renders all groups, deduplicates search, sorts judgments and clears stale association metadata',()=>{
- const get=page('boss');assert.equal(get('#activeTagTitle').textContent,'Boss');assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,82);const sections=get('#labelTable').innerHTML.split('<section ').slice(1);assert.equal(sections.length,20);for(const s of sections){const ranks=[...s.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(m=>({ready:0,partial:1,unknown:2})[m[1]]);assert.deepEqual(ranks,[...ranks].sort((a,b)=>a-b));}
+ const get=page('boss');assert.equal(get('#activeTagTitle').textContent,'Boss');assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,85);const sections=get('#labelTable').innerHTML.split('<section ').slice(1);assert.equal(sections.length,20);for(const s of sections){const ranks=[...s.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(m=>({ready:0,partial:1,unknown:2})[m[1]]);assert.deepEqual(ranks,[...ranks].sort((a,b)=>a-b));}
  get('#labelSearch').value='龙觉醒';get('#labelSearch').listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 31/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,2);assert.match(get('#labelTable').innerHTML,/不是物理伤害\+20%/);
  const sub=page('boss-physical-damage');assert.match(sub('#labelTable').innerHTML,/本组Boss效果/);assert.match(sub('#labelTable').innerHTML,/属性关联项/);
  const edited=skillLabelRows(data,labelingView(catalog,'boss-physical-damage'),{[`skill:${entry(1883).id}`]:{effect:'新描述'}}).find(e=>e.id===entry(1883).id);assert.equal(edited.judgment,'unknown');assert.deepEqual(edited.assignedTags,[]);assert.deepEqual(edited.conditionBindings,{});

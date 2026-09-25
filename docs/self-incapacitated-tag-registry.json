@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "label": "自身倒下／战斗不能",
+  "numericEffectInjection": false,
+  "skillIds": [
+    "898c96e867704168",
+    "fea184827daeaa39",
+    "d1a7d320c0eb0224",
+    "6958b9c4d7aad7cb",
+    "c9165a184c124aab",
+    "01b4b9edd30c865e",
+    "a1166f16d23a209d",
+    "8cbe5117030485dc",
+    "719b23004e804e89",
+    "0807ea77755d60fc",
+    "1faea4cee43b7137",
+    "ef62dd0cf4192724"
+  ]
+}

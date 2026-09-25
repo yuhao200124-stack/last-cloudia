@@ -1,3 +1,4 @@
+import {registryBeforeClassificationSupplements} from '../scripts/classification-supplement-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -10,27 +11,28 @@ import {validateEffectConditions} from '../scripts/validate-effect-conditions.mj
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const registry=JSON.parse(read('docs/skill-labeling-registry.json')),manifest=JSON.parse(read('docs/party-distribution-preservation-2026-09-25.json'));
 const box={window:{}};vm.runInNewContext(read('dist/data.js'),box);const data=box.window.SKILL_DATA;
+const partyBase=registryBeforeClassificationSupplements(registry),partyBaseRows=resolveSkillLabels(partyBase);
 const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex'),entry=n=>catalog.entries.find(e=>e.url.endsWith('/'+n));
 const attached=(n,tag)=>entry(n).tagDetails[tag].effectConditions;
 test('the party root and every independent party label are removed while the other roots retain their order',()=>{
  assert.equal(catalog.views.party,undefined);assert(!Object.values(catalog.views).some(v=>v.parent==='party'));
  assert(!registry.tagPasses.some(p=>p.tag==='队伍联动'));assert(catalog.entries.every(e=>!e.assignedTags.includes('队伍联动')&&!e.tagDetails['队伍联动']));
- assert.equal(registry.tagPasses.length,90);assert.equal(Object.values(catalog.views).filter(v=>!v.parent&&!v.hidden).length,82);
+ assert.equal(registry.tagPasses.length,93);assert.equal(Object.values(catalog.views).filter(v=>!v.parent&&!v.hidden).length,85);
  const previousRoots=manifest.baselineViews.map(v=>v.key).filter(k=>!registry.views[k]?.parent&&!registry.views[k]?.hidden&&!manifest.removedViews[k]);
- assert.deepEqual(Object.keys(registry.views).filter(k=>!registry.views[k].parent&&!registry.views[k].hidden),previousRoots);
+ assert.deepEqual(Object.keys(partyBase.views).filter(k=>!partyBase.views[k].parent&&!partyBase.views[k].hidden),previousRoots);
 });
 test('all 935 records and 91 earlier passes can be restored exactly and protected calculation files are unchanged',()=>{
  const before=registryBeforePartyDistribution(registry);
  assert.equal(manifest.baselineEntries.length,935);assert.equal(manifest.baselinePasses.length,91);
  for(const p of manifest.baselineEntries)assert.equal(hash(before.entries.find(e=>e.id===p.id)),p.hash,p.id);
  for(const p of manifest.baselinePasses)assert.equal(hash(before.tagPasses.find(x=>x.tag===p.tag)),p.hash,p.tag);
- for(const p of manifest.baselineViews){const change=manifest.changedViews[p.key];if(change)assert.deepEqual(registry.views[p.key]??null,change.after);assert.equal(hash(change?change.before:registry.views[p.key]),p.hash,p.key);}
+ for(const p of manifest.baselineViews){const change=manifest.changedViews[p.key];if(change)assert.deepEqual(partyBase.views[p.key]??null,change.after);assert.equal(hash(change?change.before:partyBase.views[p.key]),p.hash,p.key);}
  assert.equal(hash(Object.fromEntries(Object.entries(registry).filter(([k])=>!['entries','tagPasses','views'].includes(k)))),manifest.baselineFieldsHash);
  for(const[p,h]of Object.entries(manifest.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h,p);
  const old=resolveSkillLabels(before);assert.equal(old.filter(e=>e.judgment==='ready').length,749);
  assert(old.filter(e=>e.judgment==='ready').every(e=>catalog.entries.find(x=>x.id===e.id).judgment==='ready'));
- const promoted=old.filter(e=>e.judgment==='partial'&&catalog.entries.find(x=>x.id===e.id).judgment==='ready').map(e=>e.id).sort();
- assert.deepEqual(promoted,[...manifest.addedSkillIds].sort());assert.deepEqual(catalog.views.all.counts,{reviewedUnique:935,relatedUnique:935,notRelatedUnique:0,ready:757,partial:178,unknown:0});
+ const promoted=old.filter(e=>e.judgment==='partial'&&partyBaseRows.find(x=>x.id===e.id).judgment==='ready').map(e=>e.id).sort();
+ assert.deepEqual(promoted,[...manifest.addedSkillIds].sort());assert.deepEqual(catalog.views.all.counts,{reviewedUnique:935,relatedUnique:935,notRelatedUnique:0,ready:787,partial:148,unknown:0});
 });
 test('every transferred condition belongs to an actual benefit and every source retains its audit fingerprint',()=>{
  assert.equal(manifest.reviewedSkillIds.length,48);assert.equal(manifest.transfers.length,77);

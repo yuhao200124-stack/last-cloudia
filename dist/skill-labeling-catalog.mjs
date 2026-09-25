@@ -1256,18 +1256,109 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "通用武器数值强化，不是双武器限定加成。此处只标注原说明明确提到的双持分别应用规则；装备本体数值计算机制仍待判断。"
+        },
+        "装备自身数值强化": {
+          "summary": "每把已装备武器自身的攻击力数值+25%；单武器同样生效。；每把已装备武器自身的魔力数值+25%；单武器同样生效。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "dual-application"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "176-STR-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "每把已装备武器自身的攻击力数值+25%；单武器同样生效。",
+              "target": "each-equipped-weapon",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "equipment-stat",
+                "equipment": {
+                  "minimumWeaponCount": 1
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "STR",
+              "valuePercent": 25,
+              "base": "equipped-item-stat",
+              "applicationMode": "per-equipped-weapon",
+              "requiresDualForBaseEffect": false,
+              "changesFinalCharacterStatByPercent": false,
+              "remainingRole": "direct-effect",
+              "effectIdentity": "1a101f308e1eaae6:attack",
+              "sourceClause": "装备武器的攻击力和魔力数值+25%；装备两把武器时，两把武器分别生效。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "提升的是所装备武器自身的数值，不是角色最终面板"
+                },
+                {
+                  "partId": "dual-application",
+                  "text": "装备2把武器时，按每把武器分别应用数值提升"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "176-INT-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "每把已装备武器自身的魔力数值+25%；单武器同样生效。",
+              "target": "each-equipped-weapon",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "equipment-stat",
+                "equipment": {
+                  "minimumWeaponCount": 1
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "INT",
+              "valuePercent": 25,
+              "base": "equipped-item-stat",
+              "applicationMode": "per-equipped-weapon",
+              "requiresDualForBaseEffect": false,
+              "changesFinalCharacterStatByPercent": false,
+              "remainingRole": "direct-effect",
+              "effectIdentity": "1a101f308e1eaae6:effect-1",
+              "sourceClause": "装备武器的攻击力和魔力数值+25%；装备两把武器时，两把武器分别生效。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "提升的是所装备武器自身的数值，不是角色最终面板"
+                },
+                {
+                  "partId": "dual-application",
+                  "text": "装备2把武器时，按每把武器分别应用数值提升"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "双手"
+        "双手",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "提升的是所装备武器自身的数值，不是角色最终面板"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "b480695aa2840e5c",
@@ -3434,6 +3525,111 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+50%。；同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-armor"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "293-STR-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+50%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "51339f350198e9a2:attack",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "当同时装备剑和盔甲时，剑的攻击力和盔甲的防御力增 加50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／盔甲本身的数值"
+                },
+                {
+                  "partId": "paired-armor",
+                  "text": "同时装备盔甲，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "293-DEF-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "51339f350198e9a2:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "当同时装备剑和盔甲时，剑的攻击力和盔甲的防御力增 加50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／盔甲本身的数值"
+                },
+                {
+                  "partId": "paired-armor",
+                  "text": "同时装备盔甲，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -3441,13 +3637,12 @@ export const SKILL_LABELING_CATALOG = {
         "防御力",
         "剑",
         "铠甲",
-        "防御"
+        "防御",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是所装备剑／盔甲本身的数值"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4633d985390976cc",
@@ -5806,7 +6001,12 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "攻击力作为魔法伤害的参照量；具体换算关系待确认"
+          "text": "攻击力作为魔法伤害的参照量"
+        },
+        {
+          "id": "conversion-formula-unconfirmed",
+          "kind": "condition",
+          "text": "攻击力与魔法伤害提升量的具体换算关系待确认"
         }
       ],
       "tagDetails": {
@@ -5857,17 +6057,79 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "物理": {
+          "summary": "自身攻击力作为魔法伤害提高的参照量；不直接增加攻击力；魔法攻击伤害提高的效果",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack",
+                "effect-1"
+              ],
+              "summary": "自身攻击力作为魔法伤害提高的参照量；不直接增加攻击力；魔法攻击伤害提高的效果",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "effectIdentity": "86ad4fdedf4c3869:effect-1",
+              "referenceStat": "STR",
+              "formulaStatus": "unconfirmed",
+              "group": "reference-593",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "STR"
+                ],
+                "destination": "magic-damage",
+                "mode": "scaling",
+                "changesFinalSourceStat": false
+              },
+              "changesReferenceStat": false,
+              "physicalRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "攻击力越高，魔法攻击伤害越高。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "攻击力作为魔法伤害的参照量"
+                },
+                {
+                  "partId": "conversion-formula-unconfirmed",
+                  "text": "攻击力与魔法伤害提升量的具体换算关系待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "conversion-formula-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔法伤害增加",
+        "物理",
         "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "攻击力作为魔法伤害的参照量；具体换算关系待确认"
+        "攻击力与魔法伤害提升量的具体换算关系待确认"
       ]
     },
     {
@@ -6238,6 +6500,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备爪和衣服时，所装备爪自身的攻击力+50%。；同时装备爪和衣服时，所装备衣服自身的防御力+30%。；同时装备爪和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-clothes"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "599-STR-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备爪和衣服时，所装备爪自身的攻击力+50%。",
+              "target": "equipped-claw",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "543736df65bd47f1:attack",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备爪和衣服时，爪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备爪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备爪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与爪条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "599-DEF-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备爪和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "543736df65bd47f1:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备爪和衣服时，爪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备爪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备爪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与爪条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "599-MND-effect-2",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备爪和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "543736df65bd47f1:effect-2",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备爪和衣服时，爪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备爪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备爪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与爪条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -6246,13 +6657,12 @@ export const SKILL_LABELING_CATALOG = {
         "爪",
         "衣服",
         "防御",
-        "魔抗"
+        "魔抗",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是所装备爪／衣服本身的数值"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "8ba52a420286cb67",
@@ -7517,6 +7927,111 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+100%。；同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-armor"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "775-STR-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+100%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 100,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "87bd554c95a1dcf1:attack",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "当同时装备剑和盔甲时，剑的攻击力和盔甲的防御力增 加100%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／盔甲本身的数值"
+                },
+                {
+                  "partId": "paired-armor",
+                  "text": "同时装备盔甲，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "775-DEF-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 100,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "87bd554c95a1dcf1:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "当同时装备剑和盔甲时，剑的攻击力和盔甲的防御力增 加100%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／盔甲本身的数值"
+                },
+                {
+                  "partId": "paired-armor",
+                  "text": "同时装备盔甲，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -7524,13 +8039,12 @@ export const SKILL_LABELING_CATALOG = {
         "防御力",
         "剑",
         "铠甲",
-        "防御"
+        "防御",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是所装备剑／盔甲本身的数值"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c97e9b651d9192d2",
@@ -8085,6 +8599,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+100%。；同时装备剑和衣服时，所装备衣服自身的防御力+50%。；同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-clothes"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "823-STR-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+100%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 100,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "52c559efb1ac16a7:attack",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+100%，所装备衣服的防御力和魔抗+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "823-DEF-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "52c559efb1ac16a7:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+100%，所装备衣服的防御力和魔抗+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "823-MND-effect-2",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "52c559efb1ac16a7:effect-2",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+100%，所装备衣服的防御力和魔抗+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -8093,13 +8756,12 @@ export const SKILL_LABELING_CATALOG = {
         "剑",
         "衣服",
         "防御",
-        "魔抗"
+        "魔抗",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是所装备剑／衣服本身的数值"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "6c8b8402a6d95bd1",
@@ -8469,6 +9131,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+50%。；同时装备剑和衣服时，所装备衣服自身的防御力+30%。；同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-clothes"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "828-STR-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+50%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "6c8b8402a6d95bd1:attack",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+50%，所装备衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "828-DEF-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "6c8b8402a6d95bd1:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+50%，所装备衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "828-MND-effect-2",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "6c8b8402a6d95bd1:effect-2",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+50%，所装备衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -8477,13 +9288,12 @@ export const SKILL_LABELING_CATALOG = {
         "剑",
         "衣服",
         "防御",
-        "魔抗"
+        "魔抗",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是所装备剑／衣服本身的数值"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "835e08fc4710e268",
@@ -9300,14 +10110,17 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         },
         "防御": {
-          "summary": "开场防御力-10%",
+          "summary": "开场防御力-10%；开场把减少的防御力、魔抗数值加算到自身攻击力",
           "relation": "defensive-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "effect-1"
+              "effect-1",
+              "attack"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -9337,19 +10150,68 @@ export const SKILL_LABELING_CATALOG = {
                   "text": "将减少的防御力、魔抗数值转换并加算到攻击力"
                 }
               ]
+            },
+            {
+              "operation": "add-lost-stat-values",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "reference"
+              },
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场把减少的防御力、魔抗数值加算到自身攻击力",
+              "effectIdentity": "975fce45e6663534:attack",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "DEF",
+                  "MND"
+                ],
+                "destination": "STR",
+                "mode": "lost-value-addition",
+                "changesFinalSourceStat": false
+              },
+              "sourceDecreasePercent": {
+                "DEF": 10,
+                "MND": 10
+              },
+              "additionBase": "actual-decreased-values-sum",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "familyRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始时，自身防御力、魔抗-10%，减少的数值加到攻击力上。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "将减少的防御力、魔抗数值转换并加算到攻击力"
+                }
+              ],
+              "pendingPartIds": [],
+              "group": "reference-984"
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         },
         "魔抗": {
-          "summary": "开场魔抗-10%",
+          "summary": "开场魔抗-10%；开场把减少的防御力、魔抗数值加算到自身攻击力",
           "relation": "defensive-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "effect-2"
+              "effect-2",
+              "attack"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -9379,6 +10241,52 @@ export const SKILL_LABELING_CATALOG = {
                   "text": "将减少的防御力、魔抗数值转换并加算到攻击力"
                 }
               ]
+            },
+            {
+              "operation": "add-lost-stat-values",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "reference"
+              },
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场把减少的防御力、魔抗数值加算到自身攻击力",
+              "effectIdentity": "975fce45e6663534:attack",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "DEF",
+                  "MND"
+                ],
+                "destination": "STR",
+                "mode": "lost-value-addition",
+                "changesFinalSourceStat": false
+              },
+              "sourceDecreasePercent": {
+                "DEF": 10,
+                "MND": 10
+              },
+              "additionBase": "actual-decreased-values-sum",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "familyRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始时，自身防御力、魔抗-10%，减少的数值加到攻击力上。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "将减少的防御力、魔抗数值转换并加算到攻击力"
+                }
+              ],
+              "pendingPartIds": [],
+              "group": "reference-984"
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
@@ -9391,11 +10299,9 @@ export const SKILL_LABELING_CATALOG = {
         "防御",
         "魔抗"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "将减少的防御力、魔抗数值转换并加算到攻击力"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "6abbc6031b5d8a35",
@@ -9609,14 +10515,17 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
         },
         "物理": {
-          "summary": "开场判断攻击力≥魔力时，物理攻击伤害+20%。",
+          "summary": "开场判断攻击力≥魔力时，物理攻击伤害+20%。；开场比较自身攻击力和法强，以比较结果选择伤害加成；不改变攻击力",
           "relation": "physical-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "effect-1"
+              "effect-1",
+              "attack"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -9645,19 +10554,71 @@ export const SKILL_LABELING_CATALOG = {
                 "operator": "gte",
                 "snapshot": "wave-start"
               }
+            },
+            {
+              "operation": "compare-stats",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "reference"
+              },
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场比较自身攻击力和法强，以比较结果选择伤害加成；不改变攻击力；攻击力≥魔力时：物理攻击伤害+20%",
+              "effectIdentity": "2d772214490c52ba:attack",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "STR",
+                  "INT"
+                ],
+                "destination": "physical-branch",
+                "mode": "comparison",
+                "changesFinalSourceStat": false
+              },
+              "comparison": {
+                "left": "STR",
+                "right": "INT",
+                "operator": "gte",
+                "snapshot": "wave-start",
+                "branchesMutuallyExclusive": true,
+                "resultPartIds": [
+                  "effect-1"
+                ]
+              },
+              "changesReferenceStat": false,
+              "physicalRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始时，若攻击力≥魔力，则物理攻击伤害+20%；若攻击力<魔力，则魔法攻击伤害+20%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时判断"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
+                }
+              ],
+              "pendingPartIds": [],
+              "group": "reference-1066"
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         },
         "魔法": {
-          "summary": "开场判断攻击力＜魔力时，魔法攻击伤害+20%。",
+          "summary": "开场判断攻击力＜魔力时，魔法攻击伤害+20%。；魔力参与开场攻击力与魔力的大小比较，决定伤害加成分支；不改变魔力",
           "relation": "magic-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "effect-2"
+              "effect-2",
+              "magic-reference"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -9688,6 +10649,55 @@ export const SKILL_LABELING_CATALOG = {
                 "snapshot": "wave-start"
               },
               "mutuallyExclusiveWithPartId": "effect-1"
+            },
+            {
+              "operation": "compare-stats",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "reference"
+              },
+              "partIds": [
+                "magic-reference"
+              ],
+              "summary": "魔力参与开场攻击力与魔力的大小比较，决定伤害加成分支；不改变魔力；攻击力＜魔力时：魔法攻击伤害+20%",
+              "effectIdentity": "2d772214490c52ba:magic-reference",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "STR",
+                  "INT"
+                ],
+                "destination": "magic-branch",
+                "mode": "comparison",
+                "changesFinalSourceStat": false
+              },
+              "comparison": {
+                "left": "STR",
+                "right": "INT",
+                "operator": "lt",
+                "snapshot": "wave-start",
+                "branchesMutuallyExclusive": true,
+                "resultPartIds": [
+                  "effect-2"
+                ]
+              },
+              "changesReferenceStat": false,
+              "magicRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始时，若攻击力≥魔力，则物理攻击伤害+20%；若攻击力<魔力，则魔法攻击伤害+20%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时判断"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
+                }
+              ],
+              "pendingPartIds": [],
+              "group": "reference-1066"
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
@@ -9702,11 +10712,9 @@ export const SKILL_LABELING_CATALOG = {
         "物理",
         "魔法"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "7b7b9f7c806bbd9e",
@@ -10387,7 +11395,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "attack"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -10420,7 +11430,7 @@ export const SKILL_LABELING_CATALOG = {
               "appliesPersistentDebuff": false
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 只调整本次受伤计算的参照值，不生成持续的面板加成或敌人减益。"
         },
         "防御": {
           "summary": "受到敌人物理攻击时，该次伤害按敌人攻击力降低5%计算。",
@@ -10484,11 +11494,9 @@ export const SKILL_LABELING_CATALOG = {
         "物理",
         "防御"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "只修正该次受伤计算中的敌人攻击力，不施加持续减益"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "7498b3dbd8ba7e5d",
@@ -11528,19 +12536,92 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "开场加算与普通攻击力百分比Buff分开，不套40秒Buff倒计时。攻击力、魔力参照、战斗开始及机械条件分别保留；参照数值的计算机制仍待对应标签。"
+        },
+        "魔法": {
+          "summary": "自身魔力作为转换参照量：装备机械时，开场将其10%加算到攻击力；不提高魔力；装备机械时，开场把自身法强的10%加算到攻击力",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-reference",
+              "attack"
+            ],
+            "conditionPartIds": [
+              "condition-3"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "reference-1365",
+              "partIds": [
+                "magic-reference",
+                "attack"
+              ],
+              "summary": "自身魔力作为转换参照量：装备机械时，开场将其10%加算到攻击力；不提高魔力；装备机械时，开场把自身法强的10%加算到攻击力",
+              "target": "self",
+              "isBuff": false,
+              "operation": "add-stat-reference",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "referenceStat": "INT",
+              "referencePercent": 10,
+              "activationMode": "battle-start-stat-addition",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "effectIdentity": "0d0bdf3f7c6e0b5a:attack",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "INT"
+                ],
+                "destination": "STR",
+                "mode": "addition",
+                "changesFinalSourceStat": false
+              },
+              "changesReferenceStat": false,
+              "referenceIsConsumed": false,
+              "magicRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "装备机械类武器时，战斗开始时将自身魔力的10%加算到攻击力。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备机械类武器"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "将自身法强的10%转换并加算到攻击力"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
         "战斗开始",
-        "机械"
+        "机械",
+        "魔法"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "将自身法强的10%转换并加算到攻击力"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "403a540b2ffa9519",
@@ -12853,6 +13934,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备枪和衣服时，所装备枪自身的攻击力+50%。；同时装备枪和衣服时，所装备衣服自身的防御力+30%。；同时装备枪和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-clothes"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "1515-STR-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备枪和衣服时，所装备枪自身的攻击力+50%。",
+              "target": "equipped-spear",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "5dc1aeae525c240c:attack",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备枪和衣服时，枪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备枪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备枪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与枪条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "1515-DEF-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备枪和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "5dc1aeae525c240c:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备枪和衣服时，枪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备枪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备枪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与枪条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "1515-MND-effect-2",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备枪和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "5dc1aeae525c240c:effect-2",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备枪和衣服时，枪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备枪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备枪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与枪条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -12861,13 +14091,12 @@ export const SKILL_LABELING_CATALOG = {
         "枪",
         "衣服",
         "防御",
-        "魔抗"
+        "魔抗",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是所装备枪／衣服本身的数值"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "47ea988d3391dd7d",
@@ -13404,6 +14633,111 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备斧和盔甲时，所装备斧自身的攻击力+50%。；同时装备斧和盔甲时，所装备盔甲自身的防御力+50%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-armor"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "1690-STR-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备斧和盔甲时，所装备斧自身的攻击力+50%。",
+              "target": "equipped-axe",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "71f0c15272a753ba:attack",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备斧和盔甲时，斧的攻击力+50%，盔甲的防御力+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备斧"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备斧／盔甲本身的数值"
+                },
+                {
+                  "partId": "paired-armor",
+                  "text": "同时装备盔甲，与斧条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "1690-DEF-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备斧和盔甲时，所装备盔甲自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "71f0c15272a753ba:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备斧和盔甲时，斧的攻击力+50%，盔甲的防御力+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备斧"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备斧／盔甲本身的数值"
+                },
+                {
+                  "partId": "paired-armor",
+                  "text": "同时装备盔甲，与斧条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -13411,13 +14745,12 @@ export const SKILL_LABELING_CATALOG = {
         "防御力",
         "斧",
         "铠甲",
-        "防御"
+        "防御",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是所装备斧／盔甲本身的数值"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "d611639ee456760f",
@@ -15683,22 +17016,51 @@ export const SKILL_LABELING_CATALOG = {
       ],
       "tagDetails": {
         "攻击力": {
-          "summary": "自身攻击力+10%",
+          "summary": "自身攻击力+10%；受到伤害+10%；作为本技能对应加成的负面效果一并保留。",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "常驻属性",
+          "calculationNote": "攻击力与暴击伤害加成均保留自身受到伤害+10%的代价；不是造成伤害增加，不加入通用减伤。",
           "existingRuleIds": [
             "basic:6bd2eb47018db33f:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "受到伤害+10%；作为本技能对应加成的负面效果一并保留。",
+              "operation": "incoming-damage-up",
+              "target": "self",
+              "isBuff": false,
+              "valuePercent": 10,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "classificationContext": {
+                "kind": "associated-drawback",
+                "benefitPartIds": [
+                  "attack"
+                ],
+                "isBenefit": false
+              },
+              "effectIdentity": "6bd2eb47018db33f:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "受到来自敌人的伤害+10%，但攻击力+10%，暴击伤害+15%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": []
+            }
+          ]
         },
         "暴击": {
-          "summary": "自身暴击伤害+15%。",
+          "summary": "自身暴击伤害+15%。；受到伤害+10%；作为本技能对应加成的负面效果一并保留。",
           "relation": "critical-effect-or-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "effect-2"
+              "effect-2",
+              "effect-1"
             ],
             "conditionPartIds": []
           },
@@ -15720,19 +17082,45 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 15,
               "requiresCriticalHit": true,
               "grantsCriticalEligibility": false
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "受到伤害+10%；作为本技能对应加成的负面效果一并保留。",
+              "operation": "incoming-damage-up",
+              "target": "self",
+              "isBuff": false,
+              "valuePercent": 10,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "classificationContext": {
+                "kind": "associated-drawback",
+                "benefitPartIds": [
+                  "effect-2"
+                ],
+                "isBenefit": false
+              },
+              "criticalRole": "direct-effect",
+              "effectIdentity": "6bd2eb47018db33f:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "受到来自敌人的伤害+10%，但攻击力+10%，暴击伤害+15%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": [],
+              "group": "damage-general"
             }
           ],
-          "calculationNote": "攻击力标签保留；受到伤害+10%是负面效果，仍单独待判断，不因暴伤完成而漏掉。"
+          "calculationNote": "攻击力与暴击伤害加成均保留自身受到伤害+10%的代价；不是造成伤害增加，不加入通用减伤。"
         }
       },
       "assignedTags": [
         "攻击力",
         "暴击"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "受到伤害+10%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -15837,17 +17225,84 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        },
+        "物理": {
+          "summary": "自身攻击力作为主动技能HP恢复量提高的参照量；不直接增加攻击力；主动技能HP恢复量提升及其例外",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack",
+                "effect-1"
+              ],
+              "summary": "自身攻击力作为主动技能HP恢复量提高的参照量；不直接增加攻击力；主动技能HP恢复量提升及其例外",
+              "operation": "stat-scaled-healing-output-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP",
+                "source": "active-skill"
+              },
+              "referenceStat": "STR",
+              "changesStat": false,
+              "formulaStatus": "unconfirmed",
+              "specialHealingExceptionsStatus": "unconfirmed",
+              "group": "reference-1779",
+              "effectIdentity": "127eab1363110062:effect-1",
+              "sourceClause": "攻击力越高，自身主动技能的HP恢复量略微提升（部分特殊恢复效果除外）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "以攻击力作为主动技能HP恢复量的参照"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "只适用于主动技能的HP恢复，部分特殊恢复除外"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "攻击力与主动HP回复量的换算公式、排除的特殊回复技能名单待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ],
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "STR"
+                ],
+                "destination": "active-skill-hp-recovery",
+                "mode": "scaling",
+                "changesFinalSourceStat": false
+              },
+              "physicalRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
+        "物理",
         "HP回复"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "以攻击力作为主动技能HP恢复量的参照",
-        "只适用于主动技能的HP恢复，部分特殊恢复除外",
         "攻击力与主动HP回复量的换算公式、排除的特殊回复技能名单待确认"
       ]
     },
@@ -16792,6 +18247,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备机械和衣服时，所装备机械自身的攻击力+50%。；同时装备机械和衣服时，所装备衣服自身的防御力+30%。；同时装备机械和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-clothes"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "1940-STR-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备机械和衣服时，所装备机械自身的攻击力+50%。",
+              "target": "equipped-machine",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "e64a85601b9b58cc:attack",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备机械和衣服时，机械的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备机械"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备机械／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与机械条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "1940-DEF-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备机械和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "e64a85601b9b58cc:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备机械和衣服时，机械的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备机械"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备机械／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与机械条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "1940-MND-effect-2",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备机械和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "e64a85601b9b58cc:effect-2",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备机械和衣服时，机械的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备机械"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备机械／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与机械条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -16800,13 +18404,12 @@ export const SKILL_LABELING_CATALOG = {
         "机械",
         "衣服",
         "防御",
-        "魔抗"
+        "魔抗",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是所装备机械／衣服本身的数值"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "07cab38a1e00eaa5",
@@ -16939,14 +18542,17 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
         },
         "魔法": {
-          "summary": "开场判断攻击力＜魔力时，魔法伤害上限+5,000。",
+          "summary": "开场判断攻击力＜魔力时，魔法伤害上限+5,000。；魔力参与开场攻击力与魔力的大小比较，决定伤害上限加成分支；不改变魔力",
           "relation": "magic-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "effect-2"
+              "effect-2",
+              "magic-reference"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -16977,9 +18583,123 @@ export const SKILL_LABELING_CATALOG = {
                 "snapshot": "wave-start"
               },
               "mutuallyExclusiveWithPartId": "effect-1"
+            },
+            {
+              "operation": "compare-stats",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "reference"
+              },
+              "partIds": [
+                "magic-reference"
+              ],
+              "summary": "魔力参与开场攻击力与魔力的大小比较，决定伤害上限加成分支；不改变魔力；攻击力＜魔力时：魔法伤害上限+5,000",
+              "effectIdentity": "07cab38a1e00eaa5:magic-reference",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "STR",
+                  "INT"
+                ],
+                "destination": "magic-branch",
+                "mode": "comparison",
+                "changesFinalSourceStat": false
+              },
+              "comparison": {
+                "left": "STR",
+                "right": "INT",
+                "operator": "lt",
+                "snapshot": "wave-start",
+                "branchesMutuallyExclusive": true,
+                "resultPartIds": [
+                  "effect-2"
+                ]
+              },
+              "changesReferenceStat": false,
+              "magicRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始时，若攻击力≥魔力，则特技伤害上限+5,000；若攻击力<魔力，则魔法攻击伤害上限+5,000。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时判断"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
+                }
+              ],
+              "pendingPartIds": [],
+              "group": "reference-1941"
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "物理": {
+          "summary": "开场比较自身攻击力和法强，以比较结果选择伤害上限加成；不改变攻击力",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "operation": "compare-stats",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "reference"
+              },
+              "partIds": [
+                "attack"
+              ],
+              "summary": "开场比较自身攻击力和法强，以比较结果选择伤害上限加成；不改变攻击力；攻击力≥魔力时：特技伤害上限+5,000",
+              "effectIdentity": "07cab38a1e00eaa5:attack",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "STR",
+                  "INT"
+                ],
+                "destination": "physical-branch",
+                "mode": "comparison",
+                "changesFinalSourceStat": false
+              },
+              "comparison": {
+                "left": "STR",
+                "right": "INT",
+                "operator": "gte",
+                "snapshot": "wave-start",
+                "branchesMutuallyExclusive": true,
+                "resultPartIds": [
+                  "effect-1"
+                ]
+              },
+              "changesReferenceStat": false,
+              "physicalRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始时，若攻击力≥魔力，则特技伤害上限+5,000；若攻击力<魔力，则魔法攻击伤害上限+5,000。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时判断"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
+                }
+              ],
+              "pendingPartIds": [],
+              "group": "reference-1941"
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -16987,13 +18707,12 @@ export const SKILL_LABELING_CATALOG = {
         "魔力",
         "战斗开始",
         "特技相关",
+        "物理",
         "魔法"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "比较攻击力与法强：攻击力≥法强／攻击力＜法强，选择不同效果"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "899aa4edeab83540",
@@ -20932,20 +22651,128 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔法": {
+          "summary": "战斗开始时，将自身法强的5%加算到防御力；将自身法强的5%加算到魔抗",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "defense",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "reference-524",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "战斗开始时，将自身法强的5%加算到防御力",
+              "effectIdentity": "b7e3b644c937e9da:defense",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "add-stat-reference",
+              "referenceStat": "INT",
+              "referencePercent": 5,
+              "referenceBase": "self-stat-at-wave-start",
+              "changesReferenceStat": false,
+              "referenceIsConsumed": false,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "sourceClause": "战斗开始时，将魔力的 5% 加到防御和魔抗上。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时生效"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "按法强数值转换加算，不是防御力百分比加成"
+                }
+              ],
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "INT"
+                ],
+                "destination": "DEF",
+                "mode": "addition",
+                "changesFinalSourceStat": false
+              },
+              "magicRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "pendingPartIds": []
+            },
+            {
+              "group": "reference-524",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "将自身法强的5%加算到魔抗",
+              "effectIdentity": "b7e3b644c937e9da:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "add-stat-reference",
+              "referenceStat": "INT",
+              "referencePercent": 5,
+              "referenceBase": "self-stat-at-wave-start",
+              "changesReferenceStat": false,
+              "referenceIsConsumed": false,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "sourceClause": "战斗开始时，将魔力的 5% 加到防御和魔抗上。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时生效"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "按法强数值转换加算，不是防御力百分比加成"
+                }
+              ],
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "INT"
+                ],
+                "destination": "MND",
+                "mode": "addition",
+                "changesFinalSourceStat": false
+              },
+              "magicRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "防御力",
         "魔力",
         "战斗开始",
+        "魔法",
         "防御",
         "魔抗"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "按法强数值转换加算，不是防御力百分比加成"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0d0b88d5b3be6bd3",
@@ -24199,6 +26026,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备杖和衣服时，所装备杖自身的魔力+50%。；同时装备杖和衣服时，所装备衣服自身的防御力+30%。；同时装备杖和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1",
+              "defense",
+              "effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-clothes"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "1059-INT-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备杖和衣服时，所装备杖自身的魔力+50%。",
+              "target": "equipped-staff",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "INT",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "e23ff7a9e123570f:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "当法杖和衣服同时装备时，法杖的魔力+50%，衣服的 防御和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备杖"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是装备自身数值，不是角色最终面板百分比"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与杖条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "1059-DEF-defense",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "同时装备杖和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "e23ff7a9e123570f:defense",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "当法杖和衣服同时装备时，法杖的魔力+50%，衣服的 防御和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备杖"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是装备自身数值，不是角色最终面板百分比"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与杖条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "1059-MND-effect-2",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备杖和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "e23ff7a9e123570f:effect-2",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "当法杖和衣服同时装备时，法杖的魔力+50%，衣服的 防御和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备杖"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是装备自身数值，不是角色最终面板百分比"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与杖条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -24207,13 +26183,12 @@ export const SKILL_LABELING_CATALOG = {
         "杖",
         "衣服",
         "防御",
-        "魔抗"
+        "魔抗",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是装备自身数值，不是角色最终面板百分比"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "a35775967283bc44",
@@ -24331,7 +26306,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -24369,7 +26346,7 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 数值换算条件已完成分类；按开场来源属性的数值加算，不提高或消耗来源属性。"
         }
       },
       "assignedTags": [
@@ -24378,11 +26355,9 @@ export const SKILL_LABELING_CATALOG = {
         "防御",
         "魔抗"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "按魔抗数值转换加算，不是防御力百分比加成"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "da17e674beb5ac5b",
@@ -24504,7 +26479,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "defense"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -24555,7 +26532,7 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 只调整本次受伤计算的参照值，不生成持续的面板加成或敌人减益。"
         }
       },
       "assignedTags": [
@@ -24567,7 +26544,6 @@ export const SKILL_LABELING_CATALOG = {
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "只在该次受伤计算中提高防御力",
         "概率触发，具体概率待确认"
       ]
     },
@@ -27491,10 +29467,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "普通攻击特攻、命中施加异常、HP／MP吸收、魔力参照增伤及触发追击分组，保留每条完整限定。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "魔法": {
+          "summary": "自身魔力作为普通攻击伤害提升的参照量；不提高魔力；随魔力提高而提升普通攻击伤害",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic",
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "operation": "stat-reference",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "reference"
+              },
+              "partIds": [
+                "magic",
+                "effect-1"
+              ],
+              "summary": "自身魔力作为普通攻击伤害提升的参照量；不提高魔力；随魔力提高而提升普通攻击伤害",
+              "effectIdentity": "240bff829bf6cbe6:effect-1",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "INT"
+                ],
+                "destination": "normal-attack-damage",
+                "mode": "scaling",
+                "changesFinalSourceStat": false
+              },
+              "formulaStatus": "unconfirmed",
+              "changesReferenceStat": false,
+              "magicRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "魔力越高，普通攻击伤害越高。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "魔力与伤害提升量的换算公式尚待判断"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1"
+              ],
+              "group": "reference-169"
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "魔力",
+        "魔法",
         "普通攻击"
       ],
       "judgment": "partial",
@@ -27778,12 +29808,66 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "自身魔力作为物理攻击伤害提升的参照量；不提高魔力；随魔力提高而提升物理攻击伤害",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic",
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "operation": "stat-reference",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "reference"
+              },
+              "partIds": [
+                "magic",
+                "effect-1"
+              ],
+              "summary": "自身魔力作为物理攻击伤害提升的参照量；不提高魔力；随魔力提高而提升物理攻击伤害",
+              "effectIdentity": "762fb2ff5d9381f0:effect-1",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "INT"
+                ],
+                "destination": "physical-damage",
+                "mode": "scaling",
+                "changesFinalSourceStat": false
+              },
+              "formulaStatus": "unconfirmed",
+              "changesReferenceStat": false,
+              "magicRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "魔力越高，物理攻击伤害越高。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "魔力与伤害提升量的换算公式尚待判断"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1"
+              ],
+              "group": "reference-357"
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "魔力",
         "物理伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -28003,12 +30087,66 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法": {
+          "summary": "自身魔力作为物理攻击伤害大幅提升的参照量；不提高魔力；随魔力提高而大幅提升物理攻击伤害",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic",
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "operation": "stat-reference",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "reference"
+              },
+              "partIds": [
+                "magic",
+                "effect-1"
+              ],
+              "summary": "自身魔力作为物理攻击伤害大幅提升的参照量；不提高魔力；随魔力提高而大幅提升物理攻击伤害",
+              "effectIdentity": "96db78d77cedf5cf:effect-1",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "INT"
+                ],
+                "destination": "physical-damage",
+                "mode": "scaling",
+                "changesFinalSourceStat": false
+              },
+              "formulaStatus": "unconfirmed",
+              "changesReferenceStat": false,
+              "magicRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "魔力越高，物理攻击伤害大幅提升。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "魔力与伤害提升量的换算公式尚待判断"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1"
+              ],
+              "group": "reference-441"
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "魔力",
         "物理伤害增加",
-        "物理"
+        "物理",
+        "魔法"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -28557,19 +30695,123 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "装备自身数值强化": {
+          "summary": "同时装备杖和长袍时，所装备杖自身的魔力+50%。；同时装备杖和长袍时，所装备长袍自身的魔抗+50%。",
+          "relation": "equipment-stat-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2",
+              "paired-robe"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "641-INT-magic",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "同时装备杖和长袍时，所装备杖自身的魔力+50%。",
+              "target": "equipped-staff",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "robe"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "INT",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "756acbe5f4ea23ca:magic",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备法杖和长袍时，法杖的魔力+50%，长袍的魔抗+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备杖"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是装备自身数值，不是角色最终面板百分比"
+                },
+                {
+                  "partId": "paired-robe",
+                  "text": "同时装备长袍，与杖条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "641-MND-effect-1",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备杖和长袍时，所装备长袍自身的魔抗+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "robe"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "changesFinalCharacterStatByPercent": false,
+              "pairedEquipmentLogicalOperator": "AND",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "756acbe5f4ea23ca:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "同时装备法杖和长袍时，法杖的魔力+50%，长袍的魔抗+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备杖"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是装备自身数值，不是角色最终面板百分比"
+                },
+                {
+                  "partId": "paired-robe",
+                  "text": "同时装备长袍，与杖条件同时满足"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "魔力",
         "杖",
         "法袍",
-        "魔抗"
+        "魔抗",
+        "装备自身数值强化"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "增加的是装备自身数值，不是角色最终面板百分比"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "ea3ec6051efc1995",
@@ -29094,17 +31336,76 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "已有魔力标签保留；这是当次法强参照修正，不是冰属性伤害直接+15%，也不是常驻面板或持续Buff。计算阶段仍保留待判断。"
+        },
+        "魔法": {
+          "summary": "进行冰属性攻击时，该次伤害计算使用的魔力+15%",
+          "relation": "magic-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic"
+            ],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "reference-1694",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "进行冰属性攻击时，该次伤害计算使用的魔力+15%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-reference-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "stat": "INT",
+              "valuePercent": 15,
+              "phase": "damage-calculation",
+              "referenceTarget": "self",
+              "effectIdentity": "aa48351ee0991a93:magic",
+              "classificationContext": {
+                "kind": "stat-source",
+                "sourceStats": [
+                  "INT"
+                ],
+                "destination": "this-hit-damage",
+                "mode": "per-hit",
+                "changesFinalSourceStat": false
+              },
+              "changesReferenceStat": false,
+              "magicRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "进行冰属性攻击时，该次伤害计算使用的魔力+15%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "进行冰属性攻击时生效"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "只修正该次伤害计算所用魔力，不是常驻面板加成或持续Buff"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "魔力",
-        "冰属性"
+        "冰属性",
+        "魔法"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "只修正该次伤害计算所用魔力，不是常驻面板加成或持续Buff"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "00001521ecae775f",
@@ -29340,7 +31641,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -29352,7 +31655,11 @@ export const SKILL_LABELING_CATALOG = {
               "isBuff": false,
               "operation": "stat-reference",
               "scope": {
-                "direction": "reference"
+                "direction": "reference",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
               },
               "referenceStat": "MND",
               "destinationStat": "INT",
@@ -29382,7 +31689,7 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 数值换算条件已完成分类；按开场来源属性的数值加算，不提高或消耗来源属性。"
         }
       },
       "assignedTags": [
@@ -29391,11 +31698,9 @@ export const SKILL_LABELING_CATALOG = {
         "法袍",
         "魔抗"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "按魔抗数值转换加算，不是魔力百分比加成"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "29fd4154c6181e8e",
@@ -34182,7 +36487,12 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "effect-1",
           "kind": "effect",
-          "text": "命中率略微降低（降低量待确认）"
+          "text": "命中率略微降低"
+        },
+        {
+          "id": "accuracy-amount-unconfirmed",
+          "kind": "condition",
+          "text": "命中率降低的具体幅度待确认"
         }
       ],
       "tagDetails": {
@@ -34224,17 +36534,60 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "杂项": {
+          "summary": "命中率略微降低；具体降低量待确认。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "命中率略微降低；具体降低量待确认。",
+              "operation": "accuracy-down",
+              "scope": {
+                "direction": "self-accuracy"
+              },
+              "magnitudeStatus": "unconfirmed",
+              "affectsCriticalRate": false,
+              "remainingRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "4a7788e083ce9ea1:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "命中率略微降低，但物理攻击伤害+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "accuracy-amount-unconfirmed",
+                  "text": "命中率降低的具体幅度待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "accuracy-amount-unconfirmed"
+              ],
+              "group": "accuracy-down"
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "物理"
+        "物理",
+        "杂项"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "命中率略微降低（降低量待确认）"
-      ],
-      "remainingConditions": []
+      "remainingEffects": [],
+      "remainingConditions": [
+        "命中率降低的具体幅度待确认"
+      ]
     },
     {
       "id": "bde3ce8d694af2ab",
@@ -39878,12 +42231,13 @@ export const SKILL_LABELING_CATALOG = {
           "relatedSkillIds": []
         },
         "物理": {
-          "summary": "物理攻击伤害+20%。",
+          "summary": "物理攻击伤害+20%。；自身受到来自敌人的伤害+10%；作为本技能对应加成的负面效果一并保留。",
           "relation": "physical-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "physical-damage"
+              "physical-damage",
+              "effect-1"
             ],
             "conditionPartIds": []
           },
@@ -39904,6 +42258,34 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "e9a4eb9cb06ea2ad:physical-damage",
               "valuePercent": 20,
               "group": "damage"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身受到来自敌人的伤害+10%；作为本技能对应加成的负面效果一并保留。",
+              "operation": "incoming-damage-up",
+              "target": "self",
+              "isBuff": false,
+              "valuePercent": 10,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "classificationContext": {
+                "kind": "associated-drawback",
+                "benefitPartIds": [
+                  "physical-damage"
+                ],
+                "isBenefit": false
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "e9a4eb9cb06ea2ad:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "物理攻击伤害+20%，受到来自敌人的伤害+10%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": [],
+              "group": "damage"
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
@@ -39913,10 +42295,8 @@ export const SKILL_LABELING_CATALOG = {
         "物理伤害增加",
         "物理"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身受到来自敌人的伤害+10%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -41209,6 +43589,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "remaining-movement-state",
           "kind": "condition",
           "text": "自身处于符合技能要求的移动速度降低状态"
+        },
+        {
+          "id": "self-incapacitated-end",
+          "kind": "condition",
+          "text": "该效果持续至自身陷入战斗不能时结束"
         }
       ],
       "tagDetails": {
@@ -41391,6 +43776,10 @@ export const SKILL_LABELING_CATALOG = {
                 {
                   "partId": "remaining-movement-state",
                   "text": "自身处于符合技能要求的移动速度降低状态"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
                 }
               ],
               "pendingPartIds": [
@@ -41440,6 +43829,10 @@ export const SKILL_LABELING_CATALOG = {
                 {
                   "partId": "remaining-movement-state",
                   "text": "自身处于符合技能要求的移动速度降低状态"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
                 }
               ],
               "pendingPartIds": [
@@ -41449,6 +43842,75 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "开场对自身施加移动速度降低减益，持续到自身战斗不能；具体减速数值待确认。",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-incapacitated-end"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场对自身施加移动速度降低减益，持续到自身战斗不能；具体减速数值待确认。",
+              "operation": "apply-movement-speed-down",
+              "scope": {
+                "direction": "self-debuff",
+                "stat": "movement-speed"
+              },
+              "isDebuff": true,
+              "endsOn": "self-incapacitated",
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "group": "1378-effect-1",
+              "effectIdentity": "ef62dd0cf4192724:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "战斗开始时，赋予自身“移动速度降低”减益效果（持续至战斗不能）；处于移动速度降低状态时，物理攻击伤害+20%（部分特殊减益效果不计入触发条件）。",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "effect-termination",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时施加减益，持续至战斗不能"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "自身处于移动速度降低状态；部分特殊减益不计入"
+                },
+                {
+                  "partId": "abnormal-slow-amount",
+                  "text": "开场移动速度降低减益的具体数值待确认"
+                },
+                {
+                  "partId": "remaining-movement-state",
+                  "text": "自身处于符合技能要求的移动速度降低状态"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-2",
+                "abnormal-slow-amount"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -41456,7 +43918,8 @@ export const SKILL_LABELING_CATALOG = {
         "战斗开始",
         "物理",
         "异常",
-        "杂项"
+        "杂项",
+        "自身倒下／战斗不能"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -50066,12 +52529,13 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "上述开场效果持续20秒。其余条件和未贴标签的效果继续单独判断。"
         },
         "魔法": {
-          "summary": "战斗开始20秒后，魔法攻击伤害+20%。",
+          "summary": "战斗开始20秒后，魔法攻击伤害+20%。；开场获得自身受到伤害+20%的减益效果，持续20秒；作为本技能对应加成的负面效果一并保留。",
           "relation": "magic-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "magic-damage"
+              "magic-damage",
+              "effect-1"
             ],
             "conditionPartIds": []
           },
@@ -50096,6 +52560,48 @@ export const SKILL_LABELING_CATALOG = {
                 "delaySeconds": 20
               },
               "notBuffDurationSeconds": 20,
+              "group": "damage"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场获得自身受到伤害+20%的减益效果，持续20秒；作为本技能对应加成的负面效果一并保留。",
+              "operation": "incoming-damage-up",
+              "target": "self",
+              "isBuff": false,
+              "valuePercent": 20,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "classificationContext": {
+                "kind": "associated-drawback",
+                "benefitPartIds": [
+                  "magic-damage"
+                ],
+                "isBenefit": false
+              },
+              "isDebuff": true,
+              "appliedDurationSeconds": 20,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "e2016a861d776638:effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始时，自身获得“受到伤害+20%”的减益效果，持续20秒；战斗开始20秒后，魔法攻击伤害+20%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时触发自身易伤减益，减益持续20秒"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "魔法增伤在战斗开始20秒后生效；该20秒不是魔法增伤的持续时间"
+                }
+              ],
+              "pendingPartIds": [],
               "group": "damage"
             }
           ],
@@ -51287,6 +53793,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-3",
           "kind": "condition",
           "text": "赋予时若自身处于战斗不能状态，则再过40秒后赋予"
+        },
+        {
+          "id": "self-incapacitated-end",
+          "kind": "condition",
+          "text": "该效果持续至自身陷入战斗不能时结束"
         }
       ],
       "tagDetails": {
@@ -51348,17 +53859,87 @@ export const SKILL_LABELING_CATALOG = {
                 {
                   "partId": "condition-3",
                   "text": "赋予时若自身处于战斗不能状态，则再过40秒后赋予"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
                 }
               ],
               "pendingPartIds": []
             }
           ],
           "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "战斗开始40秒后获得伤害+20%的Buff，持续至自身战斗不能；赋予时倒下则再等40秒。",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-incapacitated-end"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "damage"
+              ],
+              "summary": "战斗开始40秒后获得伤害+20%的Buff，持续至自身战斗不能；赋予时倒下则再等40秒。",
+              "operation": "damage-up",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 20,
+              "buffType": "damage-up",
+              "endsOn": "incapacitated",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 40,
+                "retryWhenIncapacitatedSeconds": 40
+              },
+              "group": "939-damage",
+              "effectIdentity": "a1166f16d23a209d:damage",
+              "sourceClause": "战斗开始40秒后，赋予自身造成伤害+20%的增益效果（持续至战斗不能；若赋予时处于战斗不能状态，则再过40秒后赋予）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始40秒后赋予增伤Buff；不是开场立即生效"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "Buff持续至自身战斗不能；这里的40秒不是Buff持续时间，同类型Buff同时只计一项"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "赋予时若自身处于战斗不能状态，则再过40秒后赋予"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
+                }
+              ],
+              "pendingPartIds": [],
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "effect-termination",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "伤害增加",
-        "战斗时间"
+        "战斗时间",
+        "自身倒下／战斗不能"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -55765,24 +58346,76 @@ export const SKILL_LABELING_CATALOG = {
                   "text": "每个任务最多触发1次"
                 }
               ],
-              "pendingPartIds": [
-                "condition-1"
-              ]
+              "pendingPartIds": []
             }
           ],
           "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "战斗开始时若自身处于倒地状态，以50%HP复活；每个任务最多一次。",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "431-opening-effect-1",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时若自身处于倒地状态，以50%HP复活；每个任务最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "revive-self",
+              "initialHpPercent": 50,
+              "hpBase": "maximum-HP",
+              "maxTriggers": 1,
+              "resetScope": "quest",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "opening-downed-check",
+                "event": "wave-start-while-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "scope": {
+                "direction": "reference"
+              },
+              "effectIdentity": "fea184827daeaa39:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "如果在战斗开始时你处于倒地状态，你将以 50% 的生 命值复活（每个任务仅限一次）",
+              "skillReviewConditions": [
+                {
+                  "partId": "start-trigger",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "condition-1",
+                  "text": "开场自身处于倒地状态"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "每个任务最多触发1次"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "战斗开始",
         "复活",
-        "触发次数与重置"
+        "触发次数与重置",
+        "自身倒下／战斗不能"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "开场自身处于倒地状态"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "3797f19e9c516ee7",
@@ -57518,6 +60151,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "condition-1",
           "kind": "condition",
           "text": "随机追加类型的候选范围待确认"
+        },
+        {
+          "id": "self-incapacitated-end",
+          "kind": "condition",
+          "text": "该效果持续至自身陷入战斗不能时结束"
         }
       ],
       "tagDetails": {
@@ -57579,11 +60217,74 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "开场随机追加1种类型，持续至战斗不能",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-incapacitated-end"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场随机追加1种类型，持续至战斗不能",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "719b23004e804e89:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "incapacitated",
+              "candidatePoolStatus": "unconfirmed",
+              "group": "916-opening-effect-1",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "effect-termination",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "sourceClause": "战斗开始时，随机为自身追加1种类型（持续至战斗不能）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "start-trigger",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "condition-1",
+                  "text": "随机追加类型的候选范围待确认"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "战斗开始",
-        "种族／特攻共通"
+        "种族／特攻共通",
+        "自身倒下／战斗不能"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -57851,6 +60552,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "start-trigger",
           "kind": "condition",
           "text": "战斗开始时触发"
+        },
+        {
+          "id": "self-incapacitated-end",
+          "kind": "condition",
+          "text": "该效果持续至自身陷入战斗不能时结束"
         }
       ],
       "tagDetails": {
@@ -57964,12 +60670,116 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "开场获得暴击率+15个百分点Buff，持续至自身战斗不能。；战斗开始时自身获得Break值+50%的Buff，持续至自身战斗不能；同类Break值Buff只计当前最高一项。暴击率+15个百分点属于独立效果。",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-incapacitated-end"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "1009-opening-effect-1",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场获得暴击率+15个百分点Buff，持续至自身战斗不能。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 15,
+              "grantsCriticalEligibility": false,
+              "buffType": "critical-rate-up",
+              "activationMode": "triggered-buff",
+              "endsOn": "incapacitated",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              },
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "effect-termination",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "0807ea77755d60fc:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始时，赋予自身暴击率+15%、Break值+50%的增益效果（持续至战斗不能）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "start-trigger",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "战斗开始时自身获得Break值+50%的Buff，持续至自身战斗不能；同类Break值Buff只计当前最高一项。暴击率+15个百分点属于独立效果。",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 50,
+              "isBuff": true,
+              "buffType": "break-value-up",
+              "activationMode": "triggered-buff",
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "incapacitated",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "group": "1009-opening-effect-2",
+              "effectIdentity": "0807ea77755d60fc:opening-effect-2",
+              "breakRole": "direct-effect",
+              "target": "self",
+              "sourceClause": "战斗开始时，赋予自身暴击率+15%、Break值+50%的增益效果（持续至战斗不能）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "start-trigger",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
+                }
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false,
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "effect-termination",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "战斗开始",
         "暴击",
-        "Break"
+        "Break",
+        "自身倒下／战斗不能"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -67245,13 +70055,81 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "杂项": {
+          "summary": "装备「格挡」时，受到魔法攻击也有概率自动格挡。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard"
+              ],
+              "summary": "装备「格挡」时，受到魔法攻击也有概率自动格挡。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "enable-magic-guard",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "effectIdentity": "全部技能:all:34:guard",
+              "group": "required-skill-33",
+              "phase": "before-damage",
+              "activationMode": "per-hit-response",
+              "requiresSkillId": "全部技能:all:31",
+              "condition": {
+                "subject": "self",
+                "event": "attack-received",
+                "incomingType": "magic",
+                "requiresHpDamage": false
+              },
+              "chanceStatus": "unconfirmed",
+              "requiredSelfSkills": {
+                "operator": "AND",
+                "skillIds": [
+                  "全部技能:all:31"
+                ],
+                "subject": "self",
+                "mustBeEquipped": true
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "装备「格挡」技能时，魔法攻击也有概率被自动格挡。",
+              "skillReviewConditions": [
+                {
+                  "partId": "received-trigger",
+                  "text": "受到魔法攻击时"
+                },
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能时生效"
+                },
+                {
+                  "partId": "activation-chance",
+                  "text": "概率触发，具体概率待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "activation-chance"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "受到攻击",
         "魔法",
         "魔抗",
-        "格挡"
+        "格挡",
+        "杂项"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -71965,12 +74843,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "杂项": {
+          "summary": "装备「格挡」且格挡成功时，回复少量MP；具体回复值待确认。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "required-skill-35",
+              "partIds": [
+                "mp-restore"
+              ],
+              "summary": "装备「格挡」且格挡成功时，回复少量MP；具体回复值待确认。",
+              "target": "self",
+              "isBuff": false,
+              "mpRole": "resource-effect",
+              "operation": "restore-current",
+              "amountStatus": "unconfirmed",
+              "requiredSelfSkills": {
+                "operator": "AND",
+                "skillIds": [
+                  "全部技能:all:31"
+                ],
+                "subject": "self",
+                "mustBeEquipped": true
+              },
+              "remainingRole": "condition-benefit",
+              "scope": {
+                "direction": "reference"
+              },
+              "effectIdentity": "全部技能:all:36:mp-restore",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "装备「格挡」技能时，格挡成功会回复少量MP。",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能时"
+                },
+                {
+                  "partId": "guard-success",
+                  "text": "成功格挡时触发"
+                }
+              ],
+              "pendingPartIds": [
+                "mp-restore-amount"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "MP",
         "防御",
-        "格挡"
+        "格挡",
+        "杂项"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -74274,24 +77207,72 @@ export const SKILL_LABELING_CATALOG = {
               },
               "group": "once-wave-183-revival",
               "remainingRole": "condition-benefit",
-              "pendingPartIds": [
-                "incapacitated"
-              ]
+              "pendingPartIds": []
             }
           ],
           "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "自身HP降至0并战斗不能时自动复活，复活后HP为10%；每Wave最多一次。",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "incapacitated"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "183-revival",
+              "partIds": [
+                "revival"
+              ],
+              "summary": "自身HP降至0并战斗不能时自动复活，复活后HP为10%；每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "revive-self",
+              "initialHpPercent": 10,
+              "hpBase": "maximum-HP",
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "trigger",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "scope": {
+                "direction": "reference"
+              },
+              "effectIdentity": "898c96e867704168:revival",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "当生命值降至 0 时，自动复活并略微恢复生命值（每 波最多一次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "incapacitated",
+                  "text": "自身HP降至0、进入战斗不能时"
+                },
+                {
+                  "partId": "once-per-wave",
+                  "text": "每个Wave最多自动复活1次"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "复活",
         "HP回复",
-        "触发次数与重置"
+        "触发次数与重置",
+        "自身倒下／战斗不能"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "自身HP降至0、进入战斗不能时"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "89a90b8df36a0475",
@@ -97247,7 +100228,7 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "三种技能条件只绑定上限，前一句必杀增伤独立生效；上限不限必杀类型。三技能条件仍待标签。"
+          "calculationNote": "三种技能条件只绑定上限，前一句必杀增伤独立生效；上限不限必杀类型。三技能同时装备条件已归入杂项。"
         },
         "必杀相关": {
           "summary": "暗属性必杀伤害+15%。",
@@ -97280,17 +100261,72 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "杂项": {
+          "summary": "同时装备三种泽布尔·法尔技能时，暗属性伤害上限+3,000。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "three-faces"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "required-skill-1583",
+              "partIds": [
+                "dark-three-faces-cap"
+              ],
+              "summary": "同时装备三种泽布尔·法尔技能时，暗属性伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "capPoints": 3000,
+              "requiredSkillIds": [
+                "88325a3c478ed329",
+                "efdc0583f2618634",
+                "2819da7f379bf6f3"
+              ],
+              "requiredSelfSkills": {
+                "operator": "AND",
+                "skillIds": [
+                  "88325a3c478ed329",
+                  "efdc0583f2618634",
+                  "2819da7f379bf6f3"
+                ],
+                "subject": "self",
+                "mustBeEquipped": true
+              },
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "2819da7f379bf6f3:dark-three-faces-cap",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "暗属性必杀伤害+15%。同时装备3种“泽布尔·法尔”技能时，暗属性伤害上限+3,000。",
+              "skillReviewConditions": [
+                {
+                  "partId": "three-faces",
+                  "text": "同时装备左脸、右脸、正面脸三种泽布尔·法尔技能"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "必杀相关",
-        "暗属性"
+        "暗属性",
+        "杂项"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "同时装备左脸、右脸、正面脸三种泽布尔·法尔技能"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "d4e534dddd1aed24",
@@ -98562,7 +101598,11 @@ export const SKILL_LABELING_CATALOG = {
           "coverage": {
             "permissionPartIds": [],
             "conditionPartIds": [
-              "sword-equipped"
+              "sword-equipped",
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-element-damage"
             ]
           },
           "condition": {
@@ -98592,10 +101632,22 @@ export const SKILL_LABELING_CATALOG = {
                 "attackElementRelation": "same-as-equipped-sword"
               },
               "perMatchingWeaponStacking": false,
-              "valuePercent": 15
+              "valuePercent": 15,
+              "effectIdentity": "d71dfc1292e7c678:matching-element-damage",
+              "matchingElementReviewed": true
             }
           ],
-          "calculationNote": "属性取决于实际装备的剑，不固定为火、冰等任一属性；这里比较的是攻击与武器属性，不是两把武器之间比较。单武器条件已贴标签，属性匹配与对应增伤效果继续待标签。"
+          "calculationNote": "按实际攻击属性与装备武器属性比较，匹配才生效；不固定到某一种属性。保留武器种类、总数量及特技／必杀限制；同一效果跨页只计一次。",
+          "matchingElementReview": {
+            "conditionPartIds": [
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-element-damage"
+            ],
+            "dynamicElement": true,
+            "numericEffectInjection": false
+          }
         },
         "单手": {
           "summary": "仅装备1把剑，且本次攻击属性与该剑相同时，攻击伤害+15%。",
@@ -98644,13 +101696,9 @@ export const SKILL_LABELING_CATALOG = {
         "剑",
         "单手"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "仅装备一把剑且攻击属性与该剑相同时，伤害+15%"
-      ],
-      "remainingConditions": [
-        "本次攻击属性与所装备剑的属性相同"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "d118f0e46b5cac84",
@@ -99543,7 +102591,11 @@ export const SKILL_LABELING_CATALOG = {
           "coverage": {
             "permissionPartIds": [],
             "conditionPartIds": [
-              "axe-option"
+              "axe-option",
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-element-damage"
             ]
           },
           "condition": {
@@ -99589,10 +102641,21 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 15,
               "effectIdentity": "ee807560b8e94ab2:matching-element-damage",
               "effectStacking": "once-per-skill",
-              "weaponBranch": "axe"
+              "weaponBranch": "axe",
+              "matchingElementReviewed": true
             }
           ],
-          "calculationNote": "同一技能在斧、枪、机械三页共享记录；三种武器是OR选项，不要求同时装备。伤害属性取实际武器，不固定到火冰等属性；只算同一项15%，不因三个标签叠成45%。单武器已贴标签，动态属性匹配及对应增伤仍待标签。"
+          "calculationNote": "按实际攻击属性与装备武器属性比较，匹配才生效；不固定到某一种属性。保留武器种类、总数量及特技／必杀限制；同一效果跨页只计一次。",
+          "matchingElementReview": {
+            "conditionPartIds": [
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-element-damage"
+            ],
+            "dynamicElement": true,
+            "numericEffectInjection": false
+          }
         },
         "枪": {
           "summary": "仅装备1把枪，且本次攻击属性与所装备武器相同时，伤害+15%。斧、枪、机械三类任选其一。",
@@ -99602,7 +102665,11 @@ export const SKILL_LABELING_CATALOG = {
           "coverage": {
             "permissionPartIds": [],
             "conditionPartIds": [
-              "spear-option"
+              "spear-option",
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-element-damage"
             ]
           },
           "condition": {
@@ -99648,10 +102715,21 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 15,
               "effectIdentity": "ee807560b8e94ab2:matching-element-damage",
               "effectStacking": "once-per-skill",
-              "weaponBranch": "spear"
+              "weaponBranch": "spear",
+              "matchingElementReviewed": true
             }
           ],
-          "calculationNote": "同一技能在斧、枪、机械三页共享记录；三种武器是OR选项，不要求同时装备。伤害属性取实际武器，不固定到火冰等属性；只算同一项15%，不因三个标签叠成45%。单武器已贴标签，动态属性匹配及对应增伤仍待标签。"
+          "calculationNote": "按实际攻击属性与装备武器属性比较，匹配才生效；不固定到某一种属性。保留武器种类、总数量及特技／必杀限制；同一效果跨页只计一次。",
+          "matchingElementReview": {
+            "conditionPartIds": [
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-element-damage"
+            ],
+            "dynamicElement": true,
+            "numericEffectInjection": false
+          }
         },
         "机械": {
           "summary": "仅装备1把机械，且本次攻击属性与所装备武器相同时，伤害+15%。斧、枪、机械三类任选其一。",
@@ -99661,7 +102739,11 @@ export const SKILL_LABELING_CATALOG = {
           "coverage": {
             "permissionPartIds": [],
             "conditionPartIds": [
-              "machine-option"
+              "machine-option",
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-element-damage"
             ]
           },
           "condition": {
@@ -99707,10 +102789,21 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 15,
               "effectIdentity": "ee807560b8e94ab2:matching-element-damage",
               "effectStacking": "once-per-skill",
-              "weaponBranch": "machine"
+              "weaponBranch": "machine",
+              "matchingElementReviewed": true
             }
           ],
-          "calculationNote": "同一技能在斧、枪、机械三页共享记录；三种武器是OR选项，不要求同时装备。伤害属性取实际武器，不固定到火冰等属性；只算同一项15%，不因三个标签叠成45%。单武器已贴标签，动态属性匹配及对应增伤仍待标签。"
+          "calculationNote": "按实际攻击属性与装备武器属性比较，匹配才生效；不固定到某一种属性。保留武器种类、总数量及特技／必杀限制；同一效果跨页只计一次。",
+          "matchingElementReview": {
+            "conditionPartIds": [
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-element-damage"
+            ],
+            "dynamicElement": true,
+            "numericEffectInjection": false
+          }
         },
         "单手": {
           "summary": "斧、枪、机械三选一且只装备1把，攻击与武器属性相同时，伤害+15%。",
@@ -99764,13 +102857,9 @@ export const SKILL_LABELING_CATALOG = {
         "机械",
         "单手"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "仅装备斧、枪、机械三选一的1把武器，且攻击属性与该武器相同时，伤害+15%"
-      ],
-      "remainingConditions": [
-        "本次攻击属性与所装备武器的属性相同"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "6952af1368802c34",
@@ -101245,7 +104334,12 @@ export const SKILL_LABELING_CATALOG = {
           "coverage": {
             "permissionPartIds": [],
             "conditionPartIds": [
-              "single-weapon-count"
+              "single-weapon-count",
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-damage",
+              "matching-cap"
             ]
           },
           "condition": {
@@ -101272,7 +104366,9 @@ export const SKILL_LABELING_CATALOG = {
                 "attackElementRelation": "same-as-equipped-weapon"
               },
               "effectStacking": "once-per-skill",
-              "valuePercent": 20
+              "valuePercent": 20,
+              "effectIdentity": "810e5630e720f446:matching-damage",
+              "matchingElementReviewed": true
             },
             {
               "group": "any-matching-element-cap",
@@ -101293,23 +104389,31 @@ export const SKILL_LABELING_CATALOG = {
                 "attackElementRelation": "same-as-equipped-weapon"
               },
               "effectStacking": "once-per-skill",
-              "capPoints": 2000
+              "capPoints": 2000,
+              "effectIdentity": "810e5630e720f446:matching-cap",
+              "matchingElementReviewed": true
             }
           ],
-          "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+          "calculationNote": "按实际攻击属性与装备武器属性比较，匹配才生效；不固定到某一种属性。保留武器种类、总数量及特技／必杀限制；同一效果跨页只计一次。",
+          "matchingElementReview": {
+            "conditionPartIds": [
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [
+              "matching-damage",
+              "matching-cap"
+            ],
+            "dynamicElement": true,
+            "numericEffectInjection": false
+          }
         }
       },
       "assignedTags": [
         "单手"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "仅1把武器、攻击与武器属性相同时伤害+20%",
-        "仅1把武器、攻击与武器属性相同时上限+2,000"
-      ],
-      "remainingConditions": [
-        "本次攻击属性与装备武器的属性相同"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "73530ee6f38ccc34",
@@ -101988,7 +105092,8 @@ export const SKILL_LABELING_CATALOG = {
             "permissionPartIds": [],
             "conditionPartIds": [
               "dual-weapon-count",
-              "same-weapon-element"
+              "same-weapon-element",
+              "attack-matches-weapon-element"
             ]
           },
           "condition": {
@@ -102016,7 +105121,9 @@ export const SKILL_LABELING_CATALOG = {
                 "attackElementRelation": "same-as-both-equipped-weapons"
               },
               "effectStacking": "once-per-skill",
-              "valuePercent": 15
+              "valuePercent": 15,
+              "effectIdentity": "0257679d2708509b:matching-skill-damage",
+              "matchingElementReviewed": true
             },
             {
               "group": "same-element-skill-cap",
@@ -102038,7 +105145,9 @@ export const SKILL_LABELING_CATALOG = {
                 "attackElementRelation": "same-as-both-equipped-weapons"
               },
               "effectStacking": "once-per-skill",
-              "capPoints": 1500
+              "capPoints": 1500,
+              "effectIdentity": "0257679d2708509b:matching-skill-cap",
+              "matchingElementReviewed": true
             },
             {
               "group": "same-element-ultimate-damage",
@@ -102060,7 +105169,9 @@ export const SKILL_LABELING_CATALOG = {
                 "attackElementRelation": "same-as-both-equipped-weapons"
               },
               "effectStacking": "once-per-skill",
-              "valuePercent": 15
+              "valuePercent": 15,
+              "effectIdentity": "0257679d2708509b:matching-ultimate-damage",
+              "matchingElementReviewed": true
             },
             {
               "group": "same-element-ultimate-cap",
@@ -102082,10 +105193,20 @@ export const SKILL_LABELING_CATALOG = {
                 "attackElementRelation": "same-as-both-equipped-weapons"
               },
               "effectStacking": "once-per-skill",
-              "capPoints": 1500
+              "capPoints": 1500,
+              "effectIdentity": "0257679d2708509b:matching-ultimate-cap",
+              "matchingElementReviewed": true
             }
           ],
-          "calculationNote": "双武器同属性与同种类是不同条件；武器数和武器之间同属性已贴标签。特技与必杀的伤害及上限均已补齐；攻击与武器的动态属性匹配条件继续待标签。"
+          "calculationNote": "按实际攻击属性与装备武器属性比较，匹配才生效；不固定到某一种属性。保留武器种类、总数量及特技／必杀限制；同一效果跨页只计一次。",
+          "matchingElementReview": {
+            "conditionPartIds": [
+              "attack-matches-weapon-element"
+            ],
+            "effectPartIds": [],
+            "dynamicElement": true,
+            "numericEffectInjection": false
+          }
         },
         "必杀相关": {
           "summary": "2把武器同属性，且本次必杀为该属性时，伤害+15%。；2把武器同属性，且本次必杀为该属性时，上限+1,500。",
@@ -102215,11 +105336,9 @@ export const SKILL_LABELING_CATALOG = {
         "双手",
         "特技相关"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "本次特技／必杀属性等于这2把武器的共同属性"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "1519299bec222fca",
@@ -104999,6 +108118,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "buff-lifetime",
           "kind": "condition",
           "text": "增益持续至战斗不能；各同类型Buff只计最高一项"
+        },
+        {
+          "id": "self-incapacitated-end",
+          "kind": "condition",
+          "text": "该效果持续至自身陷入战斗不能时结束"
         }
       ],
       "tagDetails": {
@@ -105121,6 +108245,10 @@ export const SKILL_LABELING_CATALOG = {
                 {
                   "partId": "buff-lifetime",
                   "text": "增益持续至战斗不能；各同类型Buff只计最高一项"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
                 }
               ],
               "pendingPartIds": []
@@ -105160,18 +108288,135 @@ export const SKILL_LABELING_CATALOG = {
                 {
                   "partId": "buff-lifetime",
                   "text": "增益持续至战斗不能；各同类型Buff只计最高一项"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
                 }
               ],
               "pendingPartIds": []
             }
           ],
           "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "战斗开始40秒后，获得必杀伤害+20%的Buff，持续至战斗不能。；战斗开始40秒后，获得必杀上限+10,000的Buff，持续至战斗不能。",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-incapacitated-end"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "948-ultimate-damage",
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "战斗开始40秒后，获得必杀伤害+20%的Buff，持续至战斗不能。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate"
+              },
+              "valuePercent": 20,
+              "activationMode": "delayed-buff",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 40,
+                "retryWhenIncapacitatedSeconds": 40
+              },
+              "endsOn": "incapacitated",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activeByDefault": false,
+              "buffType": "ultimate-damage-up",
+              "effectIdentity": "8cbe5117030485dc:ultimate-damage",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "effect-termination",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始40秒后，获得必杀伤害+20%、伤害上限+10,000的增益效果（持续至战斗不能；若赋予增益时处于战斗不能状态，则再过40秒后赋予）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "delayed-grant",
+                  "text": "战斗开始40秒后获得；赋予时战斗不能则再等40秒"
+                },
+                {
+                  "partId": "buff-lifetime",
+                  "text": "增益持续至战斗不能；各同类型Buff只计最高一项"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "group": "948-ultimate-cap",
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "战斗开始40秒后，获得必杀上限+10,000的Buff，持续至战斗不能。",
+              "target": "self",
+              "isBuff": true,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate"
+              },
+              "capPoints": 10000,
+              "activationMode": "delayed-buff",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 40,
+                "retryWhenIncapacitatedSeconds": 40
+              },
+              "endsOn": "incapacitated",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activeByDefault": false,
+              "buffType": "ultimate-cap-up",
+              "effectIdentity": "8cbe5117030485dc:ultimate-cap",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "effect-termination",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "战斗开始40秒后，获得必杀伤害+20%、伤害上限+10,000的增益效果（持续至战斗不能；若赋予增益时处于战斗不能状态，则再过40秒后赋予）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "delayed-grant",
+                  "text": "战斗开始40秒后获得；赋予时战斗不能则再等40秒"
+                },
+                {
+                  "partId": "buff-lifetime",
+                  "text": "增益持续至战斗不能；各同类型Buff只计最高一项"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "战斗时间"
+        "战斗时间",
+        "自身倒下／战斗不能"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -111718,12 +114963,14 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         },
         "杂项": {
-          "summary": "被敌人锁定的优先度+1；优先度不是概率百分比。",
+          "summary": "被敌人锁定的优先度+1；优先度不是概率百分比。；受到敌人物理伤害+10%；作为本技能对应加成的负面效果一并保留。；受到敌人必杀伤害+10%；作为本技能对应加成的负面效果一并保留。",
           "relation": "misc-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "target-priority"
+              "target-priority",
+              "physical-incoming-up",
+              "ultimate-incoming-up"
             ],
             "conditionPartIds": []
           },
@@ -111746,6 +114993,62 @@ export const SKILL_LABELING_CATALOG = {
               "sourceClause": "受到敌人物理攻击和必杀的伤害+10%，被敌人锁定的优先度+1。",
               "skillReviewConditions": [],
               "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "physical-incoming-up"
+              ],
+              "summary": "受到敌人物理伤害+10%；作为本技能对应加成的负面效果一并保留。",
+              "operation": "incoming-damage-up",
+              "target": "self",
+              "isBuff": false,
+              "valuePercent": 10,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "classificationContext": {
+                "kind": "associated-drawback",
+                "benefitPartIds": [
+                  "target-priority"
+                ],
+                "isBenefit": false
+              },
+              "remainingRole": "direct-effect",
+              "effectIdentity": "f774ee12bcd73741:physical-incoming-up",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "受到敌人物理攻击和必杀的伤害+10%，被敌人锁定的优先度+1。",
+              "skillReviewConditions": [],
+              "pendingPartIds": [],
+              "group": "aggro-up"
+            },
+            {
+              "partIds": [
+                "ultimate-incoming-up"
+              ],
+              "summary": "受到敌人必杀伤害+10%；作为本技能对应加成的负面效果一并保留。",
+              "operation": "incoming-damage-up",
+              "target": "self",
+              "isBuff": false,
+              "valuePercent": 10,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "ultimate"
+              },
+              "classificationContext": {
+                "kind": "associated-drawback",
+                "benefitPartIds": [
+                  "target-priority"
+                ],
+                "isBenefit": false
+              },
+              "remainingRole": "direct-effect",
+              "effectIdentity": "f774ee12bcd73741:ultimate-incoming-up",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "受到敌人物理攻击和必杀的伤害+10%，被敌人锁定的优先度+1。",
+              "skillReviewConditions": [],
+              "pendingPartIds": [],
+              "group": "aggro-up"
             }
           ],
           "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
@@ -114790,13 +118093,77 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "杂项": {
+          "summary": "装备「格挡」技能并成功格挡时，SCT少量回复；回复量待确认。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "event": "guard-success"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "group": "required-skill-204",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "装备「格挡」技能并成功格挡时，SCT少量回复；回复量待确认。",
+              "operation": "restore-sct-unconfirmed",
+              "effectIdentity": "全部技能:all:197:sct-restore",
+              "requiredSelfSkills": {
+                "operator": "AND",
+                "skillIds": [
+                  "全部技能:all:31"
+                ],
+                "subject": "self",
+                "mustBeEquipped": true
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "[仅装备防御时生效] 防御会略微恢复 SCT",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "要求装备的是格挡技能，不是防具"
+                },
+                {
+                  "partId": "guard-success",
+                  "text": "成功格挡时触发"
+                },
+                {
+                  "partId": "sct-amount",
+                  "text": "具体SCT回复量待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "sct-amount"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "特技相关",
         "防御",
-        "格挡"
+        "格挡",
+        "杂项"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -116758,7 +120125,6 @@ export const SKILL_LABELING_CATALOG = {
               "group": "1271-hp-restore",
               "remainingRole": "condition-benefit",
               "pendingPartIds": [
-                "self-death",
                 "combat-healing-parameters"
               ]
             },
@@ -116817,24 +120183,152 @@ export const SKILL_LABELING_CATALOG = {
                 }
               ],
               "pendingPartIds": [
-                "self-death",
                 "combat-healing-parameters"
               ]
             }
           ],
           "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认。；自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-death"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "paired-living-ally",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "resource": "HP",
+              "trigger": {
+                "event": "became-incapacitated",
+                "actor": "self"
+              },
+              "pair": {
+                "otherEquippedCount": 1,
+                "requiredSkillId": "6958b9c4d7aad7cb",
+                "targetMustBeAlive": true
+              },
+              "maxTriggers": 1,
+              "resetScope": "pair",
+              "partIds": [
+                "hp-restore"
+              ],
+              "summary": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认。",
+              "operation": "restore-hp",
+              "amountStatus": "unconfirmed",
+              "group": "1271-hp-restore",
+              "effectIdentity": "6958b9c4d7aad7cb:hp-restore",
+              "sourceClause": "除自身外，若刚好只有1名友方角色也装备“Dear Hearts”，则自身战斗不能时，使仍存活的配对角色HP大幅恢复，并使其所有特技的SCT恢复15秒（每对角色仅限触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "paired-skill",
+                  "text": "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
+                },
+                {
+                  "partId": "self-death",
+                  "text": "技能持有者自身陷入战斗不能时触发"
+                },
+                {
+                  "partId": "once-per-pair",
+                  "text": "每对角色最多触发1次，不是每个角色各1次"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ],
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "trigger",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "target": "paired-living-ally",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 15,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "became-incapacitated",
+                "actor": "self"
+              },
+              "pair": {
+                "otherEquippedCount": 1,
+                "requiredSkillId": "6958b9c4d7aad7cb",
+                "targetMustBeAlive": true
+              },
+              "maxTriggers": 1,
+              "resetScope": "pair",
+              "group": "1271-sct-restore",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。",
+              "operation": "restore-sct-seconds",
+              "effectIdentity": "6958b9c4d7aad7cb:sct-restore",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "trigger",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "除自身外，若刚好只有1名友方角色也装备“Dear Hearts”，则自身战斗不能时，使仍存活的配对角色HP大幅恢复，并使其所有特技的SCT恢复15秒（每对角色仅限触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "paired-skill",
+                  "text": "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
+                },
+                {
+                  "partId": "self-death",
+                  "text": "技能持有者自身陷入战斗不能时触发"
+                },
+                {
+                  "partId": "once-per-pair",
+                  "text": "每对角色最多触发1次，不是每个角色各1次"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "特技相关",
         "HP回复",
-        "触发次数与重置"
+        "触发次数与重置",
+        "自身倒下／战斗不能"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "技能持有者自身陷入战斗不能时触发",
         "HP回复的具体数值与计算公式待确认"
       ]
     },
@@ -122578,18 +126072,61 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "地面状态": {
+          "summary": "自身在地面时，受到敌人物理伤害-10%",
+          "relation": "grounded-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "grounded"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-reduction"
+              ],
+              "summary": "自身在地面时，受到敌人物理伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "effectIdentity": "e8426d9b49aaa341:physical-reduction",
+              "valuePercent": 10,
+              "condition": {
+                "subject": "self",
+                "state": "grounded"
+              },
+              "group": "physical-reduction",
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "在地面上时，受到的来自敌人的物理伤害减少 10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "grounded",
+                  "text": "自身处于地面上"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "防御"
+        "防御",
+        "地面状态"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "自身处于地面上"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:426",
@@ -124617,17 +128154,74 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "向击败自身的敌人赋予物理攻击伤害-20%的减益",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-death"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "enemy-physical-down"
+              ],
+              "summary": "向击败自身的敌人赋予物理攻击伤害-20%的减益",
+              "target": "enemy-who-defeated-self",
+              "isBuff": false,
+              "operation": "apply-enemy-physical-damage-down",
+              "scope": {
+                "direction": "enemy-outgoing",
+                "attackType": "physical"
+              },
+              "effectIdentity": "d1a7d320c0eb0224:enemy-physical-down",
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "incapacitated-by-enemy"
+              },
+              "group": "1270-enemy-physical-down",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "trigger",
+                "event": "incapacitated-by-enemy"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "对击败你的敌人施加减益效果，使其物理攻击伤害降 低 20%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "self-death",
+                  "text": "自身被敌人击败时，只作用于击败自身的敌人"
+                },
+                {
+                  "partId": "duration-unconfirmed",
+                  "text": "物理攻击伤害降低减益的持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "duration-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "异常"
+        "异常",
+        "自身倒下／战斗不能"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "自身被敌人击败时，只作用于击败自身的敌人",
         "物理攻击伤害降低减益的持续时间待确认"
       ]
     },
@@ -126429,12 +130023,13 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         },
         "魔法": {
-          "summary": "受到敌人魔法伤害-20%。",
+          "summary": "受到敌人魔法伤害-20%。；受到敵人物理伤害+10%；作为本技能对应加成的负面效果一并保留。",
           "relation": "magic-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "magic-reduction"
+              "magic-reduction",
+              "physical-incoming-up"
             ],
             "conditionPartIds": []
           },
@@ -126454,6 +130049,34 @@ export const SKILL_LABELING_CATALOG = {
               "magicRole": "direct-effect",
               "effectIdentity": "7f9e93aba0dee0db:magic-reduction",
               "valuePercent": 20,
+              "group": "reduction"
+            },
+            {
+              "partIds": [
+                "physical-incoming-up"
+              ],
+              "summary": "受到敵人物理伤害+10%；作为本技能对应加成的负面效果一并保留。",
+              "operation": "incoming-damage-up",
+              "target": "self",
+              "isBuff": false,
+              "valuePercent": 10,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "classificationContext": {
+                "kind": "associated-drawback",
+                "benefitPartIds": [
+                  "magic-reduction"
+                ],
+                "isBenefit": false
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "7f9e93aba0dee0db:physical-incoming-up",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "使受到的来自敌人的物理伤害增加 10%，但使受到的 魔法伤害减少 20%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": [],
               "group": "reduction"
             }
           ],
@@ -126494,12 +130117,13 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         },
         "魔抗": {
-          "summary": "受到敌人魔法伤害-20%",
+          "summary": "受到敌人魔法伤害-20%；受到敵人物理伤害+10%；作为本技能对应加成的负面效果一并保留。",
           "relation": "defensive-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
-              "magic-reduction"
+              "magic-reduction",
+              "physical-incoming-up"
             ],
             "conditionPartIds": []
           },
@@ -126523,6 +130147,34 @@ export const SKILL_LABELING_CATALOG = {
               "familyRole": "direct-effect",
               "sourceClause": "使受到的来自敌人的物理伤害增加 10%，但使受到的 魔法伤害减少 20%。",
               "skillReviewConditions": []
+            },
+            {
+              "partIds": [
+                "physical-incoming-up"
+              ],
+              "summary": "受到敵人物理伤害+10%；作为本技能对应加成的负面效果一并保留。",
+              "operation": "incoming-damage-up",
+              "target": "self",
+              "isBuff": false,
+              "valuePercent": 10,
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "classificationContext": {
+                "kind": "associated-drawback",
+                "benefitPartIds": [
+                  "magic-reduction"
+                ],
+                "isBenefit": false
+              },
+              "familyRole": "direct-effect",
+              "effectIdentity": "7f9e93aba0dee0db:physical-incoming-up",
+              "effectStacking": "once-per-skill",
+              "sourceClause": "使受到的来自敌人的物理伤害增加 10%，但使受到的 魔法伤害减少 20%。",
+              "skillReviewConditions": [],
+              "pendingPartIds": [],
+              "group": "incoming-damage-down"
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
@@ -139478,6 +143130,11 @@ export const SKILL_LABELING_CATALOG = {
           "id": "remaining-once-per-wave",
           "kind": "condition",
           "text": "每个Wave最多成功触发1次"
+        },
+        {
+          "id": "self-incapacitated-end",
+          "kind": "condition",
+          "text": "该效果持续至自身陷入战斗不能时结束"
         }
       ],
       "tagDetails": {
@@ -139579,6 +143236,10 @@ export const SKILL_LABELING_CATALOG = {
                 {
                   "partId": "remaining-once-per-wave",
                   "text": "每个Wave最多成功触发1次"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
                 }
               ],
               "pendingPartIds": []
@@ -139642,19 +143303,91 @@ export const SKILL_LABELING_CATALOG = {
                 {
                   "partId": "remaining-once-per-wave",
                   "text": "每个Wave最多成功触发1次"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
                 }
               ],
               "pendingPartIds": []
             }
           ],
           "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "自身拥有至少2种类型时，获得速度Buff：移动速度+2，持续至战斗不能，每Wave最多触发1次",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-incapacitated-end"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "type-count-speed"
+              ],
+              "summary": "自身拥有至少2种类型时，获得速度Buff：移动速度+2，持续至战斗不能，每Wave最多触发1次",
+              "target": "self",
+              "isBuff": true,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1faea4cee43b7137:type-count-speed",
+              "effectStacking": "once-per-skill",
+              "operation": "movement-speed-up",
+              "scope": {
+                "direction": "movement"
+              },
+              "buffType": "speed",
+              "movementSpeedPoints": 2,
+              "changesSctSpeed": false,
+              "condition": {
+                "subject": "self",
+                "metric": "type-count",
+                "operator": "gte",
+                "count": 2
+              },
+              "trigger": {
+                "event": "type-count-qualified",
+                "maxTriggersPerWave": 1
+              },
+              "endsOn": "incapacitated",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "group": "917-type-count-speed",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "effect-termination",
+                "event": "became-incapacitated"
+              },
+              "remainingRole": "condition-benefit",
+              "sourceClause": "自身拥有2种以上类型时，自动获得「速度」效果（持续至战斗不能，每Wave最多1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "self-type-count",
+                  "text": "自身当前类型数至少为2"
+                },
+                {
+                  "partId": "remaining-once-per-wave",
+                  "text": "每个Wave最多成功触发1次"
+                },
+                {
+                  "partId": "self-incapacitated-end",
+                  "text": "该效果持续至自身陷入战斗不能时结束"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
       "assignedTags": [
         "种族／特攻共通",
         "杂项",
-        "触发次数与重置"
+        "触发次数与重置",
+        "自身倒下／战斗不能"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -141768,11 +145501,66 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "杂项": {
+          "summary": "装备格挡时，格挡伤害减免提高；具体幅度待确认",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-effect"
+              ],
+              "summary": "装备格挡时，格挡伤害减免提高；具体幅度待确认",
+              "target": "self",
+              "isBuff": false,
+              "operation": "guard-mitigation-up",
+              "scope": {
+                "direction": "guard"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "magnitudeStatus": "unconfirmed",
+              "effectIdentity": "全部技能:all:32:guard-effect",
+              "sourceClause": "装备「格挡」技能时，格挡的伤害减免效果提高。",
+              "group": "required-skill-31",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能"
+                },
+                {
+                  "partId": "guard-unknown",
+                  "text": "具体幅度或概率待确认"
+                }
+              ],
+              "requiredSelfSkills": {
+                "operator": "AND",
+                "skillIds": [
+                  "全部技能:all:31"
+                ],
+                "subject": "self",
+                "mustBeEquipped": true
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "pendingPartIds": [
+                "guard-unknown"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "防御",
-        "格挡"
+        "格挡",
+        "杂项"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -141895,11 +145683,66 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "杂项": {
+          "summary": "装备格挡时，格挡概率略微提高；具体概率待确认",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-effect"
+              ],
+              "summary": "装备格挡时，格挡概率略微提高；具体概率待确认",
+              "target": "self",
+              "isBuff": false,
+              "operation": "guard-chance-up",
+              "scope": {
+                "direction": "guard"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "magnitudeStatus": "unconfirmed",
+              "effectIdentity": "e7ce580c0a8ae126:guard-effect",
+              "sourceClause": "【仅装备「格挡」时生效】格挡概率略微提升。",
+              "group": "required-skill-32",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能"
+                },
+                {
+                  "partId": "guard-unknown",
+                  "text": "具体幅度或概率待确认"
+                }
+              ],
+              "requiredSelfSkills": {
+                "operator": "AND",
+                "skillIds": [
+                  "全部技能:all:31"
+                ],
+                "subject": "self",
+                "mustBeEquipped": true
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "pendingPartIds": [
+                "guard-unknown"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "防御",
-        "格挡"
+        "格挡",
+        "杂项"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -142022,11 +145865,66 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理／魔法格挡、格挡强化、成功格挡收益、解除敌人格挡分组；格挡技能装备条件与防具装备不同。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
+        },
+        "杂项": {
+          "summary": "装备格挡时，更不容易被破防；具体机制与幅度待确认",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-effect"
+              ],
+              "summary": "装备格挡时，更不容易被破防；具体机制与幅度待确认",
+              "target": "self",
+              "isBuff": false,
+              "operation": "guard-break-resistance-up",
+              "scope": {
+                "direction": "guard"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "magnitudeStatus": "unconfirmed",
+              "effectIdentity": "全部技能:all:37:guard-effect",
+              "sourceClause": "装备「格挡」技能时，更不容易被破防。",
+              "group": "required-skill-36",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能"
+                },
+                {
+                  "partId": "guard-unknown",
+                  "text": "具体幅度或概率待确认"
+                }
+              ],
+              "requiredSelfSkills": {
+                "operator": "AND",
+                "skillIds": [
+                  "全部技能:all:31"
+                ],
+                "subject": "self",
+                "mustBeEquipped": true
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "pendingPartIds": [
+                "guard-unknown"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "防御",
-        "格挡"
+        "格挡",
+        "杂项"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -142215,12 +146113,74 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        },
+        "杂项": {
+          "summary": "装备「格挡」技能时，格挡成功会回复少量HP。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "guard-equipped"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "guard-heal"
+              ],
+              "summary": "装备「格挡」技能时，格挡成功会回复少量HP。",
+              "target": "self",
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "healing"
+              },
+              "amountStatus": "unconfirmed",
+              "isBuff": false,
+              "trigger": {
+                "event": "guard-success"
+              },
+              "requiresEquippedSkillId": "全部技能:all:31",
+              "effectIdentity": "全部技能:all:35:guard-heal",
+              "sourceClause": "装备「格挡」技能时，格挡成功会回复少量HP。",
+              "group": "required-skill-34",
+              "skillReviewConditions": [
+                {
+                  "partId": "guard-equipped",
+                  "text": "装备「格挡」技能"
+                },
+                {
+                  "partId": "guard-success",
+                  "text": "成功格挡时触发"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "requiredSelfSkills": {
+                "operator": "AND",
+                "skillIds": [
+                  "全部技能:all:31"
+                ],
+                "subject": "self",
+                "mustBeEquipped": true
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "防御",
         "格挡",
-        "HP回复"
+        "HP回复",
+        "杂项"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -145206,16 +149166,75 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "自身被敌人击败时，有概率使该敌人陷入疾病；疾病期间无法恢复HP。概率与持续时间待确认。",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-death"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "apply-disease"
+              ],
+              "summary": "自身被敌人击败时，有概率使该敌人陷入疾病；疾病期间无法恢复HP。概率与持续时间待确认。",
+              "operation": "apply-status",
+              "target": "enemy-who-defeated-self",
+              "scope": {
+                "direction": "target-status",
+                "status": "disease",
+                "statusKind": "basic-ailment"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "incapacitated-by-enemy"
+              },
+              "chanceStatus": "unconfirmed",
+              "respectsTargetStatusResistance": true,
+              "statusDurationStatus": "unconfirmed",
+              "statusMeaning": "prevents-HP-recovery",
+              "group": "1305-apply-disease",
+              "effectIdentity": "c9165a184c124aab:apply-disease",
+              "isBuff": false,
+              "sourceClause": "自身被敌人击败时，有概率使击败自己的敌人陷入疾病状态（疾病状态下无法恢复生命值）。",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "trigger",
+                "event": "incapacitated-by-enemy"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "skillReviewConditions": [
+                {
+                  "partId": "self-death",
+                  "text": "自身被敌人击败时，仅针对击败自己的敌人"
+                },
+                {
+                  "partId": "proc-unconfirmed",
+                  "text": "疾病赋予概率、持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "proc-unconfirmed"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "异常",
-        "HP回复"
+        "HP回复",
+        "自身倒下／战斗不能"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "自身被敌人击败时，仅针对击败自己的敌人",
         "疾病赋予概率、持续时间待确认"
       ]
     },
@@ -145779,15 +149798,72 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "自身倒下／战斗不能": {
+          "summary": "自身被敌人击败时，给击败自己的敌人施加受到伤害+20%的减益；持续时间待确认。不是自身伤害+20%。",
+          "relation": "self-incapacitated-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "self-death"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "enemy-vulnerability"
+              ],
+              "summary": "自身被敌人击败时，给击败自己的敌人施加受到伤害+20%的减益；持续时间待确认。不是自身伤害+20%。",
+              "operation": "apply-target-vulnerability",
+              "target": "enemy-who-defeated-self",
+              "scope": {
+                "direction": "target-incoming",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 20,
+              "isDebuff": true,
+              "appliedDurationStatus": "unconfirmed",
+              "trigger": {
+                "event": "incapacitated-by-enemy",
+                "actor": "self"
+              },
+              "group": "1316-enemy-vulnerability",
+              "effectIdentity": "01b4b9edd30c865e:enemy-vulnerability",
+              "isBuff": false,
+              "sourceClause": "对击败你的敌人施加减益效果，使受到的伤害增加 20%。",
+              "selfIncapacitation": {
+                "actor": "self",
+                "mode": "trigger",
+                "event": "incapacitated-by-enemy"
+              },
+              "remainingRole": "condition-benefit",
+              "effectStacking": "once-per-skill",
+              "skillReviewConditions": [
+                {
+                  "partId": "self-death",
+                  "text": "自身被敌人击败时，仅作用于击败自己的敌人"
+                },
+                {
+                  "partId": "debuff-duration",
+                  "text": "易伤减益的持续时间待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "debuff-duration"
+              ]
+            }
+          ],
+          "calculationNote": "保留原文限定与实际生效条件；未知参数继续见待判断项。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
-        "异常"
+        "异常",
+        "自身倒下／战斗不能"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "自身被敌人击败时，仅作用于击败自己的敌人",
         "易伤减益的持续时间待确认"
       ]
     },
@@ -149601,8 +153677,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 55,
-        "partial": 32,
+        "ready": 70,
+        "partial": 17,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -149791,7 +153867,8 @@ export const SKILL_LABELING_CATALOG = {
         "defense-incoming-damage-down-faith-provide",
         "defense-equipment-stat-up-machine",
         "defense-stat-add",
-        "defense-apply-physical-vulnerability"
+        "defense-apply-physical-vulnerability",
+        "defense-reference-984"
       ],
       "overviewLabel": "全部防御（分组）",
       "separateSections": true,
@@ -149800,8 +153877,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 123,
         "notRelatedUnique": 812,
-        "ready": 82,
-        "partial": 41,
+        "ready": 96,
+        "partial": 27,
         "unknown": 0
       }
     },
@@ -149923,7 +154000,8 @@ export const SKILL_LABELING_CATALOG = {
         "mnd-incoming-damage-down-full-ultimate",
         "mnd-equipment-stat-up-machine",
         "mnd-incoming-damage-down-any-armor",
-        "mnd-stat-down-buff"
+        "mnd-stat-down-buff",
+        "mnd-reference-984"
       ],
       "overviewLabel": "全部魔抗（分组）",
       "separateSections": true,
@@ -149932,8 +154010,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 77,
         "notRelatedUnique": 858,
-        "ready": 50,
-        "partial": 27,
+        "ready": 61,
+        "partial": 16,
         "unknown": 0
       }
     },
@@ -150503,8 +154581,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 39,
         "notRelatedUnique": 896,
-        "ready": 13,
-        "partial": 26,
+        "ready": 14,
+        "partial": 25,
         "unknown": 0
       }
     },
@@ -150628,8 +154706,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 51,
         "notRelatedUnique": 884,
-        "ready": 32,
-        "partial": 19,
+        "ready": 41,
+        "partial": 10,
         "unknown": 0,
         "previousBasicMagicUnique": 43,
         "additionalRelatedUnique": 8
@@ -150947,7 +155025,10 @@ export const SKILL_LABELING_CATALOG = {
         "899aa4edeab83540",
         "全部技能:all:917",
         "f06cd362877374b9",
-        "af2b1b7f6ebbb498"
+        "af2b1b7f6ebbb498",
+        "86ad4fdedf4c3869",
+        "127eab1363110062",
+        "07cab38a1e00eaa5"
       ],
       "childKeys": [
         "physical-damage",
@@ -151060,17 +155141,21 @@ export const SKILL_LABELING_CATALOG = {
         "physical-race-bird-damage",
         "physical-race-bird-cap",
         "physical-race-dragon-damage",
-        "physical-race-dragon-cap"
+        "physical-race-dragon-cap",
+        "physical-reference-593",
+        "physical-reference-1779",
+        "physical-reference-1066",
+        "physical-reference-1941"
       ],
       "overviewLabel": "全部物理（分组）",
       "separateSections": true,
       "scopeDescription": "物理伤害增加是其中一项；物理上限、属性／目标限定、减伤、特攻资格、暴击、格挡／闪避、参照计算、Hit变化与受击触发分别分组。触发与效果分开，共用已审核标签；每组按完整、部分、无法判断排序，总数按技能去重。",
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 230,
-        "notRelatedUnique": 705,
-        "ready": 197,
-        "partial": 33,
+        "relatedUnique": 233,
+        "notRelatedUnique": 702,
+        "ready": 202,
+        "partial": 31,
         "unknown": 0
       }
     },
@@ -151207,7 +155292,13 @@ export const SKILL_LABELING_CATALOG = {
         "ce7f716ec611a6d3",
         "c0fa524208139962",
         "9a64344759c572ed",
-        "cb30f3c1c621732d"
+        "cb30f3c1c621732d",
+        "240bff829bf6cbe6",
+        "762fb2ff5d9381f0",
+        "96db78d77cedf5cf",
+        "0d0bdf3f7c6e0b5a",
+        "b7e3b644c937e9da",
+        "aa48351ee0991a93"
       ],
       "childKeys": [
         "magic-damage-damage",
@@ -151280,17 +155371,25 @@ export const SKILL_LABELING_CATALOG = {
         "magic-damage-race-sniper-killer",
         "magic-damage-team-damage",
         "magic-damage-high-mp-reduction",
-        "magic-damage-time-damage"
+        "magic-damage-time-damage",
+        "magic-damage-reference-169",
+        "magic-damage-reference-357",
+        "magic-damage-reference-441",
+        "magic-damage-reference-1365",
+        "magic-damage-reference-524",
+        "magic-damage-reference-1066",
+        "magic-damage-reference-1941",
+        "magic-damage-reference-1694"
       ],
       "overviewLabel": "全部魔法（分组）",
       "separateSections": true,
       "scopeDescription": "魔法伤害增加是其中一项；上限、属性／目标限定、咏唱、回复魔法、暴击资格、特攻资格、承伤与触发效果分别分组。魔力另列；种族名不代表魔法攻击。共用既有标签，每组按完整、部分、无法判断排序，总数按技能去重。",
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 130,
-        "notRelatedUnique": 805,
-        "ready": 110,
-        "partial": 20,
+        "relatedUnique": 136,
+        "notRelatedUnique": 799,
+        "ready": 115,
+        "partial": 21,
         "unknown": 0
       }
     },
@@ -151573,8 +155672,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
-        "ready": 92,
-        "partial": 25,
+        "ready": 100,
+        "partial": 17,
         "unknown": 0
       }
     },
@@ -151723,8 +155822,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 21,
         "notRelatedUnique": 914,
-        "ready": 1,
-        "partial": 20,
+        "ready": 2,
+        "partial": 19,
         "unknown": 0
       }
     },
@@ -151935,8 +156034,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 113,
         "notRelatedUnique": 822,
-        "ready": 104,
-        "partial": 9,
+        "ready": 106,
+        "partial": 7,
         "unknown": 0
       }
     },
@@ -152091,8 +156190,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 82,
         "notRelatedUnique": 853,
-        "ready": 64,
-        "partial": 18,
+        "ready": 66,
+        "partial": 16,
         "unknown": 0
       }
     },
@@ -152125,8 +156224,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 2,
-        "partial": 4,
+        "ready": 4,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -152274,8 +156373,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 45,
         "notRelatedUnique": 890,
-        "ready": 41,
-        "partial": 4,
+        "ready": 42,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -152438,8 +156537,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 32,
-        "partial": 5,
+        "ready": 33,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -152751,8 +156850,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 41,
         "notRelatedUnique": 894,
-        "ready": 39,
-        "partial": 2,
+        "ready": 40,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -152849,8 +156948,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 17,
         "notRelatedUnique": 918,
-        "ready": 11,
-        "partial": 6,
+        "ready": 16,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -152889,8 +156988,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 9,
         "notRelatedUnique": 926,
-        "ready": 7,
-        "partial": 2,
+        "ready": 9,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -152938,8 +157037,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 13,
         "notRelatedUnique": 922,
-        "ready": 10,
-        "partial": 3,
+        "ready": 12,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -153044,8 +157143,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 9,
         "notRelatedUnique": 926,
-        "ready": 6,
-        "partial": 3,
+        "ready": 9,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -153087,8 +157186,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 9,
         "notRelatedUnique": 926,
-        "ready": 8,
-        "partial": 1,
+        "ready": 9,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -153121,8 +157220,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 4,
-        "partial": 2,
+        "ready": 6,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -153177,8 +157276,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 18,
         "notRelatedUnique": 917,
-        "ready": 15,
-        "partial": 3,
+        "ready": 18,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -153250,8 +157349,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 23,
         "notRelatedUnique": 912,
-        "ready": 17,
-        "partial": 6,
+        "ready": 23,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -153300,8 +157399,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 16,
         "notRelatedUnique": 919,
-        "ready": 14,
-        "partial": 2,
+        "ready": 16,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -153444,8 +157543,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 58,
         "notRelatedUnique": 877,
-        "ready": 53,
-        "partial": 5,
+        "ready": 56,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -153490,8 +157589,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 9,
         "notRelatedUnique": 926,
-        "ready": 7,
-        "partial": 2,
+        "ready": 9,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -154472,7 +158571,16 @@ export const SKILL_LABELING_CATALOG = {
         "e0f6942b8d0b10f7",
         "e61761228b58bde4",
         "8ba52a420286cb67",
-        "2e619c768f1f382d"
+        "2e619c768f1f382d",
+        "4a7788e083ce9ea1",
+        "全部技能:all:32",
+        "e7ce580c0a8ae126",
+        "全部技能:all:34",
+        "全部技能:all:35",
+        "全部技能:all:36",
+        "全部技能:all:37",
+        "全部技能:all:197",
+        "2819da7f379bf6f3"
       ],
       "childKeys": [
         "misc-movement-low",
@@ -154503,17 +158611,26 @@ export const SKILL_LABELING_CATALOG = {
         "misc-continuous-movement",
         "misc-real-event-STR",
         "misc-real-event-DEF",
-        "misc-utility-guardian-marker"
+        "misc-utility-guardian-marker",
+        "misc-accuracy-down",
+        "misc-required-skill-31",
+        "misc-required-skill-32",
+        "misc-required-skill-33",
+        "misc-required-skill-34",
+        "misc-required-skill-35",
+        "misc-required-skill-36",
+        "misc-required-skill-204",
+        "misc-required-skill-1583"
       ],
       "overviewLabel": "全部杂项（分组）",
       "separateSections": true,
       "scopeDescription": "按效果、条件、对象和触发时点分别列组；同一效果跨页复用，未知数值与独立条件继续待确认。",
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 34,
-        "notRelatedUnique": 901,
-        "ready": 20,
-        "partial": 14,
+        "relatedUnique": 43,
+        "notRelatedUnique": 892,
+        "ready": 21,
+        "partial": 22,
         "unknown": 0
       }
     },
@@ -155045,8 +159162,133 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 28,
         "notRelatedUnique": 907,
-        "ready": 5,
-        "partial": 23,
+        "ready": 7,
+        "partial": 21,
+        "unknown": 0
+      }
+    },
+    "equipment-stat": {
+      "label": "装备自身数值强化",
+      "passKind": "equipment-stat-effects-and-condition",
+      "displayOrder": [
+        "1a101f308e1eaae6",
+        "51339f350198e9a2",
+        "543736df65bd47f1",
+        "87bd554c95a1dcf1",
+        "52c559efb1ac16a7",
+        "6c8b8402a6d95bd1",
+        "5dc1aeae525c240c",
+        "71f0c15272a753ba",
+        "e64a85601b9b58cc",
+        "e23ff7a9e123570f",
+        "756acbe5f4ea23ca"
+      ],
+      "childKeys": [
+        "equipment-stat-176-STR-attack",
+        "equipment-stat-176-INT-effect-1",
+        "equipment-stat-293-STR-attack",
+        "equipment-stat-293-DEF-effect-1",
+        "equipment-stat-599-STR-attack",
+        "equipment-stat-599-DEF-effect-1",
+        "equipment-stat-599-MND-effect-2",
+        "equipment-stat-775-STR-attack",
+        "equipment-stat-775-DEF-effect-1",
+        "equipment-stat-823-STR-attack",
+        "equipment-stat-823-DEF-effect-1",
+        "equipment-stat-823-MND-effect-2",
+        "equipment-stat-828-STR-attack",
+        "equipment-stat-828-DEF-effect-1",
+        "equipment-stat-828-MND-effect-2",
+        "equipment-stat-1515-STR-attack",
+        "equipment-stat-1515-DEF-effect-1",
+        "equipment-stat-1515-MND-effect-2",
+        "equipment-stat-1690-STR-attack",
+        "equipment-stat-1690-DEF-effect-1",
+        "equipment-stat-1940-STR-attack",
+        "equipment-stat-1940-DEF-effect-1",
+        "equipment-stat-1940-MND-effect-2",
+        "equipment-stat-1059-INT-effect-1",
+        "equipment-stat-1059-DEF-defense",
+        "equipment-stat-1059-MND-effect-2",
+        "equipment-stat-641-INT-magic",
+        "equipment-stat-641-MND-effect-1"
+      ],
+      "overviewLabel": "全部装备自身数值强化（分组）",
+      "separateSections": true,
+      "scopeDescription": "按具体效果分别展示；完整保留数值基数、作用对象及触发条件。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 11,
+        "notRelatedUnique": 924,
+        "ready": 11,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "grounded": {
+      "label": "地面状态",
+      "passKind": "grounded-effects-and-condition",
+      "displayOrder": [
+        "e8426d9b49aaa341"
+      ],
+      "childKeys": [
+        "grounded-physical-reduction"
+      ],
+      "overviewLabel": "全部地面状态（分组）",
+      "separateSections": true,
+      "scopeDescription": "按具体效果分别展示；完整保留数值基数、作用对象及触发条件。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated": {
+      "label": "自身倒下／战斗不能",
+      "passKind": "self-incapacitated-effects-and-condition",
+      "displayOrder": [
+        "898c96e867704168",
+        "fea184827daeaa39",
+        "d1a7d320c0eb0224",
+        "6958b9c4d7aad7cb",
+        "c9165a184c124aab",
+        "01b4b9edd30c865e",
+        "a1166f16d23a209d",
+        "8cbe5117030485dc",
+        "719b23004e804e89",
+        "0807ea77755d60fc",
+        "1faea4cee43b7137",
+        "ef62dd0cf4192724"
+      ],
+      "childKeys": [
+        "self-incapacitated-183-revival",
+        "self-incapacitated-431-opening-effect-1",
+        "self-incapacitated-1270-enemy-physical-down",
+        "self-incapacitated-1271-hp-restore",
+        "self-incapacitated-1271-sct-restore",
+        "self-incapacitated-1305-apply-disease",
+        "self-incapacitated-1316-enemy-vulnerability",
+        "self-incapacitated-939-damage",
+        "self-incapacitated-948-ultimate-damage",
+        "self-incapacitated-948-ultimate-cap",
+        "self-incapacitated-916-opening-effect-1",
+        "self-incapacitated-1009-opening-effect-1",
+        "self-incapacitated-1009-opening-effect-2",
+        "self-incapacitated-917-type-count-speed",
+        "self-incapacitated-1378-effect-1"
+      ],
+      "overviewLabel": "全部自身倒下／战斗不能（分组）",
+      "separateSections": true,
+      "scopeDescription": "按具体效果分别展示；完整保留数值基数、作用对象及触发条件。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 12,
+        "notRelatedUnique": 923,
+        "ready": 6,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -155188,8 +159430,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 14,
         "notRelatedUnique": 921,
-        "ready": 11,
-        "partial": 3,
+        "ready": 13,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -155214,8 +159456,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 10,
         "notRelatedUnique": 925,
-        "ready": 9,
-        "partial": 1,
+        "ready": 10,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -155238,8 +159480,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 8,
         "notRelatedUnique": 927,
-        "ready": 6,
-        "partial": 2,
+        "ready": 8,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -155259,8 +159501,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 4,
-        "partial": 1,
+        "ready": 5,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -155332,8 +159574,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -155350,8 +159592,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 1,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -155370,8 +159612,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 3,
-        "partial": 1,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -155388,8 +159630,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 1,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -155993,8 +160235,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -156198,8 +160440,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -156215,8 +160457,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -156783,8 +161025,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -157830,8 +162072,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -158174,8 +162416,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 3,
         "notRelatedUnique": 932,
-        "ready": 2,
-        "partial": 1,
+        "ready": 3,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -159864,8 +164106,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -161355,8 +165597,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 5,
-        "partial": 1,
+        "ready": 6,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -161719,8 +165961,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162163,8 +166405,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162232,8 +166474,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162250,8 +166492,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162268,8 +166510,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162286,8 +166528,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162304,8 +166546,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162534,8 +166776,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162551,8 +166793,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162568,8 +166810,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162821,8 +167063,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162838,8 +167080,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162855,8 +167097,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -162872,8 +167114,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163314,8 +167556,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163331,8 +167573,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163348,8 +167590,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163365,8 +167607,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163382,8 +167624,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163610,8 +167852,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163627,8 +167869,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163644,8 +167886,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163732,8 +167974,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163749,8 +167991,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163766,8 +168008,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163783,8 +168025,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -163800,8 +168042,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -164220,8 +168462,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -164799,8 +169041,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -164816,8 +169058,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -164833,8 +169075,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -165054,8 +169296,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -165071,8 +169313,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -165158,8 +169400,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -165175,8 +169417,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -165192,8 +169434,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -165209,8 +169451,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -165894,8 +170136,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 5,
-        "partial": 1,
+        "ready": 6,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -166101,8 +170343,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -166118,8 +170360,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -166992,8 +171234,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -167009,8 +171251,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -167363,8 +171605,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -167995,8 +172237,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 74,
         "notRelatedUnique": 861,
-        "ready": 65,
-        "partial": 9,
+        "ready": 67,
+        "partial": 7,
         "unknown": 0
       }
     },
@@ -168103,8 +172345,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 33,
-        "partial": 4,
+        "ready": 34,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -169262,8 +173504,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -170032,8 +174274,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 19,
         "notRelatedUnique": 916,
-        "ready": 15,
-        "partial": 4,
+        "ready": 16,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -170054,8 +174296,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 5,
-        "partial": 1,
+        "ready": 6,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176373,8 +180615,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176391,8 +180633,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176564,8 +180806,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176581,8 +180823,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176726,8 +180968,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176743,8 +180985,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176760,8 +181002,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176796,8 +181038,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176814,8 +181056,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176832,8 +181074,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176935,8 +181177,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176952,8 +181194,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -176969,8 +181211,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177020,8 +181262,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177037,8 +181279,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177054,8 +181296,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177089,8 +181331,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177106,8 +181348,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177123,8 +181365,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177248,8 +181490,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177265,8 +181507,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177387,8 +181629,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177743,8 +181985,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 16,
         "notRelatedUnique": 919,
-        "ready": 13,
-        "partial": 3,
+        "ready": 14,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -177840,8 +182082,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 0,
-        "partial": 4,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177945,8 +182187,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -177962,8 +182204,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178155,8 +182397,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178172,8 +182414,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178240,8 +182482,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178274,8 +182516,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178291,8 +182533,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178411,8 +182653,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178695,8 +182937,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178712,8 +182954,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178730,8 +182972,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178748,8 +182990,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178789,8 +183031,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 1,
-        "partial": 3,
+        "ready": 2,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -178824,8 +183066,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -178944,8 +183186,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -179047,8 +183289,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -182140,8 +186382,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -185174,8 +189416,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -185565,8 +189807,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -185985,6 +190227,1145 @@ export const SKILL_LABELING_CATALOG = {
       "effectGroup": "utility-guardian-marker",
       "displayOrder": [
         "2e619c768f1f382d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "misc-accuracy-down": {
+      "label": "命中率降低",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "accuracy-down",
+      "displayOrder": [
+        "4a7788e083ce9ea1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "physical-reference-593": {
+      "label": "自身攻击力作为魔法伤害提高的参照量；不直接增加攻击力；魔法攻击伤害提高的效果",
+      "parent": "physical",
+      "conditionTag": "物理",
+      "effectGroup": "reference-593",
+      "displayOrder": [
+        "86ad4fdedf4c3869"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-reference-169": {
+      "label": "自身魔力作为普通攻击伤害提升的参照量；不提高魔力；随魔力提高而提升普通攻击伤害",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "reference-169",
+      "displayOrder": [
+        "240bff829bf6cbe6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-reference-357": {
+      "label": "自身魔力作为物理攻击伤害提升的参照量；不提高魔力；随魔力提高而提升物理攻击伤害",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "reference-357",
+      "displayOrder": [
+        "762fb2ff5d9381f0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-reference-441": {
+      "label": "自身魔力作为物理攻击伤害大幅提升的参照量；不提高魔力；随魔力提高而大幅提升物理攻击伤害",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "reference-441",
+      "displayOrder": [
+        "96db78d77cedf5cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "physical-reference-1779": {
+      "label": "自身攻击力作为主动技能HP恢复量提高的参照量；不直接增加攻击力；主动技能HP恢复量提升及其例外",
+      "parent": "physical",
+      "conditionTag": "物理",
+      "effectGroup": "reference-1779",
+      "displayOrder": [
+        "127eab1363110062"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "magic-damage-reference-1365": {
+      "label": "自身魔力作为转换参照量：装备机械时，开场将其10%加算到攻击力；不提高魔力；装备机械时，开场把自身法强的10%加算到攻击力",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "reference-1365",
+      "displayOrder": [
+        "0d0bdf3f7c6e0b5a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-reference-524": {
+      "label": "战斗开始时，将自身法强的5%加算到防御力",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "reference-524",
+      "displayOrder": [
+        "b7e3b644c937e9da"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "defense-reference-984": {
+      "label": "开场把减少的防御力、魔抗数值加算到自身攻击力",
+      "parent": "defense",
+      "conditionTag": "防御",
+      "effectGroup": "reference-984",
+      "displayOrder": [
+        "975fce45e6663534"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "mnd-reference-984": {
+      "label": "开场把减少的防御力、魔抗数值加算到自身攻击力",
+      "parent": "mnd",
+      "conditionTag": "魔抗",
+      "effectGroup": "reference-984",
+      "displayOrder": [
+        "975fce45e6663534"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "physical-reference-1066": {
+      "label": "开场比较自身攻击力和法强，以比较结果选择伤害加成；不改变攻击力",
+      "parent": "physical",
+      "conditionTag": "物理",
+      "effectGroup": "reference-1066",
+      "displayOrder": [
+        "2d772214490c52ba"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-reference-1066": {
+      "label": "魔力参与开场攻击力与魔力的大小比较，决定伤害加成分支；不改变魔力",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "reference-1066",
+      "displayOrder": [
+        "2d772214490c52ba"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "physical-reference-1941": {
+      "label": "开场比较自身攻击力和法强，以比较结果选择伤害上限加成；不改变攻击力",
+      "parent": "physical",
+      "conditionTag": "物理",
+      "effectGroup": "reference-1941",
+      "displayOrder": [
+        "07cab38a1e00eaa5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-reference-1941": {
+      "label": "魔力参与开场攻击力与魔力的大小比较，决定伤害上限加成分支；不改变魔力",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "reference-1941",
+      "displayOrder": [
+        "07cab38a1e00eaa5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "magic-damage-reference-1694": {
+      "label": "进行冰属性攻击时，该次伤害计算使用的魔力+15%",
+      "parent": "magic-damage",
+      "conditionTag": "魔法",
+      "effectGroup": "reference-1694",
+      "displayOrder": [
+        "aa48351ee0991a93"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-176-STR-attack": {
+      "label": "每把已装备武器自身的攻击力数值+25%；单武器同样生效。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "176-STR-attack",
+      "displayOrder": [
+        "1a101f308e1eaae6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-176-INT-effect-1": {
+      "label": "每把已装备武器自身的魔力数值+25%；单武器同样生效。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "176-INT-effect-1",
+      "displayOrder": [
+        "1a101f308e1eaae6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-293-STR-attack": {
+      "label": "同时装备剑和盔甲时，所装备剑自身的攻击力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "293-STR-attack",
+      "displayOrder": [
+        "51339f350198e9a2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-293-DEF-effect-1": {
+      "label": "同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "293-DEF-effect-1",
+      "displayOrder": [
+        "51339f350198e9a2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-599-STR-attack": {
+      "label": "同时装备爪和衣服时，所装备爪自身的攻击力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "599-STR-attack",
+      "displayOrder": [
+        "543736df65bd47f1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-599-DEF-effect-1": {
+      "label": "同时装备爪和衣服时，所装备衣服自身的防御力+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "599-DEF-effect-1",
+      "displayOrder": [
+        "543736df65bd47f1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-599-MND-effect-2": {
+      "label": "同时装备爪和衣服时，所装备衣服自身的魔抗+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "599-MND-effect-2",
+      "displayOrder": [
+        "543736df65bd47f1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-775-STR-attack": {
+      "label": "同时装备剑和盔甲时，所装备剑自身的攻击力+100%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "775-STR-attack",
+      "displayOrder": [
+        "87bd554c95a1dcf1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-775-DEF-effect-1": {
+      "label": "同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "775-DEF-effect-1",
+      "displayOrder": [
+        "87bd554c95a1dcf1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-823-STR-attack": {
+      "label": "同时装备剑和衣服时，所装备剑自身的攻击力+100%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "823-STR-attack",
+      "displayOrder": [
+        "52c559efb1ac16a7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-823-DEF-effect-1": {
+      "label": "同时装备剑和衣服时，所装备衣服自身的防御力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "823-DEF-effect-1",
+      "displayOrder": [
+        "52c559efb1ac16a7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-823-MND-effect-2": {
+      "label": "同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "823-MND-effect-2",
+      "displayOrder": [
+        "52c559efb1ac16a7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-828-STR-attack": {
+      "label": "同时装备剑和衣服时，所装备剑自身的攻击力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "828-STR-attack",
+      "displayOrder": [
+        "6c8b8402a6d95bd1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-828-DEF-effect-1": {
+      "label": "同时装备剑和衣服时，所装备衣服自身的防御力+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "828-DEF-effect-1",
+      "displayOrder": [
+        "6c8b8402a6d95bd1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-828-MND-effect-2": {
+      "label": "同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "828-MND-effect-2",
+      "displayOrder": [
+        "6c8b8402a6d95bd1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1515-STR-attack": {
+      "label": "同时装备枪和衣服时，所装备枪自身的攻击力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1515-STR-attack",
+      "displayOrder": [
+        "5dc1aeae525c240c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1515-DEF-effect-1": {
+      "label": "同时装备枪和衣服时，所装备衣服自身的防御力+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1515-DEF-effect-1",
+      "displayOrder": [
+        "5dc1aeae525c240c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1515-MND-effect-2": {
+      "label": "同时装备枪和衣服时，所装备衣服自身的魔抗+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1515-MND-effect-2",
+      "displayOrder": [
+        "5dc1aeae525c240c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1690-STR-attack": {
+      "label": "同时装备斧和盔甲时，所装备斧自身的攻击力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1690-STR-attack",
+      "displayOrder": [
+        "71f0c15272a753ba"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1690-DEF-effect-1": {
+      "label": "同时装备斧和盔甲时，所装备盔甲自身的防御力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1690-DEF-effect-1",
+      "displayOrder": [
+        "71f0c15272a753ba"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1940-STR-attack": {
+      "label": "同时装备机械和衣服时，所装备机械自身的攻击力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1940-STR-attack",
+      "displayOrder": [
+        "e64a85601b9b58cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1940-DEF-effect-1": {
+      "label": "同时装备机械和衣服时，所装备衣服自身的防御力+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1940-DEF-effect-1",
+      "displayOrder": [
+        "e64a85601b9b58cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1940-MND-effect-2": {
+      "label": "同时装备机械和衣服时，所装备衣服自身的魔抗+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1940-MND-effect-2",
+      "displayOrder": [
+        "e64a85601b9b58cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1059-INT-effect-1": {
+      "label": "同时装备杖和衣服时，所装备杖自身的魔力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1059-INT-effect-1",
+      "displayOrder": [
+        "e23ff7a9e123570f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1059-DEF-defense": {
+      "label": "同时装备杖和衣服时，所装备衣服自身的防御力+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1059-DEF-defense",
+      "displayOrder": [
+        "e23ff7a9e123570f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-1059-MND-effect-2": {
+      "label": "同时装备杖和衣服时，所装备衣服自身的魔抗+30%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "1059-MND-effect-2",
+      "displayOrder": [
+        "e23ff7a9e123570f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-641-INT-magic": {
+      "label": "同时装备杖和长袍时，所装备杖自身的魔力+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "641-INT-magic",
+      "displayOrder": [
+        "756acbe5f4ea23ca"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "equipment-stat-641-MND-effect-1": {
+      "label": "同时装备杖和长袍时，所装备长袍自身的魔抗+50%。",
+      "parent": "equipment-stat",
+      "conditionTag": "装备自身数值强化",
+      "effectGroup": "641-MND-effect-1",
+      "displayOrder": [
+        "756acbe5f4ea23ca"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "grounded-physical-reduction": {
+      "label": "自身在地面 · 受到物理伤害降低",
+      "parent": "grounded",
+      "conditionTag": "地面状态",
+      "effectGroup": "physical-reduction",
+      "displayOrder": [
+        "e8426d9b49aaa341"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-183-revival": {
+      "label": "自身HP降至0并战斗不能时自动复活，复活后HP为10%；每Wave最多一次。",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "183-revival",
+      "displayOrder": [
+        "898c96e867704168"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-431-opening-effect-1": {
+      "label": "战斗开始时若自身处于倒地状态，以50%HP复活；每个任务最多一次。",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "431-opening-effect-1",
+      "displayOrder": [
+        "fea184827daeaa39"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-1270-enemy-physical-down": {
+      "label": "向击败自身的敌人赋予物理攻击伤害-20%的减益",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "1270-enemy-physical-down",
+      "displayOrder": [
+        "d1a7d320c0eb0224"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-1271-hp-restore": {
+      "label": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认。",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "1271-hp-restore",
+      "displayOrder": [
+        "6958b9c4d7aad7cb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-1271-sct-restore": {
+      "label": "自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "1271-sct-restore",
+      "displayOrder": [
+        "6958b9c4d7aad7cb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-1305-apply-disease": {
+      "label": "自身被敌人击败时，有概率使该敌人陷入疾病；疾病期间无法恢复HP。概率与持续时间待确认。",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "1305-apply-disease",
+      "displayOrder": [
+        "c9165a184c124aab"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-1316-enemy-vulnerability": {
+      "label": "自身被敌人击败时，给击败自己的敌人施加受到伤害+20%的减益；持续时间待确认。不是自身伤害+20%。",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "1316-enemy-vulnerability",
+      "displayOrder": [
+        "01b4b9edd30c865e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-939-damage": {
+      "label": "战斗开始40秒后获得伤害+20%的Buff，持续至自身战斗不能；赋予时倒下则再等40秒。 · 至自身战斗不能",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "939-damage",
+      "displayOrder": [
+        "a1166f16d23a209d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-948-ultimate-damage": {
+      "label": "战斗开始40秒后，获得必杀伤害+20%的Buff，持续至战斗不能。 · 至自身战斗不能",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "948-ultimate-damage",
+      "displayOrder": [
+        "8cbe5117030485dc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-948-ultimate-cap": {
+      "label": "战斗开始40秒后，获得必杀上限+10,000的Buff，持续至战斗不能。 · 至自身战斗不能",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "948-ultimate-cap",
+      "displayOrder": [
+        "8cbe5117030485dc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-916-opening-effect-1": {
+      "label": "开场随机追加1种类型，持续至战斗不能 · 至自身战斗不能",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "916-opening-effect-1",
+      "displayOrder": [
+        "719b23004e804e89"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-1009-opening-effect-1": {
+      "label": "开场获得暴击率+15个百分点Buff，持续至自身战斗不能。 · 至自身战斗不能",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "1009-opening-effect-1",
+      "displayOrder": [
+        "0807ea77755d60fc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-1009-opening-effect-2": {
+      "label": "战斗开始时自身获得Break值+50%的Buff，持续至自身战斗不能；同类Break值Buff只计当前最高一项。暴击率+15个百分点属于独立效果。 · 至自身战斗不能",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "1009-opening-effect-2",
+      "displayOrder": [
+        "0807ea77755d60fc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-917-type-count-speed": {
+      "label": "自身拥有至少2种类型时，获得速度Buff：移动速度+2，持续至战斗不能，每Wave最多触发1次 · 至自身战斗不能",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "917-type-count-speed",
+      "displayOrder": [
+        "1faea4cee43b7137"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "self-incapacitated-1378-effect-1": {
+      "label": "开场对自身施加移动速度降低减益，持续到自身战斗不能；具体减速数值待确认。 · 至自身战斗不能",
+      "parent": "self-incapacitated",
+      "conditionTag": "自身倒下／战斗不能",
+      "effectGroup": "1378-effect-1",
+      "displayOrder": [
+        "ef62dd0cf4192724"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "misc-required-skill-31": {
+      "label": "同时装备格挡 · 铁壁格挡",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "required-skill-31",
+      "displayOrder": [
+        "全部技能:all:32"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "misc-required-skill-32": {
+      "label": "同时装备格挡 · 警戒",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "required-skill-32",
+      "displayOrder": [
+        "e7ce580c0a8ae126"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "misc-required-skill-33": {
+      "label": "同时装备格挡 · 魔法格挡",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "required-skill-33",
+      "displayOrder": [
+        "全部技能:all:34"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "misc-required-skill-34": {
+      "label": "同时装备格挡 · 治疗格挡",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "required-skill-34",
+      "displayOrder": [
+        "全部技能:all:35"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "misc-required-skill-35": {
+      "label": "同时装备格挡 · 魔力格挡",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "required-skill-35",
+      "displayOrder": [
+        "全部技能:all:36"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "misc-required-skill-36": {
+      "label": "同时装备格挡 · 坚固格挡",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "required-skill-36",
+      "displayOrder": [
+        "全部技能:all:37"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "misc-required-skill-204": {
+      "label": "同时装备格挡 · 格挡充能",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "required-skill-204",
+      "displayOrder": [
+        "全部技能:all:197"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "misc-required-skill-1583": {
+      "label": "同时装备三面技能 · 暗属性上限",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "required-skill-1583",
+      "displayOrder": [
+        "2819da7f379bf6f3"
       ],
       "counts": {
         "reviewedUnique": 935,
@@ -186938,8 +192319,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 935,
         "notRelatedUnique": 0,
-        "ready": 757,
-        "partial": 178,
+        "ready": 787,
+        "partial": 148,
         "unknown": 0
       }
     }

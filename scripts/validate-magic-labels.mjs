@@ -1,3 +1,4 @@
+import {validateClassificationContext} from './validate-classification-supplements.mjs';
 export function validateMagicCoverage(view,detail,assignment,entry){
  const c=detail.coverage;
  if(view.passKind!=='magic-effects-and-condition'||!Array.isArray(c?.effectPartIds)||!Array.isArray(c?.conditionPartIds))throw Error('Missing magic coverage');
@@ -9,6 +10,7 @@ export function validateMagicCoverage(view,detail,assignment,entry){
  if(new Set(detail.bindings.map(b=>b.effectIdentity)).size!==detail.bindings.length)throw Error('Magic effect duplicated');
 }
 export function validateMagicBinding(detail,assignment,b){
+ if(b.classificationContext)return validateClassificationContext('魔法',detail,assignment,b);
  const c=detail.coverage;
  if(!b.operation||!b.effectIdentity||!b.target||typeof b.isBuff!=='boolean'||!b.scope)throw Error('Missing magic semantics');
  if(!['direct-effect','trigger-benefit','condition-benefit','spell-benefit'].includes(b.magicRole))throw Error('Missing magic relation');
