@@ -19,7 +19,7 @@ test('ultimate review audits all 935 skills, includes all 113 explicit ultimate 
  for(const n of [411,391,1180,1272,1695,1884,1021,1858,1955])assert(!generic.includes(n),source(n).name);
  assert.deepEqual(numbers(labelingView(catalog,'ultimate-boss-ultimate-damage')),[411,624,985,1041,1311]);
  assert.deepEqual(numbers(labelingView(catalog,'ultimate-incoming-ultimate-down')),[521,573,1145,1989]);
- assert.equal(catalog.entries.length,852);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,852);
+ assert.equal(catalog.entries.length,866);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,866);
 });
 
 test('ultimate conditions distinguish full gauges, enemy and self use, single-use buffs, and exact damage and resource effects',()=>{
@@ -39,18 +39,18 @@ test('ultimate conditions distinguish full gauges, enemy and self use, single-us
 });
 
 test('ultimate effects complete cumulatively while unrelated effects and unreviewed conditions stay pending',()=>{
- assert.equal(registry.tagPasses.length,66);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,69);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='必杀相关');for(const a of pass.assignments){const e=entry(Number(catalog.entries.find(e=>e.id===a.skillId).url.split('/').pop())),d=e.tagDetails['必杀相关'];assert.deepEqual(a.partIds,[...d.coverage.effectPartIds,...d.coverage.conditionPartIds]);assert(d.coverage.effectPartIds.length);}
  for(const n of [364,369,732,883,948,1037,1057,1122,1264,1284,1335,1447,666,456,1163,1909,777,1520,1884])assert.equal(entry(n).judgment,'ready',source(n).name);
  for(const n of [217,425,717,976,1145,1214,1272,1617,1695,1858])assert.equal(entry(n).judgment,'partial',source(n).name);
- assert.equal(view.counts.ready,99);assert.equal(view.counts.partial,14);assert.equal(catalog.views.all.counts.ready,540);assert.equal(catalog.views.all.counts.partial,312);
+ assert.equal(view.counts.ready,99);assert.equal(view.counts.partial,14);assert.equal(catalog.views.all.counts.ready,571);assert.equal(catalog.views.all.counts.partial,295);
  assert.deepEqual(entry(666).remainingEffects,[]);assert.deepEqual(entry(666).remainingConditions,[]);
  assert(entry(425).remainingConditions.some(t=>t.includes('持续时间待确认')));
  assert.deepEqual(entry(717).remainingEffects,[]);assert.match(entry(717).remainingConditions.join(''),/自身处于异常状态/);
  assert.deepEqual(entry(777).remainingEffects,[]);
  assert.deepEqual(entry(1272).remainingEffects,[]);assert(entry(1272).remainingEffects.every(t=>!t.includes('必杀')));
  assert(entry(1955).remainingEffects.every(t=>t.includes('物理')&&!t.includes('必杀')));
- assert(!entry(1695).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('物理伤害增加'));assert(!entry(1695).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('伤害增加'));
+ assert(!entry(1695).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('物理伤害增加'));assert(!entry(1695).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('伤害增加'));
  const prior=structuredClone(registry);prior.tagPasses=prior.tagPasses.filter(p=>p.tag!=='必杀相关');assert.equal(resolveSkillLabels(prior).find(e=>e.id===source(883).id).judgment,'partial');
  for(const[n,key]of[[883,'fire'],[1264,'low-hp'],[777,'single-weapon'],[1884,'critical'],[985,'boss']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
 });
@@ -79,7 +79,7 @@ function page(edits={}){
 }
 test('ultimate view shows separate effects, synchronized status ordering, deduplicated search and previous views',()=>{
  const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*113.*822/);assert.match(get('#judgmentSummary').textContent,/99.*14.*0/);assert.match(get('#labelResultCount').textContent,/113 \/ 113/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,59);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,81);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,80);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,61);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,81);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,80);
  const def=get('#labelTable').innerHTML.split('<section ').find(s=>s.includes('id="section-ultimate-defense-up"'));assert(def.indexOf('护罩之力')<def.indexOf('能量循环'));
  const search=get('#labelSearch');search.value='万圣节派对';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 113/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,4);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','ultimate-ultimate-damage');assert(get('#labelTable').innerHTML.includes('万物尽灭'));assert(get('#labelTable').innerHTML.includes('鸣动之深渊'));assert(!get('#labelTable').innerHTML.includes('冲浪冲击'));assert(!get('#labelTable').innerHTML.includes('我想成为完美的存在'));

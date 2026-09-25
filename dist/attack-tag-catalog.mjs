@@ -614,17 +614,130 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "只在自身进入濒死范围时触发，每个Wave最多1次。触发后Buff按各自持续时间结束，回复HP后不会立即取消；同类型Buff只计已生效的最高一项。每Wave次数限制仍单独留待标签判断。"
+        },
+        "防御": {
+          "summary": "自身濒死触发觉醒后，防御力+50%，持续40秒",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "stat-up-buff",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身濒死触发觉醒后，防御力+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "effectIdentity": "4cb37bd11ae3b17f:effect-2",
+              "target": "self",
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 50,
+              "buffType": "stat-def-up",
+              "maxTriggersPerWave": 1,
+              "trigger": {
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "自身濒死触发觉醒后，魔抗+50%，持续40秒",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "stat-up-buff",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "自身濒死触发觉醒后，魔抗+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "effectIdentity": "4cb37bd11ae3b17f:effect-3",
+              "target": "self",
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "stat-up",
+              "valuePercent": 50,
+              "buffType": "stat-mnd-up",
+              "maxTriggersPerWave": 1,
+              "trigger": {
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "濒死"
+        "濒死",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "回复HP",
-        "魔抗提升",
         "移动速度提升"
       ],
       "remainingConditions": [
@@ -1102,6 +1215,107 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "防御": {
+          "summary": "受到物理伤害-20%，保护Buff",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到物理伤害-20%，保护Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "cf4cc4324d7b87b7:effect-2",
+              "group": "incoming-damage-down-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "actor": "self",
+                "event": "wave-start"
+              },
+              "valuePercent": 20,
+              "buffType": "received-physical-damage-down",
+              "activationMode": "triggered-buff",
+              "familyRole": "direct-effect",
+              "sourceClause": "战斗开始时自动发动“勇敢”“灵气”“保护”“魔法屏障”效果。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "开场Buff持续40秒，各同类型Buff同时只计一项"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "受到魔法伤害-20%，魔法屏障Buff",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "cf4cc4324d7b87b7:effect-3",
+              "group": "incoming-damage-down-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 20,
+              "buffType": "received-magic-damage-down",
+              "familyRole": "direct-effect",
+              "sourceClause": "战斗开始时自动发动“勇敢”“灵气”“保护”“魔法屏障”效果。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "开场Buff持续40秒，各同类型Buff同时只计一项"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
@@ -1109,7 +1323,9 @@ export const ATTACK_TAG_CATALOG = {
         "魔力",
         "战斗开始",
         "物理",
-        "魔法"
+        "魔法",
+        "防御",
+        "魔抗"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -1282,17 +1498,101 @@ export const ATTACK_TAG_CATALOG = {
             "basic:90951140c1d42641:1"
           ],
           "relatedSkillIds": []
+        },
+        "防御": {
+          "summary": "现实周日，自身防御力+5%；属于条件属性加成",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "现实周日，自身防御力+5%；属于条件属性加成",
+              "effectIdentity": "90951140c1d42641:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 5,
+              "condition": {
+                "subject": "real-world-calendar",
+                "weekday": "Sunday"
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "周日（现实时间）攻击力、防御力、魔力、魔抗+5%。",
+              "group": "stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "现实时间为周日时生效；不是Buff"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "魔抗+5%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "魔抗+5%",
+              "effectIdentity": "90951140c1d42641:effect-3",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "stat-up",
+              "valuePercent": 5,
+              "condition": {
+                "subject": "real-world-calendar",
+                "weekday": "Sunday"
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "周日（现实时间）攻击力、防御力、魔力、魔抗+5%。",
+              "group": "stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "现实时间为周日时生效；不是Buff"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力"
+        "魔力",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔抗+5%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "现实时间为周日时生效；不是Buff"
       ]
@@ -1996,17 +2296,129 @@ export const ATTACK_TAG_CATALOG = {
             "basic:3e86dffa826956a7:1"
           ],
           "relatedSkillIds": []
+        },
+        "防御": {
+          "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
+              "effectIdentity": "3e86dffa826956a7:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "party-scaled-stat-up",
+              "tiers": [
+                {
+                  "matchingUnits": 2,
+                  "valuePercent": 5
+                },
+                {
+                  "matchingUnits": 3,
+                  "valuePercent": 10
+                },
+                {
+                  "matchingUnits": 4,
+                  "valuePercent": 15
+                }
+              ],
+              "condition": {
+                "sameSkillId": "3e86dffa826956a7",
+                "minimumMatchingUnits": 2,
+                "includesSelf": true
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+              "group": "party-scaled-stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
+              "effectIdentity": "3e86dffa826956a7:effect-3",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "party-scaled-stat-up",
+              "tiers": [
+                {
+                  "matchingUnits": 2,
+                  "valuePercent": 5
+                },
+                {
+                  "matchingUnits": 3,
+                  "valuePercent": 10
+                },
+                {
+                  "matchingUnits": 4,
+                  "valuePercent": 15
+                }
+              ],
+              "condition": {
+                "sameSkillId": "3e86dffa826956a7",
+                "minimumMatchingUnits": 2,
+                "includesSelf": true
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+              "group": "party-scaled-stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力"
+        "魔力",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔抗提升"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
       ]
@@ -2131,7 +2543,7 @@ export const ATTACK_TAG_CATALOG = {
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；魔抗效果已完成标签；装备自身数值的独立计算机制继续待判断。"
         },
         "铠甲": {
           "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+50%。；同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
@@ -2212,13 +2624,69 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "防御": {
+          "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-sword",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "effectIdentity": "51339f350198e9a2:effect-1",
+              "familyRole": "direct-effect",
+              "sourceClause": "当同时装备剑和盔甲时，剑的攻击力和盔甲的防御力增 加50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／盔甲本身的数值"
+                },
+                {
+                  "partId": "paired-armor",
+                  "text": "同时装备盔甲，与剑条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "剑",
-        "铠甲"
+        "铠甲",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -2622,6 +3090,104 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "必须空武器AND空防具同时满足，不能只满足其中一个就生效；饰品不影响。跨页复用同一技能与效果，不重复叠加。"
+        },
+        "防御": {
+          "summary": "武器和防具都未装备时，自身防御力+10%；饰品不影响。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "stat-up-both-empty",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "武器和防具都未装备时，自身防御力+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-stat",
+              "effectIdentity": "4633d985390976cc:effect-1",
+              "familyRole": "direct-effect",
+              "sourceClause": "当武器和防具栏位未装备任何物品时，攻击力、防御、 魔力和魔抗+10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "未装备武器；须与未装备防具同时满足，饰品不影响"
+                },
+                {
+                  "partId": "empty-armor",
+                  "text": "未装备防具；须与未装备武器同时满足，饰品不影响"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "stat-up-both-empty",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "武器和防具都未装备时，自身魔抗+10%；饰品不影响。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponCount": 0,
+                  "armorCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "stat": "MND",
+              "valuePercent": 10,
+              "base": "character-stat",
+              "effectIdentity": "4633d985390976cc:effect-3",
+              "familyRole": "direct-effect",
+              "sourceClause": "当武器和防具栏位未装备任何物品时，攻击力、防御、 魔力和魔抗+10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "未装备武器；须与未装备防具同时满足，饰品不影响"
+                },
+                {
+                  "partId": "empty-armor",
+                  "text": "未装备防具；须与未装备武器同时满足，饰品不影响"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
@@ -2630,12 +3196,12 @@ export const ATTACK_TAG_CATALOG = {
         "魔力",
         "空武器",
         "空防具",
-        "空武器+防具"
+        "空武器+防具",
+        "防御",
+        "魔抗"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔抗+10%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -2810,6 +3376,108 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "防御": {
+          "summary": "每Wave开始防御力+2%，最多累计10次",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "wave-scaled-stat-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "每Wave开始防御力+2%，最多累计10次",
+              "effectIdentity": "5f6efbf8b35453d2:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "wave-scaled-stat-up",
+              "incrementPercent": 2,
+              "maxStacks": 10,
+              "stacksBase": "actual-wave-starts",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "每个Wave开始时，攻击力、防御力、魔力、魔抗各+2%，「科学」类攻击魔法威力+5%（最多叠加10次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "按Wave累计，最多叠加10次"
+                },
+                {
+                  "partId": "science-magic-condition",
+                  "text": "威力加成仅限科学类攻击魔法"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "每Wave开始魔抗+2%，最多累计10次",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "wave-scaled-stat-up",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "每Wave开始魔抗+2%，最多累计10次",
+              "effectIdentity": "5f6efbf8b35453d2:effect-3",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "wave-scaled-stat-up",
+              "incrementPercent": 2,
+              "maxStacks": 10,
+              "stacksBase": "actual-wave-starts",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "每个Wave开始时，攻击力、防御力、魔力、魔抗各+2%，「科学」类攻击魔法威力+5%（最多叠加10次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "按Wave累计，最多叠加10次"
+                },
+                {
+                  "partId": "science-magic-condition",
+                  "text": "威力加成仅限科学类攻击魔法"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
@@ -2817,12 +3485,12 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "魔力",
         "战斗开始",
-        "魔法"
+        "魔法",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔抗提升"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "按Wave累计，最多叠加10次"
       ]
@@ -2942,12 +3610,47 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "防御": {
+          "summary": "受到的物理攻击伤害-15%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到的物理攻击伤害-15%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "c16c507cf0c2f9db:effect-2",
+              "valuePercent": 15,
+              "group": "incoming-damage-down",
+              "familyRole": "direct-effect",
+              "sourceClause": "类型追加“龙”；攻击力+10%，受到的物理攻击伤害-15%。",
+              "skillReviewConditions": []
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "物理",
-        "龙"
+        "龙",
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -3344,12 +4047,70 @@ export const ATTACK_TAG_CATALOG = {
               "condition-2"
             ]
           }
+        },
+        "防御": {
+          "summary": "敌人发动必杀时，自身获得堡垒：防御力+20%。持续时间待确认。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "stat-up-buff",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "敌人发动必杀时，自身获得堡垒：防御力+20%。持续时间待确认。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "stat-def-up",
+              "durationStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "valuePercent": 20,
+              "ultimateRole": "direct-effect",
+              "operation": "stat-up",
+              "effectIdentity": "7caf7c48fe8b8715:effect-1",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "not-an-attack"
+              },
+              "stat": "DEF",
+              "trigger": {
+                "actor": "enemy",
+                "event": "ultimate-used"
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "敌人使用必杀时，自身自动获得「勇敢」「堡垒」效果。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "敌人使用必杀时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "勇敢／堡垒Buff；各同类型Buff同时只计一项"
+                },
+                {
+                  "partId": "duration-unconfirmed",
+                  "text": "勇敢和堡垒Buff持续时间待确认"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "必杀相关"
+        "必杀相关",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -3428,17 +4189,129 @@ export const ATTACK_TAG_CATALOG = {
             "basic:edc04a2cb5cbc357:1"
           ],
           "relatedSkillIds": []
+        },
+        "防御": {
+          "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
+              "effectIdentity": "edc04a2cb5cbc357:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "party-scaled-stat-up",
+              "tiers": [
+                {
+                  "matchingUnits": 2,
+                  "valuePercent": 7
+                },
+                {
+                  "matchingUnits": 3,
+                  "valuePercent": 14
+                },
+                {
+                  "matchingUnits": 4,
+                  "valuePercent": 21
+                }
+              ],
+              "condition": {
+                "sameSkillId": "edc04a2cb5cbc357",
+                "minimumMatchingUnits": 2,
+                "includesSelf": true
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+              "group": "party-scaled-stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
+              "effectIdentity": "edc04a2cb5cbc357:effect-3",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "party-scaled-stat-up",
+              "tiers": [
+                {
+                  "matchingUnits": 2,
+                  "valuePercent": 7
+                },
+                {
+                  "matchingUnits": 3,
+                  "valuePercent": 14
+                },
+                {
+                  "matchingUnits": 4,
+                  "valuePercent": 21
+                }
+              ],
+              "condition": {
+                "sameSkillId": "edc04a2cb5cbc357",
+                "minimumMatchingUnits": 2,
+                "includesSelf": true
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+              "group": "party-scaled-stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力"
+        "魔力",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔抗提升"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
       ]
@@ -3917,18 +4790,128 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "防御": {
+          "summary": "同时装备爪和衣服时，所装备衣服自身的防御力+30%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-claw",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备爪和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "effectIdentity": "543736df65bd47f1:effect-1",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备爪和衣服时，爪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备爪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备爪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与爪条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "同时装备爪和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-claw",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备爪和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "effectIdentity": "543736df65bd47f1:effect-2",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备爪和衣服时，爪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备爪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备爪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与爪条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "爪",
-        "衣服"
+        "衣服",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "衣服自身的魔抗+30%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "增加的是所装备爪／衣服本身的数值"
       ]
@@ -4214,6 +5197,49 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "防御": {
+          "summary": "限时效果：自身防御力+10%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "限时效果：自身防御力+10%",
+              "effectIdentity": "8ba52a420286cb67:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 10,
+              "availabilityStatus": "limited-event-unconfirmed",
+              "familyRole": "direct-effect",
+              "sourceClause": "战斗开始时，随机为自身追加士兵、骑士、魔法师、狙击手中的1种类型（战斗结束时消失）。\n【限时】攻击力、防御力+10%。",
+              "group": "stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时随机追加类型，战斗结束时消失"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力与防御力加成为限时效果，适用活动时间待确认"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
@@ -4223,7 +5249,8 @@ export const ATTACK_TAG_CATALOG = {
         "士兵",
         "骑士",
         "狙击手",
-        "魔法师"
+        "魔法师",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -4725,7 +5752,7 @@ export const ATTACK_TAG_CATALOG = {
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；魔抗效果已完成标签；装备自身数值的独立计算机制继续待判断。"
         },
         "铠甲": {
           "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+100%。；同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
@@ -4806,13 +5833,69 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "防御": {
+          "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-sword",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 100,
+              "base": "equipped-item-stat",
+              "effectIdentity": "87bd554c95a1dcf1:effect-1",
+              "familyRole": "direct-effect",
+              "sourceClause": "当同时装备剑和盔甲时，剑的攻击力和盔甲的防御力增 加100%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／盔甲本身的数值"
+                },
+                {
+                  "partId": "paired-armor",
+                  "text": "同时装备盔甲，与剑条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "剑",
-        "铠甲"
+        "铠甲",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -4960,12 +6043,46 @@ export const ATTACK_TAG_CATALOG = {
             "basic:db1b48cd6af48689:1"
           ],
           "relatedSkillIds": []
+        },
+        "防御": {
+          "summary": "自身防御力+8%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身防御力+8%",
+              "effectIdentity": "db1b48cd6af48689:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 8,
+              "familyRole": "direct-effect",
+              "sourceClause": "攻击力、防御、生命值+8%",
+              "group": "stat-up",
+              "skillReviewConditions": []
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "生命力"
+        "生命力",
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -5119,7 +6236,7 @@ export const ATTACK_TAG_CATALOG = {
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；魔抗效果已完成标签；装备自身数值的独立计算机制继续待判断。"
         },
         "衣服": {
           "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+100%。；同时装备剑和衣服时，所装备衣服自身的防御力+50%。；同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
@@ -5229,18 +6346,128 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "防御": {
+          "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+50%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-sword",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "effectIdentity": "52c559efb1ac16a7:effect-1",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+100%，所装备衣服的防御力和魔抗+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-sword",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "effectIdentity": "52c559efb1ac16a7:effect-2",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+100%，所装备衣服的防御力和魔抗+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "剑",
-        "衣服"
+        "衣服",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "衣服自身的魔抗+50%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "增加的是所装备剑／衣服本身的数值"
       ]
@@ -5393,7 +6620,7 @@ export const ATTACK_TAG_CATALOG = {
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；魔抗效果已完成标签；装备自身数值的独立计算机制继续待判断。"
         },
         "衣服": {
           "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+50%。；同时装备剑和衣服时，所装备衣服自身的防御力+30%。；同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
@@ -5503,18 +6730,128 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "防御": {
+          "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+30%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-sword",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "effectIdentity": "6c8b8402a6d95bd1:effect-1",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+50%，所装备衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-sword",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "effectIdentity": "6c8b8402a6d95bd1:effect-2",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备剑和衣服时，所装备剑的攻击力+50%，所装备衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备剑"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备剑／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与剑条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "剑",
-        "衣服"
+        "衣服",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "衣服自身的魔抗+30%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "增加的是所装备剑／衣服本身的数值"
       ]
@@ -5683,13 +7020,65 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "防御": {
+          "summary": "我方角色战斗不能时，自身被施加激怒异常，其中防御力下降；比例和持续时间待确认。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "abnormal-stat-down",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "我方角色战斗不能时，自身被施加激怒异常，其中防御力下降；比例和持续时间待确认。",
+              "target": "self",
+              "isBuff": false,
+              "phase": "after-ally-death",
+              "activationMode": "triggered-abnormal-status",
+              "statusId": "rage",
+              "statusKind": "abnormal",
+              "statusDurationStatus": "unconfirmed",
+              "stat": "DEF",
+              "direction": "decrease",
+              "amountStatus": "unconfirmed",
+              "effectIdentity": "835e08fc4710e268:effect-1",
+              "scope": {
+                "direction": "self-stat"
+              },
+              "operation": "abnormal-stat-down",
+              "abnormalStatus": "rage",
+              "magnitudeStatus": "unconfirmed",
+              "durationStatus": "unconfirmed",
+              "familyRole": "direct-effect",
+              "sourceClause": "我方角色陷入战斗不能时，赋予自身“激怒”效果（攻击力提高、防御力降低，且无法使用魔法）",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "我方角色战斗不能时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "施加“激怒”异常状态，具体比例与持续时间待确认"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "友军死亡",
-        "魔法"
+        "魔法",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -5877,12 +7266,56 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        },
+        "防御": {
+          "summary": "Boss Wave中，自身防御力+7%；不是开场限时Buff。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "Boss Wave中，自身防御力+7%；不是开场限时Buff。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "stat": "DEF",
+                "waveType": "boss"
+              },
+              "valuePercent": 7,
+              "activationMode": "boss-wave-state",
+              "group": "stat-up",
+              "effectIdentity": "296bb9556080c9c4:effect-1",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill",
+              "stat": "DEF",
+              "familyRole": "direct-effect",
+              "sourceClause": "BOSS Wave中，攻击力、防御力+7%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "BOSS Wave中生效"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "Boss"
+        "Boss",
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -6100,17 +7533,101 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "防御": {
+          "summary": "开场防御力-10%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "stat-down",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场防御力-10%",
+              "effectIdentity": "975fce45e6663534:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-down",
+              "valuePercent": 10,
+              "familyRole": "direct-effect",
+              "sourceClause": "战斗开始时，自身防御力、魔抗-10%，减少的数值加到攻击力上。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "将减少的防御力、魔抗数值转换并加算到攻击力"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "开场魔抗-10%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "stat-down",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场魔抗-10%",
+              "effectIdentity": "975fce45e6663534:effect-2",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "stat-down",
+              "valuePercent": 10,
+              "familyRole": "direct-effect",
+              "sourceClause": "战斗开始时，自身防御力、魔抗-10%，减少的数值加到攻击力上。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "将减少的防御力、魔抗数值转换并加算到攻击力"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "战斗开始"
+        "战斗开始",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔抗-10%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "将减少的防御力、魔抗数值转换并加算到攻击力"
       ]
@@ -6176,12 +7693,46 @@ export const ATTACK_TAG_CATALOG = {
             "basic:6abbc6031b5d8a35:1"
           ],
           "relatedSkillIds": []
+        },
+        "防御": {
+          "summary": "自身防御力+5%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身防御力+5%",
+              "effectIdentity": "6abbc6031b5d8a35:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 5,
+              "familyRole": "direct-effect",
+              "sourceClause": "攻击力、防御、生命值+5%",
+              "group": "stat-up",
+              "skillReviewConditions": []
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "生命力"
+        "生命力",
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -6583,6 +8134,107 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "防御": {
+          "summary": "受到物理伤害-20%，保护Buff",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到物理伤害-20%，保护Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "7b7b9f7c806bbd9e:effect-2",
+              "group": "incoming-damage-down-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "actor": "self",
+                "event": "wave-start"
+              },
+              "valuePercent": 20,
+              "buffType": "received-physical-damage-down",
+              "activationMode": "triggered-buff",
+              "familyRole": "direct-effect",
+              "sourceClause": "战斗开始时自动发动“大勇敢”“大灵气”“保护”“魔法屏障”效果。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "开场Buff持续40秒，各同类型Buff同时只计一项"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "受到魔法伤害-20%，魔法屏障Buff",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "受到魔法伤害-20%，魔法屏障Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "7b7b9f7c806bbd9e:effect-3",
+              "group": "incoming-damage-down-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 20,
+              "buffType": "received-magic-damage-down",
+              "familyRole": "direct-effect",
+              "sourceClause": "战斗开始时自动发动“大勇敢”“大灵气”“保护”“魔法屏障”效果。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "开场Buff持续40秒，各同类型Buff同时只计一项"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
@@ -6590,7 +8242,9 @@ export const ATTACK_TAG_CATALOG = {
         "魔力",
         "战斗开始",
         "物理",
-        "魔法"
+        "魔法",
+        "防御",
+        "魔抗"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -7002,12 +8656,68 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "防御": {
+          "summary": "受到敌人物理攻击时，该次伤害按敌人攻击力降低5%计算。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "受到敌人物理攻击时，该次伤害按敌人攻击力降低5%计算。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-enemy-attack-reference-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "202ccad96f292698:attack",
+              "group": "incoming-enemy-attack-reference-down",
+              "phase": "damage-calculation",
+              "activationMode": "per-hit-stat-reference",
+              "referenceTarget": "attacking-enemy",
+              "referenceStat": "STR",
+              "referencePercent": 5,
+              "condition": {
+                "subject": "self",
+                "event": "attack-received",
+                "incomingType": "physical",
+                "requiresHpDamage": false,
+                "source": "enemy"
+              },
+              "appliesPersistentDebuff": false,
+              "familyRole": "direct-effect",
+              "sourceClause": "受到敌人的物理攻击时，按敌人攻击力降低5%进行该次伤害计算。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "受到敌人物理攻击时生效"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "只修正该次受伤计算中的敌人攻击力，不施加持续减益"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "受到攻击",
-        "物理"
+        "物理",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -7230,11 +8940,56 @@ export const ATTACK_TAG_CATALOG = {
             "basic:1f0a096307e7bc24:1"
           ],
           "relatedSkillIds": []
+        },
+        "防御": {
+          "summary": "自身为唯一参战单位时，防御力+10%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身为唯一参战单位时，防御力+10%",
+              "effectIdentity": "1f0a096307e7bc24:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 10,
+              "condition": {
+                "metric": "participating-unit-count",
+                "operator": "eq",
+                "count": 1,
+                "incapacitatedAlliesQualify": false
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "如果该单位是唯一参战单位，则攻击力和防御力+10%。",
+              "group": "stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "自身为唯一参战单位时生效"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -7333,12 +9088,62 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "防御": {
+          "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "stat-up-buff",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "effectIdentity": "1da4935f9a387557:effect-1",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 35,
+              "buffType": "stat-def-up",
+              "familyRole": "direct-effect",
+              "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "除自身外恰好1名友方装备“师徒之绊”"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "大勇敢／大堡垒Buff持续40秒，各同类型Buff同时只计一项"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "战斗开始"
+        "战斗开始",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -7681,11 +9486,54 @@ export const ATTACK_TAG_CATALOG = {
             "basic:8486ea2eb21efd2c:1"
           ],
           "relatedSkillIds": []
+        },
+        "防御": {
+          "summary": "处于移动速度增益效果下时，自身防御力+10%；部分特殊Buff不计",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "处于移动速度增益效果下时，自身防御力+10%；部分特殊Buff不计",
+              "effectIdentity": "8486ea2eb21efd2c:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 10,
+              "condition": {
+                "selfState": "movement-speed-buff",
+                "specialBuffExceptionsStatus": "unconfirmed"
+              },
+              "familyRole": "direct-effect",
+              "sourceClause": "当处于移动速度增益效果下时，攻击力和防御力+10% （某些特殊增益效果除外）",
+              "group": "stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "处于移动速度增益效果下时生效；部分特殊增益不计"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -7898,16 +9746,61 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "伤害减少": {
+          "summary": "实际装备盔甲时，受到伤害-7%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "实际装备盔甲时，受到伤害-7%",
+              "target": "self",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "valuePercent": 7,
+              "group": "incoming-damage-down-armor",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "5b601cf4a2c13841:effect-1",
+              "applicability": "specific-armor",
+              "familyRole": "direct-effect",
+              "sourceClause": "装备盔甲时，攻击力+12%，受到的伤害-7%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备盔甲时生效"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "铠甲"
+        "铠甲",
+        "伤害减少"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "受到伤害-7%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -7961,16 +9854,48 @@ export const ATTACK_TAG_CATALOG = {
             "basic:eb83e614cc424c74:1"
           ],
           "relatedSkillIds": []
+        },
+        "魔抗": {
+          "summary": "魔抗+10%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "魔抗+10%",
+              "effectIdentity": "eb83e614cc424c74:effect-2",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "stat-up",
+              "valuePercent": 10,
+              "familyRole": "direct-effect",
+              "sourceClause": "降低魔力 15%，但提高攻击力 10% 和魔抗 10%。",
+              "group": "stat-up",
+              "skillReviewConditions": []
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "魔抗"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "魔抗+10%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -8231,18 +10156,128 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "防御": {
+          "summary": "同时装备枪和衣服时，所装备衣服自身的防御力+30%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-spear",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备枪和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "effectIdentity": "5dc1aeae525c240c:effect-1",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备枪和衣服时，枪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备枪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备枪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与枪条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "同时装备枪和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-spear",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备枪和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "effectIdentity": "5dc1aeae525c240c:effect-2",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备枪和衣服时，枪的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备枪"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备枪／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与枪条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "枪",
-        "衣服"
+        "衣服",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "衣服自身的魔抗+30%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "增加的是所装备枪／衣服本身的数值"
       ]
@@ -8293,11 +10328,45 @@ export const ATTACK_TAG_CATALOG = {
             "basic:47ea988d3391dd7d:1"
           ],
           "relatedSkillIds": []
+        },
+        "防御": {
+          "summary": "自身防御力+20%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身防御力+20%",
+              "effectIdentity": "47ea988d3391dd7d:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 20,
+              "familyRole": "direct-effect",
+              "sourceClause": "降低攻击力 10%，但提高防御力 20%。",
+              "group": "stat-up",
+              "skillReviewConditions": []
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -8583,13 +10652,69 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "防御": {
+          "summary": "同时装备斧和盔甲时，所装备盔甲自身的防御力+50%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-axe",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备斧和盔甲时，所装备盔甲自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "effectIdentity": "71f0c15272a753ba:effect-1",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备斧和盔甲时，斧的攻击力+50%，盔甲的防御力+50%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备斧"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备斧／盔甲本身的数值"
+                },
+                {
+                  "partId": "paired-armor",
+                  "text": "同时装备盔甲，与斧条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "斧",
-        "铠甲"
+        "铠甲",
+        "防御"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -9659,6 +11784,118 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "防御": {
+          "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "faith-physical-mitigation"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "faith-physical-mitigation"
+              ],
+              "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "f063ab920fec3e4a",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true
+              },
+              "group": "incoming-damage-down-faith-receive",
+              "familyRole": "direct-effect",
+              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "效果来自自身以外的神类型友方"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "该友方须装备相应“神秘之力”技能"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "同名“神秘之力”效果不叠加"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "magicRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:effect-1",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "7611b3c1ae612f0e",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true
+              },
+              "group": "incoming-damage-down-faith-receive",
+              "familyRole": "direct-effect",
+              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "效果来自自身以外的神类型友方"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "该友方须装备相应“神秘之力”技能"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "同名“神秘之力”效果不叠加"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
@@ -9666,7 +11903,9 @@ export const ATTACK_TAG_CATALOG = {
         "物理伤害增加",
         "物理",
         "魔法",
-        "神"
+        "神",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -9746,17 +11985,95 @@ export const ATTACK_TAG_CATALOG = {
             "basic:b782149b137d2614:1"
           ],
           "relatedSkillIds": []
+        },
+        "防御": {
+          "summary": "随战斗时间经过，防御力逐渐提高；40秒时最高+20%，中间变化曲线待确认。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-3"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "随战斗时间经过，防御力逐渐提高；40秒时最高+20%，中间变化曲线待确认。",
+              "effectIdentity": "b782149b137d2614:effect-3",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "time-scaled-stat-up",
+              "maxValuePercent": 20,
+              "reachesMaximumAtSeconds": 40,
+              "curveStatus": "unconfirmed",
+              "familyRole": "direct-effect",
+              "sourceClause": "魔力、魔抗-20%；随着时间经过，攻击力、防御力逐渐提升（最多40秒，最高+20%）。",
+              "group": "time-scaled-stat-up",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "随战斗时间经过逐渐提升，40秒达到上限"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "魔抗-20%",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "魔抗-20%",
+              "effectIdentity": "b782149b137d2614:effect-2",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "stat-down",
+              "valuePercent": 20,
+              "familyRole": "direct-effect",
+              "sourceClause": "魔力、魔抗-20%；随着时间经过，攻击力、防御力逐渐提升（最多40秒，最高+20%）。",
+              "group": "stat-down",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "随战斗时间经过逐渐提升，40秒达到上限"
+                }
+              ]
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "魔力"
+        "魔力",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "魔抗-20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "随战斗时间经过逐渐提升，40秒达到上限"
       ]
@@ -10573,18 +12890,128 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        },
+        "防御": {
+          "summary": "同时装备机械和衣服时，所装备衣服自身的防御力+30%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-machine",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备机械和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "effectIdentity": "e64a85601b9b58cc:effect-1",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备机械和衣服时，机械的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备机械"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备机械／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与机械条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "魔抗": {
+          "summary": "同时装备机械和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "defensive-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "equipment-stat-up-machine",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备机械和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "effectIdentity": "e64a85601b9b58cc:effect-2",
+              "familyRole": "direct-effect",
+              "sourceClause": "同时装备机械和衣服时，机械的攻击力+50%，衣服的防御力和魔抗+30%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "装备机械"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "增加的是所装备机械／衣服本身的数值"
+                },
+                {
+                  "partId": "paired-clothes",
+                  "text": "同时装备衣服，与机械条件同时满足"
+                }
+              ],
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "机械",
-        "衣服"
+        "衣服",
+        "防御",
+        "魔抗"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "衣服自身的魔抗+30%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "增加的是所装备机械／衣服本身的数值"
       ]
@@ -11420,8 +13847,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 39,
-    "partial": 48,
+    "ready": 42,
+    "partial": 45,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9
