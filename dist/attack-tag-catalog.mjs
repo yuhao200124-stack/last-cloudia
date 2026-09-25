@@ -1474,17 +1474,79 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "锤": {
+          "summary": "装备锤时，物理攻击伤害+7%。；装备锤时，自身攻击力+5%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "hammer",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "hammer",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "equipped-physical-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备锤时，物理攻击伤害+7%。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 7
+            },
+            {
+              "group": "equipped-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备锤时，自身攻击力+5%。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 5,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "武器类型条件已贴标签；要求至少装备1把该类武器，不擅自增加单武器或双武器限制。同一技能不按武器数量重复叠加；其余效果、条件和机制沿用各自标签进度。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "物理伤害增加"
+        "物理伤害增加",
+        "锤"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "装备锤时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "b6ba057e893e1be9",
@@ -1535,17 +1597,79 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "锤": {
+          "summary": "装备锤时，物理攻击伤害+25%。；装备锤时，自身攻击力+10%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "hammer",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "hammer",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "equipped-physical-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备锤时，物理攻击伤害+25%。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 25
+            },
+            {
+              "group": "equipped-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备锤时，自身攻击力+10%。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 10,
+              "base": "character-stat"
+            }
+          ],
+          "calculationNote": "武器类型条件已贴标签；要求至少装备1把该类武器，不擅自增加单武器或双武器限制。同一技能不按武器数量重复叠加；其余效果、条件和机制沿用各自标签进度。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "物理伤害增加"
+        "物理伤害增加",
+        "锤"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "装备锤时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "3e86dffa826956a7",
@@ -2729,12 +2853,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "同时装备爪和衣服"
+          "text": "装备爪"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "增加的是所装备爪／衣服本身的数值"
+        },
+        {
+          "id": "paired-clothes",
+          "kind": "condition",
+          "text": "同时装备衣服，与爪条件同时满足"
         }
       ],
       "tagDetails": {
@@ -2753,19 +2882,109 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅强化装备自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "爪": {
+          "summary": "同时装备爪和衣服时，所装备爪自身的攻击力+50%。；同时装备爪和衣服时，所装备衣服自身的防御力+30%。；同时装备爪和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "claw",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "claw",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "clothes-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备爪和衣服时，所装备爪自身的攻击力+50%。",
+              "target": "equipped-claw",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备爪和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-armor-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备爪和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat"
+            }
+          ],
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "爪"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "衣服自身的魔抗+30%"
       ],
       "remainingConditions": [
-        "同时装备爪和衣服",
-        "增加的是所装备爪／衣服本身的数值"
+        "增加的是所装备爪／衣服本身的数值",
+        "同时装备衣服，与爪条件同时满足"
       ]
     },
     {
@@ -4680,19 +4899,102 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "锤": {
+          "summary": "装备锤时，物理攻击伤害+25%。；装备锤时，自身攻击力+10%。；装备锤时，物理攻击伤害上限+2000。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "hammer",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "hammer",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "equipped-physical-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备锤时，物理攻击伤害+25%。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 25
+            },
+            {
+              "group": "equipped-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备锤时，自身攻击力+10%。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 10,
+              "base": "character-stat"
+            },
+            {
+              "group": "equipped-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "装备锤时，物理攻击伤害上限+2000。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "武器类型条件已贴标签；要求至少装备1把该类武器，不擅自增加单武器或双武器限制。同一技能不按武器数量重复叠加；其余效果、条件和机制沿用各自标签进度。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "物理伤害增加"
+        "物理伤害增加",
+        "锤"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "物理攻击伤害上限+2,000"
       ],
-      "remainingConditions": [
-        "装备锤时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5f4d9cbfb64a5e02",
@@ -5306,17 +5608,64 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "机械": {
+          "summary": "装备机械武器时，战斗开始将自身魔力的10%加算到攻击力；不提高或扣除魔力。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "machine",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "opening-int-to-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备机械武器时，战斗开始将自身魔力的10%加算到攻击力；不提高或扣除魔力。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "add-stat-reference",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "referenceStat": "INT",
+              "referencePercent": 10,
+              "activationMode": "battle-start-stat-addition",
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              }
+            }
+          ],
+          "calculationNote": "开场加算与普通攻击力百分比Buff分开，不套40秒Buff倒计时。攻击力、魔力参照、战斗开始及机械条件分别保留；参照数值的计算机制仍待对应标签。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "机械"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "装备机械类武器",
         "将自身法强的10%转换并加算到攻击力"
       ]
     },
@@ -5638,12 +5987,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "同时装备枪和衣服"
+          "text": "装备枪"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "增加的是所装备枪／衣服本身的数值"
+        },
+        {
+          "id": "paired-clothes",
+          "kind": "condition",
+          "text": "同时装备衣服，与枪条件同时满足"
         }
       ],
       "tagDetails": {
@@ -5662,19 +6016,109 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅强化装备自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "枪": {
+          "summary": "同时装备枪和衣服时，所装备枪自身的攻击力+50%。；同时装备枪和衣服时，所装备衣服自身的防御力+30%。；同时装备枪和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "spear",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "spear",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "clothes-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备枪和衣服时，所装备枪自身的攻击力+50%。",
+              "target": "equipped-spear",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备枪和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-armor-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备枪和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat"
+            }
+          ],
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "枪"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "衣服自身的魔抗+30%"
       ],
       "remainingConditions": [
-        "同时装备枪和衣服",
-        "增加的是所装备枪／衣服本身的数值"
+        "增加的是所装备枪／衣服本身的数值",
+        "同时装备衣服，与枪条件同时满足"
       ]
     },
     {
@@ -5838,12 +6282,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "同时装备斧和盔甲"
+          "text": "装备斧"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "增加的是所装备斧／盔甲本身的数值"
+        },
+        {
+          "id": "paired-armor",
+          "kind": "condition",
+          "text": "同时装备盔甲，与斧条件同时满足"
         }
       ],
       "tagDetails": {
@@ -5862,17 +6311,84 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅强化装备自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "斧": {
+          "summary": "同时装备斧和盔甲时，所装备斧自身的攻击力+50%。；同时装备斧和盔甲时，所装备盔甲自身的防御力+50%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "axe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "axe",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "armor-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备斧和盔甲时，所装备斧自身的攻击力+50%。",
+              "target": "equipped-axe",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "armor-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备斧和盔甲时，所装备盔甲自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            }
+          ],
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "斧"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "同时装备斧和盔甲",
-        "增加的是所装备斧／盔甲本身的数值"
+        "增加的是所装备斧／盔甲本身的数值",
+        "同时装备盔甲，与斧条件同时满足"
       ]
     },
     {
@@ -7026,12 +7542,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "同时装备机械和衣服"
+          "text": "装备机械"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "增加的是所装备机械／衣服本身的数值"
+        },
+        {
+          "id": "paired-clothes",
+          "kind": "condition",
+          "text": "同时装备衣服，与机械条件同时满足"
         }
       ],
       "tagDetails": {
@@ -7050,19 +7571,109 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅强化装备自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "机械": {
+          "summary": "同时装备机械和衣服时，所装备机械自身的攻击力+50%。；同时装备机械和衣服时，所装备衣服自身的防御力+30%。；同时装备机械和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "machine",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "clothes-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备机械和衣服时，所装备机械自身的攻击力+50%。",
+              "target": "equipped-machine",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备机械和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-armor-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备机械和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat"
+            }
+          ],
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "机械"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "衣服自身的魔抗+30%"
       ],
       "remainingConditions": [
-        "同时装备机械和衣服",
-        "增加的是所装备机械／衣服本身的数值"
+        "增加的是所装备机械／衣服本身的数值",
+        "同时装备衣服，与机械条件同时满足"
       ]
     },
     {
@@ -7438,8 +8049,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 27,
-    "partial": 60,
+    "ready": 29,
+    "partial": 58,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

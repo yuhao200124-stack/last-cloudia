@@ -13,7 +13,7 @@ test('ally death audits all skills and distinguishes actor, resurrection and sur
  for(const [g,ns] of Object.entries(mapping))assert.deepEqual(numbers(labelingView(catalog,'ally-death-'+g)),ns);
  assert.equal(view.childKeys.length,10);assert.equal(view.childKeys.reduce((n,k)=>n+catalog.views[k].counts.relatedUnique,0),10);
  for(const n of [183,184,272,431,655,753,770,916,917,939,948,976,1009,1060,1270,1271,1305,1316,1378,1547,1856,1998,2028])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
- assert.equal(catalog.entries.length,577);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,577);
+ assert.equal(catalog.entries.length,587);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,587);
 });
 test('ally death event Buffs, current-state bonus, rage and stock recovery retain different meanings',()=>{
  for(const n of [493,584,690,726,849,1015])assert.deepEqual(detail(n).condition,{mode:'ally-death-trigger',subject:'other-ally',event:'became-incapacitated'});
@@ -26,18 +26,18 @@ test('ally death event Buffs, current-state bonus, rage and stock recovery retai
  for(const e of view.entries)assert(e.tagDetails['友军死亡'].bindings.every(b=>b.target==='self'));
 });
 test('only ally-death conditions are covered; existing effects accumulate and fully understood skills advance',()=>{
- assert.equal(registry.tagPasses.length,30);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,37);assert.equal(catalog.numericEffectInjection,false);
  for(const a of registry.tagPasses.find(p=>p.tag==='友军死亡').assignments){const e=catalog.entries.find(e=>e.id===a.skillId);assert(a.partIds.every(id=>e.parts.find(p=>p.id===id).kind==='condition'));assert(e.tagDetails['友军死亡'].bindings.every(b=>b.partIds.every(id=>!a.partIds.includes(id))));}
  assert.deepEqual(entry(1212).assignedTags,['攻击力','友军死亡']);assert.equal(entry(1212).judgment,'ready');assert.deepEqual(entry(1212).remainingConditions,[]);
  assert.deepEqual(entry(849).assignedTags,['攻击力','防御力','友军死亡']);assert(entry(849).remainingEffects.includes('无法使用魔法'));
  for(const n of [493,584,690,726,849,1015])assert.equal(entry(n).judgment,'partial');
- assert.equal(view.counts.ready,1);assert.equal(view.counts.partial,6);assert.equal(catalog.views.all.counts.ready,219);assert.equal(catalog.views.all.counts.partial,358);
+ assert.equal(view.counts.ready,1);assert.equal(view.counts.partial,6);assert.equal(catalog.views.all.counts.ready,234);assert.equal(catalog.views.all.counts.partial,353);
  assert.deepEqual(labelingView(catalog,'attack').entries.find(e=>e.id===source(1212).id),entry(1212));
 });
 function page(edits={}){const elements=new Map(),get=k=>{if(!elements.has(k))elements.set(k,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(k,v){this.listeners[k]=v;},setAttribute(){},focus(){}});return elements.get(k);};const code=read('../dist/skill-labeling.mjs').replace(/^import .*;\n/gm,'').replace('export function renderLabelTable','function renderLabelTable');vm.runInNewContext(code,{catalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,location:{search:'?tag=ally-death'},addEventListener(){}},localStorage:{getItem:()=>JSON.stringify(edits),setItem(){assert.fail('Do not modify saved data.');}}});return {get,click:(nav,tag)=>get(nav).listeners.click({target:{closest:()=>({dataset:{tag}})}})};}
 test('ally death page separates effects, deduplicates, switches old categories and rejects stale labels',()=>{
  const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*7.*928/);assert.match(get('#judgmentSummary').textContent,/1.*6.*0/);assert.match(get('#labelResultCount').textContent,/7 \/ 7/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,26);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,11);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,10);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,33);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,11);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,10);
  const search=get('#labelSearch');search.value='怒气';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 7/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,3);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','ally-death-attack-state');assert(get('#labelTable').innerHTML.includes('复仇心'));assert(!get('#labelTable').innerHTML.includes('美丽而残酷的世界'));assert(get('#labelTable').innerHTML.includes('judgment-ready'));
  for(const [key,count] of [['revive',6],['mp',32],['ultimate',15],['received-attack',21],['full-hp',6],['low-hp',26],['battle-start',117],['boss',13],['attack',87]]){click('#labelTabs',key);assert.equal(get('#labelResultCount').textContent,`显示 ${count} / ${count} 个技能（去重）`);}

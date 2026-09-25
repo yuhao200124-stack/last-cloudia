@@ -46,9 +46,9 @@ test('specific Boss bonuses enter neither broad damage view while source skills 
   assert(source(n));
   for(const key of ['physical','magic-damage','damage','boss-damage'])assert(!labelingView(catalog,key).entries.some(e=>e.id===source(n).id));
  }
- assert.equal(catalog.views['magic-damage'].counts.ready,2);
- assert.equal(catalog.views['magic-damage'].counts.partial,20);
+ assert.equal(catalog.views['magic-damage'].counts.ready,4);
+ assert.equal(catalog.views['magic-damage'].counts.partial,18);
  assert.equal(catalog.views.damage.counts.relatedUnique,7);
- assert.equal(catalog.entries.length,577);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,577);
- assert.equal(catalog.views.all.counts.ready,219);assert.equal(catalog.views.all.counts.partial,358);
+ assert.equal(catalog.entries.length,587);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,587);
+ assert.equal(catalog.views.all.counts.ready,234);assert.equal(catalog.views.all.counts.partial,353);
 });

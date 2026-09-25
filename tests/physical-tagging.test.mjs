@@ -43,19 +43,16 @@ test('physical bonuses remain distinct from caps, crits, killers, stat changes, 
 });
 
 test('physical tags accumulate and leave each unfinished effect/condition pending until its own pass',()=>{
- assert.equal(physical.counts.ready,4);assert.equal(physical.counts.partial,74);assert.equal(physical.counts.unknown,0);
- assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,44);
+ assert.equal(physical.counts.ready,11);assert.equal(physical.counts.partial,67);assert.equal(physical.counts.unknown,0);
+ assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,62);
  for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
- assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,['装备锤时生效']);
+ assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,[]);
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
- assert.equal(catalog.entries.length,577);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,577);
+ assert.equal(catalog.entries.length,587);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,587);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(allRows.slice(0,219).every(r=>r.judgment==='ready'));assert(allRows.slice(219).every(r=>r.judgment==='partial'));
- // A later equipment pass should complete a compound only after both its
- // attack and physical-damage fragments were already covered.
- const future=structuredClone(registry);
- future.tagPasses.push({tag:'装备锤',assignments:[{skillId:source(273).id,partIds:['condition-1']}]});
- const updated=resolveSkillLabels(future).find(e=>e.id===source(273).id);
- assert.equal(updated.judgment,'ready');assert.deepEqual(updated.assignedTags,['攻击力','物理伤害增加','装备锤']);
- assert.equal(entry(273).judgment,'partial');
+ assert(allRows.slice(0,234).every(r=>r.judgment==='ready'));assert(allRows.slice(234).every(r=>r.judgment==='partial'));
+ // Removing the weapon type pass leaves its condition pending; restoring it completes the shared skill.
+ const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='锤');
+ assert.equal(resolveSkillLabels(earlier).find(e=>e.id===source(273).id).judgment,'partial');
+ assert.equal(entry(273).judgment,'ready');assert.deepEqual(entry(273).assignedTags,['攻击力','物理伤害增加','锤']);
 });

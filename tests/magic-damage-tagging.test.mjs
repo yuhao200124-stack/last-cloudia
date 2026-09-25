@@ -41,8 +41,8 @@ test('magic damage preserves target, timing, Buff, reference and special attack 
 });
 
 test('magic damage accumulates across old views and only finishes after remaining effect and condition passes',()=>{
- assert.equal(magicDamage.counts.ready,2);assert.equal(magicDamage.counts.partial,20);assert.equal(magicDamage.counts.unknown,0);
- assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,14);
+ assert.equal(magicDamage.counts.ready,4);assert.equal(magicDamage.counts.partial,18);assert.equal(magicDamage.counts.unknown,0);
+ assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,15);
  for(const [n,key] of [[593,'attack'],[1066,'physical'],[241,'physical'],[658,'physical'],[754,'physical'],[1060,'physical'],[1507,'physical']])
   assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  const science=catalog.entries.find(e=>e.id===source(305).id);
@@ -53,14 +53,12 @@ test('magic damage accumulates across old views and only finishes after remainin
  for(const key of ['attack','defense','magic'])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===science.id),science);
  assert.deepEqual(entry(1066).assignedTags,['攻击力','魔力','物理伤害增加','魔法伤害增加','战斗开始']);
  assert.deepEqual(entry(1066).remainingEffects,[]);assert.equal(entry(1066).remainingConditions.length,1);
- assert.deepEqual(entry(241).assignedTags,['物理伤害增加','魔法伤害增加']);
- assert.deepEqual(entry(241).remainingEffects,[]);assert.deepEqual(entry(241).remainingConditions,['装备法杖时生效']);
- const future=structuredClone(registry);
- future.tagPasses.push({tag:'装备法杖',assignments:[{skillId:source(241).id,partIds:['condition-1']}]});
- const updated=resolveSkillLabels(future).find(e=>e.id===source(241).id);
- assert.equal(updated.judgment,'ready');assert.equal(entry(241).judgment,'partial');
- assert.equal(catalog.entries.length,577);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,577);
- assert.equal(catalog.views.all.counts.ready,219);assert.equal(catalog.views.all.counts.partial,358);
+ assert.deepEqual(entry(241).assignedTags,['物理伤害增加','魔法伤害增加','杖']);
+ assert.deepEqual(entry(241).remainingEffects,[]);assert.deepEqual(entry(241).remainingConditions,[]);
+ const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='杖');
+ assert.equal(resolveSkillLabels(earlier).find(e=>e.id===source(241).id).judgment,'partial');assert.equal(entry(241).judgment,'ready');
+ assert.equal(catalog.entries.length,587);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,587);
+ assert.equal(catalog.views.all.counts.ready,234);assert.equal(catalog.views.all.counts.partial,353);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,219).every(r=>r.judgment==='ready'));assert(sorted.slice(219).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,234).every(r=>r.judgment==='ready'));assert(sorted.slice(234).every(r=>r.judgment==='partial'));
 });

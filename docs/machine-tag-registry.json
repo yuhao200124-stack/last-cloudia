@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 2,
+  "label": "机械",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "4faed22debac60f9",
+    "全部技能:all:322",
+    "a9beabdba2bb1ea3",
+    "0d0b88d5b3be6bd3",
+    "bde3ce8d694af2ab",
+    "8ee1d245f7b403bc",
+    "0d0bdf3f7c6e0b5a",
+    "ee807560b8e94ab2",
+    "e64a85601b9b58cc"
+  ]
+}

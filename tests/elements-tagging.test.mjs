@@ -13,7 +13,7 @@ test('six passes independently audit all 935 unique skills and preserve complete
   for(const n of [91,97,148,381,439,691,836,938,1272,1519,1573,1604,1746])assert(!ids.includes(n));
   for(const a of registry.tagPasses.find(p=>p.tag===label).assignments){const e=catalog.entries.find(e=>e.id===a.skillId),d=e.tagDetails[label];assert.deepEqual(a.partIds,[...d.coverage.effectPartIds,...d.coverage.conditionPartIds]);for(const b of d.bindings.filter(b=>b.elementRole==='condition-benefit'))assert(b.partIds.every(id=>!a.partIds.includes(id)));}
  }
- assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,577);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,577);
+ assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,587);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,587);
 });
 test('multi-element records accumulate tags and synchronize completeness without widening generic damage',()=>{
  for(const n of [662,663,1572,1640]){assert.deepEqual(entry(n).assignedTags,['火属性','冰属性','树属性','雷属性']);assert.equal(entry(n).judgment,'ready');assert.deepEqual(entry(n).remainingEffects,[]);assert.equal(labelingView(catalog,'fire').entries.find(e=>e.id===source(n).id).judgment,'ready');}
@@ -22,7 +22,7 @@ test('multi-element records accumulate tags and synchronize completeness without
  assert.deepEqual(entry(380).assignedTags,['MP','冰属性']);assert.equal(entry(380).judgment,'ready');assert.equal(bindings(380,'ice')[0].costAdjustmentPercent,25);
  for(const[n,k,text]of[[842,'ice','魔法'],[765,'earth','物理'],[721,'thunder','特技'],[711,'light','治疗']]){assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingEffects.some(x=>x.includes(text)));assert.equal(bindings(n,k).length,1);}
  for(const n of [74,128,527,1582])assert(!entry(n).assignedTags.includes('伤害增加'));
- assert.equal(catalog.views.fire.counts.ready,20);assert.equal(catalog.views.critical.counts.ready,24);assert.equal(catalog.views.mp.counts.ready,13);
+ assert.equal(catalog.views.fire.counts.ready,20);assert.equal(catalog.views.critical.counts.ready,25);assert.equal(catalog.views.mp.counts.ready,13);
 });
 test('walls, resistance and termination use their actual element, target, duration and stacking',()=>{
  for(const[n,k,v]of[[471,'ice',20],[508,'earth',20],[639,'thunder',20],[830,'light',20],[234,'dark',20],[906,'neutral',20],[1482,'light',35],[1988,'thunder',35]]){const b=bindings(n,k)[0];assert.equal(b.target,'all-allies');assert.equal(b.valuePercent,v);assert.equal(b.durationSeconds,40);assert.equal(b.changesResistance,false);assert.equal(b.buffType,`received-${k}-damage-down`);assert.equal(b.stacking,'highest-active-buff-of-same-type-only');}
