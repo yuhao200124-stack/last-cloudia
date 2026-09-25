@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "label": "复活",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "898c96e867704168",
+    "ee6342cbdb0251e7",
+    "fea184827daeaa39",
+    "4170fcd45f772a61",
+    "563cffc7c5fa9c59",
+    "89a90b8df36a0475"
+  ]
+}

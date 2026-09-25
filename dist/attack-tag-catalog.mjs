@@ -1305,18 +1305,86 @@ export const ATTACK_TAG_CATALOG = {
             "basic:ee6342cbdb0251e7:1"
           ],
           "relatedSkillIds": []
+        },
+        "复活": {
+          "summary": "自身复活时触发",
+          "relation": "revival-or-revival-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "after-self-revival",
+            "actor": "self",
+            "revivedTarget": "self",
+            "event": "revived"
+          },
+          "coverage": {
+            "revivalPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身复活后，攻击力+30%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-buff",
+              "phase": "after-revival",
+              "buffType": "brave",
+              "valuePercent": 30,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身复活后，魔力+30%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-buff",
+              "phase": "after-revival",
+              "buffType": "aura",
+              "valuePercent": 30,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身复活后，暴击率+15%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-buff",
+              "phase": "after-revival",
+              "buffType": "critical-rate-up",
+              "valuePercent": 15,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "黄泉之理不提供自动复活能力；自身实际复活后才获得三项Buff。攻击力、魔力和暴击率分别列组；同类型Buff同时只计最高已生效一项。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "复活"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "暴击率+15%"
       ],
       "remainingConditions": [
-        "复活时触发",
         "复活Buff持续40秒，同类型属性Buff同时只计一项"
       ]
     },

@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['revive','复活',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -102,6 +102,20 @@ for(const [key,view] of Object.entries(views)){
         }
         if(condition.mode==='mp-scaling' && (condition.metric!=='current-MP' || !['higher-MP-stronger','lower-MP-stronger'].includes(condition.direction) || condition.curveStatus!=='unconfirmed' || Object.hasOwn(condition,'thresholdPoints') || Object.hasOwn(condition,'thresholdPercent')))throw Error('MP scaling must not become a fixed threshold.');
       }
+    }else if(key==='revive'){
+      const coverage=detail.coverage,c=detail.condition;
+      if(view.passKind!=='revival-and-condition' || !Array.isArray(coverage?.revivalPartIds) || !Array.isArray(coverage?.conditionPartIds))throw Error('Missing revival coverage.');
+      const ids=[...coverage.revivalPartIds,...coverage.conditionPartIds];
+      if(new Set(ids).size!==ids.length || ids.length!==assignment.partIds.length || ids.some(id=>!assignment.partIds.includes(id)))throw Error('Revival must cover only revival operations or conditions.');
+      if(coverage.revivalPartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='effect') || coverage.conditionPartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='condition'))throw Error('Invalid revival fragment types.');
+      if(c?.actor!=='self' || !['self-revival','after-self-revival','after-ally-revival'].includes(c.mode))throw Error('Invalid revival event actor or mode.');
+      if(c.mode==='self-revival'){
+        if(c.revivedTarget!=='self' || c.requiresIncapacitated!==true || !['self-incapacitated','battle-start'].includes(c.event) || !coverage.revivalPartIds.length || coverage.conditionPartIds.length)throw Error('Automatic revival requires an incapacitated self.');
+      }else{
+        if(coverage.revivalPartIds.length || !coverage.conditionPartIds.length)throw Error('A post-revival benefit must not grant revival ability.');
+        if(c.mode==='after-self-revival' && (c.revivedTarget!=='self' || c.event!=='revived'))throw Error('Missing self-revival trigger.');
+        if(c.mode==='after-ally-revival' && (c.revivedTarget!=='ally' || c.event!=='ally-revived' || c.method!=='own-active-skill'))throw Error('Ally revival must preserve its caster and method.');
+      }
     }else if(assignment.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='condition'))throw Error('Condition pass must not cover unreviewed effect tags.');
     if(!detail.bindings?.length)throw Error('Missing condition effect bindings.');
     const permanent=detail.activationMode==='permanent-status';
@@ -138,6 +152,14 @@ for(const [key,view] of Object.entries(views)){
         if(binding.mpRole==='condition-benefit' && (!detail.condition || binding.isBuff))throw Error('Current MP conditions are not triggered Buffs.');
         if(binding.isBuff && (binding.operation!=='periodic-restore-current' || !(binding.durationSeconds>0) || !(binding.intervalSeconds>0) || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Invalid MP regeneration Buff.');
         if(!binding.isBuff && (Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'stacking')))throw Error('Non-Buff MP effects must not gain Buff duration or stacking.');
+      }
+      if(key==='revive'){
+        if(binding.target!=='self' || typeof binding.isBuff!=='boolean')throw Error('Revival target and benefit recipient must be separate.');
+        if(binding.revivalRole==='revival-effect'){
+          if(binding.operation!=='revive-self' || binding.isBuff || binding.hpBase!=='maximum-HP' || !(binding.initialHpPercent>0 && binding.initialHpPercent<=100) || !['wave','quest'].includes(binding.resetScope) || binding.maxTriggers!==1 || binding.partIds.some(id=>!detail.coverage.revivalPartIds.includes(id)))throw Error('Invalid automatic revival parameters.');
+        }else if(binding.revivalRole!=='post-revival-benefit' || binding.partIds.some(id=>assignment.partIds.includes(id)))throw Error('Displaying revival benefits must not complete their effect tags.');
+        if(binding.isBuff && (binding.activationMode!=='triggered-buff' || binding.phase!=='after-revival' || !(binding.durationSeconds>0) || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Revival Buff needs its duration and same-type limit.');
+        if(!binding.isBuff && (Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'stacking')))throw Error('Revival actions and instant resource recovery are not timed Buffs.');
       }
       if(permanent && (binding.lifetime!=='permanent' || Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'endsOn') || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Permanent state must have no timed expiry and must preserve same-type Buff limits.');
       if(key==='low-hp'){

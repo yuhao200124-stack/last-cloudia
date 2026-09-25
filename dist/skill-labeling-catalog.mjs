@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "mp",
+  "activeView": "revive",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -1214,18 +1214,86 @@ export const SKILL_LABELING_CATALOG = {
             "basic:ee6342cbdb0251e7:1"
           ],
           "relatedSkillIds": []
+        },
+        "复活": {
+          "summary": "自身复活时触发",
+          "relation": "revival-or-revival-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "after-self-revival",
+            "actor": "self",
+            "revivedTarget": "self",
+            "event": "revived"
+          },
+          "coverage": {
+            "revivalPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身复活后，攻击力+30%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-buff",
+              "phase": "after-revival",
+              "buffType": "brave",
+              "valuePercent": 30,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身复活后，魔力+30%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-buff",
+              "phase": "after-revival",
+              "buffType": "aura",
+              "valuePercent": 30,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身复活后，暴击率+15%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-buff",
+              "phase": "after-revival",
+              "buffType": "critical-rate-up",
+              "valuePercent": 15,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "黄泉之理不提供自动复活能力；自身实际复活后才获得三项Buff。攻击力、魔力和暴击率分别列组；同类型Buff同时只计最高已生效一项。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "魔力"
+        "魔力",
+        "复活"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "暴击率+15%"
       ],
       "remainingConditions": [
-        "复活时触发",
         "复活Buff持续40秒，同类型属性Buff同时只计一项"
       ]
     },
@@ -13640,16 +13708,68 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "复活": {
+          "summary": "自身复活时触发",
+          "relation": "revival-or-revival-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "after-self-revival",
+            "actor": "self",
+            "revivedTarget": "self",
+            "event": "revived"
+          },
+          "coverage": {
+            "revivalPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "自身复活后，物理攻击伤害+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-buff",
+              "phase": "after-revival",
+              "buffType": "physical-damage-up",
+              "valuePercent": 20,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "magic-damage",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身复活后，魔法攻击伤害+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-buff",
+              "phase": "after-revival",
+              "buffType": "magic-damage-up",
+              "valuePercent": 20,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "英灵凭依不提供复活能力；复活后才获得物理和魔法两种增伤Buff，分别与同类型Buff只计最高一项；不改成无类型的通用伤害增加。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "复活"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "复活时触发",
         "增伤Buff持续40秒；各同类型Buff同时只计一项"
       ]
     },
@@ -17700,15 +17820,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "复活": {
+          "summary": "开场自身倒地时复活",
+          "relation": "revival-or-revival-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "self-revival",
+            "actor": "self",
+            "revivedTarget": "self",
+            "event": "battle-start",
+            "requiresIncapacitated": true
+          },
+          "coverage": {
+            "revivalPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "self",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时若自身处于倒地状态，以50%HP复活；每个任务最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "revivalRole": "revival-effect",
+              "operation": "revive-self",
+              "initialHpPercent": 50,
+              "hpBase": "maximum-HP",
+              "maxTriggers": 1,
+              "resetScope": "quest"
+            }
+          ],
+          "calculationNote": "只在开场检查自身倒地状态；不能写成战斗中倒下后立即复活，也不能把每个任务一次改成每Wave一次。50%HP是复活参数；原开场标签保留。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "复活"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "开场处于倒地状态时，以50%HP复活"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "开场自身处于倒地状态",
         "每个任务最多触发1次"
@@ -24348,17 +24503,68 @@ export const SKILL_LABELING_CATALOG = {
               "amountPoints": 30
             }
           ]
+        },
+        "复活": {
+          "summary": "使用自身主动技能复活我方角色后",
+          "relation": "revival-or-revival-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "after-ally-revival",
+            "actor": "self",
+            "revivedTarget": "ally",
+            "event": "ally-revived",
+            "method": "own-active-skill"
+          },
+          "coverage": {
+            "revivalPartIds": [],
+            "conditionPartIds": [
+              "revive-ally"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "mp-ally",
+              "partIds": [
+                "mp-restore"
+              ],
+              "summary": "用自身主动技能复活我方角色后，自身MP回复固定30点；每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-action",
+              "phase": "after-ally-revival",
+              "resource": "MP",
+              "amountPoints": 30,
+              "maxTriggersPerWave": 1
+            },
+            {
+              "group": "sct-ally",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "用自身主动技能复活我方角色后，自身SCT回复15秒；每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-action",
+              "phase": "after-ally-revival",
+              "resource": "SCT",
+              "restoreSeconds": 15,
+              "maxTriggersPerWave": 1
+            }
+          ],
+          "calculationNote": "回复的受益者是施放复活的自身，不是刚被复活的角色；队友自己自动复活或由其他角色复活不满足这里“自身主动技能”的条件。MP30点与SCT15秒分开，MP标签沿用上一轮。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
         }
       },
       "assignedTags": [
-        "MP"
+        "MP",
+        "复活"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "自身SCT回复15秒"
       ],
       "remainingConditions": [
-        "使用自身的主动技能复活我方角色时",
         "每Wave最多一次"
       ]
     },
@@ -24751,6 +24957,157 @@ export const SKILL_LABELING_CATALOG = {
       "remainingConditions": [
         "使用攻击型特技时",
         "须支付最大MP的3%；MP不足时处理待确认"
+      ]
+    },
+    {
+      "id": "898c96e867704168",
+      "name": "诱饵",
+      "url": "https://altema.jp/lastcloudia/gino/183",
+      "text": "当生命值降至 0 时，自动复活并略微恢复生命值（每 波最多一次）。",
+      "notes": "战斗不能时自动复活至10% HP；每个Wave最多1次。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "revival",
+          "kind": "effect",
+          "text": "自动复活，复活后HP为最大HP的10%"
+        },
+        {
+          "id": "incapacitated",
+          "kind": "condition",
+          "text": "自身HP降至0、进入战斗不能时"
+        },
+        {
+          "id": "once-per-wave",
+          "kind": "condition",
+          "text": "每个Wave最多自动复活1次"
+        }
+      ],
+      "tagDetails": {
+        "复活": {
+          "summary": "自身战斗不能时自动复活",
+          "relation": "revival-or-revival-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "self-revival",
+            "actor": "self",
+            "revivedTarget": "self",
+            "event": "self-incapacitated",
+            "requiresIncapacitated": true
+          },
+          "coverage": {
+            "revivalPartIds": [
+              "revival"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "self",
+              "partIds": [
+                "revival"
+              ],
+              "summary": "自身HP降至0并战斗不能时自动复活，复活后HP为10%；每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "revivalRole": "revival-effect",
+              "operation": "revive-self",
+              "initialHpPercent": 10,
+              "hpBase": "maximum-HP",
+              "maxTriggers": 1,
+              "resetScope": "wave"
+            }
+          ],
+          "calculationNote": "10%是复活后的HP值，不是最大HP增加10%，也不是保持存活时的濒死回血。复活本身不等于已完成死亡触发和次数限制标签。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
+        }
+      },
+      "assignedTags": [
+        "复活"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "自身HP降至0、进入战斗不能时",
+        "每个Wave最多自动复活1次"
+      ]
+    },
+    {
+      "id": "89a90b8df36a0475",
+      "name": "再起之种",
+      "url": "https://altema.jp/lastcloudia/gino/1998",
+      "text": "复活时，随机使1个特技的SCT恢复1次（每个Wave最多触发1次）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "revived",
+          "kind": "condition",
+          "text": "自身实际复活时"
+        },
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "随机1个特技的SCT回复1次"
+        },
+        {
+          "id": "random-target",
+          "kind": "condition",
+          "text": "随机选择1个特技"
+        },
+        {
+          "id": "once-per-wave",
+          "kind": "condition",
+          "text": "每个Wave最多触发1次"
+        }
+      ],
+      "tagDetails": {
+        "复活": {
+          "summary": "自身复活时触发",
+          "relation": "revival-or-revival-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "after-self-revival",
+            "actor": "self",
+            "revivedTarget": "self",
+            "event": "revived"
+          },
+          "coverage": {
+            "revivalPartIds": [],
+            "conditionPartIds": [
+              "revived"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "sct-self",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "自身复活时，随机1个特技回复1次SCT；每Wave最多一次。",
+              "target": "self",
+              "isBuff": false,
+              "revivalRole": "post-revival-benefit",
+              "activationMode": "triggered-action",
+              "phase": "after-revival",
+              "resource": "SCT",
+              "selection": "random-one-skill",
+              "restoreUses": 1,
+              "maxTriggersPerWave": 1
+            }
+          ],
+          "calculationNote": "回复一次特技库存，不是回复1秒，也不是全部特技。再起之种仅在复活后触发，不提供自动复活能力。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
+        }
+      },
+      "assignedTags": [
+        "复活"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "随机1个特技的SCT回复1次"
+      ],
+      "remainingConditions": [
+        "随机选择1个特技",
+        "每个Wave最多触发1次"
       ]
     }
   ],
@@ -25765,6 +26122,40 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 920,
         "ready": 3,
         "partial": 12,
+        "unknown": 0
+      }
+    },
+    "revive": {
+      "label": "复活",
+      "childKeys": [
+        "revive-self",
+        "revive-attack-up",
+        "revive-magic-up",
+        "revive-critical-rate",
+        "revive-physical-damage",
+        "revive-magic-damage",
+        "revive-sct-self",
+        "revive-mp-ally",
+        "revive-sct-ally"
+      ],
+      "overviewLabel": "全部复活相关效果（分组）",
+      "separateSections": true,
+      "passKind": "revival-and-condition",
+      "displayOrder": [
+        "898c96e867704168",
+        "ee6342cbdb0251e7",
+        "fea184827daeaa39",
+        "4170fcd45f772a61",
+        "563cffc7c5fa9c59",
+        "89a90b8df36a0475"
+      ],
+      "scopeDescription": "自动复活、自身复活后的效果、使用自身主动技能复活队友后的效果分别说明；攻击力、魔力、暴击率、物理与魔法增伤、MP和SCT各自列组。濒死回血、致命伤害存活和队友倒下触发不并入复活。已有标签同步，次数限制与未完成效果继续待判断。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 0,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -28406,6 +28797,160 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "revive-self": {
+      "label": "自身自动复活",
+      "parent": "revive",
+      "conditionTag": "复活",
+      "effectGroup": "self",
+      "displayOrder": [
+        "898c96e867704168",
+        "fea184827daeaa39"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "revive-attack-up": {
+      "label": "自身复活后：攻击力增加",
+      "parent": "revive",
+      "conditionTag": "复活",
+      "effectGroup": "attack-up",
+      "displayOrder": [
+        "ee6342cbdb0251e7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "revive-magic-up": {
+      "label": "自身复活后：魔力增加",
+      "parent": "revive",
+      "conditionTag": "复活",
+      "effectGroup": "magic-up",
+      "displayOrder": [
+        "ee6342cbdb0251e7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "revive-critical-rate": {
+      "label": "自身复活后：暴击率增加",
+      "parent": "revive",
+      "conditionTag": "复活",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "ee6342cbdb0251e7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "revive-physical-damage": {
+      "label": "自身复活后：物理伤害增加",
+      "parent": "revive",
+      "conditionTag": "复活",
+      "effectGroup": "physical-damage",
+      "displayOrder": [
+        "563cffc7c5fa9c59"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "revive-magic-damage": {
+      "label": "自身复活后：魔法伤害增加",
+      "parent": "revive",
+      "conditionTag": "复活",
+      "effectGroup": "magic-damage",
+      "displayOrder": [
+        "563cffc7c5fa9c59"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "revive-sct-self": {
+      "label": "自身复活后：SCT回复",
+      "parent": "revive",
+      "conditionTag": "复活",
+      "effectGroup": "sct-self",
+      "displayOrder": [
+        "89a90b8df36a0475"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "revive-mp-ally": {
+      "label": "复活队友后：自身MP回复",
+      "parent": "revive",
+      "conditionTag": "复活",
+      "effectGroup": "mp-ally",
+      "displayOrder": [
+        "4170fcd45f772a61"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "revive-sct-ally": {
+      "label": "复活队友后：自身SCT回复",
+      "parent": "revive",
+      "conditionTag": "复活",
+      "effectGroup": "sct-ally",
+      "displayOrder": [
+        "4170fcd45f772a61"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -28816,14 +29361,16 @@ export const SKILL_LABELING_CATALOG = {
         "eeb9b0e6da9b7f7a",
         "24ba29a7c86df4f3",
         "e26ae95f251c91e0",
-        "a8ee2e010b6e5d6c"
+        "a8ee2e010b6e5d6c",
+        "898c96e867704168",
+        "89a90b8df36a0475"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 408,
-        "notRelatedUnique": 527,
+        "relatedUnique": 410,
+        "notRelatedUnique": 525,
         "ready": 79,
-        "partial": 329,
+        "partial": 331,
         "unknown": 0
       }
     }

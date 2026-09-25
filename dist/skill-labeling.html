@@ -6,8 +6,8 @@
     <meta name="description" content="按完整效果词条逐类贴标签，核对已有分类与未完成条件。" />
     <title>技能列表打标签用的｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260925-mp-related" />
-    <link rel="stylesheet" href="./skill-labeling.css?v=20260925-mp-related" />
+    <link rel="stylesheet" href="./styles.css?v=20260925-revive" />
+    <link rel="stylesheet" href="./skill-labeling.css?v=20260925-revive" />
   </head>
   <body>
     <header class="site-header">
@@ -22,18 +22,18 @@
     <main>
       <section class="workspace labeling-workspace" aria-label="技能标签核对列表">
         <nav class="sheet-tabs label-tabs" id="labelTabs" role="tablist" aria-label="技能标签分类" aria-orientation="horizontal"></nav>
-        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-mp">
-        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">MP</h2></div></div>
-        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="MP子分类" aria-orientation="horizontal" hidden></nav>
+        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-revive">
+        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">复活</h2></div></div>
+        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="复活子分类" aria-orientation="horizontal" hidden></nav>
         <div class="labeling-overview">
           <p id="labelCoverage">正在读取全库核对结果…</p>
           <p id="judgmentSummary" aria-live="polite"></p>
           <p id="cumulativeCoverage"></p>
           <p>按完整效果词条分类：属性、Boss、种族、空中、弱点等限定增伤不拆成宽泛增伤标签。装备、队伍、自身状态、时间等启用条件继续独立判断；并列效果各自贴标签。</p>
-          <p id="conditionScope">MP上限、当前MP回复、回复速度、消耗，以及满MP／低MP／剩余MP变化条件分别列组。MP≤20指20点，MP≥1%按最大MP比例；固定值和百分比不混用。伴随消耗的增伤、上限、减伤单独展示，未完成的其他效果和条件继续待判断。</p>
+          <p id="conditionScope">自动复活、自身复活后的效果、使用自身主动技能复活队友后的效果分别说明；攻击力、魔力、暴击率、物理与魔法增伤、MP和SCT各自列组。濒死回血、致命伤害存活和队友倒下触发不并入复活。已有标签同步，次数限制与未完成效果继续待判断。</p>
         </div>
         <div class="toolbar">
-          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索MP相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
+          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索复活相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
           <div id="labelResultCount" class="result-summary" aria-live="polite"></div>
         </div>
         <div id="labelTable" class="table-area"></div>
@@ -43,6 +43,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260925-mp-related"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260925-revive"></script>
   </body>
 </html>
