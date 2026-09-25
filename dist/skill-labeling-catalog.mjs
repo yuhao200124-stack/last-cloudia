@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "abnormal",
+  "activeView": "break",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -25592,17 +25592,60 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Break": {
+          "summary": "装备斧时，Break值+20%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "axe-gauge",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备斧时，Break值+20%。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "effectIdentity": "f05822ba3ef176e5:effect-1",
+              "breakRole": "direct-effect",
+              "sourceClause": "装备斧时，物理攻击伤害+25%，Break值+20%。",
+              "skillReviewConditions": [
+                "装备斧时生效"
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "斧",
-        "物理"
+        "物理",
+        "Break"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "Break值+20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -35964,17 +36007,60 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Break": {
+          "summary": "装备斧时，Break值+20%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "axe-gauge",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "装备斧时，Break值+20%。",
+              "target": "self",
+              "isBuff": false,
+              "weaponRole": "condition-benefit",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 20,
+              "effectIdentity": "fc3ee7900740acc8:effect-2",
+              "breakRole": "direct-effect",
+              "sourceClause": "装备斧时，物理攻击伤害+25%，物理攻击伤害上限+5,000，Break值+20%。",
+              "skillReviewConditions": [
+                "装备斧时生效"
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "斧",
-        "物理"
+        "物理",
+        "Break"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "Break值+20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -49813,17 +49899,61 @@ export const SKILL_LABELING_CATALOG = {
               }
             }
           ],
-          "calculationNote": "持续至战斗不能，不写成40秒；同类型暴击率Buff只计最高一项。Break值提升是独立效果，仍待判断。"
+          "calculationNote": "暴击率Buff持续至自身战斗不能，不写成40秒；同类暴击率Buff只计最高一项。独立的Break值Buff已在Break分类完成，两项各自按效果身份识别。"
+        },
+        "Break": {
+          "summary": "战斗开始时自身获得Break值+50%的Buff，持续至自身战斗不能；同类Break值Buff只计当前最高一项。暴击率+15个百分点属于独立效果。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "战斗开始时自身获得Break值+50%的Buff，持续至自身战斗不能；同类Break值Buff只计当前最高一项。暴击率+15个百分点属于独立效果。",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 50,
+              "isBuff": true,
+              "buffType": "break-value-up",
+              "activationMode": "triggered-buff",
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "incapacitated",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "group": "opening-gauge-buff",
+              "effectIdentity": "0807ea77755d60fc:opening-effect-2",
+              "breakRole": "direct-effect",
+              "target": "self",
+              "sourceClause": "战斗开始时，赋予自身暴击率+15%、Break值+50%的增益效果（持续至战斗不能）。",
+              "skillReviewConditions": [
+                "战斗开始时触发"
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
         "战斗开始",
-        "暴击"
+        "暴击",
+        "Break"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "Break值+50%的Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -67700,17 +67830,68 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 20
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件火伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留火属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，火属性攻击伤害+20%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-fire-damage-up",
+              "partIds": [
+                "fire-damage"
+              ],
+              "summary": "对气绝或Break敌人，火属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "eadf240a561579f3:fire-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，火属性攻击伤害+20%。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "6e79eb857dac5a05",
@@ -67793,17 +67974,106 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件火伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留火属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，火属性攻击伤害+20%。；对气绝或Break敌人，火属性攻击伤害上限+3,000。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-fire-damage-up",
+              "partIds": [
+                "fire-damage"
+              ],
+              "summary": "对气绝或Break敌人，火属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "6e79eb857dac5a05:fire-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，火属性攻击伤害+20%，伤害上限+3,000。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            },
+            {
+              "group": "stun-or-break-fire-cap-up",
+              "partIds": [
+                "fire-cap"
+              ],
+              "summary": "对气绝或Break敌人，火属性攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "capPoints": 3000,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage-cap",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "6e79eb857dac5a05:fire-cap",
+              "sourceClause": "对处于气绝或Break状态的敌人，火属性攻击伤害+20%，伤害上限+3,000。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "98c68a157e1b55ff",
@@ -69721,17 +69991,68 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 20
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件冰伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留冰属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，冰属性攻击伤害+20%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-ice-damage-up",
+              "partIds": [
+                "ice-damage"
+              ],
+              "summary": "对气绝或Break敌人，冰属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "e2376f83dc028e0f:ice-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，冰属性攻击伤害+20%。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "冰属性"
+        "冰属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "ac908d277528e5bc",
@@ -71963,17 +72284,68 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 20
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件树伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留树属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，树属性攻击伤害+20%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-earth-damage-up",
+              "partIds": [
+                "earth-damage"
+              ],
+              "summary": "对气绝或Break敌人，树属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "89b2bf665f5f6aad:earth-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，树属性攻击伤害+20%。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "树属性"
+        "树属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "2d36845d899106f0",
@@ -73734,17 +74106,68 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 20
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件雷伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留雷属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，雷属性攻击伤害+20%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-thunder-damage-up",
+              "partIds": [
+                "thunder-damage"
+              ],
+              "summary": "对气绝或Break敌人，雷属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "e8339f4048e9810d:thunder-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，雷属性攻击伤害+20%。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "雷属性"
+        "雷属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "449963af5b8068b7",
@@ -73827,17 +74250,106 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件雷伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留雷属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，雷属性攻击伤害+20%。；对气绝或Break敌人，雷属性攻击伤害上限+3,000。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-thunder-damage-up",
+              "partIds": [
+                "thunder-damage"
+              ],
+              "summary": "对气绝或Break敌人，雷属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "449963af5b8068b7:thunder-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，雷属性攻击伤害+20%，伤害上限+3,000。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            },
+            {
+              "group": "stun-or-break-thunder-cap-up",
+              "partIds": [
+                "thunder-cap"
+              ],
+              "summary": "对气绝或Break敌人，雷属性攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "capPoints": 3000,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage-cap",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "449963af5b8068b7:thunder-cap",
+              "sourceClause": "对处于气绝或Break状态的敌人，雷属性攻击伤害+20%，伤害上限+3,000。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "雷属性"
+        "雷属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "19e3a03542e896a2",
@@ -75728,17 +76240,68 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 20
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件光伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留光属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，光属性攻击伤害+20%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-light-damage-up",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "对气绝或Break敌人，光属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "0b9f0f0b0c0162dc:light-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，光属性攻击伤害+20%。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f2adf1f2ba4f5cb0",
@@ -75821,17 +76384,106 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件光伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留光属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，光属性攻击伤害+20%。；对气绝或Break敌人，光属性攻击伤害上限+3,000。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-light-damage-up",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "对气绝或Break敌人，光属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "f2adf1f2ba4f5cb0:light-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，光属性攻击伤害+20%，伤害上限+3,000。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            },
+            {
+              "group": "stun-or-break-light-cap-up",
+              "partIds": [
+                "light-cap"
+              ],
+              "summary": "对气绝或Break敌人，光属性攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "capPoints": 3000,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage-cap",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "f2adf1f2ba4f5cb0:light-cap",
+              "sourceClause": "对处于气绝或Break状态的敌人，光属性攻击伤害+20%，伤害上限+3,000。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4b11acd40f6ed44f",
@@ -79210,17 +79862,68 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 20
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件暗伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留暗属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，暗属性攻击伤害+20%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-dark-damage-up",
+              "partIds": [
+                "dark-damage"
+              ],
+              "summary": "对气绝或Break敌人，暗属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "9ec3cb9696053d8b:dark-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，暗属性攻击伤害+20%。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "6ad84bb93596f650",
@@ -79303,17 +80006,106 @@ export const SKILL_LABELING_CATALOG = {
               "capPoints": 3000
             }
           ],
-          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件暗伤。"
+          "calculationNote": "气绝与Break满足任意一项即可，同项效果只计算一次；完整OR条件已在Break分类完成，保留暗属性攻击限定，不要求攻击类型为物理或魔法。"
+        },
+        "Break": {
+          "summary": "对气绝或Break敌人，暗属性攻击伤害+20%。；对气绝或Break敌人，暗属性攻击伤害上限+3,000。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "stun-or-break-dark-damage-up",
+              "partIds": [
+                "dark-damage"
+              ],
+              "summary": "对气绝或Break敌人，暗属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "6ad84bb93596f650:dark-damage",
+              "sourceClause": "对处于气绝或Break状态的敌人，暗属性攻击伤害+20%，伤害上限+3,000。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            },
+            {
+              "group": "stun-or-break-dark-cap-up",
+              "partIds": [
+                "dark-cap"
+              ],
+              "summary": "对气绝或Break敌人，暗属性攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "capPoints": 3000,
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage-cap",
+              "changesBreakGaugeDamage": false,
+              "effectIdentity": "6ad84bb93596f650:dark-cap",
+              "sourceClause": "对处于气绝或Break状态的敌人，暗属性攻击伤害+20%，伤害上限+3,000。",
+              "skillReviewConditions": [
+                "目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "暗属性"
+        "暗属性",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人处于气绝或Break状态，满足任意一项"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "448a81c14ac59549",
@@ -82955,11 +83747,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Break": {
+          "summary": "仅装备1把武器时，物理攻击Break值+100%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-break"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-break"
+              ],
+              "summary": "仅装备1把武器时，物理攻击Break值+100%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "6952af1368802c34:physical-break",
+              "group": "single-physical-gauge",
+              "effectStacking": "once-per-skill",
+              "valuePercent": 100,
+              "condition": {
+                "subject": "self-equipment",
+                "weaponCount": 1
+              },
+              "breakRole": "direct-effect",
+              "sourceClause": "仅装备1把武器时，物理攻击的Break值+100%。",
+              "skillReviewConditions": [
+                "仅装备1把武器"
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
         "单手",
-        "物理"
+        "物理",
+        "Break"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -84472,11 +85312,82 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "Break": {
+          "summary": "特技Break值+30%；单武器另加30%的分支独立计算。；仅1把武器时，特技Break值在基础+30%之外再+30%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "skill-break",
+              "extra-skill-break"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "valuePercent": 30,
+              "group": "skill-gauge",
+              "partIds": [
+                "skill-break"
+              ],
+              "summary": "特技Break值+30%；单武器另加30%的分支独立计算。",
+              "operation": "break-up",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "73530ee6f38ccc34:skill-break",
+              "breakRole": "direct-effect",
+              "sourceClause": "移动速度-1，特技的Break值+30%；仅装备1把武器时，Break值再+30%。",
+              "skillReviewConditions": [
+                "仅装备1把武器时获得额外Break值"
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "group": "single-extra-skill-gauge",
+              "partIds": [
+                "extra-skill-break"
+              ],
+              "summary": "仅1把武器时，特技Break值在基础+30%之外再+30%。",
+              "operation": "break-up",
+              "effectStacking": "once-per-skill",
+              "valuePercent": 30,
+              "addsToPartId": "skill-break",
+              "techniqueRole": "direct-effect",
+              "effectIdentity": "73530ee6f38ccc34:extra-skill-break",
+              "breakRole": "direct-effect",
+              "sourceClause": "移动速度-1，特技的Break值+30%；仅装备1把武器时，Break值再+30%。",
+              "skillReviewConditions": [
+                "仅装备1把武器时获得额外Break值"
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
         "单手",
-        "特技相关"
+        "特技相关",
+        "Break"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -85776,15 +86687,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "Break": {
+          "summary": "未装备武器时，Break值+100%。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "break-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "empty-weapon-gauge",
+              "partIds": [
+                "break-up"
+              ],
+              "summary": "未装备武器时，Break值+100%。",
+              "target": "self",
+              "isBuff": false,
+              "equipmentRole": "condition-benefit",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 0
+                }
+              },
+              "effectStacking": "once-per-skill",
+              "valuePercent": 100,
+              "effectIdentity": "5b4ee2cab67374b7:break-up",
+              "breakRole": "direct-effect",
+              "sourceClause": "未装备武器时，Break值+100%。",
+              "skillReviewConditions": [
+                "未装备武器，不要求空防具"
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "assignedTags": [
-        "空武器"
+        "空武器",
+        "Break"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "未装备武器时Break值+100%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -101386,17 +102339,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Break": {
+          "summary": "对Break状态敌人物理伤害+30%",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "enemy-break"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对Break状态敌人物理伤害+30%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyState": "break"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "c18e2156cd295689:physical-damage",
+              "valuePercent": 30,
+              "group": "break-physical-damage",
+              "breakRole": "condition-benefit",
+              "statePredicate": {
+                "subject": "target-enemy",
+                "mode": "break-active"
+              },
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "sourceClause": "对处于Break状态的敌人，物理攻击伤害+30%。",
+              "skillReviewConditions": [
+                "目标敌人正处于Break状态"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "Break"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人正处于Break状态"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0a0c2255a5f2eeeb",
@@ -120515,6 +121510,308 @@ export const SKILL_LABELING_CATALOG = {
         "自身被敌人击败时，仅作用于击败自己的敌人",
         "易伤减益的持续时间待确认"
       ]
+    },
+    {
+      "id": "68bd1c7efd3638c0",
+      "name": "破坏者",
+      "url": "https://altema.jp/lastcloudia/gino/191",
+      "text": "Break值+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "break-up",
+          "kind": "effect",
+          "text": "Break值+50%；影响Break槽削减，不提高HP伤害"
+        }
+      ],
+      "tagDetails": {
+        "Break": {
+          "summary": "Break值+50%；提升对Break槽的削减量，不是HP伤害+50%，也不保证一次攻击直接Break。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "break-up"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "break-up"
+              ],
+              "summary": "Break值+50%；提升对Break槽的削减量，不是HP伤害+50%，也不保证一次攻击直接Break。",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 50,
+              "group": "gauge",
+              "effectIdentity": "68bd1c7efd3638c0:break-up",
+              "breakRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "Break值+50%。",
+              "skillReviewConditions": [],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
+        }
+      },
+      "assignedTags": [
+        "Break"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "c66066248ff15c7b",
+      "name": "就是那里！",
+      "url": "https://altema.jp/lastcloudia/gino/809",
+      "text": "攻击敌人的弱点属性时，敌人更容易气绝，Break值+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "weakness-break",
+          "kind": "effect",
+          "text": "攻击敌人弱点属性时，Break值+50%"
+        },
+        {
+          "id": "weakness-stun",
+          "kind": "effect",
+          "text": "攻击敌人弱点属性时，敌人更容易气绝；具体幅度与机制待确认"
+        },
+        {
+          "id": "element-weak-hit",
+          "kind": "condition",
+          "text": "本次攻击实际命中目标的弱点属性；不是种族特攻或暴击"
+        },
+        {
+          "id": "stun-parameters",
+          "kind": "condition",
+          "text": "气绝提升的具体幅度和机制待确认"
+        }
+      ],
+      "tagDetails": {
+        "Break": {
+          "summary": "本次攻击命中敌人弱点属性时，Break值+50%；未指定攻击类型，不加上物理限制。气绝提升是另一效果，具体幅度尚待确认。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "weakness-break"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "weakness-break"
+              ],
+              "summary": "本次攻击命中敌人弱点属性时，Break值+50%；未指定攻击类型，不加上物理限制。气绝提升是另一效果，具体幅度尚待确认。",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresElementWeakHit": true
+              },
+              "condition": {
+                "subject": "self-attack",
+                "event": "element-weakness-hit",
+                "checksTargetForThisHit": true
+              },
+              "valuePercent": 50,
+              "group": "element-weakness-gauge",
+              "effectIdentity": "c66066248ff15c7b:weakness-break",
+              "breakRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "攻击敌人的弱点属性时，敌人更容易气绝，Break值+50%。",
+              "skillReviewConditions": [
+                "本次攻击实际命中目标的弱点属性；不是种族特攻或暴击",
+                "气绝提升的具体幅度和机制待确认"
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
+        }
+      },
+      "assignedTags": [
+        "Break"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "攻击敌人弱点属性时，敌人更容易气绝；具体幅度与机制待确认"
+      ],
+      "remainingConditions": [
+        "本次攻击实际命中目标的弱点属性；不是种族特攻或暴击",
+        "气绝提升的具体幅度和机制待确认"
+      ]
+    },
+    {
+      "id": "3462e35ad13a8f2f",
+      "name": "破防连击",
+      "url": "https://altema.jp/lastcloudia/gino/1673",
+      "text": "连续Hit达到50以上时，Break值+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "combo-break",
+          "kind": "effect",
+          "text": "连续Hit达到50或以上时，Break值+30%"
+        },
+        {
+          "id": "combo-threshold",
+          "kind": "condition",
+          "text": "连续Hit数≥50时生效；独立连击条件仍待标签"
+        }
+      ],
+      "tagDetails": {
+        "Break": {
+          "summary": "连续Hit达到50或以上时，Break值+30%；不是累计受击50次，不默认开场生效。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "combo-break"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "combo-break"
+              ],
+              "summary": "连续Hit达到50或以上时，Break值+30%；不是累计受击50次，不默认开场生效。",
+              "operation": "break-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "condition": {
+                "subject": "combo",
+                "metric": "consecutive-hit-count",
+                "operator": "gte",
+                "threshold": 50
+              },
+              "valuePercent": 30,
+              "activeByDefault": false,
+              "group": "combo-gauge",
+              "effectIdentity": "3462e35ad13a8f2f:combo-break",
+              "breakRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "连续Hit达到50以上时，Break值+30%。",
+              "skillReviewConditions": [
+                "连续Hit数≥50时生效；独立连击条件仍待标签"
+              ],
+              "affects": "break-gauge-damage",
+              "changesHpDamage": false,
+              "appliesBreakImmediately": false
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
+        }
+      },
+      "assignedTags": [
+        "Break"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续Hit数≥50时生效；独立连击条件仍待标签"
+      ]
+    },
+    {
+      "id": "4db25889525ff54a",
+      "name": "机会驱动",
+      "url": "https://altema.jp/lastcloudia/gino/190",
+      "text": "对处于气绝或Break状态的敌人，伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "state-damage",
+          "kind": "effect",
+          "text": "对气绝或Break状态的敌人伤害+20%"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "当前目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "Break": {
+          "summary": "对当前处于气绝或Break状态的敌人，伤害+20%；任意一项满足即生效，两种状态同时存在也只计算这项加成一次。",
+          "relation": "break-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "state-damage"
+            ],
+            "conditionPartIds": [
+              "enemy-state"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "state-damage"
+              ],
+              "summary": "对当前处于气绝或Break状态的敌人，伤害+20%；任意一项满足即生效，两种状态同时存在也只计算这项加成一次。",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20,
+              "statePredicate": {
+                "subject": "target-enemy",
+                "logicalOperator": "OR",
+                "statesAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "matchingMultipleStates": "apply-once",
+              "affects": "hp-damage",
+              "changesBreakGaugeDamage": false,
+              "group": "stun-or-break-damage",
+              "effectIdentity": "4db25889525ff54a:state-damage",
+              "breakRole": "direct-effect",
+              "target": "self",
+              "isBuff": false,
+              "sourceClause": "对处于气绝或Break状态的敌人，伤害+20%。",
+              "skillReviewConditions": [
+                "当前目标敌人处于气绝或Break状态，满足任意一项"
+              ]
+            }
+          ],
+          "calculationNote": "Break值影响Break槽削减；对Break或气绝目标的伤害与上限按原攻击类型和属性单列。气绝与Break为不同状态，OR条件完整保留。同一效果跨页使用相同身份；装备、连击、弱点和其他机制按各自标签进度判断。"
+        }
+      },
+      "assignedTags": [
+        "Break"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     }
   ],
   "views": {
@@ -121137,6 +122434,67 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "break": {
+      "label": "Break",
+      "passKind": "break-effects-and-condition",
+      "displayOrder": [
+        "f05822ba3ef176e5",
+        "4db25889525ff54a",
+        "68bd1c7efd3638c0",
+        "c18e2156cd295689",
+        "c66066248ff15c7b",
+        "e2376f83dc028e0f",
+        "6952af1368802c34",
+        "eadf240a561579f3",
+        "0807ea77755d60fc",
+        "9ec3cb9696053d8b",
+        "89b2bf665f5f6aad",
+        "0b9f0f0b0c0162dc",
+        "e8339f4048e9810d",
+        "fc3ee7900740acc8",
+        "5b4ee2cab67374b7",
+        "6e79eb857dac5a05",
+        "f2adf1f2ba4f5cb0",
+        "3462e35ad13a8f2f",
+        "449963af5b8068b7",
+        "6ad84bb93596f650",
+        "73530ee6f38ccc34"
+      ],
+      "childKeys": [
+        "break-gauge",
+        "break-axe-gauge",
+        "break-single-physical-gauge",
+        "break-empty-weapon-gauge",
+        "break-skill-gauge",
+        "break-single-extra-skill-gauge",
+        "break-opening-gauge-buff",
+        "break-element-weakness-gauge",
+        "break-combo-gauge",
+        "break-stun-or-break-damage",
+        "break-break-physical-damage",
+        "break-stun-or-break-ice-damage-up",
+        "break-stun-or-break-fire-damage-up",
+        "break-stun-or-break-fire-cap-up",
+        "break-stun-or-break-dark-damage-up",
+        "break-stun-or-break-dark-cap-up",
+        "break-stun-or-break-earth-damage-up",
+        "break-stun-or-break-light-damage-up",
+        "break-stun-or-break-light-cap-up",
+        "break-stun-or-break-thunder-damage-up",
+        "break-stun-or-break-thunder-cap-up"
+      ],
+      "overviewLabel": "全部Break（分组）",
+      "separateSections": true,
+      "scopeDescription": "Break值、装备／特技限定、开场Buff、弱点／连击条件、Break或气绝目标增伤与上限分别列组。Break值与HP伤害不同；未完成的独立条件继续保留。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 21,
+        "notRelatedUnique": 914,
+        "ready": 18,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
     "hp": {
       "label": "生命力",
       "displayOrder": [
@@ -121677,8 +123035,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 230,
         "notRelatedUnique": 705,
-        "ready": 163,
-        "partial": 67,
+        "ready": 166,
+        "partial": 64,
         "unknown": 0
       }
     },
@@ -122181,8 +123539,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
-        "ready": 80,
-        "partial": 37,
+        "ready": 81,
+        "partial": 36,
         "unknown": 0
       }
     },
@@ -122882,8 +124240,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 45,
         "notRelatedUnique": 890,
-        "ready": 36,
-        "partial": 9,
+        "ready": 37,
+        "partial": 8,
         "unknown": 0
       }
     },
@@ -122959,8 +124317,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 32,
         "notRelatedUnique": 903,
-        "ready": 21,
-        "partial": 11,
+        "ready": 23,
+        "partial": 9,
         "unknown": 0
       }
     },
@@ -123046,8 +124404,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 25,
-        "partial": 12,
+        "ready": 26,
+        "partial": 11,
         "unknown": 0
       }
     },
@@ -123112,8 +124470,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 27,
         "notRelatedUnique": 908,
-        "ready": 20,
-        "partial": 7,
+        "ready": 21,
+        "partial": 6,
         "unknown": 0
       }
     },
@@ -123183,8 +124541,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 30,
         "notRelatedUnique": 905,
-        "ready": 23,
-        "partial": 7,
+        "ready": 25,
+        "partial": 5,
         "unknown": 0
       }
     },
@@ -123268,8 +124626,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 39,
         "notRelatedUnique": 896,
-        "ready": 26,
-        "partial": 13,
+        "ready": 28,
+        "partial": 11,
         "unknown": 0
       }
     },
@@ -123359,8 +124717,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 41,
         "notRelatedUnique": 894,
-        "ready": 29,
-        "partial": 12,
+        "ready": 31,
+        "partial": 10,
         "unknown": 0
       }
     },
@@ -123497,8 +124855,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 9,
         "notRelatedUnique": 926,
-        "ready": 5,
-        "partial": 4,
+        "ready": 7,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -124140,8 +125498,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 9,
         "notRelatedUnique": 926,
-        "ready": 8,
-        "partial": 1,
+        "ready": 9,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -125522,8 +126880,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 2,
-        "partial": 2,
+        "ready": 3,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -125539,8 +126897,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -128798,8 +130156,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -129206,8 +130564,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -129223,8 +130581,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -129668,8 +131026,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -130196,8 +131554,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -130571,8 +131929,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -130588,8 +131946,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -130969,8 +132327,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -130986,8 +132344,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -131451,8 +132809,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -131468,8 +132826,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -132384,8 +133742,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 3,
         "notRelatedUnique": 932,
-        "ready": 1,
-        "partial": 2,
+        "ready": 3,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -132401,8 +133759,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -132419,8 +133777,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -135428,8 +136786,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -137988,8 +139346,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 74,
         "notRelatedUnique": 861,
-        "ready": 59,
-        "partial": 15,
+        "ready": 61,
+        "partial": 13,
         "unknown": 0
       }
     },
@@ -138043,8 +139401,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 39,
         "notRelatedUnique": 896,
-        "ready": 33,
-        "partial": 6,
+        "ready": 34,
+        "partial": 5,
         "unknown": 0
       }
     },
@@ -138656,8 +140014,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -150323,6 +151681,368 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "break-gauge": {
+      "label": "Break值增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "gauge",
+      "displayOrder": [
+        "68bd1c7efd3638c0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-axe-gauge": {
+      "label": "装备斧 · Break值增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "axe-gauge",
+      "displayOrder": [
+        "f05822ba3ef176e5",
+        "fc3ee7900740acc8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-single-physical-gauge": {
+      "label": "单武器 · 物理攻击Break值",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "single-physical-gauge",
+      "displayOrder": [
+        "6952af1368802c34"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-empty-weapon-gauge": {
+      "label": "空武器 · Break值增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "empty-weapon-gauge",
+      "displayOrder": [
+        "5b4ee2cab67374b7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-skill-gauge": {
+      "label": "特技Break值增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "skill-gauge",
+      "displayOrder": [
+        "73530ee6f38ccc34"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "break-single-extra-skill-gauge": {
+      "label": "单武器 · 额外特技Break值",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "single-extra-skill-gauge",
+      "displayOrder": [
+        "73530ee6f38ccc34"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "break-opening-gauge-buff": {
+      "label": "开场 · Break值Buff",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "opening-gauge-buff",
+      "displayOrder": [
+        "0807ea77755d60fc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-element-weakness-gauge": {
+      "label": "命中弱点属性 · Break值增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "element-weakness-gauge",
+      "displayOrder": [
+        "c66066248ff15c7b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "break-combo-gauge": {
+      "label": "连续Hit≥50 · Break值增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "combo-gauge",
+      "displayOrder": [
+        "3462e35ad13a8f2f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-damage": {
+      "label": "目标气绝或Break · 伤害增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-damage",
+      "displayOrder": [
+        "4db25889525ff54a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-break-physical-damage": {
+      "label": "目标Break · 物理伤害增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "break-physical-damage",
+      "displayOrder": [
+        "c18e2156cd295689"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-ice-damage-up": {
+      "label": "目标气绝或Break · 冰属性伤害增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-ice-damage-up",
+      "displayOrder": [
+        "e2376f83dc028e0f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-fire-damage-up": {
+      "label": "目标气绝或Break · 火属性伤害增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-fire-damage-up",
+      "displayOrder": [
+        "eadf240a561579f3",
+        "6e79eb857dac5a05"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-fire-cap-up": {
+      "label": "目标气绝或Break · 火属性伤害上限",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-fire-cap-up",
+      "displayOrder": [
+        "6e79eb857dac5a05"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-dark-damage-up": {
+      "label": "目标气绝或Break · 暗属性伤害增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-dark-damage-up",
+      "displayOrder": [
+        "9ec3cb9696053d8b",
+        "6ad84bb93596f650"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-dark-cap-up": {
+      "label": "目标气绝或Break · 暗属性伤害上限",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-dark-cap-up",
+      "displayOrder": [
+        "6ad84bb93596f650"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-earth-damage-up": {
+      "label": "目标气绝或Break · 树属性伤害增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-earth-damage-up",
+      "displayOrder": [
+        "89b2bf665f5f6aad"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-light-damage-up": {
+      "label": "目标气绝或Break · 光属性伤害增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-light-damage-up",
+      "displayOrder": [
+        "0b9f0f0b0c0162dc",
+        "f2adf1f2ba4f5cb0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-light-cap-up": {
+      "label": "目标气绝或Break · 光属性伤害上限",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-light-cap-up",
+      "displayOrder": [
+        "f2adf1f2ba4f5cb0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-thunder-damage-up": {
+      "label": "目标气绝或Break · 雷属性伤害增加",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-thunder-damage-up",
+      "displayOrder": [
+        "e8339f4048e9810d",
+        "449963af5b8068b7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "break-stun-or-break-thunder-cap-up": {
+      "label": "目标气绝或Break · 雷属性伤害上限",
+      "parent": "break",
+      "conditionTag": "Break",
+      "effectGroup": "stun-or-break-thunder-cap-up",
+      "displayOrder": [
+        "449963af5b8068b7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -151223,14 +152943,18 @@ export const SKILL_LABELING_CATALOG = {
         "全部技能:all:284",
         "1545ff2f2bc10672",
         "a5b8aa9bc0f4d0b8",
-        "01b4b9edd30c865e"
+        "01b4b9edd30c865e",
+        "68bd1c7efd3638c0",
+        "c66066248ff15c7b",
+        "3462e35ad13a8f2f",
+        "4db25889525ff54a"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 898,
-        "notRelatedUnique": 37,
-        "ready": 605,
-        "partial": 293,
+        "relatedUnique": 902,
+        "notRelatedUnique": 33,
+        "ready": 622,
+        "partial": 280,
         "unknown": 0
       }
     }

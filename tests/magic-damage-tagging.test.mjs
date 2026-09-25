@@ -21,7 +21,7 @@ test('magic damage audits the full library and separates damage from INT, castin
   assert(!entry(n),source(n).name);assert.equal(audit.rows.find(r=>r.id===source(n).id).decision,'not-related');
  }
  for(const n of [17,74,103,105,109,133,140,141,142,143,144,145,146,197,490,523,592,649,656,665,689,711,841,939,994,1130,1164,1480,1563,1666,1694,1754,1755,1756,1800,1911,1941,2000,2017,2028])assert(!entry(n),source(n).name);
- assert.deepEqual(entry(185).remainingEffects,[]);assert(entry(185).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('MP'));
+ assert.deepEqual(entry(185).remainingEffects,[]);assert(entry(185).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('MP'));
  assert.deepEqual(entry(1839).remainingEffects,['自身当前HP持续下降']);
  assert.equal(catalog.numericEffectInjection,false);
 });
@@ -37,29 +37,29 @@ test('magic damage preserves target, timing, Buff, reference and special attack 
  for(const n of [593,1799,2016])assert.match(entry(n).tagDetails['魔法伤害增加'].calculationNote,/不直接填入最高值/);
  assert(!entry(1233).remainingEffects.includes('类型追加“龙”'));assert.deepEqual(entry(1233).remainingConditions,[]);
  assert.equal(entry(1479).tagDetails['魔法伤害增加'].summary,'魔法攻击伤害+15%');
- assert(!entry(1479).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('伤害增加'));
+ assert(!entry(1479).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('伤害增加'));
  assert.deepEqual(entry(1479).remainingEffects,[]);assert.equal(entry(1479).remainingConditions.length,0);
 });
 
 test('magic damage accumulates across old views and only finishes after remaining effect and condition passes',()=>{
  assert.equal(magicDamage.counts.ready,12);assert.equal(magicDamage.counts.partial,10);assert.equal(magicDamage.counts.unknown,0);
- assert.equal(magicDamage.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,15);
+ assert.equal(magicDamage.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,15);
  for(const [n,key] of [[593,'attack'],[1066,'physical'],[241,'physical'],[658,'physical'],[754,'physical'],[1060,'physical'],[1507,'physical']])
   assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  const science=catalog.entries.find(e=>e.id===source(305).id);
- assert.deepEqual(science.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','防御力','魔力','战斗开始']);
+ assert.deepEqual(science.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','防御力','魔力','战斗开始']);
  assert(!science.remainingEffects.includes('魔抗提升'));
  assert(!science.remainingEffects.some(t=>t.includes('科学')));
  assert(!science.remainingConditions.some(t=>t.includes('仅限科学类攻击魔法')));
  for(const key of ['attack','defense','magic'])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===science.id),science);
- assert.deepEqual(entry(1066).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','魔力','物理伤害增加','魔法伤害增加','战斗开始']);
+ assert.deepEqual(entry(1066).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','魔力','物理伤害增加','魔法伤害增加','战斗开始']);
  assert.deepEqual(entry(1066).remainingEffects,[]);assert.equal(entry(1066).remainingConditions.length,1);
- assert.deepEqual(entry(241).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['物理伤害增加','魔法伤害增加','杖']);
+ assert.deepEqual(entry(241).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)),['物理伤害增加','魔法伤害增加','杖']);
  assert.deepEqual(entry(241).remainingEffects,[]);assert.deepEqual(entry(241).remainingConditions,[]);
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='杖');
  assert.equal(resolveSkillLabels(earlier).find(e=>e.id===source(241).id).judgment,'partial');assert.equal(entry(241).judgment,'ready');
- assert.equal(catalog.entries.length,898);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,898);
- assert.equal(catalog.views.all.counts.ready,605);assert.equal(catalog.views.all.counts.partial,293);
+ assert.equal(catalog.entries.length,902);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,902);
+ assert.equal(catalog.views.all.counts.ready,622);assert.equal(catalog.views.all.counts.partial,280);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,605).every(r=>r.judgment==='ready'));assert(sorted.slice(605).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,622).every(r=>r.judgment==='ready'));assert(sorted.slice(622).every(r=>r.judgment==='partial'));
 });

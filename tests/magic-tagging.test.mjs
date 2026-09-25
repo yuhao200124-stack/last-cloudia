@@ -41,23 +41,23 @@ test('magic keeps targets, fixed numbers, decreases, references and conditional 
  for(const n of [169,196,357,441,584,641,890,954,1164,1694,1802,1813]){
   assert.equal(entry(n).judgment,'partial',entry(n).name);assert(entry(n).remainingConditions.length,entry(n).name);
  }
- for(const n of [412,433,561]){assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','MP']);}
+ for(const n of [412,433,561]){assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','MP']);}
  assert.deepEqual(entry(1813).remainingEffects,[]);
 });
 
 test('magic accumulates with other tags and completes only fully covered attributes',()=>{
  assert.equal(magic.counts.ready,27);assert.equal(magic.counts.partial,24);assert.equal(magic.counts.unknown,0);
- assert.equal(magic.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,42);
+ assert.equal(magic.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,42);
  assert.deepEqual(magic.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[17,18,19,20,103,108,115,120,210,249,291,304,412,433,490,561,592,746,1088,1103,1143,1144,1461,1476,1505,1864,1912]);
  for(const n of [1864,1912]){
-  assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','魔力']);
+  assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','魔力']);
   assert.deepEqual(labelingView(catalog,'attack').entries.find(e=>e.id===source(n).id),entry(n));
  }
- assert.deepEqual(entry(304).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','防御力','魔力','空武器','空防具','空武器+防具']);
+ assert.deepEqual(entry(304).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','防御力','魔力','空武器','空防具','空武器+防具']);
  assert.deepEqual(entry(304).remainingEffects,[]);
  assert.deepEqual(entry(304).remainingConditions,[]);
- assert.equal(catalog.views.all.counts.relatedUnique,898);assert.equal(catalog.views.all.counts.ready,605);
- assert.equal(new Set(catalog.entries.map(e=>e.id)).size,898);
+ assert.equal(catalog.views.all.counts.relatedUnique,902);assert.equal(catalog.views.all.counts.ready,622);
+ assert.equal(new Set(catalog.entries.map(e=>e.id)).size,902);
  const rows=skillLabelRows(box.window.SKILL_DATA,magic);
  assert(rows.slice(0,27).every(r=>r.judgment==='ready'));
  assert(rows.slice(27).every(r=>r.judgment==='partial'));
