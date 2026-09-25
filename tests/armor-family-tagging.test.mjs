@@ -1,3 +1,4 @@
+import {passBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import {partsBeforeAbnormal} from '../scripts/validate-abnormal-labels.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import {createHash} from 'node:crypto';
 import {SKILL_LABELING_CATALOG as catalog} from '../dist/skill-labeling-catalog.mjs';
@@ -12,13 +13,13 @@ test('three armor passes audit all 935 sources with exact membership, complete g
  for(const s of rows){const a=audit.rows.find(e=>e.id===s.id);assert.equal(a.sourceHash,hash([s.id,s.url,s.name,s.effect,s.notes||'']));assert.equal(a.decision==='related',v.entries.some(e=>e.id===s.id));}
  assert.deepEqual([...new Set(v.childKeys.flatMap(c=>labelingView(catalog,c).entries.map(e=>e.id)))].sort(),v.entries.map(e=>e.id).sort());for(const e of v.entries)union.add(e.id);
  for(const n of [37,181,304,577,683,700,710,731,887,1171,1190,1250,1306,1312,1318,1381,1395,1461,1828])assert(!v.entries.includes(entry(n)),k+'/'+n);
- }assert.equal(union.size,41);assert.equal(catalog.entries.length,920);assert.equal(catalog.views.all.counts.ready,644);assert.equal(catalog.views.all.counts.partial,276);assert.equal(catalog.numericEffectInjection,false);
+ }assert.equal(union.size,41);assert.equal(catalog.entries.length,935);assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('armor expansion retains every previous record, source, fragment, binding, tag assignment and calculator file',()=>{
- assert.equal(preserved.entries.length,843);assert.equal(preserved.tagPassHashes.length,63);assert.equal(r.tagPasses.length,77);
- for(const old of preserved.entries){const e=r.entries.find(e=>e.id===old.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeAbnormal(e).filter(p=>p.id!=='mnd-healing-reference')]),old.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(e.tagDetails).filter(([t,d])=>!['铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血'].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),old.bindingsHash,e.name);}
- for(const p of preserved.tagPassHashes)assert.equal(hash(r.tagPasses.find(x=>x.tag===p.tag)),p.hash,p.tag);
+ assert.equal(preserved.entries.length,843);assert.equal(preserved.tagPassHashes.length,63);assert.equal(r.tagPasses.length,91);
+ for(const old of preserved.entries){const e=r.entries.find(e=>e.id===old.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeAbnormal(e).filter(p=>p.id!=='mnd-healing-reference')]),old.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(e.tagDetails).filter(([t,d])=>!['铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置'].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),old.bindingsHash,e.name);}
+ for(const p of preserved.tagPassHashes)assert.equal(hash(passBeforeRemaining(r.tagPasses.find(x=>x.tag===p.tag))),p.hash,p.tag);
  for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h,p);
 });
 
@@ -62,7 +63,7 @@ test('armor validation rejects false equipment, wrong numeric bases, narrowed co
 
 function page(key){const elements=new Map(),get=k=>{if(!elements.has(k))elements.set(k,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(k,v){this.listeners[k]=v;},setAttribute(){},focus(){}});return elements.get(k);};vm.runInNewContext(read('dist/skill-labeling.mjs').replace(/^import .*;\n/gm,'').replace('export function renderLabelTable','function renderLabelTable'),{catalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,location:{search:'?tag='+key},addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Do not change user saves');}}});return get;}
 test('three original-site armor pages render every group, unique search counts, judgment sorting and stale-description review',()=>{
- for(const[k,total,groups]of expected){const get=page(k);assert.equal(get('#activeTagTitle').textContent,label(k));assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,69);const sections=get('#labelTable').innerHTML.split('<section ').slice(1);assert.equal(sections.length,groups);for(const s of sections){const ranks=[...s.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(m=>({ready:0,partial:1,unknown:2})[m[1]]);assert.deepEqual(ranks,[...ranks].sort((a,b)=>a-b));}
+ for(const[k,total,groups]of expected){const get=page(k);assert.equal(get('#activeTagTitle').textContent,label(k));assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,83);const sections=get('#labelTable').innerHTML.split('<section ').slice(1);assert.equal(sections.length,groups);for(const s of sections){const ranks=[...s.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(m=>({ready:0,partial:1,unknown:2})[m[1]]);assert.deepEqual(ranks,[...ranks].sort((a,b)=>a-b));}
   get('#labelSearch').value='神域的加护';get('#labelSearch').listeners.input();assert.equal(get('#labelResultCount').textContent,`显示 1 / ${total} 个技能（去重）`);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,2);assert.match(get('#labelTable').innerHTML,/任意防具/);
  }
  const rows=skillLabelRows(data,labelingView(catalog,'armor'),{[`skill:${source(1013).id}`]:{effect:'已修改描述'},[`skill:${source(37).id}`]:{effect:'新的防具条件'}});for(const n of[1013,37]){const e=rows.find(e=>e.id===source(n).id);assert.equal(e.judgment,'unknown');assert.deepEqual(e.assignedTags,[]);assert.deepEqual(e.conditionBindings,{});}

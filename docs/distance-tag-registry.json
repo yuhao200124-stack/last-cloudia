@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 2,
+  "label": "距离",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "distance-effects-and-condition",
+  "skillIds": [
+    "f4bf8f6c759cece0",
+    "全部技能:all:426",
+    "9e9ea3affb033550",
+    "d4e534dddd1aed24"
+  ]
+}

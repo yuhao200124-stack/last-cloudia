@@ -1,3 +1,4 @@
+import {validateRemainingBinding} from './validate-remaining-labels.mjs';
 export function validateBreakCoverage(view,d,a,e){
  const c=d.coverage;
  if(view.passKind!=='break-effects-and-condition'||!Array.isArray(c?.effectPartIds)||!Array.isArray(c?.conditionPartIds))throw Error('Missing Break coverage');
@@ -10,6 +11,7 @@ export function validateBreakCoverage(view,d,a,e){
 }
 
 export function validateBreakBinding(d,a,b){
+ if(b.remainingRole)return validateRemainingBinding('break',d,a,b);
  if(!b.operation||!b.effectIdentity||!b.target||typeof b.isBuff!=='boolean'||!b.scope||!b.sourceClause||!Array.isArray(b.skillReviewConditions))throw Error('Missing Break semantics');
  if(b.breakRole==='condition-benefit'){
   if(!d.coverage.conditionPartIds.length||!b.statePredicate||b.partIds.some(id=>a.partIds.includes(id)))throw Error('Break condition cannot complete independent damage effects');

@@ -1,3 +1,4 @@
+import {passBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import {ADDITIONAL_RACE_TAGS,partsBeforeRaces} from './race-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -23,7 +24,7 @@ test('physical family reviews all 935 canonical skills and keeps complete qualif
  assert.equal(audit.matchedUnique,230);assert.equal(physical.entries.length,230);assert.equal(new Set(physical.entries.map(e=>e.id)).size,230);
  for(const s of rows){const a=audit.rows.find(e=>e.id===s.id);assert.equal(a.sourceHash,hash([s.id,s.url,s.name,s.effect,s.notes||'']));assert.equal(a.decision==='related',physical.entries.some(e=>e.id===s.id));}
  assert.equal(physical.childKeys.length,111);assert.equal(physical.entries.reduce((n,e)=>n+e.tagDetails['物理'].bindings.length,0),318);
- assert.equal(physical.counts.ready,169);assert.equal(physical.counts.partial,61);
+ assert.equal(physical.counts.ready,197);assert.equal(physical.counts.partial,33);
  const union=new Set(physical.childKeys.flatMap(k=>labelingView(catalog,k).entries.map(e=>e.id)));
  assert.deepEqual([...union].sort(),physical.entries.map(e=>e.id).sort());
  for(const n of [30,38,39,42,125,175,181,182,192,205,212,233,295,366,439,546,618,634,770,902,1121,1270,1296,1366,1497,1518,1651,1666,1667,1692,1729,1754,1872,1881,1955])assert(physical.entries.includes(entry(n)),source(n).name);
@@ -35,13 +36,13 @@ test('physical family reviews all 935 canonical skills and keeps complete qualif
 
 test('physical expansion preserves all 43 older passes, prior bindings, source records and fragment identities',()=>{
  assert.equal(preserved.entries.length,685);assert.equal(preserved.tagPasses.length,43);
- for(const p of preserved.tagPasses)assert.equal(hash(registry.tagPasses.find(x=>x.tag===p.tag)),p.hash,p.tag);
+ for(const p of preserved.tagPasses)assert.equal(hash(passBeforeRemaining(registry.tagPasses.find(x=>x.tag===p.tag))),p.hash,p.tag);
  for(const old of preserved.entries){
   const e=registry.entries.find(e=>e.id===old.id);assert(e);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes]),old.sourceHash);
-  assert.equal(hash(Object.entries(e.tagDetails).filter(([tag,d])=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)&&d.bindings).map(([tag,d])=>[tag,d.bindings])),old.bindingsHash,e.name);
+  assert.equal(hash(Object.entries(e.tagDetails).filter(([tag,d])=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)&&d.bindings).map(([tag,d])=>[tag,d.bindings])),old.bindingsHash,e.name);
   for(const p of old.parts){const current=partsBeforeRaces(e).find(x=>x.id===p.id);assert(current);assert.equal(current.kind,p.kind);if(![[1446,'other-effect-1'],[418,'condition-3'],[570,'condition-3'],[333,'enemy-race'],[1102,'enemy-race'],[1705,'enemy-race']].some(([n,id])=>e.id===source(n).id&&p.id===id))assert.deepEqual(current,p);}
  }
- assert.equal(registry.tagPasses.length,77);assert.equal(catalog.entries.length,920);assert.equal(catalog.views.all.counts.ready,644);assert.equal(catalog.views.all.counts.partial,276);
+ assert.equal(registry.tagPasses.length,91);assert.equal(catalog.entries.length,935);assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
  assert.equal(registry.tagPasses.find(p=>p.tag==='物理伤害增加').assignments.length,78);
  assert.equal(catalog.numericEffectInjection,false);
  for(const [n,k]of [[777,'sword'],[181,'dual-weapon'],[570,'machine'],[1955,'ultimate']])assert.strictEqual(labelingView(catalog,k).entries.find(e=>e.id===entry(n).id),entry(n));
@@ -96,7 +97,7 @@ function page(edits={}){
 }
 test('the original physical route displays the full family, subgroup search and cumulative judgment safely',()=>{
  const{get,click}=page();assert.equal(get('#activeTagTitle').textContent,'物理');assert(get('#labelTabs').innerHTML.includes('物理（230）'));assert(!get('#labelTabs').innerHTML.includes('物理伤害增加（78）'));
- assert.match(get('#labelCoverage').textContent,/935.*230.*705/);assert.match(get('#judgmentSummary').textContent,/169.*61.*0/);assert.match(get('#labelResultCount').textContent,/230 \/ 230/);
+ assert.match(get('#labelCoverage').textContent,/935.*230.*705/);assert.match(get('#judgmentSummary').textContent,/197.*33.*0/);assert.match(get('#labelResultCount').textContent,/230 \/ 230/);
  const sections=get('#labelTable').innerHTML.split('<section ').slice(1);assert.equal(sections.length,111);
  for(const s of sections){const ranks=[...s.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(m=>({ready:0,partial:1,unknown:2})[m[1]]);assert.deepEqual(ranks,[...ranks].sort((a,b)=>a-b));}
  get('#labelSearch').value='二刀流';get('#labelSearch').listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 230/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,2);

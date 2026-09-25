@@ -1,5 +1,7 @@
 # 格挡、反击、普通攻击、追击、HP回复、吸血与通用减伤接续记录
 
+> 后续已完成气绝归属、杂项及其余独立分类，最新状态见[本轮后续接续记录](remaining-families-all-tag-pass-2026-09-25.md)。下文保留该历史阶段的数量。
+
 2026-09-25，从原站版本136、源提交5500e987e0d14561cb289fd59eba1a95286a60bd接续。原Site为appgprj_6ab13ba277b881919538217cd5e376dc，网址https://last-cloudia-skill-table.yuhao200124.chatgpt.site，访问范围custom。用户一次布置多项任务，明确要求每类分开完成；普通攻击／追击、HP回复／吸血也分别建立独立入口。
 
 ## 本轮结果

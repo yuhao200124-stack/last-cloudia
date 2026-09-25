@@ -793,6 +793,356 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        },
+        "杂项": {
+          "summary": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-4"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。",
+              "operation": "movement-speed-up",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "self-movement"
+              },
+              "affectsSctSpeed": false,
+              "valuePoints": 2,
+              "buffType": "movement-speed-up",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "durationSeconds": 40,
+              "trigger": {
+                "actor": "self",
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "persistsAfterHpRecovery": true,
+              "group": "movement-low-buff",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "4cb37bd11ae3b17f:effect-4",
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "触发次数与重置": {
+          "summary": "自身濒死触发觉醒后，攻击力+50%，持续40秒；自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认；自身濒死触发觉醒后，防御力+50%，持续40秒；自身濒死触发觉醒后，魔抗+50%，持续40秒；移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。",
+          "relation": "trigger-limits-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身濒死触发觉醒后，攻击力+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "operation": "stat-up",
+              "stat": "STR",
+              "valuePercent": 50,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "buffType": "str-up",
+              "trigger": {
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "triggerLimit": {
+                "maximum": 1,
+                "scope": "wave",
+                "subject": "skill-holder",
+                "counts": "successful-trigger"
+              },
+              "group": "once-wave-118-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "4cb37bd11ae3b17f:attack",
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "target": "self",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身HP降至最大HP的30%及以下时回复HP，每Wave最多1次；具体回复量待确认。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "amountStatus": "unconfirmed",
+              "trigger": {
+                "actor": "self",
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "effectIdentity": "4cb37bd11ae3b17f:effect-1",
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "triggerLimit": {
+                "maximum": 1,
+                "scope": "wave",
+                "subject": "skill-holder",
+                "counts": "successful-trigger"
+              },
+              "group": "once-wave-118-effect-1",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身濒死触发觉醒后，防御力+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "effectIdentity": "4cb37bd11ae3b17f:effect-2",
+              "target": "self",
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 50,
+              "buffType": "stat-def-up",
+              "maxTriggersPerWave": 1,
+              "trigger": {
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "triggerLimit": {
+                "maximum": 1,
+                "scope": "wave",
+                "subject": "skill-holder",
+                "counts": "successful-trigger"
+              },
+              "group": "once-wave-118-effect-2",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            },
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "自身濒死触发觉醒后，魔抗+50%，持续40秒",
+              "activationMode": "threshold-trigger",
+              "isBuff": true,
+              "durationSeconds": 40,
+              "persistsAfterHpRecovery": true,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "effectIdentity": "4cb37bd11ae3b17f:effect-3",
+              "target": "self",
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "stat-up",
+              "valuePercent": 50,
+              "buffType": "stat-mnd-up",
+              "maxTriggersPerWave": 1,
+              "trigger": {
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "triggerLimit": {
+                "maximum": 1,
+                "scope": "wave",
+                "subject": "skill-holder",
+                "counts": "successful-trigger"
+              },
+              "group": "once-wave-118-effect-3",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            },
+            {
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。",
+              "operation": "movement-speed-up",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "self-movement"
+              },
+              "affectsSctSpeed": false,
+              "valuePoints": 2,
+              "buffType": "movement-speed-up",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "durationSeconds": 40,
+              "trigger": {
+                "actor": "self",
+                "event": "hp-crosses-low-threshold",
+                "thresholdPercent": 30
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "persistsAfterHpRecovery": true,
+              "effectIdentity": "4cb37bd11ae3b17f:effect-4",
+              "sourceClause": "濒死时回复HP，并提升攻击力、防御力、魔抗和移动速度（仅触发1次）。",
+              "triggerLimit": {
+                "maximum": 1,
+                "scope": "wave",
+                "subject": "skill-holder",
+                "counts": "successful-trigger"
+              },
+              "group": "once-wave-118-effect-4",
+              "remainingRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave最多触发1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "觉醒Buff持续40秒；回血后不立即取消"
+                },
+                {
+                  "partId": "low-hp-trigger",
+                  "text": "自身濒死（HP降至最大HP的30%及以下）时触发；不是必须一直保持低HP"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复的具体数值与计算公式待确认"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -801,14 +1151,13 @@ export const ATTACK_TAG_CATALOG = {
         "濒死",
         "防御",
         "魔抗",
-        "HP回复"
+        "HP回复",
+        "杂项",
+        "触发次数与重置"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "移动速度提升"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "每个Wave最多触发1次",
         "HP回复的具体数值与计算公式待确认"
       ]
     },
@@ -1650,6 +1999,136 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "杂项": {
+          "summary": "现实周日时，攻击力+5%；属于条件属性加成；现实周日时，防御力+5%；属于条件属性加成；现实周日时，法强+5%；属于条件属性加成；现实周日时，魔抗+5%；属于条件属性加成。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "现实周日时，攻击力+5%；属于条件属性加成。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "valuePercent": 5,
+              "realClockPredicate": {
+                "basis": "game-local-clock",
+                "weekday": "sunday"
+              },
+              "group": "real-clock-223-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "90951140c1d42641:attack",
+              "sourceClause": "周日（现实时间）攻击力、防御力、魔力、魔抗+5%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "现实时间为周日时生效；不是Buff"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "现实周日时，防御力+5%；属于条件属性加成。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "valuePercent": 5,
+              "realClockPredicate": {
+                "basis": "game-local-clock",
+                "weekday": "sunday"
+              },
+              "group": "real-clock-223-effect-1",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "90951140c1d42641:effect-1",
+              "sourceClause": "周日（现实时间）攻击力、防御力、魔力、魔抗+5%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "现实时间为周日时生效；不是Buff"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "现实周日时，法强+5%；属于条件属性加成。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "INT",
+              "valuePercent": 5,
+              "realClockPredicate": {
+                "basis": "game-local-clock",
+                "weekday": "sunday"
+              },
+              "group": "real-clock-223-effect-2",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "90951140c1d42641:effect-2",
+              "sourceClause": "周日（现实时间）攻击力、防御力、魔力、魔抗+5%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "现实时间为周日时生效；不是Buff"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "现实周日时，魔抗+5%；属于条件属性加成。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "valuePercent": 5,
+              "realClockPredicate": {
+                "basis": "game-local-clock",
+                "weekday": "sunday"
+              },
+              "group": "real-clock-223-effect-3",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "90951140c1d42641:effect-3",
+              "sourceClause": "周日（现实时间）攻击力、防御力、魔力、魔抗+5%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "现实时间为周日时生效；不是Buff"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -1657,13 +2136,12 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "魔力",
         "防御",
-        "魔抗"
+        "魔抗",
+        "杂项"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "现实时间为周日时生效；不是Buff"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "1ddd7414606b9de2",
@@ -2476,6 +2954,218 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "队伍联动": {
+          "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）；队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%；队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
+          "relation": "party-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+              "operation": "tiered-stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 5
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 15
+                }
+              ],
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "3e86dffa826956a7",
+              "includesSelf": true,
+              "minimumCount": 2,
+              "partyPredicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "284-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "3e86dffa826956a7:attack",
+              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
+              "effectIdentity": "3e86dffa826956a7:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "party-scaled-stat-up",
+              "tiers": [
+                {
+                  "matchingUnits": 2,
+                  "valuePercent": 5
+                },
+                {
+                  "matchingUnits": 3,
+                  "valuePercent": 10
+                },
+                {
+                  "matchingUnits": 4,
+                  "valuePercent": 15
+                }
+              ],
+              "condition": {
+                "sameSkillId": "3e86dffa826956a7",
+                "minimumMatchingUnits": 2,
+                "includesSelf": true
+              },
+              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                }
+              ],
+              "partyPredicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "284-effect-1",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+              "operation": "tiered-stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "INT",
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 5
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 15
+                }
+              ],
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "3e86dffa826956a7",
+              "includesSelf": true,
+              "minimumCount": 2,
+              "partyPredicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "284-effect-2",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "3e86dffa826956a7:effect-2",
+              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
+              "effectIdentity": "3e86dffa826956a7:effect-3",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "party-scaled-stat-up",
+              "tiers": [
+                {
+                  "matchingUnits": 2,
+                  "valuePercent": 5
+                },
+                {
+                  "matchingUnits": 3,
+                  "valuePercent": 10
+                },
+                {
+                  "matchingUnits": 4,
+                  "valuePercent": 15
+                }
+              ],
+              "condition": {
+                "sameSkillId": "3e86dffa826956a7",
+                "minimumMatchingUnits": 2,
+                "includesSelf": true
+              },
+              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                }
+              ],
+              "partyPredicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "284-effect-3",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -2483,13 +3173,12 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "魔力",
         "防御",
-        "魔抗"
+        "魔抗",
+        "队伍联动"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "51339f350198e9a2",
@@ -3546,6 +4235,241 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "触发次数与重置": {
+          "summary": "攻击力每Wave累计+2%，最多10次；每Wave开始防御力+2%，最多累计10次；法强每Wave累计+2%，最多10次；每Wave开始魔抗+2%，最多累计10次；每个Wave开始，科学类攻击魔法威力+5%，最多累计10次；按实际次数计算，不默认满层。",
+          "relation": "trigger-limits-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力每Wave累计+2%，最多10次。",
+              "effectIdentity": "5f6efbf8b35453d2:attack",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "operation": "wave-scaled-stat-up",
+              "incrementPercent": 2,
+              "maxStacks": 10,
+              "stacksBase": "actual-wave-starts",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "sourceClause": "每个Wave开始时，攻击力、防御力、魔力、魔抗各+2%，「科学」类攻击魔法威力+5%（最多叠加10次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "按Wave累计，最多叠加10次"
+                },
+                {
+                  "partId": "science-magic-condition",
+                  "text": "威力加成仅限科学类攻击魔法"
+                }
+              ],
+              "triggerLimit": {
+                "maximum": 10,
+                "scope": "wave-accumulation",
+                "subject": "skill-holder",
+                "countMetric": "wave-start-events"
+              },
+              "group": "305-attack",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "每Wave开始防御力+2%，最多累计10次",
+              "effectIdentity": "5f6efbf8b35453d2:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "wave-scaled-stat-up",
+              "incrementPercent": 2,
+              "maxStacks": 10,
+              "stacksBase": "actual-wave-starts",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "sourceClause": "每个Wave开始时，攻击力、防御力、魔力、魔抗各+2%，「科学」类攻击魔法威力+5%（最多叠加10次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "按Wave累计，最多叠加10次"
+                },
+                {
+                  "partId": "science-magic-condition",
+                  "text": "威力加成仅限科学类攻击魔法"
+                }
+              ],
+              "triggerLimit": {
+                "maximum": 10,
+                "scope": "wave-accumulation",
+                "subject": "skill-holder",
+                "countMetric": "wave-start-events"
+              },
+              "group": "305-effect-1",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "法强每Wave累计+2%，最多10次。",
+              "effectIdentity": "5f6efbf8b35453d2:effect-2",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "INT",
+              "operation": "wave-scaled-stat-up",
+              "incrementPercent": 2,
+              "maxStacks": 10,
+              "stacksBase": "actual-wave-starts",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "sourceClause": "每个Wave开始时，攻击力、防御力、魔力、魔抗各+2%，「科学」类攻击魔法威力+5%（最多叠加10次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "按Wave累计，最多叠加10次"
+                },
+                {
+                  "partId": "science-magic-condition",
+                  "text": "威力加成仅限科学类攻击魔法"
+                }
+              ],
+              "triggerLimit": {
+                "maximum": 10,
+                "scope": "wave-accumulation",
+                "subject": "skill-holder",
+                "countMetric": "wave-start-events"
+              },
+              "group": "305-effect-2",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "每Wave开始魔抗+2%，最多累计10次",
+              "effectIdentity": "5f6efbf8b35453d2:effect-3",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "wave-scaled-stat-up",
+              "incrementPercent": 2,
+              "maxStacks": 10,
+              "stacksBase": "actual-wave-starts",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "sourceClause": "每个Wave开始时，攻击力、防御力、魔力、魔抗各+2%，「科学」类攻击魔法威力+5%（最多叠加10次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "按Wave累计，最多叠加10次"
+                },
+                {
+                  "partId": "science-magic-condition",
+                  "text": "威力加成仅限科学类攻击魔法"
+                }
+              ],
+              "triggerLimit": {
+                "maximum": 10,
+                "scope": "wave-accumulation",
+                "subject": "skill-holder",
+                "countMetric": "wave-start-events"
+              },
+              "group": "305-effect-3",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-4"
+              ],
+              "summary": "每个Wave开始，科学类攻击魔法威力+5%，最多累计10次；按实际次数计算，不默认满层。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "wave-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "spellSubtype": "science"
+              },
+              "effectIdentity": "5f6efbf8b35453d2:effect-4",
+              "trigger": {
+                "event": "wave-start"
+              },
+              "incrementPercent": 5,
+              "maxStacks": 10,
+              "stacksBase": "actual-wave-starts",
+              "triggerLimit": {
+                "maximum": 10,
+                "scope": "wave-accumulation",
+                "subject": "skill-holder",
+                "countMetric": "wave-start-events"
+              },
+              "group": "305-effect-4",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "每个Wave开始时，攻击力、防御力、魔力、魔抗各+2%，「科学」类攻击魔法威力+5%（最多叠加10次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "按Wave累计，最多叠加10次"
+                },
+                {
+                  "partId": "science-magic-condition",
+                  "text": "威力加成仅限科学类攻击魔法"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -3555,13 +4479,12 @@ export const ATTACK_TAG_CATALOG = {
         "战斗开始",
         "魔法",
         "防御",
-        "魔抗"
+        "魔抗",
+        "触发次数与重置"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "按Wave累计，最多叠加10次"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c16c507cf0c2f9db",
@@ -3907,18 +4830,67 @@ export const ATTACK_TAG_CATALOG = {
               }
             }
           ],
-          "calculationNote": "大勇敢的攻击力、暴击的暴击率、速度的移动速度分别处理。开场与攻击力标签保留；速度及Buff机制仍待判断。"
+          "calculationNote": "大勇敢的攻击力、暴击的暴击率、速度的移动速度分别处理。开场与攻击力标签保留；移动速度已由杂项覆盖，各Buff保留40秒时长并按同类型最高值处理。"
+        },
+        "杂项": {
+          "summary": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。",
+              "operation": "movement-speed-up",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "self-movement"
+              },
+              "affectsSctSpeed": false,
+              "valuePoints": 2,
+              "buffType": "movement-speed-up",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "durationSeconds": 40,
+              "trigger": {
+                "actor": "self",
+                "event": "wave-start"
+              },
+              "group": "movement-opening-buff",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "81e5eed79e630a07:effect-2",
+              "sourceClause": "战斗开始时自动发动“大勇敢”“暴击”“速度”效果。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "开场Buff持续40秒，各同类型Buff同时只计一项"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始",
-        "暴击"
+        "暴击",
+        "杂项"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "速度带来的移动速度提升"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -4369,6 +5341,218 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "队伍联动": {
+          "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）；队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%；队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
+          "relation": "party-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+              "operation": "tiered-stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 7
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 14
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 21
+                }
+              ],
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "edc04a2cb5cbc357",
+              "includesSelf": true,
+              "minimumCount": 2,
+              "partyPredicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "514-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "edc04a2cb5cbc357:attack",
+              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
+              "effectIdentity": "edc04a2cb5cbc357:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "party-scaled-stat-up",
+              "tiers": [
+                {
+                  "matchingUnits": 2,
+                  "valuePercent": 7
+                },
+                {
+                  "matchingUnits": 3,
+                  "valuePercent": 14
+                },
+                {
+                  "matchingUnits": 4,
+                  "valuePercent": 21
+                }
+              ],
+              "condition": {
+                "sameSkillId": "edc04a2cb5cbc357",
+                "minimumMatchingUnits": 2,
+                "includesSelf": true
+              },
+              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                }
+              ],
+              "partyPredicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "514-effect-1",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+              "operation": "tiered-stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "INT",
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 7
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 14
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 21
+                }
+              ],
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "edc04a2cb5cbc357",
+              "includesSelf": true,
+              "minimumCount": 2,
+              "partyPredicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "514-effect-2",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "edc04a2cb5cbc357:effect-2",
+              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
+              "effectIdentity": "edc04a2cb5cbc357:effect-3",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "MND",
+              "operation": "party-scaled-stat-up",
+              "tiers": [
+                {
+                  "matchingUnits": 2,
+                  "valuePercent": 7
+                },
+                {
+                  "matchingUnits": 3,
+                  "valuePercent": 14
+                },
+                {
+                  "matchingUnits": 4,
+                  "valuePercent": 21
+                }
+              ],
+              "condition": {
+                "sameSkillId": "edc04a2cb5cbc357",
+                "minimumMatchingUnits": 2,
+                "includesSelf": true
+              },
+              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                }
+              ],
+              "partyPredicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "514-effect-3",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -4376,13 +5560,12 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "魔力",
         "防御",
-        "魔抗"
+        "魔抗",
+        "队伍联动"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "dece5d91ef6eddbb",
@@ -5023,6 +6206,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "攻击力与防御力加成为限时效果，适用活动时间待确认"
+        },
+        {
+          "id": "remaining-real-event-window",
+          "kind": "condition",
+          "text": "属性加成具有现实限时活动期间的适用条件"
         }
       ],
       "tagDetails": {
@@ -5308,6 +6496,165 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "杂项": {
+          "summary": "限时活动效果：攻击力+10%，实际适用活动时间待确认；限时活动效果：防御力+10%，实际适用活动时间待确认。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "remaining-real-event-window"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "限时活动效果：攻击力+10%，实际适用活动时间待确认。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "valuePercent": 10,
+              "realClockPredicate": {
+                "basis": "event-schedule",
+                "scheduleStatus": "unconfirmed"
+              },
+              "group": "real-event-STR",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "8ba52a420286cb67:attack",
+              "sourceClause": "战斗开始时，随机为自身追加士兵、骑士、魔法师、狙击手中的1种类型（战斗结束时消失）。\n【限时】攻击力、防御力+10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时随机追加类型，战斗结束时消失"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力与防御力加成为限时效果，适用活动时间待确认"
+                },
+                {
+                  "partId": "remaining-real-event-window",
+                  "text": "属性加成具有现实限时活动期间的适用条件"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-2"
+              ]
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "限时活动效果：防御力+10%，实际适用活动时间待确认。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "valuePercent": 10,
+              "realClockPredicate": {
+                "basis": "event-schedule",
+                "scheduleStatus": "unconfirmed"
+              },
+              "group": "real-event-DEF",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "8ba52a420286cb67:effect-1",
+              "sourceClause": "战斗开始时，随机为自身追加士兵、骑士、魔法师、狙击手中的1种类型（战斗结束时消失）。\n【限时】攻击力、防御力+10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时随机追加类型，战斗结束时消失"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力与防御力加成为限时效果，适用活动时间待确认"
+                },
+                {
+                  "partId": "remaining-real-event-window",
+                  "text": "属性加成具有现实限时活动期间的适用条件"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-2"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "战斗结束": {
+          "summary": "开场随机追加类型。",
+          "relation": "battle-end-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "8ba52a420286cb67:effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "random-one-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "selection": "one-of-candidates",
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "battle-end",
+              "candidatePoolStatus": "confirmed",
+              "group": "random-race-expiry",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "战斗开始时，随机为自身追加士兵、骑士、魔法师、狙击手中的1种类型（战斗结束时消失）。\n【限时】攻击力、防御力+10%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时随机追加类型，战斗结束时消失"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力与防御力加成为限时效果，适用活动时间待确认"
+                },
+                {
+                  "partId": "remaining-real-event-window",
+                  "text": "属性加成具有现实限时活动期间的适用条件"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-2"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -5318,7 +6665,9 @@ export const ATTACK_TAG_CATALOG = {
         "骑士",
         "狙击手",
         "魔法师",
-        "防御"
+        "防御",
+        "杂项",
+        "战斗结束"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -5447,18 +6796,90 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "队伍联动": {
+          "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff。",
+          "relation": "party-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff",
+              "target": "selected-other-ally",
+              "isBuff": true,
+              "effectIdentity": "619c3ef058c4b219:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "buffType": "killer-damage-cap-up",
+              "capPoints": 5000,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              },
+              "selection": {
+                "subject": "other-allies",
+                "metric": "STR",
+                "order": "highest",
+                "count": 1,
+                "excludeSelf": true
+              },
+              "partyPredicate": {
+                "clauses": [
+                  "选中除自身外攻击力最高的1名友方"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "696-effect-1",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予增益：触发特攻时的伤害上限+5,000。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "选中除自身外攻击力最高的1名友方"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "触发特攻时生效"
+                },
+                {
+                  "partId": "condition-4",
+                  "text": "赋予友方的Buff持续40秒"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始",
-        "种族／特攻共通"
+        "种族／特攻共通",
+        "队伍联动"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "选中除自身外攻击力最高的1名友方"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "386eb4063fb25415",
@@ -9063,11 +10484,58 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "按当前是否存在倒下友军判断，不是死亡时赋予40秒Buff；不要求恰好只有1名，也不会按倒下人数重复叠加20%。攻击力和此条件均已贴标签，因此已完整判断。"
+        },
+        "队伍联动": {
+          "summary": "至少一名其他友方处于战斗不能状态时，自身攻击力+20%。",
+          "relation": "party-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "至少一名其他友方处于战斗不能状态时，自身攻击力+20%。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "valuePercent": 20,
+              "partyPredicate": {
+                "clauses": [
+                  "有一名友军处于战斗不能状态时生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "1212-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "7498b3dbd8ba7e5d:attack",
+              "sourceClause": "若有一名友军失去行动能力，攻击力+20%",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "有一名友军处于战斗不能状态时生效"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "友军死亡"
+        "友军死亡",
+        "队伍联动"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -9462,19 +10930,127 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "队伍联动": {
+          "summary": "除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒；除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒。",
+          "relation": "party-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "valuePercent": 35,
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "buffType": "str-up",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "partyPredicate": {
+                "clauses": [
+                  "除自身外恰好1名友方装备“师徒之绊”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "1da4935f9a387557"
+              },
+              "group": "1256-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "1da4935f9a387557:attack",
+              "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "除自身外恰好1名友方装备“师徒之绊”"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "大勇敢／大堡垒Buff持续40秒，各同类型Buff同时只计一项"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "effectIdentity": "1da4935f9a387557:effect-1",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 35,
+              "buffType": "stat-def-up",
+              "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "除自身外恰好1名友方装备“师徒之绊”"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "每个Wave开始时触发"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "大勇敢／大堡垒Buff持续40秒，各同类型Buff同时只计一项"
+                }
+              ],
+              "partyPredicate": {
+                "clauses": [
+                  "除自身外恰好1名友方装备“师徒之绊”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "1da4935f9a387557"
+              },
+              "group": "1256-effect-1",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "战斗开始",
-        "防御"
+        "防御",
+        "队伍联动"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "除自身外恰好1名友方装备“师徒之绊”"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f5c157dab48c38c7",
@@ -9739,6 +11315,16 @@ export const ATTACK_TAG_CATALOG = {
           "id": "combat-healing-parameters",
           "kind": "condition",
           "text": "HP回复量、每10秒判定的触发概率待确认"
+        },
+        {
+          "id": "remaining-periodic-clock",
+          "kind": "condition",
+          "text": "战斗开始后每10秒进行概率判定，成功时回复HP并赋予攻击力Buff"
+        },
+        {
+          "id": "remaining-once-per-wave",
+          "kind": "condition",
+          "text": "每个Wave最多成功触发1次"
         }
       ],
       "tagDetails": {
@@ -9810,17 +11396,267 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
+        },
+        "战斗时间": {
+          "summary": "每10秒进行概率判定，成功时获得攻击力+100%的20秒Buff，每Wave最多一次；概率待确认；战斗开始后每10秒概率判定，触发时大幅回复HP，每Wave最多1次；回复量与概率待确认。攻击力Buff的20秒时长不套用到这次即时回复。",
+          "relation": "battle-time-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "remaining-periodic-clock",
+              "condition-1",
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "每10秒进行概率判定，成功时获得攻击力+100%的20秒Buff，每Wave最多一次；概率待确认。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "valuePercent": 100,
+              "durationSeconds": 20,
+              "buffType": "str-up",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "periodic",
+                "intervalSeconds": 10,
+                "chanceStatus": "unconfirmed"
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "group": "1370-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "403a540b2ffa9519:attack",
+              "sourceClause": "从战斗开始后每 10 秒，有一定几率大幅恢复生命 值，并获得 攻击力 +100% 的增益效果，持续 20 秒（每 波最多一次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始后每10秒判定，概率触发，每个Wave最多1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力Buff持续20秒"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复量、每10秒判定的触发概率待确认"
+                },
+                {
+                  "partId": "remaining-periodic-clock",
+                  "text": "战斗开始后每10秒进行概率判定，成功时回复HP并赋予攻击力Buff"
+                },
+                {
+                  "partId": "remaining-once-per-wave",
+                  "text": "每个Wave最多成功触发1次"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "战斗开始后每10秒概率判定，触发时大幅回复HP，每Wave最多1次；回复量与概率待确认。攻击力Buff的20秒时长不套用到这次即时回复。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "intervalSeconds": 10,
+              "trigger": {
+                "actor": "self",
+                "event": "periodic-after-battle-start"
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "chanceStatus": "unconfirmed",
+              "amountStatus": "unconfirmed",
+              "effectIdentity": "403a540b2ffa9519:effect-1",
+              "sourceClause": "从战斗开始后每 10 秒，有一定几率大幅恢复生命 值，并获得 攻击力 +100% 的增益效果，持续 20 秒（每 波最多一次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始后每10秒判定，概率触发，每个Wave最多1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力Buff持续20秒"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复量、每10秒判定的触发概率待确认"
+                },
+                {
+                  "partId": "remaining-periodic-clock",
+                  "text": "战斗开始后每10秒进行概率判定，成功时回复HP并赋予攻击力Buff"
+                },
+                {
+                  "partId": "remaining-once-per-wave",
+                  "text": "每个Wave最多成功触发1次"
+                }
+              ],
+              "group": "1370-effect-1",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "触发次数与重置": {
+          "summary": "每10秒进行概率判定，成功时获得攻击力+100%的20秒Buff，每Wave最多一次；概率待确认；战斗开始后每10秒概率判定，触发时大幅回复HP，每Wave最多1次；回复量与概率待确认。攻击力Buff的20秒时长不套用到这次即时回复。",
+          "relation": "trigger-limits-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "remaining-once-per-wave"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "每10秒进行概率判定，成功时获得攻击力+100%的20秒Buff，每Wave最多一次；概率待确认。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": true,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "valuePercent": 100,
+              "durationSeconds": 20,
+              "buffType": "str-up",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "periodic",
+                "intervalSeconds": 10,
+                "chanceStatus": "unconfirmed"
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "effectIdentity": "403a540b2ffa9519:attack",
+              "sourceClause": "从战斗开始后每 10 秒，有一定几率大幅恢复生命 值，并获得 攻击力 +100% 的增益效果，持续 20 秒（每 波最多一次）。",
+              "triggerLimit": {
+                "maximum": 1,
+                "scope": "wave",
+                "subject": "skill-holder",
+                "counts": "successful-trigger"
+              },
+              "group": "once-wave-1370-attack",
+              "remainingRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始后每10秒判定，概率触发，每个Wave最多1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力Buff持续20秒"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复量、每10秒判定的触发概率待确认"
+                },
+                {
+                  "partId": "remaining-periodic-clock",
+                  "text": "战斗开始后每10秒进行概率判定，成功时回复HP并赋予攻击力Buff"
+                },
+                {
+                  "partId": "remaining-once-per-wave",
+                  "text": "每个Wave最多成功触发1次"
+                }
+              ],
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "战斗开始后每10秒概率判定，触发时大幅回复HP，每Wave最多1次；回复量与概率待确认。攻击力Buff的20秒时长不套用到这次即时回复。",
+              "operation": "restore-hp",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "healing",
+                "resource": "HP"
+              },
+              "intervalSeconds": 10,
+              "trigger": {
+                "actor": "self",
+                "event": "periodic-after-battle-start"
+              },
+              "maxTriggers": 1,
+              "resetScope": "wave",
+              "chanceStatus": "unconfirmed",
+              "amountStatus": "unconfirmed",
+              "effectIdentity": "403a540b2ffa9519:effect-1",
+              "sourceClause": "从战斗开始后每 10 秒，有一定几率大幅恢复生命 值，并获得 攻击力 +100% 的增益效果，持续 20 秒（每 波最多一次）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始后每10秒判定，概率触发，每个Wave最多1次"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "攻击力Buff持续20秒"
+                },
+                {
+                  "partId": "combat-healing-parameters",
+                  "text": "HP回复量、每10秒判定的触发概率待确认"
+                },
+                {
+                  "partId": "remaining-periodic-clock",
+                  "text": "战斗开始后每10秒进行概率判定，成功时回复HP并赋予攻击力Buff"
+                },
+                {
+                  "partId": "remaining-once-per-wave",
+                  "text": "每个Wave最多成功触发1次"
+                }
+              ],
+              "triggerLimit": {
+                "maximum": 1,
+                "scope": "wave",
+                "subject": "skill-holder",
+                "counts": "successful-trigger"
+              },
+              "group": "once-wave-1370-effect-1",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": [
+                "combat-healing-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "HP回复"
+        "HP回复",
+        "战斗时间",
+        "触发次数与重置"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "战斗开始后每10秒判定，概率触发，每个Wave最多1次",
-        "攻击力Buff持续20秒",
         "HP回复量、每10秒判定的触发概率待确认"
       ]
     },
@@ -9853,6 +11689,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-1",
           "kind": "condition",
           "text": "处于移动速度增益效果下时生效；部分特殊增益不计"
+        },
+        {
+          "id": "remaining-movement-state",
+          "kind": "condition",
+          "text": "自身处于符合技能要求的移动速度增益状态"
         }
       ],
       "tagDetails": {
@@ -9917,12 +11758,103 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "杂项": {
+          "summary": "自身处于符合要求的移动速度增益效果时，攻击力+10%；部分特殊增益除外；处于移动速度增益效果下时，自身防御力+10%；部分特殊Buff不计。",
+          "relation": "misc-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "remaining-movement-state"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身处于符合要求的移动速度增益效果时，攻击力+10%；部分特殊增益除外。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "valuePercent": 10,
+              "statusPredicate": {
+                "subject": "self",
+                "state": "movement-speed-up",
+                "specialExceptionsStatus": "unconfirmed"
+              },
+              "group": "movement-state-1380-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "8486ea2eb21efd2c:attack",
+              "sourceClause": "当处于移动速度增益效果下时，攻击力和防御力+10% （某些特殊增益效果除外）",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "处于移动速度增益效果下时生效；部分特殊增益不计"
+                },
+                {
+                  "partId": "remaining-movement-state",
+                  "text": "自身处于符合技能要求的移动速度增益状态"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1"
+              ]
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "处于移动速度增益效果下时，自身防御力+10%；部分特殊Buff不计",
+              "effectIdentity": "8486ea2eb21efd2c:effect-1",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "stat-up",
+              "valuePercent": 10,
+              "condition": {
+                "selfState": "movement-speed-buff",
+                "specialBuffExceptionsStatus": "unconfirmed"
+              },
+              "sourceClause": "当处于移动速度增益效果下时，攻击力和防御力+10% （某些特殊增益效果除外）",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "处于移动速度增益效果下时生效；部分特殊增益不计"
+                },
+                {
+                  "partId": "remaining-movement-state",
+                  "text": "自身处于符合技能要求的移动速度增益状态"
+                }
+              ],
+              "statusPredicate": {
+                "subject": "self",
+                "state": "movement-speed-up",
+                "specialExceptionsStatus": "unconfirmed"
+              },
+              "group": "movement-state-1380-effect-1",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": [
+                "condition-1"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "防御"
+        "防御",
+        "杂项"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -10795,6 +12727,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "start-reset",
           "kind": "effect",
           "text": "每个Wave开始重置累计攻击力增幅"
+        },
+        {
+          "id": "remaining-elapsed-clock",
+          "kind": "condition",
+          "text": "攻击力随战斗经过时间增长，每个Wave重新累计"
         }
       ],
       "tagDetails": {
@@ -10826,16 +12763,121 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "开场仅重置累计／计时，不自动取得最高加成。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "战斗时间": {
+          "summary": "攻击力随时间逐渐提高，最高20%，每Wave重置；增长曲线待确认。",
+          "relation": "battle-time-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "remaining-elapsed-clock"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力随时间逐渐提高，最高20%，每Wave重置；增长曲线待确认。",
+              "operation": "time-scaled-stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "resetScope": "wave",
+              "group": "1629-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "daa5fb62f2887078:attack",
+              "sourceClause": "随着时间经过，攻击力逐渐提高（最高+20%，每个Wave开始时重置）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "随战斗时间经过逐渐提升；具体变化曲线待确认"
+                },
+                {
+                  "partId": "start-trigger",
+                  "text": "每个Wave开始时重置"
+                },
+                {
+                  "partId": "remaining-elapsed-clock",
+                  "text": "攻击力随战斗经过时间增长，每个Wave重新累计"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+        },
+        "触发次数与重置": {
+          "summary": "每个Wave开始时重置该技能的时间累计；不会立即获得最高加成。",
+          "relation": "trigger-limits-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "start-reset"
+            ],
+            "conditionPartIds": [
+              "start-trigger"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "start-reset"
+              ],
+              "summary": "每个Wave开始时重置该技能的时间累计；不会立即获得最高加成。",
+              "operation": "reset-accumulation",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-accumulation"
+              },
+              "trigger": {
+                "event": "wave-start"
+              },
+              "resets": "stat-growth",
+              "grantsMaximumAtStart": false,
+              "group": "wave-reset-1629",
+              "remainingRole": "direct-effect",
+              "effectIdentity": "daa5fb62f2887078:start-reset",
+              "sourceClause": "随着时间经过，攻击力逐渐提高（最高+20%，每个Wave开始时重置）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "随战斗时间经过逐渐提升；具体变化曲线待确认"
+                },
+                {
+                  "partId": "start-trigger",
+                  "text": "每个Wave开始时重置"
+                },
+                {
+                  "partId": "remaining-elapsed-clock",
+                  "text": "攻击力随战斗经过时间增长，每个Wave重新累计"
+                }
+              ],
+              "pendingPartIds": [
+                "condition-1"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "战斗时间",
+        "触发次数与重置"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "每个Wave开始重置累计攻击力增幅"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "随战斗时间经过逐渐提升；具体变化曲线待确认"
       ]
@@ -11222,18 +13264,84 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "队伍联动": {
+          "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力。",
+          "relation": "party-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力",
+              "target": "highest-STR-other-ally",
+              "isBuff": true,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "effectIdentity": "d611639ee456760f:effect-1",
+              "durationSeconds": 90,
+              "trigger": {
+                "actor": "self",
+                "event": "wave-start"
+              },
+              "capPoints": 5000,
+              "buffType": "physical-cap-up",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "selection": {
+                "excludesSelf": true,
+                "count": 1,
+                "metric": "STR",
+                "order": "highest"
+              },
+              "partyPredicate": {
+                "clauses": [
+                  "选中除自身外攻击力最高的1名友方"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "1706-effect-1",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予90秒增益：物理攻击伤害上限+5,000。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时触发"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "选中除自身外攻击力最高的1名友方"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "赋予友方的Buff持续90秒"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始",
-        "物理"
+        "物理",
+        "队伍联动"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "选中除自身外攻击力最高的1名友方"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4032cdf421f18002",
@@ -12285,6 +14393,294 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "队伍联动": {
+          "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加；从神秘之力【结界】获得受到的魔法攻击伤害-10%；从神秘之力【守护】获得受到的物理攻击伤害-10%；从神秘之力【轮光】获得光属性伤害+10%；从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加。",
+          "relation": "party-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "5dbd4f977800ad88:attack",
+              "effectStacking": "once-per-skill",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "attribute"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "stat": "STR",
+              "grant": {
+                "providerSkillId": "7bc369d4036dd098",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "7bc369d4036dd098:attack"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "partyPredicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "1754-attack",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "效果来自自身以外的神类型友方"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "该友方须装备相应“神秘之力”技能"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "同名“神秘之力”效果不叠加"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "effectIdentity": "5dbd4f977800ad88:effect-1",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "7611b3c1ae612f0e",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true
+              },
+              "partyPredicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "1754-effect-1",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "效果来自自身以外的神类型友方"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "该友方须装备相应“神秘之力”技能"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "同名“神秘之力”效果不叠加"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "faith-physical-mitigation"
+              ],
+              "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "f063ab920fec3e4a",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true
+              },
+              "partyPredicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "1754-faith-physical-mitigation",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "效果来自自身以外的神类型友方"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "该友方须装备相应“神秘之力”技能"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "同名“神秘之力”效果不叠加"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "faith-light-damage"
+              ],
+              "summary": "从神秘之力【轮光】获得光属性伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "effectIdentity": "5dbd4f977800ad88:faith-light-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "ca8779066b942675",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "partyPredicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "1754-faith-light-damage",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "效果来自自身以外的神类型友方"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "该友方须装备相应“神秘之力”技能"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "同名“神秘之力”效果不叠加"
+                }
+              ],
+              "pendingPartIds": []
+            },
+            {
+              "partIds": [
+                "faith-physical-damage"
+              ],
+              "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "8c11c64768072670",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true
+              },
+              "partyPredicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "1754-faith-physical-damage",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "效果来自自身以外的神类型友方"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "该友方须装备相应“神秘之力”技能"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "同名“神秘之力”效果不叠加"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -12294,14 +14690,12 @@ export const ATTACK_TAG_CATALOG = {
         "魔法",
         "神",
         "防御",
-        "魔抗"
+        "魔抗",
+        "队伍联动"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "该友方须装备相应“神秘之力”技能",
-        "同名“神秘之力”效果不叠加"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "b782149b137d2614",
@@ -12342,6 +14736,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-1",
           "kind": "condition",
           "text": "随战斗时间经过逐渐提升，40秒达到上限"
+        },
+        {
+          "id": "remaining-time-curve",
+          "kind": "condition",
+          "text": "40秒之前攻击力与防御力增长的具体曲线待确认，不能直接按线性换算"
         }
       ],
       "tagDetails": {
@@ -12452,6 +14851,86 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+        },
+        "战斗时间": {
+          "summary": "攻击力随时间增长，40秒最高20%；此前曲线待确认；防御力随时间增长，40秒最高20%；此前曲线待确认。",
+          "relation": "battle-time-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "攻击力随时间增长，40秒最高20%；此前曲线待确认。",
+              "effectIdentity": "b782149b137d2614:attack",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "operation": "time-scaled-stat-up",
+              "maxValuePercent": 20,
+              "reachesMaximumAtSeconds": 40,
+              "curveStatus": "unconfirmed",
+              "sourceClause": "魔力、魔抗-20%；随着时间经过，攻击力、防御力逐渐提升（最多40秒，最高+20%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "随战斗时间经过逐渐提升，40秒达到上限"
+                },
+                {
+                  "partId": "remaining-time-curve",
+                  "text": "40秒之前攻击力与防御力增长的具体曲线待确认，不能直接按线性换算"
+                }
+              ],
+              "group": "1765-attack",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": [
+                "remaining-time-curve"
+              ]
+            },
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "防御力随时间增长，40秒最高20%；此前曲线待确认。",
+              "effectIdentity": "b782149b137d2614:effect-3",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "DEF",
+              "operation": "time-scaled-stat-up",
+              "maxValuePercent": 20,
+              "reachesMaximumAtSeconds": 40,
+              "curveStatus": "unconfirmed",
+              "sourceClause": "魔力、魔抗-20%；随着时间经过，攻击力、防御力逐渐提升（最多40秒，最高+20%）。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "随战斗时间经过逐渐提升，40秒达到上限"
+                },
+                {
+                  "partId": "remaining-time-curve",
+                  "text": "40秒之前攻击力与防御力增长的具体曲线待确认，不能直接按线性换算"
+                }
+              ],
+              "group": "1765-effect-3",
+              "remainingRole": "condition-benefit",
+              "pendingPartIds": [
+                "remaining-time-curve"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
@@ -12459,12 +14938,13 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "魔力",
         "防御",
-        "魔抗"
+        "魔抗",
+        "战斗时间"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "随战斗时间经过逐渐提升，40秒达到上限"
+        "40秒之前攻击力与防御力增长的具体曲线待确认，不能直接按线性换算"
       ]
     },
     {
@@ -12733,18 +15213,75 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "队伍联动": {
+          "summary": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
+          "relation": "party-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
+              "operation": "stat-up",
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "self-stat"
+              },
+              "stat": "STR",
+              "valuePercent": 25,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "partyPredicate": {
+                "clauses": [
+                  "全队只有自身装备“精灵骑士”",
+                  "除自身外恰好1名友方装备“禁书库的大精灵”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "1801-attack",
+              "remainingRole": "condition-benefit",
+              "effectIdentity": "34045351ea740196:attack",
+              "sourceClause": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时判断"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "全队只有自身装备“精灵骑士”"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "除自身外恰好1名友方装备“禁书库的大精灵”"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "队伍联动"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "全队只有自身装备“精灵骑士”",
-        "除自身外恰好1名友方装备“禁书库的大精灵”"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0aed639a3c185d89",
@@ -12836,6 +15373,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "abnormal-parameters",
           "kind": "condition",
           "text": "猛毒的扣血量、间隔和持续时间待确认"
+        },
+        {
+          "id": "remaining-periodic-clock",
+          "kind": "condition",
+          "text": "猛毒周期性扣除自身HP，毒伤本身不会使HP降至1以下"
         }
       ],
       "tagDetails": {
@@ -12908,12 +15450,75 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "基本异常、特殊异常、能力下降等减益和技能使用限制分别列组。异常耐性是等级；属性耐性是点数；异常存在条件区分自身、目标与攻击来源。施加概率、持续时间和独立攻击触发按原文保留，未确认参数仍待判断。同一技能与效果跨页复用，不重复叠加。"
+        },
+        "战斗时间": {
+          "summary": "每个Wave开场对自身施加猛毒；周期扣HP且该扣血本身不致死（保留至少1HP）。攻击力+20%独立常驻；猛毒扣血量、间隔和持续时间待确认。",
+          "relation": "battle-time-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "remaining-periodic-clock"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "每个Wave开场对自身施加猛毒；周期扣HP且该扣血本身不致死（保留至少1HP）。攻击力+20%独立常驻；猛毒扣血量、间隔和持续时间待确认。",
+              "operation": "apply-status",
+              "target": "self",
+              "scope": {
+                "direction": "self-status",
+                "status": "severe-poison",
+                "statusKind": "special-status"
+              },
+              "trigger": {
+                "event": "wave-start"
+              },
+              "periodicDamage": {
+                "minimumRemainingHP": 1,
+                "amountStatus": "unconfirmed",
+                "intervalStatus": "unconfirmed"
+              },
+              "statusDurationStatus": "unconfirmed",
+              "effectIdentity": "1f04cd2da53994eb:effect-1",
+              "isBuff": false,
+              "sourceClause": "攻击力+20%。战斗开始时，对自身赋予猛毒。",
+              "battleClock": {
+                "mode": "periodic",
+                "intervalStatus": "unconfirmed"
+              },
+              "group": "1873-effect-1",
+              "remainingRole": "condition-benefit",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "战斗开始时对自身施加猛毒"
+                },
+                {
+                  "partId": "abnormal-parameters",
+                  "text": "猛毒的扣血量、间隔和持续时间待确认"
+                },
+                {
+                  "partId": "remaining-periodic-clock",
+                  "text": "猛毒周期性扣除自身HP，毒伤本身不会使HP降至1以下"
+                }
+              ],
+              "pendingPartIds": [
+                "abnormal-parameters"
+              ]
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始",
-        "异常"
+        "异常",
+        "战斗时间"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -14236,18 +16841,92 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "队伍联动": {
+          "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加。",
+          "relation": "party-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
+              "target": "allies-with-faith",
+              "isBuff": false,
+              "effectIdentity": "7bc369d4036dd098:attack",
+              "effectStacking": "once-per-skill",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "attribute"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "stat": "STR",
+              "grant": {
+                "providerSkillId": "7bc369d4036dd098",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "provide",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "7bc369d4036dd098:attack"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "partyPredicate": {
+                "clauses": [
+                  "效果给予装备“信仰”的我方角色",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "group": "2001-attack",
+              "remainingRole": "condition-benefit",
+              "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：攻击力+10%。同名「神秘之力」效果不会叠加。",
+              "skillReviewConditions": [
+                {
+                  "partId": "condition-1",
+                  "text": "自身为神类型"
+                },
+                {
+                  "partId": "condition-2",
+                  "text": "效果给予装备“信仰”的我方角色"
+                },
+                {
+                  "partId": "condition-3",
+                  "text": "同名“神秘之力”效果不叠加"
+                }
+              ],
+              "pendingPartIds": []
+            }
+          ],
+          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "神"
+        "神",
+        "队伍联动"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "效果给予装备“信仰”的我方角色",
-        "同名“神秘之力”效果不叠加"
-      ]
+      "remainingConditions": []
     }
   ],
   "displayOrder": [
@@ -14343,8 +17022,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 42,
-    "partial": 45,
+    "ready": 53,
+    "partial": 34,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

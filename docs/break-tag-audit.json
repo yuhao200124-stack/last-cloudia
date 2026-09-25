@@ -1,7 +1,7 @@
 {
   "label": "Break",
   "reviewedUnique": 935,
-  "matchedUnique": 21,
+  "matchedUnique": 22,
   "rows": [
     {
       "id": "f6b3f0aa974f4913",
@@ -875,8 +875,8 @@
       "id": "全部技能:all:126",
       "url": "https://altema.jp/lastcloudia/gino/126",
       "sourceHash": "9d23061484b5b63fe72bb188fcd2e14738fb40636accad9134d65d82df777722",
-      "decision": "not-related",
-      "reason": "仅气绝相关，未涉及Break；气绝不是Break，不因相似控制状态混入。"
+      "decision": "related",
+      "reason": "使敌人更容易眩晕（气绝）；不是麻痹耐性降低，也不是Break伤害加成。具体幅度和机制待确认。"
     },
     {
       "id": "f871fed73e6326c3",
@@ -3508,7 +3508,7 @@
       "url": "https://altema.jp/lastcloudia/gino/809",
       "sourceHash": "717524ad159cd0ceb9c174436fd5ebf8e31e567de62871bd61606f7f3524d6e3",
       "decision": "related",
-      "reason": "本次攻击命中敌人弱点属性时，Break值+50%；未指定攻击类型，不加上物理限制。气绝提升是另一效果，具体幅度尚待确认。"
+      "reason": "本次攻击命中敌人弱点属性时，Break值+50%；未指定攻击类型，不加上物理限制。气绝提升是另一效果，具体幅度尚待确认。 命中目标属性弱点时，更容易使敌人气绝；幅度与判定机制待确认。"
     },
     {
       "id": "6436af4db7e5b1b5",

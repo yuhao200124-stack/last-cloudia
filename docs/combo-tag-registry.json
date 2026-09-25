@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 2,
+  "label": "连击",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "combo-effects-and-condition",
+  "skillIds": [
+    "e473e81b4b16e917",
+    "e9fbf5b56f0559bf",
+    "eb60bf2d887d8202",
+    "07280db1cb26a374",
+    "4598f48797c2c478",
+    "25f4aebf13e4d5a1",
+    "ff2be2bc2e694db4",
+    "340e241067686512",
+    "254ff4e20e2b8d20",
+    "d1183996ac70be89",
+    "3462e35ad13a8f2f",
+    "2956cbc5fa6221fd",
+    "3a0b205292a15907",
+    "cf6437fca36082d9",
+    "9dbce7c7fe7e59f0"
+  ]
+}

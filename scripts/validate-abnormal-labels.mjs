@@ -1,4 +1,5 @@
 import {partsBeforeCombat} from './combat-preservation-helpers.mjs';
+import {validateRemainingBinding} from './validate-remaining-labels.mjs';
 export const abnormalAddedPartIds=['abnormal-parameters','abnormal-slow-amount','abnormal-opening-str-down','abnormal-random-str-down'];
 export const partsBeforeAbnormal=entry=>partsBeforeCombat(entry).filter(p=>!abnormalAddedPartIds.includes(p.id));
 
@@ -14,6 +15,7 @@ export function validateAbnormalCoverage(view,d,a,e){
 }
 
 export function validateAbnormalBinding(d,a,b){
+ if(b.remainingRole)return validateRemainingBinding('abnormal',d,a,b);
  if(!b.operation||!b.effectIdentity||!b.target||typeof b.isBuff!=='boolean'||!b.scope||!b.sourceClause)throw Error('Missing abnormal semantics');
  if(b.abnormalRole==='direct-effect'){
   if(b.partIds.some(id=>!d.coverage.effectPartIds.includes(id)))throw Error('Unreviewed abnormal effect');

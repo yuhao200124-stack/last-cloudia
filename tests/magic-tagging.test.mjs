@@ -38,27 +38,27 @@ test('magic keeps targets, fixed numbers, decreases, references and conditional 
  assert.equal(entry(1694).tagDetails['魔力'].relation,'attack-calculation-stat');
  assert.match(entry(1164).tagDetails['魔力'].calculationNote,/不能.*\+50%/);
  assert.match(entry(1813).tagDetails['魔力'].calculationNote,/不是魔力\+10%/);
- for(const n of [169,196,357,441,584,641,890,954,1164,1694,1802,1813]){
+ for(const n of [169,196,357,441,584,641,890,954,1164,1694,1813]){
   assert.equal(entry(n).judgment,'partial',entry(n).name);assert(entry(n).remainingConditions.length,entry(n).name);
  }
- for(const n of [412,433,561]){assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','MP']);}
+ for(const n of [412,433,561]){assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','MP']);}
  assert.deepEqual(entry(1813).remainingEffects,[]);
 });
 
 test('magic accumulates with other tags and completes only fully covered attributes',()=>{
- assert.equal(magic.counts.ready,27);assert.equal(magic.counts.partial,24);assert.equal(magic.counts.unknown,0);
- assert.equal(magic.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,42);
- assert.deepEqual(magic.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[17,18,19,20,103,108,115,120,210,249,291,304,412,433,490,561,592,746,1088,1103,1143,1144,1461,1476,1505,1864,1912]);
+ assert.equal(magic.counts.ready,32);assert.equal(magic.counts.partial,19);assert.equal(magic.counts.unknown,0);
+ assert.equal(magic.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,42);
+ assert.deepEqual(magic.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[17,18,19,20,103,108,115,120,210,223,249,284,291,304,305,412,433,490,514,561,592,746,1088,1103,1143,1144,1461,1476,1505,1802,1864,1912]);
  for(const n of [1864,1912]){
-  assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','魔力']);
+  assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','魔力']);
   assert.deepEqual(labelingView(catalog,'attack').entries.find(e=>e.id===source(n).id),entry(n));
  }
- assert.deepEqual(entry(304).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','防御力','魔力','空武器','空防具','空武器+防具']);
+ assert.deepEqual(entry(304).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','防御力','魔力','空武器','空防具','空武器+防具']);
  assert.deepEqual(entry(304).remainingEffects,[]);
  assert.deepEqual(entry(304).remainingConditions,[]);
- assert.equal(catalog.views.all.counts.relatedUnique,920);assert.equal(catalog.views.all.counts.ready,644);
- assert.equal(new Set(catalog.entries.map(e=>e.id)).size,920);
+ assert.equal(catalog.views.all.counts.relatedUnique,935);assert.equal(catalog.views.all.counts.ready,749);
+ assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
  const rows=skillLabelRows(box.window.SKILL_DATA,magic);
- assert(rows.slice(0,27).every(r=>r.judgment==='ready'));
- assert(rows.slice(27).every(r=>r.judgment==='partial'));
+ assert(rows.slice(0,32).every(r=>r.judgment==='ready'));
+ assert(rows.slice(32).every(r=>r.judgment==='partial'));
 });

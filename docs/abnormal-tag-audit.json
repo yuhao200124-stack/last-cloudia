@@ -1,7 +1,7 @@
 {
   "label": "异常",
   "reviewedUnique": 935,
-  "matchedUnique": 65,
+  "matchedUnique": 67,
   "rows": [
     {
       "id": "f6b3f0aa974f4913",
@@ -875,8 +875,8 @@
       "id": "全部技能:all:126",
       "url": "https://altema.jp/lastcloudia/gino/126",
       "sourceHash": "9d23061484b5b63fe72bb188fcd2e14738fb40636accad9134d65d82df777722",
-      "decision": "related",
-      "reason": "使敌人更容易眩晕（气绝）；不是麻痹耐性降低，也不是Break伤害加成。具体幅度和机制待确认。"
+      "decision": "not-related",
+      "reason": "按用户指定，将进攻端气绝施加移到Break；气绝抵抗与时间缩短仍放异常抵抗。"
     },
     {
       "id": "f871fed73e6326c3",
@@ -1309,8 +1309,8 @@
       "id": "f4301787035b8551",
       "url": "https://altema.jp/lastcloudia/gino/194",
       "sourceHash": "2e3b7935376fb193ce4c63b3bf76cb2ad6817c7c0d9e053419ef7b3bcaa13599",
-      "decision": "not-related",
-      "reason": "无异常耐性、防护、施加、恢复、异常状态条件或明确减益关联；不由技能名称推断，不把元素墙、伤害无效、格挡、种族名、常驻属性代价或单次伤害参照视为异常。"
+      "decision": "related",
+      "reason": "缩短气绝时间。具体幅度与机制待确认。"
     },
     {
       "id": "b480695aa2840e5c",
@@ -2051,8 +2051,8 @@
       "id": "全部技能:all:294",
       "url": "https://altema.jp/lastcloudia/gino/348",
       "sourceHash": "16bf4e9c7967342196488cfa8afaec2b77449581bc19b84570e201f0f0ac2a67",
-      "decision": "not-related",
-      "reason": "无异常耐性、防护、施加、恢复、异常状态条件或明确减益关联；不由技能名称推断，不把元素墙、伤害无效、格挡、种族名、常驻属性代价或单次伤害参照视为异常。"
+      "decision": "related",
+      "reason": "更不容易进入气绝状态。具体幅度与机制待确认。"
     },
     {
       "id": "全部技能:all:295",
@@ -4550,8 +4550,8 @@
       "id": "465c19e17eb0cb01",
       "url": "https://altema.jp/lastcloudia/gino/1189",
       "sourceHash": "b7534300981e3a552d7a675e92a0ed59969846b4c78015c291cc6e7f82742d1f",
-      "decision": "not-related",
-      "reason": "无异常耐性、防护、施加、恢复、异常状态条件或明确减益关联；不由技能名称推断，不把元素墙、伤害无效、格挡、种族名、常驻属性代价或单次伤害参照视为异常。"
+      "decision": "related",
+      "reason": "自身反击发动期间，不会因敌人攻击而气绝；不扩大为全部异常免疫。"
     },
     {
       "id": "0b5a9905580d734c",

@@ -7,7 +7,7 @@ import {SKILL_LABELING_CATALOG as catalog} from '../dist/skill-labeling-catalog.
 import {canonicalSkillRows,labelingView,skillLabelRows,resolveSkillLabels} from '../dist/skill-labeling-model.mjs';
 const read=path=>fs.readFileSync(new URL(path,import.meta.url),'utf8');
 const box={window:{}};vm.runInNewContext(read('../dist/data.js'),box);
-const all=canonicalSkillRows(box.window.SKILL_DATA),physical={entries:catalog.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('物理伤害增加')),counts:Object.fromEntries(['ready','partial','unknown'].map(status=>[status,catalog.entries.filter(e=>e.assignedTags.includes('物理伤害增加')&&e.judgment===status).length]))};
+const all=canonicalSkillRows(box.window.SKILL_DATA),physical={entries:catalog.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('物理伤害增加')),counts:Object.fromEntries(['ready','partial','unknown'].map(status=>[status,catalog.entries.filter(e=>e.assignedTags.includes('物理伤害增加')&&e.judgment===status).length]))};
 const source=n=>all.find(r=>r.url.endsWith(`/gino/${n}`));
 const entry=n=>physical.entries.find(e=>e.id===source(n).id);
 const registry=JSON.parse(read('../docs/skill-labeling-registry.json'));
@@ -23,7 +23,7 @@ test('physical damage audits all 935 skills and excludes complete elemental and 
   assert(!entry(n),source(n).name);
   assert.equal(audit.rows.find(r=>r.id===source(n).id).decision,'not-related');
  }
- for(const n of [365,410,502,556,594,619,977]){assert(!entry(n).remainingEffects.includes('暴击率+10%'));assert(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('暴击'));assert(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('单手'));assert.deepEqual(entry(n).remainingConditions,[]);}
+ for(const n of [365,410,502,556,594,619,977]){assert(!entry(n).remainingEffects.includes('暴击率+10%'));assert(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('暴击'));assert(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('单手'));assert.deepEqual(entry(n).remainingConditions,[]);}
  assert.equal(catalog.numericEffectInjection,false);
 });
 
@@ -35,25 +35,25 @@ test('physical bonuses remain distinct from caps, crits, killers, stat changes, 
  assert.deepEqual(entry(1754).tagDetails['物理伤害增加'].relatedSkillIds,[source(1756).id]);
  assert(!entry(1754).remainingEffects.some(t=>t.includes('铁锤')||t.includes('非攻击力效果')));
  assert.equal(entry(1754).remainingEffects.length,0);
- for(const n of [357,441]){assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','物理伤害增加']);assert.deepEqual(entry(n).remainingEffects,[]);assert(entry(n).remainingConditions.some(t=>t.includes('公式')));}
+ for(const n of [357,441]){assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','物理伤害增加']);assert.deepEqual(entry(n).remainingEffects,[]);assert(entry(n).remainingConditions.some(t=>t.includes('公式')));}
  for(const n of [1113,1491])assert.match(entry(n).tagDetails['物理伤害增加'].calculationNote,/不直接填入最高值/);
  for(const n of [1073,1615])assert.deepEqual(entry(n).remainingConditions,[]);
- assert.deepEqual(entry(1548).remainingConditions,[]);
+ assert(entry(1548).remainingConditions.some(t=>t.includes('扣除HP')));
  // The weapon has a fire requirement, but the physical damage itself has none.
  for(const n of [1548,717,1378,1462,1605])assert(entry(n),source(n).name);
 });
 
 test('physical tags accumulate and leave each unfinished effect/condition pending until its own pass',()=>{
- assert.equal(physical.counts.ready,61);assert.equal(physical.counts.partial,17);assert.equal(physical.counts.unknown,0);
- assert.equal(physical.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,69);
+ assert.equal(physical.counts.ready,65);assert.equal(physical.counts.partial,13);assert.equal(physical.counts.unknown,0);
+ assert.equal(physical.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).length>1).length,69);
  for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,[]);
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
- assert.equal(catalog.entries.length,920);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,920);
+ assert.equal(catalog.entries.length,935);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(allRows.slice(0,644).every(r=>r.judgment==='ready'));assert(allRows.slice(644).every(r=>r.judgment==='partial'));
+ assert(allRows.slice(0,749).every(r=>r.judgment==='ready'));assert(allRows.slice(749).every(r=>r.judgment==='partial'));
  // Removing the weapon type pass leaves its condition pending; restoring it completes the shared skill.
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='锤');
  assert.equal(resolveSkillLabels(earlier).find(e=>e.id===source(273).id).judgment,'partial');
- assert.equal(entry(273).judgment,'ready');assert.deepEqual(entry(273).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','物理伤害增加','锤']);
+ assert.equal(entry(273).judgment,'ready');assert.deepEqual(entry(273).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','物理伤害增加','锤']);
 });
