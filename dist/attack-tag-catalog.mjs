@@ -1659,12 +1659,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "同时装备剑和盔甲"
+          "text": "装备剑"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "增加的是所装备剑／盔甲本身的数值"
+        },
+        {
+          "id": "paired-armor",
+          "kind": "condition",
+          "text": "同时装备盔甲，与剑条件同时满足"
         }
       ],
       "tagDetails": {
@@ -1683,17 +1688,84 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅强化装备自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "剑": {
+          "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+50%。；同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "sword",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "sword",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "armor-sword-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+50%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "armor-defense",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            }
+          ],
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型、装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "剑"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "同时装备剑和盔甲",
-        "增加的是所装备剑／盔甲本身的数值"
+        "增加的是所装备剑／盔甲本身的数值",
+        "同时装备盔甲，与剑条件同时满足"
       ]
     },
     {
@@ -3145,12 +3217,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "同时装备剑和盔甲"
+          "text": "装备剑"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "增加的是所装备剑／盔甲本身的数值"
+        },
+        {
+          "id": "paired-armor",
+          "kind": "condition",
+          "text": "同时装备盔甲，与剑条件同时满足"
         }
       ],
       "tagDetails": {
@@ -3169,17 +3246,84 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅强化装备自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "剑": {
+          "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+100%。；同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "sword",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "sword",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "armor-sword-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+100%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 100,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "armor-defense",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 100,
+              "base": "equipped-item-stat"
+            }
+          ],
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型、装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "剑"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "同时装备剑和盔甲",
-        "增加的是所装备剑／盔甲本身的数值"
+        "增加的是所装备剑／盔甲本身的数值",
+        "同时装备盔甲，与剑条件同时满足"
       ]
     },
     {
@@ -3364,12 +3508,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "同时装备剑和衣服"
+          "text": "装备剑"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "增加的是所装备剑／衣服本身的数值"
+        },
+        {
+          "id": "paired-clothes",
+          "kind": "condition",
+          "text": "同时装备衣服，与剑条件同时满足"
         }
       ],
       "tagDetails": {
@@ -3388,19 +3537,109 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅强化装备自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "剑": {
+          "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+100%。；同时装备剑和衣服时，所装备衣服自身的防御力+50%。；同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "sword",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "sword",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "clothes-sword-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+100%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 100,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-defense",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            }
+          ],
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型、装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "剑"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "衣服自身的魔抗+50%"
       ],
       "remainingConditions": [
-        "同时装备剑和衣服",
-        "增加的是所装备剑／衣服本身的数值"
+        "增加的是所装备剑／衣服本身的数值",
+        "同时装备衣服，与剑条件同时满足"
       ]
     },
     {
@@ -3434,12 +3673,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "同时装备剑和衣服"
+          "text": "装备剑"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "增加的是所装备剑／衣服本身的数值"
+        },
+        {
+          "id": "paired-clothes",
+          "kind": "condition",
+          "text": "同时装备衣服，与剑条件同时满足"
         }
       ],
       "tagDetails": {
@@ -3458,19 +3702,109 @@ export const ATTACK_TAG_CATALOG = {
           "calculationNote": "仅强化装备自身数值",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "剑": {
+          "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+50%。；同时装备剑和衣服时，所装备衣服自身的防御力+30%。；同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "sword",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "sword",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "clothes-sword-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+50%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-defense",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat"
+            },
+            {
+              "group": "clothes-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes"
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat"
+            }
+          ],
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型、装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "剑"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "衣服自身的魔抗+30%"
       ],
       "remainingConditions": [
-        "同时装备剑和衣服",
-        "增加的是所装备剑／衣服本身的数值"
+        "增加的是所装备剑／衣服本身的数值",
+        "同时装备衣服，与剑条件同时满足"
       ]
     },
     {
@@ -5766,12 +6100,17 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "只装备一把剑时生效（单武器且武器为剑）"
+          "text": "装备剑"
         },
         {
           "id": "condition-2",
           "kind": "condition",
           "text": "对弱雷属性敌人的额外上限条件"
+        },
+        {
+          "id": "single-weapon-count",
+          "kind": "condition",
+          "text": "仅装备一把武器；装备第二把武器时不满足"
         }
       ],
       "tagDetails": {
@@ -5824,12 +6163,103 @@ export const ATTACK_TAG_CATALOG = {
               "requiresAttackElement": false
             }
           ],
-          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。只完成弱雷条件，单剑和物理上限仍待对应标签。"
+          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。弱雷与剑类型条件已覆盖，仅1把武器条件和物理上限仍待对应标签。"
+        },
+        "剑": {
+          "summary": "仅装备1把剑时，自身攻击力+20%。；仅装备1把剑时，物理攻击伤害上限+3,000。；仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "sword",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "requiredWeaponType": "sword",
+            "minimumMatchingWeaponCount": 1
+          },
+          "bindings": [
+            {
+              "group": "single-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "仅装备1把剑时，自身攻击力+20%。",
+              "target": "self",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 20,
+              "base": "character-stat"
+            },
+            {
+              "group": "single-physical-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000
+            },
+            {
+              "group": "single-enemy-thunder-weak-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "swordRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                },
+                "enemyWeakElement": "thunder"
+              },
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "requiresAttackElement": false,
+              "addsToPartId": "effect-1"
+            }
+          ],
+          "calculationNote": "沿用攻击力和敌人弱雷标签；这里不是雷属性攻击限定。两个上限是基础+3,000和符合弱雷条件时再+3,000；本轮补剑类型，单武器数量及物理上限继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "雷属性"
+        "雷属性",
+        "剑"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -5837,7 +6267,7 @@ export const ATTACK_TAG_CATALOG = {
         "对弱雷属性敌人的伤害上限+3,000"
       ],
       "remainingConditions": [
-        "只装备一把剑时生效（单武器且武器为剑）"
+        "仅装备一把武器；装备第二把武器时不满足"
       ]
     },
     {

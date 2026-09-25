@@ -13,7 +13,7 @@ test('six passes independently audit all 935 unique skills and preserve complete
   for(const n of [91,97,148,381,439,691,836,938,1272,1519,1573,1604,1746])assert(!ids.includes(n));
   for(const a of registry.tagPasses.find(p=>p.tag===label).assignments){const e=catalog.entries.find(e=>e.id===a.skillId),d=e.tagDetails[label];assert.deepEqual(a.partIds,[...d.coverage.effectPartIds,...d.coverage.conditionPartIds]);for(const b of d.bindings.filter(b=>b.elementRole==='condition-benefit'))assert(b.partIds.every(id=>!a.partIds.includes(id)));}
  }
- assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,575);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,575);
+ assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,577);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,577);
 });
 test('multi-element records accumulate tags and synchronize completeness without widening generic damage',()=>{
  for(const n of [662,663,1572,1640]){assert.deepEqual(entry(n).assignedTags,['火属性','冰属性','树属性','雷属性']);assert.equal(entry(n).judgment,'ready');assert.deepEqual(entry(n).remainingEffects,[]);assert.equal(labelingView(catalog,'fire').entries.find(e=>e.id===source(n).id).judgment,'ready');}

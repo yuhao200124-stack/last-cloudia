@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "label": "剑",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "61ce9132ba164832",
+    "2c33c46964323f76",
+    "9933f7bea186f541",
+    "51339f350198e9a2",
+    "15ef9e047319adc5",
+    "4bdba285c5859d95",
+    "87bd554c95a1dcf1",
+    "3f364d1ae44f839e",
+    "52c559efb1ac16a7",
+    "6c8b8402a6d95bd1",
+    "ce4c7604e001b0ed",
+    "5837c3c5bd19cc83",
+    "d71dfc1292e7c678",
+    "bafb60af9aea2655",
+    "c8018a23d827d656",
+    "f6bc920aeccd81d4",
+    "a92f6001f2419fda"
+  ]
+}

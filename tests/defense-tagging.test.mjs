@@ -57,7 +57,7 @@ test('cumulative judgments agree across views and do not claim unfinished condit
   assert.equal(entry(n).judgment,'partial',entry(n).name);assert(entry(n).remainingConditions.length,entry(n).name);
  }
  assert.deepEqual(entry(419).remainingEffects,['魔抗+8%']);
- assert.equal(catalog.entries.length,575);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,575);
+ assert.equal(catalog.entries.length,577);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,577);
  assert.deepEqual(catalog.views.all.displayOrder.slice(0,87),catalog.views.attack.displayOrder);
  const rows=skillLabelRows(data,defense);
  const single=filterLabelRows(rows,'御子与守护者');assert.equal(single.length,1);
