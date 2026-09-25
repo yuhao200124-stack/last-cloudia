@@ -1869,7 +1869,87 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型、装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+        },
+        "铠甲": {
+          "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+50%。；同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-armor"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "armor"
+          },
+          "bindings": [
+            {
+              "group": "sword-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+50%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "51339f350198e9a2:attack",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "sword-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "51339f350198e9a2:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -3349,7 +3429,116 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件已完成；装备数值计算机制及尚未处理的效果继续待判断。"
+        },
+        "衣服": {
+          "summary": "同时装备爪和衣服时，所装备爪自身的攻击力+50%。；同时装备爪和衣服时，所装备衣服自身的防御力+30%。；同时装备爪和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-clothes"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "group": "claw-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备爪和衣服时，所装备爪自身的攻击力+50%。",
+              "target": "equipped-claw",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "543736df65bd47f1:attack",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "claw-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备爪和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "543736df65bd47f1:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "claw-armor-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备爪和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "claw",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "543736df65bd47f1:effect-2",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -4097,7 +4286,87 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型、装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+        },
+        "铠甲": {
+          "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+100%。；同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-armor"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "armor"
+          },
+          "bindings": [
+            {
+              "group": "sword-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备剑自身的攻击力+100%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 100,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "87bd554c95a1dcf1:attack",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "sword-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和盔甲时，所装备盔甲自身的防御力+100%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 100,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "87bd554c95a1dcf1:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -4385,7 +4654,116 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型、装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+        },
+        "衣服": {
+          "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+100%。；同时装备剑和衣服时，所装备衣服自身的防御力+50%。；同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-clothes"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "group": "sword-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+100%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 100,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "52c559efb1ac16a7:attack",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "sword-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "52c559efb1ac16a7:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "sword-armor-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "52c559efb1ac16a7:effect-2",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -4537,7 +4915,116 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型、装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+          "calculationNote": "提升的是剑／防具本身的数值，不直接乘角色最终攻击、防御或魔抗面板。剑条件本轮完成；防具类型已完成；装备数值计算机制及尚未贴标签的魔抗效果分别保留待判断。"
+        },
+        "衣服": {
+          "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+50%。；同时装备剑和衣服时，所装备衣服自身的防御力+30%。；同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-clothes"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "group": "sword-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备剑和衣服时，所装备剑自身的攻击力+50%。",
+              "target": "equipped-sword",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "6c8b8402a6d95bd1:attack",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "sword-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "6c8b8402a6d95bd1:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "sword-armor-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备剑和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "6c8b8402a6d95bd1:effect-2",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -6565,6 +7052,53 @@
             "basic:8df3ecca35bfe8f8:1"
           ],
           "relatedSkillIds": []
+        },
+        "衣服": {
+          "summary": "装备衣服时，自身攻击力+20%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备衣服时，自身攻击力+20%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "STR",
+              "valuePercent": 20,
+              "base": "character-base-stat",
+              "group": "stat-str",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "8df3ecca35bfe8f8:attack",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -6609,6 +7143,77 @@
             "basic:5b601cf4a2c13841:1"
           ],
           "relatedSkillIds": []
+        },
+        "铠甲": {
+          "summary": "装备盔甲时，自身攻击力+12%。；实际装备盔甲时，受到伤害-7%",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "armor"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备盔甲时，自身攻击力+12%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "STR",
+              "valuePercent": 12,
+              "base": "character-base-stat",
+              "group": "stat-str",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "5b601cf4a2c13841:attack",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "实际装备盔甲时，受到伤害-7%",
+              "target": "self",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "valuePercent": 7,
+              "group": "all-reduction",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "5b601cf4a2c13841:effect-1",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -6814,7 +7419,116 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件已完成；装备数值计算机制及尚未处理的效果继续待判断。"
+        },
+        "衣服": {
+          "summary": "同时装备枪和衣服时，所装备枪自身的攻击力+50%。；同时装备枪和衣服时，所装备衣服自身的防御力+30%。；同时装备枪和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-clothes"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "group": "spear-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备枪和衣服时，所装备枪自身的攻击力+50%。",
+              "target": "equipped-spear",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "5dc1aeae525c240c:attack",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "spear-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备枪和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "5dc1aeae525c240c:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "spear-armor-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备枪和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "spear",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "5dc1aeae525c240c:effect-2",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -7055,7 +7769,87 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件已完成；装备数值计算机制及尚未处理的效果继续待判断。"
+        },
+        "铠甲": {
+          "summary": "同时装备斧和盔甲时，所装备斧自身的攻击力+50%。；同时装备斧和盔甲时，所装备盔甲自身的防御力+50%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-armor"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "armor"
+          },
+          "bindings": [
+            {
+              "group": "axe-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备斧和盔甲时，所装备斧自身的攻击力+50%。",
+              "target": "equipped-axe",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "71f0c15272a753ba:attack",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "axe-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备斧和盔甲时，所装备盔甲自身的防御力+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "axe",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "71f0c15272a753ba:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -8802,7 +9596,116 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件已完成；装备数值计算机制及尚未处理的效果继续待判断。"
+        },
+        "衣服": {
+          "summary": "同时装备机械和衣服时，所装备机械自身的攻击力+50%。；同时装备机械和衣服时，所装备衣服自身的防御力+30%。；同时装备机械和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-clothes"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "group": "machine-weapon-str",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "同时装备机械和衣服时，所装备机械自身的攻击力+50%。",
+              "target": "equipped-machine",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "STR",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "e64a85601b9b58cc:attack",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "machine-armor-def",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备机械和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "e64a85601b9b58cc:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "machine-armor-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备机械和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "machine",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "e64a85601b9b58cc:effect-2",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -9907,6 +10810,79 @@
             }
           ],
           "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        },
+        "铠甲": {
+          "summary": "装备盔甲时，受到Boss的伤害-10%（不限制攻击种类）。；装备盔甲时，自身防御力+20%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "armor"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备盔甲时，受到Boss的伤害-10%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "boss",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "valuePercent": 10,
+              "changesDefenseStat": false,
+              "group": "boss-reduction",
+              "effectIdentity": "全部技能:all:235:effect-1",
+              "effectStacking": "once-per-skill",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "defense"
+              ],
+              "summary": "装备盔甲时，自身防御力+20%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "DEF",
+              "valuePercent": 20,
+              "base": "character-base-stat",
+              "group": "stat-def",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:235:defense",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -10019,6 +10995,102 @@
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "衣服": {
+          "summary": "实际装备衣服时，物理攻击伤害+10%；装备衣服时，自身防御力+10%。；装备衣服时，自身魔抗+10%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "实际装备衣服时，物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "56cc2ba3fab2065f:effect-2",
+              "valuePercent": 10,
+              "group": "physical-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "defense"
+              ],
+              "summary": "装备衣服时，自身防御力+10%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-base-stat",
+              "group": "stat-def",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "56cc2ba3fab2065f:defense",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备衣服时，自身魔抗+10%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "MND",
+              "valuePercent": 10,
+              "base": "character-base-stat",
+              "group": "stat-mnd",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "56cc2ba3fab2065f:effect-1",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -10100,6 +11172,79 @@
             }
           ],
           "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        },
+        "铠甲": {
+          "summary": "装备盔甲时，受到Boss的伤害-5%（不限制攻击种类）。；装备盔甲时，自身防御力+7%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "armor"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备盔甲时，受到Boss的伤害-5%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "boss",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "valuePercent": 5,
+              "changesDefenseStat": false,
+              "group": "boss-reduction",
+              "effectIdentity": "全部技能:all:266:effect-1",
+              "effectStacking": "once-per-skill",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "defense"
+              ],
+              "summary": "装备盔甲时，自身防御力+7%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "DEF",
+              "valuePercent": 7,
+              "base": "character-base-stat",
+              "group": "stat-def",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:266:defense",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -10265,6 +11410,102 @@
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "衣服": {
+          "summary": "实际装备衣服时，物理攻击伤害+5%；装备衣服时，自身防御力+5%。；装备衣服时，自身魔抗+5%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "实际装备衣服时，物理攻击伤害+5%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "全部技能:all:314:effect-2",
+              "valuePercent": 5,
+              "group": "physical-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "defense"
+              ],
+              "summary": "装备衣服时，自身防御力+5%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "DEF",
+              "valuePercent": 5,
+              "base": "character-base-stat",
+              "group": "stat-def",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:314:defense",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备衣服时，自身魔抗+5%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "MND",
+              "valuePercent": 5,
+              "base": "character-base-stat",
+              "group": "stat-mnd",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:314:effect-1",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -11598,6 +12839,103 @@
             }
           ],
           "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        },
+        "铠甲": {
+          "summary": "实际装备盔甲时，受到的物理伤害-10%；装备盔甲时，受到Boss的伤害-10%（不限制攻击种类）。；装备盔甲时，自身防御力+20%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "armor"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "实际装备盔甲时，受到的物理伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "全部技能:all:428:effect-1",
+              "valuePercent": 10,
+              "group": "physical-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "装备盔甲时，受到Boss的伤害-10%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "boss",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "valuePercent": 10,
+              "changesDefenseStat": false,
+              "group": "boss-reduction",
+              "effectIdentity": "全部技能:all:428:effect-2",
+              "effectStacking": "once-per-skill",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "defense"
+              ],
+              "summary": "装备盔甲时，自身防御力+20%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "DEF",
+              "valuePercent": 20,
+              "base": "character-base-stat",
+              "group": "stat-def",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:428:defense",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -12036,6 +13374,126 @@
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "衣服": {
+          "summary": "实际装备衣服时，受到的物理伤害-10%；实际装备衣服时，物理攻击伤害+10%；装备衣服时，自身防御力+10%。；装备衣服时，自身魔抗+10%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "实际装备衣服时，受到的物理伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "48d0bc39febccaaf:effect-2",
+              "valuePercent": 10,
+              "group": "physical-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "实际装备衣服时，物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "48d0bc39febccaaf:effect-3",
+              "valuePercent": 10,
+              "group": "physical-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "defense"
+              ],
+              "summary": "装备衣服时，自身防御力+10%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-base-stat",
+              "group": "stat-def",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "48d0bc39febccaaf:defense",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备衣服时，自身魔抗+10%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "MND",
+              "valuePercent": 10,
+              "base": "character-base-stat",
+              "group": "stat-mnd",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "48d0bc39febccaaf:effect-1",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -12475,7 +13933,116 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件已完成；装备数值计算机制及尚未处理的效果继续待判断。"
+        },
+        "衣服": {
+          "summary": "同时装备杖和衣服时，所装备杖自身的魔力+50%。；同时装备杖和衣服时，所装备衣服自身的防御力+30%。；同时装备杖和衣服时，所装备衣服自身的魔抗+30%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-clothes"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "group": "staff-weapon-int",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备杖和衣服时，所装备杖自身的魔力+50%。",
+              "target": "equipped-staff",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "INT",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "e23ff7a9e123570f:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "staff-armor-def",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "同时装备杖和衣服时，所装备衣服自身的防御力+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "DEF",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "e23ff7a9e123570f:defense",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "staff-armor-mnd",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "同时装备杖和衣服时，所装备衣服自身的魔抗+30%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 30,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "e23ff7a9e123570f:effect-2",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -12930,6 +14497,77 @@
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "衣服": {
+          "summary": "实际装备衣服时，受到的物理攻击伤害-10%；装备衣服时，自身防御力+10%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "实际装备衣服时，受到的物理攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "8c4e8f50e9a5ccaa:effect-1",
+              "valuePercent": 10,
+              "group": "physical-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "defense"
+              ],
+              "summary": "装备衣服时，自身防御力+10%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "DEF",
+              "valuePercent": 10,
+              "base": "character-base-stat",
+              "group": "stat-def",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "8c4e8f50e9a5ccaa:defense",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -13532,6 +15170,177 @@
             "basic:314745e663f4e29e:1"
           ],
           "relatedSkillIds": []
+        },
+        "铠甲": {
+          "summary": "装备任意防具时，自身HP上限+15%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "装备任意防具时，自身HP上限+15%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "stat": "HP",
+              "valuePercent": 15,
+              "base": "maximum-HP",
+              "group": "common-stat-hp",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "314745e663f4e29e:hp-stat",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "衣服": {
+          "summary": "装备任意防具时，自身HP上限+15%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "装备任意防具时，自身HP上限+15%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "stat": "HP",
+              "valuePercent": 15,
+              "base": "maximum-HP",
+              "group": "common-stat-hp",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "314745e663f4e29e:hp-stat",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "法袍": {
+          "summary": "装备任意防具时，自身HP上限+15%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "装备任意防具时，自身HP上限+15%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "stat": "HP",
+              "valuePercent": 15,
+              "base": "maximum-HP",
+              "group": "common-stat-hp",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "314745e663f4e29e:hp-stat",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
         }
       }
     },
@@ -13622,6 +15431,177 @@
             "basic:ea81b15f2a9dc860:1"
           ],
           "relatedSkillIds": []
+        },
+        "铠甲": {
+          "summary": "装备任意防具时，自身HP上限+10%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "装备任意防具时，自身HP上限+10%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "stat": "HP",
+              "valuePercent": 10,
+              "base": "maximum-HP",
+              "group": "common-stat-hp",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "ea81b15f2a9dc860:hp-stat",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "衣服": {
+          "summary": "装备任意防具时，自身HP上限+10%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "装备任意防具时，自身HP上限+10%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "stat": "HP",
+              "valuePercent": 10,
+              "base": "maximum-HP",
+              "group": "common-stat-hp",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "ea81b15f2a9dc860:hp-stat",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "法袍": {
+          "summary": "装备任意防具时，自身HP上限+10%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "hp-stat"
+              ],
+              "summary": "装备任意防具时，自身HP上限+10%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "stat": "HP",
+              "valuePercent": 10,
+              "base": "maximum-HP",
+              "group": "common-stat-hp",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "ea81b15f2a9dc860:hp-stat",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
         }
       }
     },
@@ -15298,7 +17278,87 @@
               "base": "equipped-item-stat"
             }
           ],
-          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件、装备数值计算机制及尚未处理的效果继续待判断。"
+          "calculationNote": "提升的是所装备武器／防具本身的数值，不直接乘角色最终面板。武器类型已贴标签，防具条件已完成；装备数值计算机制及尚未处理的效果继续待判断。"
+        },
+        "法袍": {
+          "summary": "同时装备杖和长袍时，所装备杖自身的魔力+50%。；同时装备杖和长袍时，所装备长袍自身的魔抗+50%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "paired-robe"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "robe"
+          },
+          "bindings": [
+            {
+              "group": "staff-weapon-int",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "同时装备杖和长袍时，所装备杖自身的魔力+50%。",
+              "target": "equipped-staff",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "INT",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "756acbe5f4ea23ca:magic",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            },
+            {
+              "group": "staff-armor-mnd",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "同时装备杖和长袍时，所装备长袍自身的魔抗+50%。",
+              "target": "equipped-armor",
+              "isBuff": false,
+              "operation": "equipment-stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "staff",
+                  "minimumMatchingWeaponCount": 1,
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "perMatchingWeaponStacking": false,
+              "stat": "MND",
+              "valuePercent": 50,
+              "base": "equipped-item-stat",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "756acbe5f4ea23ca:effect-1",
+              "applicability": "specific-armor",
+              "pairedEquipmentLogicalOperator": "AND"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -15860,6 +17920,60 @@
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "法袍": {
+          "summary": "装备长袍时，战斗开始将自身魔抗数值的10%加算到魔力；不降低魔抗，不是魔力直接+10%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "robe"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic",
+                "effect-1"
+              ],
+              "summary": "装备长袍时，战斗开始将自身魔抗数值的10%加算到魔力；不降低魔抗，不是魔力直接+10%。",
+              "target": "self",
+              "operation": "add-stat-reference",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "INT",
+              "referenceStat": "MND",
+              "referencePercent": 10,
+              "referenceBase": "self-MND-at-battle-start",
+              "referenceIsConsumed": false,
+              "changesReferenceStat": false,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "effectIdentity": "b6f1305e6f78634c:magic",
+              "group": "opening-mnd-to-int",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -29721,6 +31835,76 @@
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "衣服": {
+          "summary": "装备衣服时，物理攻击伤害+10%；实际装备衣服时，受到的魔法攻击伤害-10%",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "装备衣服时，物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "92a57a934fb2eb2f:physical-damage",
+              "valuePercent": 10,
+              "group": "physical-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "实际装备衣服时，受到的魔法攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "92a57a934fb2eb2f:effect-1",
+              "valuePercent": 10,
+              "group": "attack-magic-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -29826,6 +32010,76 @@
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "衣服": {
+          "summary": "装备衣服时，物理攻击伤害+20%；实际装备衣服时，受到的魔法攻击伤害-20%",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "装备衣服时，物理攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "6df40a3227341ce3:physical-damage",
+              "valuePercent": 20,
+              "group": "physical-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "实际装备衣服时，受到的魔法攻击伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "6df40a3227341ce3:effect-1",
+              "valuePercent": 20,
+              "group": "attack-magic-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -30019,6 +32273,77 @@
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "法袍": {
+          "summary": "装备长袍时，魔法攻击伤害+10%；装备长袍时，自身魔抗+20%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "robe"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "bf684afd6ed9b3e1:magic-damage",
+              "valuePercent": 10,
+              "group": "attack-magic-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备长袍时，自身魔抗+20%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "MND",
+              "valuePercent": 20,
+              "base": "character-base-stat",
+              "group": "stat-mnd",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "bf684afd6ed9b3e1:effect-1",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -30201,6 +32526,77 @@
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "法袍": {
+          "summary": "装备长袍时，魔法攻击伤害+5%；装备长袍时，自身魔抗+7%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "robe"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+5%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "ea2269dc8dbcfa74:magic-damage",
+              "valuePercent": 5,
+              "group": "attack-magic-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备长袍时，自身魔抗+7%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "MND",
+              "valuePercent": 7,
+              "base": "character-base-stat",
+              "group": "stat-mnd",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "ea2269dc8dbcfa74:effect-1",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -30527,6 +32923,101 @@
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "法袍": {
+          "summary": "实际装备长袍时，受到的物理攻击伤害-10%；装备长袍时，魔法攻击伤害+10%；装备长袍时，自身魔抗+20%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "robe"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "实际装备长袍时，受到的物理攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "ef761252451c1b55:effect-2",
+              "valuePercent": 10,
+              "group": "physical-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "ef761252451c1b55:magic-damage",
+              "valuePercent": 10,
+              "group": "attack-magic-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备长袍时，自身魔抗+20%。",
+              "target": "self",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "stat": "MND",
+              "valuePercent": 20,
+              "base": "character-base-stat",
+              "group": "stat-mnd",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "ef761252451c1b55:effect-1",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -30632,6 +33123,76 @@
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "法袍": {
+          "summary": "实际装备长袍时，受到的物理攻击伤害-10%；装备长袍时，魔法攻击伤害+10%",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "robe"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "实际装备长袍时，受到的物理攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "8e6716f96c389e1d:effect-1",
+              "valuePercent": 10,
+              "group": "physical-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "8e6716f96c389e1d:magic-damage",
+              "valuePercent": 10,
+              "group": "attack-magic-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -30968,6 +33529,76 @@
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "法袍": {
+          "summary": "实际装备长袍时，受到的物理攻击伤害-20%；装备长袍时，魔法攻击伤害+20%",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "robe"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "实际装备长袍时，受到的物理攻击伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "58197bb69bad678a:effect-1",
+              "valuePercent": 20,
+              "group": "physical-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "装备长袍时，魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "robe",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "58197bb69bad678a:magic-damage",
+              "valuePercent": 20,
+              "group": "attack-magic-damage",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       }
     },
@@ -77588,6 +80219,267 @@
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "铠甲": {
+          "summary": "实际装备任意防具时，受到魔法伤害-20%；实际装备任意防具时，受到敌人必杀伤害-20%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "实际装备任意防具时，受到魔法伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorCount": 1,
+                  "requiresActuallyEquipped": true,
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "effectIdentity": "c0fa524208139962:magic-reduction",
+              "valuePercent": 20,
+              "group": "common-attack-magic-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "any-armor"
+            },
+            {
+              "group": "common-ultimate-reduction",
+              "partIds": [
+                "ultimate-reduction"
+              ],
+              "summary": "实际装备任意防具时，受到敌人必杀伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "ultimate",
+                "equipment": {
+                  "armorCount": 1,
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "valuePercent": 20,
+              "effectIdentity": "c0fa524208139962:ultimate-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "衣服": {
+          "summary": "实际装备任意防具时，受到魔法伤害-20%；实际装备任意防具时，受到敌人必杀伤害-20%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "实际装备任意防具时，受到魔法伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorCount": 1,
+                  "requiresActuallyEquipped": true,
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "effectIdentity": "c0fa524208139962:magic-reduction",
+              "valuePercent": 20,
+              "group": "common-attack-magic-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "any-armor"
+            },
+            {
+              "group": "common-ultimate-reduction",
+              "partIds": [
+                "ultimate-reduction"
+              ],
+              "summary": "实际装备任意防具时，受到敌人必杀伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "ultimate",
+                "equipment": {
+                  "armorCount": 1,
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "valuePercent": 20,
+              "effectIdentity": "c0fa524208139962:ultimate-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "法袍": {
+          "summary": "实际装备任意防具时，受到魔法伤害-20%；实际装备任意防具时，受到敌人必杀伤害-20%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "实际装备任意防具时，受到魔法伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorCount": 1,
+                  "requiresActuallyEquipped": true,
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "effectIdentity": "c0fa524208139962:magic-reduction",
+              "valuePercent": 20,
+              "group": "common-attack-magic-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "any-armor"
+            },
+            {
+              "group": "common-ultimate-reduction",
+              "partIds": [
+                "ultimate-reduction"
+              ],
+              "summary": "实际装备任意防具时，受到敌人必杀伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "ultimate",
+                "equipment": {
+                  "armorCount": 1,
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "valuePercent": 20,
+              "effectIdentity": "c0fa524208139962:ultimate-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
         }
       },
       "relatedSkillIds": []
@@ -84051,6 +86943,71 @@
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "铠甲": {
+          "summary": "允许装备盔甲；实际装备盔甲时，受到物理伤害-10%",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [
+              "armor-permission"
+            ],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "armor"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "armor-permission"
+              ],
+              "summary": "允许装备盔甲",
+              "target": "self",
+              "operation": "allow-armor-type",
+              "scope": {},
+              "grantsArmorType": "armor",
+              "automaticallyEquipsArmor": false,
+              "group": "permission",
+              "isBuff": false,
+              "armorRole": "permission-effect",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "21895cf9028407dd:armor-permission"
+            },
+            {
+              "partIds": [
+                "physical-reduction"
+              ],
+              "summary": "实际装备盔甲时，受到物理伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "21895cf9028407dd:physical-reduction",
+              "valuePercent": 10,
+              "group": "physical-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。"
@@ -85124,6 +88081,76 @@
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "铠甲": {
+          "summary": "实际穿戴盔甲时，受到物理伤害-10%；实际穿戴盔甲时，受到魔法伤害-10%",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "armor"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-reduction"
+              ],
+              "summary": "实际穿戴盔甲时，受到物理伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "全部技能:all:806:physical-reduction",
+              "valuePercent": 10,
+              "group": "physical-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            },
+            {
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "实际穿戴盔甲时，受到魔法伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic",
+                "equipment": {
+                  "armorType": "armor",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "effectIdentity": "全部技能:all:806:magic-reduction",
+              "valuePercent": 10,
+              "group": "attack-magic-reduction",
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。"
@@ -95218,6 +98245,1188 @@
             }
           ],
           "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:88",
+      "url": "https://altema.jp/lastcloudia/gino/87",
+      "name": "铠甲装备",
+      "text": "允许你装备盔甲。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "armor-permission",
+          "kind": "effect",
+          "text": "允许你装备盔甲。"
+        }
+      ],
+      "tagDetails": {
+        "铠甲": {
+          "summary": "允许你装备盔甲。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [
+              "armor-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "armor-permission"
+              ],
+              "summary": "允许你装备盔甲。",
+              "target": "self",
+              "operation": "allow-armor-type",
+              "scope": {},
+              "grantsArmorType": "armor",
+              "automaticallyEquipsArmor": false,
+              "group": "permission",
+              "isBuff": false,
+              "armorRole": "permission-effect",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:88:armor-permission"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        }
+      }
+    },
+    {
+      "id": "74ca61783738a8d8",
+      "url": "https://altema.jp/lastcloudia/gino/88",
+      "name": "衣服装备",
+      "text": "允许你装备衣服。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "armor-permission",
+          "kind": "effect",
+          "text": "允许你装备衣服。"
+        }
+      ],
+      "tagDetails": {
+        "衣服": {
+          "summary": "允许你装备衣服。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [
+              "armor-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "armor-permission"
+              ],
+              "summary": "允许你装备衣服。",
+              "target": "self",
+              "operation": "allow-armor-type",
+              "scope": {},
+              "grantsArmorType": "clothes",
+              "automaticallyEquipsArmor": false,
+              "group": "permission",
+              "isBuff": false,
+              "armorRole": "permission-effect",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "74ca61783738a8d8:armor-permission"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        }
+      }
+    },
+    {
+      "id": "bfccca3df6816d36",
+      "url": "https://altema.jp/lastcloudia/gino/89",
+      "name": "法袍装备",
+      "text": "允许你装备长袍。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "armor-permission",
+          "kind": "effect",
+          "text": "允许你装备长袍。"
+        }
+      ],
+      "tagDetails": {
+        "法袍": {
+          "summary": "允许你装备长袍。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [
+              "armor-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "armor-permission"
+              ],
+              "summary": "允许你装备长袍。",
+              "target": "self",
+              "operation": "allow-armor-type",
+              "scope": {},
+              "grantsArmorType": "robe",
+              "automaticallyEquipsArmor": false,
+              "group": "permission",
+              "isBuff": false,
+              "armorRole": "permission-effect",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "bfccca3df6816d36:armor-permission"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        }
+      }
+    },
+    {
+      "id": "554267b802fb480e",
+      "url": "https://altema.jp/lastcloudia/gino/940",
+      "name": "防具暗盲耐性",
+      "text": "装备防具时，暗盲异常耐性+1。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "status-resistance",
+          "kind": "effect",
+          "text": "暗盲耐性+1"
+        },
+        {
+          "id": "armor-equipped",
+          "kind": "condition",
+          "text": "实际装备任意防具；防具栏放武器不满足"
+        }
+      ],
+      "tagDetails": {
+        "铠甲": {
+          "summary": "装备任意防具时，暗盲耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，暗盲耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "blindness",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-blindness",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "554267b802fb480e:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "衣服": {
+          "summary": "装备任意防具时，暗盲耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，暗盲耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "blindness",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-blindness",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "554267b802fb480e:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "法袍": {
+          "summary": "装备任意防具时，暗盲耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，暗盲耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "blindness",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-blindness",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "554267b802fb480e:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        }
+      }
+    },
+    {
+      "id": "98771021cfbaa2c3",
+      "url": "https://altema.jp/lastcloudia/gino/966",
+      "name": "新年装束",
+      "text": "装备衣服时，受到可恢复HP的主动技能时，自身HP恢复量+10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "healing-received",
+          "kind": "effect",
+          "text": "受到可回复HP的主动技能时，自身受到的HP回复量+10%"
+        },
+        {
+          "id": "clothes-equipped",
+          "kind": "condition",
+          "text": "实际装备衣服"
+        },
+        {
+          "id": "active-heal-received",
+          "kind": "condition",
+          "text": "自身受到可回复HP的主动技能"
+        }
+      ],
+      "tagDetails": {
+        "衣服": {
+          "summary": "装备衣服并受到可回复HP的主动技能时，自身受到的HP回复量+10%。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "clothes-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "armor-type-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "requiredArmorType": "clothes"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "healing-received"
+              ],
+              "summary": "装备衣服并受到可回复HP的主动技能时，自身受到的HP回复量+10%。",
+              "target": "self",
+              "operation": "healing-received-up",
+              "scope": {
+                "direction": "incoming-healing",
+                "healingSource": "active-skill",
+                "resource": "HP",
+                "equipment": {
+                  "armorType": "clothes",
+                  "requiresActuallyEquipped": true
+                }
+              },
+              "valuePercent": 10,
+              "trigger": {
+                "event": "active-hp-recovery-received"
+              },
+              "increasesHealingDealt": false,
+              "appliesToPassiveRegeneration": false,
+              "group": "active-healing-received",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "98771021cfbaa2c3:healing-received",
+              "applicability": "specific-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。"
+        }
+      }
+    },
+    {
+      "id": "bb32fdca7184f7b8",
+      "url": "https://altema.jp/lastcloudia/gino/1026",
+      "name": "防具沉默耐性",
+      "text": "装备防具时，沉默耐性+1。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "status-resistance",
+          "kind": "effect",
+          "text": "沉默耐性+1"
+        },
+        {
+          "id": "armor-equipped",
+          "kind": "condition",
+          "text": "实际装备任意防具；防具栏放武器不满足"
+        }
+      ],
+      "tagDetails": {
+        "铠甲": {
+          "summary": "装备任意防具时，沉默耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，沉默耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "silence",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-silence",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "bb32fdca7184f7b8:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "衣服": {
+          "summary": "装备任意防具时，沉默耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，沉默耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "silence",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-silence",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "bb32fdca7184f7b8:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "法袍": {
+          "summary": "装备任意防具时，沉默耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，沉默耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "silence",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-silence",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "bb32fdca7184f7b8:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        }
+      }
+    },
+    {
+      "id": "dd01efc0419e5a40",
+      "url": "https://altema.jp/lastcloudia/gino/1045",
+      "name": "防具毒耐性",
+      "text": "装备防具时，毒耐性+1。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "status-resistance",
+          "kind": "effect",
+          "text": "毒耐性+1"
+        },
+        {
+          "id": "armor-equipped",
+          "kind": "condition",
+          "text": "实际装备任意防具；防具栏放武器不满足"
+        }
+      ],
+      "tagDetails": {
+        "铠甲": {
+          "summary": "装备任意防具时，毒耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，毒耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "poison",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-poison",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "dd01efc0419e5a40:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "衣服": {
+          "summary": "装备任意防具时，毒耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，毒耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "poison",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-poison",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "dd01efc0419e5a40:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "法袍": {
+          "summary": "装备任意防具时，毒耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，毒耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "poison",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-poison",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "dd01efc0419e5a40:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        }
+      }
+    },
+    {
+      "id": "723dc4cfe45b43e1",
+      "url": "https://altema.jp/lastcloudia/gino/1227",
+      "name": "防具诅咒耐性",
+      "text": "装备防具时，诅咒耐性+1。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "status-resistance",
+          "kind": "effect",
+          "text": "诅咒耐性+1"
+        },
+        {
+          "id": "armor-equipped",
+          "kind": "condition",
+          "text": "实际装备任意防具；防具栏放武器不满足"
+        }
+      ],
+      "tagDetails": {
+        "铠甲": {
+          "summary": "装备任意防具时，诅咒耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，诅咒耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "curse",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-curse",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "723dc4cfe45b43e1:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "衣服": {
+          "summary": "装备任意防具时，诅咒耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，诅咒耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "curse",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-curse",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "723dc4cfe45b43e1:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "法袍": {
+          "summary": "装备任意防具时，诅咒耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，诅咒耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "curse",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-curse",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "723dc4cfe45b43e1:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:929",
+      "url": "https://altema.jp/lastcloudia/gino/1990",
+      "name": "防具麻痹耐性",
+      "text": "装备防具时，麻痹异常耐性+1。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "status-resistance",
+          "kind": "effect",
+          "text": "麻痹耐性+1"
+        },
+        {
+          "id": "armor-equipped",
+          "kind": "condition",
+          "text": "实际装备任意防具；防具栏放武器不满足"
+        }
+      ],
+      "tagDetails": {
+        "铠甲": {
+          "summary": "装备任意防具时，麻痹耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "armor",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，麻痹耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "paralysis",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-paralysis",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:929:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "衣服": {
+          "summary": "装备任意防具时，麻痹耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "clothes",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，麻痹耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "paralysis",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-paralysis",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:929:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
+        },
+        "法袍": {
+          "summary": "装备任意防具时，麻痹耐性+1；不是直接无效或减伤。",
+          "relation": "equipment-permission-or-condition",
+          "equipmentType": "robe",
+          "target": "bound-effects",
+          "coverage": {
+            "permissionPartIds": [],
+            "conditionPartIds": [
+              "armor-equipped"
+            ]
+          },
+          "condition": {
+            "subject": "self-equipment",
+            "mode": "any-armor-equipped",
+            "requiresActuallyEquipped": true,
+            "armorSlotWeaponQualifies": false,
+            "armorTypesAnyOf": [
+              "armor",
+              "clothes",
+              "robe"
+            ],
+            "logicalOperator": "OR"
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "status-resistance"
+              ],
+              "summary": "装备任意防具时，麻痹耐性+1；不是直接无效或减伤。",
+              "target": "self",
+              "operation": "status-resistance-up",
+              "scope": {
+                "direction": "self-resistance",
+                "status": "paralysis",
+                "equipment": {
+                  "armorTypesAnyOf": [
+                    "armor",
+                    "clothes",
+                    "robe"
+                  ],
+                  "requiresActuallyEquipped": true,
+                  "armorSlotWeaponQualifies": false
+                }
+              },
+              "resistanceSteps": 1,
+              "guaranteesImmunity": false,
+              "group": "common-resistance-paralysis",
+              "isBuff": false,
+              "armorRole": "condition-benefit",
+              "perMatchingArmorStacking": false,
+              "effectStacking": "once-per-skill",
+              "effectIdentity": "全部技能:all:929:status-resistance",
+              "applicability": "any-armor"
+            }
+          ],
+          "calculationNote": "本类完成防具装备许可／实际穿戴条件，对应加成按完整范围分别展示。装备许可不等于穿戴，防具栏的第二把武器不算防具；武器＋防具须同时满足，装备自身数值不直接乘角色面板。其他效果和计算机制按已有标签累计判断，跨页共用同一片段。 此项适用于任意一种防具，在三页共用，不能因展示三次而叠加。"
         }
       }
     }
@@ -107077,6 +111286,364 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "铠甲",
+      "assignments": [
+        {
+          "skillId": "全部技能:all:88",
+          "partIds": [
+            "armor-permission"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:235",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:266",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "51339f350198e9a2",
+          "partIds": [
+            "paired-armor"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:428",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "87bd554c95a1dcf1",
+          "partIds": [
+            "paired-armor"
+          ]
+        },
+        {
+          "skillId": "314745e663f4e29e",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "ea81b15f2a9dc860",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "554267b802fb480e",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "21895cf9028407dd",
+          "partIds": [
+            "armor-permission",
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "bb32fdca7184f7b8",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "dd01efc0419e5a40",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "723dc4cfe45b43e1",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "5b601cf4a2c13841",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:806",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "71f0c15272a753ba",
+          "partIds": [
+            "paired-armor"
+          ]
+        },
+        {
+          "skillId": "c0fa524208139962",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:929",
+          "partIds": [
+            "armor-equipped"
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "衣服",
+      "assignments": [
+        {
+          "skillId": "74ca61783738a8d8",
+          "partIds": [
+            "armor-permission"
+          ]
+        },
+        {
+          "skillId": "56cc2ba3fab2065f",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:314",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "543736df65bd47f1",
+          "partIds": [
+            "paired-clothes"
+          ]
+        },
+        {
+          "skillId": "314745e663f4e29e",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "52c559efb1ac16a7",
+          "partIds": [
+            "paired-clothes"
+          ]
+        },
+        {
+          "skillId": "6c8b8402a6d95bd1",
+          "partIds": [
+            "paired-clothes"
+          ]
+        },
+        {
+          "skillId": "ea81b15f2a9dc860",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "48d0bc39febccaaf",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "554267b802fb480e",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "98771021cfbaa2c3",
+          "partIds": [
+            "clothes-equipped"
+          ]
+        },
+        {
+          "skillId": "bb32fdca7184f7b8",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "dd01efc0419e5a40",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "e23ff7a9e123570f",
+          "partIds": [
+            "paired-clothes"
+          ]
+        },
+        {
+          "skillId": "723dc4cfe45b43e1",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "8c4e8f50e9a5ccaa",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "8df3ecca35bfe8f8",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "5dc1aeae525c240c",
+          "partIds": [
+            "paired-clothes"
+          ]
+        },
+        {
+          "skillId": "92a57a934fb2eb2f",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "6df40a3227341ce3",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "e64a85601b9b58cc",
+          "partIds": [
+            "paired-clothes"
+          ]
+        },
+        {
+          "skillId": "c0fa524208139962",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:929",
+          "partIds": [
+            "armor-equipped"
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "法袍",
+      "assignments": [
+        {
+          "skillId": "bfccca3df6816d36",
+          "partIds": [
+            "armor-permission"
+          ]
+        },
+        {
+          "skillId": "bf684afd6ed9b3e1",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "ea2269dc8dbcfa74",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "756acbe5f4ea23ca",
+          "partIds": [
+            "paired-robe"
+          ]
+        },
+        {
+          "skillId": "ef761252451c1b55",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "314745e663f4e29e",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "ea81b15f2a9dc860",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "554267b802fb480e",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "bb32fdca7184f7b8",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "dd01efc0419e5a40",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "8e6716f96c389e1d",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "723dc4cfe45b43e1",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "58197bb69bad678a",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "b6f1305e6f78634c",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "c0fa524208139962",
+          "partIds": [
+            "armor-equipped"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:929",
+          "partIds": [
+            "armor-equipped"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -108092,7 +112659,16 @@
         "ac7e651d686855cc",
         "920fb55fe5cd8123",
         "2da13319efa00435",
-        "8a9117fcd3961f99"
+        "8a9117fcd3961f99",
+        "全部技能:all:88",
+        "74ca61783738a8d8",
+        "bfccca3df6816d36",
+        "554267b802fb480e",
+        "98771021cfbaa2c3",
+        "bb32fdca7184f7b8",
+        "dd01efc0419e5a40",
+        "723dc4cfe45b43e1",
+        "全部技能:all:929"
       ]
     },
     "hp": {
@@ -123069,7 +127645,781 @@
       "displayOrder": [
         "3797f19e9c516ee7"
       ]
+    },
+    "armor": {
+      "label": "铠甲",
+      "passKind": "equipment-permission-and-condition",
+      "displayOrder": [
+        "全部技能:all:88",
+        "全部技能:all:235",
+        "全部技能:all:266",
+        "51339f350198e9a2",
+        "全部技能:all:428",
+        "87bd554c95a1dcf1",
+        "314745e663f4e29e",
+        "ea81b15f2a9dc860",
+        "554267b802fb480e",
+        "21895cf9028407dd",
+        "bb32fdca7184f7b8",
+        "dd01efc0419e5a40",
+        "723dc4cfe45b43e1",
+        "5b601cf4a2c13841",
+        "全部技能:all:806",
+        "71f0c15272a753ba",
+        "c0fa524208139962",
+        "全部技能:all:929"
+      ],
+      "childKeys": [
+        "armor-permission",
+        "armor-boss-reduction",
+        "armor-stat-def",
+        "armor-sword-weapon-str",
+        "armor-sword-armor-def",
+        "armor-physical-reduction",
+        "armor-common-stat-hp",
+        "armor-common-resistance-blindness",
+        "armor-common-resistance-silence",
+        "armor-common-resistance-poison",
+        "armor-common-resistance-curse",
+        "armor-stat-str",
+        "armor-all-reduction",
+        "armor-attack-magic-reduction",
+        "armor-axe-weapon-str",
+        "armor-axe-armor-def",
+        "armor-common-attack-magic-reduction",
+        "armor-common-ultimate-reduction",
+        "armor-common-resistance-paralysis"
+      ],
+      "overviewLabel": "全部铠甲（分组）",
+      "separateSections": true,
+      "scopeDescription": "装备许可、实际穿戴与武器配套效果分组；任意防具共通项明确标注，空防具仍保留在原分类。"
+    },
+    "armor-permission": {
+      "label": "装备许可",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "permission",
+      "displayOrder": [
+        "全部技能:all:88",
+        "21895cf9028407dd"
+      ]
+    },
+    "armor-boss-reduction": {
+      "label": "受到Boss伤害减少",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "boss-reduction",
+      "displayOrder": [
+        "全部技能:all:235",
+        "全部技能:all:266",
+        "全部技能:all:428"
+      ]
+    },
+    "armor-stat-def": {
+      "label": "角色防御力",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "stat-def",
+      "displayOrder": [
+        "全部技能:all:235",
+        "全部技能:all:266",
+        "全部技能:all:428"
+      ]
+    },
+    "armor-sword-weapon-str": {
+      "label": "剑＋铠甲：剑自身攻击力",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "sword-weapon-str",
+      "displayOrder": [
+        "51339f350198e9a2",
+        "87bd554c95a1dcf1"
+      ]
+    },
+    "armor-sword-armor-def": {
+      "label": "剑＋铠甲：铠甲自身防御力",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "sword-armor-def",
+      "displayOrder": [
+        "51339f350198e9a2",
+        "87bd554c95a1dcf1"
+      ]
+    },
+    "armor-physical-reduction": {
+      "label": "受到物理伤害减少",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "physical-reduction",
+      "displayOrder": [
+        "全部技能:all:428",
+        "21895cf9028407dd",
+        "全部技能:all:806"
+      ]
+    },
+    "armor-common-stat-hp": {
+      "label": "任意防具：HP上限",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "common-stat-hp",
+      "displayOrder": [
+        "314745e663f4e29e",
+        "ea81b15f2a9dc860"
+      ]
+    },
+    "armor-common-resistance-blindness": {
+      "label": "任意防具：暗盲耐性",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "common-resistance-blindness",
+      "displayOrder": [
+        "554267b802fb480e"
+      ]
+    },
+    "armor-common-resistance-silence": {
+      "label": "任意防具：沉默耐性",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "common-resistance-silence",
+      "displayOrder": [
+        "bb32fdca7184f7b8"
+      ]
+    },
+    "armor-common-resistance-poison": {
+      "label": "任意防具：毒耐性",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "common-resistance-poison",
+      "displayOrder": [
+        "dd01efc0419e5a40"
+      ]
+    },
+    "armor-common-resistance-curse": {
+      "label": "任意防具：诅咒耐性",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "common-resistance-curse",
+      "displayOrder": [
+        "723dc4cfe45b43e1"
+      ]
+    },
+    "armor-stat-str": {
+      "label": "角色攻击力",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "stat-str",
+      "displayOrder": [
+        "5b601cf4a2c13841"
+      ]
+    },
+    "armor-all-reduction": {
+      "label": "受到伤害减少",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "all-reduction",
+      "displayOrder": [
+        "5b601cf4a2c13841"
+      ]
+    },
+    "armor-attack-magic-reduction": {
+      "label": "受到魔法伤害减少",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "attack-magic-reduction",
+      "displayOrder": [
+        "全部技能:all:806"
+      ]
+    },
+    "armor-axe-weapon-str": {
+      "label": "斧＋铠甲：斧自身攻击力",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "axe-weapon-str",
+      "displayOrder": [
+        "71f0c15272a753ba"
+      ]
+    },
+    "armor-axe-armor-def": {
+      "label": "斧＋铠甲：铠甲自身防御力",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "axe-armor-def",
+      "displayOrder": [
+        "71f0c15272a753ba"
+      ]
+    },
+    "armor-common-attack-magic-reduction": {
+      "label": "任意防具：受到魔法伤害减少",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "common-attack-magic-reduction",
+      "displayOrder": [
+        "c0fa524208139962"
+      ]
+    },
+    "armor-common-ultimate-reduction": {
+      "label": "任意防具：受到必杀伤害减少",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "common-ultimate-reduction",
+      "displayOrder": [
+        "c0fa524208139962"
+      ]
+    },
+    "armor-common-resistance-paralysis": {
+      "label": "任意防具：麻痹耐性",
+      "parent": "armor",
+      "conditionTag": "铠甲",
+      "effectGroup": "common-resistance-paralysis",
+      "displayOrder": [
+        "全部技能:all:929"
+      ]
+    },
+    "clothes": {
+      "label": "衣服",
+      "passKind": "equipment-permission-and-condition",
+      "displayOrder": [
+        "74ca61783738a8d8",
+        "56cc2ba3fab2065f",
+        "全部技能:all:314",
+        "543736df65bd47f1",
+        "314745e663f4e29e",
+        "52c559efb1ac16a7",
+        "6c8b8402a6d95bd1",
+        "ea81b15f2a9dc860",
+        "48d0bc39febccaaf",
+        "554267b802fb480e",
+        "98771021cfbaa2c3",
+        "bb32fdca7184f7b8",
+        "dd01efc0419e5a40",
+        "e23ff7a9e123570f",
+        "723dc4cfe45b43e1",
+        "8c4e8f50e9a5ccaa",
+        "8df3ecca35bfe8f8",
+        "5dc1aeae525c240c",
+        "92a57a934fb2eb2f",
+        "6df40a3227341ce3",
+        "e64a85601b9b58cc",
+        "c0fa524208139962",
+        "全部技能:all:929"
+      ],
+      "childKeys": [
+        "clothes-permission",
+        "clothes-physical-damage",
+        "clothes-stat-def",
+        "clothes-stat-mnd",
+        "clothes-claw-weapon-str",
+        "clothes-claw-armor-def",
+        "clothes-claw-armor-mnd",
+        "clothes-common-stat-hp",
+        "clothes-sword-weapon-str",
+        "clothes-sword-armor-def",
+        "clothes-sword-armor-mnd",
+        "clothes-physical-reduction",
+        "clothes-common-resistance-blindness",
+        "clothes-active-healing-received",
+        "clothes-common-resistance-silence",
+        "clothes-common-resistance-poison",
+        "clothes-staff-weapon-int",
+        "clothes-staff-armor-def",
+        "clothes-staff-armor-mnd",
+        "clothes-common-resistance-curse",
+        "clothes-stat-str",
+        "clothes-spear-weapon-str",
+        "clothes-spear-armor-def",
+        "clothes-spear-armor-mnd",
+        "clothes-attack-magic-reduction",
+        "clothes-machine-weapon-str",
+        "clothes-machine-armor-def",
+        "clothes-machine-armor-mnd",
+        "clothes-common-attack-magic-reduction",
+        "clothes-common-ultimate-reduction",
+        "clothes-common-resistance-paralysis"
+      ],
+      "overviewLabel": "全部衣服（分组）",
+      "separateSections": true,
+      "scopeDescription": "装备许可、实际穿戴与武器配套效果分组；任意防具共通项明确标注，空防具仍保留在原分类。"
+    },
+    "clothes-permission": {
+      "label": "装备许可",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "permission",
+      "displayOrder": [
+        "74ca61783738a8d8"
+      ]
+    },
+    "clothes-physical-damage": {
+      "label": "物理伤害增加",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "physical-damage",
+      "displayOrder": [
+        "56cc2ba3fab2065f",
+        "全部技能:all:314",
+        "48d0bc39febccaaf",
+        "92a57a934fb2eb2f",
+        "6df40a3227341ce3"
+      ]
+    },
+    "clothes-stat-def": {
+      "label": "角色防御力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "stat-def",
+      "displayOrder": [
+        "56cc2ba3fab2065f",
+        "全部技能:all:314",
+        "48d0bc39febccaaf",
+        "8c4e8f50e9a5ccaa"
+      ]
+    },
+    "clothes-stat-mnd": {
+      "label": "角色魔抗",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "stat-mnd",
+      "displayOrder": [
+        "56cc2ba3fab2065f",
+        "全部技能:all:314",
+        "48d0bc39febccaaf"
+      ]
+    },
+    "clothes-claw-weapon-str": {
+      "label": "爪＋衣服：爪自身攻击力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "claw-weapon-str",
+      "displayOrder": [
+        "543736df65bd47f1"
+      ]
+    },
+    "clothes-claw-armor-def": {
+      "label": "爪＋衣服：衣服自身防御力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "claw-armor-def",
+      "displayOrder": [
+        "543736df65bd47f1"
+      ]
+    },
+    "clothes-claw-armor-mnd": {
+      "label": "爪＋衣服：衣服自身魔抗",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "claw-armor-mnd",
+      "displayOrder": [
+        "543736df65bd47f1"
+      ]
+    },
+    "clothes-common-stat-hp": {
+      "label": "任意防具：HP上限",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "common-stat-hp",
+      "displayOrder": [
+        "314745e663f4e29e",
+        "ea81b15f2a9dc860"
+      ]
+    },
+    "clothes-sword-weapon-str": {
+      "label": "剑＋衣服：剑自身攻击力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "sword-weapon-str",
+      "displayOrder": [
+        "52c559efb1ac16a7",
+        "6c8b8402a6d95bd1"
+      ]
+    },
+    "clothes-sword-armor-def": {
+      "label": "剑＋衣服：衣服自身防御力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "sword-armor-def",
+      "displayOrder": [
+        "52c559efb1ac16a7",
+        "6c8b8402a6d95bd1"
+      ]
+    },
+    "clothes-sword-armor-mnd": {
+      "label": "剑＋衣服：衣服自身魔抗",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "sword-armor-mnd",
+      "displayOrder": [
+        "52c559efb1ac16a7",
+        "6c8b8402a6d95bd1"
+      ]
+    },
+    "clothes-physical-reduction": {
+      "label": "受到物理伤害减少",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "physical-reduction",
+      "displayOrder": [
+        "48d0bc39febccaaf",
+        "8c4e8f50e9a5ccaa"
+      ]
+    },
+    "clothes-common-resistance-blindness": {
+      "label": "任意防具：暗盲耐性",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "common-resistance-blindness",
+      "displayOrder": [
+        "554267b802fb480e"
+      ]
+    },
+    "clothes-active-healing-received": {
+      "label": "主动技能：受到的HP回复量",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "active-healing-received",
+      "displayOrder": [
+        "98771021cfbaa2c3"
+      ]
+    },
+    "clothes-common-resistance-silence": {
+      "label": "任意防具：沉默耐性",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "common-resistance-silence",
+      "displayOrder": [
+        "bb32fdca7184f7b8"
+      ]
+    },
+    "clothes-common-resistance-poison": {
+      "label": "任意防具：毒耐性",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "common-resistance-poison",
+      "displayOrder": [
+        "dd01efc0419e5a40"
+      ]
+    },
+    "clothes-staff-weapon-int": {
+      "label": "杖＋衣服：杖自身魔力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "staff-weapon-int",
+      "displayOrder": [
+        "e23ff7a9e123570f"
+      ]
+    },
+    "clothes-staff-armor-def": {
+      "label": "杖＋衣服：衣服自身防御力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "staff-armor-def",
+      "displayOrder": [
+        "e23ff7a9e123570f"
+      ]
+    },
+    "clothes-staff-armor-mnd": {
+      "label": "杖＋衣服：衣服自身魔抗",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "staff-armor-mnd",
+      "displayOrder": [
+        "e23ff7a9e123570f"
+      ]
+    },
+    "clothes-common-resistance-curse": {
+      "label": "任意防具：诅咒耐性",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "common-resistance-curse",
+      "displayOrder": [
+        "723dc4cfe45b43e1"
+      ]
+    },
+    "clothes-stat-str": {
+      "label": "角色攻击力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "stat-str",
+      "displayOrder": [
+        "8df3ecca35bfe8f8"
+      ]
+    },
+    "clothes-spear-weapon-str": {
+      "label": "枪＋衣服：枪自身攻击力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "spear-weapon-str",
+      "displayOrder": [
+        "5dc1aeae525c240c"
+      ]
+    },
+    "clothes-spear-armor-def": {
+      "label": "枪＋衣服：衣服自身防御力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "spear-armor-def",
+      "displayOrder": [
+        "5dc1aeae525c240c"
+      ]
+    },
+    "clothes-spear-armor-mnd": {
+      "label": "枪＋衣服：衣服自身魔抗",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "spear-armor-mnd",
+      "displayOrder": [
+        "5dc1aeae525c240c"
+      ]
+    },
+    "clothes-attack-magic-reduction": {
+      "label": "受到魔法伤害减少",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "attack-magic-reduction",
+      "displayOrder": [
+        "92a57a934fb2eb2f",
+        "6df40a3227341ce3"
+      ]
+    },
+    "clothes-machine-weapon-str": {
+      "label": "机械＋衣服：机械自身攻击力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "machine-weapon-str",
+      "displayOrder": [
+        "e64a85601b9b58cc"
+      ]
+    },
+    "clothes-machine-armor-def": {
+      "label": "机械＋衣服：衣服自身防御力",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "machine-armor-def",
+      "displayOrder": [
+        "e64a85601b9b58cc"
+      ]
+    },
+    "clothes-machine-armor-mnd": {
+      "label": "机械＋衣服：衣服自身魔抗",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "machine-armor-mnd",
+      "displayOrder": [
+        "e64a85601b9b58cc"
+      ]
+    },
+    "clothes-common-attack-magic-reduction": {
+      "label": "任意防具：受到魔法伤害减少",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "common-attack-magic-reduction",
+      "displayOrder": [
+        "c0fa524208139962"
+      ]
+    },
+    "clothes-common-ultimate-reduction": {
+      "label": "任意防具：受到必杀伤害减少",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "common-ultimate-reduction",
+      "displayOrder": [
+        "c0fa524208139962"
+      ]
+    },
+    "clothes-common-resistance-paralysis": {
+      "label": "任意防具：麻痹耐性",
+      "parent": "clothes",
+      "conditionTag": "衣服",
+      "effectGroup": "common-resistance-paralysis",
+      "displayOrder": [
+        "全部技能:all:929"
+      ]
+    },
+    "robe": {
+      "label": "法袍",
+      "passKind": "equipment-permission-and-condition",
+      "displayOrder": [
+        "bfccca3df6816d36",
+        "bf684afd6ed9b3e1",
+        "ea2269dc8dbcfa74",
+        "756acbe5f4ea23ca",
+        "ef761252451c1b55",
+        "314745e663f4e29e",
+        "ea81b15f2a9dc860",
+        "554267b802fb480e",
+        "bb32fdca7184f7b8",
+        "dd01efc0419e5a40",
+        "8e6716f96c389e1d",
+        "723dc4cfe45b43e1",
+        "58197bb69bad678a",
+        "b6f1305e6f78634c",
+        "c0fa524208139962",
+        "全部技能:all:929"
+      ],
+      "childKeys": [
+        "robe-permission",
+        "robe-attack-magic-damage",
+        "robe-stat-mnd",
+        "robe-staff-weapon-int",
+        "robe-staff-armor-mnd",
+        "robe-physical-reduction",
+        "robe-common-stat-hp",
+        "robe-common-resistance-blindness",
+        "robe-common-resistance-silence",
+        "robe-common-resistance-poison",
+        "robe-common-resistance-curse",
+        "robe-opening-mnd-to-int",
+        "robe-common-attack-magic-reduction",
+        "robe-common-ultimate-reduction",
+        "robe-common-resistance-paralysis"
+      ],
+      "overviewLabel": "全部法袍（分组）",
+      "separateSections": true,
+      "scopeDescription": "装备许可、实际穿戴与武器配套效果分组；任意防具共通项明确标注，空防具仍保留在原分类。"
+    },
+    "robe-permission": {
+      "label": "装备许可",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "permission",
+      "displayOrder": [
+        "bfccca3df6816d36"
+      ]
+    },
+    "robe-attack-magic-damage": {
+      "label": "魔法伤害增加",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "attack-magic-damage",
+      "displayOrder": [
+        "bf684afd6ed9b3e1",
+        "ea2269dc8dbcfa74",
+        "ef761252451c1b55",
+        "8e6716f96c389e1d",
+        "58197bb69bad678a"
+      ]
+    },
+    "robe-stat-mnd": {
+      "label": "角色魔抗",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "stat-mnd",
+      "displayOrder": [
+        "bf684afd6ed9b3e1",
+        "ea2269dc8dbcfa74",
+        "ef761252451c1b55"
+      ]
+    },
+    "robe-staff-weapon-int": {
+      "label": "杖＋法袍：杖自身魔力",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "staff-weapon-int",
+      "displayOrder": [
+        "756acbe5f4ea23ca"
+      ]
+    },
+    "robe-staff-armor-mnd": {
+      "label": "杖＋法袍：法袍自身魔抗",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "staff-armor-mnd",
+      "displayOrder": [
+        "756acbe5f4ea23ca"
+      ]
+    },
+    "robe-physical-reduction": {
+      "label": "受到物理伤害减少",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "physical-reduction",
+      "displayOrder": [
+        "ef761252451c1b55",
+        "8e6716f96c389e1d",
+        "58197bb69bad678a"
+      ]
+    },
+    "robe-common-stat-hp": {
+      "label": "任意防具：HP上限",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "common-stat-hp",
+      "displayOrder": [
+        "314745e663f4e29e",
+        "ea81b15f2a9dc860"
+      ]
+    },
+    "robe-common-resistance-blindness": {
+      "label": "任意防具：暗盲耐性",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "common-resistance-blindness",
+      "displayOrder": [
+        "554267b802fb480e"
+      ]
+    },
+    "robe-common-resistance-silence": {
+      "label": "任意防具：沉默耐性",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "common-resistance-silence",
+      "displayOrder": [
+        "bb32fdca7184f7b8"
+      ]
+    },
+    "robe-common-resistance-poison": {
+      "label": "任意防具：毒耐性",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "common-resistance-poison",
+      "displayOrder": [
+        "dd01efc0419e5a40"
+      ]
+    },
+    "robe-common-resistance-curse": {
+      "label": "任意防具：诅咒耐性",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "common-resistance-curse",
+      "displayOrder": [
+        "723dc4cfe45b43e1"
+      ]
+    },
+    "robe-opening-mnd-to-int": {
+      "label": "开场：魔抗加算魔力",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "opening-mnd-to-int",
+      "displayOrder": [
+        "b6f1305e6f78634c"
+      ]
+    },
+    "robe-common-attack-magic-reduction": {
+      "label": "任意防具：受到魔法伤害减少",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "common-attack-magic-reduction",
+      "displayOrder": [
+        "c0fa524208139962"
+      ]
+    },
+    "robe-common-ultimate-reduction": {
+      "label": "任意防具：受到必杀伤害减少",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "common-ultimate-reduction",
+      "displayOrder": [
+        "c0fa524208139962"
+      ]
+    },
+    "robe-common-resistance-paralysis": {
+      "label": "任意防具：麻痹耐性",
+      "parent": "robe",
+      "conditionTag": "法袍",
+      "effectGroup": "common-resistance-paralysis",
+      "displayOrder": [
+        "全部技能:all:929"
+      ]
     }
   },
-  "activeView": "boss"
+  "activeView": "armor"
 }

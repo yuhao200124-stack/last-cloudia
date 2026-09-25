@@ -1,0 +1,14 @@
+[
+  {
+    "key": "armor",
+    "label": "铠甲"
+  },
+  {
+    "key": "clothes",
+    "label": "衣服"
+  },
+  {
+    "key": "robe",
+    "label": "法袍"
+  }
+]
