@@ -37,20 +37,20 @@ test('physical bonuses remain distinct from caps, crits, killers, stat changes, 
  for(const n of [357,441]){assert.deepEqual(entry(n).assignedTags,['魔力','物理伤害增加']);assert.deepEqual(entry(n).remainingEffects,[]);assert(entry(n).remainingConditions.some(t=>t.includes('公式')));}
  for(const n of [1113,1491])assert.match(entry(n).tagDetails['物理伤害增加'].calculationNote,/不直接填入最高值/);
  for(const n of [1073,1615])assert(entry(n).remainingConditions.some(t=>t.includes('类型相同')&&t.includes('不要求属性相同')));
- assert.deepEqual(entry(1548).remainingConditions,['装备剑','该剑为火属性']);
+ assert.deepEqual(entry(1548).remainingConditions,['装备剑']);
  // The weapon has a fire requirement, but the physical damage itself has none.
  for(const n of [1548,717,1378,1462,1605])assert(entry(n),source(n).name);
 });
 
 test('physical tags accumulate and leave each unfinished effect/condition pending until its own pass',()=>{
  assert.equal(physical.counts.ready,2);assert.equal(physical.counts.partial,76);assert.equal(physical.counts.unknown,0);
- assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,34);
+ assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,36);
  for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,['装备锤时生效']);
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
- assert.equal(catalog.entries.length,435);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,435);
+ assert.equal(catalog.entries.length,459);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,459);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(allRows.slice(0,91).every(r=>r.judgment==='ready'));assert(allRows.slice(91).every(r=>r.judgment==='partial'));
+ assert(allRows.slice(0,107).every(r=>r.judgment==='ready'));assert(allRows.slice(107).every(r=>r.judgment==='partial'));
  // A later equipment pass should complete a compound only after both its
  // attack and physical-damage fragments were already covered.
  const future=structuredClone(registry);

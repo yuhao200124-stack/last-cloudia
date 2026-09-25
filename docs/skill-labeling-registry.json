@@ -10927,6 +10927,39 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "火属性": {
+          "summary": "受到火属性攻击的伤害-20%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到火属性攻击的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 20,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "物理伤害+20%标签沿用，HP持续下降是独立负面效果，仍待判断；不因减火伤完成就遗漏代价。"
         }
       }
     },
@@ -13305,6 +13338,84 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "火属性": {
+          "summary": "装备火属性剑时，物理攻击伤害+30%。；装备火属性剑时，物理攻击伤害上限+2,000。；装备火属性剑时，自身HP持续下降；具体下降量待确认。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "condition": {
+            "subject": "equipped-sword",
+            "weaponElement": "fire"
+          },
+          "bindings": [
+            {
+              "group": "weapon-physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "装备火属性剑时，物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "condition-benefit",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "weaponElement": "fire"
+                }
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "weapon-physical-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "装备火属性剑时，物理攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "condition-benefit",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "weaponElement": "fire"
+                }
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "weapon-hp-drain",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备火属性剑时，自身HP持续下降；具体下降量待确认。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "condition-benefit",
+              "operation": "current-hp-drain",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponType": "sword",
+                  "weaponElement": "fire"
+                }
+              },
+              "amountStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "火属性限制在装备的剑，不在这次物理攻击；不能擅自要求攻击也为火属性。本轮只补该剑为火属性的条件，原物理增伤标签保留；剑类型、HP代价和物理上限继续待判断。"
         }
       }
     },
@@ -15565,6 +15676,46 @@
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "火属性": {
+          "summary": "每Wave开始时，我方全体受到火属性攻击伤害-20%，持续40秒。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到火属性攻击伤害-20%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "fireRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-fire-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。冰墙减火伤，不提高火耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       }
     },
@@ -17051,6 +17202,46 @@
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "火属性": {
+          "summary": "每Wave开始时，我方全体受到火属性攻击伤害-35%，持续40秒。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到火属性攻击伤害-35%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "fireRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 35,
+              "changesResistance": false,
+              "buffType": "received-fire-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。冰墙减火伤，不提高火耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       }
     },
@@ -17579,6 +17770,45 @@
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "火属性": {
+          "summary": "战斗开始时，自身火属性攻击伤害+20%，持续40秒。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，自身火属性攻击伤害+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 20,
+              "buffType": "fire-damage-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签，火属性伤害Buff持续40秒；同类型Buff只计最高已生效一项，不当成永久或所有属性增伤。"
         }
       }
     },
@@ -18164,6 +18394,43 @@
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "火属性": {
+          "summary": "永久获得冰墙：仅自身受到火属性攻击伤害-20%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得冰墙：仅自身受到火属性攻击伤害-20%。",
+              "target": "self",
+              "isBuff": true,
+              "fireRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-fire-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       }
     },
@@ -22748,6 +23015,46 @@
             }
           ],
           "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+        },
+        "火属性": {
+          "summary": "火属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": [
+              "attack-scope"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "fire",
+            "attackType": "attack-magic"
+          },
+          "bindings": [
+            {
+              "group": "magic-critical-permission",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "火属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "fire"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "沿用暴击标签，补齐火属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
         }
       }
     },
@@ -23230,6 +23537,65 @@
             }
           ],
           "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+        },
+        "火属性": {
+          "summary": "火属性攻击暴击率+5个百分点。；火属性攻击实际暴击时，暴击伤害+50%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": [
+              "attack-element"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "fire"
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "火属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "critical-damage",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "火属性攻击实际暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "critical-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击标签已覆盖两种效果，本轮补齐火属性条件；暴击率和暴伤分别显示，不额外赋予魔法暴击资格，不重复计算同一效果。"
         }
       }
     },
@@ -23886,6 +24252,1717 @@
             }
           ],
           "calculationNote": "属性弱点不是种族特攻；需物理攻击命中属性弱点并实际暴击。属性弱点条件仍待标签，不能当所有物理伤害或上限。"
+        }
+      }
+    },
+    {
+      "id": "97d948f5e3717d10",
+      "name": "炎攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/73",
+      "text": "火属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-damage",
+          "kind": "effect",
+          "text": "火属性攻击伤害+20%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性攻击伤害+20%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "fire-damage"
+              ],
+              "summary": "火属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为火，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:301",
+      "name": "火焰攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/359",
+      "text": "火属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-damage",
+          "kind": "effect",
+          "text": "火属性攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性攻击伤害+30%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "fire-damage"
+              ],
+              "summary": "火属性攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为火，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      }
+    },
+    {
+      "id": "f871fed73e6326c3",
+      "name": "炎魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/127",
+      "text": "火属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-magic-damage",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性魔法攻击伤害+10%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "fire-magic-damage"
+              ],
+              "summary": "火属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "fire"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "完整词条是火属性魔法攻击增伤，不计入所有魔法或火属性物理／必杀。"
+        }
+      }
+    },
+    {
+      "id": "f38969900a97ccd0",
+      "name": "炎魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/134",
+      "text": "火属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-magic-damage",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性魔法攻击伤害+30%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "fire-magic-damage"
+              ],
+              "summary": "火属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "完整词条是火属性魔法攻击增伤，不计入所有魔法或火属性物理／必杀。"
+        }
+      }
+    },
+    {
+      "id": "92bf2e44cf665bdf",
+      "name": "灯饰",
+      "url": "https://altema.jp/lastcloudia/gino/244",
+      "text": "每10秒自动为自身发动1种六属性墙系魔法。",
+      "notes": "随机墙作用于自身，持续30秒。炎墙减树伤、冰墙减火伤、石墙减雷伤、雷墙减冰伤、圣墙减暗伤、暗影墙减光伤，各减20%。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "wall-fire",
+          "kind": "effect",
+          "text": "随机获得冰墙时，自身受到火属性攻击伤害-20%，持续30秒"
+        },
+        {
+          "id": "wall-ice",
+          "kind": "effect",
+          "text": "随机获得雷墙时，自身受到冰属性攻击伤害-20%，持续30秒"
+        },
+        {
+          "id": "wall-earth",
+          "kind": "effect",
+          "text": "随机获得炎墙时，自身受到树属性攻击伤害-20%，持续30秒"
+        },
+        {
+          "id": "wall-thunder",
+          "kind": "effect",
+          "text": "随机获得石墙时，自身受到雷属性攻击伤害-20%，持续30秒"
+        },
+        {
+          "id": "wall-light",
+          "kind": "effect",
+          "text": "随机获得暗影墙时，自身受到光属性攻击伤害-20%，持续30秒"
+        },
+        {
+          "id": "wall-dark",
+          "kind": "effect",
+          "text": "随机获得圣墙时，自身受到暗属性攻击伤害-20%，持续30秒"
+        },
+        {
+          "id": "periodic-trigger",
+          "kind": "condition",
+          "text": "每10秒自动发动一次"
+        },
+        {
+          "id": "random-wall",
+          "kind": "condition",
+          "text": "每次随机选择六属性墙中的一种，不是六种同时施加"
+        },
+        {
+          "id": "wall-mechanism",
+          "kind": "condition",
+          "text": "随机墙持续30秒，同类型Buff只计最高已生效一项"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "每10秒随机施加1种墙；获得冰墙时，自身受到火属性攻击伤害-20%，该墙持续30秒。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "wall-fire"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-random",
+              "partIds": [
+                "wall-fire"
+              ],
+              "summary": "每10秒随机施加1种墙；获得冰墙时，自身受到火属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "fireRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-fire-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "ice-wall",
+              "activeByDefault": false
+            }
+          ],
+          "calculationNote": "本轮只完成随机冰墙的火伤减免分支，其余五种属性墙仍待各自标签。10秒是发动间隔，30秒是墙持续时间；未随机取得冰墙时不能默认减火伤。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:291",
+      "name": "炎属性护盾2",
+      "url": "https://altema.jp/lastcloudia/gino/345",
+      "text": "减少受到的火属性攻击伤害20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-fire",
+          "kind": "effect",
+          "text": "受到火属性攻击的伤害-20%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "受到火属性攻击的伤害-20%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-fire"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-fire"
+              ],
+              "summary": "受到火属性攻击的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 20,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "这是被动所受火伤减免，不是限时冰墙Buff，也不是火属性耐性数值+20。"
+        }
+      }
+    },
+    {
+      "id": "44ab9538d448c7c5",
+      "name": "炎属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/450",
+      "text": "火属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-physical-damage",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害+10%"
+        },
+        {
+          "id": "fire-ultimate-damage",
+          "kind": "effect",
+          "text": "火属性必杀伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性物理攻击伤害+10%。；火属性必杀伤害+10%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-physical-damage",
+              "fire-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "fire-physical-damage"
+              ],
+              "summary": "火属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "fire"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "fire-ultimate-damage"
+              ],
+              "summary": "火属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "fire"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为火属性；不包含火属性魔法，也不重复当作所有火伤加成。"
+        }
+      }
+    },
+    {
+      "id": "7030177b28467440",
+      "name": "炎属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/451",
+      "text": "火属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-physical-damage",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害+30%"
+        },
+        {
+          "id": "fire-ultimate-damage",
+          "kind": "effect",
+          "text": "火属性必杀伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性物理攻击伤害+30%。；火属性必杀伤害+30%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-physical-damage",
+              "fire-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "fire-physical-damage"
+              ],
+              "summary": "火属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "fire-ultimate-damage"
+              ],
+              "summary": "火属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为火属性；不包含火属性魔法，也不重复当作所有火伤加成。"
+        }
+      }
+    },
+    {
+      "id": "16398266d34af6ff",
+      "name": "炎属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/582",
+      "text": "火属性物理攻击与必杀伤害+30%，火属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-physical-damage",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害+30%"
+        },
+        {
+          "id": "fire-ultimate-damage",
+          "kind": "effect",
+          "text": "火属性必杀伤害+30%"
+        },
+        {
+          "id": "fire-physical-cap",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "fire-ultimate-cap",
+          "kind": "effect",
+          "text": "火属性必杀伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性物理攻击伤害+30%。；火属性必杀伤害+30%。；火属性物理攻击伤害上限+2,000。；火属性必杀伤害上限+2,000。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-physical-damage",
+              "fire-ultimate-damage",
+              "fire-physical-cap",
+              "fire-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "fire-physical-damage"
+              ],
+              "summary": "火属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "fire-ultimate-damage"
+              ],
+              "summary": "火属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-physical",
+              "partIds": [
+                "fire-physical-cap"
+              ],
+              "summary": "火属性物理攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "fire"
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "cap-ultimate",
+              "partIds": [
+                "fire-ultimate-cap"
+              ],
+              "summary": "火属性必杀伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "fire"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "四项效果按攻击类型和伤害／上限分开，魔法不适用。"
+        }
+      }
+    },
+    {
+      "id": "25b961ea21f3b629",
+      "name": "炎魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/643",
+      "text": "火属性魔法攻击伤害+30%，火属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-magic-damage",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "fire-magic-cap",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性魔法攻击伤害+30%。；火属性魔法攻击伤害上限+2,000。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic-damage",
+              "fire-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "fire-magic-damage"
+              ],
+              "summary": "火属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-magic",
+              "partIds": [
+                "fire-magic-cap"
+              ],
+              "summary": "火属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "fire"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "伤害与上限分开；两项均限定火属性魔法攻击，不扩展为所有魔法。"
+        }
+      }
+    },
+    {
+      "id": "d2278025c02f3498",
+      "name": "炎攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/648",
+      "text": "火属性伤害+30%，火属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-damage",
+          "kind": "effect",
+          "text": "火属性伤害+30%"
+        },
+        {
+          "id": "fire-cap",
+          "kind": "effect",
+          "text": "火属性伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性伤害+30%。；火属性伤害上限+2,000。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-damage",
+              "fire-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "fire-damage"
+              ],
+              "summary": "火属性伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-general",
+              "partIds": [
+                "fire-cap"
+              ],
+              "summary": "火属性伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "完整词条没有另限攻击类型，火属性伤害与火属性上限分开。"
+        }
+      }
+    },
+    {
+      "id": "71d9f5a3ea0a9660",
+      "name": "元素增幅",
+      "url": "https://altema.jp/lastcloudia/gino/662",
+      "text": "炎、冰、树、雷属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-magic",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "ice-magic",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "earth-magic",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害+10%"
+        },
+        {
+          "id": "thunder-magic",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性魔法攻击伤害+10%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "fire-magic"
+              ],
+              "summary": "火属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "fire"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "原技能同时作用于火、冰、树、雷，本轮只覆盖火属性片段；其余三种属性的效果继续待各自标签，不因本轮完成火分支就判整个技能完整。"
+        }
+      }
+    },
+    {
+      "id": "72fb68a7b16692e8",
+      "name": "元素驱动",
+      "url": "https://altema.jp/lastcloudia/gino/663",
+      "text": "炎、冰、树、雷属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-physical",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害+10%"
+        },
+        {
+          "id": "fire-ultimate",
+          "kind": "effect",
+          "text": "火属性必杀伤害+10%"
+        },
+        {
+          "id": "ice-physical",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害+10%"
+        },
+        {
+          "id": "ice-ultimate",
+          "kind": "effect",
+          "text": "冰属性必杀伤害+10%"
+        },
+        {
+          "id": "earth-physical",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害+10%"
+        },
+        {
+          "id": "earth-ultimate",
+          "kind": "effect",
+          "text": "树属性必杀伤害+10%"
+        },
+        {
+          "id": "thunder-physical",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害+10%"
+        },
+        {
+          "id": "thunder-ultimate",
+          "kind": "effect",
+          "text": "雷属性必杀伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性物理攻击伤害+10%。；火属性必杀伤害+10%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-physical",
+              "fire-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "fire-physical"
+              ],
+              "summary": "火属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "fire"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "fire-ultimate"
+              ],
+              "summary": "火属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "fire"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "原技能同时作用于火、冰、树、雷，本轮只覆盖火属性片段；其余三种属性的效果继续待各自标签，不因本轮完成火分支就判整个技能完整。"
+        }
+      }
+    },
+    {
+      "id": "fc654365c794bc7f",
+      "name": "元素高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1572",
+      "text": "炎、冰、树、雷属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-physical",
+          "kind": "effect",
+          "text": "火属性物理攻击伤害+30%"
+        },
+        {
+          "id": "fire-ultimate",
+          "kind": "effect",
+          "text": "火属性必杀伤害+30%"
+        },
+        {
+          "id": "ice-physical",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害+30%"
+        },
+        {
+          "id": "ice-ultimate",
+          "kind": "effect",
+          "text": "冰属性必杀伤害+30%"
+        },
+        {
+          "id": "earth-physical",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害+30%"
+        },
+        {
+          "id": "earth-ultimate",
+          "kind": "effect",
+          "text": "树属性必杀伤害+30%"
+        },
+        {
+          "id": "thunder-physical",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害+30%"
+        },
+        {
+          "id": "thunder-ultimate",
+          "kind": "effect",
+          "text": "雷属性必杀伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性物理攻击伤害+30%。；火属性必杀伤害+30%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-physical",
+              "fire-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "fire-physical"
+              ],
+              "summary": "火属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "fire-ultimate"
+              ],
+              "summary": "火属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "原技能同时作用于火、冰、树、雷，本轮只覆盖火属性片段；其余三种属性的效果继续待各自标签，不因本轮完成火分支就判整个技能完整。"
+        }
+      }
+    },
+    {
+      "id": "789bffd5f1b5782a",
+      "name": "元素高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1640",
+      "text": "炎、冰、树、雷属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-magic",
+          "kind": "effect",
+          "text": "火属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "ice-magic",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "earth-magic",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "thunder-magic",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性魔法攻击伤害+30%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "fire-magic"
+              ],
+              "summary": "火属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "fire"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "原技能同时作用于火、冰、树、雷，本轮只覆盖火属性片段；其余三种属性的效果继续待各自标签，不因本轮完成火分支就判整个技能完整。"
+        }
+      }
+    },
+    {
+      "id": "ea3727ee373b623b",
+      "name": "炎之强化",
+      "url": "https://altema.jp/lastcloudia/gino/883",
+      "text": "火属性攻击伤害+15%，必杀伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-damage",
+          "kind": "effect",
+          "text": "火属性攻击伤害+15%"
+        },
+        {
+          "id": "ultimate-damage",
+          "kind": "effect",
+          "text": "必杀伤害+50%，此条没有火属性限制"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性攻击伤害+15%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "fire-damage"
+              ],
+              "summary": "火属性攻击伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 15
+            }
+          ],
+          "calculationNote": "后一句必杀伤害+50%没有火属性限制，是另一项完整效果，本轮不把它改成火属性必杀加成，也不顺便完成该效果标签。"
+        }
+      }
+    },
+    {
+      "id": "eadf240a561579f3",
+      "name": "炎之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1008",
+      "text": "对处于气绝或Break状态的敌人，火属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，火属性攻击伤害+20%"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "对气绝或Break敌人，火属性攻击伤害+20%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "fire-damage"
+              ],
+              "summary": "对气绝或Break敌人，火属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件火伤。"
+        }
+      }
+    },
+    {
+      "id": "6e79eb857dac5a05",
+      "name": "炎之机遇2",
+      "url": "https://altema.jp/lastcloudia/gino/1546",
+      "text": "对处于气绝或Break状态的敌人，火属性攻击伤害+20%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，火属性攻击伤害+20%"
+        },
+        {
+          "id": "fire-cap",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，火属性攻击伤害上限+3,000"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "对气绝或Break敌人，火属性攻击伤害+20%。；对气绝或Break敌人，火属性攻击伤害上限+3,000。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-damage",
+              "fire-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "fire-damage"
+              ],
+              "summary": "对气绝或Break敌人，火属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            },
+            {
+              "group": "cap-stun-break",
+              "partIds": [
+                "fire-cap"
+              ],
+              "summary": "对气绝或Break敌人，火属性攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "capPoints": 3000
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件火伤。"
+        }
+      }
+    },
+    {
+      "id": "98c68a157e1b55ff",
+      "name": "炎属性弱点突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1038",
+      "text": "使用火属性攻击命中弱点属性时，伤害上限+2,000；仅装备1把武器时，提升量变为+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-weakness-cap",
+          "kind": "effect",
+          "text": "火属性命中弱点时，上限+2000；仅装备1把武器时改为+4000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次火属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "fire-weakness-cap"
+              ],
+              "summary": "火属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      }
+    },
+    {
+      "id": "9bba0f584207868a",
+      "name": "炎属性弱点突破",
+      "url": "https://altema.jp/lastcloudia/gino/1379",
+      "text": "使用火属性攻击命中弱点属性时，伤害上限+1,000；仅装备1把武器时，提升量变为+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-weakness-cap",
+          "kind": "effect",
+          "text": "火属性命中弱点时，上限+1000；仅装备1把武器时改为+2000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次火属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "fire-weakness-cap"
+              ],
+              "summary": "火属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      }
+    },
+    {
+      "id": "3159ed767f08fdf1",
+      "name": "炎属性弱点突破3",
+      "url": "https://altema.jp/lastcloudia/gino/1882",
+      "text": "使用火属性攻击命中弱点属性时，伤害上限+3,000；仅装备1把武器时，提升量变为+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-weakness-cap",
+          "kind": "effect",
+          "text": "火属性命中弱点时，上限+3000；仅装备1把武器时改为+6000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次火属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性命中弱点时，上限+3,000；仅1把武器时改为+6,000。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "fire-weakness-cap"
+              ],
+              "summary": "火属性命中弱点时，上限+3,000；仅1把武器时改为+6,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      }
+    },
+    {
+      "id": "898133b240997611",
+      "name": "炎之合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1229",
+      "text": "2名以上我方单位装备“炎之合奏”时，火属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-damage",
+          "kind": "effect",
+          "text": "火属性攻击伤害随装备炎之合奏人数提升：2人+10%、3人+20%、4人+30%"
+        },
+        {
+          "id": "party-skill-count",
+          "kind": "condition",
+          "text": "我方至少2名角色装备炎之合奏，按装备人数选择对应档位"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "至少2名我方角色装备炎之合奏：2人+10%、3人+20%、4人+30%。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-party",
+              "partIds": [
+                "fire-damage"
+              ],
+              "summary": "至少2名我方角色装备炎之合奏：2人+10%、3人+20%、4人+30%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "tiered-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "898133b240997611",
+              "minimumCount": 2,
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 20
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 30
+                }
+              ]
+            }
+          ],
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+        }
+      }
+    },
+    {
+      "id": "25f4aebf13e4d5a1",
+      "name": "炎之冲锋",
+      "url": "https://altema.jp/lastcloudia/gino/1397",
+      "text": "连续Hit达到50以上时，火属性物理攻击伤害上限+1,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-physical-cap",
+          "kind": "effect",
+          "text": "连续Hit至少50时，火属性物理攻击伤害上限+1,500"
+        },
+        {
+          "id": "hit-count",
+          "kind": "condition",
+          "text": "连续Hit数≥50"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "连续Hit达到50以上时，火属性物理攻击伤害上限+1,500。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-physical-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-hit-count",
+              "partIds": [
+                "fire-physical-cap"
+              ],
+              "summary": "连续Hit达到50以上时，火属性物理攻击伤害上限+1,500。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "fire"
+              },
+              "capPoints": 1500,
+              "hitCount": {
+                "metric": "consecutive-hits",
+                "operator": "gte",
+                "value": 50
+              }
+            }
+          ],
+          "calculationNote": "达到50即满足数值条件，不是每50Hit叠加，也不是提高所有火属性伤害上限；Hit条件仍待标签。"
+        }
+      }
+    },
+    {
+      "id": "9e9ea3affb033550",
+      "name": "辐射波动",
+      "url": "https://altema.jp/lastcloudia/gino/1659",
+      "text": "使用火属性特技时，距离敌人越近，伤害与伤害上限越高（最高伤害+25%、伤害上限+2,000）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "fire-skill-damage",
+          "kind": "effect",
+          "text": "火属性特技距离越近伤害越高，最高+25%"
+        },
+        {
+          "id": "fire-skill-cap",
+          "kind": "effect",
+          "text": "火属性特技距离越近上限越高，最高+2,000"
+        },
+        {
+          "id": "distance-scaling",
+          "kind": "condition",
+          "text": "发动火属性特技时按与敌人的距离计算；具体距离阈值与增幅曲线待确认"
+        }
+      ],
+      "tagDetails": {
+        "火属性": {
+          "summary": "火属性特技发动时，离敌人越近伤害越高，最高+25%。；火属性特技发动时，离敌人越近伤害上限越高，最高+2,000。",
+          "relation": "fire-effect-or-condition",
+          "element": "fire",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "fire-skill-damage",
+              "fire-skill-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-distance",
+              "partIds": [
+                "fire-skill-damage"
+              ],
+              "summary": "火属性特技发动时，离敌人越近伤害越高，最高+25%。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "distance-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "element": "fire"
+              },
+              "maxValuePercent": 25,
+              "scaling": {
+                "metric": "distance-to-target-at-skill-use",
+                "direction": "closer-stronger",
+                "curveStatus": "unconfirmed"
+              }
+            },
+            {
+              "group": "cap-distance",
+              "partIds": [
+                "fire-skill-cap"
+              ],
+              "summary": "火属性特技发动时，离敌人越近伤害上限越高，最高+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "fireRole": "direct-effect",
+              "operation": "distance-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "element": "fire"
+              },
+              "maxCapPoints": 2000,
+              "scaling": {
+                "metric": "distance-to-target-at-skill-use",
+                "direction": "closer-stronger",
+                "curveStatus": "unconfirmed"
+              }
+            }
+          ],
+          "calculationNote": "25%和2,000只是最高值，距离与曲线尚未确认时不直接当当前加成；不扩为全部火属性物理攻击。距离条件继续待标签。"
         }
       }
     }
@@ -27845,6 +29922,217 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "火属性",
+      "assignments": [
+        {
+          "skillId": "97d948f5e3717d10",
+          "partIds": [
+            "fire-damage"
+          ]
+        },
+        {
+          "skillId": "f871fed73e6326c3",
+          "partIds": [
+            "fire-magic-damage"
+          ]
+        },
+        {
+          "skillId": "f38969900a97ccd0",
+          "partIds": [
+            "fire-magic-damage"
+          ]
+        },
+        {
+          "skillId": "12fb48061bb074e5",
+          "partIds": [
+            "critical-permission",
+            "attack-scope"
+          ]
+        },
+        {
+          "skillId": "865730759d5fd514",
+          "partIds": [
+            "opening-effect-1"
+          ]
+        },
+        {
+          "skillId": "92bf2e44cf665bdf",
+          "partIds": [
+            "wall-fire"
+          ]
+        },
+        {
+          "skillId": "2a62c41d8d3fb3d0",
+          "partIds": [
+            "critical-rate",
+            "critical-damage",
+            "attack-element"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:291",
+          "partIds": [
+            "received-fire"
+          ]
+        },
+        {
+          "skillId": "a85d531b3bab38a1",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:301",
+          "partIds": [
+            "fire-damage"
+          ]
+        },
+        {
+          "skillId": "44ab9538d448c7c5",
+          "partIds": [
+            "fire-physical-damage",
+            "fire-ultimate-damage"
+          ]
+        },
+        {
+          "skillId": "7030177b28467440",
+          "partIds": [
+            "fire-physical-damage",
+            "fire-ultimate-damage"
+          ]
+        },
+        {
+          "skillId": "16398266d34af6ff",
+          "partIds": [
+            "fire-physical-damage",
+            "fire-ultimate-damage",
+            "fire-physical-cap",
+            "fire-ultimate-cap"
+          ]
+        },
+        {
+          "skillId": "25b961ea21f3b629",
+          "partIds": [
+            "fire-magic-damage",
+            "fire-magic-cap"
+          ]
+        },
+        {
+          "skillId": "d2278025c02f3498",
+          "partIds": [
+            "fire-damage",
+            "fire-cap"
+          ]
+        },
+        {
+          "skillId": "71d9f5a3ea0a9660",
+          "partIds": [
+            "fire-magic"
+          ]
+        },
+        {
+          "skillId": "72fb68a7b16692e8",
+          "partIds": [
+            "fire-physical",
+            "fire-ultimate"
+          ]
+        },
+        {
+          "skillId": "ec87e1562724f2ba",
+          "partIds": [
+            "permanent-effect"
+          ]
+        },
+        {
+          "skillId": "ea3727ee373b623b",
+          "partIds": [
+            "fire-damage"
+          ]
+        },
+        {
+          "skillId": "eadf240a561579f3",
+          "partIds": [
+            "fire-damage"
+          ]
+        },
+        {
+          "skillId": "98c68a157e1b55ff",
+          "partIds": [
+            "fire-weakness-cap"
+          ]
+        },
+        {
+          "skillId": "898133b240997611",
+          "partIds": [
+            "fire-damage"
+          ]
+        },
+        {
+          "skillId": "9bba0f584207868a",
+          "partIds": [
+            "fire-weakness-cap"
+          ]
+        },
+        {
+          "skillId": "25f4aebf13e4d5a1",
+          "partIds": [
+            "fire-physical-cap"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:750",
+          "partIds": [
+            "opening-effect-1"
+          ]
+        },
+        {
+          "skillId": "6e79eb857dac5a05",
+          "partIds": [
+            "fire-damage",
+            "fire-cap"
+          ]
+        },
+        {
+          "skillId": "f6bc920aeccd81d4",
+          "partIds": [
+            "condition-2"
+          ]
+        },
+        {
+          "skillId": "fc654365c794bc7f",
+          "partIds": [
+            "fire-physical",
+            "fire-ultimate"
+          ]
+        },
+        {
+          "skillId": "789bffd5f1b5782a",
+          "partIds": [
+            "fire-magic"
+          ]
+        },
+        {
+          "skillId": "9e9ea3affb033550",
+          "partIds": [
+            "fire-skill-damage",
+            "fire-skill-cap"
+          ]
+        },
+        {
+          "skillId": "3159ed767f08fdf1",
+          "partIds": [
+            "fire-weakness-cap"
+          ]
+        },
+        {
+          "skillId": "d53c1518b71c0259",
+          "partIds": [
+            "opening-effect-1"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -28452,7 +30740,31 @@
         "3aa15cb512c24b16",
         "3177d5a582d25cba",
         "4d81b9b6cd7cb7fe",
-        "a5ace74d23269296"
+        "a5ace74d23269296",
+        "97d948f5e3717d10",
+        "全部技能:all:301",
+        "f871fed73e6326c3",
+        "f38969900a97ccd0",
+        "92bf2e44cf665bdf",
+        "全部技能:all:291",
+        "44ab9538d448c7c5",
+        "7030177b28467440",
+        "16398266d34af6ff",
+        "25b961ea21f3b629",
+        "d2278025c02f3498",
+        "71d9f5a3ea0a9660",
+        "72fb68a7b16692e8",
+        "fc654365c794bc7f",
+        "789bffd5f1b5782a",
+        "ea3727ee373b623b",
+        "eadf240a561579f3",
+        "6e79eb857dac5a05",
+        "98c68a157e1b55ff",
+        "9bba0f584207868a",
+        "3159ed767f08fdf1",
+        "898133b240997611",
+        "25f4aebf13e4d5a1",
+        "9e9ea3affb033550"
       ]
     },
     "hp": {
@@ -31387,7 +33699,330 @@
         "0d45e653455b29d1"
       ],
       "scopeDescription": "暴击率、暴击伤害、暴击上限、允许暴击、暴击触发回复、所受暴击减免分别列组。属性、Boss、物理、反击、武器、满HP和Buff限制分别保留；允许暴击不等于必定暴击。已有标签和判断同步，同一技能跨组只计一次。"
+    },
+    "fire-damage-general": {
+      "label": "火属性：伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "damage-general",
+      "displayOrder": [
+        "97d948f5e3717d10",
+        "全部技能:all:301",
+        "d2278025c02f3498",
+        "ea3727ee373b623b"
+      ]
+    },
+    "fire-cap-general": {
+      "label": "火属性：伤害上限增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "cap-general",
+      "displayOrder": [
+        "d2278025c02f3498"
+      ]
+    },
+    "fire-damage-physical": {
+      "label": "火属性物理：伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "damage-physical",
+      "displayOrder": [
+        "44ab9538d448c7c5",
+        "7030177b28467440",
+        "16398266d34af6ff",
+        "72fb68a7b16692e8",
+        "fc654365c794bc7f"
+      ]
+    },
+    "fire-cap-physical": {
+      "label": "火属性物理：伤害上限增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "cap-physical",
+      "displayOrder": [
+        "16398266d34af6ff"
+      ]
+    },
+    "fire-damage-magic": {
+      "label": "火属性魔法：伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "damage-magic",
+      "displayOrder": [
+        "f871fed73e6326c3",
+        "f38969900a97ccd0",
+        "25b961ea21f3b629",
+        "71d9f5a3ea0a9660",
+        "789bffd5f1b5782a"
+      ]
+    },
+    "fire-cap-magic": {
+      "label": "火属性魔法：伤害上限增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "cap-magic",
+      "displayOrder": [
+        "25b961ea21f3b629"
+      ]
+    },
+    "fire-damage-ultimate": {
+      "label": "火属性必杀：伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "damage-ultimate",
+      "displayOrder": [
+        "44ab9538d448c7c5",
+        "7030177b28467440",
+        "16398266d34af6ff",
+        "72fb68a7b16692e8",
+        "fc654365c794bc7f"
+      ]
+    },
+    "fire-cap-ultimate": {
+      "label": "火属性必杀：伤害上限增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "cap-ultimate",
+      "displayOrder": [
+        "16398266d34af6ff"
+      ]
+    },
+    "fire-critical-rate": {
+      "label": "火属性：暴击率增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "2a62c41d8d3fb3d0"
+      ]
+    },
+    "fire-critical-damage": {
+      "label": "火属性：暴击伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "critical-damage",
+      "displayOrder": [
+        "2a62c41d8d3fb3d0"
+      ]
+    },
+    "fire-magic-critical-permission": {
+      "label": "火属性攻击魔法：允许暴击",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "magic-critical-permission",
+      "displayOrder": [
+        "12fb48061bb074e5"
+      ]
+    },
+    "fire-damage-opening": {
+      "label": "开场Buff：火属性伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "damage-opening",
+      "displayOrder": [
+        "d53c1518b71c0259"
+      ]
+    },
+    "fire-damage-stun-break": {
+      "label": "敌人气绝／Break：火属性伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "damage-stun-break",
+      "displayOrder": [
+        "eadf240a561579f3",
+        "6e79eb857dac5a05"
+      ]
+    },
+    "fire-cap-stun-break": {
+      "label": "敌人气绝／Break：火属性上限增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "cap-stun-break",
+      "displayOrder": [
+        "6e79eb857dac5a05"
+      ]
+    },
+    "fire-cap-weakness": {
+      "label": "命中属性弱点：火属性上限增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "cap-weakness",
+      "displayOrder": [
+        "98c68a157e1b55ff",
+        "9bba0f584207868a",
+        "3159ed767f08fdf1"
+      ]
+    },
+    "fire-damage-party": {
+      "label": "多人装备：火属性伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "damage-party",
+      "displayOrder": [
+        "898133b240997611"
+      ]
+    },
+    "fire-cap-hit-count": {
+      "label": "连续Hit≥50：火属性物理上限增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "cap-hit-count",
+      "displayOrder": [
+        "25f4aebf13e4d5a1"
+      ]
+    },
+    "fire-damage-distance": {
+      "label": "距离越近：火属性特技伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "damage-distance",
+      "displayOrder": [
+        "9e9ea3affb033550"
+      ]
+    },
+    "fire-cap-distance": {
+      "label": "距离越近：火属性特技上限增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "cap-distance",
+      "displayOrder": [
+        "9e9ea3affb033550"
+      ]
+    },
+    "fire-weapon-physical-damage": {
+      "label": "火属性武器条件：物理伤害增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "weapon-physical-damage",
+      "displayOrder": [
+        "f6bc920aeccd81d4"
+      ]
+    },
+    "fire-weapon-physical-cap": {
+      "label": "火属性武器条件：物理上限增加",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "weapon-physical-cap",
+      "displayOrder": [
+        "f6bc920aeccd81d4"
+      ]
+    },
+    "fire-weapon-hp-drain": {
+      "label": "火属性武器条件：HP持续下降",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "weapon-hp-drain",
+      "displayOrder": [
+        "f6bc920aeccd81d4"
+      ]
+    },
+    "fire-received-passive": {
+      "label": "常驻加成：受到火属性伤害减少",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "received-passive",
+      "displayOrder": [
+        "全部技能:all:291",
+        "a85d531b3bab38a1"
+      ]
+    },
+    "fire-received-opening": {
+      "label": "开场Buff：受到火属性伤害减少",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "received-opening",
+      "displayOrder": [
+        "865730759d5fd514",
+        "全部技能:all:750"
+      ]
+    },
+    "fire-received-permanent": {
+      "label": "永久Buff：受到火属性伤害减少",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "received-permanent",
+      "displayOrder": [
+        "ec87e1562724f2ba"
+      ]
+    },
+    "fire-received-random": {
+      "label": "随机墙Buff：受到火属性伤害减少",
+      "parent": "fire",
+      "conditionTag": "火属性",
+      "effectGroup": "received-random",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ]
+    },
+    "fire": {
+      "label": "火属性",
+      "childKeys": [
+        "fire-damage-general",
+        "fire-cap-general",
+        "fire-damage-physical",
+        "fire-cap-physical",
+        "fire-damage-magic",
+        "fire-cap-magic",
+        "fire-damage-ultimate",
+        "fire-cap-ultimate",
+        "fire-critical-rate",
+        "fire-critical-damage",
+        "fire-magic-critical-permission",
+        "fire-damage-opening",
+        "fire-damage-stun-break",
+        "fire-cap-stun-break",
+        "fire-cap-weakness",
+        "fire-damage-party",
+        "fire-cap-hit-count",
+        "fire-damage-distance",
+        "fire-cap-distance",
+        "fire-weapon-physical-damage",
+        "fire-weapon-physical-cap",
+        "fire-weapon-hp-drain",
+        "fire-received-passive",
+        "fire-received-opening",
+        "fire-received-permanent",
+        "fire-received-random"
+      ],
+      "overviewLabel": "全部火属性相关效果（分组）",
+      "separateSections": true,
+      "passKind": "element-effects-and-condition",
+      "displayOrder": [
+        "97d948f5e3717d10",
+        "f871fed73e6326c3",
+        "f38969900a97ccd0",
+        "12fb48061bb074e5",
+        "865730759d5fd514",
+        "92bf2e44cf665bdf",
+        "2a62c41d8d3fb3d0",
+        "全部技能:all:291",
+        "a85d531b3bab38a1",
+        "全部技能:all:301",
+        "44ab9538d448c7c5",
+        "7030177b28467440",
+        "16398266d34af6ff",
+        "25b961ea21f3b629",
+        "d2278025c02f3498",
+        "71d9f5a3ea0a9660",
+        "72fb68a7b16692e8",
+        "ec87e1562724f2ba",
+        "ea3727ee373b623b",
+        "eadf240a561579f3",
+        "98c68a157e1b55ff",
+        "898133b240997611",
+        "9bba0f584207868a",
+        "25f4aebf13e4d5a1",
+        "全部技能:all:750",
+        "6e79eb857dac5a05",
+        "f6bc920aeccd81d4",
+        "fc654365c794bc7f",
+        "789bffd5f1b5782a",
+        "9e9ea3affb033550",
+        "3159ed767f08fdf1",
+        "d53c1518b71c0259"
+      ],
+      "scopeDescription": "火属性伤害按物理、魔法、必杀、特技及未限定类型分开；伤害、上限、暴击与受到火伤减免分别列组。火属性武器条件不等于火属性攻击。多属性技能本轮只完成火属性部分，其他效果与条件继续待判断；同一技能跨组只计一次。"
     }
   },
-  "activeView": "critical"
+  "activeView": "fire"
 }

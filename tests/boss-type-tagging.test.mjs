@@ -61,7 +61,7 @@ test('Boss page is a deduplicated union of six categories, not an extra bonus ta
  assert(boss.entries.every(e=>!e.assignedTags.includes('Boss增伤')));
  const rows=skillLabelRows(box.window.SKILL_DATA,boss);
  assert(rows.slice(0,3).every(r=>r.judgment==='ready'));assert(rows.slice(3).every(r=>r.judgment==='partial'));
- assert.equal(catalog.views.all.counts.relatedUnique,435);assert.equal(catalog.views.all.counts.ready,91);assert.equal(catalog.views.all.counts.partial,344);
+ assert.equal(catalog.views.all.counts.relatedUnique,459);assert.equal(catalog.views.all.counts.ready,107);assert.equal(catalog.views.all.counts.partial,352);
  assert.equal(catalog.views.physical.counts.relatedUnique,78);assert.equal(catalog.views['magic-damage'].counts.relatedUnique,22);
 });
 
