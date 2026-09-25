@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "label": "必杀相关",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "7305afeb3e366f19",
+    "ab0b9f05425aae49",
+    "7caf7c48fe8b8715",
+    "c4cb3f5b1831b5f7",
+    "1c1fef3cdbb3164c",
+    "ee7974e871d9836c",
+    "71ac299474a52c86",
+    "0e15301820186e27",
+    "f16297127305bf04",
+    "8f928b05fc447ac9",
+    "8a5d23a0f83cd5f5",
+    "ed00d6c7e726b8ce",
+    "77ca049322fad0af",
+    "9bde00a6ca77b552",
+    "899aa4edeab83540"
+  ]
+}

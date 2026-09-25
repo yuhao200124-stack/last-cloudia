@@ -1005,16 +1005,41 @@ export const ATTACK_TAG_CATALOG = {
             "basic:7305afeb3e366f19:1"
           ],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "自身必杀槽满时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-gauge-full",
+            "subject": "self",
+            "metric": "current-ultimate-gauge-percent",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "必杀槽满时，自身攻击力+30%。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "ultimate-gauge-full",
+              "phase": "current-state"
+            }
+          ],
+          "calculationNote": "按当前必杀槽是否满槽判断；槽不满时失效，重新蓄满后恢复。这是条件加成，不是发动必杀后的Buff，可与同属性Buff并存。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "必杀相关"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "必杀槽满时生效；不是Buff"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "90951140c1d42641",
@@ -2105,6 +2130,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-2",
           "kind": "condition",
           "text": "勇敢／堡垒Buff；各同类型Buff同时只计一项"
+        },
+        {
+          "id": "duration-unconfirmed",
+          "kind": "condition",
+          "text": "勇敢和堡垒Buff持续时间待确认"
         }
       ],
       "tagDetails": {
@@ -2127,17 +2157,61 @@ export const ATTACK_TAG_CATALOG = {
             "basic:7caf7c48fe8b8715:1"
           ],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "敌人发动必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "enemy",
+            "event": "ultimate-used"
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "敌人发动必杀时，自身获得勇敢：攻击力+20%。持续时间待确认。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "brave",
+              "durationStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "valuePercent": 20
+            },
+            {
+              "group": "defense-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "敌人发动必杀时，自身获得堡垒：防御力+20%。持续时间待确认。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "fort",
+              "durationStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "触发者是敌人，Buff作用于自身；不改成自身发动必杀或受到必杀伤害后才生效。现有资料没有写出持续时间，不套用其他Buff的40秒。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "必杀相关"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "敌人使用必杀时触发",
-        "勇敢／堡垒Buff；各同类型Buff同时只计一项"
+        "勇敢／堡垒Buff；各同类型Buff同时只计一项",
+        "勇敢和堡垒Buff持续时间待确认"
       ]
     },
     {
@@ -6243,7 +6317,7 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "发动物理攻击或必杀时"
+          "text": "发动物理攻击时（与发动必杀是“或”关系，任一满足）"
         },
         {
           "id": "condition-2",
@@ -6259,6 +6333,11 @@ export const ATTACK_TAG_CATALOG = {
           "id": "condition-4",
           "kind": "condition",
           "text": "只装备一把武器时额外提高上限"
+        },
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "发动必杀时（与发动物理攻击是“或”关系，任一满足）"
         }
       ],
       "tagDetails": {
@@ -6271,10 +6350,43 @@ export const ATTACK_TAG_CATALOG = {
             "basic:899aa4edeab83540:1"
           ],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "自身发动必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "self",
+            "event": "ultimate-used",
+            "alternativeEvents": [
+              "physical-attack-used",
+              "ultimate-used"
+            ],
+            "operator": "or"
+          },
+          "bindings": [
+            {
+              "group": "attack-reference",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "发动必杀时，该次伤害以自身攻击力+30%的状态计算。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "per-ultimate-stat-reference",
+              "phase": "damage-calculation",
+              "referenceTarget": "self",
+              "referenceStat": "STR",
+              "referencePercent": 30
+            }
+          ],
+          "calculationNote": "原文是物理攻击或必杀，任一满足即可；本轮只覆盖必杀分支，物理攻击分支仍保留待判断。这里不是必杀伤害直接+30%；Boss上限和单武器额外上限不挂在这条触发效果里。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "必杀相关"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -6282,7 +6394,7 @@ export const ATTACK_TAG_CATALOG = {
         "单武器额外上限+10,000"
       ],
       "remainingConditions": [
-        "发动物理攻击或必杀时",
+        "发动物理攻击时（与发动必杀是“或”关系，任一满足）",
         "攻击力只在该次伤害计算中提高",
         "对Boss时才有对应伤害上限加成",
         "只装备一把武器时额外提高上限"
@@ -6441,8 +6553,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 22,
-    "partial": 65,
+    "ready": 23,
+    "partial": 64,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

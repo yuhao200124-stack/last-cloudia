@@ -44,7 +44,7 @@ test('received attack retains event timing, exact resource and heal bases, chanc
 });
 
 test('one condition pass accumulates on stable identities without marking future effects or mechanisms complete',()=>{
- assert.equal(registry.tagPasses.length,18);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,19);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='受到攻击');
  for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId);assert(a.partIds.every(id=>e.parts.find(p=>p.id===id).kind==='condition'));assert.equal(e.judgment,'partial');}
  for(const [n,oldTag] of [[195,'攻击力'],[196,'魔力'],[1133,'防御力'],[1176,'攻击力']]){
@@ -53,20 +53,20 @@ test('one condition pass accumulates on stable identities without marking future
  assert(entry(1133).remainingConditions.includes('概率触发，具体概率待确认'));
  assert.match(entry(195).remainingConditions.join(''),/持续40秒/);assert.match(entry(1176).remainingConditions.join(''),/该次受伤计算/);
  assert.deepEqual(entry(740).assignedTags,['受到攻击']);assert.match(entry(740).remainingEffects.join(''),/魔抗\+20%/);
- assert.equal(view.counts.ready,0);assert.equal(view.counts.partial,21);assert.equal(catalog.entries.length,385);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,385);
- assert.equal(catalog.views.all.counts.ready,72);assert.equal(catalog.views.all.counts.partial,313);
+ assert.equal(view.counts.ready,0);assert.equal(view.counts.partial,21);assert.equal(catalog.entries.length,393);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,393);
+ assert.equal(catalog.views.all.counts.ready,75);assert.equal(catalog.views.all.counts.partial,318);
 });
 
 function page(edits={}){
  const elements=new Map(),get=k=>{if(!elements.has(k))elements.set(k,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(k,v){this.listeners[k]=v;},setAttribute(){},focus(){}});return elements.get(k);};
  const code=read('../dist/skill-labeling.mjs').replace(/^import .*;\n/gm,'').replace('export function renderLabelTable','function renderLabelTable');
- vm.runInNewContext(code,{catalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,addEventListener(){}},localStorage:{getItem:()=>JSON.stringify(edits),setItem(){assert.fail('Do not modify saved data.');}}});
+ vm.runInNewContext(code,{catalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,location:{search:'?tag=received-attack'},addEventListener(){}},localStorage:{getItem:()=>JSON.stringify(edits),setItem(){assert.fail('Do not modify saved data.');}}});
  return {get,click:(nav,tag)=>get(nav).listeners.click({target:{closest:()=>({dataset:{tag}})}})};
 }
 test('received attack page groups effects, deduplicates totals, searches and preserves old tabs and stale edit review',()=>{
- const {get,click}=page();assert.equal(catalog.activeView,'received-attack');
+ const {get,click}=page();
  assert.match(get('#labelCoverage').textContent,/935.*21.*914/);assert.match(get('#judgmentSummary').textContent,/0.*21.*0/);assert.match(get('#labelResultCount').textContent,/21 \/ 21/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,14);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,19);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,15);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,19);
  assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,18);assert.equal((get('#labelTable').innerHTML.match(/data-skill-id=/g)||[]).length,25);
  const search=get('#labelSearch');search.value='从零开始';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 21/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,3);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','received-attack-magic-up');assert.match(get('#activeTagTitle').textContent,/受到攻击.*魔力/);assert(get('#labelTable').innerHTML.includes('复仇增魔'));assert(!get('#labelTable').innerHTML.includes('复仇鼓舞'));

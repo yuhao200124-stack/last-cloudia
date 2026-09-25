@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -101,6 +101,14 @@ for(const [key,view] of Object.entries(views)){
       const condition=detail.condition;
       if(condition?.subject!=='self' || !['attack-received','damage-received'].includes(condition.event) || !['any','physical','magic'].includes(condition.incomingType) || condition.requiresHpDamage!==(condition.event==='damage-received'))throw Error('Received attack and actual received damage must be distinguished.');
     }
+    if(key==='ultimate'){
+      const condition=detail.condition;
+      if(!['ultimate-use','ultimate-gauge-full','next-ultimate-use'].includes(condition?.mode) || !['self','enemy'].includes(condition.subject))throw Error('Missing ultimate condition mode or actor.');
+      if(condition.mode==='ultimate-gauge-full' && (condition.subject!=='self' || condition.metric!=='current-ultimate-gauge-percent' || condition.operator!=='eq' || condition.thresholdPercent!==100))throw Error('Ultimate gauge state must require a full current gauge.');
+      if(condition.mode!=='ultimate-gauge-full' && condition.event!=='ultimate-used')throw Error('Ultimate use event must be explicit.');
+      if(condition.mode==='next-ultimate-use' && (condition.subject!=='self' || condition.requiresActiveBuff!==true))throw Error('Next ultimate requires the previously granted Buff.');
+      if(condition.alternativeEvents && (condition.operator!=='or' || !condition.alternativeEvents.includes('ultimate-used') && !condition.alternativeEvents.includes('ice-ultimate-used')))throw Error('Ultimate alternatives must preserve OR semantics.');
+    }
     for(const binding of detail.bindings){
       if(!groups.has(binding.group) || !binding.summary || !binding.partIds?.length || binding.partIds.some(id=>entry.parts.find(part=>part.id===id)?.kind!=='effect'))throw Error('Invalid opening effect binding.');
       if(permanent && (binding.lifetime!=='permanent' || Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'endsOn') || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Permanent state must have no timed expiry and must preserve same-type Buff limits.');
@@ -118,6 +126,17 @@ for(const [key,view] of Object.entries(views)){
           if(binding.activationMode!=='triggered-buff' || binding.phase!=='after-damage' || !(binding.durationSeconds>0) || binding.stacking!=='highest-active-buff-of-same-type-only')throw Error('Received damage Buff must have its own lifetime and stacking rule.');
         }else if(Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'stacking'))throw Error('Per-hit effects are not lasting Buffs.');
         if(binding.activationMode==='per-hit-stat-reference' && (binding.phase!=='damage-calculation' || binding.isBuff || !['self','attacking-enemy'].includes(binding.referenceTarget)))throw Error('Invalid incoming damage stat reference.');
+      }
+      if(key==='ultimate'){
+        if(binding.target!=='self' || typeof binding.isBuff!=='boolean')throw Error('Ultimate trigger actor must not replace the effect target.');
+        if(detail.condition.mode==='ultimate-gauge-full' && (binding.activationMode!=='ultimate-gauge-full' || binding.phase!=='current-state' || binding.isBuff))throw Error('Full gauge attributes are current-state bonuses.');
+        if(binding.isBuff){
+          if(binding.stacking!=='highest-active-buff-of-same-type-only')throw Error('Ultimate Buff stacking must be explicit.');
+          if(binding.activationMode==='next-use-buff'){
+            if(detail.condition.mode!=='next-ultimate-use' || binding.uses!==1 || binding.phase!=='next-ultimate' || Object.hasOwn(binding,'durationSeconds'))throw Error('Periodic grant interval is not a next-use Buff duration.');
+          }else if(binding.activationMode!=='triggered-buff' || binding.phase!=='on-ultimate-use' || !((binding.durationSeconds>0 && !binding.durationStatus) || (binding.durationStatus==='unconfirmed' && !Object.hasOwn(binding,'durationSeconds'))))throw Error('Triggered ultimate Buff needs a known duration or an explicit unknown.');
+        }else if(Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'durationStatus') || Object.hasOwn(binding,'stacking'))throw Error('Non-Buff ultimate effects must not gain Buff metadata.');
+        if(binding.activationMode==='per-ultimate-stat-reference' && (binding.isBuff || binding.phase!=='damage-calculation' || binding.referenceTarget!=='self'))throw Error('Ultimate stat reference must stay within the current damage calculation.');
       }
     }
   }

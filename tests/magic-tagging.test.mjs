@@ -37,7 +37,7 @@ test('magic keeps targets, fixed numbers, decreases, references and conditional 
  assert.equal(entry(1694).tagDetails['魔力'].relation,'attack-calculation-stat');
  assert.match(entry(1164).tagDetails['魔力'].calculationNote,/不能.*\+50%/);
  assert.match(entry(1813).tagDetails['魔力'].calculationNote,/不是魔力\+10%/);
- for(const n of [169,196,249,357,441,584,641,890,954,1164,1461,1694,1802,1813]){
+ for(const n of [169,196,357,441,584,641,890,954,1164,1461,1694,1802,1813]){
   assert.equal(entry(n).judgment,'partial',entry(n).name);assert(entry(n).remainingConditions.length,entry(n).name);
  }
  for(const n of [412,433,561]){assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).assignedTags,['魔力','MP']);}
@@ -45,9 +45,9 @@ test('magic keeps targets, fixed numbers, decreases, references and conditional 
 });
 
 test('magic accumulates with other tags and completes only fully covered attributes',()=>{
- assert.equal(magic.counts.ready,20);assert.equal(magic.counts.partial,31);assert.equal(magic.counts.unknown,0);
- assert.equal(magic.entries.filter(e=>e.assignedTags.length>1).length,37);
- assert.deepEqual(magic.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[17,18,19,20,103,108,115,120,291,412,433,490,561,746,1088,1143,1144,1476,1864,1912]);
+ assert.equal(magic.counts.ready,21);assert.equal(magic.counts.partial,30);assert.equal(magic.counts.unknown,0);
+ assert.equal(magic.entries.filter(e=>e.assignedTags.length>1).length,38);
+ assert.deepEqual(magic.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[17,18,19,20,103,108,115,120,249,291,412,433,490,561,746,1088,1143,1144,1476,1864,1912]);
  for(const n of [1864,1912]){
   assert.deepEqual(entry(n).assignedTags,['攻击力','魔力']);
   assert.deepEqual(labelingView(catalog,'attack').entries.find(e=>e.id===source(n).id),entry(n));
@@ -55,9 +55,9 @@ test('magic accumulates with other tags and completes only fully covered attribu
  assert.deepEqual(entry(304).assignedTags,['攻击力','防御力','魔力']);
  assert.deepEqual(entry(304).remainingEffects,['魔抗+10%']);
  assert(entry(304).remainingConditions.length);
- assert.equal(catalog.views.all.counts.relatedUnique,385);assert.equal(catalog.views.all.counts.ready,72);
- assert.equal(new Set(catalog.entries.map(e=>e.id)).size,385);
+ assert.equal(catalog.views.all.counts.relatedUnique,393);assert.equal(catalog.views.all.counts.ready,75);
+ assert.equal(new Set(catalog.entries.map(e=>e.id)).size,393);
  const rows=skillLabelRows(box.window.SKILL_DATA,magic);
- assert(rows.slice(0,20).every(r=>r.judgment==='ready'));
- assert(rows.slice(20).every(r=>r.judgment==='partial'));
+ assert(rows.slice(0,21).every(r=>r.judgment==='ready'));
+ assert(rows.slice(21).every(r=>r.judgment==='partial'));
 });

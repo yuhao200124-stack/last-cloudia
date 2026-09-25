@@ -818,6 +818,32 @@
             "basic:7305afeb3e366f19:1"
           ],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "自身必杀槽满时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-gauge-full",
+            "subject": "self",
+            "metric": "current-ultimate-gauge-percent",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "必杀槽满时，自身攻击力+30%。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "ultimate-gauge-full",
+              "phase": "current-state"
+            }
+          ],
+          "calculationNote": "按当前必杀槽是否满槽判断；槽不满时失效，重新蓄满后恢复。这是条件加成，不是发动必杀后的Buff，可与同属性Buff并存。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       }
     },
@@ -1771,6 +1797,11 @@
           "id": "condition-2",
           "kind": "condition",
           "text": "勇敢／堡垒Buff；各同类型Buff同时只计一项"
+        },
+        {
+          "id": "duration-unconfirmed",
+          "kind": "condition",
+          "text": "勇敢和堡垒Buff持续时间待确认"
         }
       ],
       "tagDetails": {
@@ -1793,6 +1824,49 @@
             "basic:7caf7c48fe8b8715:1"
           ],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "敌人发动必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "enemy",
+            "event": "ultimate-used"
+          },
+          "bindings": [
+            {
+              "group": "attack-up",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "敌人发动必杀时，自身获得勇敢：攻击力+20%。持续时间待确认。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "brave",
+              "durationStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "valuePercent": 20
+            },
+            {
+              "group": "defense-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "敌人发动必杀时，自身获得堡垒：防御力+20%。持续时间待确认。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "fort",
+              "durationStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "触发者是敌人，Buff作用于自身；不改成自身发动必杀或受到必杀伤害后才生效。现有资料没有写出持续时间，不套用其他Buff的40秒。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       }
     },
@@ -5338,7 +5412,7 @@
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "发动物理攻击或必杀时"
+          "text": "发动物理攻击时（与发动必杀是“或”关系，任一满足）"
         },
         {
           "id": "condition-2",
@@ -5354,6 +5428,11 @@
           "id": "condition-4",
           "kind": "condition",
           "text": "只装备一把武器时额外提高上限"
+        },
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "发动必杀时（与发动物理攻击是“或”关系，任一满足）"
         }
       ],
       "tagDetails": {
@@ -5366,6 +5445,38 @@
             "basic:899aa4edeab83540:1"
           ],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "自身发动必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "self",
+            "event": "ultimate-used",
+            "alternativeEvents": [
+              "physical-attack-used",
+              "ultimate-used"
+            ],
+            "operator": "or"
+          },
+          "bindings": [
+            {
+              "group": "attack-reference",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "发动必杀时，该次伤害以自身攻击力+30%的状态计算。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "per-ultimate-stat-reference",
+              "phase": "damage-calculation",
+              "referenceTarget": "self",
+              "referenceStat": "STR",
+              "referencePercent": 30
+            }
+          ],
+          "calculationNote": "原文是物理攻击或必杀，任一满足即可；本轮只覆盖必杀分支，物理攻击分支仍保留待判断。这里不是必杀伤害直接+30%；Boss上限和单武器额外上限不挂在这条触发效果里。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       }
     },
@@ -6663,6 +6774,79 @@
             "basic:1c1fef3cdbb3164c:1"
           ],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "自身发动必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "self",
+            "event": "ultimate-used"
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "自身发动必杀时，获得堡垒：防御力+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "fort",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "valuePercent": 20
+            },
+            {
+              "group": "mnd-up",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "自身发动必杀时，获得梅蒂斯：魔抗+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "metis",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "valuePercent": 20
+            },
+            {
+              "group": "hp-max",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身发动必杀时，获得活力：HP上限固定+1,000，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "vitality",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "flatValue": 1000
+            },
+            {
+              "group": "sct-speed",
+              "partIds": [
+                "effect-3"
+              ],
+              "summary": "自身发动必杀时，获得加速：SCT回复速度+25%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "haste",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "valuePercent": 25
+            }
+          ],
+          "calculationNote": "每次自身发动必杀分别获得四种Buff，同类型Buff只计最高已生效一项。HP效果提高的是上限固定值；SCT是回复速度，不是立即回复25秒，也不加快必杀槽。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       }
     },
@@ -6987,6 +7171,32 @@
             "basic:ee7974e871d9836c:1"
           ],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "自身必杀槽满时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-gauge-full",
+            "subject": "self",
+            "metric": "current-ultimate-gauge-percent",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "defense-up",
+              "partIds": [
+                "defense"
+              ],
+              "summary": "必杀槽满时，自身防御力+30%。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "ultimate-gauge-full",
+              "phase": "current-state"
+            }
+          ],
+          "calculationNote": "按当前必杀槽是否满槽判断；槽不满时失效，重新蓄满后恢复。这是条件加成，不是发动必杀后的Buff，可与同属性Buff并存。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       }
     },
@@ -8617,6 +8827,32 @@
             "basic:ab0b9f05425aae49:1"
           ],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "自身必杀槽满时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-gauge-full",
+            "subject": "self",
+            "metric": "current-ultimate-gauge-percent",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "magic-up",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "必杀槽满时，自身魔力+30%。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "ultimate-gauge-full",
+              "phase": "current-state"
+            }
+          ],
+          "calculationNote": "按当前必杀槽是否满槽判断；槽不满时失效，重新蓄满后恢复。这是条件加成，不是发动必杀后的Buff，可与同属性Buff并存。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       }
     },
@@ -10997,6 +11233,34 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "必杀相关": {
+          "summary": "自身发动必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "self",
+            "event": "ultimate-used"
+          },
+          "bindings": [
+            {
+              "group": "physical-damage",
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "自身发动必杀时，获得物理攻击伤害+20%的Buff，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "physical-damage-up",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "必杀是触发方式，增益提高的是后续物理攻击伤害；不写成必杀伤害+20%。同类型Buff只计最高已生效一项。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
         }
       }
     },
@@ -18778,6 +19042,516 @@
           "calculationNote": "魔抗与魔力分别列组；生效后使用完整20%加成，不按概率折算属性；同类型Buff同时只计最高一项。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
         }
       }
+    },
+    {
+      "id": "c4cb3f5b1831b5f7",
+      "name": "恶魔王座",
+      "url": "https://altema.jp/lastcloudia/gino/456",
+      "text": "必杀槽满时，远程物理攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "自身必杀槽处于满槽状态"
+        },
+        {
+          "id": "ranged-physical",
+          "kind": "effect",
+          "text": "远程物理攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "必杀相关": {
+          "summary": "自身必杀槽满时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-gauge-full",
+            "subject": "self",
+            "metric": "current-ultimate-gauge-percent",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "ranged-physical-damage",
+              "partIds": [
+                "ranged-physical"
+              ],
+              "summary": "必杀槽满时，远程物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "ultimate-gauge-full",
+              "phase": "current-state"
+            }
+          ],
+          "calculationNote": "按当前必杀槽是否满槽判断；槽不满时失效，重新蓄满后恢复。这是条件加成，不是发动必杀后的Buff，可与同属性Buff并存。 效果限定远程物理攻击，不拆成通用物理增伤或必杀增伤。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        }
+      }
+    },
+    {
+      "id": "0e15301820186e27",
+      "name": "临界障壁",
+      "url": "https://altema.jp/lastcloudia/gino/1163",
+      "text": "必杀槽蓄满时，受到的物理攻击伤害-15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "自身必杀槽处于满槽状态"
+        },
+        {
+          "id": "physical-reduction",
+          "kind": "effect",
+          "text": "受到的物理攻击伤害-15%"
+        }
+      ],
+      "tagDetails": {
+        "必杀相关": {
+          "summary": "自身必杀槽满时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-gauge-full",
+            "subject": "self",
+            "metric": "current-ultimate-gauge-percent",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "physical-reduction",
+              "partIds": [
+                "physical-reduction"
+              ],
+              "summary": "必杀槽满时，受到的物理攻击伤害-15%。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "ultimate-gauge-full",
+              "phase": "current-state"
+            }
+          ],
+          "calculationNote": "按当前必杀槽是否满槽判断；槽不满时失效，重新蓄满后恢复。这是条件加成，不是发动必杀后的Buff，可与同属性Buff并存。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        }
+      }
+    },
+    {
+      "id": "f16297127305bf04",
+      "name": "万物尽灭",
+      "url": "https://altema.jp/lastcloudia/gino/1214",
+      "text": "发动攻击型必杀时，消耗最大MP的20%，使该必杀伤害+20%、伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "自身发动攻击型必杀时"
+        },
+        {
+          "id": "mp-cost",
+          "kind": "effect",
+          "text": "消耗最大MP的20%"
+        },
+        {
+          "id": "ultimate-damage",
+          "kind": "effect",
+          "text": "该次必杀伤害+20%"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "该次必杀伤害上限+5,000"
+        },
+        {
+          "id": "mp-payment",
+          "kind": "condition",
+          "text": "须消耗最大MP的20%；MP不足时的处理待确认"
+        }
+      ],
+      "tagDetails": {
+        "必杀相关": {
+          "summary": "自身发动攻击型必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "self",
+            "event": "ultimate-used",
+            "ultimateKind": "attack"
+          },
+          "bindings": [
+            {
+              "group": "mp-cost",
+              "partIds": [
+                "mp-cost"
+              ],
+              "summary": "发动攻击型必杀时，消耗相当于最大MP20%的当前MP。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "per-ultimate-calculation",
+              "phase": "damage-calculation",
+              "resource": "MP",
+              "costBase": "maximum-MP",
+              "costPercent": 20
+            },
+            {
+              "group": "ultimate-damage",
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "发动攻击型必杀并支付MP时，该次必杀伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "per-ultimate-calculation",
+              "phase": "damage-calculation",
+              "damageType": "ultimate",
+              "valuePercent": 20
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "发动攻击型必杀并支付MP时，该次必杀伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "per-ultimate-calculation",
+              "phase": "damage-calculation",
+              "damageType": "ultimate",
+              "flatValue": 5000
+            }
+          ],
+          "calculationNote": "只限攻击型必杀，MP消耗按最大MP计算，不按当前剩余MP的20%。三项效果都绑定该次必杀，不是之后持续的Buff。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        }
+      }
+    },
+    {
+      "id": "8f928b05fc447ac9",
+      "name": "循环",
+      "url": "https://altema.jp/lastcloudia/gino/1335",
+      "text": "发动必杀时，随机使1个特技的SCT恢复1次。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "自身发动必杀时"
+        },
+        {
+          "id": "sct-restore",
+          "kind": "effect",
+          "text": "随机1个特技的SCT回复1次"
+        },
+        {
+          "id": "random-target",
+          "kind": "condition",
+          "text": "随机选择1个特技"
+        }
+      ],
+      "tagDetails": {
+        "必杀相关": {
+          "summary": "自身发动必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "self",
+            "event": "ultimate-used"
+          },
+          "bindings": [
+            {
+              "group": "sct-restore",
+              "partIds": [
+                "sct-restore"
+              ],
+              "summary": "自身发动必杀时，随机1个特技回复1次SCT。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "triggered-action",
+              "phase": "on-ultimate-use",
+              "resource": "SCT",
+              "selection": "random-one-skill",
+              "restoreUses": 1
+            }
+          ],
+          "calculationNote": "回复的是一个随机特技的一次库存，不是1秒、全部特技或必杀槽。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        }
+      }
+    },
+    {
+      "id": "8a5d23a0f83cd5f5",
+      "name": "鸣动之深渊",
+      "url": "https://altema.jp/lastcloudia/gino/1617",
+      "text": "战斗开始后，每20秒获得增益效果，使下一次发动的必杀伤害+30%、伤害上限+10,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "仅对已获得增益后的下一次必杀生效"
+        },
+        {
+          "id": "ultimate-damage",
+          "kind": "effect",
+          "text": "下一次必杀伤害+30%"
+        },
+        {
+          "id": "ultimate-cap",
+          "kind": "effect",
+          "text": "下一次必杀伤害上限+10,000"
+        },
+        {
+          "id": "periodic-grant",
+          "kind": "condition",
+          "text": "战斗开始后每20秒获得增益，不是开场立即获得"
+        },
+        {
+          "id": "buff-refresh",
+          "kind": "condition",
+          "text": "再次获得同类Buff时的刷新方式待确认；同类型只计最高一项"
+        }
+      ],
+      "tagDetails": {
+        "必杀相关": {
+          "summary": "增益生效后的下一次自身必杀",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "next-ultimate-use",
+            "subject": "self",
+            "event": "ultimate-used",
+            "requiresActiveBuff": true
+          },
+          "bindings": [
+            {
+              "group": "ultimate-damage",
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "每20秒获得增益后，下一次必杀伤害+30%。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "next-use-buff",
+              "phase": "next-ultimate",
+              "damageType": "ultimate",
+              "valuePercent": 30,
+              "uses": 1,
+              "grantIntervalSeconds": 20,
+              "stacking": "highest-active-buff-of-same-type-only"
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "每20秒获得增益后，下一次必杀伤害上限+10,000。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "next-use-buff",
+              "phase": "next-ultimate",
+              "damageType": "ultimate",
+              "flatValue": 10000,
+              "uses": 1,
+              "grantIntervalSeconds": 20,
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "20秒是增益获得间隔，不是Buff持续时间；只作用于获得后下一次必杀，不能连续每次必杀都套用，也不能每隔20秒叠加多份。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        }
+      }
+    },
+    {
+      "id": "ed00d6c7e726b8ce",
+      "name": "冲浪冲击",
+      "url": "https://altema.jp/lastcloudia/gino/1695",
+      "text": "装备冰属性武器时，发动冰属性特技或必杀时，该次伤害随机+10%～40%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "发动冰属性必杀时（与冰属性特技是任选其一的触发分支）"
+        },
+        {
+          "id": "ice-skill-condition",
+          "kind": "condition",
+          "text": "发动冰属性特技时（与冰属性必杀是“或”关系，仍待对应标签）"
+        },
+        {
+          "id": "ice-weapon",
+          "kind": "condition",
+          "text": "装备冰属性武器时"
+        },
+        {
+          "id": "ice-skill-damage",
+          "kind": "effect",
+          "text": "该次冰属性特技伤害随机+10%～40%"
+        },
+        {
+          "id": "ice-ultimate-damage",
+          "kind": "effect",
+          "text": "该次冰属性必杀伤害随机+10%～40%"
+        },
+        {
+          "id": "random-value",
+          "kind": "condition",
+          "text": "伤害加成在10%～40%间随机；分布待确认"
+        }
+      ],
+      "tagDetails": {
+        "必杀相关": {
+          "summary": "自身发动冰属性必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "self",
+            "event": "ultimate-used",
+            "element": "ice",
+            "alternativeEvents": [
+              "ice-skill-used",
+              "ice-ultimate-used"
+            ],
+            "operator": "or"
+          },
+          "bindings": [
+            {
+              "group": "ice-ultimate-damage",
+              "partIds": [
+                "ice-ultimate-damage"
+              ],
+              "summary": "装备冰属性武器并发动冰属性必杀时，该次必杀伤害随机+10%～40%。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "per-ultimate-calculation",
+              "phase": "damage-calculation",
+              "damageType": "ultimate",
+              "element": "ice",
+              "minPercent": 10,
+              "maxPercent": 40,
+              "distributionStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "保留冰属性武器和冰属性必杀两个限定，不并入通用必杀增伤；冰属性特技与必杀是“或”关系，各自一条分支。不能默认固定+40%或自行取平均值。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        }
+      }
+    },
+    {
+      "id": "77ca049322fad0af",
+      "name": "全身全灵的一击",
+      "url": "https://altema.jp/lastcloudia/gino/1858",
+      "text": "发动必杀时，赋予自身物理攻击伤害上限+10,000的增益效果（每Wave最多1次）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "自身发动必杀时"
+        },
+        {
+          "id": "physical-cap",
+          "kind": "effect",
+          "text": "获得物理攻击伤害上限+10,000的Buff"
+        },
+        {
+          "id": "once-per-wave",
+          "kind": "condition",
+          "text": "每Wave最多触发一次"
+        },
+        {
+          "id": "buff-duration",
+          "kind": "condition",
+          "text": "Buff持续时间待确认；同类型Buff只计最高一项"
+        }
+      ],
+      "tagDetails": {
+        "必杀相关": {
+          "summary": "自身发动必杀时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-use",
+            "subject": "self",
+            "event": "ultimate-used"
+          },
+          "bindings": [
+            {
+              "group": "physical-cap",
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "自身发动必杀时，获得物理攻击伤害上限+10,000的Buff；每Wave最多一次，持续时间待确认。",
+              "target": "self",
+              "isBuff": true,
+              "activationMode": "triggered-buff",
+              "phase": "on-ultimate-use",
+              "buffType": "physical-cap-up",
+              "durationStatus": "unconfirmed",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "flatValue": 10000,
+              "maxTriggersPerWave": 1
+            }
+          ],
+          "calculationNote": "必杀是触发条件，提升的是物理攻击伤害上限。没有持续时间资料，不能默认40秒或永久。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        }
+      }
+    },
+    {
+      "id": "9bde00a6ca77b552",
+      "name": "第三只眼",
+      "url": "https://altema.jp/lastcloudia/gino/1909",
+      "text": "必杀槽蓄满时，受到的魔法攻击伤害-15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ultimate-condition",
+          "kind": "condition",
+          "text": "自身必杀槽处于满槽状态"
+        },
+        {
+          "id": "magic-reduction",
+          "kind": "effect",
+          "text": "受到的魔法攻击伤害-15%"
+        }
+      ],
+      "tagDetails": {
+        "必杀相关": {
+          "summary": "自身必杀槽满时",
+          "relation": "ultimate-condition",
+          "target": "bound-effects",
+          "condition": {
+            "mode": "ultimate-gauge-full",
+            "subject": "self",
+            "metric": "current-ultimate-gauge-percent",
+            "operator": "eq",
+            "thresholdPercent": 100
+          },
+          "bindings": [
+            {
+              "group": "magic-reduction",
+              "partIds": [
+                "magic-reduction"
+              ],
+              "summary": "必杀槽满时，受到的魔法攻击伤害-15%。",
+              "target": "self",
+              "isBuff": false,
+              "activationMode": "ultimate-gauge-full",
+              "phase": "current-state"
+            }
+          ],
+          "calculationNote": "按当前必杀槽是否满槽判断；槽不满时失效，重新蓄满后恢复。这是条件加成，不是发动必杀后的Buff，可与同属性Buff并存。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        }
+      }
     }
   ],
   "tagPasses": [
@@ -22119,6 +22893,101 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "必杀相关",
+      "assignments": [
+        {
+          "skillId": "7305afeb3e366f19",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "ab0b9f05425aae49",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "7caf7c48fe8b8715",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "c4cb3f5b1831b5f7",
+          "partIds": [
+            "ultimate-condition"
+          ]
+        },
+        {
+          "skillId": "1c1fef3cdbb3164c",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "ee7974e871d9836c",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "71ac299474a52c86",
+          "partIds": [
+            "condition-1"
+          ]
+        },
+        {
+          "skillId": "0e15301820186e27",
+          "partIds": [
+            "ultimate-condition"
+          ]
+        },
+        {
+          "skillId": "f16297127305bf04",
+          "partIds": [
+            "ultimate-condition"
+          ]
+        },
+        {
+          "skillId": "8f928b05fc447ac9",
+          "partIds": [
+            "ultimate-condition"
+          ]
+        },
+        {
+          "skillId": "8a5d23a0f83cd5f5",
+          "partIds": [
+            "ultimate-condition"
+          ]
+        },
+        {
+          "skillId": "ed00d6c7e726b8ce",
+          "partIds": [
+            "ultimate-condition"
+          ]
+        },
+        {
+          "skillId": "77ca049322fad0af",
+          "partIds": [
+            "ultimate-condition"
+          ]
+        },
+        {
+          "skillId": "9bde00a6ca77b552",
+          "partIds": [
+            "ultimate-condition"
+          ]
+        },
+        {
+          "skillId": "899aa4edeab83540",
+          "partIds": [
+            "ultimate-condition"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -22676,7 +23545,15 @@
         "29f04fa2a0ffb9fb",
         "4ab8df2c073b5bf0",
         "9dbce7c7fe7e59f0",
-        "e97879470b786304"
+        "e97879470b786304",
+        "c4cb3f5b1831b5f7",
+        "0e15301820186e27",
+        "f16297127305bf04",
+        "8f928b05fc447ac9",
+        "8a5d23a0f83cd5f5",
+        "ed00d6c7e726b8ce",
+        "77ca049322fad0af",
+        "9bde00a6ca77b552"
       ]
     },
     "hp": {
@@ -24327,7 +25204,207 @@
         "202ccad96f292698"
       ],
       "scopeDescription": "受击触发、该次伤害计算和受击后效果结束分别说明；攻击力、魔力、魔抗、回复、MP消耗、格挡、反击等各自列组。“受到攻击”与必须实际“受到伤害”的条件分开记录。单纯受到某类伤害减少的完整词条留给对应减伤标签。已有标签同步保留，未完成的效果和机制继续待判断。"
+    },
+    "ultimate-attack-up": {
+      "label": "攻击力增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "attack-up",
+      "displayOrder": [
+        "7305afeb3e366f19",
+        "7caf7c48fe8b8715"
+      ]
+    },
+    "ultimate-magic-up": {
+      "label": "魔力增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "magic-up",
+      "displayOrder": [
+        "ab0b9f05425aae49"
+      ]
+    },
+    "ultimate-defense-up": {
+      "label": "防御力增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "defense-up",
+      "displayOrder": [
+        "7caf7c48fe8b8715",
+        "1c1fef3cdbb3164c",
+        "ee7974e871d9836c"
+      ]
+    },
+    "ultimate-mnd-up": {
+      "label": "魔抗增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "mnd-up",
+      "displayOrder": [
+        "1c1fef3cdbb3164c"
+      ]
+    },
+    "ultimate-hp-max": {
+      "label": "HP上限增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "hp-max",
+      "displayOrder": [
+        "1c1fef3cdbb3164c"
+      ]
+    },
+    "ultimate-sct-speed": {
+      "label": "SCT回复速度增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "sct-speed",
+      "displayOrder": [
+        "1c1fef3cdbb3164c"
+      ]
+    },
+    "ultimate-sct-restore": {
+      "label": "SCT回复",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "sct-restore",
+      "displayOrder": [
+        "8f928b05fc447ac9"
+      ]
+    },
+    "ultimate-mp-cost": {
+      "label": "MP消耗",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "mp-cost",
+      "displayOrder": [
+        "f16297127305bf04"
+      ]
+    },
+    "ultimate-physical-damage": {
+      "label": "物理伤害增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "physical-damage",
+      "displayOrder": [
+        "71ac299474a52c86"
+      ]
+    },
+    "ultimate-ranged-physical-damage": {
+      "label": "远程物理伤害增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "ranged-physical-damage",
+      "displayOrder": [
+        "c4cb3f5b1831b5f7"
+      ]
+    },
+    "ultimate-physical-cap": {
+      "label": "物理伤害上限增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "physical-cap",
+      "displayOrder": [
+        "77ca049322fad0af"
+      ]
+    },
+    "ultimate-ultimate-damage": {
+      "label": "必杀伤害增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "ultimate-damage",
+      "displayOrder": [
+        "f16297127305bf04",
+        "8a5d23a0f83cd5f5"
+      ]
+    },
+    "ultimate-ultimate-cap": {
+      "label": "必杀伤害上限增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "ultimate-cap",
+      "displayOrder": [
+        "f16297127305bf04",
+        "8a5d23a0f83cd5f5"
+      ]
+    },
+    "ultimate-ice-ultimate-damage": {
+      "label": "冰属性必杀伤害增加",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "ice-ultimate-damage",
+      "displayOrder": [
+        "ed00d6c7e726b8ce"
+      ]
+    },
+    "ultimate-attack-reference": {
+      "label": "该次必杀计算：攻击力提高",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "attack-reference",
+      "displayOrder": [
+        "899aa4edeab83540"
+      ]
+    },
+    "ultimate-physical-reduction": {
+      "label": "受到物理伤害减少",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "physical-reduction",
+      "displayOrder": [
+        "0e15301820186e27"
+      ]
+    },
+    "ultimate-magic-reduction": {
+      "label": "受到魔法伤害减少",
+      "parent": "ultimate",
+      "conditionTag": "必杀相关",
+      "effectGroup": "magic-reduction",
+      "displayOrder": [
+        "9bde00a6ca77b552"
+      ]
+    },
+    "ultimate": {
+      "label": "必杀相关",
+      "childKeys": [
+        "ultimate-attack-up",
+        "ultimate-magic-up",
+        "ultimate-defense-up",
+        "ultimate-mnd-up",
+        "ultimate-hp-max",
+        "ultimate-sct-speed",
+        "ultimate-sct-restore",
+        "ultimate-mp-cost",
+        "ultimate-physical-damage",
+        "ultimate-ranged-physical-damage",
+        "ultimate-physical-cap",
+        "ultimate-ultimate-damage",
+        "ultimate-ultimate-cap",
+        "ultimate-ice-ultimate-damage",
+        "ultimate-attack-reference",
+        "ultimate-physical-reduction",
+        "ultimate-magic-reduction"
+      ],
+      "overviewLabel": "全部必杀条件效果（分组）",
+      "separateSections": true,
+      "displayOrder": [
+        "7305afeb3e366f19",
+        "ab0b9f05425aae49",
+        "7caf7c48fe8b8715",
+        "c4cb3f5b1831b5f7",
+        "1c1fef3cdbb3164c",
+        "ee7974e871d9836c",
+        "71ac299474a52c86",
+        "0e15301820186e27",
+        "f16297127305bf04",
+        "8f928b05fc447ac9",
+        "8a5d23a0f83cd5f5",
+        "ed00d6c7e726b8ce",
+        "77ca049322fad0af",
+        "9bde00a6ca77b552",
+        "899aa4edeab83540"
+      ],
+      "scopeDescription": "本轮按必杀条件分类：自身发动、敌人发动、必杀槽满、下一次必杀。不同效果分别列组；满槽条件加成、触发后Buff和该次必杀计算分别说明。单纯必杀增伤、属性／Boss／种族限定增伤与上限、必杀槽回复等效果留给对应标签，不能只按“必杀”两字混在一起。已有标签与判断同步。"
     }
   },
-  "activeView": "received-attack"
+  "activeView": "ultimate"
 }
