@@ -55,7 +55,7 @@ export function labelingView(catalog, key) {
   if (!view) throw Error('Unknown tag view.');
   const tags = view.tagKeys ? view.tagKeys.map(child => catalog.views[child].label) : [view.label];
   return {...view, entries: key === 'all' ? catalog.entries : catalog.entries.filter(entry => view.effectGroup
-    ? entry.assignedTags.includes(view.conditionTag) && entry.tagDetails[view.conditionTag]?.bindings?.some(binding => binding.group === view.effectGroup)
+    ? entry.assignedTags.includes(view.conditionTag) && entry.tagDetails[view.conditionTag]?.bindings?.some(binding => (binding.group === view.effectGroup || binding.associatedGroups?.includes(view.effectGroup)))
     : entry.assignedTags.some(tag => tags.includes(tag)))};
 }
 

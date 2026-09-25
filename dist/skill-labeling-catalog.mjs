@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "race-beast",
+  "activeView": "boss",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -5242,17 +5242,73 @@ export const SKILL_LABELING_CATALOG = {
             "basic:296bb9556080c9c4:1"
           ],
           "relatedSkillIds": []
+        },
+        "Boss": {
+          "summary": "Boss Wave中，自身攻击力+7%；持续条件为当前波次，不要求攻击目标是Boss。；Boss Wave中，自身防御力+7%；不是开场限时Buff。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "Boss Wave中，自身攻击力+7%；持续条件为当前波次，不要求攻击目标是Boss。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "stat": "STR",
+                "waveType": "boss"
+              },
+              "valuePercent": 7,
+              "activationMode": "boss-wave-state",
+              "group": "wave-str",
+              "effectIdentity": "296bb9556080c9c4:attack",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "Boss Wave中，自身防御力+7%；不是开场限时Buff。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "stat": "DEF",
+                "waveType": "boss"
+              },
+              "valuePercent": 7,
+              "activationMode": "boss-wave-state",
+              "group": "wave-def",
+              "effectIdentity": "296bb9556080c9c4:effect-1",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "BOSS Wave中生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c14ec33793319bba",
@@ -9220,7 +9276,7 @@ export const SKILL_LABELING_CATALOG = {
             "stat": "STR"
           },
           "groupingOnly": true,
-          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型已完成，Boss Wave条件继续待判断。",
+          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型与Boss Wave条件均已完成判断。",
           "existingRuleIds": [
             "basic:86c11809d76a7959:1"
           ],
@@ -9268,18 +9324,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "Boss": {
+          "summary": "Boss Wave中，自身攻击力+20%。按指定保留在Boss物理伤害列表的属性关联项，不是物理伤害+20%。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "Boss Wave中，自身攻击力+20%。按指定保留在Boss物理伤害列表的属性关联项，不是物理伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "stat": "STR",
+                "waveType": "boss"
+              },
+              "valuePercent": 20,
+              "activationMode": "boss-wave-state",
+              "associatedGroups": [
+                "physical-damage"
+              ],
+              "associationKind": "user-requested-stat-reference",
+              "group": "wave-str",
+              "effectIdentity": "86c11809d76a7959:attack",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "攻击力",
         "Boss物理伤害增加",
-        "龙"
+        "龙",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "BOSS Wave中生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c1b1fa0330ed3ca3",
@@ -10006,19 +10101,125 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Boss": {
+          "summary": "对Boss物理攻击伤害上限+10,000；仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。；对Boss的必杀伤害上限+10,000。；仅1把武器时，对Boss必杀上限在基础+10,000之外再+10,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1",
+              "effect-2",
+              "boss-ultimate-cap",
+              "single-boss-ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "condition-3"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "对Boss物理攻击伤害上限+10,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "899aa4edeab83540:effect-1",
+              "capPoints": 10000,
+              "group": "physical-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyType": "boss"
+              },
+              "effectIdentity": "899aa4edeab83540:effect-2",
+              "group": "physical-cap",
+              "effectStacking": "once-per-skill",
+              "capPoints": 10000,
+              "addsToPartId": "effect-1",
+              "condition": {
+                "subject": "self-equipment",
+                "weaponCount": 1
+              },
+              "bossRole": "direct-effect"
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "boss-ultimate-cap"
+              ],
+              "summary": "对Boss的必杀伤害上限+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "capPoints": 10000,
+              "effectIdentity": "899aa4edeab83540:boss-ultimate-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "single-boss-ultimate-cap"
+              ],
+              "summary": "仅1把武器时，对Boss必杀上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capPoints": 10000,
+              "addsToPartId": "boss-ultimate-cap",
+              "effectIdentity": "899aa4edeab83540:single-boss-ultimate-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "攻击力",
         "必杀相关",
         "单手",
-        "物理"
+        "物理",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "对Boss时才有对应伤害上限加成"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "7bc369d4036dd098",
@@ -10537,18 +10738,55 @@ export const SKILL_LABELING_CATALOG = {
             "basic:全部技能:all:235:1"
           ],
           "relatedSkillIds": []
+        },
+        "Boss": {
+          "summary": "装备盔甲时，受到Boss的伤害-10%（不限制攻击种类）。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备盔甲时，受到Boss的伤害-10%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "boss",
+                "equipment": {
+                  "armorType": "armor"
+                }
+              },
+              "valuePercent": 10,
+              "changesDefenseStat": false,
+              "group": "incoming-damage-down",
+              "effectIdentity": "全部技能:all:235:effect-1",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "Boss"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "受到的Boss伤害-10%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "装备盔甲时生效",
-        "减伤只针对Boss造成的伤害"
+        "装备盔甲时生效"
       ]
     },
     {
@@ -10720,18 +10958,55 @@ export const SKILL_LABELING_CATALOG = {
             "basic:全部技能:all:266:1"
           ],
           "relatedSkillIds": []
+        },
+        "Boss": {
+          "summary": "装备盔甲时，受到Boss的伤害-5%（不限制攻击种类）。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备盔甲时，受到Boss的伤害-5%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "boss",
+                "equipment": {
+                  "armorType": "armor"
+                }
+              },
+              "valuePercent": 5,
+              "changesDefenseStat": false,
+              "group": "incoming-damage-down",
+              "effectIdentity": "全部技能:all:266:effect-1",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "Boss"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "受到的Boss伤害-5%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "装备盔甲时生效",
-        "减伤只针对Boss造成的伤害"
+        "装备盔甲时生效"
       ]
     },
     {
@@ -12261,7 +12536,12 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-2",
           "kind": "condition",
-          "text": "对应减伤分别要求物理伤害／Boss造成的伤害"
+          "text": "Boss减伤要求伤害来自Boss"
+        },
+        {
+          "id": "physical-incoming-type",
+          "kind": "condition",
+          "text": "物理减伤要求受到物理伤害"
         }
       ],
       "tagDetails": {
@@ -12309,19 +12589,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Boss": {
+          "summary": "装备盔甲时，受到Boss的伤害-10%（不限制攻击种类）。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "装备盔甲时，受到Boss的伤害-10%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "boss",
+                "equipment": {
+                  "armorType": "armor"
+                }
+              },
+              "valuePercent": 10,
+              "changesDefenseStat": false,
+              "group": "incoming-damage-down",
+              "effectIdentity": "全部技能:all:428:effect-2",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "防御力",
-        "物理"
+        "物理",
+        "Boss"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "受到的Boss伤害-10%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "装备盔甲时生效",
-        "对应减伤分别要求物理伤害／Boss造成的伤害"
+        "物理减伤要求受到物理伤害"
       ]
     },
     {
@@ -14954,19 +15272,87 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Boss": {
+          "summary": "对Boss的物理攻击伤害上限+3,000；1把武器或未装备武器时，对Boss的物理上限在基础+3,000之外再+3,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "对Boss的物理攻击伤害上限+3,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "d268368f04c8f840:effect-1",
+              "capPoints": 3000,
+              "group": "physical-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "1把武器或未装备武器时，对Boss的物理上限在基础+3,000之外再+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCountIn": [
+                    0,
+                    1
+                  ]
+                },
+                "enemyType": "boss"
+              },
+              "effectIdentity": "d268368f04c8f840:effect-2",
+              "group": "physical-cap",
+              "effectStacking": "once-per-skill",
+              "capPoints": 3000,
+              "addsToPartId": "effect-1",
+              "condition": {
+                "subject": "self-equipment",
+                "weaponCountIn": [
+                  0,
+                  1
+                ]
+              },
+              "bossRole": "direct-effect"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "生命力",
         "单手",
         "空武器",
-        "物理"
+        "物理",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "伤害上限加成针对Boss"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "790933563ebc27aa",
@@ -34521,21 +34907,75 @@ export const SKILL_LABELING_CATALOG = {
           "scope": {
             "boss": true
           },
-          "calculationNote": "本标签只覆盖不限定物理、魔法、特技、必杀、暴击或属性的对Boss伤害增加。对Boss造成伤害+20%为一条完整效果；受到Boss的伤害-20%是独立减伤效果，继续待判断。",
+          "calculationNote": "本标签只覆盖不限定物理、魔法、特技、必杀、暴击或属性的对Boss伤害增加。对Boss造成伤害+20%为一条完整效果；受到Boss的伤害-20%是独立减伤效果，已在Boss分类中完成判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "Boss": {
+          "summary": "受到Boss的伤害-20%（不限制攻击种类）。；对Boss造成的伤害+20%",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-mitigation",
+              "boss-damage"
+            ],
+            "conditionPartIds": [
+              "boss-target",
+              "boss-source"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "boss-mitigation"
+              ],
+              "summary": "受到Boss的伤害-20%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "boss"
+              },
+              "valuePercent": 20,
+              "changesDefenseStat": false,
+              "group": "incoming-damage-down",
+              "effectIdentity": "b7297c3eb4e46bba:boss-mitigation",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "partIds": [
+                "boss-damage"
+              ],
+              "summary": "对Boss造成的伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "group": "damage",
+              "effectIdentity": "b7297c3eb4e46bba:boss-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
-        "Boss伤害增加"
+        "Boss伤害增加",
+        "Boss"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "受到Boss的伤害-20%"
-      ],
-      "remainingConditions": [
-        "减伤要求攻击来源为Boss"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "79a377bec526c2d4",
@@ -34602,11 +35042,47 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "Boss": {
+          "summary": "对Boss的魔法攻击伤害+20%",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "对Boss的魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "79a377bec526c2d4:magic-damage",
+              "valuePercent": 20,
+              "group": "magic-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss魔法伤害增加",
-        "魔法"
+        "魔法",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -34701,11 +35177,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "Boss": {
+          "summary": "对Boss的魔法攻击伤害+20%；魔法攻击伤害上限+2,000",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "对Boss的魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "a97531c83b0073e7:magic-damage",
+              "valuePercent": 20,
+              "group": "magic-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "a97531c83b0073e7:effect-1",
+              "capPoints": 2000,
+              "group": "magic-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss魔法伤害增加",
-        "魔法"
+        "魔法",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -34800,11 +35332,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "Boss": {
+          "summary": "对Boss的魔法攻击伤害+20%；魔法攻击伤害上限+6,000",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "对Boss的魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "f49f17d3da2551a8:magic-damage",
+              "valuePercent": 20,
+              "group": "magic-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害上限+6,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "f49f17d3da2551a8:effect-1",
+              "capPoints": 6000,
+              "group": "magic-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss魔法伤害增加",
-        "魔法"
+        "魔法",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -34899,11 +35487,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "Boss": {
+          "summary": "对Boss的魔法攻击伤害+20%；魔法攻击伤害上限+4,000",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "对Boss的魔法攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "42656c3afdc8103a:magic-damage",
+              "valuePercent": 20,
+              "group": "magic-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "魔法攻击伤害上限+4,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "42656c3afdc8103a:effect-1",
+              "capPoints": 4000,
+              "group": "magic-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss魔法伤害增加",
-        "魔法"
+        "魔法",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -34997,11 +35641,67 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Boss": {
+          "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "tiered-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "a17f779989645fb0:physical-damage",
+              "tiers": [
+                {
+                  "count": 1,
+                  "valuePercent": 6
+                },
+                {
+                  "count": 2,
+                  "valuePercent": 12
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 18
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 24
+                }
+              ],
+              "minimumCount": 1,
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "a17f779989645fb0",
+              "group": "physical-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss物理伤害增加",
-        "物理"
+        "物理",
+        "Boss"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -35125,13 +35825,69 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "Boss": {
+          "summary": "对Boss的特技伤害+20%。；对Boss的必杀伤害+20%",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-skill-damage",
+              "boss-ultimate-damage"
+            ],
+            "conditionPartIds": [
+              "boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "group": "skill-damage",
+              "partIds": [
+                "boss-skill-damage"
+              ],
+              "summary": "对Boss的特技伤害+20%。",
+              "operation": "damage-up",
+              "effectIdentity": "6bb2c943681bb3e7:boss-skill-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-damage",
+              "partIds": [
+                "boss-ultimate-damage"
+              ],
+              "summary": "对Boss的必杀伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "effectIdentity": "6bb2c943681bb3e7:boss-ultimate-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss特技伤害增加",
         "Boss必杀伤害增加",
         "必杀相关",
-        "特技相关"
+        "特技相关",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -35301,13 +36057,109 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "Boss": {
+          "summary": "对Boss的特技伤害+20%。；对Boss的特技伤害上限+2,000；对Boss的必杀伤害+20%；对Boss必杀伤害上限+2,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-skill-damage",
+              "skill-cap",
+              "boss-ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "group": "skill-damage",
+              "partIds": [
+                "boss-skill-damage"
+              ],
+              "summary": "对Boss的特技伤害+20%。",
+              "operation": "damage-up",
+              "effectIdentity": "7ef2d01b96b2406e:boss-skill-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "capPoints": 2000,
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "对Boss的特技伤害上限+2,000",
+              "operation": "cap-up",
+              "effectIdentity": "7ef2d01b96b2406e:skill-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-damage",
+              "partIds": [
+                "boss-ultimate-damage"
+              ],
+              "summary": "对Boss的必杀伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "effectIdentity": "7ef2d01b96b2406e:boss-ultimate-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对Boss必杀伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "capPoints": 2000,
+              "effectIdentity": "7ef2d01b96b2406e:ultimate-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss特技伤害增加",
         "Boss必杀伤害增加",
         "必杀相关",
-        "特技相关"
+        "特技相关",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -35477,13 +36329,109 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "Boss": {
+          "summary": "对Boss的特技伤害+20%。；对Boss的特技伤害上限+4,000；对Boss的必杀伤害+20%；对Boss必杀伤害上限+4,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-skill-damage",
+              "skill-cap",
+              "boss-ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "group": "skill-damage",
+              "partIds": [
+                "boss-skill-damage"
+              ],
+              "summary": "对Boss的特技伤害+20%。",
+              "operation": "damage-up",
+              "effectIdentity": "ecf05abb4f8e4b10:boss-skill-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "capPoints": 4000,
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "对Boss的特技伤害上限+4,000",
+              "operation": "cap-up",
+              "effectIdentity": "ecf05abb4f8e4b10:skill-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-damage",
+              "partIds": [
+                "boss-ultimate-damage"
+              ],
+              "summary": "对Boss的必杀伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "effectIdentity": "ecf05abb4f8e4b10:boss-ultimate-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对Boss必杀伤害上限+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "capPoints": 4000,
+              "effectIdentity": "ecf05abb4f8e4b10:ultimate-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss特技伤害增加",
         "Boss必杀伤害增加",
         "必杀相关",
-        "特技相关"
+        "特技相关",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -35653,13 +36601,109 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "Boss": {
+          "summary": "对Boss的特技伤害+20%。；对Boss的特技伤害上限+6,000；对Boss的必杀伤害+20%；对Boss必杀伤害上限+6,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-skill-damage",
+              "skill-cap",
+              "boss-ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "group": "skill-damage",
+              "partIds": [
+                "boss-skill-damage"
+              ],
+              "summary": "对Boss的特技伤害+20%。",
+              "operation": "damage-up",
+              "effectIdentity": "5c16599b8947ce62:boss-skill-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "capPoints": 6000,
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "对Boss的特技伤害上限+6,000",
+              "operation": "cap-up",
+              "effectIdentity": "5c16599b8947ce62:skill-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-damage",
+              "partIds": [
+                "boss-ultimate-damage"
+              ],
+              "summary": "对Boss的必杀伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "effectIdentity": "5c16599b8947ce62:boss-ultimate-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对Boss必杀伤害上限+6,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "capPoints": 6000,
+              "effectIdentity": "5c16599b8947ce62:ultimate-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss特技伤害增加",
         "Boss必杀伤害增加",
         "必杀相关",
-        "特技相关"
+        "特技相关",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -35754,11 +36798,67 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "Boss": {
+          "summary": "对Boss的必杀伤害+20%；对Boss必杀伤害上限+5,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "ultimate-damage",
+              "partIds": [
+                "boss-ultimate-damage"
+              ],
+              "summary": "对Boss的必杀伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "valuePercent": 20,
+              "effectIdentity": "2ad532afbdeb2594:boss-ultimate-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对Boss必杀伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "capPoints": 5000,
+              "effectIdentity": "2ad532afbdeb2594:ultimate-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss必杀伤害增加",
-        "必杀相关"
+        "必杀相关",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -35864,11 +36964,71 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "Boss暴伤标签已经覆盖Boss目标与实际暴击范围，本轮补齐暴击上限。原Boss标签说明中的“上限待判断”是早期记录，以当前累计判断为准；同一效果跨页展示不重复计入。"
+        },
+        "Boss": {
+          "summary": "对Boss发生暴击时，暴击伤害+10%。；对Boss发生暴击时，暴击伤害上限+2,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-critical-damage",
+              "critical-cap"
+            ],
+            "conditionPartIds": [
+              "boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "critical-damage",
+              "partIds": [
+                "boss-critical-damage"
+              ],
+              "summary": "对Boss发生暴击时，暴击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyType": "boss"
+              },
+              "valuePercent": 10,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false,
+              "effectIdentity": "e3085e506db3fa44:boss-critical-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "critical-cap",
+              "partIds": [
+                "critical-cap"
+              ],
+              "summary": "对Boss发生暴击时，暴击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyType": "boss"
+              },
+              "capPoints": 2000,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false,
+              "effectIdentity": "e3085e506db3fa44:critical-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "Boss暴击伤害增加",
-        "暴击"
+        "暴击",
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -37248,20 +38408,106 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "Boss": {
+          "summary": "Boss Wave开始时，自身HP回复50%。；Boss Wave开始时，自身SCT回复30秒。；Boss Wave开始时，回复最大必杀槽的10%。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1",
+              "opening-effect-2",
+              "opening-effect-3"
+            ],
+            "conditionPartIds": [
+              "start-trigger",
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "Boss Wave开始时，自身HP回复50%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-hp",
+              "scope": {
+                "direction": "resource",
+                "resource": "HP"
+              },
+              "resource": "HP",
+              "restorePercent": 50,
+              "restoreBase": "maximum-HP",
+              "trigger": {
+                "event": "boss-wave-start"
+              },
+              "group": "wave-start-hp",
+              "effectIdentity": "3797f19e9c516ee7:opening-effect-1",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "resource",
+                "resource": "SCT"
+              },
+              "resource": "SCT",
+              "restoreSeconds": 30,
+              "skillSelection": "all",
+              "trigger": {
+                "event": "boss-wave-start"
+              },
+              "group": "wave-start-sct",
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "Boss Wave开始时，自身SCT回复30秒。",
+              "operation": "restore-sct-seconds",
+              "effectIdentity": "3797f19e9c516ee7:opening-effect-2",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "wave-start-ultimate-gauge",
+              "partIds": [
+                "opening-effect-3"
+              ],
+              "summary": "Boss Wave开始时，回复最大必杀槽的10%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "restore-ultimate-gauge",
+              "scope": {
+                "direction": "resource",
+                "resource": "ultimate-gauge"
+              },
+              "resource": "ultimate-gauge",
+              "restorePercent": 10,
+              "restoreBase": "maximum-ultimate-gauge",
+              "trigger": {
+                "event": "boss-wave-start"
+              },
+              "maxGaugePercent": 100,
+              "effectIdentity": "3797f19e9c516ee7:opening-effect-3",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "战斗开始",
         "必杀相关",
-        "特技相关"
+        "特技相关",
+        "Boss"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "Boss Wave开始时回复50%HP"
-      ],
-      "remainingConditions": [
-        "只在Boss Wave开始时触发"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:356",
@@ -73010,17 +74256,55 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "Boss": {
+          "summary": "装备2把武器对Boss时，特技上限在基础+5,000之外再+5,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-skill-extra-cap"
+            ],
+            "conditionPartIds": [
+              "boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "equipment": {
+                  "weaponCount": 2
+                },
+                "enemyType": "boss"
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "boss-skill-extra-cap"
+              ],
+              "summary": "装备2把武器对Boss时，特技上限在基础+5,000之外再+5,000。",
+              "operation": "cap-up",
+              "effectStacking": "once-per-skill",
+              "capPoints": 5000,
+              "addsToPartId": "skill-cap",
+              "effectIdentity": "bc94425edcde5d97:boss-skill-extra-cap",
+              "bossRole": "direct-effect"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "双手",
-        "特技相关"
+        "特技相关",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "额外特技上限要求目标为Boss"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5b4ee2cab67374b7",
@@ -79618,17 +80902,69 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "Boss": {
+          "summary": "对Boss必杀上限按装备英雄传说的我方人数提升：2名+5,000、3名+10,000、4名+15,000",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对Boss必杀上限按装备英雄传说的我方人数提升：2名+5,000、3名+10,000、4名+15,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "3651039f5585a575",
+              "minimumCount": 2,
+              "tiers": [
+                {
+                  "count": 2,
+                  "capPoints": 5000
+                },
+                {
+                  "count": 3,
+                  "capPoints": 10000
+                },
+                {
+                  "count": 4,
+                  "capPoints": 15000
+                }
+              ],
+              "belowMinimumCapPoints": 0,
+              "effectIdentity": "3651039f5585a575:ultimate-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "必杀相关"
+        "必杀相关",
+        "Boss"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "装备英雄传说的我方单位至少2名，按实际人数取对应档位",
-        "目标敌人为Boss"
+        "装备英雄传说的我方单位至少2名，按实际人数取对应档位"
       ]
     },
     {
@@ -83129,17 +84465,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "Boss": {
+          "summary": "对非Boss敌人的特技伤害+10%。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "non-boss-skill-damage"
+            ],
+            "conditionPartIds": [
+              "non-boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "non-boss"
+              },
+              "valuePercent": 10,
+              "group": "non-boss-skill-damage",
+              "partIds": [
+                "non-boss-skill-damage"
+              ],
+              "summary": "对非Boss敌人的特技伤害+10%。",
+              "operation": "damage-up",
+              "effectIdentity": "a0e9ad8c974ebca1:non-boss-skill-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关"
+        "特技相关",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人不是Boss"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c0f93572d58f624a",
@@ -83871,17 +85241,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "Boss": {
+          "summary": "对非Boss敌人的特技伤害+20%。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "non-boss-skill-damage"
+            ],
+            "conditionPartIds": [
+              "non-boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "non-boss"
+              },
+              "valuePercent": 20,
+              "group": "non-boss-skill-damage",
+              "partIds": [
+                "non-boss-skill-damage"
+              ],
+              "summary": "对非Boss敌人的特技伤害+20%。",
+              "operation": "damage-up",
+              "effectIdentity": "27978c00d7374193:non-boss-skill-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关"
+        "特技相关",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人不是Boss"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "74710ff77dbf0cb0",
@@ -84498,18 +85902,84 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "Boss": {
+          "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000；自身以外至少一名女性友方存活时，对Boss特技上限+10,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-cap",
+              "skill-cap"
+            ],
+            "conditionPartIds": [
+              "boss-target"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-cap"
+              ],
+              "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "cb30f3c1c621732d:magic-cap",
+              "capPoints": 10000,
+              "condition": {
+                "subject": "other-allies",
+                "requireAnyLivingFemale": true,
+                "excludeSelf": true,
+                "requireAllFemale": false
+              },
+              "group": "magic-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "target": "self",
+              "isBuff": false,
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "enemyType": "boss"
+              },
+              "capPoints": 10000,
+              "condition": {
+                "metric": "living-female-allies-excluding-self",
+                "operator": "gte",
+                "count": 1
+              },
+              "group": "skill-cap",
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "自身以外至少一名女性友方存活时，对Boss特技上限+10,000。",
+              "operation": "cap-up",
+              "effectIdentity": "cb30f3c1c621732d:skill-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "特技相关",
-        "魔法"
+        "魔法",
+        "Boss"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "自身以外至少一名女性友方存活；不要求其余队友全为女性",
-        "目标敌人为Boss"
+        "自身以外至少一名女性友方存活；不要求其余队友全为女性"
       ]
     },
     {
@@ -87563,7 +89033,12 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "not-boss-arena",
           "kind": "condition",
-          "text": "对Boss及竞技场无效"
+          "text": "即死效果对Boss无效"
+        },
+        {
+          "id": "arena-exclusion",
+          "kind": "condition",
+          "text": "即死效果在竞技场无效"
         },
         {
           "id": "chance-unconfirmed",
@@ -87610,16 +89085,57 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Boss": {
+          "summary": "物理攻击时尝试即死；对Boss及竞技场无效。触发概率与目标免疫判定仍待确认。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "instant-kill"
+            ],
+            "conditionPartIds": [
+              "not-boss-arena"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "instant-kill"
+              ],
+              "summary": "物理攻击时尝试即死；对Boss及竞技场无效。触发概率与目标免疫判定仍待确认。",
+              "target": "target-enemy",
+              "isBuff": false,
+              "operation": "instant-kill-attempt",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "excludedEnemyTypes": [
+                  "boss"
+                ],
+                "excludedModes": [
+                  "arena"
+                ]
+              },
+              "effectIdentity": "0f5accc66c3d4ea0:instant-kill",
+              "chanceStatus": "unconfirmed",
+              "group": "instant-kill-exclusion",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "Boss"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "对Boss及竞技场无效",
+        "即死效果在竞技场无效",
         "即死概率与目标免疫判定待确认"
       ]
     },
@@ -100241,6 +101757,321 @@ export const SKILL_LABELING_CATALOG = {
       "remainingConditions": [
         "来袭攻击命中自身属性弱点；与特攻条件为OR，共用同一减伤效果"
       ]
+    },
+    {
+      "id": "f91d0e232f186a78",
+      "url": "https://altema.jp/lastcloudia/gino/640",
+      "name": "王者威装",
+      "text": "受到非BOSS敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-damage",
+          "kind": "effect",
+          "text": "受到非BOSS敌人的伤害-10%。"
+        },
+        {
+          "id": "attacker-boss-state",
+          "kind": "condition",
+          "text": "伤害来源为非Boss敌人"
+        }
+      ],
+      "tagDetails": {
+        "Boss": {
+          "summary": "受到非Boss敌人的伤害-10%（不限制攻击种类）。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-damage"
+            ],
+            "conditionPartIds": [
+              "attacker-boss-state"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-damage"
+              ],
+              "summary": "受到非Boss敌人的伤害-10%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "non-boss"
+              },
+              "valuePercent": 10,
+              "changesDefenseStat": false,
+              "group": "non-boss-incoming-damage-down",
+              "effectIdentity": "f91d0e232f186a78:incoming-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        }
+      },
+      "assignedTags": [
+        "Boss"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "ac7e651d686855cc",
+      "url": "https://altema.jp/lastcloudia/gino/888",
+      "name": "巨型护罩",
+      "text": "受到BOSS的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-damage",
+          "kind": "effect",
+          "text": "受到BOSS的伤害-10%。"
+        },
+        {
+          "id": "attacker-boss-state",
+          "kind": "condition",
+          "text": "伤害来源为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss": {
+          "summary": "受到Boss的伤害-10%（不限制攻击种类）。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-damage"
+            ],
+            "conditionPartIds": [
+              "attacker-boss-state"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-damage"
+              ],
+              "summary": "受到Boss的伤害-10%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "boss"
+              },
+              "valuePercent": 10,
+              "changesDefenseStat": false,
+              "group": "incoming-damage-down",
+              "effectIdentity": "ac7e651d686855cc:incoming-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        }
+      },
+      "assignedTags": [
+        "Boss"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "920fb55fe5cd8123",
+      "url": "https://altema.jp/lastcloudia/gino/1097",
+      "name": "巨型护罩2",
+      "text": "受到BOSS的伤害-20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-damage",
+          "kind": "effect",
+          "text": "受到BOSS的伤害-20%。"
+        },
+        {
+          "id": "attacker-boss-state",
+          "kind": "condition",
+          "text": "伤害来源为Boss"
+        }
+      ],
+      "tagDetails": {
+        "Boss": {
+          "summary": "受到Boss的伤害-20%（不限制攻击种类）。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-damage"
+            ],
+            "conditionPartIds": [
+              "attacker-boss-state"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-damage"
+              ],
+              "summary": "受到Boss的伤害-20%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "boss"
+              },
+              "valuePercent": 20,
+              "changesDefenseStat": false,
+              "group": "incoming-damage-down",
+              "effectIdentity": "920fb55fe5cd8123:incoming-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        }
+      },
+      "assignedTags": [
+        "Boss"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "2da13319efa00435",
+      "url": "https://altema.jp/lastcloudia/gino/1630",
+      "name": "王者威装2",
+      "text": "受到非BOSS敌人的伤害-15%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-damage",
+          "kind": "effect",
+          "text": "受到非BOSS敌人的伤害-15%。"
+        },
+        {
+          "id": "attacker-boss-state",
+          "kind": "condition",
+          "text": "伤害来源为非Boss敌人"
+        }
+      ],
+      "tagDetails": {
+        "Boss": {
+          "summary": "受到非Boss敌人的伤害-15%（不限制攻击种类）。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-damage"
+            ],
+            "conditionPartIds": [
+              "attacker-boss-state"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-damage"
+              ],
+              "summary": "受到非Boss敌人的伤害-15%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "non-boss"
+              },
+              "valuePercent": 15,
+              "changesDefenseStat": false,
+              "group": "non-boss-incoming-damage-down",
+              "effectIdentity": "2da13319efa00435:incoming-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        }
+      },
+      "assignedTags": [
+        "Boss"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "8a9117fcd3961f99",
+      "url": "https://altema.jp/lastcloudia/gino/1918",
+      "name": "王者威装3",
+      "text": "受到非BOSS敌人的伤害-20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-damage",
+          "kind": "effect",
+          "text": "受到非BOSS敌人的伤害-20%。"
+        },
+        {
+          "id": "attacker-boss-state",
+          "kind": "condition",
+          "text": "伤害来源为非Boss敌人"
+        }
+      ],
+      "tagDetails": {
+        "Boss": {
+          "summary": "受到非Boss敌人的伤害-20%（不限制攻击种类）。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-damage"
+            ],
+            "conditionPartIds": [
+              "attacker-boss-state"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-damage"
+              ],
+              "summary": "受到非Boss敌人的伤害-20%（不限制攻击种类）。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerType": "non-boss"
+              },
+              "valuePercent": 20,
+              "changesDefenseStat": false,
+              "group": "non-boss-incoming-damage-down",
+              "effectIdentity": "8a9117fcd3961f99:incoming-damage",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
+        }
+      },
+      "assignedTags": [
+        "Boss"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     }
   ],
   "views": {
@@ -100339,8 +102170,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 35,
-        "partial": 52,
+        "ready": 38,
+        "partial": 49,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -100424,8 +102255,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 70,
         "notRelatedUnique": 865,
-        "ready": 25,
-        "partial": 45,
+        "ready": 26,
+        "partial": 44,
         "unknown": 0,
         "previousBasicDefenseUnique": 64,
         "additionalRelatedUnique": 6
@@ -100464,8 +102295,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 25,
         "notRelatedUnique": 910,
-        "ready": 21,
-        "partial": 4,
+        "ready": 22,
+        "partial": 3,
         "unknown": 0,
         "previousBasicHpUnique": 25,
         "additionalRelatedUnique": 0
@@ -100971,8 +102802,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 230,
         "notRelatedUnique": 705,
-        "ready": 144,
-        "partial": 86,
+        "ready": 146,
+        "partial": 84,
         "unknown": 0
       }
     },
@@ -101216,104 +103047,73 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
-    "boss-damage": {
-      "label": "Boss伤害增加",
+    "boss": {
+      "label": "Boss",
+      "passKind": "boss-effects-and-condition",
       "displayOrder": [
-        "b7297c3eb4e46bba"
-      ],
-      "parent": "boss",
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
-    "boss-magic-damage": {
-      "label": "Boss魔法伤害增加",
-      "parent": "boss",
-      "displayOrder": [
+        "b7297c3eb4e46bba",
         "79a377bec526c2d4",
         "a97531c83b0073e7",
         "f49f17d3da2551a8",
-        "42656c3afdc8103a"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 4,
-        "notRelatedUnique": 931,
-        "ready": 4,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "boss-physical-damage": {
-      "label": "Boss物理伤害增加",
-      "parent": "boss",
-      "displayOrder": [
+        "42656c3afdc8103a",
         "a17f779989645fb0",
-        "86c11809d76a7959"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 2,
-        "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
-        "unknown": 0
-      }
-    },
-    "boss-skill-damage": {
-      "label": "Boss特技伤害增加",
-      "parent": "boss",
-      "displayOrder": [
         "6bb2c943681bb3e7",
         "7ef2d01b96b2406e",
         "ecf05abb4f8e4b10",
-        "5c16599b8947ce62"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 4,
-        "notRelatedUnique": 931,
-        "ready": 4,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "boss-ultimate-damage": {
-      "label": "Boss必杀伤害增加",
-      "parent": "boss",
-      "displayOrder": [
-        "6bb2c943681bb3e7",
-        "7ef2d01b96b2406e",
+        "5c16599b8947ce62",
         "2ad532afbdeb2594",
-        "ecf05abb4f8e4b10",
-        "5c16599b8947ce62"
+        "e3085e506db3fa44",
+        "86c11809d76a7959",
+        "0f5accc66c3d4ea0",
+        "全部技能:all:235",
+        "全部技能:all:266",
+        "3797f19e9c516ee7",
+        "全部技能:all:428",
+        "f91d0e232f186a78",
+        "a0e9ad8c974ebca1",
+        "ac7e651d686855cc",
+        "296bb9556080c9c4",
+        "920fb55fe5cd8123",
+        "27978c00d7374193",
+        "2da13319efa00435",
+        "d268368f04c8f840",
+        "3651039f5585a575",
+        "bc94425edcde5d97",
+        "8a9117fcd3961f99",
+        "899aa4edeab83540",
+        "cb30f3c1c621732d"
       ],
+      "childKeys": [
+        "boss-damage",
+        "boss-magic-damage",
+        "boss-physical-damage",
+        "boss-skill-damage",
+        "boss-ultimate-damage",
+        "boss-critical-damage",
+        "boss-physical-cap",
+        "boss-magic-cap",
+        "boss-skill-cap",
+        "boss-ultimate-cap",
+        "boss-critical-cap",
+        "boss-incoming-damage-down",
+        "boss-non-boss-skill-damage",
+        "boss-non-boss-incoming-damage-down",
+        "boss-instant-kill-exclusion",
+        "boss-wave-str",
+        "boss-wave-def",
+        "boss-wave-start-hp",
+        "boss-wave-start-sct",
+        "boss-wave-start-ultimate-gauge"
+      ],
+      "overviewLabel": "全部Boss（分组）",
+      "separateSections": true,
+      "scopeDescription": "Boss相关效果按增伤、伤害上限、受到伤害、非Boss与Boss Wave分别列出；Boss伤害只是其中一项。",
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 5,
-        "notRelatedUnique": 930,
-        "ready": 5,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "boss-critical-damage": {
-      "label": "Boss暴击伤害增加",
-      "parent": "boss",
-      "displayOrder": [
-        "e3085e506db3fa44"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
+        "relatedUnique": 31,
+        "notRelatedUnique": 904,
+        "ready": 24,
+        "partial": 7,
         "unknown": 0
       }
     },
@@ -101506,8 +103306,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
-        "ready": 72,
-        "partial": 45,
+        "ready": 73,
+        "partial": 44,
         "unknown": 0
       }
     },
@@ -101868,8 +103668,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 113,
         "notRelatedUnique": 822,
-        "ready": 96,
-        "partial": 17,
+        "ready": 98,
+        "partial": 15,
         "unknown": 0
       }
     },
@@ -102024,8 +103824,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 82,
         "notRelatedUnique": 853,
-        "ready": 41,
-        "partial": 41,
+        "ready": 45,
+        "partial": 37,
         "unknown": 0
       }
     },
@@ -103198,8 +104998,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 58,
         "notRelatedUnique": 877,
-        "ready": 35,
-        "partial": 23,
+        "ready": 37,
+        "partial": 21,
         "unknown": 0
       }
     },
@@ -103244,8 +105044,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 9,
         "notRelatedUnique": 926,
-        "ready": 5,
-        "partial": 4,
+        "ready": 6,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -103286,8 +105086,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 9,
         "notRelatedUnique": 926,
-        "ready": 5,
-        "partial": 4,
+        "ready": 6,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -103849,8 +105649,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 14,
         "notRelatedUnique": 921,
-        "ready": 13,
-        "partial": 1,
+        "ready": 14,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104189,37 +105989,116 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
-    "boss": {
-      "label": "Boss增伤",
-      "tagKeys": [
-        "boss-damage",
-        "boss-magic-damage",
-        "boss-physical-damage",
-        "boss-skill-damage",
-        "boss-ultimate-damage",
-        "boss-critical-damage"
-      ],
+    "boss-damage": {
+      "label": "Boss伤害增加",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "damage",
       "displayOrder": [
-        "b7297c3eb4e46bba",
+        "b7297c3eb4e46bba"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-magic-damage": {
+      "label": "Boss魔法伤害增加",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "magic-damage",
+      "displayOrder": [
         "79a377bec526c2d4",
         "a97531c83b0073e7",
         "f49f17d3da2551a8",
-        "42656c3afdc8103a",
+        "42656c3afdc8103a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 4,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-physical-damage": {
+      "label": "Boss物理伤害增加",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "physical-damage",
+      "displayOrder": [
         "a17f779989645fb0",
-        "6bb2c943681bb3e7",
-        "7ef2d01b96b2406e",
-        "ecf05abb4f8e4b10",
-        "5c16599b8947ce62",
-        "2ad532afbdeb2594",
-        "e3085e506db3fa44",
         "86c11809d76a7959"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 13,
-        "notRelatedUnique": 922,
-        "ready": 10,
-        "partial": 3,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 1,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "boss-skill-damage": {
+      "label": "Boss特技伤害增加",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "skill-damage",
+      "displayOrder": [
+        "6bb2c943681bb3e7",
+        "7ef2d01b96b2406e",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 4,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-ultimate-damage": {
+      "label": "Boss必杀伤害增加",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "ultimate-damage",
+      "displayOrder": [
+        "6bb2c943681bb3e7",
+        "7ef2d01b96b2406e",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62",
+        "2ad532afbdeb2594"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-critical-damage": {
+      "label": "Boss暴击伤害增加",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "critical-damage",
+      "displayOrder": [
+        "e3085e506db3fa44"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104949,8 +106828,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 4,
-        "partial": 1,
+        "ready": 5,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104966,8 +106845,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104983,8 +106862,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -106381,8 +108260,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -113944,8 +115823,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -113961,8 +115840,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -114046,8 +115925,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -114288,8 +116167,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 3,
         "notRelatedUnique": 932,
-        "ready": 1,
-        "partial": 2,
+        "ready": 2,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -114339,8 +116218,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -114356,8 +116235,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -114441,8 +116320,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -114891,8 +116770,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 4,
-        "partial": 2,
+        "ready": 5,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -115961,8 +117840,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -116102,8 +117981,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 17,
         "notRelatedUnique": 918,
-        "ready": 7,
-        "partial": 10,
+        "ready": 8,
+        "partial": 9,
         "unknown": 0
       }
     },
@@ -116143,8 +118022,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 8,
         "notRelatedUnique": 927,
-        "ready": 3,
-        "partial": 5,
+        "ready": 4,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -116249,8 +118128,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 3,
-        "partial": 2,
+        "ready": 4,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -116284,8 +118163,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -116719,8 +118598,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 1,
-        "partial": 5,
+        "ready": 2,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -118698,8 +120577,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -118955,8 +120834,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -122822,8 +124701,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 3,
-        "partial": 1,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -125104,6 +126983,266 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "boss-physical-cap": {
+      "label": "Boss物理伤害上限",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "physical-cap",
+      "displayOrder": [
+        "d268368f04c8f840",
+        "899aa4edeab83540"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-magic-cap": {
+      "label": "Boss魔法伤害上限",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "magic-cap",
+      "displayOrder": [
+        "a97531c83b0073e7",
+        "f49f17d3da2551a8",
+        "42656c3afdc8103a",
+        "cb30f3c1c621732d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 3,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "boss-skill-cap": {
+      "label": "Boss特技伤害上限",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "skill-cap",
+      "displayOrder": [
+        "7ef2d01b96b2406e",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62",
+        "bc94425edcde5d97",
+        "cb30f3c1c621732d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 4,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "boss-ultimate-cap": {
+      "label": "Boss必杀伤害上限",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "ultimate-cap",
+      "displayOrder": [
+        "7ef2d01b96b2406e",
+        "ecf05abb4f8e4b10",
+        "5c16599b8947ce62",
+        "2ad532afbdeb2594",
+        "3651039f5585a575",
+        "899aa4edeab83540"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 5,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "boss-critical-cap": {
+      "label": "Boss暴击伤害上限",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "critical-cap",
+      "displayOrder": [
+        "e3085e506db3fa44"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-incoming-damage-down": {
+      "label": "受到Boss伤害减少",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "incoming-damage-down",
+      "displayOrder": [
+        "b7297c3eb4e46bba",
+        "全部技能:all:235",
+        "全部技能:all:266",
+        "全部技能:all:428",
+        "ac7e651d686855cc",
+        "920fb55fe5cd8123"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 3,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "boss-non-boss-skill-damage": {
+      "label": "非Boss特技伤害增加",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "non-boss-skill-damage",
+      "displayOrder": [
+        "a0e9ad8c974ebca1",
+        "27978c00d7374193"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-non-boss-incoming-damage-down": {
+      "label": "受到非Boss伤害减少",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "non-boss-incoming-damage-down",
+      "displayOrder": [
+        "f91d0e232f186a78",
+        "2da13319efa00435",
+        "8a9117fcd3961f99"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-instant-kill-exclusion": {
+      "label": "Boss即死无效",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "instant-kill-exclusion",
+      "displayOrder": [
+        "0f5accc66c3d4ea0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "boss-wave-str": {
+      "label": "Boss Wave攻击力",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "wave-str",
+      "displayOrder": [
+        "86c11809d76a7959",
+        "296bb9556080c9c4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-wave-def": {
+      "label": "Boss Wave防御力",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "wave-def",
+      "displayOrder": [
+        "296bb9556080c9c4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-wave-start-hp": {
+      "label": "Boss Wave开始时HP回复",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "wave-start-hp",
+      "displayOrder": [
+        "3797f19e9c516ee7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-wave-start-sct": {
+      "label": "Boss Wave开始时SCT回复",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "wave-start-sct",
+      "displayOrder": [
+        "3797f19e9c516ee7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "boss-wave-start-ultimate-gauge": {
+      "label": "Boss Wave开始时必杀槽回复",
+      "parent": "boss",
+      "conditionTag": "Boss",
+      "effectGroup": "wave-start-ultimate-gauge",
+      "displayOrder": [
+        "3797f19e9c516ee7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -125944,14 +128083,19 @@ export const SKILL_LABELING_CATALOG = {
         "92cbaf3db3586d0d",
         "32f98ad19af760dc",
         "1faea4cee43b7137",
-        "49f537942bfaa37d"
+        "49f537942bfaa37d",
+        "f91d0e232f186a78",
+        "ac7e651d686855cc",
+        "920fb55fe5cd8123",
+        "2da13319efa00435",
+        "8a9117fcd3961f99"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 838,
-        "notRelatedUnique": 97,
-        "ready": 510,
-        "partial": 328,
+        "relatedUnique": 843,
+        "notRelatedUnique": 92,
+        "ready": 524,
+        "partial": 319,
         "unknown": 0
       }
     }

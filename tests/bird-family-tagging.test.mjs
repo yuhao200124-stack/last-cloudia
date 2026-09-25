@@ -1,4 +1,4 @@
-import {ADDITIONAL_RACE_TAGS,partsBeforeRaces} from './race-preservation-helpers.mjs';
+import {ADDITIONAL_RACE_TAGS,partsBeforeRaces,textBeforeBoss} from './race-preservation-helpers.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import {createHash} from 'node:crypto';
 import {SKILL_LABELING_CATALOG as catalog} from '../dist/skill-labeling-catalog.mjs';
 import {canonicalSkillRows,labelingView,skillLabelRows,filterLabelRows} from '../dist/skill-labeling-model.mjs';
@@ -17,14 +17,14 @@ test('bird audits all 935 skills, includes complete bird clauses, and excludes a
 });
 
 test('bird preserves old source, 45 tag passes and bindings; only previously uncovered OR conditions are split',()=>{
- assert.equal(preserved.entries.length,772);assert.equal(preserved.tagPasses.length,45);assert.equal(r.tagPasses.length,62);
+ assert.equal(preserved.entries.length,772);assert.equal(preserved.tagPasses.length,45);assert.equal(r.tagPasses.length,63);
  for(const p of preserved.tagPasses)assert.equal(hash(r.tagPasses.find(t=>t.tag===p.tag)),p.hash,p.tag);
  for(const old of preserved.entries){const e=r.entries.find(x=>x.id===old.id),split=preserved.conditionSplits.find(x=>x.skillId===old.id);let parts=partsBeforeRaces(e);
-  if(split){assert.equal(split.wasExisting,true);assert.deepEqual(e.parts.filter(p=>split.replacementParts.some(x=>x.id===p.id)),split.replacementParts);for(const t of r.tagPasses.filter(t=>t.tag!=='鸟'&&!ADDITIONAL_RACE_TAGS.includes(t.tag)))assert(!t.assignments.some(a=>a.skillId===e.id&&a.partIds.includes(split.originalPart.id)));parts=parts.flatMap(p=>p.id===split.originalPart.id?[split.originalPart]:split.replacementParts.some(x=>x.id===p.id)?[]:[p]);}
-  assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,parts]),old.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(e.tagDetails).filter(([t,d])=>!['鸟',...ADDITIONAL_RACE_TAGS].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),old.bindingsHash,e.name);
+  if(split){assert.equal(split.wasExisting,true);assert.deepEqual(e.parts.filter(p=>split.replacementParts.some(x=>x.id===p.id)),split.replacementParts);for(const t of r.tagPasses.filter(t=>t.tag!=='鸟'&&!['Boss',...ADDITIONAL_RACE_TAGS].includes(t.tag)))assert(!t.assignments.some(a=>a.skillId===e.id&&a.partIds.includes(split.originalPart.id)));parts=parts.flatMap(p=>p.id===split.originalPart.id?[split.originalPart]:split.replacementParts.some(x=>x.id===p.id)?[]:[p]);}
+  assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,parts]),old.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(e.tagDetails).filter(([t,d])=>!['鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),old.bindingsHash,e.name);
  }
- for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(read('../'+p)).digest('hex'),h,p);
- assert.equal(catalog.entries.length,838);assert.equal(catalog.views.all.counts.ready,510);assert.equal(catalog.views.all.counts.partial,328);assert.equal(catalog.numericEffectInjection,false);
+ for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeBoss(p,read('../'+p))).digest('hex'),h,p);
+ assert.equal(catalog.entries.length,843);assert.equal(catalog.views.all.counts.ready,524);assert.equal(catalog.views.all.counts.partial,319);assert.equal(catalog.numericEffectInjection,false);
  for(const[n,key,tag]of [[48,'physical','物理'],[918,'magic-damage','魔法'],[1971,'ultimate','必杀相关']]){assert.strictEqual(labelingView(catalog,key).entries.find(e=>e.id===entry(n).id),entry(n));assert.equal(entry(n).judgment,'ready');for(const b of entry(n).tagDetails[tag].bindings)assert(bs(n).some(x=>x.effectIdentity===b.effectIdentity));}
 });
 

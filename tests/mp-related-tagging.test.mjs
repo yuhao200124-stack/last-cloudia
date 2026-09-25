@@ -17,8 +17,8 @@ test('MP expands the existing page across the entire library without mixing INT,
  for(const [g,ns] of Object.entries(mapping))assert.deepEqual(numbers(labelingView(catalog,'mp-'+g)),ns,g);
  assert.equal(view.childKeys.length,26);assert.equal(view.childKeys.reduce((n,k)=>n+catalog.views[k].counts.relatedUnique,0),41);
  for(const n of [17,18,19,20,29,110,112,119,120,121,164,1858,196,199,217,218,249,460,666,914,1163,1335,1768,1909])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
- assert.equal(registry.tagPasses.length,62);assert.equal(registry.tagPasses.filter(p=>p.tag==='MP').length,1);assert.equal(catalog.numericEffectInjection,false);
- assert.equal(catalog.entries.length,838);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,838);
+ assert.equal(registry.tagPasses.length,63);assert.equal(registry.tagPasses.filter(p=>p.tag==='MP').length,1);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(catalog.entries.length,843);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,843);
 });
 
 test('MP states preserve absolute points, percentages and unknown scaling curves while costs preserve their own bases',()=>{
@@ -45,9 +45,9 @@ test('MP covers resource fragments and MP conditions, preserves old MP maxima, a
  const before=structuredClone(registry);before.tagPasses=before.tagPasses.filter(p=>p.tag!=='魔法');before.tagPasses.find(p=>p.tag==='MP').assignments=before.tagPasses.find(p=>p.tag==='MP').assignments.filter(a=>maxIds.some(n=>a.skillId===source(n).id));const prior=resolveSkillLabels(before);
  for(const n of [185,787,1147,1555]){assert.equal(prior.find(e=>e.id===source(n).id).judgment,'partial');assert.equal(entry(n).judgment,'ready');}
  assert.equal(entry(209).judgment,'partial');assert(entry(209).remainingEffects.includes('魔抗+20%'));assert.equal(entry(208).judgment,'partial');assert(entry(208).remainingConditions.some(c=>c.includes('Buff')));
- assert.deepEqual(entry(1214).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP','必杀相关']);assert.deepEqual(entry(233).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP','受到攻击']);
- for(const n of [202,1766])assert.equal(entry(n).judgment,'partial');assert(!entry(380).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('魔法伤害增加'));
- assert.equal(view.counts.ready,14);assert.equal(view.counts.partial,18);assert.equal(catalog.views.all.counts.ready,510);assert.equal(catalog.views.all.counts.partial,328);
+ assert.deepEqual(entry(1214).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP','必杀相关']);assert.deepEqual(entry(233).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP','受到攻击']);
+ for(const n of [202,1766])assert.equal(entry(n).judgment,'partial');assert(!entry(380).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('魔法伤害增加'));
+ assert.equal(view.counts.ready,14);assert.equal(view.counts.partial,18);assert.equal(catalog.views.all.counts.ready,524);assert.equal(catalog.views.all.counts.partial,319);
  const ordered=skillLabelRows(data,view);assert(ordered.slice(0,14).every(e=>e.judgment==='ready'));assert(ordered.slice(14).every(e=>e.judgment==='partial'));
 });
 
@@ -64,7 +64,7 @@ test('expanded MP page keeps one main tab, grouped effects, deduplicated searche
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','mp-max');assert.match(get('#labelResultCount').textContent,/8 \/ 8/);assert.match(get('#judgmentSummary').textContent,/8.*0.*0/);
  click('#labelSubTabs','mp-full-defense');assert(get('#labelTable').innerHTML.includes('黄昏'));assert(!get('#labelTable').innerHTML.includes('空无堡垒'));
  click('#labelSubTabs','mp-cost-magic-damage');assert(get('#labelTable').innerHTML.includes('魔导光环'));assert(!get('#labelTable').innerHTML.includes('与帕克的契约'));
- for(const [key,count] of [['ultimate',113],['received-attack',21],['full-hp',6],['low-hp',26],['battle-start',117],['boss',13]]){click('#labelTabs',key);assert.equal(get('#labelResultCount').textContent,`显示 ${count} / ${count} 个技能（去重）`);}
+ for(const [key,count] of [['ultimate',113],['received-attack',21],['full-hp',6],['low-hp',26],['battle-start',117],['boss',31]]){click('#labelTabs',key);assert.equal(get('#labelResultCount').textContent,`显示 ${count} / ${count} 个技能（去重）`);}
  const edits={[`skill:${source(787).id}`]:{effect:'未知效果'},[`skill:${source(9).id}`]:{effect:'新MP条件'}};const changed=page(edits);assert.match(changed.get('#labelResultCount').textContent,/33 \/ 33/);assert.match(changed.get('#labelTable').innerHTML,/描述已修改，待重新判断（2）/);
  const stale=skillLabelRows(data,view,edits).find(e=>e.id===source(787).id);assert.equal(stale.judgment,'unknown');assert.deepEqual(stale.conditionBindings,{});
 });

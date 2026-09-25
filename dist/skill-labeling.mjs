@@ -1,5 +1,5 @@
-import {SKILL_LABELING_CATALOG as catalog} from './skill-labeling-catalog.mjs?v=20260925-races';
-import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260925-races';
+import {SKILL_LABELING_CATALOG as catalog} from './skill-labeling-catalog.mjs?v=20260925-boss';
+import {skillLabelRows, labelingView, filterLabelRows} from './skill-labeling-model.mjs?v=20260925-boss';
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const statusLabels = {ready:'已完整判断', partial:'判断部分', unknown:'没办法判断'};
 const pendingList = (title, texts) => texts.length ? `<div class="remaining-effects"><b>${title}</b><ul>${texts.map(text => `<li>${escape(text)}</li>`).join('')}</ul></div>` : '';
@@ -8,7 +8,7 @@ export function renderLabelTable(rows, effectGroup, conditionTag = '战斗开始
   return `<div class="table-scroll"><table class="excel-table labeling-table" aria-label="技能标签列表"><colgroup><col class="name"><col class="judgment"><col class="effect"><col class="tags"></colgroup><thead><tr class="column-title"><th>技能名称</th><th>判断</th><th>技能效果／说明</th><th>标签／判断说明</th></tr></thead><tbody>${rows.map(row => `<tr data-skill-id="${escape(row.id)}">
     <td><a class="label-name" href="${escape(row.url)}" target="_blank" rel="noreferrer">${escape(row.name)}</a></td>
     <td class="judgment-cell"><span class="judgment-label judgment-${row.judgment}">${statusLabels[row.judgment]}</span></td>
-    <td>${effectGroup ? bindingsFor(row, conditionTag).filter(binding => binding.group === effectGroup).map(binding => `<p class="opening-effect"><b>本组${escape(conditionTag === '战斗开始' ? '开场' : conditionTag)}效果：</b>${escape(binding.summary)}</p>`).join('') : ''}<div class="effect-text">${escape(row.effect)}</div>${row.notes ? `<div class="skill-effect-notes"><span>补充说明</span>${escape(row.notes)}</div>` : ''}</td>
+    <td>${effectGroup ? bindingsFor(row, conditionTag).filter(binding => (binding.group === effectGroup || binding.associatedGroups?.includes(effectGroup))).map(binding => `<p class="opening-effect"><b>本组${escape(conditionTag === '战斗开始' ? '开场' : conditionTag)}效果：</b>${escape(binding.summary)}</p>`).join('') : ''}<div class="effect-text">${escape(row.effect)}</div>${row.notes ? `<div class="skill-effect-notes"><span>补充说明</span>${escape(row.notes)}</div>` : ''}</td>
     <td>${row.needsReview ? '<p class="skill-tag-note">描述已变化，需重新判断标签关联；原标签暂不沿用。</p>' : `${row.assignedTags.map(tag => `<span class="assigned-tag">${escape(tag)}</span>`).join(' ')}${(row.tagSummaries || []).map(item => `<p class="attack-summary"><b>${escape(item.tag)}：</b>${escape(item.summary)}</p>${item.calculationNote ? `<small class="calculation-note">${escape(item.calculationNote)}</small>` : ''}`).join('')}${pendingList('待判断效果', row.remainingEffects)}${pendingList('待判断条件／机制', row.remainingConditions)}`}</td>
   </tr>`).join('')}</tbody></table></div>`;
 }
@@ -47,7 +47,7 @@ if (typeof document !== 'undefined') {
     if (view.separateSections) {
       const sections = view.childKeys.map(key => {
         const child = catalog.views[key];
-        const members = filtered.filter(row => bindingsFor(row, view.label).some(binding => binding.group === child.effectGroup));
+        const members = filtered.filter(row => bindingsFor(row, view.label).some(binding => (binding.group === child.effectGroup || binding.associatedGroups?.includes(child.effectGroup))));
         return members.length ? `<section class="opening-section" aria-labelledby="section-${escape(key)}"><h3 id="section-${escape(key)}">${escape(view.label)} · ${escape(child.label)}（${members.length}）</h3>${renderLabelTable(members, child.effectGroup, view.label)}</section>` : '';
       });
       const changed = filtered.filter(row => row.needsReview);

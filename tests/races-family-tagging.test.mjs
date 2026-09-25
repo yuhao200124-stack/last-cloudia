@@ -2,11 +2,11 @@ import test from 'node:test';import assert from 'node:assert/strict';import fs f
 import {SKILL_LABELING_CATALOG as catalog} from '../dist/skill-labeling-catalog.mjs';
 import {canonicalSkillRows,labelingView,skillLabelRows,filterLabelRows} from '../dist/skill-labeling-model.mjs';
 import {validateRaceBinding,validateRaceCoverage} from '../scripts/validate-race-labels.mjs';
-import {ADDITIONAL_RACE_TAGS,partsBeforeRaces} from './race-preservation-helpers.mjs';
+import {ADDITIONAL_RACE_TAGS,partsBeforeRaces,textBeforeBoss} from './race-preservation-helpers.mjs';
 const read=p=>fs.readFileSync(new URL(p,import.meta.url),'utf8'),r=JSON.parse(read('../docs/skill-labeling-registry.json')),defs=JSON.parse(read('../docs/races-pass-definitions.json')),preserved=JSON.parse(read('../docs/races-preservation-2026-09-25.json'));
 const box={window:{}};vm.runInNewContext(read('../dist/data.js'),box);const data=box.window.SKILL_DATA,rows=canonicalSkillRows(data),source=n=>rows.find(e=>e.url.endsWith('/'+n)),entry=n=>catalog.entries.find(e=>e.id===source(n).id),tag=k=>defs.find(d=>d.race===k).label,detail=(n,k)=>entry(n).tagDetails[tag(k)],bs=(n,k)=>detail(n,k).bindings;
 const hash=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex'),human=['soldier','knight','sniper','sorcerer'],monster=['beast','plant','insect','bird','fish','creature'];
-const expected=[['beast',13,17,19,12],['plant',10,13,14,9],['insect',9,13,13,9],['creature',14,18,20,12],['undead',13,16,18,12],['stone',8,7,8,7],['machine',9,10,14,9],['fish',12,17,18,12],['spirit',13,16,17,11],['dragon',14,16,20,13],['god',20,26,29,13],['soldier',17,24,27,14],['knight',14,21,22,11],['sniper',14,21,22,11],['sorcerer',14,17,19,11],['common',16,11,17,12]];
+const expected=[['beast',13,17,19,12],['plant',10,13,14,9],['insect',9,13,13,9],['creature',14,18,20,12],['undead',13,16,18,12],['stone',8,7,8,7],['machine',9,10,14,9],['fish',12,17,18,12],['spirit',13,16,17,11],['dragon',14,16,20,14],['god',20,26,29,13],['soldier',17,24,27,14],['knight',14,21,22,11],['sniper',14,21,22,11],['sorcerer',14,17,19,11],['common',16,11,17,12]];
 
 test('all remaining races and common mechanisms audit every canonical source and retain exact group counts',()=>{
  assert.equal(defs.length,16);const union=new Set(catalog.views.bird.displayOrder);
@@ -14,17 +14,17 @@ test('all remaining races and common mechanisms audit every canonical source and
   for(const s of rows){const a=audit.rows.find(x=>x.id===s.id);assert.equal(a.sourceHash,hash([s.id,s.url,s.name,s.effect,s.notes||'']));assert.equal(a.decision==='related',v.entries.some(e=>e.id===s.id));}
   assert.deepEqual([...new Set(v.childKeys.flatMap(g=>labelingView(catalog,g).entries.map(e=>e.id)))].sort(),v.entries.map(e=>e.id).sort());for(const e of v.entries)union.add(e.id);
  }
- assert.equal(union.size,164);assert.equal(catalog.views.bird.counts.ready,10);assert.equal(catalog.views.bird.counts.partial,0);assert.equal(catalog.entries.length,838);assert.equal(catalog.views.all.counts.ready,510);assert.equal(catalog.views.all.counts.partial,328);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(union.size,164);assert.equal(catalog.views.bird.counts.ready,10);assert.equal(catalog.views.bird.counts.partial,0);assert.equal(catalog.entries.length,843);assert.equal(catalog.views.all.counts.ready,524);assert.equal(catalog.views.all.counts.partial,319);assert.equal(catalog.numericEffectInjection,false);
  for(const n of [84,122,269,284,289,398,418,570,619,984,1000,1014,1067,1240,1365,1366,1615,1746,1801,1802,1874,1940])assert(!union.has(source(n).id),source(n).name);
  assert.equal(catalog.views.machine.label,'机械');assert.equal(catalog.views['race-machine'].label,'机械种族');
 });
 
 test('race passes preserve all 776 previous records and 46 passes, refining only unassigned compound conditions',()=>{
- assert.equal(preserved.entries.length,776);assert.equal(preserved.tagPasses.length,46);assert.equal(r.tagPasses.length,62);
+ assert.equal(preserved.entries.length,776);assert.equal(preserved.tagPasses.length,46);assert.equal(r.tagPasses.length,63);
  for(const p of preserved.tagPasses)assert.equal(hash(r.tagPasses.find(t=>t.tag===p.tag)),p.hash,p.tag);
- for(const p of preserved.entries){const e=r.entries.find(e=>e.id===p.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeRaces(e)]),p.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(e.tagDetails).filter(([t,d])=>!ADDITIONAL_RACE_TAGS.includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),p.bindingsHash,e.name);}
- for(const s of preserved.conditionSplits){const e=r.entries.find(e=>e.id===s.skillId);assert.deepEqual(e.parts.filter(p=>s.replacementParts.some(x=>x.id===p.id)),s.replacementParts);for(const pass of r.tagPasses.filter(t=>!ADDITIONAL_RACE_TAGS.includes(t.tag)))assert(!pass.assignments.some(a=>a.skillId===e.id&&a.partIds.includes(s.originalPart.id)));}
- for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(read('../'+p)).digest('hex'),h);
+ for(const p of preserved.entries){const e=r.entries.find(e=>e.id===p.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeRaces(e)]),p.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(e.tagDetails).filter(([t,d])=>!['Boss',...ADDITIONAL_RACE_TAGS].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),p.bindingsHash,e.name);}
+ for(const s of preserved.conditionSplits){const e=r.entries.find(e=>e.id===s.skillId);assert.deepEqual(e.parts.filter(p=>s.replacementParts.some(x=>x.id===p.id)),s.replacementParts);for(const pass of r.tagPasses.filter(t=>!['Boss',...ADDITIONAL_RACE_TAGS].includes(t.tag)))assert(!pass.assignments.some(a=>a.skillId===e.id&&a.partIds.includes(s.originalPart.id)));}
+ for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeBoss(p,read('../'+p))).digest('hex'),h);
  for(const[n,key]of [[42,'physical'],[665,'magic-damage'],[772,'ultimate'],[1191,'technique'],[1884,'critical'],[1179,'light']]){assert.strictEqual(labelingView(catalog,key).entries.find(e=>e.id===entry(n).id),entry(n));assert.equal(entry(n).judgment,'ready');}
 });
 

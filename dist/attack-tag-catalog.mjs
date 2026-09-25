@@ -5333,17 +5333,73 @@ export const ATTACK_TAG_CATALOG = {
             "basic:296bb9556080c9c4:1"
           ],
           "relatedSkillIds": []
+        },
+        "Boss": {
+          "summary": "Boss Wave中，自身攻击力+7%；持续条件为当前波次，不要求攻击目标是Boss。；Boss Wave中，自身防御力+7%；不是开场限时Buff。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "Boss Wave中，自身攻击力+7%；持续条件为当前波次，不要求攻击目标是Boss。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "stat": "STR",
+                "waveType": "boss"
+              },
+              "valuePercent": 7,
+              "activationMode": "boss-wave-state",
+              "group": "wave-str",
+              "effectIdentity": "296bb9556080c9c4:attack",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "Boss Wave中，自身防御力+7%；不是开场限时Buff。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "stat": "DEF",
+                "waveType": "boss"
+              },
+              "valuePercent": 7,
+              "activationMode": "boss-wave-state",
+              "group": "wave-def",
+              "effectIdentity": "296bb9556080c9c4:effect-1",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "防御力"
+        "防御力",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "BOSS Wave中生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c14ec33793319bba",
@@ -9311,7 +9367,7 @@ export const ATTACK_TAG_CATALOG = {
             "stat": "STR"
           },
           "groupingOnly": true,
-          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型已完成，Boss Wave条件继续待判断。",
+          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型与Boss Wave条件均已完成判断。",
           "existingRuleIds": [
             "basic:86c11809d76a7959:1"
           ],
@@ -9359,18 +9415,57 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "Boss": {
+          "summary": "Boss Wave中，自身攻击力+20%。按指定保留在Boss物理伤害列表的属性关联项，不是物理伤害+20%。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "Boss Wave中，自身攻击力+20%。按指定保留在Boss物理伤害列表的属性关联项，不是物理伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self-stat",
+                "stat": "STR",
+                "waveType": "boss"
+              },
+              "valuePercent": 20,
+              "activationMode": "boss-wave-state",
+              "associatedGroups": [
+                "physical-damage"
+              ],
+              "associationKind": "user-requested-stat-reference",
+              "group": "wave-str",
+              "effectIdentity": "86c11809d76a7959:attack",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "攻击力",
         "Boss物理伤害增加",
-        "龙"
+        "龙",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "BOSS Wave中生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c1b1fa0330ed3ca3",
@@ -10097,19 +10192,125 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "Boss": {
+          "summary": "对Boss物理攻击伤害上限+10,000；仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。；对Boss的必杀伤害上限+10,000。；仅1把武器时，对Boss必杀上限在基础+10,000之外再+10,000。",
+          "relation": "boss-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1",
+              "effect-2",
+              "boss-ultimate-cap",
+              "single-boss-ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "condition-3"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "对Boss物理攻击伤害上限+10,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyType": "boss"
+              },
+              "effectIdentity": "899aa4edeab83540:effect-1",
+              "capPoints": 10000,
+              "group": "physical-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyType": "boss"
+              },
+              "effectIdentity": "899aa4edeab83540:effect-2",
+              "group": "physical-cap",
+              "effectStacking": "once-per-skill",
+              "capPoints": 10000,
+              "addsToPartId": "effect-1",
+              "condition": {
+                "subject": "self-equipment",
+                "weaponCount": 1
+              },
+              "bossRole": "direct-effect"
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "boss-ultimate-cap"
+              ],
+              "summary": "对Boss的必杀伤害上限+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "capPoints": 10000,
+              "effectIdentity": "899aa4edeab83540:boss-ultimate-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            },
+            {
+              "group": "ultimate-cap",
+              "partIds": [
+                "single-boss-ultimate-cap"
+              ],
+              "summary": "仅1把武器时，对Boss必杀上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capPoints": 10000,
+              "addsToPartId": "boss-ultimate-cap",
+              "effectIdentity": "899aa4edeab83540:single-boss-ultimate-cap",
+              "bossRole": "direct-effect",
+              "effectStacking": "once-per-skill"
+            }
+          ],
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
         }
       },
       "assignedTags": [
         "攻击力",
         "必杀相关",
         "单手",
-        "物理"
+        "物理",
+        "Boss"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "对Boss时才有对应伤害上限加成"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "7bc369d4036dd098",
@@ -10318,8 +10519,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 35,
-    "partial": 52,
+    "ready": 38,
+    "partial": 49,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

@@ -25,7 +25,7 @@ test('each Boss attack-type pass audits the full library and keeps the complete 
   assert.equal(audit.rows.filter(r=>r.decision==='related').length,numbers.length);
   assert.equal(view.parent,'boss');
   for(const n of [760,1289,1526,1608,1651,1708,1830,1955,2028])assert(!view.entries.some(e=>e.id===source(n).id),`${key}/${n}`);
-  for(const e of view.entries)assert(!e.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).some(t=>['Boss伤害增加','物理伤害增加','魔法伤害增加','伤害增加'].includes(t)));
+  for(const e of view.entries)assert(!e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)).some(t=>['Boss伤害增加','物理伤害增加','魔法伤害增加','伤害增加'].includes(t)));
  }
  assert.deepEqual(entry(720).tagDetails['Boss物理伤害增加'].scope,{boss:true,damageType:'physical'});
  assert.deepEqual(entry(837).tagDetails['Boss魔法伤害增加'].scope,{boss:true,attackKinds:['magic']});
@@ -35,10 +35,10 @@ test('each Boss attack-type pass audits the full library and keeps the complete 
 
 test('parallel skill and ultimate clauses share one record and finish only after both type labels',()=>{
  const giant=entry(411),skill=labelingView(catalog,'boss-skill-damage'),ultimate=labelingView(catalog,'boss-ultimate-damage');
- assert.deepEqual(giant.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss特技伤害增加','Boss必杀伤害增加','必杀相关','特技相关']);
+ assert.deepEqual(giant.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss特技伤害增加','Boss必杀伤害增加','必杀相关','特技相关']);
  assert.strictEqual(skill.entries.find(e=>e.id===giant.id),ultimate.entries.find(e=>e.id===giant.id));
  assert.equal(giant.judgment,'ready');assert.deepEqual(giant.remainingEffects,[]);assert.deepEqual(giant.remainingConditions,[]);
- const beforeUltimate=structuredClone(registry);beforeUltimate.tagPasses=beforeUltimate.tagPasses.filter(p=>!['Boss必杀伤害增加','必杀相关'].includes(p.tag));
+ const beforeUltimate=structuredClone(registry);beforeUltimate.tagPasses=beforeUltimate.tagPasses.filter(p=>!['Boss必杀伤害增加','必杀相关','Boss'].includes(p.tag));
  const unfinished=resolveSkillLabels(beforeUltimate).find(e=>e.id===giant.id);
  assert.equal(unfinished.judgment,'partial');assert.deepEqual(unfinished.remainingEffects,['对Boss的必杀伤害+20%']);
  assert.equal(giant.parts.filter(p=>p.kind==='effect').length,2);
@@ -53,17 +53,13 @@ test('typed Boss bonuses leave caps and party counts pending without injecting d
  assert.equal(catalog.numericEffectInjection,false);
 });
 
-test('Boss page is a deduplicated union of six categories, not an extra bonus tag',()=>{
+test('Boss family preserves old subroutes and shares all 31 skill judgments',()=>{
  const boss=labelingView(catalog,'boss');
- assert.equal(boss.entries.length,13);assert.equal(new Set(boss.entries.map(e=>e.id)).size,13);
- assert.equal(boss.counts.ready,10);assert.equal(boss.counts.partial,3);
- assert.equal(boss.tagKeys.reduce((sum,key)=>sum+catalog.views[key].counts.relatedUnique,0),17);
- assert.deepEqual(boss.entries.filter(e=>e.judgment==='ready').map(e=>e.name).sort(),['巨人杀手','巨人杀手2','巨人杀手3','巨人杀手4','巨型净化','巨型净化2','巨型净化3','巨型净化4','邪恶织法','锐利一击']);
- assert(boss.entries.every(e=>!e.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('Boss增伤')));
+ assert.equal(boss.entries.length,31);assert.equal(new Set(boss.entries.map(e=>e.id)).size,31);
+ assert.equal(boss.counts.ready,24);assert.equal(boss.counts.partial,7);assert.equal(boss.childKeys.length,20);
  const rows=skillLabelRows(box.window.SKILL_DATA,boss);
- assert(rows.slice(0,10).every(r=>r.judgment==='ready'));assert(rows.slice(10).every(r=>r.judgment==='partial'));
- assert.equal(catalog.views.all.counts.relatedUnique,838);assert.equal(catalog.views.all.counts.ready,510);assert.equal(catalog.views.all.counts.partial,328);
- assert.equal(catalog.views.physical.counts.relatedUnique,230);assert.equal(catalog.views['magic-damage'].counts.relatedUnique,130);
+ assert(rows.slice(0,24).every(r=>r.judgment==='ready'));assert(rows.slice(24).every(r=>r.judgment==='partial'));
+ assert.equal(catalog.views.all.counts.relatedUnique,843);assert.equal(catalog.views.all.counts.ready,524);assert.equal(catalog.views.all.counts.partial,319);
 });
 
 test('Boss critical damage retains its scope while the critical pass completes its cap',()=>{
@@ -72,7 +68,7 @@ test('Boss critical damage retains its scope while the critical pass completes i
  assert.equal(audit.rows.filter(r=>r.decision==='related').length,1);
  assert.deepEqual(view.entries.map(e=>e.name),['锐利一击']);
  const sharp=entry(1289),detail=sharp.tagDetails['Boss暴击伤害增加'];
- assert.deepEqual(sharp.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss暴击伤害增加','暴击']);
+ assert.deepEqual(sharp.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss暴击伤害增加','暴击']);
  assert.deepEqual(detail.scope,{boss:true,criticalOnly:true});
  assert.equal(detail.relation,'boss-critical-damage-increase');
  assert.match(detail.calculationNote,/不提高暴击率.*不赋予魔法暴击资格/);
@@ -84,7 +80,7 @@ test('Boss critical damage retains its scope while the critical pass completes i
 
 test('requested Dragon Awakening grouping preserves the STR effect and does not grant a physical damage multiplier',()=>{
  const dragon=entry(1883),detail=dragon.tagDetails['Boss物理伤害增加'];
- assert.deepEqual(dragon.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','Boss物理伤害增加']);
+ assert.deepEqual(dragon.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','Boss物理伤害增加']);
  assert.equal(detail.relation,'boss-wave-attribute-change');assert.equal(detail.groupingOnly,true);
  assert.deepEqual(detail.scope,{bossWave:true,stat:'STR'});
  assert.match(detail.calculationNote,/不能按物理伤害直接\+20%计算/);
@@ -93,8 +89,8 @@ test('requested Dragon Awakening grouping preserves the STR effect and does not 
  const boss=registry.tagPasses.find(p=>p.tag==='Boss物理伤害增加').assignments.find(a=>a.skillId===dragon.id);
  assert.deepEqual(boss.partIds,attack.partIds);assert.deepEqual(boss.partIds,['attack']);
  assert.deepEqual(dragon.remainingEffects,[]);
- assert.deepEqual(dragon.remainingConditions,['BOSS Wave中生效']);
- assert.equal(dragon.judgment,'partial');
+ assert.deepEqual(dragon.remainingConditions,[]);
+ assert.equal(dragon.judgment,'ready');
  assert.strictEqual(labelingView(catalog,'attack').entries.find(e=>e.id===dragon.id),labelingView(catalog,'boss-physical-damage').entries.find(e=>e.id===dragon.id));
  const withoutGrouping=structuredClone(registry);withoutGrouping.tagPasses.find(p=>p.tag==='Boss物理伤害增加').assignments=withoutGrouping.tagPasses.find(p=>p.tag==='Boss物理伤害增加').assignments.filter(a=>a.skillId!==dragon.id);
  const previous=resolveSkillLabels(withoutGrouping).find(e=>e.id===dragon.id);

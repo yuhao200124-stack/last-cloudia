@@ -16,7 +16,7 @@ test('technique scans all 935 skills and separates whole clauses into 55 effect 
  const generic=numbers(labelingView(catalog,'technique-skill-damage'));for(const n of [411,624,1272,1582,1659,1695,760,1526,1204,1463,1743,1816,1931])assert(!generic.includes(n),source(n).name);
  assert.deepEqual(numbers(labelingView(catalog,'technique-boss-skill-damage')),[411,624,1041,1311]);assert.deepEqual(numbers(labelingView(catalog,'technique-non-boss-skill-damage')),[760,1526]);
  for(const n of [117,406,917,1021])assert(!numbers(view).includes(n));
- assert.deepEqual(entry(1021).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['物理伤害增加','必杀相关']);assert(entry(1335).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('必杀相关'));assert(entry(1335).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('特技相关'));
+ assert.deepEqual(entry(1021).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)),['物理伤害增加','必杀相关']);assert(entry(1335).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('必杀相关'));assert(entry(1335).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('特技相关'));
 });
 
 test('SCT recovery preserves seconds, stocks, capacity, trigger and recipient',()=>{
@@ -45,9 +45,9 @@ test('technique caps, costs, buffs and special effects retain their calculation 
 });
 
 test('technique completes only reviewed fragments and shares the resulting status with earlier pages',()=>{
- assert.equal(registry.tagPasses.length,62);assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,838);assert.equal(view.counts.ready,41);assert.equal(view.counts.partial,41);assert.equal(catalog.views.all.counts.ready,510);assert.equal(catalog.views.all.counts.partial,328);
+ assert.equal(registry.tagPasses.length,63);assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,843);assert.equal(view.counts.ready,45);assert.equal(view.counts.partial,37);assert.equal(catalog.views.all.counts.ready,524);assert.equal(catalog.views.all.counts.partial,319);
  for(const n of[112,164,213,243,583,604,626,721,753,827,831,843,866,1041,1311,1349,1427,1448,1658,1931,1998,968,1191,1607])assert.equal(entry(n).judgment,'ready',source(n).name);
- for(const n of[173,202,204,458,510,976,1257,1271,1272,1695,1764,1773,1799,1816,1830,1914,1987])assert.equal(entry(n).judgment,'partial',source(n).name);
+ for(const n of[173,202,204,458,510,976,1257,1271,1272,1695,1764,1773,1799,1816,1914,1987])assert.equal(entry(n).judgment,'partial',source(n).name);
  assert.deepEqual(entry(1272).remainingEffects,[]);assert.match(entry(1272).remainingConditions.join(''),/共同属性/);assert.deepEqual(entry(1695).remainingEffects,[]);assert.deepEqual(entry(1695).remainingConditions,['伤害加成在10%～40%间随机；分布待确认']);
  for(const[n,key]of[[624,'boss'],[666,'ultimate'],[753,'revive'],[843,'full-hp'],[1427,'low-hp'],[866,'single-weapon'],[1658,'dual-weapon']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
 });
@@ -59,7 +59,7 @@ function page(edits={}){
  return {get,click:(nav,tag)=>get(nav).listeners.click({target:{closest:()=>({dataset:{tag}})}})};
 }
 test('technique page renders grouped and deduplicated results, updates search, and invalidates edited descriptions',()=>{
- const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*82.*853/);assert.match(get('#judgmentSummary').textContent,/41.*41.*0/);assert.match(get('#labelResultCount').textContent,/82 \/ 82/);
+ const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*82.*853/);assert.match(get('#judgmentSummary').textContent,/45.*37.*0/);assert.match(get('#labelResultCount').textContent,/82 \/ 82/);
  assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,56);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,56);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,55);
  const search=get('#labelSearch');search.value='循环';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 82/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,1);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','technique-skill-damage');const html=get('#labelTable').innerHTML;assert(html.includes('神式-技-'));assert(!html.includes('巨人杀手'));assert(!html.includes('冲浪冲击'));assert(html.indexOf('神式-技-')<html.indexOf('星眼'));

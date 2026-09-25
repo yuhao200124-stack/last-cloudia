@@ -27,18 +27,18 @@ test('Boss damage is a complete untyped phrase: only Hero Soul qualifies in the 
  assert.equal(catalog.numericEffectInjection,false);
 });
 
-test('Hero Soul covers only outgoing Boss damage and remains partial for incoming mitigation',()=>{
+test('Hero Soul preserves its outgoing-only legacy tag and completes incoming mitigation through Boss',()=>{
  const hero=entry(1608);
  assert.equal(hero.name,'勇者之魂');
  assert.deepEqual(hero.tagDetails['Boss伤害增加'].scope,{boss:true});
  assert.equal(hero.tagDetails['Boss伤害增加'].summary,'对Boss造成的伤害+20%');
- assert.deepEqual(hero.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss伤害增加']);
- assert.deepEqual(hero.remainingEffects,['受到Boss的伤害-20%']);
- assert.deepEqual(hero.remainingConditions,['减伤要求攻击来源为Boss']);
- assert.equal(hero.judgment,'partial');
+ assert.deepEqual(hero.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss伤害增加']);
+ assert.deepEqual(hero.remainingEffects,[]);
+ assert.deepEqual(hero.remainingConditions,[]);
+ assert.equal(hero.judgment,'ready');
  const pass=registry.tagPasses.find(p=>p.tag==='Boss伤害增加');
  assert.deepEqual(pass.assignments,[{skillId:hero.id,partIds:['boss-damage','boss-target']}]);
- assert.equal(boss.counts.ready,0);assert.equal(boss.counts.partial,1);assert.equal(boss.counts.unknown,0);
+ assert.equal(boss.counts.ready,1);assert.equal(boss.counts.partial,0);assert.equal(boss.counts.unknown,0);
  assert.deepEqual(skillLabelRows(box.window.SKILL_DATA,boss).map(r=>r.id),[hero.id]);
 });
 
@@ -50,6 +50,6 @@ test('specific Boss bonuses enter neither broad damage view while source skills 
  assert.equal(catalog.views['magic-damage'].counts.ready,80);
  assert.equal(catalog.views['magic-damage'].counts.partial,50);
  assert.equal(catalog.views.damage.counts.relatedUnique,7);
- assert.equal(catalog.entries.length,838);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,838);
- assert.equal(catalog.views.all.counts.ready,510);assert.equal(catalog.views.all.counts.partial,328);
+ assert.equal(catalog.entries.length,843);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,843);
+ assert.equal(catalog.views.all.counts.ready,524);assert.equal(catalog.views.all.counts.partial,319);
 });
