@@ -22,20 +22,20 @@ test('sword element matching and enemy weakness preserve their separate conditio
  for(const b of detail(1548).bindings){assert.equal(b.scope.equipment.weaponElement,'fire');assert.equal(b.scope.element,undefined);}
  const weak=detail(1727).bindings.find(b=>b.scope.enemyWeakElement);assert.equal(weak.scope.enemyWeakElement,'thunder');assert.equal(weak.requiresAttackElement,false);assert.equal(weak.scope.element,undefined);assert.equal(weak.capPoints,3000);assert.equal(weak.addsToPartId,'effect-1');
  for(const a of registry.tagPasses.find(p=>p.tag==='剑').assignments){const e=catalog.entries.find(e=>e.id===a.skillId),d=e.tagDetails['剑'];assert.deepEqual(a.partIds,[...d.coverage.permissionPartIds,...d.coverage.conditionPartIds]);for(const b of d.bindings.filter(b=>b.swordRole==='condition-benefit'))assert(b.partIds.every(id=>!a.partIds.includes(id)));}
- assert.deepEqual(view.entries.filter(e=>e.judgment==='ready').map(e=>+e.url.split('/').pop()).sort((a,b)=>a-b),[79,215,222]);
+ assert.deepEqual(view.entries.filter(e=>e.judgment==='ready').map(e=>+e.url.split('/').pop()).sort((a,b)=>a-b),[79,215,222,502,537,777,829,901,1034,1538,1727]);
  for(const n of[502,777,829,901,938,1727])assert(!entry(n).remainingConditions.some(x=>x.includes('仅装备一把武器')));assert(entry(938).remainingConditions.some(x=>x.includes('属性')));
  for(const n of[293,775])assert(entry(n).remainingConditions.some(x=>x.includes('盔甲')));for(const n of[823,828]){assert(entry(n).remainingConditions.some(x=>x.includes('衣服')));assert(entry(n).remainingEffects.some(x=>x.includes('魔抗')));}
- assert.deepEqual(entry(1538).remainingConditions,[]);assert.deepEqual(entry(1548).remainingConditions,[]);assert.equal(entry(1548).judgment,'partial');assert(entry(1548).remainingEffects.some(x=>x.includes('HP')));assert(entry(1548).remainingEffects.some(x=>x.includes('上限')));
- assert.equal(catalog.views.physical.counts.ready,14);assert.equal(catalog.views.fire.counts.ready,21);assert.equal(catalog.views.all.counts.relatedUnique,685);
- // Claw now completes the paired condition, while the cap remains pending.
+ assert.deepEqual(entry(1538).remainingConditions,[]);assert.deepEqual(entry(1548).remainingConditions,[]);assert.equal(entry(1548).judgment,'partial');assert(entry(1548).remainingEffects.some(x=>x.includes('HP')));assert(!entry(1548).remainingEffects.some(x=>x.includes('上限')));
+ assert.equal(catalog.views.physical.counts.ready,90);assert.equal(catalog.views.fire.counts.ready,21);assert.equal(catalog.views.all.counts.relatedUnique,737);
+ // Claw completes the paired condition; the physical pass covers the cap.
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='爪');assert(resolveSkillLabels(earlier).find(e=>e.id===source(1538).id).remainingConditions.some(x=>x.includes('爪')));
- assert.equal(entry(1538).judgment,'partial');assert(entry(1538).assignedTags.includes('剑'));assert(entry(1538).assignedTags.includes('爪'));
+ assert.equal(entry(1538).judgment,'ready');assert(entry(1538).assignedTags.filter(tag=>tag!=='物理').includes('剑'));assert(entry(1538).assignedTags.filter(tag=>tag!=='物理').includes('爪'));
 });
 test('sword page separates 21 groups, counts 17 identities, sorts judgments and reviews edited descriptions',()=>{
  const elements=new Map(),get=k=>{if(!elements.has(k))elements.set(k,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(k,v){this.listeners[k]=v;},setAttribute(){},focus(){}});return elements.get(k);};
  const code=read('../dist/skill-labeling.mjs').replace(/^import .*;\n/gm,'').replace('export function renderLabelTable','function renderLabelTable');vm.runInNewContext(code,{catalog,skillLabelRows,labelingView,filterLabelRows,URLSearchParams,document:{querySelector:get},window:{SKILL_DATA:data,location:{search:'?tag=sword'},addEventListener(){}},localStorage:{getItem:()=>null,setItem(){assert.fail('Do not overwrite saved data');}}});
- assert.match(get('#labelCoverage').textContent,/935.*17.*918/);assert.match(get('#judgmentSummary').textContent,/3.*14.*0/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,21);assert.match(get('#labelResultCount').textContent,/17 \/ 17/);
+ assert.match(get('#labelCoverage').textContent,/935.*17.*918/);assert.match(get('#judgmentSummary').textContent,/11.*6.*0/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,21);assert.match(get('#labelResultCount').textContent,/17 \/ 17/);
  get('#labelSearch').value='两手剑增幅2';get('#labelSearch').listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 17/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,4);
- const ordered=skillLabelRows(data,view);assert(ordered.slice(0,3).every(e=>e.judgment==='ready'));assert(ordered.slice(3).every(e=>e.judgment==='partial'));
+ const ordered=skillLabelRows(data,view);assert(ordered.slice(0,11).every(e=>e.judgment==='ready'));assert(ordered.slice(11).every(e=>e.judgment==='partial'));
  const edits={[`skill:${source(1548).id}`]:{effect:'改成未确认效果'}};for(const k of ['sword','fire','physical']){const e=skillLabelRows(data,labelingView(catalog,k),edits).find(e=>e.id===source(1548).id);assert.equal(e.judgment,'unknown');assert.deepEqual(e.conditionBindings,{});}
 });

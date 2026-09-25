@@ -42,21 +42,21 @@ test('general damage retains its own activation conditions and keeps Buff timing
 
 test('scope correction preserves old tags and source skills while unfinished conditions remain partial',()=>{
  assert.equal(damage.counts.ready,0);assert.equal(damage.counts.partial,7);assert.equal(damage.counts.unknown,0);
- assert.equal(damage.entries.filter(e=>e.assignedTags.length>1).length,1);
+ assert.equal(damage.entries.filter(e=>e.assignedTags.filter(tag=>tag!=='物理').length>1).length,1);
  const shadow=catalog.entries.find(e=>e.id===source(1479).id),faith=catalog.entries.find(e=>e.id===source(1754).id);
- assert.deepEqual(shadow.assignedTags,['魔法伤害增加','暗属性']);
+ assert.deepEqual(shadow.assignedTags.filter(tag=>tag!=='物理'),['魔法伤害增加','暗属性']);
  assert.deepEqual(shadow.remainingEffects,[]);assert.equal(shadow.remainingConditions.length,0);
- assert.deepEqual(faith.assignedTags,['攻击力','物理伤害增加']);
- assert.equal(faith.remainingEffects.length,3);assert(faith.remainingEffects.some(t=>t.includes('轮光')));
+ assert.deepEqual(faith.assignedTags.filter(tag=>tag!=='物理'),['攻击力','物理伤害增加']);
+ assert.equal(faith.remainingEffects.length,2);assert(faith.remainingEffects.some(t=>t.includes('轮光')));
  for(const n of [1316,122]){assert(source(n));assert(!catalog.entries.some(e=>e.id===source(n).id));}
- assert.deepEqual(catalog.entries.find(e=>e.id===source(1608).id).assignedTags,['Boss伤害增加']);
- assert.deepEqual(catalog.entries.find(e=>e.id===source(73).id).assignedTags,['火属性']);assert(!entry(73));
+ assert.deepEqual(catalog.entries.find(e=>e.id===source(1608).id).assignedTags.filter(tag=>tag!=='物理'),['Boss伤害增加']);
+ assert.deepEqual(catalog.entries.find(e=>e.id===source(73).id).assignedTags.filter(tag=>tag!=='物理'),['火属性']);assert(!entry(73));
  const future=structuredClone(registry);
  future.tagPasses.push({tag:'连续Hit达到50',assignments:[{skillId:source(186).id,partIds:['condition-1']}]});
  const updated=resolveSkillLabels(future).find(e=>e.id===source(186).id);
  assert.equal(updated.judgment,'ready');assert.equal(entry(186).judgment,'partial');
- assert.equal(catalog.entries.length,685);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,685);
- assert.equal(catalog.views.all.counts.ready,294);assert.equal(catalog.views.all.counts.partial,391);
+ assert.equal(catalog.entries.length,737);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,737);
+ assert.equal(catalog.views.all.counts.ready,341);assert.equal(catalog.views.all.counts.partial,396);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,294).every(r=>r.judgment==='ready'));assert(sorted.slice(294).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,341).every(r=>r.judgment==='ready'));assert(sorted.slice(341).every(r=>r.judgment==='partial'));
 });

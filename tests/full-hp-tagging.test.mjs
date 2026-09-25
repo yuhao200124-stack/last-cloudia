@@ -14,20 +14,20 @@ test('full HP audits the whole library and separates six actual effects from ful
  for(const [n,group] of mapping){const groupView=labelingView(catalog,'full-hp-'+group);assert.deepEqual(groupView.entries.map(e=>e.id),[source(n).id]);assert.equal(groupView.parent,'full-hp');}
  for(const n of [218,249,456,914,1163,1909,353,402,666,867,1221,1768,113,1264,267,788,1164,1390,1779])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
  assert.equal(view.childKeys.length,6);assert.equal(view.childKeys.reduce((sum,k)=>sum+catalog.views[k].counts.relatedUnique,0),6);
- assert.equal(catalog.entries.length,685);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,685);
+ assert.equal(catalog.entries.length,737);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,737);
 });
 
 test('full HP is equality with current maximum HP, not a persistent Buff, and completes only covered effects',()=>{
  for(const [n] of mapping){const d=entry(n).tagDetails['满HP'];assert.deepEqual(d.condition,{mode:'full-hp-state',subject:'self',metric:'current-hp-percent-of-max',operator:'eq',thresholdPercent:100});assert(d.bindings.every(b=>b.isBuff===false && b.durationSeconds===undefined && b.persistsAfterHpRecovery===undefined));assert.match(d.calculationNote,/少于最大HP时不生效.*恢复到满HP后重新满足条件/);}
- assert.deepEqual(entry(119).assignedTags,['攻击力','满HP']);assert.deepEqual(entry(120).assignedTags,['魔力','满HP']);
+ assert.deepEqual(entry(119).assignedTags.filter(tag=>tag!=='物理'),['攻击力','满HP']);assert.deepEqual(entry(120).assignedTags.filter(tag=>tag!=='物理'),['魔力','满HP']);
  assert.deepEqual(view.entries.filter(e=>e.judgment==='ready').map(e=>e.name),['磊落','月光','锐气','云耀','邂逅']);
  assert.equal(view.counts.ready,5);assert.equal(view.counts.partial,1);
  const previous=structuredClone(registry);previous.tagPasses=previous.tagPasses.filter(p=>p.tag!=='满HP');const before=resolveSkillLabels(previous);
  for(const n of [119,120,237]){assert.equal(before.find(e=>e.id===source(n).id).judgment,'partial');assert.deepEqual(entry(n).remainingConditions,[]);}
- for(const n of [121]){assert.deepEqual(entry(n).assignedTags,['满HP']);assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,1);}
- assert.match(entry(121).remainingEffects[0],/具体提升量待确认/);assert.deepEqual(entry(237).remainingEffects,[]);assert.deepEqual(entry(237).assignedTags,['满HP','暴击']);assert.deepEqual(entry(1448).remainingEffects,[]);for(const n of [843,1448]){assert.deepEqual(entry(n).assignedTags,['满HP','特技相关']);assert.equal(entry(n).judgment,'ready');};
+ for(const n of [121]){assert.deepEqual(entry(n).assignedTags.filter(tag=>tag!=='物理'),['满HP']);assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,1);}
+ assert.match(entry(121).remainingEffects[0],/具体提升量待确认/);assert.deepEqual(entry(237).remainingEffects,[]);assert.deepEqual(entry(237).assignedTags.filter(tag=>tag!=='物理'),['满HP','暴击']);assert.deepEqual(entry(1448).remainingEffects,[]);for(const n of [843,1448]){assert.deepEqual(entry(n).assignedTags.filter(tag=>tag!=='物理'),['满HP','特技相关']);assert.equal(entry(n).judgment,'ready');};
  const pass=registry.tagPasses.find(p=>p.tag==='满HP');for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId);assert(a.partIds.every(id=>e.parts.find(p=>p.id===id).kind==='condition'));}
- assert.equal(catalog.views.all.counts.ready,294);assert.equal(catalog.views.all.counts.partial,391);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(catalog.views.all.counts.ready,341);assert.equal(catalog.views.all.counts.partial,396);assert.equal(catalog.numericEffectInjection,false);
 });
 
 function page(edits={}){

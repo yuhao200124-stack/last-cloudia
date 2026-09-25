@@ -1025,16 +1025,55 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "物理": {
+          "summary": "受到物理伤害-20%，保护Buff。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到物理伤害-20%，保护Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "cf4cc4324d7b87b7:effect-2",
+              "group": "reduction",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "actor": "self",
+                "event": "wave-start"
+              },
+              "valuePercent": 20,
+              "buffType": "received-physical-damage-down",
+              "activationMode": "triggered-buff"
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "物理"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "保护带来的物理减伤",
         "魔法屏障带来的魔法减伤"
       ],
       "remainingConditions": []
@@ -1631,12 +1670,54 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "武器类型条件已贴标签；要求至少装备1把该类武器，不擅自增加单武器或双武器限制。同一技能不按武器数量重复叠加；其余效果、条件和机制沿用各自标签进度。"
+        },
+        "物理": {
+          "summary": "装备锤时，物理攻击伤害+7%。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备锤时，物理攻击伤害+7%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "c9e5df1dd31f35cf:effect-1",
+              "group": "damage",
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 7,
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "hammer",
+                "minimumMatchingWeaponCount": 1
+              }
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "物理伤害增加",
-        "锤"
+        "锤",
+        "物理"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -1754,12 +1835,54 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "武器类型条件已贴标签；要求至少装备1把该类武器，不擅自增加单武器或双武器限制。同一技能不按武器数量重复叠加；其余效果、条件和机制沿用各自标签进度。"
+        },
+        "物理": {
+          "summary": "装备锤时，物理攻击伤害+25%。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备锤时，物理攻击伤害+25%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "b6ba057e893e1be9:effect-1",
+              "group": "damage",
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 25,
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "hammer",
+                "minimumMatchingWeaponCount": 1
+              }
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "物理伤害增加",
-        "锤"
+        "锤",
+        "物理"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -2590,15 +2713,46 @@ export const ATTACK_TAG_CATALOG = {
             "basic:c16c507cf0c2f9db:1"
           ],
           "relatedSkillIds": []
+        },
+        "物理": {
+          "summary": "受到的物理攻击伤害-15%。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到的物理攻击伤害-15%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "c16c507cf0c2f9db:effect-2",
+              "valuePercent": 15,
+              "group": "reduction"
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "物理"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "类型追加“龙”",
-        "受到的物理攻击伤害-15%"
+        "类型追加“龙”"
       ],
       "remainingConditions": []
     },
@@ -5155,6 +5309,47 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "物理": {
+          "summary": "开场判断攻击力≥魔力时，物理攻击伤害+20%。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "开场判断攻击力≥魔力时，物理攻击伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "2d772214490c52ba:effect-1",
+              "group": "damage",
+              "mutuallyExclusiveBranch": true,
+              "trigger": {
+                "event": "battle-start",
+                "delaySeconds": 0
+              },
+              "valuePercent": 20,
+              "condition": {
+                "metric": "STR-vs-INT",
+                "operator": "gte",
+                "snapshot": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
@@ -5162,7 +5357,8 @@ export const ATTACK_TAG_CATALOG = {
         "魔力",
         "物理伤害增加",
         "魔法伤害增加",
-        "战斗开始"
+        "战斗开始",
+        "物理"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -5284,16 +5480,55 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "物理": {
+          "summary": "受到物理伤害-20%，保护Buff。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到物理伤害-20%，保护Buff",
+              "target": "self",
+              "isBuff": true,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "7b7b9f7c806bbd9e:effect-2",
+              "group": "reduction",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "actor": "self",
+                "event": "wave-start"
+              },
+              "valuePercent": 20,
+              "buffType": "received-physical-damage-down",
+              "activationMode": "triggered-buff"
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "战斗开始"
+        "战斗开始",
+        "物理"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "保护带来的物理减伤",
         "魔法屏障带来的魔法减伤"
       ],
       "remainingConditions": []
@@ -5436,17 +5671,85 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "武器类型条件已贴标签；要求至少装备1把该类武器，不擅自增加单武器或双武器限制。同一技能不按武器数量重复叠加；其余效果、条件和机制沿用各自标签进度。"
+        },
+        "物理": {
+          "summary": "装备锤时，物理攻击伤害+25%；装备锤时，物理攻击伤害上限+2000。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备锤时，物理攻击伤害+25%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "efc2aa7f65146e56:effect-1",
+              "group": "damage",
+              "perMatchingWeaponStacking": false,
+              "valuePercent": 25,
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "hammer",
+                "minimumMatchingWeaponCount": 1
+              }
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "装备锤时，物理攻击伤害上限+2000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "hammer",
+                  "minimumMatchingWeaponCount": 1
+                }
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "efc2aa7f65146e56:effect-2",
+              "group": "cap",
+              "perMatchingWeaponStacking": false,
+              "capPoints": 2000,
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "hammer",
+                "minimumMatchingWeaponCount": 1
+              }
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "物理伤害增加",
-        "锤"
+        "锤",
+        "物理"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "物理攻击伤害上限+2,000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -5593,11 +5896,55 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "修改的是该次受伤计算参照的敌人攻击力；不减少自身攻击力，也不对敌人施加持续降攻减益。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "物理": {
+          "summary": "受到敌人物理攻击时，该次伤害按敌人攻击力降低5%计算。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "受到敌人物理攻击时，该次伤害按敌人攻击力降低5%计算。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-enemy-attack-reference-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "202ccad96f292698:attack",
+              "group": "incoming-enemy-attack-reference-down",
+              "phase": "damage-calculation",
+              "activationMode": "per-hit-stat-reference",
+              "referenceTarget": "attacking-enemy",
+              "referenceStat": "STR",
+              "referencePercent": 5,
+              "condition": {
+                "subject": "self",
+                "event": "attack-received",
+                "incomingType": "physical",
+                "requiresHpDamage": false,
+                "source": "enemy"
+              },
+              "appliesPersistentDebuff": false
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "受到攻击"
+        "受到攻击",
+        "物理"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -6949,16 +7296,59 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续90秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "物理": {
+          "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力",
+              "target": "highest-STR-other-ally",
+              "isBuff": true,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "d611639ee456760f:effect-1",
+              "group": "cap",
+              "durationSeconds": 90,
+              "trigger": {
+                "actor": "self",
+                "event": "wave-start"
+              },
+              "capPoints": 5000,
+              "buffType": "physical-cap-up",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "selection": {
+                "excludesSelf": true,
+                "count": 1,
+                "metric": "STR",
+                "order": "highest"
+              }
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "物理"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "给选中友方赋予物理攻击伤害上限+5,000的90秒Buff"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "选中除自身外攻击力最高的1名友方"
       ]
@@ -7170,7 +7560,7 @@ export const ATTACK_TAG_CATALOG = {
               "requiresAttackElement": false
             }
           ],
-          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。弱雷、剑类型及仅1把武器条件已覆盖，物理上限仍待对应标签。"
+          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。弱雷、剑类型及仅1把武器条件已覆盖，物理上限已由物理标签覆盖。"
         },
         "剑": {
           "summary": "仅装备1把剑时，自身攻击力+20%。；仅装备1把剑时，物理攻击伤害上限+3,000。；仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
@@ -7260,7 +7650,7 @@ export const ATTACK_TAG_CATALOG = {
               "addsToPartId": "effect-1"
             }
           ],
-          "calculationNote": "沿用攻击力和敌人弱雷标签；这里不是雷属性攻击限定。两个上限是基础+3,000和符合弱雷条件时再+3,000；剑类型和单武器数量已贴标签，物理上限继续待判断。"
+          "calculationNote": "沿用攻击力和敌人弱雷标签；这里不是雷属性攻击限定。两个上限是基础+3,000和符合弱雷条件时再+3,000；剑类型和单武器数量已贴标签，物理上限已由物理标签覆盖。"
         },
         "单手": {
           "summary": "仅装备1把剑时，自身攻击力+20%。；仅装备1把剑时，物理攻击伤害上限+3,000。；仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
@@ -7352,19 +7742,91 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
+        },
+        "物理": {
+          "summary": "仅装备1把剑时，物理攻击伤害上限+3,000；仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把剑时，物理攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                }
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "a92f6001f2419fda:effect-1",
+              "group": "cap",
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "sword",
+                "minimumMatchingWeaponCount": 1
+              }
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅装备1把剑，且目标敌人弱雷时，物理攻击伤害上限再+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponType": "sword",
+                  "minimumMatchingWeaponCount": 1,
+                  "weaponCount": 1
+                },
+                "enemyWeakElement": "thunder"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "a92f6001f2419fda:effect-2",
+              "group": "enemy-weak-thunder-cap",
+              "perMatchingWeaponStacking": false,
+              "capPoints": 3000,
+              "requiresAttackElement": false,
+              "addsToPartId": "effect-1",
+              "condition": {
+                "subject": "self-equipment",
+                "requiredWeaponType": "sword",
+                "minimumMatchingWeaponCount": 1
+              }
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "雷属性",
         "剑",
-        "单手"
+        "单手",
+        "物理"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "物理攻击伤害上限+3,000",
-        "对弱雷属性敌人的伤害上限+3,000"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -7515,16 +7977,83 @@ export const ATTACK_TAG_CATALOG = {
           "relatedSkillIds": [
             "8c11c64768072670"
           ]
+        },
+        "物理": {
+          "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%；从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "faith-physical-mitigation",
+              "faith-physical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "faith-physical-mitigation"
+              ],
+              "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "f063ab920fec3e4a",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true
+              },
+              "group": "reduction"
+            },
+            {
+              "partIds": [
+                "faith-physical-damage"
+              ],
+              "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+              "target": "self",
+              "isBuff": false,
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "8c11c64768072670",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true
+              },
+              "group": "damage"
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "物理伤害增加"
+        "物理伤害增加",
+        "物理"
       ],
       "judgment": "partial",
       "remainingEffects": [
         "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
-        "从神秘之力【守护】获得受到的物理攻击伤害-10%",
         "从神秘之力【轮光】获得光属性伤害+10%"
       ],
       "remainingConditions": [
@@ -8560,7 +9089,7 @@ export const ATTACK_TAG_CATALOG = {
               "effectIdentity": "899aa4edeab83540:single-boss-ultimate-cap"
             }
           ],
-          "calculationNote": "原文是物理攻击或必杀，任一满足即可；本轮只覆盖必杀分支，物理攻击分支仍保留待判断。这里不是必杀伤害直接+30%；Boss上限和单武器额外上限不挂在这条触发效果里。 本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
+          "calculationNote": "原文是物理攻击或必杀，任一满足即可；必杀与物理分支现已分别覆盖，共用同一条件片段。这里不是必杀伤害直接+30%；Boss上限和单武器额外上限不挂在这条触发效果里。 本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
           "coverage": {
             "effectPartIds": [
               "attack",
@@ -8634,20 +9163,102 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "只绑定单武器额外上限；STR参照修正和基础Boss上限不以单武器为条件。"
+        },
+        "物理": {
+          "summary": "发动物理攻击时，该次伤害以自身攻击力+30%计算；不是物理伤害直接+30%；对Boss物理攻击伤害上限+10,000；仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。",
+          "relation": "physical-effects-and-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1",
+              "effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "发动物理攻击时，该次伤害以自身攻击力+30%计算；不是物理伤害直接+30%。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "stat-reference-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "899aa4edeab83540:attack",
+              "referenceStat": "STR",
+              "referencePercent": 30,
+              "trigger": {
+                "actor": "self",
+                "event": "physical-attack-used"
+              },
+              "group": "stat-reference-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "对Boss物理攻击伤害上限+10,000",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyType": "boss"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "899aa4edeab83540:effect-1",
+              "capPoints": 10000,
+              "group": "boss-cap"
+            },
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "equipment": {
+                  "weaponCount": 1
+                },
+                "enemyType": "boss"
+              },
+              "physicalRole": "direct-effect",
+              "effectIdentity": "899aa4edeab83540:effect-2",
+              "group": "boss-cap",
+              "effectStacking": "once-per-skill",
+              "capPoints": 10000,
+              "addsToPartId": "effect-1",
+              "condition": {
+                "subject": "self-equipment",
+                "weaponCount": 1
+              }
+            }
+          ],
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "必杀相关",
-        "单手"
+        "单手",
+        "物理"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "对Boss物理攻击伤害上限+10,000",
-        "单武器时，对Boss物理攻击伤害上限额外+10,000"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "发动物理攻击时（与发动必杀是“或”关系，任一满足）",
         "对Boss时才有对应伤害上限加成"
       ]
     },
@@ -8804,8 +9415,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 30,
-    "partial": 57,
+    "ready": 32,
+    "partial": 55,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

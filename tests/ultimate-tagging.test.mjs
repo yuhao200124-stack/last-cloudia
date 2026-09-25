@@ -18,7 +18,7 @@ test('ultimate review audits all 935 skills, includes all 113 explicit ultimate 
  for(const n of [411,391,1180,1272,1695,1884,1021,1858,1955])assert(!generic.includes(n),source(n).name);
  assert.deepEqual(numbers(labelingView(catalog,'ultimate-boss-ultimate-damage')),[411,624,985,1041,1311]);
  assert.deepEqual(numbers(labelingView(catalog,'ultimate-incoming-ultimate-down')),[521,573,1145,1989]);
- assert.equal(catalog.entries.length,685);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,685);
+ assert.equal(catalog.entries.length,737);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,737);
 });
 
 test('ultimate conditions distinguish full gauges, enemy and self use, single-use buffs, and exact damage and resource effects',()=>{
@@ -32,24 +32,24 @@ test('ultimate conditions distinguish full gauges, enemy and self use, single-us
  const cycle=detail(1335).bindings[0];assert.equal(cycle.resource,'SCT');assert.equal(cycle.selection,'random-one-skill');assert.equal(cycle.restoreUses,1);assert.equal(cycle.restoreSeconds,undefined);
  assert.equal(detail(1617).condition.requiresActiveBuff,true);for(const b of detail(1617).bindings){assert.equal(b.activationMode,'next-use-buff');assert.equal(b.uses,1);assert.equal(b.grantIntervalSeconds,20);assert.equal(b.durationSeconds,undefined);}
  for(const n of [1695,1955])assert.equal(detail(n).condition.operator,'or');
- assert.match(entry(1695).remainingConditions.join(''),/随机.*待确认/);assert.match(entry(1955).remainingConditions.join(''),/物理攻击.*或/);
+ assert.match(entry(1695).remainingConditions.join(''),/随机.*待确认/);assert.match(entry(1955).parts.find(p=>p.id==='condition-1').text,/物理攻击.*或/);
  const ice=detail(1695).bindings[0];assert.equal(ice.element,'ice');assert.equal(ice.distributionStatus,'unconfirmed');assert.equal(ice.minPercent,10);assert.equal(ice.maxPercent,40);
- assert.equal(detail(1955).bindings.length,3);assert.equal(detail(1955).bindings[0].referenceStat,'STR');assert.equal(detail(1955).bindings[0].referencePercent,30);assert.match(entry(1955).remainingEffects.join(''),/Boss/);
+ assert.equal(detail(1955).bindings.length,3);assert.equal(detail(1955).bindings[0].referenceStat,'STR');assert.equal(detail(1955).bindings[0].referencePercent,30);assert.match(entry(1955).remainingConditions.join(''),/Boss/);
 });
 
 test('ultimate effects complete cumulatively while unrelated effects and unreviewed conditions stay pending',()=>{
- assert.equal(registry.tagPasses.length,43);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,44);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='必杀相关');for(const a of pass.assignments){const e=entry(Number(catalog.entries.find(e=>e.id===a.skillId).url.split('/').pop())),d=e.tagDetails['必杀相关'];assert.deepEqual(a.partIds,[...d.coverage.effectPartIds,...d.coverage.conditionPartIds]);assert(d.coverage.effectPartIds.length);}
- for(const n of [364,369,732,883,948,1037,1057,1122,1264,1284,1335,1447,666,456,1163,1909])assert.equal(entry(n).judgment,'ready',source(n).name);
- for(const n of [217,425,717,777,976,1145,1214,1272,1520,1617,1695,1858,1884,1955])assert.equal(entry(n).judgment,'partial',source(n).name);
- assert.equal(view.counts.ready,56);assert.equal(view.counts.partial,57);assert.equal(catalog.views.all.counts.ready,294);assert.equal(catalog.views.all.counts.partial,391);
+ for(const n of [364,369,732,883,948,1037,1057,1122,1264,1284,1335,1447,666,456,1163,1909,777])assert.equal(entry(n).judgment,'ready',source(n).name);
+ for(const n of [217,425,717,976,1145,1214,1272,1520,1617,1695,1858,1884,1955])assert.equal(entry(n).judgment,'partial',source(n).name);
+ assert.equal(view.counts.ready,67);assert.equal(view.counts.partial,46);assert.equal(catalog.views.all.counts.ready,341);assert.equal(catalog.views.all.counts.partial,396);
  assert.deepEqual(entry(666).remainingEffects,[]);assert.deepEqual(entry(666).remainingConditions,[]);
  assert(entry(425).remainingConditions.some(t=>t.includes('持续时间待确认')));
  assert.deepEqual(entry(717).remainingEffects,[]);assert.match(entry(717).remainingConditions.join(''),/自身处于异常状态/);
- assert.deepEqual(entry(777).remainingEffects,['物理攻击伤害上限+6,000']);
+ assert.deepEqual(entry(777).remainingEffects,[]);
  assert.deepEqual(entry(1272).remainingEffects,[]);assert(entry(1272).remainingEffects.every(t=>!t.includes('必杀')));
  assert(entry(1955).remainingEffects.every(t=>t.includes('物理')&&!t.includes('必杀')));
- assert(!entry(1695).assignedTags.includes('物理伤害增加'));assert(!entry(1695).assignedTags.includes('伤害增加'));
+ assert(!entry(1695).assignedTags.filter(tag=>tag!=='物理').includes('物理伤害增加'));assert(!entry(1695).assignedTags.filter(tag=>tag!=='物理').includes('伤害增加'));
  const prior=structuredClone(registry);prior.tagPasses=prior.tagPasses.filter(p=>p.tag!=='必杀相关');assert.equal(resolveSkillLabels(prior).find(e=>e.id===source(883).id).judgment,'partial');
  for(const[n,key]of[[883,'fire'],[1264,'low-hp'],[777,'single-weapon'],[1884,'critical'],[985,'boss']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
 });
@@ -77,7 +77,7 @@ function page(edits={}){
  return {get,click:(nav,tag)=>get(nav).listeners.click({target:{closest:()=>({dataset:{tag}})}})};
 }
 test('ultimate view shows separate effects, synchronized status ordering, deduplicated search and previous views',()=>{
- const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*113.*822/);assert.match(get('#judgmentSummary').textContent,/56.*57.*0/);assert.match(get('#labelResultCount').textContent,/113 \/ 113/);
+ const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*113.*822/);assert.match(get('#judgmentSummary').textContent,/67.*46.*0/);assert.match(get('#labelResultCount').textContent,/113 \/ 113/);
  assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,39);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,81);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,80);
  const def=get('#labelTable').innerHTML.split('<section ').find(s=>s.includes('id="section-ultimate-defense-up"'));assert(def.indexOf('护罩之力')<def.indexOf('能量循环'));
  const search=get('#labelSearch');search.value='万圣节派对';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 113/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,4);

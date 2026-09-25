@@ -14,7 +14,7 @@ test('revival audits the full library and distinguishes resurrection from surviv
  for(const [g,ns] of Object.entries(mapping))assert.deepEqual(numbers(labelingView(catalog,'revive-'+g)),ns,g);
  assert.equal(view.childKeys.length,9);assert.equal(view.childKeys.reduce((n,k)=>n+catalog.views[k].counts.relatedUnique,0),10);
  for(const n of [110,113,118,184,195,219,389,493,584,690,726,849,890,916,917,939,948,976,1009,1015,1022,1092,1212,1270,1271,1305,1316,1378])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
- assert.equal(catalog.entries.length,685);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,685);
+ assert.equal(catalog.entries.length,737);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,737);
 });
 
 test('revival preserves initial HP, Wave versus quest limits, recipient identity, Buff lifetime and distinct SCT units',()=>{
@@ -28,12 +28,12 @@ test('revival preserves initial HP, Wave versus quest limits, recipient identity
 });
 
 test('revival operations and conditions accumulate without completing other effects or use-limit mechanisms',()=>{
- assert.equal(registry.tagPasses.length,43);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,44);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='复活');for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId),d=e.tagDetails['复活'];assert.deepEqual(a.partIds,[...d.coverage.revivalPartIds,...d.coverage.conditionPartIds]);assert.equal(e.judgment,[753,1998].some(n=>e.id===source(n).id)?'ready':'partial');for(const b of d.bindings.filter(b=>b.revivalRole==='post-revival-benefit'))assert(b.partIds.every(id=>!a.partIds.includes(id)));}
- assert.deepEqual(entry(272).assignedTags,['攻击力','魔力','复活','暴击']);assert.deepEqual(entry(1060).assignedTags,['物理伤害增加','魔法伤害增加','复活']);assert.deepEqual(entry(753).assignedTags,['MP','复活','特技相关']);assert.deepEqual(entry(431).assignedTags,['战斗开始','复活']);
+ assert.deepEqual(entry(272).assignedTags.filter(tag=>tag!=='物理'),['攻击力','魔力','复活','暴击']);assert.deepEqual(entry(1060).assignedTags.filter(tag=>tag!=='物理'),['物理伤害增加','魔法伤害增加','复活']);assert.deepEqual(entry(753).assignedTags.filter(tag=>tag!=='物理'),['MP','复活','特技相关']);assert.deepEqual(entry(431).assignedTags.filter(tag=>tag!=='物理'),['战斗开始','复活']);
  assert.deepEqual(entry(272).remainingEffects,[]);assert(entry(1060).remainingConditions.some(c=>c.includes('40秒')));assert.deepEqual(entry(753).remainingEffects,[]);assert.deepEqual(entry(753).remainingConditions,[]);assert.deepEqual(entry(1998).remainingConditions,[]);
  for(const n of [183,431])assert(entry(n).remainingConditions.some(c=>c.includes('最多')));
- assert.equal(view.counts.ready,2);assert.equal(view.counts.partial,4);assert.equal(catalog.views.all.counts.ready,294);assert.equal(catalog.views.all.counts.partial,391);
+ assert.equal(view.counts.ready,2);assert.equal(view.counts.partial,4);assert.equal(catalog.views.all.counts.ready,341);assert.equal(catalog.views.all.counts.partial,396);
  assert.deepEqual(labelingView(catalog,'attack').entries.find(e=>e.id===source(272).id),entry(272));assert.deepEqual(labelingView(catalog,'mp').entries.find(e=>e.id===source(753).id),entry(753));
 });
 

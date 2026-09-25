@@ -34,27 +34,27 @@ test('received attack retains event timing, exact resource and heal bases, chanc
  const reduction=detail(389).bindings.find(b=>b.group==='damage-reduction-buff');assert.equal(reduction.durationSeconds,10);assert.equal(reduction.phase,'after-damage');assert.equal(reduction.buffTypeStatus,'unconfirmed');
  assert(entry(389).remainingConditions.includes('每Wave仅一次'));assert.match(entry(184).remainingConditions.join(''),/重置范围待确认/);
  for(const [n,p] of [[372,25],[401,10],[440,25],[553,40]]){const b=detail(n).bindings[0];assert.equal(b.healingBase,'damage-received');assert.equal(b.healingPercent,p);}
- assert.equal(detail(172).bindings[0].healingBase,'unconfirmed');assert.match(entry(172).remainingEffects[0],/基数待确认/);
+ assert.equal(detail(172).bindings[0].healingBase,'unconfirmed');assert.match(entry(172).remainingConditions.join('；'),/基数待确认/);
  assert.equal(detail(628).bindings[0].curveStatus,'unconfirmed');assert.equal(detail(628).bindings[0].hitsAtMaximum,50);assert.match(detail(628).calculationNote,/不使用自身打出的Hit数/);
  assert.equal(detail(37).bindings[0].chancePercent,50);assert.match(detail(37).bindings[0].summary,/仍承受普通伤害/);
  for(const n of [1133,1176]){const b=detail(n).bindings[0];assert.equal(b.phase,'damage-calculation');assert.equal(b.isBuff,false);assert.equal(b.durationSeconds,undefined);}
  assert.equal(detail(1133).bindings[0].referenceTarget,'self');assert.equal(detail(1176).bindings[0].referenceTarget,'attacking-enemy');
  for(const n of [617,859]){const b=detail(n).bindings[0];assert.equal(b.phase,'end-effect');assert.equal(b.activationMode,'effect-termination');assert(b.endsOn);assert.equal(b.durationSeconds,undefined);}
- assert.equal(detail(859).condition.element,'ice');assert.deepEqual(entry(859).assignedTags,['战斗开始','受到攻击','冰属性']);assert.equal(entry(859).tagDetails['战斗开始'].bindings[0].endsOn,'hit-by-enemy-ice-attack');
+ assert.equal(detail(859).condition.element,'ice');assert.deepEqual(entry(859).assignedTags.filter(tag=>tag!=='物理'),['战斗开始','受到攻击','冰属性']);assert.equal(entry(859).tagDetails['战斗开始'].bindings[0].endsOn,'hit-by-enemy-ice-attack');
 });
 
 test('one condition pass accumulates on stable identities without marking future effects or mechanisms complete',()=>{
- assert.equal(registry.tagPasses.length,43);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,44);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='受到攻击');
  for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId);assert(a.partIds.every(id=>e.parts.find(p=>p.id===id).kind==='condition'));assert.equal(e.judgment,'partial');}
  for(const [n,oldTag] of [[195,'攻击力'],[196,'魔力'],[1133,'防御力'],[1176,'攻击力']]){
-  assert.deepEqual(entry(n).assignedTags,[oldTag,'受到攻击']);assert.deepEqual(labelingView(catalog,{攻击力:'attack',魔力:'magic',防御力:'defense'}[oldTag]).entries.find(e=>e.id===source(n).id),entry(n));
+  assert.deepEqual(entry(n).assignedTags.filter(tag=>tag!=='物理'),[oldTag,'受到攻击']);assert.deepEqual(labelingView(catalog,{攻击力:'attack',魔力:'magic',防御力:'defense'}[oldTag]).entries.find(e=>e.id===source(n).id),entry(n));
  }
  assert(entry(1133).remainingConditions.includes('概率触发，具体概率待确认'));
  assert.match(entry(195).remainingConditions.join(''),/持续40秒/);assert.match(entry(1176).remainingConditions.join(''),/该次受伤计算/);
- assert.deepEqual(entry(740).assignedTags,['受到攻击']);assert.match(entry(740).remainingEffects.join(''),/魔抗\+20%/);
- assert.equal(view.counts.ready,0);assert.equal(view.counts.partial,21);assert.equal(catalog.entries.length,685);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,685);
- assert.equal(catalog.views.all.counts.ready,294);assert.equal(catalog.views.all.counts.partial,391);
+ assert.deepEqual(entry(740).assignedTags.filter(tag=>tag!=='物理'),['受到攻击']);assert.match(entry(740).remainingEffects.join(''),/魔抗\+20%/);
+ assert.equal(view.counts.ready,0);assert.equal(view.counts.partial,21);assert.equal(catalog.entries.length,737);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,737);
+ assert.equal(catalog.views.all.counts.ready,341);assert.equal(catalog.views.all.counts.partial,396);
 });
 
 function page(edits={}){
