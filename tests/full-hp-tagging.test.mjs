@@ -28,7 +28,7 @@ test('full HP is equality with current maximum HP, not a persistent Buff, and co
  for(const n of [121]){assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['满HP']);assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,0);}
  assert.match(entry(121).remainingConditions.join(''),/移动速度.*数值待确认/);assert.deepEqual(entry(237).remainingEffects,[]);assert.deepEqual(entry(237).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['满HP','暴击']);assert.deepEqual(entry(1448).remainingEffects,[]);for(const n of [843,1448]){assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['满HP','特技相关']);assert.equal(entry(n).judgment,'ready');};
  const pass=registry.tagPasses.find(p=>p.tag==='满HP');for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId);assert(a.partIds.every(id=>e.parts.find(p=>p.id===id).kind==='condition'));}
- assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);assert.equal(catalog.numericEffectInjection,false);
 });
 
 function page(edits={}){
@@ -41,7 +41,7 @@ function page(edits={}){
 test('full HP opens as grouped tables with synchronized status, search, preserved prior tabs and stale edit handling',()=>{
  const {get,click}=page();
  assert.match(get('#labelCoverage').textContent,/935.*6.*929/);assert.match(get('#judgmentSummary').textContent,/5.*1.*0/);assert.match(get('#labelResultCount').textContent,/6 \/ 6/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,83);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,7);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,82);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,7);
  assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,6);
  for(const [n,g] of mapping){const section=get('#labelTable').innerHTML.split('<section ').find(s=>s.includes(`id="section-full-hp-${g}"`));assert(section.includes(source(n).name));assert.equal((section.match(/data-skill-id=/g)||[]).length,1);}
  const search=get('#labelSearch');search.value='云耀';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 6/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,1);

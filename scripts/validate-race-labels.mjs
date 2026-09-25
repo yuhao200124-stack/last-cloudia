@@ -3,7 +3,7 @@ export function validateRaceCoverage(view,detail,assignment,entry){
  const c=detail.coverage,ids=[...(c?.effectPartIds||[]),...(c?.conditionPartIds||[])];
  if(view.passKind!=='race-effects-and-condition'||view.race!==detail.race||!Array.isArray(c?.effectPartIds)||!Array.isArray(c?.conditionPartIds)||ids.length!==new Set(ids).size||ids.length!==assignment.partIds.length||ids.some(id=>!assignment.partIds.includes(id)))throw Error('Race coverage mismatch');
  for(const[kind,list]of[['effect',c.effectPartIds],['condition',c.conditionPartIds]])if(list.some(id=>entry.parts.find(p=>p.id===id)?.kind!==kind))throw Error('Race effect/condition mismatch');
- for(const id of c.conditionPartIds){const p=entry.parts.find(p=>p.id===id);if(p.race&&p.race!==detail.race||/待确认|尚待/.test(p.text))throw Error('Other race branch or unknown condition covered');}
+ for(const id of c.conditionPartIds){const p=entry.parts.find(p=>p.id===id);const attached=detail.effectConditions?.some(c=>c.conditionPartIds.includes(id));if(p.race&&p.race!==detail.race&&!attached||/待确认|尚待/.test(p.text))throw Error('Other race branch or unknown condition covered');}
  if(c.effectPartIds.some(id=>!detail.bindings.some(b=>b.partIds.includes(id)))||new Set(detail.bindings.map(b=>b.effectIdentity)).size!==detail.bindings.length)throw Error('Missing or duplicated race effect');
 }
 export function validateRaceBinding(detail,assignment,b){

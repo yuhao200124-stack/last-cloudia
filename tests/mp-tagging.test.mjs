@@ -42,7 +42,7 @@ test('MP completes three existing magic compounds without losing their labels or
  for(const n of [5,6,7,8,262])assert.deepEqual(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP']);
  assert.equal(catalog.views.magic.counts.ready,32);assert.equal(catalog.views.magic.counts.partial,19);
  assert.equal(catalog.entries.length,935);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
- assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
+ assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
  const rows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(rows.slice(0,749).every(r=>r.judgment==='ready'));assert(rows.slice(749).every(r=>r.judgment==='partial'));
+ assert(rows.slice(0,757).every(r=>r.judgment==='ready'));assert(rows.slice(757).every(r=>r.judgment==='partial'));
 });

@@ -17,7 +17,7 @@ test('MP expands the existing page across the entire library without mixing INT,
  for(const [g,ns] of Object.entries(mapping))assert.deepEqual(numbers(labelingView(catalog,'mp-'+g)),ns,g);
  assert.equal(view.childKeys.length,26);assert.equal(view.childKeys.reduce((n,k)=>n+catalog.views[k].counts.relatedUnique,0),41);
  for(const n of [17,18,19,20,29,110,112,119,120,121,164,1858,196,199,217,218,249,460,666,914,1163,1335,1768,1909])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
- assert.equal(registry.tagPasses.length,91);assert.equal(registry.tagPasses.filter(p=>p.tag==='MP').length,1);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,90);assert.equal(registry.tagPasses.filter(p=>p.tag==='MP').length,1);assert.equal(catalog.numericEffectInjection,false);
  assert.equal(catalog.entries.length,935);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
 });
 
@@ -47,7 +47,7 @@ test('MP covers resource fragments and MP conditions, preserves old MP maxima, a
  assert.equal(entry(209).judgment,'ready');assert.deepEqual(entry(209).remainingEffects,[]);assert.equal(entry(208).judgment,'partial');assert(entry(208).remainingConditions.some(c=>c.includes('Buff')));
  assert.deepEqual(entry(1214).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP','必杀相关']);assert.deepEqual(entry(233).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['MP','受到攻击']);
  for(const n of [202,1766])assert.equal(entry(n).judgment,'partial');assert(!entry(380).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('魔法伤害增加'));
- assert.equal(view.counts.ready,16);assert.equal(view.counts.partial,16);assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
+ assert.equal(view.counts.ready,16);assert.equal(view.counts.partial,16);assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
  const ordered=skillLabelRows(data,view);assert(ordered.slice(0,16).every(e=>e.judgment==='ready'));assert(ordered.slice(16).every(e=>e.judgment==='partial'));
 });
 
@@ -59,7 +59,7 @@ function page(edits={}){
 }
 test('expanded MP page keeps one main tab, grouped effects, deduplicated searches, old pages and stale edit review',()=>{
  const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*32.*903/);assert.match(get('#judgmentSummary').textContent,/16.*16.*0/);assert.match(get('#labelResultCount').textContent,/32 \/ 32/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,83);assert.equal((get('#labelTabs').innerHTML.match(/data-tag="mp"/g)||[]).length,1);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,27);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,26);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,82);assert.equal((get('#labelTabs').innerHTML.match(/data-tag="mp"/g)||[]).length,1);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,27);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,26);
  const search=get('#labelSearch');search.value='万物尽灭';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 32/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,3);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','mp-max');assert.match(get('#labelResultCount').textContent,/8 \/ 8/);assert.match(get('#judgmentSummary').textContent,/8.*0.*0/);
  click('#labelSubTabs','mp-full-defense');assert(get('#labelTable').innerHTML.includes('黄昏'));assert(!get('#labelTable').innerHTML.includes('空无堡垒'));

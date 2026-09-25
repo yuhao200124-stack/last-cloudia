@@ -45,11 +45,11 @@ test('attack and magic opening clauses occupy different groups while compound sk
   assert.strictEqual(labelingView(catalog,'battle-start-attack-up').entries.find(e=>e.id===entry(n).id),labelingView(catalog,'battle-start-magic-up').entries.find(e=>e.id===entry(n).id));
   assert.equal(entry(n).judgment,'ready');assert.deepEqual(entry(n).remainingEffects,[]);
  }
- assert.equal(opening.counts.relatedUnique,117);assert.equal(opening.counts.ready,91);assert.equal(opening.counts.partial,26);
+ assert.equal(opening.counts.relatedUnique,117);assert.equal(opening.counts.ready,92);assert.equal(opening.counts.partial,25);
  const union=new Set(opening.childKeys.flatMap(k=>labelingView(catalog,k).entries.map(e=>e.id)));
  assert.deepEqual([...union].sort(),opening.entries.map(e=>e.id).sort());
  assert.equal(opening.childKeys.length,59);
- assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
+ assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
 });
 
 test('opening grouping follows its own clause, never passive stats, comparison operands, delayed damage or a maximum',()=>{
@@ -74,9 +74,9 @@ test('the condition pass completes known opening buffs but leaves equipment, par
  const before=structuredClone(registry);before.tagPasses=before.tagPasses.filter(p=>p.tag!=='战斗开始');
  const old=resolveSkillLabels(before);
  const promoted=opening.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b);
- assert.deepEqual(promoted,[102,103,104,105,106,107,108,109,112,164,201,203,207,210,214,234,239,243,256,305,324,350,353,358,390,402,406,460,471,473,508,512,560,592,636,639,649,683,692,696,699,700,710,746,830,831,851,859,867,886,887,899,906,969,992,994,1009,1028,1088,1103,1144,1190,1205,1221,1241,1250,1256,1312,1364,1381,1395,1425,1432,1459,1462,1482,1605,1616,1674,1693,1706,1753,1768,1801,1802,1812,1828,1879,1884,1954,1988]);
+ assert.deepEqual(promoted,[102,103,104,105,106,107,108,109,112,164,201,203,207,210,214,234,239,243,256,305,324,350,353,358,390,402,406,460,471,473,508,512,560,592,636,639,649,683,692,696,699,700,710,746,830,831,851,859,867,886,887,899,906,969,992,994,1009,1028,1088,1103,1144,1190,1205,1221,1241,1250,1256,1312,1364,1381,1395,1425,1432,1459,1462,1482,1605,1616,1674,1693,1706,1747,1753,1768,1801,1802,1812,1828,1879,1884,1954,1988]);
  for(const n of promoted){const current=entry(n);assert.equal(old.find(e=>e.id===current.id).judgment,[460,1812].includes(n)?'ready':'partial');assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).remainingConditions,[]);}
- for(const n of [524,1066,1231,1365,1747,1799,1813,1941,2016]){assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingConditions.length,entry(n).name);}
+ for(const n of [524,1066,1231,1365,1799,1813,1941,2016]){assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingConditions.length,entry(n).name);}
  assert(!entry(390).remainingEffects.some(t=>t.includes('暴击率')));assert(entry(390).assignedTags.includes('杂项'));
  assert.deepEqual(entry(402).remainingEffects,[]);
  assert.deepEqual(entry(1884).remainingEffects,[]);
@@ -105,9 +105,9 @@ function page(edits={}){
 
 test('opening overview separates effect tables, counts unique skills and preserves judgment sorting and search',()=>{
  const {get,click}=page();
- assert.match(get('#labelCoverage').textContent,/935.*117.*818/);assert.match(get('#judgmentSummary').textContent,/91.*26.*0/);
+ assert.match(get('#labelCoverage').textContent,/935.*117.*818/);assert.match(get('#judgmentSummary').textContent,/92.*25.*0/);
  assert.match(get('#labelResultCount').textContent,/117 \/ 117/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,83);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,82);
  assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,60);
  const sections=get('#labelTable').innerHTML.split('<section ').slice(1);
  assert.equal(sections.length,59);
@@ -159,7 +159,7 @@ test('permanent named statuses are the exact user-approved extension and retain 
  assert.equal(catalog.entries.filter(e=>e.tagDetails['战斗开始']?.activationMode==='permanent-status' && e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).length===1).length,7);
  assert.deepEqual(permanent.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[106,107,108,109,112,239,350,406,636,683,700,710,887,899,969,1088,1190,1221,1250,1312,1364,1381,1395,1768,1828]);
  assert.equal(registry.tagPasses.filter(p=>p.tag==='战斗开始').length,1);
- assert.equal(registry.tagPasses.length,91);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,90);assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('permanent effect groups preserve stats, HP caps, speed, recovery and self-only elemental walls separately',()=>{

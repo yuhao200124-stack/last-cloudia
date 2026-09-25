@@ -5,7 +5,7 @@ export function validateBossCoverage(view,d,a,e){
  const ids=[...c.effectPartIds,...c.conditionPartIds];
  if(new Set(ids).size!==ids.length||ids.length!==a.partIds.length||ids.some(id=>!a.partIds.includes(id)))throw Error('Boss coverage mismatch');
  for(const[kind,list]of[['effect',c.effectPartIds],['condition',c.conditionPartIds]])if(list.some(id=>e.parts.find(p=>p.id===id)?.kind!==kind))throw Error('Boss fragment kinds mixed');
- if(c.effectPartIds.some(id=>!d.bindings.some(b=>b.partIds.includes(id)))||c.conditionPartIds.some(id=>!/boss/i.test(e.parts.find(p=>p.id===id).text)))throw Error('Boss coverage must identify only Boss fragments');
+ if(c.effectPartIds.some(id=>!d.bindings.some(b=>b.partIds.includes(id)))||c.conditionPartIds.some(id=>!/boss/i.test(e.parts.find(p=>p.id===id).text)&&!d.effectConditions?.some(c=>c.conditionPartIds.includes(id))))throw Error('Boss coverage must identify only Boss fragments or attached benefit conditions');
  if(new Set(d.bindings.map(b=>b.effectIdentity)).size!==d.bindings.length)throw Error('Boss effects duplicated');
  for(const b of d.bindings)if(b.associatedGroups&&(e.url!=='https://altema.jp/lastcloudia/gino/1883'||b.operation!=='stat-up'||b.scope.stat!=='STR'||JSON.stringify(b.associatedGroups)!=='["physical-damage"]'||b.associationKind!=='user-requested-stat-reference'))throw Error('Only the requested Dragon Awakening association is allowed');
 }

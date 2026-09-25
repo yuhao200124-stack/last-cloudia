@@ -1,4 +1,4 @@
-export const remainingTags={'misc':'杂项','element-weakness':'属性弱点','combo':'连击','enemy-defeat':'击败敌人','battle-end':'战斗结束','aerial':'空中','back-attack':'背后攻击','party':'队伍联动','battle-time':'战斗时间','distance':'距离','hp-consumption':'HP持续消耗','lethal-survival':'致命伤害存活','damage-cap':'通用伤害上限','trigger-limits':'触发次数与重置'};
+export const remainingTags={'misc':'杂项','element-weakness':'属性弱点','combo':'连击','enemy-defeat':'击败敌人','battle-end':'战斗结束','aerial':'空中','back-attack':'背后攻击','battle-time':'战斗时间','distance':'距离','hp-consumption':'HP持续消耗','lethal-survival':'致命伤害存活','damage-cap':'通用伤害上限','trigger-limits':'触发次数与重置'};
 export const remainingKeys=Object.keys(remainingTags);
 export function validateRemainingCoverage(key,view,d,a,e){
  const c=d.coverage;

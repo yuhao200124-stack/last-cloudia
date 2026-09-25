@@ -45,7 +45,7 @@ test('received attack retains event timing, exact resource and heal bases, chanc
 });
 
 test('one condition pass accumulates on stable identities without marking future effects or mechanisms complete',()=>{
- assert.equal(registry.tagPasses.length,91);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,90);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='受到攻击');
  for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId);assert(a.partIds.every(id=>e.parts.find(p=>p.id===id).kind==='condition'));assert.equal(e.judgment,e.id===source(859).id?'ready':'partial');}
  for(const [n,oldTag] of [[195,'攻击力'],[196,'魔力'],[1133,'防御力'],[1176,'攻击力']]){
@@ -55,7 +55,7 @@ test('one condition pass accumulates on stable identities without marking future
  assert.match(entry(195).remainingConditions.join(''),/持续40秒/);assert.match(entry(1176).remainingConditions.join(''),/该次受伤计算/);
  assert.deepEqual(entry(740).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['受到攻击']);assert.deepEqual(entry(740).remainingEffects,[]);
  assert.equal(view.counts.ready,1);assert.equal(view.counts.partial,20);assert.equal(catalog.entries.length,935);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
- assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
+ assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
 });
 
 function page(edits={}){
@@ -67,7 +67,7 @@ function page(edits={}){
 test('received attack page groups effects, deduplicates totals, searches and preserves old tabs and stale edit review',()=>{
  const {get,click}=page();
  assert.match(get('#labelCoverage').textContent,/935.*21.*914/);assert.match(get('#judgmentSummary').textContent,/1.*20.*0/);assert.match(get('#labelResultCount').textContent,/21 \/ 21/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,83);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,19);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,82);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,19);
  assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,18);assert.equal((get('#labelTable').innerHTML.match(/data-skill-id=/g)||[]).length,25);
  const search=get('#labelSearch');search.value='从零开始';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 21/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,3);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','received-attack-magic-up');assert.match(get('#activeTagTitle').textContent,/受到攻击.*魔力/);assert(get('#labelTable').innerHTML.includes('复仇增魔'));assert(!get('#labelTable').innerHTML.includes('复仇鼓舞'));

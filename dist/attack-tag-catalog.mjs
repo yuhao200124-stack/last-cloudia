@@ -2817,31 +2817,209 @@ export const ATTACK_TAG_CATALOG = {
           "summary": "队伍至少2人装备同技能时，自身攻击力提升：2人5%、3人10%、4人15%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。",
+          "calculationNote": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:3e86dffa826956a7:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "operation": "tiered-stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "3e86dffa826956a7",
+                "includesSelf": true,
+                "minimumCount": 2,
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "3e86dffa826956a7:attack",
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "防御力": {
           "summary": "队伍至少2人装备魔兽同盟时，自身防御力提升：2人5%、3人10%、4人15%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。",
+          "calculationNote": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:3e86dffa826956a7:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
+                "effectIdentity": "3e86dffa826956a7:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "3e86dffa826956a7",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "魔力": {
           "summary": "队伍至少2人装备魔兽同盟时，自身魔力提升：2人5%、3人10%、4人15%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:3e86dffa826956a7:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-2"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-2"
+                ],
+                "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "operation": "tiered-stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "INT",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "3e86dffa826956a7",
+                "includesSelf": true,
+                "minimumCount": 2,
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "3e86dffa826956a7:effect-2",
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "防御": {
           "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
@@ -2851,7 +3029,9 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -2897,7 +3077,67 @@ export const ATTACK_TAG_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
+                "effectIdentity": "3e86dffa826956a7:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "3e86dffa826956a7",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "魔抗": {
           "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
@@ -2907,7 +3147,9 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "effect-3"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -2953,219 +3195,67 @@ export const ATTACK_TAG_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）；队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%；队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
+          "effectConditions": [
             {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "operation": "tiered-stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 15
-                }
-              ],
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "3e86dffa826956a7",
-              "includesSelf": true,
-              "minimumCount": 2,
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "284-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "3e86dffa826956a7:attack",
-              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "effect-1"
-              ],
-              "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
-              "effectIdentity": "3e86dffa826956a7:effect-1",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "DEF",
-              "operation": "party-scaled-stat-up",
-              "tiers": [
-                {
-                  "matchingUnits": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "matchingUnits": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "matchingUnits": 4,
-                  "valuePercent": 15
-                }
-              ],
-              "condition": {
-                "sameSkillId": "3e86dffa826956a7",
-                "minimumMatchingUnits": 2,
-                "includesSelf": true
-              },
-              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "284-effect-1",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "effect-2"
-              ],
-              "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "operation": "tiered-stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "INT",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 15
-                }
-              ],
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "3e86dffa826956a7",
-              "includesSelf": true,
-              "minimumCount": 2,
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "284-effect-2",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "3e86dffa826956a7:effect-2",
-              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-3"
               ],
-              "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
-              "effectIdentity": "3e86dffa826956a7:effect-3",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "MND",
-              "operation": "party-scaled-stat-up",
-              "tiers": [
-                {
-                  "matchingUnits": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "matchingUnits": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "matchingUnits": 4,
-                  "valuePercent": 15
-                }
+              "conditionPartIds": [
+                "condition-1"
               ],
-              "condition": {
-                "sameSkillId": "3e86dffa826956a7",
-                "minimumMatchingUnits": 2,
-                "includesSelf": true
-              },
-              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "284-effect-3",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "effect-3"
+                ],
+                "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
+                "effectIdentity": "3e86dffa826956a7:effect-3",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "MND",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "3e86dffa826956a7",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
@@ -3173,8 +3263,7 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "魔力",
         "防御",
-        "魔抗",
-        "队伍联动"
+        "魔抗"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -5204,31 +5293,209 @@ export const ATTACK_TAG_CATALOG = {
           "summary": "队伍至少2人装备同技能时，自身攻击力提升：2人7%、3人14%、4人21%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:edc04a2cb5cbc357:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "operation": "tiered-stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "edc04a2cb5cbc357",
+                "includesSelf": true,
+                "minimumCount": 2,
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "edc04a2cb5cbc357:attack",
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "防御力": {
           "summary": "队伍至少2人装备英雄之绊时，自身防御力提升：2人7%、3人14%、4人21%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:edc04a2cb5cbc357:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
+                "effectIdentity": "edc04a2cb5cbc357:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "edc04a2cb5cbc357",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "魔力": {
           "summary": "队伍至少2人装备英雄之绊时，自身魔力提升：2人7%、3人14%、4人21%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:edc04a2cb5cbc357:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-2"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-2"
+                ],
+                "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "operation": "tiered-stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "INT",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "edc04a2cb5cbc357",
+                "includesSelf": true,
+                "minimumCount": 2,
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "edc04a2cb5cbc357:effect-2",
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "防御": {
           "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
@@ -5238,7 +5505,9 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -5284,7 +5553,67 @@ export const ATTACK_TAG_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
+                "effectIdentity": "edc04a2cb5cbc357:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "edc04a2cb5cbc357",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "魔抗": {
           "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
@@ -5294,7 +5623,9 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "effect-3"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -5340,219 +5671,67 @@ export const ATTACK_TAG_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）；队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%；队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
+          "effectConditions": [
             {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "operation": "tiered-stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 7
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 14
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 21
-                }
-              ],
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "edc04a2cb5cbc357",
-              "includesSelf": true,
-              "minimumCount": 2,
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "514-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "edc04a2cb5cbc357:attack",
-              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "effect-1"
-              ],
-              "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
-              "effectIdentity": "edc04a2cb5cbc357:effect-1",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "DEF",
-              "operation": "party-scaled-stat-up",
-              "tiers": [
-                {
-                  "matchingUnits": 2,
-                  "valuePercent": 7
-                },
-                {
-                  "matchingUnits": 3,
-                  "valuePercent": 14
-                },
-                {
-                  "matchingUnits": 4,
-                  "valuePercent": 21
-                }
-              ],
-              "condition": {
-                "sameSkillId": "edc04a2cb5cbc357",
-                "minimumMatchingUnits": 2,
-                "includesSelf": true
-              },
-              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "514-effect-1",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "effect-2"
-              ],
-              "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "operation": "tiered-stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "INT",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 7
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 14
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 21
-                }
-              ],
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "edc04a2cb5cbc357",
-              "includesSelf": true,
-              "minimumCount": 2,
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "514-effect-2",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "edc04a2cb5cbc357:effect-2",
-              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-3"
               ],
-              "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
-              "effectIdentity": "edc04a2cb5cbc357:effect-3",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "MND",
-              "operation": "party-scaled-stat-up",
-              "tiers": [
-                {
-                  "matchingUnits": 2,
-                  "valuePercent": 7
-                },
-                {
-                  "matchingUnits": 3,
-                  "valuePercent": 14
-                },
-                {
-                  "matchingUnits": 4,
-                  "valuePercent": 21
-                }
+              "conditionPartIds": [
+                "condition-1"
               ],
-              "condition": {
-                "sameSkillId": "edc04a2cb5cbc357",
-                "minimumMatchingUnits": 2,
-                "includesSelf": true
-              },
-              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "514-effect-3",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "effect-3"
+                ],
+                "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
+                "effectIdentity": "edc04a2cb5cbc357:effect-3",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "MND",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "edc04a2cb5cbc357",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
@@ -5560,8 +5739,7 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "魔力",
         "防御",
-        "魔抗",
-        "队伍联动"
+        "魔抗"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -6758,7 +6936,8 @@ export const ATTACK_TAG_CATALOG = {
               "effect-1"
             ],
             "conditionPartIds": [
-              "condition-3"
+              "condition-3",
+              "condition-2"
             ]
           },
           "bindings": [
@@ -6795,87 +6974,70 @@ export const ATTACK_TAG_CATALOG = {
               "group": "outgoing-unspecified-cap-up-buff"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：选中除自身外攻击力最高的1名友方。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff",
-              "target": "selected-other-ally",
-              "isBuff": true,
-              "effectIdentity": "619c3ef058c4b219:effect-1",
-              "effectStacking": "once-per-skill",
-              "operation": "cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "requiresKillerHit": true
-              },
-              "buffType": "killer-damage-cap-up",
-              "capPoints": 5000,
-              "durationSeconds": 40,
-              "stacking": "highest-active-buff-of-same-type-only",
-              "trigger": {
-                "event": "battle-start"
-              },
-              "selection": {
-                "subject": "other-allies",
-                "metric": "STR",
-                "order": "highest",
-                "count": 1,
-                "excludeSelf": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2"
+              ],
+              "predicate": {
                 "clauses": [
                   "选中除自身外攻击力最高的1名友方"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "696-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予增益：触发特攻时的伤害上限+5,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时触发"
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff",
+                "target": "selected-other-ally",
+                "isBuff": true,
+                "effectIdentity": "619c3ef058c4b219:effect-1",
+                "effectStacking": "once-per-skill",
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "requiresKillerHit": true
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "选中除自身外攻击力最高的1名友方"
+                "buffType": "killer-damage-cap-up",
+                "capPoints": 5000,
+                "durationSeconds": 40,
+                "stacking": "highest-active-buff-of-same-type-only",
+                "trigger": {
+                  "event": "battle-start"
                 },
-                {
-                  "partId": "condition-3",
-                  "text": "触发特攻时生效"
+                "selection": {
+                  "subject": "other-allies",
+                  "metric": "STR",
+                  "order": "highest",
+                  "count": 1,
+                  "excludeSelf": true
                 },
-                {
-                  "partId": "condition-4",
-                  "text": "赋予友方的Buff持续40秒"
-                }
-              ],
-              "pendingPartIds": []
+                "partyPredicate": {
+                  "clauses": [
+                    "选中除自身外攻击力最高的1名友方"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予增益：触发特攻时的伤害上限+5,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "选中除自身外攻击力最高的1名友方"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始",
-        "种族／特攻共通",
-        "队伍联动"
+        "种族／特攻共通"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -10450,11 +10612,53 @@ export const ATTACK_TAG_CATALOG = {
           "summary": "一名友军失去行动能力时，自身攻击力+20%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：有一名友军处于战斗不能状态时生效。",
           "existingRuleIds": [
             "basic:7498b3dbd8ba7e5d:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "有一名友军处于战斗不能状态时生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "至少一名其他友方处于战斗不能状态时，自身攻击力+20%。",
+                "operation": "stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "valuePercent": 20,
+                "partyPredicate": {
+                  "clauses": [
+                    "有一名友军处于战斗不能状态时生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "7498b3dbd8ba7e5d:attack",
+                "sourceClause": "若有一名友军失去行动能力，攻击力+20%"
+              },
+              "numericEffectInjection": false,
+              "summary": "有一名友军处于战斗不能状态时生效"
+            }
+          ]
         },
         "友军死亡": {
           "summary": "存在处于战斗不能状态的其他友军时生效",
@@ -10484,58 +10688,11 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "按当前是否存在倒下友军判断，不是死亡时赋予40秒Buff；不要求恰好只有1名，也不会按倒下人数重复叠加20%。攻击力和此条件均已贴标签，因此已完整判断。"
-        },
-        "队伍联动": {
-          "summary": "至少一名其他友方处于战斗不能状态时，自身攻击力+20%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "至少一名其他友方处于战斗不能状态时，自身攻击力+20%。",
-              "operation": "stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "valuePercent": 20,
-              "partyPredicate": {
-                "clauses": [
-                  "有一名友军处于战斗不能状态时生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1212-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "7498b3dbd8ba7e5d:attack",
-              "sourceClause": "若有一名友军失去行动能力，攻击力+20%",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "有一名友军处于战斗不能状态时生效"
-                }
-              ],
-              "pendingPartIds": []
-            }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "友军死亡",
-        "队伍联动"
+        "友军死亡"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -10718,21 +10875,120 @@ export const ATTACK_TAG_CATALOG = {
           "summary": "自身为唯一参战单位时，攻击力+10%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：自身为唯一参战单位时生效。",
           "existingRuleIds": [
             "basic:1f0a096307e7bc24:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身为唯一参战单位时生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "effectIdentity": "1f0a096307e7bc24:attack",
+                "summary": "自身为唯一参战单位时，攻击力+10%",
+                "operation": "stat-up",
+                "stat": "STR",
+                "valuePercent": 10,
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "sourceClause": "如果该单位是唯一参战单位，则攻击力和防御力+10%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "自身为唯一参战单位时生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "自身为唯一参战单位时生效"
+            }
+          ]
         },
         "防御力": {
           "summary": "自身为唯一参战单位时，防御力+10%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：自身为唯一参战单位时生效。",
           "existingRuleIds": [
             "basic:1f0a096307e7bc24:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身为唯一参战单位时生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "自身为唯一参战单位时，防御力+10%",
+                "effectIdentity": "1f0a096307e7bc24:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "stat-up",
+                "valuePercent": 10,
+                "condition": {
+                  "metric": "participating-unit-count",
+                  "operator": "eq",
+                  "count": 1,
+                  "incapacitatedAlliesQualify": false
+                },
+                "familyRole": "direct-effect",
+                "sourceClause": "如果该单位是唯一参战单位，则攻击力和防御力+10%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "自身为唯一参战单位时生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "自身为唯一参战单位时生效"
+            }
+          ]
         },
         "防御": {
           "summary": "自身为唯一参战单位时，防御力+10%",
@@ -10742,7 +10998,9 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -10776,7 +11034,60 @@ export const ATTACK_TAG_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：自身为唯一参战单位时生效。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身为唯一参战单位时生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "自身为唯一参战单位时，防御力+10%",
+                "effectIdentity": "1f0a096307e7bc24:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "stat-up",
+                "valuePercent": 10,
+                "condition": {
+                  "metric": "participating-unit-count",
+                  "operator": "eq",
+                  "count": 1,
+                  "incapacitatedAlliesQualify": false
+                },
+                "familyRole": "direct-effect",
+                "sourceClause": "如果该单位是唯一参战单位，则攻击力和防御力+10%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "自身为唯一参战单位时生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "自身为唯一参战单位时生效"
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -10784,11 +11095,9 @@ export const ATTACK_TAG_CATALOG = {
         "防御力",
         "防御"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "自身为唯一参战单位时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "1da4935f9a387557",
@@ -10836,21 +11145,126 @@ export const ATTACK_TAG_CATALOG = {
           "summary": "除自身外恰好1人装备师徒之绊时，每个Wave开始自身攻击力+35%，持续40秒",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：除自身外恰好1名友方装备“师徒之绊”。",
           "existingRuleIds": [
             "basic:1da4935f9a387557:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "除自身外恰好1名友方装备“师徒之绊”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "1da4935f9a387557"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒。",
+                "operation": "stat-up",
+                "target": "self",
+                "isBuff": true,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "valuePercent": 35,
+                "durationSeconds": 40,
+                "trigger": {
+                  "event": "wave-start"
+                },
+                "buffType": "str-up",
+                "stacking": "highest-active-buff-of-same-type-only",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外恰好1名友方装备“师徒之绊”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "1da4935f9a387557"
+                },
+                "effectIdentity": "1da4935f9a387557:attack",
+                "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。"
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外恰好1名友方装备“师徒之绊”"
+            }
+          ]
         },
         "防御力": {
           "summary": "除自身外恰好1人装备师徒之绊时，每个Wave开始自身防御力+35%，持续40秒",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：除自身外恰好1名友方装备“师徒之绊”。",
           "existingRuleIds": [
             "basic:1da4935f9a387557:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "除自身外恰好1名友方装备“师徒之绊”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "1da4935f9a387557"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
+                "durationSeconds": 40,
+                "stacking": "highest-active-buff-of-same-type-only",
+                "effectIdentity": "1da4935f9a387557:effect-1",
+                "target": "self",
+                "isBuff": true,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "stat-up",
+                "valuePercent": 35,
+                "buffType": "stat-def-up",
+                "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外恰好1名友方装备“师徒之绊”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "1da4935f9a387557"
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外恰好1名友方装备“师徒之绊”"
+            }
+          ]
         },
         "战斗开始": {
           "summary": "每个Wave开始时触发",
@@ -10890,7 +11304,9 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -10929,101 +11345,16 @@ export const ATTACK_TAG_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒；除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：除自身外恰好1名友方装备“师徒之绊”。",
+          "effectConditions": [
             {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒。",
-              "operation": "stat-up",
-              "target": "self",
-              "isBuff": true,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "valuePercent": 35,
-              "durationSeconds": 40,
-              "trigger": {
-                "event": "wave-start"
-              },
-              "buffType": "str-up",
-              "stacking": "highest-active-buff-of-same-type-only",
-              "partyPredicate": {
-                "clauses": [
-                  "除自身外恰好1名友方装备“师徒之绊”"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "exact-other-same-skill-pair",
-                "otherEquippedCount": 1,
-                "requiredSkillId": "1da4935f9a387557"
-              },
-              "group": "1256-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "1da4935f9a387557:attack",
-              "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "除自身外恰好1名友方装备“师徒之绊”"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "每个Wave开始时触发"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "大勇敢／大堡垒Buff持续40秒，各同类型Buff同时只计一项"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
-              "durationSeconds": 40,
-              "stacking": "highest-active-buff-of-same-type-only",
-              "effectIdentity": "1da4935f9a387557:effect-1",
-              "target": "self",
-              "isBuff": true,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "DEF",
-              "operation": "stat-up",
-              "valuePercent": 35,
-              "buffType": "stat-def-up",
-              "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "除自身外恰好1名友方装备“师徒之绊”"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "每个Wave开始时触发"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "大勇敢／大堡垒Buff持续40秒，各同类型Buff同时只计一项"
-                }
+              "conditionPartIds": [
+                "condition-1"
               ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "除自身外恰好1名友方装备“师徒之绊”"
                 ],
@@ -11033,20 +11364,46 @@ export const ATTACK_TAG_CATALOG = {
                 "otherEquippedCount": 1,
                 "requiredSkillId": "1da4935f9a387557"
               },
-              "group": "1256-effect-1",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
+                "durationSeconds": 40,
+                "stacking": "highest-active-buff-of-same-type-only",
+                "effectIdentity": "1da4935f9a387557:effect-1",
+                "target": "self",
+                "isBuff": true,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "stat-up",
+                "valuePercent": 35,
+                "buffType": "stat-def-up",
+                "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外恰好1名友方装备“师徒之绊”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "1da4935f9a387557"
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外恰好1名友方装备“师徒之绊”"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "战斗开始",
-        "防御",
-        "队伍联动"
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -13229,7 +13586,9 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -13263,81 +13622,68 @@ export const ATTACK_TAG_CATALOG = {
               }
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
-        },
-        "队伍联动": {
-          "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：选中除自身外攻击力最高的1名友方。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力",
-              "target": "highest-STR-other-ally",
-              "isBuff": true,
-              "operation": "cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
-              },
-              "effectIdentity": "d611639ee456760f:effect-1",
-              "durationSeconds": 90,
-              "trigger": {
-                "actor": "self",
-                "event": "wave-start"
-              },
-              "capPoints": 5000,
-              "buffType": "physical-cap-up",
-              "stacking": "highest-active-buff-of-same-type-only",
-              "selection": {
-                "excludesSelf": true,
-                "count": 1,
-                "metric": "STR",
-                "order": "highest"
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2"
+              ],
+              "predicate": {
                 "clauses": [
                   "选中除自身外攻击力最高的1名友方"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1706-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予90秒增益：物理攻击伤害上限+5,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时触发"
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力",
+                "target": "highest-STR-other-ally",
+                "isBuff": true,
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "选中除自身外攻击力最高的1名友方"
+                "effectIdentity": "d611639ee456760f:effect-1",
+                "durationSeconds": 90,
+                "trigger": {
+                  "actor": "self",
+                  "event": "wave-start"
                 },
-                {
-                  "partId": "condition-3",
-                  "text": "赋予友方的Buff持续90秒"
-                }
-              ],
-              "pendingPartIds": []
+                "capPoints": 5000,
+                "buffType": "physical-cap-up",
+                "stacking": "highest-active-buff-of-same-type-only",
+                "selection": {
+                  "excludesSelf": true,
+                  "count": 1,
+                  "metric": "STR",
+                  "order": "highest"
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "选中除自身外攻击力最高的1名友方"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予90秒增益：物理攻击伤害上限+5,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "选中除自身外攻击力最高的1名友方"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始",
-        "物理",
-        "队伍联动"
+        "物理"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -13855,11 +14201,64 @@ export const ATTACK_TAG_CATALOG = {
           "summary": "开场时，除自身外恰好只有1人装备“与你同在”，自身攻击力+20%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：除自身外恰好1名盟友装备“与你同在”。",
           "existingRuleIds": [
             "basic:a5f24684f4b2911a:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2"
+              ],
+              "predicate": {
+                "clauses": [
+                  "除自身外恰好1名盟友装备“与你同在”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "a5f24684f4b2911a",
+                "snapshot": "wave-start"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "effectIdentity": "a5f24684f4b2911a:attack",
+                "summary": "开场时，除自身外恰好只有1人装备“与你同在”，自身攻击力+20%",
+                "operation": "stat-up",
+                "stat": "STR",
+                "valuePercent": 20,
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "sourceClause": "战斗开始时，如果除了你之外只有一名盟友装备了 “与你同在”，则攻击力+20%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外恰好1名盟友装备“与你同在”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "a5f24684f4b2911a",
+                  "snapshot": "wave-start"
+                },
+                "trigger": {
+                  "event": "wave-start"
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外恰好1名盟友装备“与你同在”"
+            }
+          ]
         },
         "战斗开始": {
           "summary": "战斗开始时触发",
@@ -13878,18 +14277,16 @@ export const ATTACK_TAG_CATALOG = {
               "summary": "开场判断除自身外恰好1人装备与你同在：攻击力+20%"
             }
           ],
-          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+          "calculationNote": "开场与人数条件已完成分类；开场时除自身外恰好1名盟友装备同技能，攻击力加成才生效。"
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "除自身外恰好1名盟友装备“与你同在”"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5dbd4f977800ad88",
@@ -13952,20 +14349,139 @@ export const ATTACK_TAG_CATALOG = {
           "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
           "relation": "inherited-effect",
           "target": "self",
-          "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+          "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
           "existingRuleIds": [],
           "relatedSkillIds": [
             "7bc369d4036dd098"
+          ],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "5dbd4f977800ad88:attack",
+                "effectStacking": "once-per-skill",
+                "operation": "stat-up",
+                "scope": {
+                  "direction": "attribute"
+                },
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
+                },
+                "valuePercent": 10,
+                "stat": "STR",
+                "grant": {
+                  "providerSkillId": "7bc369d4036dd098",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "7bc369d4036dd098:attack"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
           ]
         },
         "物理伤害增加": {
           "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
           "relation": "inherited-effect",
           "target": "self",
-          "calculationNote": "与对应的信仰／神秘之力配套生效；同名效果只计一项，不能把提供者与接受者重复相加。",
+          "calculationNote": "与对应的信仰／神秘之力配套生效；同名效果只计一项，不能把提供者与接受者重复相加。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
           "existingRuleIds": [],
           "relatedSkillIds": [
             "8c11c64768072670"
+          ],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-damage"
+                ],
+                "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "8c11c64768072670",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
           ]
         },
         "物理": {
@@ -13977,7 +14493,10 @@ export const ATTACK_TAG_CATALOG = {
               "faith-physical-mitigation",
               "faith-physical-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -14033,7 +14552,113 @@ export const ATTACK_TAG_CATALOG = {
               "group": "damage"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-physical-mitigation"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-mitigation"
+                ],
+                "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "f063ab920fec3e4a",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "faith-physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-damage"
+                ],
+                "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "8c11c64768072670",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "魔法": {
           "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%。",
@@ -14043,7 +14668,10 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -14073,7 +14701,61 @@ export const ATTACK_TAG_CATALOG = {
               "group": "reduction"
             }
           ],
-          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "5dbd4f977800ad88:effect-1",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "7611b3c1ae612f0e",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "神": {
           "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%；从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加；从神秘之力【守护】获得受到的物理攻击伤害-10%；从神秘之力【轮光】获得光属性伤害+10%；从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加。",
@@ -14089,7 +14771,9 @@ export const ATTACK_TAG_CATALOG = {
               "attack"
             ],
             "conditionPartIds": [
-              "condition-1"
+              "condition-1",
+              "condition-2",
+              "condition-3"
             ]
           },
           "bindings": [
@@ -14280,7 +14964,292 @@ export const ATTACK_TAG_CATALOG = {
               "group": "faith-receive-STR-stat-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "5dbd4f977800ad88:attack",
+                "effectStacking": "once-per-skill",
+                "operation": "stat-up",
+                "scope": {
+                  "direction": "attribute"
+                },
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
+                },
+                "valuePercent": 10,
+                "stat": "STR",
+                "grant": {
+                  "providerSkillId": "7bc369d4036dd098",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "7bc369d4036dd098:attack"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "5dbd4f977800ad88:effect-1",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "7611b3c1ae612f0e",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "faith-physical-mitigation"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-mitigation"
+                ],
+                "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "f063ab920fec3e4a",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "faith-light-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-light-damage"
+                ],
+                "summary": "从神秘之力【轮光】获得光属性伤害+10%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "5dbd4f977800ad88:faith-light-damage",
+                "effectStacking": "once-per-skill",
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
+                },
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
+                },
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "ca8779066b942675",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "faith-physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-damage"
+                ],
+                "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "8c11c64768072670",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "防御": {
           "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
@@ -14290,7 +15259,10 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "faith-physical-mitigation"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -14336,7 +15308,61 @@ export const ATTACK_TAG_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-physical-mitigation"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-mitigation"
+                ],
+                "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "f063ab920fec3e4a",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "魔抗": {
           "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
@@ -14346,7 +15372,10 @@ export const ATTACK_TAG_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -14392,105 +15421,17 @@ export const ATTACK_TAG_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加；从神秘之力【结界】获得受到的魔法攻击伤害-10%；从神秘之力【守护】获得受到的物理攻击伤害-10%；从神秘之力【轮光】获得光属性伤害+10%；从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2",
-              "condition-3"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
             {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
-              "target": "self",
-              "isBuff": false,
-              "effectIdentity": "5dbd4f977800ad88:attack",
-              "effectStacking": "once-per-skill",
-              "operation": "stat-up",
-              "scope": {
-                "direction": "attribute"
-              },
-              "raceRelation": {
-                "subject": "provider",
-                "operator": "any-of",
-                "races": [
-                  "god"
-                ]
-              },
-              "valuePercent": 10,
-              "stat": "STR",
-              "grant": {
-                "providerSkillId": "7bc369d4036dd098",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "recipientMustEquipFaith": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true,
-                "providerEffectIdentity": "7bc369d4036dd098:attack"
-              },
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
-                "clauses": [
-                  "该友方须装备相应“神秘之力”技能",
-                  "同名“神秘之力”效果不叠加"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1754-attack",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "attack-magic"
-              },
-              "effectIdentity": "5dbd4f977800ad88:effect-1",
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "7611b3c1ae612f0e",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
                 "clauses": [
                   "该友方须装备相应“神秘之力”技能",
                   "同名“神秘之力”效果不叠加"
@@ -14498,189 +15439,43 @@ export const ATTACK_TAG_CATALOG = {
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1754-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "faith-physical-mitigation"
-              ],
-              "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "physical"
-              },
-              "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "f063ab920fec3e4a",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "该友方须装备相应“神秘之力”技能",
-                  "同名“神秘之力”效果不叠加"
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
                 ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1754-faith-physical-mitigation",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
+                "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "attack-magic"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
+                "effectIdentity": "5dbd4f977800ad88:effect-1",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "7611b3c1ae612f0e",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
                 },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "faith-light-damage"
-              ],
-              "summary": "从神秘之力【轮光】获得光属性伤害+10%",
-              "target": "self",
-              "isBuff": false,
-              "effectIdentity": "5dbd4f977800ad88:faith-light-damage",
-              "effectStacking": "once-per-skill",
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "element": "light"
-              },
-              "raceRelation": {
-                "subject": "provider",
-                "operator": "any-of",
-                "races": [
-                  "god"
-                ]
-              },
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "ca8779066b942675",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "recipientMustEquipFaith": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true,
-                "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
-              },
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
-                "clauses": [
-                  "该友方须装备相应“神秘之力”技能",
-                  "同名“神秘之力”效果不叠加"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1754-faith-light-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "faith-physical-damage"
-              ],
-              "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
-              "target": "self",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
               },
-              "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "8c11c64768072670",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "该友方须装备相应“神秘之力”技能",
-                  "同名“神秘之力”效果不叠加"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1754-faith-physical-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
@@ -14690,8 +15485,7 @@ export const ATTACK_TAG_CATALOG = {
         "魔法",
         "神",
         "防御",
-        "魔抗",
-        "队伍联动"
+        "魔抗"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -15189,11 +15983,59 @@ export const ATTACK_TAG_CATALOG = {
           "summary": "开场时全队只有自身装备精灵骑士，且恰好1名其他友方装备禁书库的大精灵，自身攻击力+25%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：全队只有自身装备“精灵骑士”；除自身外恰好1名友方装备“禁书库的大精灵”。",
           "existingRuleIds": [
             "basic:34045351ea740196:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "全队只有自身装备“精灵骑士”",
+                  "除自身外恰好1名友方装备“禁书库的大精灵”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
+                "operation": "stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "valuePercent": 25,
+                "trigger": {
+                  "event": "wave-start"
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "全队只有自身装备“精灵骑士”",
+                    "除自身外恰好1名友方装备“禁书库的大精灵”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "34045351ea740196:attack",
+                "sourceClause": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "全队只有自身装备“精灵骑士”；除自身外恰好1名友方装备“禁书库的大精灵”"
+            }
+          ]
         },
         "战斗开始": {
           "summary": "战斗开始时触发",
@@ -15213,71 +16055,11 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
-        },
-        "队伍联动": {
-          "summary": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2",
-              "condition-3"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
-              "operation": "stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "valuePercent": 25,
-              "trigger": {
-                "event": "wave-start"
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "全队只有自身装备“精灵骑士”",
-                  "除自身外恰好1名友方装备“禁书库的大精灵”"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1801-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "34045351ea740196:attack",
-              "sourceClause": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时判断"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "全队只有自身装备“精灵骑士”"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "除自身外恰好1名友方装备“禁书库的大精灵”"
-                }
-              ],
-              "pendingPartIds": []
-            }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始",
-        "队伍联动"
+        "战斗开始"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -16782,11 +17564,76 @@ export const ATTACK_TAG_CATALOG = {
           "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
           "relation": "attribute-change",
           "target": "ally",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：效果给予装备“信仰”的我方角色；同名“神秘之力”效果不叠加。",
           "existingRuleIds": [
             "basic:7bc369d4036dd098:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "效果给予装备“信仰”的我方角色",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "effectIdentity": "7bc369d4036dd098:attack",
+                "effectStacking": "once-per-skill",
+                "operation": "stat-up",
+                "scope": {
+                  "direction": "attribute"
+                },
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
+                },
+                "valuePercent": 10,
+                "stat": "STR",
+                "grant": {
+                  "providerSkillId": "7bc369d4036dd098",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "7bc369d4036dd098:attack"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "效果给予装备“信仰”的我方角色",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：攻击力+10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "效果给予装备“信仰”的我方角色；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "神": {
           "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加。",
@@ -16798,7 +17645,9 @@ export const ATTACK_TAG_CATALOG = {
               "attack"
             ],
             "conditionPartIds": [
-              "condition-1"
+              "condition-1",
+              "condition-2",
+              "condition-3"
             ]
           },
           "bindings": [
@@ -16840,55 +17689,17 @@ export const ATTACK_TAG_CATALOG = {
               "group": "faith-provide-STR-stat-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2",
-              "condition-3"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：效果给予装备“信仰”的我方角色；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "attack"
               ],
-              "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
-              "target": "allies-with-faith",
-              "isBuff": false,
-              "effectIdentity": "7bc369d4036dd098:attack",
-              "effectStacking": "once-per-skill",
-              "operation": "stat-up",
-              "scope": {
-                "direction": "attribute"
-              },
-              "raceRelation": {
-                "subject": "provider",
-                "operator": "any-of",
-                "races": [
-                  "god"
-                ]
-              },
-              "valuePercent": 10,
-              "stat": "STR",
-              "grant": {
-                "providerSkillId": "7bc369d4036dd098",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "recipientMustEquipFaith": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "provide",
-                "countProviderAndRecipientOnce": true,
-                "providerEffectIdentity": "7bc369d4036dd098:attack"
-              },
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
                 "clauses": [
                   "效果给予装备“信仰”的我方角色",
                   "同名“神秘之力”效果不叠加"
@@ -16896,33 +17707,59 @@ export const ATTACK_TAG_CATALOG = {
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "2001-attack",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：攻击力+10%。同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "自身为神类型"
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "effectIdentity": "7bc369d4036dd098:attack",
+                "effectStacking": "once-per-skill",
+                "operation": "stat-up",
+                "scope": {
+                  "direction": "attribute"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "效果给予装备“信仰”的我方角色"
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
                 },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
+                "valuePercent": 10,
+                "stat": "STR",
+                "grant": {
+                  "providerSkillId": "7bc369d4036dd098",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "7bc369d4036dd098:attack"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "效果给予装备“信仰”的我方角色",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：攻击力+10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "效果给予装备“信仰”的我方角色；同名“神秘之力”效果不叠加"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "攻击力",
-        "神",
-        "队伍联动"
+        "神"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -17022,8 +17859,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 53,
-    "partial": 34,
+    "ready": 55,
+    "partial": 32,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

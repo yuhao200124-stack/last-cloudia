@@ -1,7 +1,7 @@
 {
-  "label": "杂项",
+  "label": "队伍与多人条件核查（按实际加成分配）",
   "reviewedUnique": 935,
-  "matchedUnique": 34,
+  "matchedUnique": 48,
   "rows": [
     {
       "id": "f6b3f0aa974f4913",
@@ -812,15 +812,15 @@
       "id": "70ba6508f2c7ff23",
       "url": "https://altema.jp/lastcloudia/gino/117",
       "sourceHash": "beed84a9d11ab600572961f1d90113b69414689415c5a2c75ee2016a6579631f",
-      "decision": "related",
-      "reason": "移动速度+2。自身HP≤30%时生效。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "4cb37bd11ae3b17f",
       "url": "https://altema.jp/lastcloudia/gino/118",
       "sourceHash": "df44250acde6f23813edba6a800abd87f04ffe0313a62ca5f4d659987314189e",
-      "decision": "related",
-      "reason": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "59da270118efac4f",
@@ -840,8 +840,8 @@
       "id": "386458aa75f9df1d",
       "url": "https://altema.jp/lastcloudia/gino/121",
       "sourceHash": "efd7cb7864c73dc8435062ebf3711fd822297e3613085a3aeae97a5c42d5cf74",
-      "decision": "related",
-      "reason": "移动速度提升，具体数值待确认。自身当前HP等于最大HP时生效。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "43cfc2a774603911",
@@ -1155,15 +1155,15 @@
       "id": "f9f8ec965ab0a415",
       "url": "https://altema.jp/lastcloudia/gino/170",
       "sourceHash": "2f1479ea3c5b41d5518b3ded69bad3187b86d55162c0e43ed348cf211271de34",
-      "decision": "related",
-      "reason": "被敌人锁定的优先度+1；优先度不是概率百分比。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "0267906ae6c02575",
       "url": "https://altema.jp/lastcloudia/gino/171",
       "sourceHash": "2874988df1f3bfefb707e753c6ef1c5da69f8639ac0626c4c881e39e956757ca",
-      "decision": "related",
-      "reason": "被敌人锁定的优先度-1；优先度不是概率百分比。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "6606b1627076dda2",
@@ -1183,8 +1183,8 @@
       "id": "f504f03347fe02ac",
       "url": "https://altema.jp/lastcloudia/gino/174",
       "sourceHash": "ea6bb6063619e474d9833d6d72d60572dabba73aa8217593af59103fba37b219",
-      "decision": "related",
-      "reason": "移动速度提升，具体数值待确认。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "23dfdab660ed35dd",
@@ -1267,15 +1267,15 @@
       "id": "ed0358d1fd168237",
       "url": "https://altema.jp/lastcloudia/gino/187",
       "sourceHash": "3fccaf8b5fcfc6c42ab854b45591bd8001f05f52d3dcbb94cee1c810fab58525",
-      "decision": "related",
-      "reason": "战斗结束后获得的经验值+20%（不可叠加）。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "2a2c1744a8d2bfe6",
       "url": "https://altema.jp/lastcloudia/gino/188",
       "sourceHash": "418249febd160424a9af3c8da08644d8be3b63c745e24320d2cb4e7714db8e31",
-      "decision": "related",
-      "reason": "战斗结束后获得的泽尔+20%（同类效果不叠加）。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "4db25889525ff54a",
@@ -1463,8 +1463,8 @@
       "id": "70ec71c2f309be8a",
       "url": "https://altema.jp/lastcloudia/gino/217",
       "sourceHash": "6962ead952deafc609913fd3fe75a34c04790af2387c8a194052871406f33bd0",
-      "decision": "related",
-      "reason": "移动速度提升，具体数值待确认。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "7305afeb3e366f19",
@@ -1477,8 +1477,8 @@
       "id": "ecfc5e235fabef1a",
       "url": "https://altema.jp/lastcloudia/gino/219",
       "sourceHash": "c7a2d8d44dce0a37886674693514a5932511b26981692fe3e5ed38914d1dd243",
-      "decision": "related",
-      "reason": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "e2018b4f235f4bc5",
@@ -1505,8 +1505,8 @@
       "id": "90951140c1d42641",
       "url": "https://altema.jp/lastcloudia/gino/223",
       "sourceHash": "fc08a655c2f265fa9fae4fc2119958748bfb643739f8ac4304e84c7b07faeffc",
-      "decision": "related",
-      "reason": "现实周日时，攻击力+5%；属于条件属性加成；现实周日时，防御力+5%；属于条件属性加成；现实周日时，法强+5%；属于条件属性加成；现实周日时，魔抗+5%；属于条件属性加成。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "0eaadb437c882ccc",
@@ -1533,15 +1533,15 @@
       "id": "b63054ad34e97c0d",
       "url": "https://altema.jp/lastcloudia/gino/227",
       "sourceHash": "930bcd5da77f85f67e0638c054731e9a3266561e7a6f35e80bb8b2562f3d74c1",
-      "decision": "related",
-      "reason": "现实白天6:00～17:59，光属性魔法伤害+10%。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "713403dd798c7836",
       "url": "https://altema.jp/lastcloudia/gino/228",
       "sourceHash": "4fb579ef2e4878585f83c1b74a04254004e88d7097e51b39d925f7def6bcb408",
-      "decision": "related",
-      "reason": "现实夜间18:00～次日5:59，暗属性魔法伤害+10%。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "f52898e0e4d6fcb3",
@@ -1617,8 +1617,8 @@
       "id": "e0f6942b8d0b10f7",
       "url": "https://altema.jp/lastcloudia/gino/242",
       "sourceHash": "79539eac703d3fc38bba6063394d9dffa0c89ac03e7b619e6ee5bb746b80817c",
-      "decision": "related",
-      "reason": "现实夜间18:00～次日5:59，光属性魔法伤害+10%。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "4f8a8b3359a2206f",
@@ -1820,8 +1820,8 @@
       "id": "3e86dffa826956a7",
       "url": "https://altema.jp/lastcloudia/gino/284",
       "sourceHash": "5eee8c3ab147564ad0831f7f34e99df1a0740b34ea6baa61f56e43436253a07b",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）；队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%；队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。"
     },
     {
       "id": "2aa7d6992469786a",
@@ -1953,8 +1953,8 @@
       "id": "d4e534dddd1aed24",
       "url": "https://altema.jp/lastcloudia/gino/325",
       "sourceHash": "de980262b1877b4e0fb52e5b608f8b2c2f4899039f36244966f3ddd407d503ba",
-      "decision": "related",
-      "reason": "被敌人锁定的优先度+1；优先度不是概率百分比。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "0c3458f75f95c9c1",
@@ -2205,8 +2205,8 @@
       "id": "81e5eed79e630a07",
       "url": "https://altema.jp/lastcloudia/gino/390",
       "sourceHash": "13dd7a77c58706dc26cd0f7aea508fb3a7b54607efbc0344337f910530c3e6ba",
-      "decision": "related",
-      "reason": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "全部技能:all:317",
@@ -2289,8 +2289,8 @@
       "id": "23372f853389c00f",
       "url": "https://altema.jp/lastcloudia/gino/406",
       "sourceHash": "8697ce9aae6d8e0a315da95c985918f2b24d1fb305d10d58e01133f0f950aad8",
-      "decision": "related",
-      "reason": "移动速度+2；永久速度Buff，同类型只取当前最高一项。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "全部技能:all:329",
@@ -2506,8 +2506,8 @@
       "id": "22dcd2546156107b",
       "url": "https://altema.jp/lastcloudia/gino/489",
       "sourceHash": "c2474ee4bcd9d57c3b259a7ac5aa752b2e75c5c3b7a8adac98c9bcc664189336",
-      "decision": "related",
-      "reason": "战斗结束后，敌人掉落的泽尔+35%（不可叠加）。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "82914b5361062d3a",
@@ -2590,22 +2590,22 @@
       "id": "e61761228b58bde4",
       "url": "https://altema.jp/lastcloudia/gino/510",
       "sourceHash": "39361ac1ba7b2f1cf6300b58d83951af283b9228d7cb12e9bd2f35fda536ddf3",
-      "decision": "related",
-      "reason": "连续移动每满2秒使同一个特技增伤Buff提高10个百分点，最高100%；特技攻击后或超时解除，超时时长待确认。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "4797c6c5a5093916",
       "url": "https://altema.jp/lastcloudia/gino/511",
       "sourceHash": "c118a06464c8ddd3d69acb8b60b2dc42e40a298e05013e9849dab3f6c6e0595c",
-      "decision": "related",
-      "reason": "战斗结束后获得的经验值+35%（不可叠加）。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "全部技能:all:373",
       "url": "https://altema.jp/lastcloudia/gino/512",
       "sourceHash": "8cf2a50c93ec2a45928cf7caf72d46899839f1b081f06729aa481984519217c5",
-      "decision": "related",
-      "reason": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "a1d3d2d5b491b676",
@@ -2618,8 +2618,8 @@
       "id": "edc04a2cb5cbc357",
       "url": "https://altema.jp/lastcloudia/gino/514",
       "sourceHash": "e4985cfb219f433e7fce8964ea1d8a9949a5873f34164ec4efeecc1d1f59d70f",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）；队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%；队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。"
     },
     {
       "id": "08fffb416a91dd55",
@@ -2702,8 +2702,8 @@
       "id": "0d636daacfa3516a",
       "url": "https://altema.jp/lastcloudia/gino/546",
       "sourceHash": "80256631d1208718b06107b9fe415fa12bf8152375846e4d5c673aa70b99bdf0",
-      "decision": "related",
-      "reason": "移动速度降低，具体数值待确认。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "fcf4e5ad6cd07998",
@@ -2884,8 +2884,8 @@
       "id": "dd2669fcbcbc5696",
       "url": "https://altema.jp/lastcloudia/gino/615",
       "sourceHash": "2b892b7567059cf3ec3de82356680570e270e9da234555160be1a98f99d332aa",
-      "decision": "related",
-      "reason": "移动速度提升，具体数值待确认。自身HP≤30%时生效。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "7ee810a4231404fe",
@@ -2898,8 +2898,8 @@
       "id": "4ab8df2c073b5bf0",
       "url": "https://altema.jp/lastcloudia/gino/617",
       "sourceHash": "127faf8e41d56a6e72183b0070f36dcffcf03d5539ddc76651fe1ce8b2b3cdcf",
-      "decision": "related",
-      "reason": "移动速度提升，具体数值待确认。受到伤害时结束，后续重置范围待确认。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "e8426d9b49aaa341",
@@ -2947,8 +2947,8 @@
       "id": "8ba52a420286cb67",
       "url": "https://altema.jp/lastcloudia/gino/627",
       "sourceHash": "150f5fad31f6278a9b2a6beb8818d43aa7ab7fc527c8a8bb34369b710077763f",
-      "decision": "related",
-      "reason": "限时活动效果：攻击力+10%，实际适用活动时间待确认；限时活动效果：防御力+10%，实际适用活动时间待确认。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "9dbce7c7fe7e59f0",
@@ -3038,8 +3038,8 @@
       "id": "eb659c714ed39fd6",
       "url": "https://altema.jp/lastcloudia/gino/655",
       "sourceHash": "52ea22f0b04d80ea704119cb08146964e560e2e5227b313806cffe618e8d3256",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "队伍至少2名且全员存活时，自身造成伤害+5%；受到的伤害-5%。"
     },
     {
       "id": "858365fd1fc6ea73",
@@ -3164,8 +3164,8 @@
       "id": "619c3ef058c4b219",
       "url": "https://altema.jp/lastcloudia/gino/696",
       "sourceHash": "36225e0852f1106ef3d567b6daac3403fd29f3c4efbe787367b2630fe2969700",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "给选中友方赋予特攻伤害上限+5,000的40秒Buff。"
     },
     {
       "id": "351f8b7c824ec758",
@@ -3248,8 +3248,8 @@
       "id": "a17f779989645fb0",
       "url": "https://altema.jp/lastcloudia/gino/720",
       "sourceHash": "3d3c30a416fcf563bbdd57bf501c6ab31e050f6099e239b53749567692de8366",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%。"
     },
     {
       "id": "4e8a749504d3799f",
@@ -3325,8 +3325,8 @@
       "id": "863142029c408b2a",
       "url": "https://altema.jp/lastcloudia/gino/739",
       "sourceHash": "b5c630bbb41a477fadd2470db3838371b10f3f6c2eb42033e51402b24ffeb76d",
-      "decision": "related",
-      "reason": "【男性/其他】被敌人锁定的优先度+1；【女性】被敌人锁定的优先度-1。两分支按自身性别互斥，不叠加。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "e97879470b786304",
@@ -3374,8 +3374,8 @@
       "id": "9c0bd935e13111e8",
       "url": "https://altema.jp/lastcloudia/gino/754",
       "sourceHash": "ca6734d1b42082ef09b7fa3d09073ebfbea18c418c96c85678e2fb58d0ff2439",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "满足永远的挚友配对条件时，物理攻击伤害+15%；魔法攻击伤害+15%。"
     },
     {
       "id": "3cc8a829b724bfe7",
@@ -3423,8 +3423,8 @@
       "id": "4ad3b1d265b33240",
       "url": "https://altema.jp/lastcloudia/gino/770",
       "sourceHash": "d8d85ecdd97ee4b16c4af7d1789fd2ab985de25b41cafc6c7b3fc6080bcadfc2",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "我方至少2名单位且全员存活时，受到敌人物理伤害-10%。"
     },
     {
       "id": "99a9a562aa4868a1",
@@ -3766,8 +3766,8 @@
       "id": "faa4c35ca794565a",
       "url": "https://altema.jp/lastcloudia/gino/890",
       "sourceHash": "769ad30e23d0c1154aa3b1fb40e37eb09cb7b66a7382f347c7c9e5826c3c08b0",
-      "decision": "related",
-      "reason": "移动速度+2；持续40秒，同类型速度Buff只取当前最高一项。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "5f13abe1484bc2c7",
@@ -3843,8 +3843,8 @@
       "id": "1faea4cee43b7137",
       "url": "https://altema.jp/lastcloudia/gino/917",
       "sourceHash": "04e387fc9854bcdaf506cc36fd8344a97d5c3ab6128c45ed0a68b85a9a86a304",
-      "decision": "related",
-      "reason": "移动速度+2；持续至自身战斗不能，每Wave最多1次。自身当前至少拥有2种类型时触发。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "f851cc57b094612a",
@@ -3997,8 +3997,8 @@
       "id": "全部技能:all:572",
       "url": "https://altema.jp/lastcloudia/gino/976",
       "sourceHash": "d63d943d5f18436ebb0ed05489fb81cb9d50341ba0b5f6c937fb295301b314d9",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "单人参战时，必杀伤害+20%；单人参战时，必杀上限+3,000；仅自身一人参战时，特技伤害+20%；仅自身一人参战时，特技上限+3,000；单人参战时，受到敌人伤害-10%。"
     },
     {
       "id": "22db4d8dd8dbfd9c",
@@ -4067,8 +4067,8 @@
       "id": "cae22c8f6e9a70ef",
       "url": "https://altema.jp/lastcloudia/gino/1000",
       "sourceHash": "6e5211ec38bc5dce3a89cf40c15320e1a4e2d7bd8e2e76b36965e899c02efeb5",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "至少2名我方角色装备神圣合奏：2人+10%、3人+20%、4人+30%。"
     },
     {
       "id": "4b11acd40f6ed44f",
@@ -4144,8 +4144,8 @@
       "id": "1af9886755b25da9",
       "url": "https://altema.jp/lastcloudia/gino/1027",
       "sourceHash": "fd9077fa6adf53452aad6fd3ac3b0f7a8ef7288345addf7b2a662ad3676affb1",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "自身以外恰好1名友方装备共鸣障壁时，受到物理伤害-10%。"
     },
     {
       "id": "18991b227c1fe30b",
@@ -4249,8 +4249,8 @@
       "id": "31e0fc5aedd96ccb",
       "url": "https://altema.jp/lastcloudia/gino/1067",
       "sourceHash": "bf76bb5683fc75a6019d6c11f9e737424e87aba2357cb39ac69d9dfe35373779",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "装备黑色骑士团的我方单位2／3／4名时，特技上限分别+1,000／2,000／3,000。"
     },
     {
       "id": "0f9fbe87a80cc013",
@@ -4277,8 +4277,8 @@
       "id": "5985cead77169d18",
       "url": "https://altema.jp/lastcloudia/gino/1075",
       "sourceHash": "509a81fb6c29e6e672b5c9b11f78fa6f955b972035e7e8472b970f0144772f7a",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "受到敌人的伤害-10%。"
     },
     {
       "id": "2d36845d899106f0",
@@ -4473,8 +4473,8 @@
       "id": "106e0b26cc206aed",
       "url": "https://altema.jp/lastcloudia/gino/1154",
       "sourceHash": "36061f408f4027de1864202349896cd866d35f31915270ff48ceeaa6d6e2f961",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "补齐同技能人数／单人参战条件，随实际加成分类。"
     },
     {
       "id": "a97531c83b0073e7",
@@ -4564,8 +4564,8 @@
       "id": "4aafd29a15ad98c4",
       "url": "https://altema.jp/lastcloudia/gino/1191",
       "sourceHash": "86a183a81521b6221afd67ec52bd513223551a4f7ab7a3af5419113c0574b703",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "每名机械类型我方单位使特技上限+1,000，最多4名；每名机械类型我方单位使反击上限+1,000，最多4名；每名我方机械类型单位使必杀上限+1,000，最多4名、最高+4,000。"
     },
     {
       "id": "e4d78aa3f37004bd",
@@ -4599,8 +4599,8 @@
       "id": "7498b3dbd8ba7e5d",
       "url": "https://altema.jp/lastcloudia/gino/1212",
       "sourceHash": "b29a866413b2449a63a17a917941a31a73206214ed062d95847c3332283cd36a",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "至少一名其他友方处于战斗不能状态时，自身攻击力+20%。"
     },
     {
       "id": "全部技能:all:660",
@@ -4648,8 +4648,8 @@
       "id": "898133b240997611",
       "url": "https://altema.jp/lastcloudia/gino/1229",
       "sourceHash": "0117bec2a14baa8e4bac0d7d2d7d002a629a172cc21a8ad245b09fd36510b35e",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "补齐同技能人数／单人参战条件，随实际加成分类。"
     },
     {
       "id": "fd400293f61ca404",
@@ -4704,8 +4704,8 @@
       "id": "1f0a096307e7bc24",
       "url": "https://altema.jp/lastcloudia/gino/1249",
       "sourceHash": "7b84cf964bd163687385d2d1cf854f009b78ab1b7749bf7a3d69b4e165e4be68",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "补齐同技能人数／单人参战条件，随实际加成分类。"
     },
     {
       "id": "全部技能:all:675",
@@ -4725,8 +4725,8 @@
       "id": "1da4935f9a387557",
       "url": "https://altema.jp/lastcloudia/gino/1256",
       "sourceHash": "374dbc9bed129fcecbfbb57db33cd2c321341455a5883bc103ce6503f0298ae1",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒；除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒。"
     },
     {
       "id": "7597b164f4387ec7",
@@ -4760,8 +4760,8 @@
       "id": "6958b9c4d7aad7cb",
       "url": "https://altema.jp/lastcloudia/gino/1271",
       "sourceHash": "253b5a37be6cf1b9e5f61305cbed0b63e6e3f0019010e9471d728feb4dc25264",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认；自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。"
     },
     {
       "id": "0257679d2708509b",
@@ -4816,8 +4816,8 @@
       "id": "7791e2dcb32f7841",
       "url": "https://altema.jp/lastcloudia/gino/1296",
       "sourceHash": "5c6ec2528dc0cd3dfec6a69edd3a396cad6047e9d10223479d96ddf8cb80a32f",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "同技能我方单位2／3／4名时，受到物理伤害分别-5%／-10%／-15%；实际装备自由之翼的我方单位2／3／4名时，受到反击伤害分别-5%／-10%／-15%；按当前人数取一档。"
     },
     {
       "id": "fc3ee7900740acc8",
@@ -4900,8 +4900,8 @@
       "id": "cd5203b730b861ca",
       "url": "https://altema.jp/lastcloudia/gino/1327",
       "sourceHash": "96b65ed2385c9519bc3f7cb3a3c24766a8546d9436d673dea2a9e66e2edcbf68",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "补齐同技能人数／单人参战条件，随实际加成分类。"
     },
     {
       "id": "8f928b05fc447ac9",
@@ -5012,8 +5012,8 @@
       "id": "ef62dd0cf4192724",
       "url": "https://altema.jp/lastcloudia/gino/1378",
       "sourceHash": "3f6517cb71497733409f31e2fc36530d36aed9dbb2e2d1d568dbcba1590d9ebe",
-      "decision": "related",
-      "reason": "开场对自身施加移动速度降低减益，持续到自身战斗不能；具体减速数值待确认；处于符合要求的移动速度降低状态时，物理攻击伤害+20%。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "9bba0f584207868a",
@@ -5026,8 +5026,8 @@
       "id": "8486ea2eb21efd2c",
       "url": "https://altema.jp/lastcloudia/gino/1380",
       "sourceHash": "6f68ed62794b8e707cb44c4cb44d05f1b81fa57588cc2364fdf99ac583257039",
-      "decision": "related",
-      "reason": "自身处于符合要求的移动速度增益效果时，攻击力+10%；部分特殊增益除外；处于移动速度增益效果下时，自身防御力+10%；部分特殊Buff不计。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "a9028de3be35cf4b",
@@ -5103,8 +5103,8 @@
       "id": "3698611e7487f0aa",
       "url": "https://altema.jp/lastcloudia/gino/1409",
       "sourceHash": "282e42936e8f007c565249bc8941475e6e15c2f8eefee2076cf9826c728c8ddf",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "补齐同技能人数／单人参战条件，随实际加成分类。"
     },
     {
       "id": "f80a686243715fb5",
@@ -5131,8 +5131,8 @@
       "id": "a977358b6c4ff913",
       "url": "https://altema.jp/lastcloudia/gino/1418",
       "sourceHash": "469f745a2e780e099d85ce778c31fa251cffeda1b36edbc130cafe98bf288d5a",
-      "decision": "related",
-      "reason": "战斗结束后，敌人掉落的泽尔+50%（不可叠加）。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "0909ef13d95c0497",
@@ -5257,8 +5257,8 @@
       "id": "d291d901e1625ee2",
       "url": "https://altema.jp/lastcloudia/gino/1462",
       "sourceHash": "77626a3fb02b554b1cd5080c352d0784d6ebf326b5a6fb2d8827c12a7695c6e2",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "开场判断我方全员为恐怖系时，物理攻击伤害+10%。"
     },
     {
       "id": "2d7be6839ef276d6",
@@ -5279,14 +5279,14 @@
       "url": "https://altema.jp/lastcloudia/gino/1477",
       "sourceHash": "af2686e94e7b36265266e6c888cffd4377aab8c19c0193e6638f81c79fd2b127",
       "decision": "related",
-      "reason": "无独立数值加成的技能联动标记，归杂项。"
+      "reason": "作为「纳萨力克的统治者」技能统计阶层守护者人数的条件；本技能本身不直接提供属性或伤害加成。"
     },
     {
       "id": "d451135c6dde31c4",
       "url": "https://altema.jp/lastcloudia/gino/1478",
       "sourceHash": "4212c8b65bc01bdd2ab042b7cbee021416447a66b6ef0aa238d2e95bc02359c1",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "全队只有自身装备纳萨力克的统治者时，按其他装备阶层守护者的友方人数提升伤害；3名最高+36%，1／2名档位待确认；按相同人数条件减少自身受到的伤害，3名时最高-15%。"
     },
     {
       "id": "82bfa575b36bca5b",
@@ -5383,15 +5383,15 @@
       "id": "b684f06fad6f204e",
       "url": "https://altema.jp/lastcloudia/gino/1506",
       "sourceHash": "7abb47fd8b4c3741b618ec472957f8f3e688f2f59b540cc7a5e4e2cf68d78e04",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "补齐同技能人数／单人参战条件，随实际加成分类。"
     },
     {
       "id": "4810345440e1ca42",
       "url": "https://altema.jp/lastcloudia/gino/1507",
       "sourceHash": "ceca7f206f64eba4d6a21e1e484e2e7fa9cb080b447511cce9d76754d088c8a4",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%；魔法攻击伤害+20%。"
     },
     {
       "id": "340e241067686512",
@@ -5502,8 +5502,8 @@
       "id": "3f8ac48a18f25fa8",
       "url": "https://altema.jp/lastcloudia/gino/1547",
       "sourceHash": "c795ff772c397dd5794597eeaa7c9a53554ccc0a328b8decb441ced225bc613a",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "仅自身存活时，必杀伤害+50%；仅自身存活时，必杀上限+10,000。"
     },
     {
       "id": "f6bc920aeccd81d4",
@@ -5635,8 +5635,8 @@
       "id": "b1235f3ab30aff73",
       "url": "https://altema.jp/lastcloudia/gino/1607",
       "sourceHash": "444b05478666ac349d8f9e23a0131c66f65b20a908de342f8489f6beb99eb085",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "每名士兵类型我方单位使特技上限+1,000，最多4名；每名我方士兵类型单位使必杀上限+1,000，最多4名、最高+4,000。"
     },
     {
       "id": "b7297c3eb4e46bba",
@@ -5754,8 +5754,8 @@
       "id": "85715ffd27c809f3",
       "url": "https://altema.jp/lastcloudia/gino/1666",
       "sourceHash": "8b2d54807ef2f9589f4bc22add57ba5b55a781f35ed176c7bd367813050c9bfe",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "自身以外恰好1名友方装备共犯者时，物理上限+2,000；自身以外恰好1名友方装备共犯者时，魔法上限+2,000。"
     },
     {
       "id": "0cf4b314ecf1f25a",
@@ -5852,8 +5852,8 @@
       "id": "d611639ee456760f",
       "url": "https://altema.jp/lastcloudia/gino/1706",
       "sourceHash": "14614d14badcbcdad3ca49aee192c70a0fa47a316268a18f767c3c4903f7f193",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力。"
     },
     {
       "id": "4032cdf421f18002",
@@ -5866,8 +5866,8 @@
       "id": "3651039f5585a575",
       "url": "https://altema.jp/lastcloudia/gino/1708",
       "sourceHash": "67b57589e25e9d4538a289da2736d40a578151e4b6fadc12f3ac895f15cccfef",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "对Boss必杀上限按装备英雄传说的我方人数提升：2名+5,000、3名+10,000、4名+15,000。"
     },
     {
       "id": "9dabf82a19744e2a",
@@ -5936,8 +5936,8 @@
       "id": "a5f24684f4b2911a",
       "url": "https://altema.jp/lastcloudia/gino/1747",
       "sourceHash": "37a11963fe895737fccbbfa49b95039d76c7dba0067d8b94b3cc9bc1b7119adf",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "补齐同技能人数／单人参战条件，随实际加成分类。"
     },
     {
       "id": "7168ea516478d79a",
@@ -5950,29 +5950,29 @@
       "id": "5dbd4f977800ad88",
       "url": "https://altema.jp/lastcloudia/gino/1754",
       "sourceHash": "36a22f01c0bee49514d8dbad73e399af2b878d98a9d9181384cdb01dd866c1cf",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加；从神秘之力【结界】获得受到的魔法攻击伤害-10%；从神秘之力【守护】获得受到的物理攻击伤害-10%；从神秘之力【轮光】获得光属性伤害+10%；从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加。"
     },
     {
       "id": "7611b3c1ae612f0e",
       "url": "https://altema.jp/lastcloudia/gino/1755",
       "sourceHash": "c023a716b56e855d28eef73fd02e93f3afdb279c85f205d0af76b41becd4f5bb",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%。"
     },
     {
       "id": "8c11c64768072670",
       "url": "https://altema.jp/lastcloudia/gino/1756",
       "sourceHash": "337acf2df844daf08201182b9b836a6cc9e11c7c9eb8a2ba11d17da6c136daa5",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%。"
     },
     {
       "id": "73530ee6f38ccc34",
       "url": "https://altema.jp/lastcloudia/gino/1764",
       "sourceHash": "ce973935e372f961c551f47e7064b2352ab7f3467386095c7075fb012359d10f",
-      "decision": "related",
-      "reason": "移动速度−1。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "b782149b137d2614",
@@ -6020,8 +6020,8 @@
       "id": "b50f1be94e5ec002",
       "url": "https://altema.jp/lastcloudia/gino/1776",
       "sourceHash": "391859a960351290b62503f1f7af1c159ed12e7f87657ca8d7dca26df2b66335",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。"
     },
     {
       "id": "9687330d53763046",
@@ -6062,8 +6062,8 @@
       "id": "869205f984d49c10",
       "url": "https://altema.jp/lastcloudia/gino/1799",
       "sourceHash": "5254888c369f836ab2b30ef700fe8b18e15c1ce0bb9cca129d4188531fd06c76",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%；开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。"
     },
     {
       "id": "8545a75056e827a4",
@@ -6076,22 +6076,22 @@
       "id": "34045351ea740196",
       "url": "https://altema.jp/lastcloudia/gino/1801",
       "sourceHash": "db5c6d7da7f43917838d382dba861ed55bf731e1d8540e8981261f865ada7033",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。"
     },
     {
       "id": "00001521ecae775f",
       "url": "https://altema.jp/lastcloudia/gino/1802",
       "sourceHash": "10fb803bd523e30040d900b16bbe2398224e5ac92c0a73fb2fe3073b76c110a8",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "战斗开始时，若己方只有自身装备“禁书库的大精灵”，且恰好有1名其他友方装备“精灵骑士”，则魔力+25%。"
     },
     {
       "id": "f774ee12bcd73741",
       "url": "https://altema.jp/lastcloudia/gino/1811",
       "sourceHash": "dac876bd6b334ff3a0d3a6277663c8fa6f96647debf9c5a60270e5b609c23753",
-      "decision": "related",
-      "reason": "被敌人锁定的优先度+1；优先度不是概率百分比。"
+      "decision": "not-related",
+      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     },
     {
       "id": "e2016a861d776638",
@@ -6202,8 +6202,8 @@
       "id": "d542c5868da412e7",
       "url": "https://altema.jp/lastcloudia/gino/1856",
       "sourceHash": "e0ca43e18956ba2fad57b3e60ded4992570ed24556f686da66bad83bb124f320",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "仅自身存活时，SCT恢复速度+20%。"
     },
     {
       "id": "16e16b5e64f54f5c",
@@ -6244,8 +6244,8 @@
       "id": "2a1da0c826ca8526",
       "url": "https://altema.jp/lastcloudia/gino/1874",
       "sourceHash": "fff53fb3ef6d69961a3393ae2c7a4acc94b30400bb9bfc84ebf787413f60ad36",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "至少3名友方装备暴风龙四天王时，特技伤害+30%。"
     },
     {
       "id": "3a34d4d6da6da693",
@@ -6265,8 +6265,8 @@
       "id": "f063ab920fec3e4a",
       "url": "https://altema.jp/lastcloudia/gino/1881",
       "sourceHash": "a1254233727970fa1dc506683906498758e99ead88b6e6c3725ac59f5c8e19ad",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%。"
     },
     {
       "id": "3159ed767f08fdf1",
@@ -6307,8 +6307,8 @@
       "id": "f26238efd3af2674",
       "url": "https://altema.jp/lastcloudia/gino/1910",
       "sourceHash": "36b32c0dd151676267f2e4524d73e1cdeba3d9b960c27101c164b427a028691b",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "补齐同技能人数／单人参战条件，随实际加成分类。"
     },
     {
       "id": "a4d841b7ab1590f8",
@@ -6412,8 +6412,8 @@
       "id": "9a9df999dd518e22",
       "url": "https://altema.jp/lastcloudia/gino/1963",
       "sourceHash": "ab1da6856ae341c75bacb8219807342bbc6420f0e16af396e9c7fb89e4b56f38",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。"
     },
     {
       "id": "dc2ed90213e63025",
@@ -6510,15 +6510,15 @@
       "id": "ca8779066b942675",
       "url": "https://altema.jp/lastcloudia/gino/2000",
       "sourceHash": "46630e5239aa8266d56f382ba62817c9798afc006889928479d3b1f0445ddfdc",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "使我方装备信仰的角色获得光属性伤害+10%。"
     },
     {
       "id": "7bc369d4036dd098",
       "url": "https://altema.jp/lastcloudia/gino/2001",
       "sourceHash": "ebbcfc9ccf0d036c0ec07f2e4de92a33d22954c1003b7ccea6a88efdd9b95811",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加。"
     },
     {
       "id": "29da106c453e0234",
@@ -6538,8 +6538,8 @@
       "id": "cb30f3c1c621732d",
       "url": "https://altema.jp/lastcloudia/gino/2028",
       "sourceHash": "518cc0db36b04be3271b21341694ae9f8c0605f7f91c47aedad145242038f68d",
-      "decision": "not-related",
-      "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
+      "decision": "related",
+      "reason": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000；自身以外至少一名女性友方存活时，对Boss特技上限+10,000。"
     },
     {
       "id": "af2b1b7f6ebbb498",
@@ -6548,5 +6548,6 @@
       "decision": "not-related",
       "reason": "原效果与说明没有本类明确关系；只按效果归类，不由名称推断，不把不同主体、资源或机制合并。"
     }
-  ]
+  ],
+  "purpose": "队伍与多人条件按实际收益分配；不是独立分类。"
 }

@@ -7,7 +7,7 @@ export function validateElementCoverage(key, view, detail, assignment, entry) {
   const ids = [...c.effectPartIds, ...c.conditionPartIds];
   if (new Set(ids).size !== ids.length || ids.length !== assignment.partIds.length || ids.some(id => !assignment.partIds.includes(id))) throw Error('Element coverage must match reviewed fragments.');
   if (c.effectPartIds.some(id => entry.parts.find(p => p.id === id)?.kind !== 'effect') || c.conditionPartIds.some(id => entry.parts.find(p => p.id === id)?.kind !== 'condition')) throw Error('Element effects and conditions are mixed.');
-  if (c.conditionPartIds.length) {
+  if (c.conditionPartIds.some(id => !detail.effectConditions?.some(attached => attached.conditionPartIds.includes(id)))) {
     const t = detail.condition;
     const valid = ['self-attack', 'enemy-attack'].includes(t?.subject) && t.element === element
       || t?.subject === 'equipped-weapon' && t.weaponElement === element

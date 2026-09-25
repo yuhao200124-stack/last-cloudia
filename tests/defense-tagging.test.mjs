@@ -43,8 +43,8 @@ test('defense keeps pure damage reduction, guard, armor names and unprovided fai
 });
 
 test('cumulative judgments agree across views and do not claim unfinished conditions or other stats are tagged',()=>{
- assert.equal(defense.counts.ready,45);assert.equal(defense.counts.partial,25);
- assert.deepEqual(defense.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[13,14,15,16,114,175,209,223,246,254,265,284,290,304,305,306,388,398,402,418,419,473,507,514,515,570,616,636,638,666,737,796,875,914,941,986,1171,1177,1205,1256,1350,1555,1571,1704,1969]);
+ assert.equal(defense.counts.ready,46);assert.equal(defense.counts.partial,24);
+ assert.deepEqual(defense.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[13,14,15,16,114,175,209,223,246,254,265,284,290,304,305,306,388,398,402,418,419,473,507,514,515,570,616,636,638,666,737,796,875,914,941,986,1171,1177,1205,1249,1256,1350,1555,1571,1704,1969]);
  const shared=defense.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('攻击力'));
  assert.equal(shared.length,26);
  for(const e of shared){

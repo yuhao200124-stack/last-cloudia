@@ -1,4 +1,5 @@
 import {remainingKeys,remainingTags,validateRemainingCoverage,validateRemainingBinding} from './validate-remaining-labels.mjs';
+import {validateEffectConditions} from './validate-effect-conditions.mjs';
 import {combatKeys,validateCombatCoverage,validateCombatBinding} from './validate-combat-labels.mjs';
 import {validateBreakCoverage,validateBreakBinding} from './validate-break-labels.mjs';
 import {validateAbnormalCoverage,validateAbnormalBinding} from './validate-abnormal-labels.mjs';
@@ -24,6 +25,7 @@ const shared = read('docs/skill-labeling-registry.json');
 const racePassDefinitions=read('docs/races-pass-definitions.json');
 if (shared.numericEffectInjection !== false) throw Error('Label metadata must not inject calculator effects.');
 const resolved = resolveSkillLabels(shared);
+for(const pass of shared.tagPasses)for(const a of pass.assignments){const e=shared.entries.find(e=>e.id===a.skillId);validateEffectConditions(e,pass.tag,e.tagDetails[pass.tag],a);}
 const box = {window:{}};
 vm.runInNewContext(fs.readFileSync(new URL('dist/data.js', root), 'utf8'), box);
 const rows = canonicalSkillRows(box.window.SKILL_DATA);
@@ -127,7 +129,7 @@ for(const [key,view] of Object.entries(views)){
       const ids=[...coverage.effectPartIds,...coverage.conditionPartIds];
       if(new Set(ids).size!==ids.length || ids.length!==assignment.partIds.length || ids.some(id=>!assignment.partIds.includes(id)))throw Error('Fire coverage must match reviewed fragments.');
       if(coverage.effectPartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='effect') || coverage.conditionPartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='condition'))throw Error('Fire effect and condition fragments are mixed.');
-      if(coverage.conditionPartIds.length && !(detail.condition?.subject==='self-attack' && detail.condition.element==='fire' || detail.condition?.subject==='equipped-sword' && detail.condition.weaponElement==='fire'))throw Error('Fire conditions must distinguish the attack element from the weapon element.');
+      if(coverage.conditionPartIds.some(id=>!detail.effectConditions?.some(c=>c.conditionPartIds.includes(id))) && !(detail.condition?.subject==='self-attack' && detail.condition.element==='fire' || detail.condition?.subject==='equipped-sword' && detail.condition.weaponElement==='fire'))throw Error('Fire conditions must distinguish the attack element from the weapon element.');
     }else if(key==='sword'){
       validateSwordCoverage(view,detail,assignment,entry);
     }else if(equipmentStateKeys.includes(key)){

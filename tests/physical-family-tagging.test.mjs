@@ -42,7 +42,7 @@ test('physical expansion preserves all 43 older passes, prior bindings, source r
   assert.equal(hash(Object.entries(e.tagDetails).filter(([tag,d])=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)&&d.bindings).map(([tag,d])=>[tag,d.bindings])),old.bindingsHash,e.name);
   for(const p of old.parts){const current=partsBeforeRaces(e).find(x=>x.id===p.id);assert(current);assert.equal(current.kind,p.kind);if(![[1446,'other-effect-1'],[418,'condition-3'],[570,'condition-3'],[333,'enemy-race'],[1102,'enemy-race'],[1705,'enemy-race']].some(([n,id])=>e.id===source(n).id&&p.id===id))assert.deepEqual(current,p);}
  }
- assert.equal(registry.tagPasses.length,91);assert.equal(catalog.entries.length,935);assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
+ assert.equal(registry.tagPasses.length,90);assert.equal(catalog.entries.length,935);assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
  assert.equal(registry.tagPasses.find(p=>p.tag==='物理伤害增加').assignments.length,78);
  assert.equal(catalog.numericEffectInjection,false);
  for(const [n,k]of [[777,'sword'],[181,'dual-weapon'],[570,'machine'],[1955,'ultimate']])assert.strictEqual(labelingView(catalog,k).entries.find(e=>e.id===entry(n).id),entry(n));

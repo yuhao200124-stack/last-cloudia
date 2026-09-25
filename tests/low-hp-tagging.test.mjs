@@ -26,7 +26,7 @@ test('low HP audits every canonical skill, including explicit 25% HP and untagge
  assert.equal(view.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).length===1).length,9);
  assert(view.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)).length===1).every(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag))[0]==='濒死'));
  assert.equal(catalog.entries.length,935);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
- assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
+ assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
  assert.equal(catalog.numericEffectInjection,false);
 });
 
@@ -100,7 +100,7 @@ function page(edits={}){
 test('low HP page separates effect tables, keeps status ordering and search, and switches cleanly to opening and Boss views',()=>{
  const {get,click}=page();
  assert.match(get('#labelCoverage').textContent,/935.*26.*909/);assert.match(get('#judgmentSummary').textContent,/17.*9.*0/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,83);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,82);
  assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,20);
  assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,19);
  assert.match(get('#labelResultCount').textContent,/26 \/ 26/);

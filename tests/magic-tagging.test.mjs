@@ -56,7 +56,7 @@ test('magic accumulates with other tags and completes only fully covered attribu
  assert.deepEqual(entry(304).assignedTags.filter(tag=>!['物理','魔法','鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','防御力','魔力','空武器','空防具','空武器+防具']);
  assert.deepEqual(entry(304).remainingEffects,[]);
  assert.deepEqual(entry(304).remainingConditions,[]);
- assert.equal(catalog.views.all.counts.relatedUnique,935);assert.equal(catalog.views.all.counts.ready,749);
+ assert.equal(catalog.views.all.counts.relatedUnique,935);assert.equal(catalog.views.all.counts.ready,757);
  assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
  const rows=skillLabelRows(box.window.SKILL_DATA,magic);
  assert(rows.slice(0,32).every(r=>r.judgment==='ready'));

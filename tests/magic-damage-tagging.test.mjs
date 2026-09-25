@@ -59,7 +59,7 @@ test('magic damage accumulates across old views and only finishes after remainin
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='杖');
  assert.equal(resolveSkillLabels(earlier).find(e=>e.id===source(241).id).judgment,'partial');assert.equal(entry(241).judgment,'ready');
  assert.equal(catalog.entries.length,935);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
- assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
+ assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,749).every(r=>r.judgment==='ready'));assert(sorted.slice(749).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,757).every(r=>r.judgment==='ready'));assert(sorted.slice(757).every(r=>r.judgment==='partial'));
 });

@@ -39,11 +39,11 @@ test('ultimate conditions distinguish full gauges, enemy and self use, single-us
 });
 
 test('ultimate effects complete cumulatively while unrelated effects and unreviewed conditions stay pending',()=>{
- assert.equal(registry.tagPasses.length,91);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,90);assert.equal(catalog.numericEffectInjection,false);
  const pass=registry.tagPasses.find(p=>p.tag==='必杀相关');for(const a of pass.assignments){const e=entry(Number(catalog.entries.find(e=>e.id===a.skillId).url.split('/').pop())),d=e.tagDetails['必杀相关'];assert.deepEqual(a.partIds,[...d.coverage.effectPartIds,...d.coverage.conditionPartIds]);assert(d.coverage.effectPartIds.length);}
  for(const n of [364,369,732,883,948,1037,1057,1122,1264,1284,1335,1447,666,456,1163,1909,777,1520,1884])assert.equal(entry(n).judgment,'ready',source(n).name);
  for(const n of [217,425,1145,1214,1272,1617,1695,1858])assert.equal(entry(n).judgment,'partial',source(n).name);
- assert.equal(view.counts.ready,104);assert.equal(view.counts.partial,9);assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
+ assert.equal(view.counts.ready,104);assert.equal(view.counts.partial,9);assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
  assert.deepEqual(entry(666).remainingEffects,[]);assert.deepEqual(entry(666).remainingConditions,[]);
  assert(entry(425).remainingConditions.some(t=>t.includes('持续时间待确认')));
  assert.deepEqual(entry(717).remainingEffects,[]);assert.deepEqual(entry(717).remainingConditions,[]);assert.equal(entry(717).judgment,'ready');
@@ -79,7 +79,7 @@ function page(edits={}){
 }
 test('ultimate view shows separate effects, synchronized status ordering, deduplicated search and previous views',()=>{
  const {get,click}=page();assert.match(get('#labelCoverage').textContent,/935.*113.*822/);assert.match(get('#judgmentSummary').textContent,/104.*9.*0/);assert.match(get('#labelResultCount').textContent,/113 \/ 113/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,83);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,81);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,80);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,82);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,81);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,80);
  const def=get('#labelTable').innerHTML.split('<section ').find(s=>s.includes('id="section-ultimate-defense-up"'));assert(def.indexOf('护罩之力')<def.indexOf('能量循环'));
  const search=get('#labelSearch');search.value='万圣节派对';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 113/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,4);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','ultimate-ultimate-damage');assert(get('#labelTable').innerHTML.includes('万物尽灭'));assert(get('#labelTable').innerHTML.includes('鸣动之深渊'));assert(!get('#labelTable').innerHTML.includes('冲浪冲击'));assert(!get('#labelTable').innerHTML.includes('我想成为完美的存在'));

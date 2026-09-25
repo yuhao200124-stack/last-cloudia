@@ -59,7 +59,7 @@ test('Boss family preserves old subroutes and shares all 31 skill judgments',()=
  assert.equal(boss.counts.ready,30);assert.equal(boss.counts.partial,1);assert.equal(boss.childKeys.length,20);
  const rows=skillLabelRows(box.window.SKILL_DATA,boss);
  assert(rows.slice(0,30).every(r=>r.judgment==='ready'));assert(rows.slice(30).every(r=>r.judgment==='partial'));
- assert.equal(catalog.views.all.counts.relatedUnique,935);assert.equal(catalog.views.all.counts.ready,749);assert.equal(catalog.views.all.counts.partial,186);
+ assert.equal(catalog.views.all.counts.relatedUnique,935);assert.equal(catalog.views.all.counts.ready,757);assert.equal(catalog.views.all.counts.partial,178);
 });
 
 test('Boss critical damage retains its scope while the critical pass completes its cap',()=>{

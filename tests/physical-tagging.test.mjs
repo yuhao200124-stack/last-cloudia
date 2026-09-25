@@ -51,7 +51,7 @@ test('physical tags accumulate and leave each unfinished effect/condition pendin
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
  assert.equal(catalog.entries.length,935);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,935);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(allRows.slice(0,749).every(r=>r.judgment==='ready'));assert(allRows.slice(749).every(r=>r.judgment==='partial'));
+ assert(allRows.slice(0,757).every(r=>r.judgment==='ready'));assert(allRows.slice(757).every(r=>r.judgment==='partial'));
  // Removing the weapon type pass leaves its condition pending; restoring it completes the shared skill.
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='锤');
  assert.equal(resolveSkillLabels(earlier).find(e=>e.id===source(273).id).judgment,'partial');

@@ -2726,31 +2726,209 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "队伍至少2人装备同技能时，自身攻击力提升：2人5%、3人10%、4人15%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。",
+          "calculationNote": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:3e86dffa826956a7:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "operation": "tiered-stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "3e86dffa826956a7",
+                "includesSelf": true,
+                "minimumCount": 2,
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "3e86dffa826956a7:attack",
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "防御力": {
           "summary": "队伍至少2人装备魔兽同盟时，自身防御力提升：2人5%、3人10%、4人15%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。",
+          "calculationNote": "多人 / 队内装备同一技能的人数（含自身）：2人+5%、3人+10%、4人+15%；需要人数资料，不是只判断是否多人联机。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:3e86dffa826956a7:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
+                "effectIdentity": "3e86dffa826956a7:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "3e86dffa826956a7",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "魔力": {
           "summary": "队伍至少2人装备魔兽同盟时，自身魔力提升：2人5%、3人10%、4人15%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:3e86dffa826956a7:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-2"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-2"
+                ],
+                "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "operation": "tiered-stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "INT",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "3e86dffa826956a7",
+                "includesSelf": true,
+                "minimumCount": 2,
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "3e86dffa826956a7:effect-2",
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "防御": {
           "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
@@ -2760,7 +2938,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -2806,7 +2986,67 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
+                "effectIdentity": "3e86dffa826956a7:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "3e86dffa826956a7",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "魔抗": {
           "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
@@ -2816,7 +3056,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-3"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -2862,219 +3104,67 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）；队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%；队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效。",
+          "effectConditions": [
             {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "operation": "tiered-stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 15
-                }
-              ],
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "3e86dffa826956a7",
-              "includesSelf": true,
-              "minimumCount": 2,
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "284-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "3e86dffa826956a7:attack",
-              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "effect-1"
-              ],
-              "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%。",
-              "effectIdentity": "3e86dffa826956a7:effect-1",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "DEF",
-              "operation": "party-scaled-stat-up",
-              "tiers": [
-                {
-                  "matchingUnits": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "matchingUnits": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "matchingUnits": 4,
-                  "valuePercent": 15
-                }
-              ],
-              "condition": {
-                "sameSkillId": "3e86dffa826956a7",
-                "minimumMatchingUnits": 2,
-                "includesSelf": true
-              },
-              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "284-effect-1",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "effect-2"
-              ],
-              "summary": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "operation": "tiered-stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "INT",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 15
-                }
-              ],
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "3e86dffa826956a7",
-              "includesSelf": true,
-              "minimumCount": 2,
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "284-effect-2",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "3e86dffa826956a7:effect-2",
-              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-3"
               ],
-              "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
-              "effectIdentity": "3e86dffa826956a7:effect-3",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "MND",
-              "operation": "party-scaled-stat-up",
-              "tiers": [
-                {
-                  "matchingUnits": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "matchingUnits": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "matchingUnits": 4,
-                  "valuePercent": 15
-                }
+              "conditionPartIds": [
+                "condition-1"
               ],
-              "condition": {
-                "sameSkillId": "3e86dffa826956a7",
-                "minimumMatchingUnits": 2,
-                "includesSelf": true
-              },
-              "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "284-effect-3",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "effect-3"
+                ],
+                "summary": "队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%。",
+                "effectIdentity": "3e86dffa826956a7:effect-3",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "MND",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "3e86dffa826956a7",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“魔兽同盟”；含自身按2／3／4人分别生效"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
@@ -3082,8 +3172,7 @@ export const SKILL_LABELING_CATALOG = {
         "防御力",
         "魔力",
         "防御",
-        "魔抗",
-        "队伍联动"
+        "魔抗"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -5113,31 +5202,209 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "队伍至少2人装备同技能时，自身攻击力提升：2人7%、3人14%、4人21%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:edc04a2cb5cbc357:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "operation": "tiered-stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "edc04a2cb5cbc357",
+                "includesSelf": true,
+                "minimumCount": 2,
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "edc04a2cb5cbc357:attack",
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "防御力": {
           "summary": "队伍至少2人装备英雄之绊时，自身防御力提升：2人7%、3人14%、4人21%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:edc04a2cb5cbc357:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
+                "effectIdentity": "edc04a2cb5cbc357:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "edc04a2cb5cbc357",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "魔力": {
           "summary": "队伍至少2人装备英雄之绊时，自身魔力提升：2人7%、3人14%、4人21%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
           "existingRuleIds": [
             "basic:edc04a2cb5cbc357:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-2"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-2"
+                ],
+                "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "operation": "tiered-stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "INT",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "edc04a2cb5cbc357",
+                "includesSelf": true,
+                "minimumCount": 2,
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "edc04a2cb5cbc357:effect-2",
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "防御": {
           "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
@@ -5147,7 +5414,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -5193,7 +5462,67 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
+                "effectIdentity": "edc04a2cb5cbc357:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "edc04a2cb5cbc357",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+            }
+          ]
         },
         "魔抗": {
           "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
@@ -5203,7 +5532,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-3"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -5249,219 +5580,67 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）；队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%；队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效。",
+          "effectConditions": [
             {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "operation": "tiered-stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 7
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 14
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 21
-                }
-              ],
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "edc04a2cb5cbc357",
-              "includesSelf": true,
-              "minimumCount": 2,
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "514-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "edc04a2cb5cbc357:attack",
-              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "effect-1"
-              ],
-              "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%。",
-              "effectIdentity": "edc04a2cb5cbc357:effect-1",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "DEF",
-              "operation": "party-scaled-stat-up",
-              "tiers": [
-                {
-                  "matchingUnits": 2,
-                  "valuePercent": 7
-                },
-                {
-                  "matchingUnits": 3,
-                  "valuePercent": 14
-                },
-                {
-                  "matchingUnits": 4,
-                  "valuePercent": 21
-                }
-              ],
-              "condition": {
-                "sameSkillId": "edc04a2cb5cbc357",
-                "minimumMatchingUnits": 2,
-                "includesSelf": true
-              },
-              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "514-effect-1",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "effect-2"
-              ],
-              "summary": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "operation": "tiered-stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "INT",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 7
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 14
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 21
-                }
-              ],
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "edc04a2cb5cbc357",
-              "includesSelf": true,
-              "minimumCount": 2,
-              "partyPredicate": {
-                "clauses": [
-                  "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "514-effect-2",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "edc04a2cb5cbc357:effect-2",
-              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-3"
               ],
-              "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
-              "effectIdentity": "edc04a2cb5cbc357:effect-3",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "MND",
-              "operation": "party-scaled-stat-up",
-              "tiers": [
-                {
-                  "matchingUnits": 2,
-                  "valuePercent": 7
-                },
-                {
-                  "matchingUnits": 3,
-                  "valuePercent": 14
-                },
-                {
-                  "matchingUnits": 4,
-                  "valuePercent": 21
-                }
+              "conditionPartIds": [
+                "condition-1"
               ],
-              "condition": {
-                "sameSkillId": "edc04a2cb5cbc357",
-                "minimumMatchingUnits": 2,
-                "includesSelf": true
-              },
-              "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
-                }
-              ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "514-effect-3",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "effect-3"
+                ],
+                "summary": "队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%。",
+                "effectIdentity": "edc04a2cb5cbc357:effect-3",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "MND",
+                "operation": "party-scaled-stat-up",
+                "tiers": [
+                  {
+                    "matchingUnits": 2,
+                    "valuePercent": 7
+                  },
+                  {
+                    "matchingUnits": 3,
+                    "valuePercent": 14
+                  },
+                  {
+                    "matchingUnits": 4,
+                    "valuePercent": 21
+                  }
+                ],
+                "condition": {
+                  "sameSkillId": "edc04a2cb5cbc357",
+                  "minimumMatchingUnits": 2,
+                  "includesSelf": true
+                },
+                "sourceClause": "队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍至少2人装备“英雄之绊”；含自身按2／3／4人分别生效"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
@@ -5469,8 +5648,7 @@ export const SKILL_LABELING_CATALOG = {
         "防御力",
         "魔力",
         "防御",
-        "魔抗",
-        "队伍联动"
+        "魔抗"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -6667,7 +6845,8 @@ export const SKILL_LABELING_CATALOG = {
               "effect-1"
             ],
             "conditionPartIds": [
-              "condition-3"
+              "condition-3",
+              "condition-2"
             ]
           },
           "bindings": [
@@ -6704,87 +6883,70 @@ export const SKILL_LABELING_CATALOG = {
               "group": "outgoing-unspecified-cap-up-buff"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：选中除自身外攻击力最高的1名友方。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff",
-              "target": "selected-other-ally",
-              "isBuff": true,
-              "effectIdentity": "619c3ef058c4b219:effect-1",
-              "effectStacking": "once-per-skill",
-              "operation": "cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "requiresKillerHit": true
-              },
-              "buffType": "killer-damage-cap-up",
-              "capPoints": 5000,
-              "durationSeconds": 40,
-              "stacking": "highest-active-buff-of-same-type-only",
-              "trigger": {
-                "event": "battle-start"
-              },
-              "selection": {
-                "subject": "other-allies",
-                "metric": "STR",
-                "order": "highest",
-                "count": 1,
-                "excludeSelf": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2"
+              ],
+              "predicate": {
                 "clauses": [
                   "选中除自身外攻击力最高的1名友方"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "696-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予增益：触发特攻时的伤害上限+5,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时触发"
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff",
+                "target": "selected-other-ally",
+                "isBuff": true,
+                "effectIdentity": "619c3ef058c4b219:effect-1",
+                "effectStacking": "once-per-skill",
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "requiresKillerHit": true
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "选中除自身外攻击力最高的1名友方"
+                "buffType": "killer-damage-cap-up",
+                "capPoints": 5000,
+                "durationSeconds": 40,
+                "stacking": "highest-active-buff-of-same-type-only",
+                "trigger": {
+                  "event": "battle-start"
                 },
-                {
-                  "partId": "condition-3",
-                  "text": "触发特攻时生效"
+                "selection": {
+                  "subject": "other-allies",
+                  "metric": "STR",
+                  "order": "highest",
+                  "count": 1,
+                  "excludeSelf": true
                 },
-                {
-                  "partId": "condition-4",
-                  "text": "赋予友方的Buff持续40秒"
-                }
-              ],
-              "pendingPartIds": []
+                "partyPredicate": {
+                  "clauses": [
+                    "选中除自身外攻击力最高的1名友方"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予增益：触发特攻时的伤害上限+5,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "选中除自身外攻击力最高的1名友方"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始",
-        "种族／特攻共通",
-        "队伍联动"
+        "种族／特攻共通"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -10359,11 +10521,53 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "一名友军失去行动能力时，自身攻击力+20%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：有一名友军处于战斗不能状态时生效。",
           "existingRuleIds": [
             "basic:7498b3dbd8ba7e5d:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "有一名友军处于战斗不能状态时生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "至少一名其他友方处于战斗不能状态时，自身攻击力+20%。",
+                "operation": "stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "valuePercent": 20,
+                "partyPredicate": {
+                  "clauses": [
+                    "有一名友军处于战斗不能状态时生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "7498b3dbd8ba7e5d:attack",
+                "sourceClause": "若有一名友军失去行动能力，攻击力+20%"
+              },
+              "numericEffectInjection": false,
+              "summary": "有一名友军处于战斗不能状态时生效"
+            }
+          ]
         },
         "友军死亡": {
           "summary": "存在处于战斗不能状态的其他友军时生效",
@@ -10393,58 +10597,11 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "按当前是否存在倒下友军判断，不是死亡时赋予40秒Buff；不要求恰好只有1名，也不会按倒下人数重复叠加20%。攻击力和此条件均已贴标签，因此已完整判断。"
-        },
-        "队伍联动": {
-          "summary": "至少一名其他友方处于战斗不能状态时，自身攻击力+20%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "至少一名其他友方处于战斗不能状态时，自身攻击力+20%。",
-              "operation": "stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "valuePercent": 20,
-              "partyPredicate": {
-                "clauses": [
-                  "有一名友军处于战斗不能状态时生效"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1212-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "7498b3dbd8ba7e5d:attack",
-              "sourceClause": "若有一名友军失去行动能力，攻击力+20%",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "有一名友军处于战斗不能状态时生效"
-                }
-              ],
-              "pendingPartIds": []
-            }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "友军死亡",
-        "队伍联动"
+        "友军死亡"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -10627,21 +10784,120 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "自身为唯一参战单位时，攻击力+10%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：自身为唯一参战单位时生效。",
           "existingRuleIds": [
             "basic:1f0a096307e7bc24:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身为唯一参战单位时生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "effectIdentity": "1f0a096307e7bc24:attack",
+                "summary": "自身为唯一参战单位时，攻击力+10%",
+                "operation": "stat-up",
+                "stat": "STR",
+                "valuePercent": 10,
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "sourceClause": "如果该单位是唯一参战单位，则攻击力和防御力+10%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "自身为唯一参战单位时生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "自身为唯一参战单位时生效"
+            }
+          ]
         },
         "防御力": {
           "summary": "自身为唯一参战单位时，防御力+10%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：自身为唯一参战单位时生效。",
           "existingRuleIds": [
             "basic:1f0a096307e7bc24:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身为唯一参战单位时生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "自身为唯一参战单位时，防御力+10%",
+                "effectIdentity": "1f0a096307e7bc24:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "stat-up",
+                "valuePercent": 10,
+                "condition": {
+                  "metric": "participating-unit-count",
+                  "operator": "eq",
+                  "count": 1,
+                  "incapacitatedAlliesQualify": false
+                },
+                "familyRole": "direct-effect",
+                "sourceClause": "如果该单位是唯一参战单位，则攻击力和防御力+10%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "自身为唯一参战单位时生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "自身为唯一参战单位时生效"
+            }
+          ]
         },
         "防御": {
           "summary": "自身为唯一参战单位时，防御力+10%",
@@ -10651,7 +10907,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -10685,7 +10943,60 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：自身为唯一参战单位时生效。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身为唯一参战单位时生效"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "自身为唯一参战单位时，防御力+10%",
+                "effectIdentity": "1f0a096307e7bc24:effect-1",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "stat-up",
+                "valuePercent": 10,
+                "condition": {
+                  "metric": "participating-unit-count",
+                  "operator": "eq",
+                  "count": 1,
+                  "incapacitatedAlliesQualify": false
+                },
+                "familyRole": "direct-effect",
+                "sourceClause": "如果该单位是唯一参战单位，则攻击力和防御力+10%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "自身为唯一参战单位时生效"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "自身为唯一参战单位时生效"
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -10693,11 +11004,9 @@ export const SKILL_LABELING_CATALOG = {
         "防御力",
         "防御"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "自身为唯一参战单位时生效"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "1da4935f9a387557",
@@ -10745,21 +11054,126 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "除自身外恰好1人装备师徒之绊时，每个Wave开始自身攻击力+35%，持续40秒",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：除自身外恰好1名友方装备“师徒之绊”。",
           "existingRuleIds": [
             "basic:1da4935f9a387557:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "除自身外恰好1名友方装备“师徒之绊”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "1da4935f9a387557"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒。",
+                "operation": "stat-up",
+                "target": "self",
+                "isBuff": true,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "valuePercent": 35,
+                "durationSeconds": 40,
+                "trigger": {
+                  "event": "wave-start"
+                },
+                "buffType": "str-up",
+                "stacking": "highest-active-buff-of-same-type-only",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外恰好1名友方装备“师徒之绊”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "1da4935f9a387557"
+                },
+                "effectIdentity": "1da4935f9a387557:attack",
+                "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。"
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外恰好1名友方装备“师徒之绊”"
+            }
+          ]
         },
         "防御力": {
           "summary": "除自身外恰好1人装备师徒之绊时，每个Wave开始自身防御力+35%，持续40秒",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：除自身外恰好1名友方装备“师徒之绊”。",
           "existingRuleIds": [
             "basic:1da4935f9a387557:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "除自身外恰好1名友方装备“师徒之绊”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "1da4935f9a387557"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
+                "durationSeconds": 40,
+                "stacking": "highest-active-buff-of-same-type-only",
+                "effectIdentity": "1da4935f9a387557:effect-1",
+                "target": "self",
+                "isBuff": true,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "stat-up",
+                "valuePercent": 35,
+                "buffType": "stat-def-up",
+                "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外恰好1名友方装备“师徒之绊”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "1da4935f9a387557"
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外恰好1名友方装备“师徒之绊”"
+            }
+          ]
         },
         "战斗开始": {
           "summary": "每个Wave开始时触发",
@@ -10799,7 +11213,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -10838,101 +11254,16 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒；除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：除自身外恰好1名友方装备“师徒之绊”。",
+          "effectConditions": [
             {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒。",
-              "operation": "stat-up",
-              "target": "self",
-              "isBuff": true,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "valuePercent": 35,
-              "durationSeconds": 40,
-              "trigger": {
-                "event": "wave-start"
-              },
-              "buffType": "str-up",
-              "stacking": "highest-active-buff-of-same-type-only",
-              "partyPredicate": {
-                "clauses": [
-                  "除自身外恰好1名友方装备“师徒之绊”"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "exact-other-same-skill-pair",
-                "otherEquippedCount": 1,
-                "requiredSkillId": "1da4935f9a387557"
-              },
-              "group": "1256-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "1da4935f9a387557:attack",
-              "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "除自身外恰好1名友方装备“师徒之绊”"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "每个Wave开始时触发"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "大勇敢／大堡垒Buff持续40秒，各同类型Buff同时只计一项"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
-              "durationSeconds": 40,
-              "stacking": "highest-active-buff-of-same-type-only",
-              "effectIdentity": "1da4935f9a387557:effect-1",
-              "target": "self",
-              "isBuff": true,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "DEF",
-              "operation": "stat-up",
-              "valuePercent": 35,
-              "buffType": "stat-def-up",
-              "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "除自身外恰好1名友方装备“师徒之绊”"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "每个Wave开始时触发"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "大勇敢／大堡垒Buff持续40秒，各同类型Buff同时只计一项"
-                }
+              "conditionPartIds": [
+                "condition-1"
               ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "除自身外恰好1名友方装备“师徒之绊”"
                 ],
@@ -10942,20 +11273,46 @@ export const SKILL_LABELING_CATALOG = {
                 "otherEquippedCount": 1,
                 "requiredSkillId": "1da4935f9a387557"
               },
-              "group": "1256-effect-1",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
+                "durationSeconds": 40,
+                "stacking": "highest-active-buff-of-same-type-only",
+                "effectIdentity": "1da4935f9a387557:effect-1",
+                "target": "self",
+                "isBuff": true,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "DEF",
+                "operation": "stat-up",
+                "valuePercent": 35,
+                "buffType": "stat-def-up",
+                "sourceClause": "自身以外恰好有1名友方装备「师徒之绊」时，每个Wave开始自动获得攻击力+35%、防御力+35%的增益。",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外恰好1名友方装备“师徒之绊”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "1da4935f9a387557"
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外恰好1名友方装备“师徒之绊”"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
         "战斗开始",
-        "防御",
-        "队伍联动"
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -13138,7 +13495,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -13172,81 +13531,68 @@ export const SKILL_LABELING_CATALOG = {
               }
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
-        },
-        "队伍联动": {
-          "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：选中除自身外攻击力最高的1名友方。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力",
-              "target": "highest-STR-other-ally",
-              "isBuff": true,
-              "operation": "cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
-              },
-              "effectIdentity": "d611639ee456760f:effect-1",
-              "durationSeconds": 90,
-              "trigger": {
-                "actor": "self",
-                "event": "wave-start"
-              },
-              "capPoints": 5000,
-              "buffType": "physical-cap-up",
-              "stacking": "highest-active-buff-of-same-type-only",
-              "selection": {
-                "excludesSelf": true,
-                "count": 1,
-                "metric": "STR",
-                "order": "highest"
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2"
+              ],
+              "predicate": {
                 "clauses": [
                   "选中除自身外攻击力最高的1名友方"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1706-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予90秒增益：物理攻击伤害上限+5,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时触发"
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力",
+                "target": "highest-STR-other-ally",
+                "isBuff": true,
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "选中除自身外攻击力最高的1名友方"
+                "effectIdentity": "d611639ee456760f:effect-1",
+                "durationSeconds": 90,
+                "trigger": {
+                  "actor": "self",
+                  "event": "wave-start"
                 },
-                {
-                  "partId": "condition-3",
-                  "text": "赋予友方的Buff持续90秒"
-                }
-              ],
-              "pendingPartIds": []
+                "capPoints": 5000,
+                "buffType": "physical-cap-up",
+                "stacking": "highest-active-buff-of-same-type-only",
+                "selection": {
+                  "excludesSelf": true,
+                  "count": 1,
+                  "metric": "STR",
+                  "order": "highest"
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "选中除自身外攻击力最高的1名友方"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "战斗开始时，对除自身外攻击力最高的我方角色赋予90秒增益：物理攻击伤害上限+5,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "选中除自身外攻击力最高的1名友方"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始",
-        "物理",
-        "队伍联动"
+        "物理"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -13764,11 +14110,64 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "开场时，除自身外恰好只有1人装备“与你同在”，自身攻击力+20%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：除自身外恰好1名盟友装备“与你同在”。",
           "existingRuleIds": [
             "basic:a5f24684f4b2911a:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2"
+              ],
+              "predicate": {
+                "clauses": [
+                  "除自身外恰好1名盟友装备“与你同在”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "a5f24684f4b2911a",
+                "snapshot": "wave-start"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "effectIdentity": "a5f24684f4b2911a:attack",
+                "summary": "开场时，除自身外恰好只有1人装备“与你同在”，自身攻击力+20%",
+                "operation": "stat-up",
+                "stat": "STR",
+                "valuePercent": 20,
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "sourceClause": "战斗开始时，如果除了你之外只有一名盟友装备了 “与你同在”，则攻击力+20%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外恰好1名盟友装备“与你同在”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "a5f24684f4b2911a",
+                  "snapshot": "wave-start"
+                },
+                "trigger": {
+                  "event": "wave-start"
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外恰好1名盟友装备“与你同在”"
+            }
+          ]
         },
         "战斗开始": {
           "summary": "战斗开始时触发",
@@ -13787,18 +14186,16 @@ export const SKILL_LABELING_CATALOG = {
               "summary": "开场判断除自身外恰好1人装备与你同在：攻击力+20%"
             }
           ],
-          "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+          "calculationNote": "开场与人数条件已完成分类；开场时除自身外恰好1名盟友装备同技能，攻击力加成才生效。"
         }
       },
       "assignedTags": [
         "攻击力",
         "战斗开始"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "除自身外恰好1名盟友装备“与你同在”"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5dbd4f977800ad88",
@@ -13861,20 +14258,139 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
           "relation": "inherited-effect",
           "target": "self",
-          "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。",
+          "calculationNote": "仅记录攻击力的关联用途，不将它当作攻击力百分比加成。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
           "existingRuleIds": [],
           "relatedSkillIds": [
             "7bc369d4036dd098"
+          ],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "5dbd4f977800ad88:attack",
+                "effectStacking": "once-per-skill",
+                "operation": "stat-up",
+                "scope": {
+                  "direction": "attribute"
+                },
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
+                },
+                "valuePercent": 10,
+                "stat": "STR",
+                "grant": {
+                  "providerSkillId": "7bc369d4036dd098",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "7bc369d4036dd098:attack"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
           ]
         },
         "物理伤害增加": {
           "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
           "relation": "inherited-effect",
           "target": "self",
-          "calculationNote": "与对应的信仰／神秘之力配套生效；同名效果只计一项，不能把提供者与接受者重复相加。",
+          "calculationNote": "与对应的信仰／神秘之力配套生效；同名效果只计一项，不能把提供者与接受者重复相加。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
           "existingRuleIds": [],
           "relatedSkillIds": [
             "8c11c64768072670"
+          ],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-damage"
+                ],
+                "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "8c11c64768072670",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
           ]
         },
         "物理": {
@@ -13886,7 +14402,10 @@ export const SKILL_LABELING_CATALOG = {
               "faith-physical-mitigation",
               "faith-physical-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -13942,7 +14461,113 @@ export const SKILL_LABELING_CATALOG = {
               "group": "damage"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-physical-mitigation"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-mitigation"
+                ],
+                "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "f063ab920fec3e4a",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "faith-physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-damage"
+                ],
+                "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "8c11c64768072670",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "魔法": {
           "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%。",
@@ -13952,7 +14577,10 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -13982,7 +14610,61 @@ export const SKILL_LABELING_CATALOG = {
               "group": "reduction"
             }
           ],
-          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "5dbd4f977800ad88:effect-1",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "7611b3c1ae612f0e",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "神": {
           "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%；从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加；从神秘之力【守护】获得受到的物理攻击伤害-10%；从神秘之力【轮光】获得光属性伤害+10%；从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加。",
@@ -13998,7 +14680,9 @@ export const SKILL_LABELING_CATALOG = {
               "attack"
             ],
             "conditionPartIds": [
-              "condition-1"
+              "condition-1",
+              "condition-2",
+              "condition-3"
             ]
           },
           "bindings": [
@@ -14189,7 +14873,292 @@ export const SKILL_LABELING_CATALOG = {
               "group": "faith-receive-STR-stat-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "5dbd4f977800ad88:attack",
+                "effectStacking": "once-per-skill",
+                "operation": "stat-up",
+                "scope": {
+                  "direction": "attribute"
+                },
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
+                },
+                "valuePercent": 10,
+                "stat": "STR",
+                "grant": {
+                  "providerSkillId": "7bc369d4036dd098",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "7bc369d4036dd098:attack"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "5dbd4f977800ad88:effect-1",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "7611b3c1ae612f0e",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "faith-physical-mitigation"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-mitigation"
+                ],
+                "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "f063ab920fec3e4a",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "faith-light-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-light-damage"
+                ],
+                "summary": "从神秘之力【轮光】获得光属性伤害+10%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "5dbd4f977800ad88:faith-light-damage",
+                "effectStacking": "once-per-skill",
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
+                },
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
+                },
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "ca8779066b942675",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            },
+            {
+              "effectPartIds": [
+                "faith-physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-damage"
+                ],
+                "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "8c11c64768072670",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "防御": {
           "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
@@ -14199,7 +15168,10 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "faith-physical-mitigation"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -14245,7 +15217,61 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-physical-mitigation"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "该友方须装备相应“神秘之力”技能",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-mitigation"
+                ],
+                "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "f063ab920fec3e4a",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "魔抗": {
           "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
@@ -14255,7 +15281,10 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -14301,105 +15330,17 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加；从神秘之力【结界】获得受到的魔法攻击伤害-10%；从神秘之力【守护】获得受到的物理攻击伤害-10%；从神秘之力【轮光】获得光属性伤害+10%；从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2",
-              "condition-3"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
             {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
-              "target": "self",
-              "isBuff": false,
-              "effectIdentity": "5dbd4f977800ad88:attack",
-              "effectStacking": "once-per-skill",
-              "operation": "stat-up",
-              "scope": {
-                "direction": "attribute"
-              },
-              "raceRelation": {
-                "subject": "provider",
-                "operator": "any-of",
-                "races": [
-                  "god"
-                ]
-              },
-              "valuePercent": 10,
-              "stat": "STR",
-              "grant": {
-                "providerSkillId": "7bc369d4036dd098",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "recipientMustEquipFaith": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true,
-                "providerEffectIdentity": "7bc369d4036dd098:attack"
-              },
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
-                "clauses": [
-                  "该友方须装备相应“神秘之力”技能",
-                  "同名“神秘之力”效果不叠加"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1754-attack",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "attack-magic"
-              },
-              "effectIdentity": "5dbd4f977800ad88:effect-1",
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "7611b3c1ae612f0e",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
                 "clauses": [
                   "该友方须装备相应“神秘之力”技能",
                   "同名“神秘之力”效果不叠加"
@@ -14407,189 +15348,43 @@ export const SKILL_LABELING_CATALOG = {
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1754-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "faith-physical-mitigation"
-              ],
-              "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "physical"
-              },
-              "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "f063ab920fec3e4a",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "该友方须装备相应“神秘之力”技能",
-                  "同名“神秘之力”效果不叠加"
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
                 ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1754-faith-physical-mitigation",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
+                "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "attack-magic"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
+                "effectIdentity": "5dbd4f977800ad88:effect-1",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "7611b3c1ae612f0e",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "receive",
+                  "countProviderAndRecipientOnce": true
                 },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "faith-light-damage"
-              ],
-              "summary": "从神秘之力【轮光】获得光属性伤害+10%",
-              "target": "self",
-              "isBuff": false,
-              "effectIdentity": "5dbd4f977800ad88:faith-light-damage",
-              "effectStacking": "once-per-skill",
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "element": "light"
-              },
-              "raceRelation": {
-                "subject": "provider",
-                "operator": "any-of",
-                "races": [
-                  "god"
-                ]
-              },
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "ca8779066b942675",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "recipientMustEquipFaith": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true,
-                "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
-              },
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
-                "clauses": [
-                  "该友方须装备相应“神秘之力”技能",
-                  "同名“神秘之力”效果不叠加"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1754-faith-light-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
+                "partyPredicate": {
+                  "clauses": [
+                    "该友方须装备相应“神秘之力”技能",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "faith-physical-damage"
-              ],
-              "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
-              "target": "self",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
+                "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。"
               },
-              "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "8c11c64768072670",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "receive",
-                "countProviderAndRecipientOnce": true
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "该友方须装备相应“神秘之力”技能",
-                  "同名“神秘之力”效果不叠加"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1754-faith-physical-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "获得自身以外的神类型我方角色所装备「神秘之力」系列技能对应的效果；同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "效果来自自身以外的神类型友方"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "该友方须装备相应“神秘之力”技能"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
+              "numericEffectInjection": false,
+              "summary": "该友方须装备相应“神秘之力”技能；同名“神秘之力”效果不叠加"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
@@ -14599,8 +15394,7 @@ export const SKILL_LABELING_CATALOG = {
         "魔法",
         "神",
         "防御",
-        "魔抗",
-        "队伍联动"
+        "魔抗"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -15098,11 +15892,59 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "开场时全队只有自身装备精灵骑士，且恰好1名其他友方装备禁书库的大精灵，自身攻击力+25%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：全队只有自身装备“精灵骑士”；除自身外恰好1名友方装备“禁书库的大精灵”。",
           "existingRuleIds": [
             "basic:34045351ea740196:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "全队只有自身装备“精灵骑士”",
+                  "除自身外恰好1名友方装备“禁书库的大精灵”"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
+                "operation": "stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "STR",
+                "valuePercent": 25,
+                "trigger": {
+                  "event": "wave-start"
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "全队只有自身装备“精灵骑士”",
+                    "除自身外恰好1名友方装备“禁书库的大精灵”"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "34045351ea740196:attack",
+                "sourceClause": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "全队只有自身装备“精灵骑士”；除自身外恰好1名友方装备“禁书库的大精灵”"
+            }
+          ]
         },
         "战斗开始": {
           "summary": "战斗开始时触发",
@@ -15122,71 +15964,11 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
-        },
-        "队伍联动": {
-          "summary": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2",
-              "condition-3"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "attack"
-              ],
-              "summary": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
-              "operation": "stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "STR",
-              "valuePercent": 25,
-              "trigger": {
-                "event": "wave-start"
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "全队只有自身装备“精灵骑士”",
-                  "除自身外恰好1名友方装备“禁书库的大精灵”"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1801-attack",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "34045351ea740196:attack",
-              "sourceClause": "战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时判断"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "全队只有自身装备“精灵骑士”"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "除自身外恰好1名友方装备“禁书库的大精灵”"
-                }
-              ],
-              "pendingPartIds": []
-            }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始",
-        "队伍联动"
+        "战斗开始"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -16691,11 +17473,76 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
           "relation": "attribute-change",
           "target": "ally",
-          "calculationNote": "基础属性已标注；触发状态、叠加或计算阶段待后续对应类型确认，暂不自动计入。",
+          "calculationNote": "本项属性加成保留以下队伍条件，须满足条件才生效；未确定的机制仍见待判断项。 适用条件：效果给予装备“信仰”的我方角色；同名“神秘之力”效果不叠加。",
           "existingRuleIds": [
             "basic:7bc369d4036dd098:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "attack"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "效果给予装备“信仰”的我方角色",
+                  "同名“神秘之力”效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "effectIdentity": "7bc369d4036dd098:attack",
+                "effectStacking": "once-per-skill",
+                "operation": "stat-up",
+                "scope": {
+                  "direction": "attribute"
+                },
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
+                },
+                "valuePercent": 10,
+                "stat": "STR",
+                "grant": {
+                  "providerSkillId": "7bc369d4036dd098",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "7bc369d4036dd098:attack"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "效果给予装备“信仰”的我方角色",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：攻击力+10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "效果给予装备“信仰”的我方角色；同名“神秘之力”效果不叠加"
+            }
+          ]
         },
         "神": {
           "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加。",
@@ -16707,7 +17554,9 @@ export const SKILL_LABELING_CATALOG = {
               "attack"
             ],
             "conditionPartIds": [
-              "condition-1"
+              "condition-1",
+              "condition-2",
+              "condition-3"
             ]
           },
           "bindings": [
@@ -16749,55 +17598,17 @@ export const SKILL_LABELING_CATALOG = {
               "group": "faith-provide-STR-stat-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2",
-              "condition-3"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：效果给予装备“信仰”的我方角色；同名“神秘之力”效果不叠加。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "attack"
               ],
-              "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
-              "target": "allies-with-faith",
-              "isBuff": false,
-              "effectIdentity": "7bc369d4036dd098:attack",
-              "effectStacking": "once-per-skill",
-              "operation": "stat-up",
-              "scope": {
-                "direction": "attribute"
-              },
-              "raceRelation": {
-                "subject": "provider",
-                "operator": "any-of",
-                "races": [
-                  "god"
-                ]
-              },
-              "valuePercent": 10,
-              "stat": "STR",
-              "grant": {
-                "providerSkillId": "7bc369d4036dd098",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "recipientMustEquipFaith": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "provide",
-                "countProviderAndRecipientOnce": true,
-                "providerEffectIdentity": "7bc369d4036dd098:attack"
-              },
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
                 "clauses": [
                   "效果给予装备“信仰”的我方角色",
                   "同名“神秘之力”效果不叠加"
@@ -16805,33 +17616,59 @@ export const SKILL_LABELING_CATALOG = {
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "2001-attack",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：攻击力+10%。同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "自身为神类型"
+              "effectBinding": {
+                "partIds": [
+                  "attack"
+                ],
+                "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "effectIdentity": "7bc369d4036dd098:attack",
+                "effectStacking": "once-per-skill",
+                "operation": "stat-up",
+                "scope": {
+                  "direction": "attribute"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "效果给予装备“信仰”的我方角色"
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
                 },
-                {
-                  "partId": "condition-3",
-                  "text": "同名“神秘之力”效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
+                "valuePercent": 10,
+                "stat": "STR",
+                "grant": {
+                  "providerSkillId": "7bc369d4036dd098",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "7bc369d4036dd098:attack"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "效果给予装备“信仰”的我方角色",
+                    "同名“神秘之力”效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：攻击力+10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "效果给予装备“信仰”的我方角色；同名“神秘之力”效果不叠加"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "攻击力",
-        "神",
-        "队伍联动"
+        "神"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -28298,11 +29135,56 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "开场满足己方指定技能配对条件时，自身魔力+25%",
           "relation": "attribute-change",
           "target": "self",
-          "calculationNote": "魔力（INT），对应现有计算器的法强属性。",
+          "calculationNote": "魔力（INT），对应现有计算器的法强属性。 适用条件：全队只有自身装备禁书库的大精灵，且恰好1名其他友方装备精灵骑士。",
           "existingRuleIds": [
             "basic:00001521ecae775f:1"
           ],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "magic"
+              ],
+              "conditionPartIds": [
+                "condition-2"
+              ],
+              "predicate": {
+                "clauses": [
+                  "全队只有自身装备禁书库的大精灵，且恰好1名其他友方装备精灵骑士"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "magic"
+                ],
+                "summary": "战斗开始时，若己方只有自身装备“禁书库的大精灵”，且恰好有1名其他友方装备“精灵骑士”，则魔力+25%。",
+                "operation": "stat-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "self-stat"
+                },
+                "stat": "INT",
+                "valuePercent": 25,
+                "trigger": {
+                  "event": "wave-start"
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "全队只有自身装备禁书库的大精灵，且恰好1名其他友方装备精灵骑士"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "00001521ecae775f:magic",
+                "sourceClause": "战斗开始时，若己方只有自身装备“禁书库的大精灵”，且恰好有1名其他友方装备“精灵骑士”，则魔力+25%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "全队只有自身装备禁书库的大精灵，且恰好1名其他友方装备精灵骑士"
+            }
+          ]
         },
         "战斗开始": {
           "summary": "战斗开始时触发",
@@ -28322,65 +29204,11 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
-        },
-        "队伍联动": {
-          "summary": "战斗开始时，若己方只有自身装备“禁书库的大精灵”，且恰好有1名其他友方装备“精灵骑士”，则魔力+25%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "magic"
-              ],
-              "summary": "战斗开始时，若己方只有自身装备“禁书库的大精灵”，且恰好有1名其他友方装备“精灵骑士”，则魔力+25%。",
-              "operation": "stat-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "self-stat"
-              },
-              "stat": "INT",
-              "valuePercent": 25,
-              "trigger": {
-                "event": "wave-start"
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "全队只有自身装备禁书库的大精灵，且恰好1名其他友方装备精灵骑士"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1802-magic",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "00001521ecae775f:magic",
-              "sourceClause": "战斗开始时，若己方只有自身装备“禁书库的大精灵”，且恰好有1名其他友方装备“精灵骑士”，则魔力+25%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时判断"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "全队只有自身装备禁书库的大精灵，且恰好1名其他友方装备精灵骑士"
-                }
-              ],
-              "pendingPartIds": []
-            }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
         }
       },
       "assignedTags": [
         "魔力",
-        "战斗开始",
-        "队伍联动"
+        "战斗开始"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -34484,17 +35312,124 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "满足永远的挚友配对条件时，物理攻击伤害+15%",
           "relation": "physical-damage-increase",
           "target": "self",
-          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。 适用条件：自身以外恰好只有1名友方也装备永远的挚友。",
           "existingRuleIds": [],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外恰好只有1名友方也装备永远的挚友"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "9c0bd935e13111e8"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "满足永远的挚友配对条件时，物理攻击伤害+15%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "9c0bd935e13111e8:physical-damage",
+                "valuePercent": 15,
+                "pair": {
+                  "requiredSkillId": "9c0bd935e13111e8",
+                  "otherEquippedCount": 1
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好只有1名友方也装备永远的挚友"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "9c0bd935e13111e8"
+                },
+                "sourceClause": "若除自身外刚好只有1名友方单位也装备「永远的挚友」，则物理攻击和魔法攻击伤害+15%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好只有1名友方也装备永远的挚友"
+            }
+          ]
         },
         "魔法伤害增加": {
           "summary": "满足永远的挚友配对条件时，魔法攻击伤害+15%",
           "relation": "magic-damage-increase",
           "target": "self",
-          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。 适用条件：自身以外恰好只有1名友方也装备永远的挚友。",
           "existingRuleIds": [],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外恰好只有1名友方也装备永远的挚友"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "9c0bd935e13111e8"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "魔法攻击伤害+15%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "9c0bd935e13111e8:effect-1",
+                "valuePercent": 15,
+                "condition": {
+                  "otherAlliesWithSameSkill": {
+                    "operator": "eq",
+                    "count": 1
+                  },
+                  "excludeSelf": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好只有1名友方也装备永远的挚友"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "9c0bd935e13111e8"
+                },
+                "sourceClause": "若除自身外刚好只有1名友方单位也装备「永远的挚友」，则物理攻击和魔法攻击伤害+15%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好只有1名友方也装备永远的挚友"
+            }
+          ]
         },
         "物理": {
           "summary": "满足永远的挚友配对条件时，物理攻击伤害+15%。",
@@ -34504,7 +35439,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -34529,7 +35466,59 @@ export const SKILL_LABELING_CATALOG = {
               "group": "damage"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：自身以外恰好只有1名友方也装备永远的挚友。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外恰好只有1名友方也装备永远的挚友"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "9c0bd935e13111e8"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "满足永远的挚友配对条件时，物理攻击伤害+15%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "9c0bd935e13111e8:physical-damage",
+                "valuePercent": 15,
+                "pair": {
+                  "requiredSkillId": "9c0bd935e13111e8",
+                  "otherEquippedCount": 1
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好只有1名友方也装备永远的挚友"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "9c0bd935e13111e8"
+                },
+                "sourceClause": "若除自身外刚好只有1名友方单位也装备「永远的挚友」，则物理攻击和魔法攻击伤害+15%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好只有1名友方也装备永远的挚友"
+            }
+          ]
         },
         "魔法": {
           "summary": "魔法攻击伤害+15%。",
@@ -34539,7 +35528,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -34567,80 +35558,16 @@ export const SKILL_LABELING_CATALOG = {
               "group": "damage"
             }
           ],
-          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
-        },
-        "队伍联动": {
-          "summary": "满足永远的挚友配对条件时，物理攻击伤害+15%；魔法攻击伤害+15%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。 适用条件：自身以外恰好只有1名友方也装备永远的挚友。",
+          "effectConditions": [
             {
-              "partIds": [
-                "physical-damage"
-              ],
-              "summary": "满足永远的挚友配对条件时，物理攻击伤害+15%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
-              },
-              "effectIdentity": "9c0bd935e13111e8:physical-damage",
-              "valuePercent": 15,
-              "pair": {
-                "requiredSkillId": "9c0bd935e13111e8",
-                "otherEquippedCount": 1
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "自身以外恰好只有1名友方也装备永远的挚友"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "exact-other-same-skill-pair",
-                "otherEquippedCount": 1,
-                "requiredSkillId": "9c0bd935e13111e8"
-              },
-              "group": "754-physical-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "若除自身外刚好只有1名友方单位也装备「永远的挚友」，则物理攻击和魔法攻击伤害+15%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "自身以外恰好只有1名友方也装备永远的挚友"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "魔法攻击伤害+15%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "attack-magic"
-              },
-              "effectIdentity": "9c0bd935e13111e8:effect-1",
-              "valuePercent": 15,
-              "condition": {
-                "otherAlliesWithSameSkill": {
-                  "operator": "eq",
-                  "count": 1
-                },
-                "excludeSelf": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
                 "clauses": [
                   "自身以外恰好只有1名友方也装备永远的挚友"
                 ],
@@ -34650,27 +35577,50 @@ export const SKILL_LABELING_CATALOG = {
                 "otherEquippedCount": 1,
                 "requiredSkillId": "9c0bd935e13111e8"
               },
-              "group": "754-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "若除自身外刚好只有1名友方单位也装备「永远的挚友」，则物理攻击和魔法攻击伤害+15%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "自身以外恰好只有1名友方也装备永远的挚友"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "魔法攻击伤害+15%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "9c0bd935e13111e8:effect-1",
+                "valuePercent": 15,
+                "condition": {
+                  "otherAlliesWithSameSkill": {
+                    "operator": "eq",
+                    "count": 1
+                  },
+                  "excludeSelf": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好只有1名友方也装备永远的挚友"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "9c0bd935e13111e8"
+                },
+                "sourceClause": "若除自身外刚好只有1名友方单位也装备「永远的挚友」，则物理攻击和魔法攻击伤害+15%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好只有1名友方也装备永远的挚友"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "魔法伤害增加",
         "物理",
-        "魔法",
-        "队伍联动"
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -41259,9 +42209,73 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%",
           "relation": "physical-damage-increase",
           "target": "self",
-          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。 适用条件：每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）。",
           "existingRuleIds": [],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-undead",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                  "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                  "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "all-members-match-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "开场判断我方全员为恐怖系时，物理攻击伤害+10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "d291d901e1625ee2:physical-damage",
+                "trigger": {
+                  "event": "battle-start",
+                  "delaySeconds": 0
+                },
+                "valuePercent": 10,
+                "condition": {
+                  "snapshot": "wave-start",
+                  "allAlliesHaveOneOfTypes": [
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "all-members-match-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，若我方全员均为恐怖系（魔法生物、不死生物、精灵），物理攻击伤害+10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "战斗开始": {
           "summary": "战斗开始时触发",
@@ -41290,7 +42304,11 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-2-undead",
+              "condition-2-spirit"
+            ]
           },
           "bindings": [
             {
@@ -41323,7 +42341,71 @@ export const SKILL_LABELING_CATALOG = {
               }
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-undead",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                  "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                  "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "all-members-match-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "开场判断我方全员为恐怖系时，物理攻击伤害+10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "d291d901e1625ee2:physical-damage",
+                "trigger": {
+                  "event": "battle-start",
+                  "delaySeconds": 0
+                },
+                "valuePercent": 10,
+                "condition": {
+                  "snapshot": "wave-start",
+                  "allAlliesHaveOneOfTypes": [
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "all-members-match-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，若我方全员均为恐怖系（魔法生物、不死生物、精灵），物理攻击伤害+10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "魔法生物": {
           "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%。",
@@ -41335,7 +42417,9 @@ export const SKILL_LABELING_CATALOG = {
               "physical-damage"
             ],
             "conditionPartIds": [
-              "condition-2"
+              "condition-2",
+              "condition-2-undead",
+              "condition-2-spirit"
             ]
           },
           "bindings": [
@@ -41380,7 +42464,71 @@ export const SKILL_LABELING_CATALOG = {
               "group": "all-allies-any-of-creature-undead-spirit-physical--damage-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-undead",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                  "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                  "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "all-members-match-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "开场判断我方全员为恐怖系时，物理攻击伤害+10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "d291d901e1625ee2:physical-damage",
+                "trigger": {
+                  "event": "battle-start",
+                  "delaySeconds": 0
+                },
+                "valuePercent": 10,
+                "condition": {
+                  "snapshot": "wave-start",
+                  "allAlliesHaveOneOfTypes": [
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "all-members-match-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，若我方全员均为恐怖系（魔法生物、不死生物、精灵），物理攻击伤害+10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "不死生物": {
           "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%。",
@@ -41392,6 +42540,131 @@ export const SKILL_LABELING_CATALOG = {
               "physical-damage"
             ],
             "conditionPartIds": [
+              "condition-2-undead",
+              "condition-2",
+              "condition-2-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d291d901e1625ee2:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "all-allies",
+                "operator": "any-of",
+                "races": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "condition": {
+                "allAlliesHaveOneOfTypes": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "snapshot": "wave-start"
+              },
+              "trigger": {
+                "event": "battle-start"
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "all-allies-any-of-creature-undead-spirit-physical--damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-undead",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                  "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                  "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "all-members-match-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "开场判断我方全员为恐怖系时，物理攻击伤害+10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "d291d901e1625ee2:physical-damage",
+                "trigger": {
+                  "event": "battle-start",
+                  "delaySeconds": 0
+                },
+                "valuePercent": 10,
+                "condition": {
+                  "snapshot": "wave-start",
+                  "allAlliesHaveOneOfTypes": [
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "all-members-match-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，若我方全员均为恐怖系（魔法生物、不死生物、精灵），物理攻击伤害+10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
+        },
+        "精灵": {
+          "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "condition-2-spirit",
+              "condition-2",
               "condition-2-undead"
             ]
           },
@@ -41437,105 +42710,18 @@ export const SKILL_LABELING_CATALOG = {
               "group": "all-allies-any-of-creature-undead-spirit-physical--damage-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "精灵": {
-          "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%。",
-          "relation": "race-effects-and-condition",
-          "race": "spirit",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "physical-damage"
-            ],
-            "conditionPartIds": [
-              "condition-2-spirit"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "physical-damage"
               ],
-              "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "d291d901e1625ee2:physical-damage",
-              "effectStacking": "once-per-skill",
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
-              },
-              "raceRelation": {
-                "subject": "all-allies",
-                "operator": "any-of",
-                "races": [
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "condition": {
-                "allAlliesHaveOneOfTypes": [
-                  "creature",
-                  "undead",
-                  "spirit"
-                ],
-                "includesSelf": true,
-                "snapshot": "wave-start"
-              },
-              "trigger": {
-                "event": "battle-start"
-              },
-              "valuePercent": 10,
-              "matchingMultipleRaces": "apply-once",
-              "group": "all-allies-any-of-creature-undead-spirit-physical--damage-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "开场判断我方全员为恐怖系时，物理攻击伤害+10%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2",
-              "condition-2-undead",
-              "condition-2-spirit"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "physical-damage"
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-undead",
+                "condition-2-spirit"
               ],
-              "summary": "开场判断我方全员为恐怖系时，物理攻击伤害+10%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
-              },
-              "effectIdentity": "d291d901e1625ee2:physical-damage",
-              "trigger": {
-                "event": "battle-start",
-                "delaySeconds": 0
-              },
-              "valuePercent": 10,
-              "condition": {
-                "snapshot": "wave-start",
-                "allAlliesHaveOneOfTypes": [
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
                   "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
@@ -41546,31 +42732,49 @@ export const SKILL_LABELING_CATALOG = {
                 "mode": "all-members-match-any-allowed-race",
                 "eachUnitCountsOnce": true
               },
-              "group": "1462-physical-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "战斗开始时，若我方全员均为恐怖系（魔法生物、不死生物、精灵），物理攻击伤害+10%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时判断"
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "开场判断我方全员为恐怖系时，物理攻击伤害+10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                "effectIdentity": "d291d901e1625ee2:physical-damage",
+                "trigger": {
+                  "event": "battle-start",
+                  "delaySeconds": 0
                 },
-                {
-                  "partId": "condition-2-undead",
-                  "text": "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                "valuePercent": 10,
+                "condition": {
+                  "snapshot": "wave-start",
+                  "allAlliesHaveOneOfTypes": [
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
                 },
-                {
-                  "partId": "condition-2-spirit",
-                  "text": "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
-                }
-              ],
-              "pendingPartIds": []
+                "partyPredicate": {
+                  "clauses": [
+                    "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+                    "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "all-members-match-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，若我方全员均为恐怖系（魔法生物、不死生物、精灵），物理攻击伤害+10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）；每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
@@ -41579,8 +42783,7 @@ export const SKILL_LABELING_CATALOG = {
         "物理",
         "魔法生物",
         "不死生物",
-        "精灵",
-        "队伍联动"
+        "精灵"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -42549,17 +43752,154 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%",
           "relation": "physical-damage-increase",
           "target": "self",
-          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
+          "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。 适用条件：自身以外恰好只有1名友方也装备圣诞夜的槲寄生；两名配对角色为一男一女。",
           "existingRuleIds": [],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-2"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
+                  "两名配对角色为一男一女"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "4810345440e1ca42",
+                "pairSexes": [
+                  "male",
+                  "female"
+                ]
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "4810345440e1ca42:physical-damage",
+                "valuePercent": 20,
+                "pair": {
+                  "requiredSkillId": "4810345440e1ca42",
+                  "otherEquippedCount": 1,
+                  "genders": [
+                    "male",
+                    "female"
+                  ]
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
+                    "两名配对角色为一男一女"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "4810345440e1ca42",
+                  "pairSexes": [
+                    "male",
+                    "female"
+                  ]
+                },
+                "sourceClause": "除自身外，若刚好只有1名友方角色也装备“圣诞夜的槲寄生”，且两人性别为一男一女，则自身物理攻击和魔法攻击伤害+20%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好只有1名友方也装备圣诞夜的槲寄生；两名配对角色为一男一女"
+            }
+          ]
         },
         "魔法伤害增加": {
           "summary": "满足圣诞夜的槲寄生技能配对与性别条件时，魔法攻击伤害+20%",
           "relation": "magic-damage-increase",
           "target": "self",
-          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。",
+          "calculationNote": "本轮只覆盖魔法增伤效果；其它效果及生效条件仍分别判断。 适用条件：自身以外恰好只有1名友方也装备圣诞夜的槲寄生；两名配对角色为一男一女。",
           "existingRuleIds": [],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-2"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
+                  "两名配对角色为一男一女"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "4810345440e1ca42",
+                "pairSexes": [
+                  "male",
+                  "female"
+                ]
+              },
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "魔法攻击伤害+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "4810345440e1ca42:effect-1",
+                "valuePercent": 20,
+                "condition": {
+                  "otherAlliesWithSameSkill": {
+                    "operator": "eq",
+                    "count": 1
+                  },
+                  "pairedGenders": [
+                    "male",
+                    "female"
+                  ],
+                  "excludeSelf": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
+                    "两名配对角色为一男一女"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "4810345440e1ca42",
+                  "pairSexes": [
+                    "male",
+                    "female"
+                  ]
+                },
+                "sourceClause": "除自身外，若刚好只有1名友方角色也装备“圣诞夜的槲寄生”，且两人性别为一男一女，则自身物理攻击和魔法攻击伤害+20%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好只有1名友方也装备圣诞夜的槲寄生；两名配对角色为一男一女"
+            }
+          ]
         },
         "物理": {
           "summary": "满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%。",
@@ -42569,7 +43909,10 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -42598,7 +43941,74 @@ export const SKILL_LABELING_CATALOG = {
               "group": "damage"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：自身以外恰好只有1名友方也装备圣诞夜的槲寄生；两名配对角色为一男一女。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-2"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
+                  "两名配对角色为一男一女"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "4810345440e1ca42",
+                "pairSexes": [
+                  "male",
+                  "female"
+                ]
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "4810345440e1ca42:physical-damage",
+                "valuePercent": 20,
+                "pair": {
+                  "requiredSkillId": "4810345440e1ca42",
+                  "otherEquippedCount": 1,
+                  "genders": [
+                    "male",
+                    "female"
+                  ]
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
+                    "两名配对角色为一男一女"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "4810345440e1ca42",
+                  "pairSexes": [
+                    "male",
+                    "female"
+                  ]
+                },
+                "sourceClause": "除自身外，若刚好只有1名友方角色也装备“圣诞夜的槲寄生”，且两人性别为一男一女，则自身物理攻击和魔法攻击伤害+20%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好只有1名友方也装备圣诞夜的槲寄生；两名配对角色为一男一女"
+            }
+          ]
         },
         "魔法": {
           "summary": "魔法攻击伤害+20%。",
@@ -42608,7 +44018,10 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -42640,98 +44053,17 @@ export const SKILL_LABELING_CATALOG = {
               "group": "damage"
             }
           ],
-          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
-        },
-        "队伍联动": {
-          "summary": "满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%；魔法攻击伤害+20%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1",
-              "condition-2"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。 适用条件：自身以外恰好只有1名友方也装备圣诞夜的槲寄生；两名配对角色为一男一女。",
+          "effectConditions": [
             {
-              "partIds": [
-                "physical-damage"
-              ],
-              "summary": "满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
-              },
-              "effectIdentity": "4810345440e1ca42:physical-damage",
-              "valuePercent": 20,
-              "pair": {
-                "requiredSkillId": "4810345440e1ca42",
-                "otherEquippedCount": 1,
-                "genders": [
-                  "male",
-                  "female"
-                ]
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
-                  "两名配对角色为一男一女"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "exact-other-same-skill-pair",
-                "otherEquippedCount": 1,
-                "requiredSkillId": "4810345440e1ca42",
-                "pairSexes": [
-                  "male",
-                  "female"
-                ]
-              },
-              "group": "1507-physical-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "除自身外，若刚好只有1名友方角色也装备“圣诞夜的槲寄生”，且两人性别为一男一女，则自身物理攻击和魔法攻击伤害+20%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "自身以外恰好只有1名友方也装备圣诞夜的槲寄生"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "两名配对角色为一男一女"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "魔法攻击伤害+20%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "attack-magic"
-              },
-              "effectIdentity": "4810345440e1ca42:effect-1",
-              "valuePercent": 20,
-              "condition": {
-                "otherAlliesWithSameSkill": {
-                  "operator": "eq",
-                  "count": 1
-                },
-                "pairedGenders": [
-                  "male",
-                  "female"
-                ],
-                "excludeSelf": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-1",
+                "condition-2"
+              ],
+              "predicate": {
                 "clauses": [
                   "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
                   "两名配对角色为一男一女"
@@ -42746,31 +44078,59 @@ export const SKILL_LABELING_CATALOG = {
                   "female"
                 ]
               },
-              "group": "1507-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "除自身外，若刚好只有1名友方角色也装备“圣诞夜的槲寄生”，且两人性别为一男一女，则自身物理攻击和魔法攻击伤害+20%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "自身以外恰好只有1名友方也装备圣诞夜的槲寄生"
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "魔法攻击伤害+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "两名配对角色为一男一女"
-                }
-              ],
-              "pendingPartIds": []
+                "effectIdentity": "4810345440e1ca42:effect-1",
+                "valuePercent": 20,
+                "condition": {
+                  "otherAlliesWithSameSkill": {
+                    "operator": "eq",
+                    "count": 1
+                  },
+                  "pairedGenders": [
+                    "male",
+                    "female"
+                  ],
+                  "excludeSelf": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好只有1名友方也装备圣诞夜的槲寄生",
+                    "两名配对角色为一男一女"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "4810345440e1ca42",
+                  "pairSexes": [
+                    "male",
+                    "female"
+                  ]
+                },
+                "sourceClause": "除自身外，若刚好只有1名友方角色也装备“圣诞夜的槲寄生”，且两人性别为一男一女，则自身物理攻击和魔法攻击伤害+20%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好只有1名友方也装备圣诞夜的槲寄生；两名配对角色为一男一女"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "魔法伤害增加",
         "物理",
-        "魔法",
-        "队伍联动"
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -44198,10 +45558,64 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%",
           "relation": "ally-damage-grant",
           "target": "allies-with-faith",
-          "calculationNote": "与对应的信仰／神秘之力配套生效；同名效果只计一项，不能把提供者与接受者重复相加。",
+          "calculationNote": "与对应的信仰／神秘之力配套生效；同名效果只计一项，不能把提供者与接受者重复相加。 适用条件：受益的我方角色须装备信仰；同名神秘之力【铁锤】效果不叠加。",
           "existingRuleIds": [],
           "relatedSkillIds": [
             "5dbd4f977800ad88"
+          ],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "受益的我方角色须装备信仰",
+                  "同名神秘之力【铁锤】效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "8c11c64768072670:physical-damage",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "8c11c64768072670",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "受益的我方角色须装备信仰",
+                    "同名神秘之力【铁锤】效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：物理攻击伤害+10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "受益的我方角色须装备信仰；同名神秘之力【铁锤】效果不叠加"
+            }
           ]
         },
         "物理": {
@@ -44212,7 +45626,10 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-3"
+            ]
           },
           "bindings": [
             {
@@ -44242,7 +45659,61 @@ export const SKILL_LABELING_CATALOG = {
               "group": "damage"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：受益的我方角色须装备信仰；同名神秘之力【铁锤】效果不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
+                "clauses": [
+                  "受益的我方角色须装备信仰",
+                  "同名神秘之力【铁锤】效果不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "8c11c64768072670:physical-damage",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "8c11c64768072670",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "受益的我方角色须装备信仰",
+                    "同名神秘之力【铁锤】效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：物理攻击伤害+10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "受益的我方角色须装备信仰；同名神秘之力【铁锤】效果不叠加"
+            }
+          ]
         },
         "神": {
           "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%。",
@@ -44254,7 +45725,9 @@ export const SKILL_LABELING_CATALOG = {
               "physical-damage"
             ],
             "conditionPartIds": [
-              "condition-1"
+              "condition-1",
+              "condition-2",
+              "condition-3"
             ]
           },
           "bindings": [
@@ -44296,44 +45769,17 @@ export const SKILL_LABELING_CATALOG = {
               "group": "faith-provide-physical-damage-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-2",
-              "condition-3"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：受益的我方角色须装备信仰；同名神秘之力【铁锤】效果不叠加。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "physical-damage"
               ],
-              "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%",
-              "target": "allies-with-faith",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
-              },
-              "effectIdentity": "8c11c64768072670:physical-damage",
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "8c11c64768072670",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "provide",
-                "countProviderAndRecipientOnce": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2",
+                "condition-3"
+              ],
+              "predicate": {
                 "clauses": [
                   "受益的我方角色须装备信仰",
                   "同名神秘之力【铁锤】效果不叠加"
@@ -44341,34 +45787,49 @@ export const SKILL_LABELING_CATALOG = {
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1756-physical-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：物理攻击伤害+10%。同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "自身为神类型"
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "受益的我方角色须装备信仰"
+                "effectIdentity": "8c11c64768072670:physical-damage",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "8c11c64768072670",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true
                 },
-                {
-                  "partId": "condition-3",
-                  "text": "同名神秘之力【铁锤】效果不叠加"
-                }
-              ],
-              "pendingPartIds": []
+                "partyPredicate": {
+                  "clauses": [
+                    "受益的我方角色须装备信仰",
+                    "同名神秘之力【铁锤】效果不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：物理攻击伤害+10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "受益的我方角色须装备信仰；同名神秘之力【铁锤】效果不叠加"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "物理",
-        "神",
-        "队伍联动"
+        "神"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -46835,9 +48296,84 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
           "relation": "magic-damage-increase",
           "target": "self",
-          "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。",
+          "calculationNote": "实际增幅随参照值、层数、人数或时间变化；机制未完成，不直接填入最高值。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）。",
           "existingRuleIds": [],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "magic-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "magic-damage"
+                ],
+                "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "869205f984d49c10:magic-damage",
+                "trigger": {
+                  "event": "wave-start",
+                  "snapshot": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "战斗开始": {
           "summary": "战斗开始时触发",
@@ -46873,7 +48409,13 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-2-knight",
+              "condition-2-sniper",
+              "condition-2-sorcerer",
+              "condition-2-spirit"
+            ]
           },
           "bindings": [
             {
@@ -46911,7 +48453,82 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "869205f984d49c10:effect-1"
             }
           ],
-          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
+                "operation": "team-scaled-damage-up",
+                "effectIdentity": "869205f984d49c10:effect-1",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "魔法": {
           "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%。",
@@ -46921,7 +48538,13 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "magic-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-2",
+              "condition-2-knight",
+              "condition-2-sniper",
+              "condition-2-sorcerer",
+              "condition-2-spirit"
+            ]
           },
           "bindings": [
             {
@@ -46959,7 +48582,82 @@ export const SKILL_LABELING_CATALOG = {
               }
             }
           ],
-          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "magic-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "magic-damage"
+                ],
+                "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "869205f984d49c10:magic-damage",
+                "trigger": {
+                  "event": "wave-start",
+                  "snapshot": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "精灵": {
           "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
@@ -46972,462 +48670,10 @@ export const SKILL_LABELING_CATALOG = {
               "effect-1"
             ],
             "conditionPartIds": [
-              "condition-2-spirit"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "magic-damage"
-              ],
-              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "869205f984d49c10:magic-damage",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "attack-magic"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
-            },
-            {
-              "partIds": [
-                "effect-1"
-              ],
-              "summary": "按相同人数条件提高特技伤害，最高+20%",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "869205f984d49c10:effect-1",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "士兵": {
-          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
-          "relation": "race-effects-and-condition",
-          "race": "soldier",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "magic-damage",
-              "effect-1"
-            ],
-            "conditionPartIds": [
-              "condition-2"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "magic-damage"
-              ],
-              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "869205f984d49c10:magic-damage",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "attack-magic"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
-            },
-            {
-              "partIds": [
-                "effect-1"
-              ],
-              "summary": "按相同人数条件提高特技伤害，最高+20%",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "869205f984d49c10:effect-1",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "骑士": {
-          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
-          "relation": "race-effects-and-condition",
-          "race": "knight",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "magic-damage",
-              "effect-1"
-            ],
-            "conditionPartIds": [
-              "condition-2-knight"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "magic-damage"
-              ],
-              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "869205f984d49c10:magic-damage",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "attack-magic"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
-            },
-            {
-              "partIds": [
-                "effect-1"
-              ],
-              "summary": "按相同人数条件提高特技伤害，最高+20%",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "869205f984d49c10:effect-1",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "狙击手": {
-          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
-          "relation": "race-effects-and-condition",
-          "race": "sniper",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "magic-damage",
-              "effect-1"
-            ],
-            "conditionPartIds": [
-              "condition-2-sniper"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "magic-damage"
-              ],
-              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "869205f984d49c10:magic-damage",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "attack-magic"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
-            },
-            {
-              "partIds": [
-                "effect-1"
-              ],
-              "summary": "按相同人数条件提高特技伤害，最高+20%",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "869205f984d49c10:effect-1",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer",
-                  "spirit"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "魔法师": {
-          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
-          "relation": "race-effects-and-condition",
-          "race": "sorcerer",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "magic-damage",
-              "effect-1"
-            ],
-            "conditionPartIds": [
+              "condition-2-spirit",
+              "condition-2",
+              "condition-2-knight",
+              "condition-2-sniper",
               "condition-2-sorcerer"
             ]
           },
@@ -47529,14 +48775,166 @@ export const SKILL_LABELING_CATALOG = {
               "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "magic-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "magic-damage"
+                ],
+                "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "869205f984d49c10:magic-damage",
+                "trigger": {
+                  "event": "wave-start",
+                  "snapshot": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            },
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
+                "operation": "team-scaled-damage-up",
+                "effectIdentity": "869205f984d49c10:effect-1",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
-        "队伍联动": {
-          "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%；开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
-          "relation": "party-effects-and-condition",
+        "士兵": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
           "target": "bound-effects",
           "coverage": {
-            "effectPartIds": [],
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
             "conditionPartIds": [
               "condition-2",
               "condition-2-knight",
@@ -47550,21 +48948,28 @@ export const SKILL_LABELING_CATALOG = {
               "partIds": [
                 "magic-damage"
               ],
-              "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
+              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
               "target": "self",
               "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "effectStacking": "once-per-skill",
               "operation": "team-scaled-damage-up",
               "scope": {
                 "direction": "outgoing",
                 "attackType": "attack-magic"
               },
-              "effectIdentity": "869205f984d49c10:magic-damage",
-              "trigger": {
-                "event": "wave-start",
-                "snapshot": true
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
               },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
               "count": {
                 "metric": "allied-units-of-any-race",
                 "raceAnyOf": [
@@ -47574,70 +48979,45 @@ export const SKILL_LABELING_CATALOG = {
                   "sorcerer",
                   "spirit"
                 ],
-                "eachUnitCountsOnce": true,
-                "maxCount": 4
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
-                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
-                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
-                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
-                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
-                ],
-                "logicalOperator": "OR-per-unit",
-                "requiresActualPartyState": true,
-                "mode": "count-units-matching-any-allowed-race",
+                "includesSelf": true,
+                "maxCount": 4,
                 "eachUnitCountsOnce": true
               },
-              "group": "1799-magic-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时判断"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
-                },
-                {
-                  "partId": "condition-2-knight",
-                  "text": "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
-                },
-                {
-                  "partId": "condition-2-sniper",
-                  "text": "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
-                },
-                {
-                  "partId": "condition-2-sorcerer",
-                  "text": "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
-                },
-                {
-                  "partId": "condition-2-spirit",
-                  "text": "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "各人数对应的增幅待确认，不能无条件取最高20%"
-                }
-              ],
-              "pendingPartIds": [
-                "condition-3"
-              ]
-            },
-            {
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
               "trigger": {
                 "event": "battle-start",
                 "snapshot": true
               },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "按相同人数条件提高特技伤害，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
               "count": {
                 "metric": "allied-units-of-any-race",
                 "raceAnyOf": [
@@ -47647,18 +49027,34 @@ export const SKILL_LABELING_CATALOG = {
                   "sorcerer",
                   "spirit"
                 ],
-                "eachUnitCountsOnce": true,
-                "maxCount": 4
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
               },
               "maxValuePercent": 20,
               "curveStatus": "unconfirmed",
-              "partIds": [
-                "effect-1"
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "magic-damage"
               ],
-              "summary": "开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
-              "operation": "team-scaled-damage-up",
-              "effectIdentity": "869205f984d49c10:effect-1",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
                 "clauses": [
                   "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
                   "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
@@ -47671,45 +49067,927 @@ export const SKILL_LABELING_CATALOG = {
                 "mode": "count-units-matching-any-allowed-race",
                 "eachUnitCountsOnce": true
               },
-              "group": "1799-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "战斗开始时判断"
+              "effectBinding": {
+                "partIds": [
+                  "magic-damage"
+                ],
+                "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                "effectIdentity": "869205f984d49c10:magic-damage",
+                "trigger": {
+                  "event": "wave-start",
+                  "snapshot": true
                 },
-                {
-                  "partId": "condition-2-knight",
-                  "text": "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
                 },
-                {
-                  "partId": "condition-2-sniper",
-                  "text": "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
                 },
-                {
-                  "partId": "condition-2-sorcerer",
-                  "text": "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
-                },
-                {
-                  "partId": "condition-2-spirit",
-                  "text": "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "各人数对应的增幅待确认，不能无条件取最高20%"
-                }
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            },
+            {
+              "effectPartIds": [
+                "effect-1"
               ],
-              "pendingPartIds": [
-                "condition-3"
-              ]
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
+                "operation": "team-scaled-damage-up",
+                "effectIdentity": "869205f984d49c10:effect-1",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
+        },
+        "骑士": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2-knight",
+              "condition-2",
+              "condition-2-sniper",
+              "condition-2-sorcerer",
+              "condition-2-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "按相同人数条件提高特技伤害，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
             }
           ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "magic-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "magic-damage"
+                ],
+                "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "869205f984d49c10:magic-damage",
+                "trigger": {
+                  "event": "wave-start",
+                  "snapshot": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            },
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
+                "operation": "team-scaled-damage-up",
+                "effectIdentity": "869205f984d49c10:effect-1",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
+        },
+        "狙击手": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2-sniper",
+              "condition-2",
+              "condition-2-knight",
+              "condition-2-sorcerer",
+              "condition-2-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "按相同人数条件提高特技伤害，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "magic-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "magic-damage"
+                ],
+                "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "869205f984d49c10:magic-damage",
+                "trigger": {
+                  "event": "wave-start",
+                  "snapshot": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            },
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
+                "operation": "team-scaled-damage-up",
+                "effectIdentity": "869205f984d49c10:effect-1",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
+        },
+        "魔法师": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2-sorcerer",
+              "condition-2",
+              "condition-2-knight",
+              "condition-2-sniper",
+              "condition-2-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "按相同人数条件提高特技伤害，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "magic-damage"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "magic-damage"
+                ],
+                "summary": "开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "869205f984d49c10:magic-damage",
+                "trigger": {
+                  "event": "wave-start",
+                  "snapshot": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            },
+            {
+              "effectPartIds": [
+                "effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-2",
+                "condition-2-knight",
+                "condition-2-sniper",
+                "condition-2-sorcerer",
+                "condition-2-spirit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer",
+                    "spirit"
+                  ],
+                  "eachUnitCountsOnce": true,
+                  "maxCount": 4
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认。",
+                "operation": "team-scaled-damage-up",
+                "effectIdentity": "869205f984d49c10:effect-1",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方士兵、骑士、狙击手、魔法师、精灵类型的单位越多，特技和魔法攻击伤害越高（最多4名，+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         }
       },
       "assignedTags": [
@@ -47721,8 +49999,7 @@ export const SKILL_LABELING_CATALOG = {
         "士兵",
         "骑士",
         "狙击手",
-        "魔法师",
-        "队伍联动"
+        "魔法师"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -48539,9 +50816,58 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "队伍至少2名且全员存活时，自身造成伤害+5%",
           "relation": "damage-increase",
           "target": "self",
-          "calculationNote": "本轮只覆盖自身整体造成伤害增加；不含限定攻击类型、属性、敌人目标或攻击方位的增伤。自身、队伍或战况条件仍单独待判断。",
+          "calculationNote": "本轮只覆盖自身整体造成伤害增加；不含限定攻击类型、属性、敌人目标或攻击方位的增伤。自身、队伍或战况条件仍单独待判断。 适用条件：队伍中至少2名单位；我方全员存活。",
           "existingRuleIds": [],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "damage"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-2"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍中至少2名单位",
+                  "我方全员存活"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "minimumPartySize": 2,
+                "allPartyMembersAlive": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "damage"
+                ],
+                "summary": "队伍至少2名且全员存活时，自身造成伤害+5%。",
+                "operation": "damage-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified"
+                },
+                "valuePercent": 5,
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍中至少2名单位",
+                    "我方全员存活"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "minimumPartySize": 2,
+                  "allPartyMembersAlive": true
+                },
+                "effectIdentity": "eb659c714ed39fd6:damage",
+                "sourceClause": "队伍中有2名或以上单位且全员存活时，自身造成伤害+5%，受到的伤害-5%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍中至少2名单位；我方全员存活"
+            }
+          ]
         },
         "伤害减少": {
           "summary": "受到的伤害-5%",
@@ -48551,7 +50877,10 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -48587,89 +50916,17 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "队伍至少2名且全员存活时，自身造成伤害+5%；受到的伤害-5%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1",
-              "condition-2"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：队伍中至少2名单位；我方全员存活。",
+          "effectConditions": [
             {
-              "partIds": [
-                "damage"
-              ],
-              "summary": "队伍至少2名且全员存活时，自身造成伤害+5%。",
-              "operation": "damage-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified"
-              },
-              "valuePercent": 5,
-              "partyPredicate": {
-                "clauses": [
-                  "队伍中至少2名单位",
-                  "我方全员存活"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "minimumPartySize": 2,
-                "allPartyMembersAlive": true
-              },
-              "group": "655-damage",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "eb659c714ed39fd6:damage",
-              "sourceClause": "队伍中有2名或以上单位且全员存活时，自身造成伤害+5%，受到的伤害-5%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍中至少2名单位"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "我方全员存活"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "受到的伤害-5%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "unspecified"
-              },
-              "valuePercent": 5,
-              "condition": {
-                "participatingUnitsAtLeast": 2,
-                "allAlliesAlive": true
-              },
-              "effectIdentity": "eb659c714ed39fd6:effect-1",
-              "sourceClause": "队伍中有2名或以上单位且全员存活时，自身造成伤害+5%，受到的伤害-5%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "队伍中至少2名单位"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "我方全员存活"
-                }
+              "conditionPartIds": [
+                "condition-1",
+                "condition-2"
               ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "队伍中至少2名单位",
                   "我方全员存活"
@@ -48679,18 +50936,45 @@ export const SKILL_LABELING_CATALOG = {
                 "minimumPartySize": 2,
                 "allPartyMembersAlive": true
               },
-              "group": "655-effect-1",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "受到的伤害-5%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "unspecified"
+                },
+                "valuePercent": 5,
+                "condition": {
+                  "participatingUnitsAtLeast": 2,
+                  "allAlliesAlive": true
+                },
+                "effectIdentity": "eb659c714ed39fd6:effect-1",
+                "sourceClause": "队伍中有2名或以上单位且全员存活时，自身造成伤害+5%，受到的伤害-5%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍中至少2名单位",
+                    "我方全员存活"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "minimumPartySize": 2,
+                  "allPartyMembersAlive": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍中至少2名单位；我方全员存活"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "伤害增加",
-        "伤害减少",
-        "队伍联动"
+        "伤害减少"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -49301,9 +51585,63 @@ export const SKILL_LABELING_CATALOG = {
           "summary": "按其他装备纳萨力克阶层守护者的友方人数提高自身造成伤害，3名时最高+36%",
           "relation": "damage-increase",
           "target": "self",
-          "calculationNote": "实际加成随人数或经过时间变化；具体换算尚未完成，不能直接使用最高值。",
+          "calculationNote": "实际加成随人数或经过时间变化；具体换算尚未完成，不能直接使用最高值。 适用条件：全队只有自身装备纳萨力克的统治者；统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大。",
           "existingRuleIds": [],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "damage"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-2"
+              ],
+              "predicate": {
+                "clauses": [
+                  "全队只有自身装备纳萨力克的统治者",
+                  "统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "selfSkillHolderCount": 1,
+                "otherRequiredSkillId": "2e619c768f1f382d",
+                "countIncludesSelf": false,
+                "maxCount": 3
+              },
+              "effectBinding": {
+                "partIds": [
+                  "damage"
+                ],
+                "summary": "全队只有自身装备纳萨力克的统治者时，按其他装备阶层守护者的友方人数提升伤害；3名最高+36%，1／2名档位待确认。",
+                "operation": "party-scaled-damage-up",
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified"
+                },
+                "maxValuePercent": 36,
+                "curveStatus": "unconfirmed",
+                "partyPredicate": {
+                  "clauses": [
+                    "全队只有自身装备纳萨力克的统治者",
+                    "统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "selfSkillHolderCount": 1,
+                  "otherRequiredSkillId": "2e619c768f1f382d",
+                  "countIncludesSelf": false,
+                  "maxCount": 3
+                },
+                "effectIdentity": "d451135c6dde31c4:damage",
+                "sourceClause": "全队只有自身装备此技能时，根据其他装备“纳萨力克阶层守护者”的友方角色人数，使自身造成的伤害提高、受到的伤害降低（3名时达到最大：伤害+36%，受到的伤害-15%）"
+              },
+              "numericEffectInjection": false,
+              "summary": "全队只有自身装备纳萨力克的统治者；统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
+            }
+          ]
         },
         "伤害减少": {
           "summary": "按相同人数条件减少自身受到的伤害，3名时最高-15%",
@@ -49313,7 +51651,10 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2"
+            ]
           },
           "bindings": [
             {
@@ -49356,105 +51697,17 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "全队只有自身装备纳萨力克的统治者时，按其他装备阶层守护者的友方人数提升伤害；3名最高+36%，1／2名档位待确认；按相同人数条件减少自身受到的伤害，3名时最高-15%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1",
-              "condition-2"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：全队只有自身装备纳萨力克的统治者；统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大。",
+          "effectConditions": [
             {
-              "partIds": [
-                "damage"
-              ],
-              "summary": "全队只有自身装备纳萨力克的统治者时，按其他装备阶层守护者的友方人数提升伤害；3名最高+36%，1／2名档位待确认。",
-              "operation": "party-scaled-damage-up",
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified"
-              },
-              "maxValuePercent": 36,
-              "curveStatus": "unconfirmed",
-              "partyPredicate": {
-                "clauses": [
-                  "全队只有自身装备纳萨力克的统治者",
-                  "统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "selfSkillHolderCount": 1,
-                "otherRequiredSkillId": "2e619c768f1f382d",
-                "countIncludesSelf": false,
-                "maxCount": 3
-              },
-              "group": "1478-damage",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "d451135c6dde31c4:damage",
-              "sourceClause": "全队只有自身装备此技能时，根据其他装备“纳萨力克阶层守护者”的友方角色人数，使自身造成的伤害提高、受到的伤害降低（3名时达到最大：伤害+36%，受到的伤害-15%）",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "全队只有自身装备纳萨力克的统治者"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "1名、2名对应的具体增减幅待确认，不直接取最高值"
-                }
-              ],
-              "pendingPartIds": [
-                "condition-3"
-              ]
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "effect-1"
               ],
-              "summary": "按相同人数条件减少自身受到的伤害，3名时最高-15%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "party-scaled-reduction",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "unspecified"
-              },
-              "maxReductionPercent": 15,
-              "otherMatchingAlliesAtMaximum": 3,
-              "curveStatus": "unconfirmed",
-              "condition": {
-                "onlySelfEquipsThisSkill": true,
-                "otherAllySkillName": "纳萨力克阶层守护者",
-                "excludesSelf": true
-              },
-              "effectIdentity": "d451135c6dde31c4:effect-1",
-              "sourceClause": "全队只有自身装备此技能时，根据其他装备“纳萨力克阶层守护者”的友方角色人数，使自身造成的伤害提高、受到的伤害降低（3名时达到最大：伤害+36%，受到的伤害-15%）",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "全队只有自身装备纳萨力克的统治者"
-                },
-                {
-                  "partId": "condition-2",
-                  "text": "统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
-                },
-                {
-                  "partId": "condition-3",
-                  "text": "1名、2名对应的具体增减幅待确认，不直接取最高值"
-                }
+              "conditionPartIds": [
+                "condition-1",
+                "condition-2"
               ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "全队只有自身装备纳萨力克的统治者",
                   "统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
@@ -49466,20 +51719,50 @@ export const SKILL_LABELING_CATALOG = {
                 "countIncludesSelf": false,
                 "maxCount": 3
               },
-              "group": "1478-effect-1",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": [
-                "condition-3"
-              ]
+              "effectBinding": {
+                "partIds": [
+                  "effect-1"
+                ],
+                "summary": "按相同人数条件减少自身受到的伤害，3名时最高-15%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "party-scaled-reduction",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "unspecified"
+                },
+                "maxReductionPercent": 15,
+                "otherMatchingAlliesAtMaximum": 3,
+                "curveStatus": "unconfirmed",
+                "condition": {
+                  "onlySelfEquipsThisSkill": true,
+                  "otherAllySkillName": "纳萨力克阶层守护者",
+                  "excludesSelf": true
+                },
+                "effectIdentity": "d451135c6dde31c4:effect-1",
+                "sourceClause": "全队只有自身装备此技能时，根据其他装备“纳萨力克阶层守护者”的友方角色人数，使自身造成的伤害提高、受到的伤害降低（3名时达到最大：伤害+36%，受到的伤害-15%）",
+                "partyPredicate": {
+                  "clauses": [
+                    "全队只有自身装备纳萨力克的统治者",
+                    "统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "selfSkillHolderCount": 1,
+                  "otherRequiredSkillId": "2e619c768f1f382d",
+                  "countIncludesSelf": false,
+                  "maxCount": 3
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "全队只有自身装备纳萨力克的统治者；统计自身以外装备纳萨力克阶层守护者的友方人数，3名达到最大"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "伤害增加",
-        "伤害减少",
-        "队伍联动"
+        "伤害减少"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -50203,9 +52486,72 @@ export const SKILL_LABELING_CATALOG = {
             "boss": true,
             "damageType": "physical"
           },
-          "calculationNote": "本标签覆盖完整的对Boss物理增伤；队伍中装备同技能的人数已由队伍联动覆盖，不能直接按最高24%计入。",
+          "calculationNote": "本标签覆盖完整的对Boss物理增伤；队伍中装备同技能的人数已由对应加成分类覆盖，不能直接按最高24%计入。 适用条件：按队伍中装备调查兵团的单位数量计算。",
           "existingRuleIds": [],
-          "relatedSkillIds": []
+          "relatedSkillIds": [],
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "按队伍中装备调查兵团的单位数量计算"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical",
+                  "enemyType": "boss"
+                },
+                "effectIdentity": "a17f779989645fb0:physical-damage",
+                "tiers": [
+                  {
+                    "count": 1,
+                    "valuePercent": 6
+                  },
+                  {
+                    "count": 2,
+                    "valuePercent": 12
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 18
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 24
+                  }
+                ],
+                "minimumCount": 1,
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "a17f779989645fb0",
+                "partyPredicate": {
+                  "clauses": [
+                    "按队伍中装备调查兵团的单位数量计算"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "根据装备“调查兵团”的我方单位数量，提高对BOSS的物理攻击伤害（1名：+6%；2名：+12%；3名：+18%；4名：+24%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "按队伍中装备调查兵团的单位数量计算"
+            }
+          ]
         },
         "物理": {
           "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%。",
@@ -50215,7 +52561,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1"
+            ]
           },
           "bindings": [
             {
@@ -50257,7 +52605,70 @@ export const SKILL_LABELING_CATALOG = {
               "group": "boss-damage"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：按队伍中装备调查兵团的单位数量计算。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-damage"
+              ],
+              "conditionPartIds": [
+                "condition-1"
+              ],
+              "predicate": {
+                "clauses": [
+                  "按队伍中装备调查兵团的单位数量计算"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical",
+                  "enemyType": "boss"
+                },
+                "effectIdentity": "a17f779989645fb0:physical-damage",
+                "tiers": [
+                  {
+                    "count": 1,
+                    "valuePercent": 6
+                  },
+                  {
+                    "count": 2,
+                    "valuePercent": 12
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 18
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 24
+                  }
+                ],
+                "minimumCount": 1,
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "a17f779989645fb0",
+                "partyPredicate": {
+                  "clauses": [
+                    "按队伍中装备调查兵团的单位数量计算"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "根据装备“调查兵团”的我方单位数量，提高对BOSS的物理攻击伤害（1名：+6%；2名：+12%；3名：+18%；4名：+24%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "按队伍中装备调查兵团的单位数量计算"
+            }
+          ]
         },
         "Boss": {
           "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%",
@@ -50268,7 +52679,8 @@ export const SKILL_LABELING_CATALOG = {
               "physical-damage"
             ],
             "conditionPartIds": [
-              "condition-2"
+              "condition-2",
+              "condition-1"
             ]
           },
           "bindings": [
@@ -50312,85 +52724,76 @@ export const SKILL_LABELING_CATALOG = {
               "effectStacking": "once-per-skill"
             }
           ],
-          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
-        },
-        "队伍联动": {
-          "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。 适用条件：按队伍中装备调查兵团的单位数量计算。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "physical-damage"
               ],
-              "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "tiered-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical",
-                "enemyType": "boss"
-              },
-              "effectIdentity": "a17f779989645fb0:physical-damage",
-              "tiers": [
-                {
-                  "count": 1,
-                  "valuePercent": 6
-                },
-                {
-                  "count": 2,
-                  "valuePercent": 12
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 18
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 24
-                }
+              "conditionPartIds": [
+                "condition-1"
               ],
-              "minimumCount": 1,
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "a17f779989645fb0",
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "按队伍中装备调查兵团的单位数量计算"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "720-physical-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "根据装备“调查兵团”的我方单位数量，提高对BOSS的物理攻击伤害（1名：+6%；2名：+12%；3名：+18%；4名：+24%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "condition-1",
-                  "text": "按队伍中装备调查兵团的单位数量计算"
+              "effectBinding": {
+                "partIds": [
+                  "physical-damage"
+                ],
+                "summary": "对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical",
+                  "enemyType": "boss"
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "目标敌人为Boss"
-                }
-              ],
-              "pendingPartIds": []
+                "effectIdentity": "a17f779989645fb0:physical-damage",
+                "tiers": [
+                  {
+                    "count": 1,
+                    "valuePercent": 6
+                  },
+                  {
+                    "count": 2,
+                    "valuePercent": 12
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 18
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 24
+                  }
+                ],
+                "minimumCount": 1,
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "a17f779989645fb0",
+                "partyPredicate": {
+                  "clauses": [
+                    "按队伍中装备调查兵团的单位数量计算"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "根据装备“调查兵团”的我方单位数量，提高对BOSS的物理攻击伤害（1名：+6%；2名：+12%；3名：+18%；4名：+24%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "按队伍中装备调查兵团的单位数量计算"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "Boss物理伤害增加",
         "物理",
-        "Boss",
-        "队伍联动"
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -56969,7 +59372,12 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "opening-effect-1"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1",
+              "condition-1-knight",
+              "condition-1-sniper",
+              "condition-1-sorcerer"
+            ]
           },
           "bindings": [
             {
@@ -57002,7 +59410,92 @@ export const SKILL_LABELING_CATALOG = {
               "tiersStatus": "unconfirmed"
             }
           ],
-          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；开场与队伍类型条件已完成，人数档位参数继续待确认。"
+          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；开场与队伍类型条件已完成，人数档位参数继续待确认。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "opening-effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-1"
+                ],
+                "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "ice"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "光属性": {
           "summary": "开场按我方人类系单位人数提高光属性伤害，最多4名、最高+20%。",
@@ -57013,7 +59506,12 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "opening-effect-2"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "condition-1",
+              "condition-1-knight",
+              "condition-1-sniper",
+              "condition-1-sorcerer"
+            ]
           },
           "bindings": [
             {
@@ -57046,7 +59544,92 @@ export const SKILL_LABELING_CATALOG = {
               "tiersStatus": "unconfirmed"
             }
           ],
-          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；开场与队伍类型条件已完成，人数档位参数继续待确认。"
+          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；开场与队伍类型条件已完成，人数档位参数继续待确认。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "opening-effect-2"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-2"
+                ],
+                "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "士兵": {
           "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
@@ -57059,7 +59642,10 @@ export const SKILL_LABELING_CATALOG = {
               "opening-effect-2"
             ],
             "conditionPartIds": [
-              "condition-1"
+              "condition-1",
+              "condition-1-knight",
+              "condition-1-sniper",
+              "condition-1-sorcerer"
             ]
           },
           "bindings": [
@@ -57158,7 +59744,175 @@ export const SKILL_LABELING_CATALOG = {
               "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "opening-effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-1"
+                ],
+                "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "ice"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+            },
+            {
+              "effectPartIds": [
+                "opening-effect-2"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-2"
+                ],
+                "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "骑士": {
           "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
@@ -57171,7 +59925,10 @@ export const SKILL_LABELING_CATALOG = {
               "opening-effect-2"
             ],
             "conditionPartIds": [
-              "condition-1-knight"
+              "condition-1-knight",
+              "condition-1",
+              "condition-1-sniper",
+              "condition-1-sorcerer"
             ]
           },
           "bindings": [
@@ -57270,7 +60027,175 @@ export const SKILL_LABELING_CATALOG = {
               "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "opening-effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-1"
+                ],
+                "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "ice"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+            },
+            {
+              "effectPartIds": [
+                "opening-effect-2"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-2"
+                ],
+                "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+            }
+          ]
         },
         "狙击手": {
           "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
@@ -57283,6 +60208,292 @@ export const SKILL_LABELING_CATALOG = {
               "opening-effect-2"
             ],
             "conditionPartIds": [
+              "condition-1-sniper",
+              "condition-1",
+              "condition-1-knight",
+              "condition-1-sorcerer"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "opening-effect-1"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-1"
+                ],
+                "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "ice"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+            },
+            {
+              "effectPartIds": [
+                "opening-effect-2"
+              ],
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
+              ],
+              "predicate": {
+                "clauses": [
+                  "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                  "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                ],
+                "logicalOperator": "OR-per-unit",
+                "requiresActualPartyState": true,
+                "mode": "count-units-matching-any-allowed-race",
+                "eachUnitCountsOnce": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-2"
+                ],
+                "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
+                },
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+            }
+          ]
+        },
+        "魔法师": {
+          "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1",
+              "opening-effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1-sorcerer",
+              "condition-1",
+              "condition-1-knight",
               "condition-1-sniper"
             ]
           },
@@ -57382,179 +60593,19 @@ export const SKILL_LABELING_CATALOG = {
               "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "魔法师": {
-          "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
-          "relation": "race-effects-and-condition",
-          "race": "sorcerer",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "opening-effect-1",
-              "opening-effect-2"
-            ],
-            "conditionPartIds": [
-              "condition-1-sorcerer"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "opening-effect-1"
               ],
-              "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "element": "ice"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up"
-            },
-            {
-              "partIds": [
-                "opening-effect-2"
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
               ],
-              "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "element": "light"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "condition-1",
-              "condition-1-knight",
-              "condition-1-sniper",
-              "condition-1-sorcerer"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "opening-effect-1"
-              ],
-              "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
-              "target": "self",
-              "isBuff": false,
-              "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "element": "ice"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
                   "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
@@ -57566,84 +60617,78 @@ export const SKILL_LABELING_CATALOG = {
                 "mode": "count-units-matching-any-allowed-race",
                 "eachUnitCountsOnce": true
               },
-              "group": "1776-opening-effect-1",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "start-trigger",
-                  "text": "战斗开始时触发"
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-1"
+                ],
+                "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "ice"
                 },
-                {
-                  "partId": "condition-1",
-                  "text": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
                 },
-                {
-                  "partId": "condition-1-knight",
-                  "text": "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
                 },
-                {
-                  "partId": "condition-1-sniper",
-                  "text": "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
                 },
-                {
-                  "partId": "condition-1-sorcerer",
-                  "text": "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "各人数对应的具体增幅待确认，不能直接取最高20%"
-                }
-              ],
-              "pendingPartIds": [
-                "condition-2"
-              ]
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
             },
             {
-              "partIds": [
+              "effectPartIds": [
                 "opening-effect-2"
               ],
-              "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
-              "target": "self",
-              "isBuff": false,
-              "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
-              "effectStacking": "once-per-skill",
-              "operation": "team-scaled-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "element": "light"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-any-race",
-                "raceAnyOf": [
-                  "soldier",
-                  "knight",
-                  "sniper",
-                  "sorcerer"
-                ],
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "maxValuePercent": 20,
-              "curveStatus": "unconfirmed",
-              "trigger": {
-                "event": "battle-start",
-                "snapshot": true
-              },
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "condition-1",
+                "condition-1-knight",
+                "condition-1-sniper",
+                "condition-1-sorcerer"
+              ],
+              "predicate": {
                 "clauses": [
                   "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
                   "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
@@ -57655,41 +60700,68 @@ export const SKILL_LABELING_CATALOG = {
                 "mode": "count-units-matching-any-allowed-race",
                 "eachUnitCountsOnce": true
               },
-              "group": "1776-opening-effect-2",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "start-trigger",
-                  "text": "战斗开始时触发"
+              "effectBinding": {
+                "partIds": [
+                  "opening-effect-2"
+                ],
+                "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+                "effectStacking": "once-per-skill",
+                "operation": "team-scaled-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
                 },
-                {
-                  "partId": "condition-1",
-                  "text": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ]
                 },
-                {
-                  "partId": "condition-1-knight",
-                  "text": "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                "count": {
+                  "metric": "allied-units-of-any-race",
+                  "raceAnyOf": [
+                    "soldier",
+                    "knight",
+                    "sniper",
+                    "sorcerer"
+                  ],
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
                 },
-                {
-                  "partId": "condition-1-sniper",
-                  "text": "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                "maxValuePercent": 20,
+                "curveStatus": "unconfirmed",
+                "trigger": {
+                  "event": "battle-start",
+                  "snapshot": true
                 },
-                {
-                  "partId": "condition-1-sorcerer",
-                  "text": "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+                    "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
+                  ],
+                  "logicalOperator": "OR-per-unit",
+                  "requiresActualPartyState": true,
+                  "mode": "count-units-matching-any-allowed-race",
+                  "eachUnitCountsOnce": true
                 },
-                {
-                  "partId": "condition-2",
-                  "text": "各人数对应的具体增幅待确认，不能直接取最高20%"
-                }
-              ],
-              "pendingPartIds": [
-                "condition-2"
-              ]
+                "sourceClause": "战斗开始时，我方人类系类型（士兵、骑士、狙击手、魔法师）的单位越多，冰、光属性伤害越高（最多4名，最高+20%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）；队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
@@ -57699,8 +60771,7 @@ export const SKILL_LABELING_CATALOG = {
         "士兵",
         "骑士",
         "狙击手",
-        "魔法师",
-        "队伍联动"
+        "魔法师"
       ],
       "judgment": "partial",
       "remainingEffects": [],
@@ -78972,7 +82043,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "fire-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "party-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -79009,17 +82082,81 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件已随本加成完成，不默认最高30%。 适用条件：我方至少2名角色装备炎之合奏，按装备人数选择对应档位。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "fire-damage"
+              ],
+              "conditionPartIds": [
+                "party-skill-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方至少2名角色装备炎之合奏，按装备人数选择对应档位"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "same-skill-count",
+                "minimumCount": 2,
+                "requiredSkillId": "898133b240997611",
+                "includesSelf": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "fire-damage"
+                ],
+                "summary": "至少2名我方角色装备炎之合奏：2人+10%、3人+20%、4人+30%。",
+                "target": "self",
+                "isBuff": false,
+                "fireRole": "direct-effect",
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "fire"
+                },
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "898133b240997611",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 20
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 30
+                  }
+                ],
+                "partyPredicate": {
+                  "clauses": [
+                    "我方至少2名角色装备炎之合奏，按装备人数选择对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "same-skill-count",
+                  "minimumCount": 2,
+                  "requiredSkillId": "898133b240997611",
+                  "includesSelf": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "我方至少2名角色装备炎之合奏，按装备人数选择对应档位"
+            }
+          ]
         }
       },
       "assignedTags": [
         "火属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "我方至少2名角色装备炎之合奏，按装备人数选择对应档位"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "25f4aebf13e4d5a1",
@@ -81251,7 +84388,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "ice-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "party-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -81288,17 +84427,81 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件已随本加成完成，不默认最高30%。 适用条件：我方至少2名角色装备冰之合奏，按装备人数选择对应档位。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "ice-damage"
+              ],
+              "conditionPartIds": [
+                "party-skill-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方至少2名角色装备冰之合奏，按装备人数选择对应档位"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "same-skill-count",
+                "minimumCount": 2,
+                "requiredSkillId": "3698611e7487f0aa",
+                "includesSelf": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "ice-damage"
+                ],
+                "summary": "至少2名我方角色装备冰之合奏：2人+10%、3人+20%、4人+30%。",
+                "target": "self",
+                "isBuff": false,
+                "elementRole": "direct-effect",
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "ice"
+                },
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "3698611e7487f0aa",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 20
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 30
+                  }
+                ],
+                "partyPredicate": {
+                  "clauses": [
+                    "我方至少2名角色装备冰之合奏，按装备人数选择对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "same-skill-count",
+                  "minimumCount": 2,
+                  "requiredSkillId": "3698611e7487f0aa",
+                  "includesSelf": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "我方至少2名角色装备冰之合奏，按装备人数选择对应档位"
+            }
+          ]
         }
       },
       "assignedTags": [
         "冰属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "我方至少2名角色装备冰之合奏，按装备人数选择对应档位"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "7699c0abda6d47a0",
@@ -83884,7 +87087,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "earth-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "party-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -83921,17 +87126,81 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件已随本加成完成，不默认最高30%。 适用条件：我方至少2名角色装备石之合奏，按装备人数选择对应档位。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "earth-damage"
+              ],
+              "conditionPartIds": [
+                "party-skill-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方至少2名角色装备石之合奏，按装备人数选择对应档位"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "same-skill-count",
+                "minimumCount": 2,
+                "requiredSkillId": "b684f06fad6f204e",
+                "includesSelf": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "earth-damage"
+                ],
+                "summary": "至少2名我方角色装备石之合奏：2人+10%、3人+20%、4人+30%。",
+                "target": "self",
+                "isBuff": false,
+                "elementRole": "direct-effect",
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "earth"
+                },
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "b684f06fad6f204e",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 20
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 30
+                  }
+                ],
+                "partyPredicate": {
+                  "clauses": [
+                    "我方至少2名角色装备石之合奏，按装备人数选择对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "same-skill-count",
+                  "minimumCount": 2,
+                  "requiredSkillId": "b684f06fad6f204e",
+                  "includesSelf": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "我方至少2名角色装备石之合奏，按装备人数选择对应档位"
+            }
+          ]
         }
       },
       "assignedTags": [
         "树属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "我方至少2名角色装备石之合奏，按装备人数选择对应档位"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "d1aa6e7dfcf2a189",
@@ -86105,7 +89374,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "thunder-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "party-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -86142,17 +89413,81 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件已随本加成完成，不默认最高30%。 适用条件：我方至少2名角色装备雷霆合奏，按装备人数选择对应档位。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "thunder-damage"
+              ],
+              "conditionPartIds": [
+                "party-skill-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方至少2名角色装备雷霆合奏，按装备人数选择对应档位"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "same-skill-count",
+                "minimumCount": 2,
+                "requiredSkillId": "cd5203b730b861ca",
+                "includesSelf": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "thunder-damage"
+                ],
+                "summary": "至少2名我方角色装备雷霆合奏：2人+10%、3人+20%、4人+30%。",
+                "target": "self",
+                "isBuff": false,
+                "elementRole": "direct-effect",
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "thunder"
+                },
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "cd5203b730b861ca",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 20
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 30
+                  }
+                ],
+                "partyPredicate": {
+                  "clauses": [
+                    "我方至少2名角色装备雷霆合奏，按装备人数选择对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "same-skill-count",
+                  "minimumCount": 2,
+                  "requiredSkillId": "cd5203b730b861ca",
+                  "includesSelf": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "我方至少2名角色装备雷霆合奏，按装备人数选择对应档位"
+            }
+          ]
         }
       },
       "assignedTags": [
         "雷属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "我方至少2名角色装备雷霆合奏，按装备人数选择对应档位"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4e8a749504d3799f",
@@ -88605,7 +91940,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "light-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "party-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -88642,75 +91979,70 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件已由队伍联动覆盖，不默认最高30%。"
-        },
-        "队伍联动": {
-          "summary": "至少2名我方角色装备神圣合奏：2人+10%、3人+20%、4人+30%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "party-skill-count"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件已由对应加成分类覆盖，不默认最高30%。 适用条件：我方至少2名角色装备神圣合奏，按装备人数选择对应档位。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "light-damage"
               ],
-              "summary": "至少2名我方角色装备神圣合奏：2人+10%、3人+20%、4人+30%。",
-              "target": "self",
-              "isBuff": false,
-              "operation": "tiered-damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "element": "light"
-              },
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "cae22c8f6e9a70ef",
-              "minimumCount": 2,
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 10
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 20
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 30
-                }
+              "conditionPartIds": [
+                "party-skill-count"
               ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "我方至少2名角色装备神圣合奏，按装备人数选择对应档位"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1000-light-damage",
-              "remainingRole": "condition-benefit",
-              "effectIdentity": "cae22c8f6e9a70ef:light-damage",
-              "sourceClause": "2名以上我方单位装备“神圣合奏”时，光属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "party-skill-count",
-                  "text": "我方至少2名角色装备神圣合奏，按装备人数选择对应档位"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "light-damage"
+                ],
+                "summary": "至少2名我方角色装备神圣合奏：2人+10%、3人+20%、4人+30%。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
+                },
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "cae22c8f6e9a70ef",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 20
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 30
+                  }
+                ],
+                "partyPredicate": {
+                  "clauses": [
+                    "我方至少2名角色装备神圣合奏，按装备人数选择对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "effectIdentity": "cae22c8f6e9a70ef:light-damage",
+                "sourceClause": "2名以上我方单位装备“神圣合奏”时，光属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "我方至少2名角色装备神圣合奏，按装备人数选择对应档位"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
-        "光属性",
-        "队伍联动"
+        "光属性"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -90498,7 +93830,10 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "light-aura-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "ally-faith",
+              "same-name-limit"
+            ]
           },
           "bindings": [
             {
@@ -90526,7 +93861,73 @@ export const SKILL_LABELING_CATALOG = {
               "sameNameStacking": "one-instance-only"
             }
           ],
-          "calculationNote": "持有者与受益者分开；不能直接给全队或默认给自身。神类型条件已完成；信仰装备与同名不叠加条件已由队伍联动覆盖。"
+          "calculationNote": "持有者与受益者分开；不能直接给全队或默认给自身。神类型条件已完成；信仰装备与同名不叠加条件已由对应加成分类覆盖。 适用条件：受益角色装备信仰；同名神秘之力技能不叠加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "light-aura-damage"
+              ],
+              "conditionPartIds": [
+                "ally-faith",
+                "same-name-limit"
+              ],
+              "predicate": {
+                "clauses": [
+                  "受益角色装备信仰",
+                  "同名神秘之力技能不叠加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "light-aura-damage"
+                ],
+                "summary": "使我方装备信仰的角色获得光属性伤害+10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "effectIdentity": "ca8779066b942675:light-aura-damage",
+                "effectStacking": "once-per-skill",
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
+                },
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
+                },
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "ca8779066b942675",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "受益角色装备信仰",
+                    "同名神秘之力技能不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：光属性伤害+10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "受益角色装备信仰；同名神秘之力技能不叠加"
+            }
+          ]
         },
         "神": {
           "summary": "使我方装备信仰的角色获得光属性伤害+10%。",
@@ -90538,7 +93939,9 @@ export const SKILL_LABELING_CATALOG = {
               "light-aura-damage"
             ],
             "conditionPartIds": [
-              "self-god"
+              "self-god",
+              "ally-faith",
+              "same-name-limit"
             ]
           },
           "bindings": [
@@ -90581,56 +93984,17 @@ export const SKILL_LABELING_CATALOG = {
               "group": "faith-provide-unspecifiedlight-damage-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "使我方装备信仰的角色获得光属性伤害+10%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "ally-faith",
-              "same-name-limit"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：受益角色装备信仰；同名神秘之力技能不叠加。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "light-aura-damage"
               ],
-              "summary": "使我方装备信仰的角色获得光属性伤害+10%",
-              "target": "allies-with-faith",
-              "isBuff": false,
-              "effectIdentity": "ca8779066b942675:light-aura-damage",
-              "effectStacking": "once-per-skill",
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "element": "light"
-              },
-              "raceRelation": {
-                "subject": "provider",
-                "operator": "any-of",
-                "races": [
-                  "god"
-                ]
-              },
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "ca8779066b942675",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "recipientMustEquipFaith": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "provide",
-                "countProviderAndRecipientOnce": true,
-                "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
-              },
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "ally-faith",
+                "same-name-limit"
+              ],
+              "predicate": {
                 "clauses": [
                   "受益角色装备信仰",
                   "同名神秘之力技能不叠加"
@@ -90638,33 +94002,60 @@ export const SKILL_LABELING_CATALOG = {
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "2000-light-aura-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：光属性伤害+10%。同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "self-god",
-                  "text": "技能持有者自身为神类型"
+              "effectBinding": {
+                "partIds": [
+                  "light-aura-damage"
+                ],
+                "summary": "使我方装备信仰的角色获得光属性伤害+10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "effectIdentity": "ca8779066b942675:light-aura-damage",
+                "effectStacking": "once-per-skill",
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "light"
                 },
-                {
-                  "partId": "ally-faith",
-                  "text": "受益角色装备信仰"
+                "raceRelation": {
+                  "subject": "provider",
+                  "operator": "any-of",
+                  "races": [
+                    "god"
+                  ]
                 },
-                {
-                  "partId": "same-name-limit",
-                  "text": "同名神秘之力技能不叠加"
-                }
-              ],
-              "pendingPartIds": []
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "ca8779066b942675",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "recipientMustEquipFaith": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true,
+                  "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
+                },
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "受益角色装备信仰",
+                    "同名神秘之力技能不叠加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：光属性伤害+10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "受益角色装备信仰；同名神秘之力技能不叠加"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
         "光属性",
-        "神",
-        "队伍联动"
+        "神"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -92818,7 +96209,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "dark-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "party-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -92855,17 +96248,81 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件已随本加成完成，不默认最高30%。 适用条件：我方至少2名角色装备暗影合奏，按装备人数选择对应档位。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "dark-damage"
+              ],
+              "conditionPartIds": [
+                "party-skill-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方至少2名角色装备暗影合奏，按装备人数选择对应档位"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "same-skill-count",
+                "minimumCount": 2,
+                "requiredSkillId": "106e0b26cc206aed",
+                "includesSelf": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "dark-damage"
+                ],
+                "summary": "至少2名我方角色装备暗影合奏：2人+10%、3人+20%、4人+30%。",
+                "target": "self",
+                "isBuff": false,
+                "elementRole": "direct-effect",
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "dark"
+                },
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "106e0b26cc206aed",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 20
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 30
+                  }
+                ],
+                "partyPredicate": {
+                  "clauses": [
+                    "我方至少2名角色装备暗影合奏，按装备人数选择对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "same-skill-count",
+                  "minimumCount": 2,
+                  "requiredSkillId": "106e0b26cc206aed",
+                  "includesSelf": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "我方至少2名角色装备暗影合奏，按装备人数选择对应档位"
+            }
+          ]
         }
       },
       "assignedTags": [
         "暗属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "我方至少2名角色装备暗影合奏，按装备人数选择对应档位"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "492069f33fad559b",
@@ -94897,7 +98354,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "neutral-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "party-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -94934,17 +98393,81 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件已随本加成完成，不默认最高30%。 适用条件：我方至少2名角色装备无属性合奏，按装备人数选择对应档位。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "neutral-damage"
+              ],
+              "conditionPartIds": [
+                "party-skill-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方至少2名角色装备无属性合奏，按装备人数选择对应档位"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "same-skill-count",
+                "minimumCount": 2,
+                "requiredSkillId": "f26238efd3af2674",
+                "includesSelf": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "neutral-damage"
+                ],
+                "summary": "至少2名我方角色装备无属性合奏：2人+10%、3人+20%、4人+30%。",
+                "target": "self",
+                "isBuff": false,
+                "elementRole": "direct-effect",
+                "operation": "tiered-damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "element": "none"
+                },
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "f26238efd3af2674",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 20
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 30
+                  }
+                ],
+                "partyPredicate": {
+                  "clauses": [
+                    "我方至少2名角色装备无属性合奏，按装备人数选择对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "same-skill-count",
+                  "minimumCount": 2,
+                  "requiredSkillId": "f26238efd3af2674",
+                  "includesSelf": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "我方至少2名角色装备无属性合奏，按装备人数选择对应档位"
+            }
+          ]
         }
       },
       "assignedTags": [
         "无属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "我方至少2名角色装备无属性合奏，按装备人数选择对应档位"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "61ce9132ba164832",
@@ -101743,14 +105266,116 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "全部技能:all:572:ultimate-cap"
             }
           ],
-          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
+          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。 适用条件：只有自身一个单位参战；其他队员倒下不算单人参战。",
           "coverage": {
             "effectPartIds": [
               "ultimate-damage",
               "ultimate-cap"
             ],
-            "conditionPartIds": []
-          }
+            "conditionPartIds": [
+              "team-state"
+            ]
+          },
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "ultimate-damage"
+              ],
+              "conditionPartIds": [
+                "team-state"
+              ],
+              "predicate": {
+                "clauses": [
+                  "只有自身一个单位参战；其他队员倒下不算单人参战"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-damage"
+                ],
+                "summary": "单人参战时，必杀伤害+20%。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate"
+                },
+                "valuePercent": 20,
+                "condition": {
+                  "metric": "participating-unit-count",
+                  "operator": "eq",
+                  "count": 1
+                },
+                "effectIdentity": "全部技能:all:572:ultimate-damage",
+                "partyPredicate": {
+                  "clauses": [
+                    "只有自身一个单位参战；其他队员倒下不算单人参战"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                },
+                "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "只有自身一个单位参战；其他队员倒下不算单人参战"
+            },
+            {
+              "effectPartIds": [
+                "ultimate-cap"
+              ],
+              "conditionPartIds": [
+                "team-state"
+              ],
+              "predicate": {
+                "clauses": [
+                  "只有自身一个单位参战；其他队员倒下不算单人参战"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-cap"
+                ],
+                "summary": "单人参战时，必杀上限+3,000。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate"
+                },
+                "capPoints": 3000,
+                "condition": {
+                  "metric": "participating-unit-count",
+                  "operator": "eq",
+                  "count": 1
+                },
+                "effectIdentity": "全部技能:all:572:ultimate-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "只有自身一个单位参战；其他队员倒下不算单人参战"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                },
+                "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "只有自身一个单位参战；其他队员倒下不算单人参战"
+            }
+          ]
         },
         "特技相关": {
           "summary": "仅自身一人参战时，特技伤害+20%；仅自身一人参战时，特技上限+3,000。",
@@ -101761,7 +105386,9 @@ export const SKILL_LABELING_CATALOG = {
               "skill-damage",
               "skill-cap"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "team-state"
+            ]
           },
           "bindings": [
             {
@@ -101809,7 +105436,107 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "全部技能:all:572:skill-cap"
             }
           ],
-          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。 适用条件：只有自身一个单位参战；其他队员倒下不算单人参战。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "skill-damage"
+              ],
+              "conditionPartIds": [
+                "team-state"
+              ],
+              "predicate": {
+                "clauses": [
+                  "只有自身一个单位参战；其他队员倒下不算单人参战"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "valuePercent": 20,
+                "condition": {
+                  "metric": "participating-unit-count",
+                  "operator": "eq",
+                  "count": 1
+                },
+                "partIds": [
+                  "skill-damage"
+                ],
+                "summary": "仅自身一人参战时，特技伤害+20%。",
+                "operation": "damage-up",
+                "effectIdentity": "全部技能:all:572:skill-damage",
+                "partyPredicate": {
+                  "clauses": [
+                    "只有自身一个单位参战；其他队员倒下不算单人参战"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                },
+                "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "只有自身一个单位参战；其他队员倒下不算单人参战"
+            },
+            {
+              "effectPartIds": [
+                "skill-cap"
+              ],
+              "conditionPartIds": [
+                "team-state"
+              ],
+              "predicate": {
+                "clauses": [
+                  "只有自身一个单位参战；其他队员倒下不算单人参战"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "solo-entry",
+                "downedAlliesDoNotQualify": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "capPoints": 3000,
+                "condition": {
+                  "metric": "participating-unit-count",
+                  "operator": "eq",
+                  "count": 1
+                },
+                "partIds": [
+                  "skill-cap"
+                ],
+                "summary": "仅自身一人参战时，特技上限+3,000。",
+                "operation": "cap-up",
+                "effectIdentity": "全部技能:all:572:skill-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "只有自身一个单位参战；其他队员倒下不算单人参战"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                },
+                "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "只有自身一个单位参战；其他队员倒下不算单人参战"
+            }
+          ]
         },
         "伤害减少": {
           "summary": "单人参战时，受到敌人伤害-10%",
@@ -101819,7 +105546,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "incoming-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "team-state"
+            ]
           },
           "bindings": [
             {
@@ -101853,203 +105582,16 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "单人参战时，必杀伤害+20%；单人参战时，必杀上限+3,000；仅自身一人参战时，特技伤害+20%；仅自身一人参战时，特技上限+3,000；单人参战时，受到敌人伤害-10%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "team-state"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：只有自身一个单位参战；其他队员倒下不算单人参战。",
+          "effectConditions": [
             {
-              "partIds": [
-                "ultimate-damage"
-              ],
-              "summary": "单人参战时，必杀伤害+20%。",
-              "target": "self",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "ultimate"
-              },
-              "valuePercent": 20,
-              "condition": {
-                "metric": "participating-unit-count",
-                "operator": "eq",
-                "count": 1
-              },
-              "effectIdentity": "全部技能:all:572:ultimate-damage",
-              "partyPredicate": {
-                "clauses": [
-                  "只有自身一个单位参战；其他队员倒下不算单人参战"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "solo-entry",
-                "downedAlliesDoNotQualify": true
-              },
-              "group": "976-ultimate-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "team-state",
-                  "text": "只有自身一个单位参战；其他队员倒下不算单人参战"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "ultimate-cap"
-              ],
-              "summary": "单人参战时，必杀上限+3,000。",
-              "target": "self",
-              "isBuff": false,
-              "operation": "cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "ultimate"
-              },
-              "capPoints": 3000,
-              "condition": {
-                "metric": "participating-unit-count",
-                "operator": "eq",
-                "count": 1
-              },
-              "effectIdentity": "全部技能:all:572:ultimate-cap",
-              "partyPredicate": {
-                "clauses": [
-                  "只有自身一个单位参战；其他队员倒下不算单人参战"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "solo-entry",
-                "downedAlliesDoNotQualify": true
-              },
-              "group": "976-ultimate-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "team-state",
-                  "text": "只有自身一个单位参战；其他队员倒下不算单人参战"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "valuePercent": 20,
-              "condition": {
-                "metric": "participating-unit-count",
-                "operator": "eq",
-                "count": 1
-              },
-              "partIds": [
-                "skill-damage"
-              ],
-              "summary": "仅自身一人参战时，特技伤害+20%。",
-              "operation": "damage-up",
-              "effectIdentity": "全部技能:all:572:skill-damage",
-              "partyPredicate": {
-                "clauses": [
-                  "只有自身一个单位参战；其他队员倒下不算单人参战"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "solo-entry",
-                "downedAlliesDoNotQualify": true
-              },
-              "group": "976-skill-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "team-state",
-                  "text": "只有自身一个单位参战；其他队员倒下不算单人参战"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "capPoints": 3000,
-              "condition": {
-                "metric": "participating-unit-count",
-                "operator": "eq",
-                "count": 1
-              },
-              "partIds": [
-                "skill-cap"
-              ],
-              "summary": "仅自身一人参战时，特技上限+3,000。",
-              "operation": "cap-up",
-              "effectIdentity": "全部技能:all:572:skill-cap",
-              "partyPredicate": {
-                "clauses": [
-                  "只有自身一个单位参战；其他队员倒下不算单人参战"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "solo-entry",
-                "downedAlliesDoNotQualify": true
-              },
-              "group": "976-skill-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "team-state",
-                  "text": "只有自身一个单位参战；其他队员倒下不算单人参战"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "incoming-reduction"
               ],
-              "summary": "单人参战时，受到敌人伤害-10%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "unspecified"
-              },
-              "valuePercent": 10,
-              "condition": {
-                "metric": "participating-unit-count",
-                "operator": "eq",
-                "count": 1,
-                "incapacitatedAlliesQualify": false
-              },
-              "effectIdentity": "全部技能:all:572:incoming-reduction",
-              "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "team-state",
-                  "text": "只有自身一个单位参战；其他队员倒下不算单人参战"
-                }
+              "conditionPartIds": [
+                "team-state"
               ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "只有自身一个单位参战；其他队员倒下不算单人参战"
                 ],
@@ -102058,20 +105600,48 @@ export const SKILL_LABELING_CATALOG = {
                 "mode": "solo-entry",
                 "downedAlliesDoNotQualify": true
               },
-              "group": "976-incoming-reduction",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "incoming-reduction"
+                ],
+                "summary": "单人参战时，受到敌人伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "unspecified"
+                },
+                "valuePercent": 10,
+                "condition": {
+                  "metric": "participating-unit-count",
+                  "operator": "eq",
+                  "count": 1,
+                  "incapacitatedAlliesQualify": false
+                },
+                "effectIdentity": "全部技能:all:572:incoming-reduction",
+                "sourceClause": "仅自身一人参战时，特技和必杀伤害+20%、伤害上限+3,000，受到敌人的伤害-10%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "只有自身一个单位参战；其他队员倒下不算单人参战"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "solo-entry",
+                  "downedAlliesDoNotQualify": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "只有自身一个单位参战；其他队员倒下不算单人参战"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "特技相关",
-        "伤害减少",
-        "队伍联动"
+        "伤害减少"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -102980,13 +106550,64 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "4aafd29a15ad98c4:ultimate-cap"
             }
           ],
-          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
+          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。 适用条件：统计我方机械类型单位，包含自身，最多4名。",
           "coverage": {
             "effectPartIds": [
               "ultimate-cap"
             ],
-            "conditionPartIds": []
-          }
+            "conditionPartIds": [
+              "ally-race-count"
+            ]
+          },
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "ultimate-cap"
+              ],
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "统计我方机械类型单位，包含自身，最多4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-cap"
+                ],
+                "summary": "每名我方机械类型单位使必杀上限+1,000，最多4名、最高+4,000。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "count-scaled-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate"
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "machine",
+                  "includesSelf": true,
+                  "maxCount": 4
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "effectIdentity": "4aafd29a15ad98c4:ultimate-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方机械类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计我方机械类型单位，包含自身，最多4名"
+            }
+          ]
         },
         "特技相关": {
           "summary": "每名机械类型我方单位使特技上限+1,000，最多4名。",
@@ -102996,7 +106617,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "skill-cap"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "ally-race-count"
+            ]
           },
           "bindings": [
             {
@@ -103024,7 +106647,56 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "4aafd29a15ad98c4:skill-cap"
             }
           ],
-          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。 适用条件：统计我方机械类型单位，包含自身，最多4名。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "skill-cap"
+              ],
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "统计我方机械类型单位，包含自身，最多4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "machine",
+                  "includesSelf": true,
+                  "maxCount": 4
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "partIds": [
+                  "skill-cap"
+                ],
+                "summary": "每名机械类型我方单位使特技上限+1,000，最多4名",
+                "operation": "count-scaled-cap-up",
+                "effectIdentity": "4aafd29a15ad98c4:skill-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方机械类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计我方机械类型单位，包含自身，最多4名"
+            }
+          ]
         },
         "机械种族": {
           "summary": "类型追加“机械”；每名机械类型我方单位使特技上限+1,000，最多4名；每名机械类型我方单位使必杀上限+1,000，最多4名；每名机械类型我方单位使反击上限+1,000，最多4名。",
@@ -103174,7 +106846,160 @@ export const SKILL_LABELING_CATALOG = {
               "group": "allied-unit-count-any-of-machine-counter--count-scaled-cap-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：统计我方机械类型单位，包含自身，最多4名。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "skill-cap"
+              ],
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "统计我方机械类型单位，包含自身，最多4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "machine",
+                  "includesSelf": true,
+                  "maxCount": 4
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "partIds": [
+                  "skill-cap"
+                ],
+                "summary": "每名机械类型我方单位使特技上限+1,000，最多4名",
+                "operation": "count-scaled-cap-up",
+                "effectIdentity": "4aafd29a15ad98c4:skill-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方机械类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计我方机械类型单位，包含自身，最多4名"
+            },
+            {
+              "effectPartIds": [
+                "counter-cap"
+              ],
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "统计我方机械类型单位，包含自身，最多4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "counter-cap"
+                ],
+                "summary": "每名机械类型我方单位使反击上限+1,000，最多4名",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "4aafd29a15ad98c4:counter-cap",
+                "effectStacking": "once-per-skill",
+                "operation": "count-scaled-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "counter"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "machine"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "machine",
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方机械类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计我方机械类型单位，包含自身，最多4名"
+            },
+            {
+              "effectPartIds": [
+                "ultimate-cap"
+              ],
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "统计我方机械类型单位，包含自身，最多4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-cap"
+                ],
+                "summary": "每名我方机械类型单位使必杀上限+1,000，最多4名、最高+4,000。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "count-scaled-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate"
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "machine",
+                  "includesSelf": true,
+                  "maxCount": 4
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "effectIdentity": "4aafd29a15ad98c4:ultimate-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方机械类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计我方机械类型单位，包含自身，最多4名"
+            }
+          ]
         },
         "反击": {
           "summary": "每名机械类型我方单位使反击上限+1,000，最多4名。",
@@ -103184,7 +107009,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "counter-cap"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "ally-race-count"
+            ]
           },
           "bindings": [
             {
@@ -103230,148 +107057,66 @@ export const SKILL_LABELING_CATALOG = {
               "pendingPartIds": []
             }
           ],
-          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
-        },
-        "队伍联动": {
-          "summary": "每名机械类型我方单位使特技上限+1,000，最多4名；每名机械类型我方单位使反击上限+1,000，最多4名；每名我方机械类型单位使必杀上限+1,000，最多4名、最高+4,000。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "ally-race-count"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。 适用条件：统计我方机械类型单位，包含自身，最多4名。",
+          "effectConditions": [
             {
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "count": {
-                "metric": "allied-units-of-race",
-                "race": "machine",
-                "includesSelf": true,
-                "maxCount": 4
-              },
-              "capPerUnit": 1000,
-              "maxCapPoints": 4000,
-              "partIds": [
-                "skill-cap"
-              ],
-              "summary": "每名机械类型我方单位使特技上限+1,000，最多4名",
-              "operation": "count-scaled-cap-up",
-              "effectIdentity": "4aafd29a15ad98c4:skill-cap",
-              "partyPredicate": {
-                "clauses": [
-                  "统计我方机械类型单位，包含自身，最多4名"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1191-skill-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "ally-race-count",
-                  "text": "统计我方机械类型单位，包含自身，最多4名"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "counter-cap"
               ],
-              "summary": "每名机械类型我方单位使反击上限+1,000，最多4名",
-              "target": "self",
-              "isBuff": false,
-              "effectIdentity": "4aafd29a15ad98c4:counter-cap",
-              "effectStacking": "once-per-skill",
-              "operation": "count-scaled-cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "counter"
-              },
-              "raceRelation": {
-                "subject": "allied-unit-count",
-                "operator": "any-of",
-                "races": [
-                  "machine"
-                ]
-              },
-              "count": {
-                "metric": "allied-units-of-race",
-                "race": "machine",
-                "includesSelf": true,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "capPerUnit": 1000,
-              "maxCapPoints": 4000,
-              "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
                 "clauses": [
                   "统计我方机械类型单位，包含自身，最多4名"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1191-counter-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "ally-race-count",
-                  "text": "统计我方机械类型单位，包含自身，最多4名"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
-                "ultimate-cap"
-              ],
-              "summary": "每名我方机械类型单位使必杀上限+1,000，最多4名、最高+4,000。",
-              "target": "self",
-              "isBuff": false,
-              "operation": "count-scaled-cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "ultimate"
-              },
-              "count": {
-                "metric": "allied-units-of-race",
-                "race": "machine",
-                "includesSelf": true,
-                "maxCount": 4
-              },
-              "capPerUnit": 1000,
-              "maxCapPoints": 4000,
-              "effectIdentity": "4aafd29a15ad98c4:ultimate-cap",
-              "partyPredicate": {
-                "clauses": [
-                  "统计我方机械类型单位，包含自身，最多4名"
+              "effectBinding": {
+                "partIds": [
+                  "counter-cap"
                 ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
+                "summary": "每名机械类型我方单位使反击上限+1,000，最多4名",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "4aafd29a15ad98c4:counter-cap",
+                "effectStacking": "once-per-skill",
+                "operation": "count-scaled-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "counter"
+                },
+                "raceRelation": {
+                  "subject": "allied-unit-count",
+                  "operator": "any-of",
+                  "races": [
+                    "machine"
+                  ]
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "machine",
+                  "includesSelf": true,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方机械类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。"
               },
-              "group": "1191-ultimate-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "类型追加“机械”。每有1名机械类型的我方单位，特技、必杀和反击的伤害上限+1,000（最多4名，最高+4,000）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "ally-race-count",
-                  "text": "统计我方机械类型单位，包含自身，最多4名"
-                }
-              ],
-              "pendingPartIds": []
+              "numericEffectInjection": false,
+              "summary": "统计我方机械类型单位，包含自身，最多4名"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "relatedSkillIds": [],
@@ -103379,8 +107124,7 @@ export const SKILL_LABELING_CATALOG = {
         "必杀相关",
         "特技相关",
         "机械种族",
-        "反击",
-        "队伍联动"
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -105168,47 +108912,25 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "3f8ac48a18f25fa8:ultimate-cap"
             }
           ],
-          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
+          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。 适用条件：仅自身存活，其他友方均处于战斗不能。",
           "coverage": {
             "effectPartIds": [
               "ultimate-damage",
               "ultimate-cap"
             ],
-            "conditionPartIds": []
-          }
-        },
-        "队伍联动": {
-          "summary": "仅自身存活时，必杀伤害+50%；仅自身存活时，必杀上限+10,000。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
             "conditionPartIds": [
               "team-state"
             ]
           },
-          "bindings": [
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "ultimate-damage"
               ],
-              "summary": "仅自身存活时，必杀伤害+50%。",
-              "target": "self",
-              "isBuff": false,
-              "operation": "damage-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "ultimate"
-              },
-              "valuePercent": 50,
-              "condition": {
-                "metric": "living-allied-unit-count",
-                "operator": "eq",
-                "count": 1,
-                "onlyLivingUnitIsSelf": true
-              },
-              "effectIdentity": "3f8ac48a18f25fa8:ultimate-damage",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "team-state"
+              ],
+              "predicate": {
                 "clauses": [
                   "仅自身存活，其他友方均处于战斗不能"
                 ],
@@ -105216,38 +108938,47 @@ export const SKILL_LABELING_CATALOG = {
                 "requiresActualPartyState": true,
                 "mode": "only-self-alive"
               },
-              "group": "1547-ultimate-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "仅自身存活时，必杀伤害+50%、伤害上限+10,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "team-state",
-                  "text": "仅自身存活，其他友方均处于战斗不能"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-damage"
+                ],
+                "summary": "仅自身存活时，必杀伤害+50%。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "damage-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate"
+                },
+                "valuePercent": 50,
+                "condition": {
+                  "metric": "living-allied-unit-count",
+                  "operator": "eq",
+                  "count": 1,
+                  "onlyLivingUnitIsSelf": true
+                },
+                "effectIdentity": "3f8ac48a18f25fa8:ultimate-damage",
+                "partyPredicate": {
+                  "clauses": [
+                    "仅自身存活，其他友方均处于战斗不能"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "only-self-alive"
+                },
+                "sourceClause": "仅自身存活时，必杀伤害+50%、伤害上限+10,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "仅自身存活，其他友方均处于战斗不能"
             },
             {
-              "partIds": [
+              "effectPartIds": [
                 "ultimate-cap"
               ],
-              "summary": "仅自身存活时，必杀上限+10,000。",
-              "target": "self",
-              "isBuff": false,
-              "operation": "cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "ultimate"
-              },
-              "capPoints": 10000,
-              "condition": {
-                "metric": "living-allied-unit-count",
-                "operator": "eq",
-                "count": 1,
-                "onlyLivingUnitIsSelf": true
-              },
-              "effectIdentity": "3f8ac48a18f25fa8:ultimate-cap",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "team-state"
+              ],
+              "predicate": {
                 "clauses": [
                   "仅自身存活，其他友方均处于战斗不能"
                 ],
@@ -105255,25 +108986,45 @@ export const SKILL_LABELING_CATALOG = {
                 "requiresActualPartyState": true,
                 "mode": "only-self-alive"
               },
-              "group": "1547-ultimate-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "仅自身存活时，必杀伤害+50%、伤害上限+10,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "team-state",
-                  "text": "仅自身存活，其他友方均处于战斗不能"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-cap"
+                ],
+                "summary": "仅自身存活时，必杀上限+10,000。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate"
+                },
+                "capPoints": 10000,
+                "condition": {
+                  "metric": "living-allied-unit-count",
+                  "operator": "eq",
+                  "count": 1,
+                  "onlyLivingUnitIsSelf": true
+                },
+                "effectIdentity": "3f8ac48a18f25fa8:ultimate-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "仅自身存活，其他友方均处于战斗不能"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "only-self-alive"
+                },
+                "sourceClause": "仅自身存活时，必杀伤害+50%、伤害上限+10,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "仅自身存活，其他友方均处于战斗不能"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "必杀相关",
-        "队伍联动"
+        "必杀相关"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -105627,13 +109378,64 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "b1235f3ab30aff73:ultimate-cap"
             }
           ],
-          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
+          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。 适用条件：统计我方士兵类型单位，包含自身，最多4名。",
           "coverage": {
             "effectPartIds": [
               "ultimate-cap"
             ],
-            "conditionPartIds": []
-          }
+            "conditionPartIds": [
+              "ally-race-count"
+            ]
+          },
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "ultimate-cap"
+              ],
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "统计我方士兵类型单位，包含自身，最多4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-cap"
+                ],
+                "summary": "每名我方士兵类型单位使必杀上限+1,000，最多4名、最高+4,000。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "count-scaled-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate"
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "soldier",
+                  "includesSelf": true,
+                  "maxCount": 4
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "effectIdentity": "b1235f3ab30aff73:ultimate-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方士兵类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“士兵”。每有1名士兵类型的我方单位，特技和必杀的伤害上限+1,000（最多4名，最高+4,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计我方士兵类型单位，包含自身，最多4名"
+            }
+          ]
         },
         "特技相关": {
           "summary": "每名士兵类型我方单位使特技上限+1,000，最多4名。",
@@ -105643,7 +109445,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "skill-cap"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "ally-race-count"
+            ]
           },
           "bindings": [
             {
@@ -105671,7 +109475,56 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "b1235f3ab30aff73:skill-cap"
             }
           ],
-          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。 适用条件：统计我方士兵类型单位，包含自身，最多4名。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "skill-cap"
+              ],
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "统计我方士兵类型单位，包含自身，最多4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "soldier",
+                  "includesSelf": true,
+                  "maxCount": 4
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "partIds": [
+                  "skill-cap"
+                ],
+                "summary": "每名士兵类型我方单位使特技上限+1,000，最多4名",
+                "operation": "count-scaled-cap-up",
+                "effectIdentity": "b1235f3ab30aff73:skill-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方士兵类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“士兵”。每有1名士兵类型的我方单位，特技和必杀的伤害上限+1,000（最多4名，最高+4,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计我方士兵类型单位，包含自身，最多4名"
+            }
+          ]
         },
         "士兵": {
           "summary": "类型追加“士兵”；每名士兵类型我方单位使特技上限+1,000，最多4名；每名士兵类型我方单位使必杀上限+1,000，最多4名。",
@@ -105786,107 +109639,110 @@ export const SKILL_LABELING_CATALOG = {
               "group": "allied-unit-count-any-of-soldier-ultimate--count-scaled-cap-up"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "每名士兵类型我方单位使特技上限+1,000，最多4名；每名我方士兵类型单位使必杀上限+1,000，最多4名、最高+4,000。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "ally-race-count"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：统计我方士兵类型单位，包含自身，最多4名。",
+          "effectConditions": [
             {
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "count": {
-                "metric": "allied-units-of-race",
-                "race": "soldier",
-                "includesSelf": true,
-                "maxCount": 4
-              },
-              "capPerUnit": 1000,
-              "maxCapPoints": 4000,
-              "partIds": [
+              "effectPartIds": [
                 "skill-cap"
               ],
-              "summary": "每名士兵类型我方单位使特技上限+1,000，最多4名",
-              "operation": "count-scaled-cap-up",
-              "effectIdentity": "b1235f3ab30aff73:skill-cap",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
                 "clauses": [
                   "统计我方士兵类型单位，包含自身，最多4名"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1607-skill-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "类型追加“士兵”。每有1名士兵类型的我方单位，特技和必杀的伤害上限+1,000（最多4名，最高+4,000）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "ally-race-count",
-                  "text": "统计我方士兵类型单位，包含自身，最多4名"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "soldier",
+                  "includesSelf": true,
+                  "maxCount": 4
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "partIds": [
+                  "skill-cap"
+                ],
+                "summary": "每名士兵类型我方单位使特技上限+1,000，最多4名",
+                "operation": "count-scaled-cap-up",
+                "effectIdentity": "b1235f3ab30aff73:skill-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方士兵类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“士兵”。每有1名士兵类型的我方单位，特技和必杀的伤害上限+1,000（最多4名，最高+4,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计我方士兵类型单位，包含自身，最多4名"
             },
             {
-              "partIds": [
+              "effectPartIds": [
                 "ultimate-cap"
               ],
-              "summary": "每名我方士兵类型单位使必杀上限+1,000，最多4名、最高+4,000。",
-              "target": "self",
-              "isBuff": false,
-              "operation": "count-scaled-cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "ultimate"
-              },
-              "count": {
-                "metric": "allied-units-of-race",
-                "race": "soldier",
-                "includesSelf": true,
-                "maxCount": 4
-              },
-              "capPerUnit": 1000,
-              "maxCapPoints": 4000,
-              "effectIdentity": "b1235f3ab30aff73:ultimate-cap",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "ally-race-count"
+              ],
+              "predicate": {
                 "clauses": [
                   "统计我方士兵类型单位，包含自身，最多4名"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1607-ultimate-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "类型追加“士兵”。每有1名士兵类型的我方单位，特技和必杀的伤害上限+1,000（最多4名，最高+4,000）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "ally-race-count",
-                  "text": "统计我方士兵类型单位，包含自身，最多4名"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-cap"
+                ],
+                "summary": "每名我方士兵类型单位使必杀上限+1,000，最多4名、最高+4,000。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "count-scaled-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate"
+                },
+                "count": {
+                  "metric": "allied-units-of-race",
+                  "race": "soldier",
+                  "includesSelf": true,
+                  "maxCount": 4
+                },
+                "capPerUnit": 1000,
+                "maxCapPoints": 4000,
+                "effectIdentity": "b1235f3ab30aff73:ultimate-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计我方士兵类型单位，包含自身，最多4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "类型追加“士兵”。每有1名士兵类型的我方单位，特技和必杀的伤害上限+1,000（最多4名，最高+4,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计我方士兵类型单位，包含自身，最多4名"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "特技相关",
-        "士兵",
-        "队伍联动"
+        "士兵"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -107259,13 +111115,75 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "3651039f5585a575:ultimate-cap"
             }
           ],
-          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
+          "calculationNote": "本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。 适用条件：装备英雄传说的我方单位至少2名，按实际人数取对应档位。",
           "coverage": {
             "effectPartIds": [
               "ultimate-cap"
             ],
-            "conditionPartIds": []
-          }
+            "conditionPartIds": [
+              "allies-with-skill"
+            ]
+          },
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "ultimate-cap"
+              ],
+              "conditionPartIds": [
+                "allies-with-skill"
+              ],
+              "predicate": {
+                "clauses": [
+                  "装备英雄传说的我方单位至少2名，按实际人数取对应档位"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-cap"
+                ],
+                "summary": "对Boss必杀上限按装备英雄传说的我方人数提升：2名+5,000、3名+10,000、4名+15,000",
+                "target": "self",
+                "isBuff": false,
+                "operation": "tiered-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate",
+                  "enemyType": "boss"
+                },
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "3651039f5585a575",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "capPoints": 5000
+                  },
+                  {
+                    "count": 3,
+                    "capPoints": 10000
+                  },
+                  {
+                    "count": 4,
+                    "capPoints": 15000
+                  }
+                ],
+                "belowMinimumCapPoints": 0,
+                "effectIdentity": "3651039f5585a575:ultimate-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "装备英雄传说的我方单位至少2名，按实际人数取对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "装备“英雄传说”的我方单位达到2名以上时，对BOSS的必杀伤害上限提升（2名：+5,000；3名：+10,000；4名：+15,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "装备英雄传说的我方单位至少2名，按实际人数取对应档位"
+            }
+          ]
         },
         "Boss": {
           "summary": "对Boss必杀上限按装备英雄传说的我方人数提升：2名+5,000、3名+10,000、4名+15,000",
@@ -107276,7 +111194,8 @@ export const SKILL_LABELING_CATALOG = {
               "ultimate-cap"
             ],
             "conditionPartIds": [
-              "boss-target"
+              "boss-target",
+              "allies-with-skill"
             ]
           },
           "bindings": [
@@ -107317,82 +111236,73 @@ export const SKILL_LABELING_CATALOG = {
               "effectStacking": "once-per-skill"
             }
           ],
-          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
-        },
-        "队伍联动": {
-          "summary": "对Boss必杀上限按装备英雄传说的我方人数提升：2名+5,000、3名+10,000、4名+15,000。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "allies-with-skill"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。 适用条件：装备英雄传说的我方单位至少2名，按实际人数取对应档位。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "ultimate-cap"
               ],
-              "summary": "对Boss必杀上限按装备英雄传说的我方人数提升：2名+5,000、3名+10,000、4名+15,000",
-              "target": "self",
-              "isBuff": false,
-              "operation": "tiered-cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "ultimate",
-                "enemyType": "boss"
-              },
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "3651039f5585a575",
-              "minimumCount": 2,
-              "tiers": [
-                {
-                  "count": 2,
-                  "capPoints": 5000
-                },
-                {
-                  "count": 3,
-                  "capPoints": 10000
-                },
-                {
-                  "count": 4,
-                  "capPoints": 15000
-                }
+              "conditionPartIds": [
+                "allies-with-skill"
               ],
-              "belowMinimumCapPoints": 0,
-              "effectIdentity": "3651039f5585a575:ultimate-cap",
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "装备英雄传说的我方单位至少2名，按实际人数取对应档位"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1708-ultimate-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "装备“英雄传说”的我方单位达到2名以上时，对BOSS的必杀伤害上限提升（2名：+5,000；3名：+10,000；4名：+15,000）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "allies-with-skill",
-                  "text": "装备英雄传说的我方单位至少2名，按实际人数取对应档位"
+              "effectBinding": {
+                "partIds": [
+                  "ultimate-cap"
+                ],
+                "summary": "对Boss必杀上限按装备英雄传说的我方人数提升：2名+5,000、3名+10,000、4名+15,000",
+                "target": "self",
+                "isBuff": false,
+                "operation": "tiered-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "ultimate",
+                  "enemyType": "boss"
                 },
-                {
-                  "partId": "boss-target",
-                  "text": "目标敌人为Boss"
-                }
-              ],
-              "pendingPartIds": []
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "3651039f5585a575",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "capPoints": 5000
+                  },
+                  {
+                    "count": 3,
+                    "capPoints": 10000
+                  },
+                  {
+                    "count": 4,
+                    "capPoints": 15000
+                  }
+                ],
+                "belowMinimumCapPoints": 0,
+                "effectIdentity": "3651039f5585a575:ultimate-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "装备英雄传说的我方单位至少2名，按实际人数取对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "装备“英雄传说”的我方单位达到2名以上时，对BOSS的必杀伤害上限提升（2名：+5,000；3名：+10,000；4名：+15,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "装备英雄传说的我方单位至少2名，按实际人数取对应档位"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "Boss",
-        "队伍联动"
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -112244,7 +116154,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "skill-cap"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "allies-with-skill"
+            ]
           },
           "bindings": [
             {
@@ -112282,76 +116194,71 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "31e0fc5aedd96ccb:skill-cap"
             }
           ],
-          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
-        },
-        "队伍联动": {
-          "summary": "装备黑色骑士团的我方单位2／3／4名时，特技上限分别+1,000／2,000／3,000。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "allies-with-skill"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。 适用条件：装备黑色骑士团的我方单位至少2名，按实际人数取对应档位。",
+          "effectConditions": [
             {
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "31e0fc5aedd96ccb",
-              "minimumCount": 2,
-              "tiers": [
-                {
-                  "count": 2,
-                  "capPoints": 1000
-                },
-                {
-                  "count": 3,
-                  "capPoints": 2000
-                },
-                {
-                  "count": 4,
-                  "capPoints": 3000
-                }
-              ],
-              "belowMinimumCapPoints": 0,
-              "partIds": [
+              "effectPartIds": [
                 "skill-cap"
               ],
-              "summary": "装备黑色骑士团的我方单位2／3／4名时，特技上限分别+1,000／2,000／3,000。",
-              "operation": "tiered-cap-up",
-              "effectIdentity": "31e0fc5aedd96ccb:skill-cap",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "allies-with-skill"
+              ],
+              "predicate": {
                 "clauses": [
                   "装备黑色骑士团的我方单位至少2名，按实际人数取对应档位"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1067-skill-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "装备“黑色骑士团”的友方角色达到2名以上时，特技伤害上限提升（2名：+1,000，3名：+2,000，4名：+3,000）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "allies-with-skill",
-                  "text": "装备黑色骑士团的我方单位至少2名，按实际人数取对应档位"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "31e0fc5aedd96ccb",
+                "minimumCount": 2,
+                "tiers": [
+                  {
+                    "count": 2,
+                    "capPoints": 1000
+                  },
+                  {
+                    "count": 3,
+                    "capPoints": 2000
+                  },
+                  {
+                    "count": 4,
+                    "capPoints": 3000
+                  }
+                ],
+                "belowMinimumCapPoints": 0,
+                "partIds": [
+                  "skill-cap"
+                ],
+                "summary": "装备黑色骑士团的我方单位2／3／4名时，特技上限分别+1,000／2,000／3,000。",
+                "operation": "tiered-cap-up",
+                "effectIdentity": "31e0fc5aedd96ccb:skill-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "装备黑色骑士团的我方单位至少2名，按实际人数取对应档位"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "装备“黑色骑士团”的友方角色达到2名以上时，特技伤害上限提升（2名：+1,000，3名：+2,000，4名：+3,000）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "装备黑色骑士团的我方单位至少2名，按实际人数取对应档位"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关",
-        "队伍联动"
+        "特技相关"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -112553,7 +116460,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "sct-restore"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "paired-skill"
+            ]
           },
           "bindings": [
             {
@@ -112587,7 +116496,70 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "6958b9c4d7aad7cb:sct-restore"
             }
           ],
-          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。 适用条件：除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "sct-restore"
+              ],
+              "conditionPartIds": [
+                "paired-skill"
+              ],
+              "predicate": {
+                "clauses": [
+                  "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "6958b9c4d7aad7cb",
+                "pairedTargetMustBeAlive": true
+              },
+              "effectBinding": {
+                "target": "paired-living-ally",
+                "isBuff": false,
+                "scope": {
+                  "direction": "resource",
+                  "resource": "SCT"
+                },
+                "resource": "SCT",
+                "restoreSeconds": 15,
+                "skillSelection": "all",
+                "trigger": {
+                  "event": "became-incapacitated",
+                  "actor": "self"
+                },
+                "pair": {
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "6958b9c4d7aad7cb",
+                  "targetMustBeAlive": true
+                },
+                "maxTriggers": 1,
+                "resetScope": "pair",
+                "partIds": [
+                  "sct-restore"
+                ],
+                "summary": "自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。",
+                "operation": "restore-sct-seconds",
+                "effectIdentity": "6958b9c4d7aad7cb:sct-restore",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "6958b9c4d7aad7cb",
+                  "pairedTargetMustBeAlive": true
+                },
+                "sourceClause": "除自身外，若刚好只有1名友方角色也装备“Dear Hearts”，则自身战斗不能时，使仍存活的配对角色HP大幅恢复，并使其所有特技的SCT恢复15秒（每对角色仅限触发1次）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
+            }
+          ]
         },
         "HP回复": {
           "summary": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认。",
@@ -112597,7 +116569,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "hp-restore"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "paired-skill"
+            ]
           },
           "bindings": [
             {
@@ -112655,65 +116629,16 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。"
-        },
-        "队伍联动": {
-          "summary": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认；自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "paired-skill"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "即时HP回复、再生、回复量、回复上限、主动治疗触发、复活初始HP和疾病阻止回复分组；明确回复来源、对象与计算基数。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。同类型再生Buff只取当前最高一项。 适用条件：除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活。",
+          "effectConditions": [
             {
-              "target": "paired-living-ally",
-              "isBuff": false,
-              "scope": {
-                "direction": "healing",
-                "resource": "HP"
-              },
-              "resource": "HP",
-              "trigger": {
-                "event": "became-incapacitated",
-                "actor": "self"
-              },
-              "pair": {
-                "otherEquippedCount": 1,
-                "requiredSkillId": "6958b9c4d7aad7cb",
-                "targetMustBeAlive": true
-              },
-              "maxTriggers": 1,
-              "resetScope": "pair",
-              "partIds": [
+              "effectPartIds": [
                 "hp-restore"
               ],
-              "summary": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认。",
-              "operation": "restore-hp",
-              "amountStatus": "unconfirmed",
-              "effectIdentity": "6958b9c4d7aad7cb:hp-restore",
-              "sourceClause": "除自身外，若刚好只有1名友方角色也装备“Dear Hearts”，则自身战斗不能时，使仍存活的配对角色HP大幅恢复，并使其所有特技的SCT恢复15秒（每对角色仅限触发1次）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "paired-skill",
-                  "text": "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
-                },
-                {
-                  "partId": "self-death",
-                  "text": "技能持有者自身陷入战斗不能时触发"
-                },
-                {
-                  "partId": "once-per-pair",
-                  "text": "每对角色最多触发1次，不是每个角色各1次"
-                },
-                {
-                  "partId": "combat-healing-parameters",
-                  "text": "HP回复的具体数值与计算公式待确认"
-                }
+              "conditionPartIds": [
+                "paired-skill"
               ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
                 ],
@@ -112724,79 +116649,49 @@ export const SKILL_LABELING_CATALOG = {
                 "requiredSkillId": "6958b9c4d7aad7cb",
                 "pairedTargetMustBeAlive": true
               },
-              "group": "1271-hp-restore",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": [
-                "self-death",
-                "combat-healing-parameters"
-              ]
-            },
-            {
-              "target": "paired-living-ally",
-              "isBuff": false,
-              "scope": {
-                "direction": "resource",
-                "resource": "SCT"
-              },
-              "resource": "SCT",
-              "restoreSeconds": 15,
-              "skillSelection": "all",
-              "trigger": {
-                "event": "became-incapacitated",
-                "actor": "self"
-              },
-              "pair": {
-                "otherEquippedCount": 1,
-                "requiredSkillId": "6958b9c4d7aad7cb",
-                "targetMustBeAlive": true
-              },
-              "maxTriggers": 1,
-              "resetScope": "pair",
-              "partIds": [
-                "sct-restore"
-              ],
-              "summary": "自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。",
-              "operation": "restore-sct-seconds",
-              "effectIdentity": "6958b9c4d7aad7cb:sct-restore",
-              "partyPredicate": {
-                "clauses": [
-                  "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
+              "effectBinding": {
+                "target": "paired-living-ally",
+                "isBuff": false,
+                "scope": {
+                  "direction": "healing",
+                  "resource": "HP"
+                },
+                "resource": "HP",
+                "trigger": {
+                  "event": "became-incapacitated",
+                  "actor": "self"
+                },
+                "pair": {
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "6958b9c4d7aad7cb",
+                  "targetMustBeAlive": true
+                },
+                "maxTriggers": 1,
+                "resetScope": "pair",
+                "partIds": [
+                  "hp-restore"
                 ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "exact-other-same-skill-pair",
-                "otherEquippedCount": 1,
-                "requiredSkillId": "6958b9c4d7aad7cb",
-                "pairedTargetMustBeAlive": true
-              },
-              "group": "1271-sct-restore",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "除自身外，若刚好只有1名友方角色也装备“Dear Hearts”，则自身战斗不能时，使仍存活的配对角色HP大幅恢复，并使其所有特技的SCT恢复15秒（每对角色仅限触发1次）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "paired-skill",
-                  "text": "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
-                },
-                {
-                  "partId": "self-death",
-                  "text": "技能持有者自身陷入战斗不能时触发"
-                },
-                {
-                  "partId": "once-per-pair",
-                  "text": "每对角色最多触发1次，不是每个角色各1次"
-                },
-                {
-                  "partId": "combat-healing-parameters",
-                  "text": "HP回复的具体数值与计算公式待确认"
+                "summary": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认。",
+                "operation": "restore-hp",
+                "amountStatus": "unconfirmed",
+                "effectIdentity": "6958b9c4d7aad7cb:hp-restore",
+                "sourceClause": "除自身外，若刚好只有1名友方角色也装备“Dear Hearts”，则自身战斗不能时，使仍存活的配对角色HP大幅恢复，并使其所有特技的SCT恢复15秒（每对角色仅限触发1次）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "6958b9c4d7aad7cb",
+                  "pairedTargetMustBeAlive": true
                 }
-              ],
-              "pendingPartIds": [
-                "self-death",
-                "combat-healing-parameters"
-              ]
+              },
+              "numericEffectInjection": false,
+              "summary": "除自身外刚好1名友方也装备Dear Hearts，且配对角色仍存活"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         },
         "触发次数与重置": {
           "summary": "自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认；自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次。",
@@ -112934,7 +116829,6 @@ export const SKILL_LABELING_CATALOG = {
       "assignedTags": [
         "特技相关",
         "HP回复",
-        "队伍联动",
         "触发次数与重置"
       ],
       "judgment": "partial",
@@ -113817,7 +117711,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "sct-speed"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "team-state"
+            ]
           },
           "bindings": [
             {
@@ -113845,41 +117741,16 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "d542c5868da412e7:sct-speed"
             }
           ],
-          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
-        },
-        "队伍联动": {
-          "summary": "仅自身存活时，SCT恢复速度+20%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "team-state"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。 适用条件：仅自身存活。",
+          "effectConditions": [
             {
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "resource",
-                "resource": "SCT"
-              },
-              "resource": "SCT",
-              "valuePercent": 20,
-              "condition": {
-                "metric": "living-allied-unit-count",
-                "operator": "eq",
-                "count": 1,
-                "onlyLivingUnitIsSelf": true
-              },
-              "partIds": [
+              "effectPartIds": [
                 "sct-speed"
               ],
-              "summary": "仅自身存活时，SCT恢复速度+20%。",
-              "operation": "sct-speed-up",
-              "effectIdentity": "d542c5868da412e7:sct-speed",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "team-state"
+              ],
+              "predicate": {
                 "clauses": [
                   "仅自身存活"
                 ],
@@ -113887,25 +117758,46 @@ export const SKILL_LABELING_CATALOG = {
                 "requiresActualPartyState": true,
                 "mode": "only-self-alive"
               },
-              "group": "1856-sct-speed",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "仅自身存活时，SCT恢复速度+20%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "team-state",
-                  "text": "仅自身存活"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "resource",
+                  "resource": "SCT"
+                },
+                "resource": "SCT",
+                "valuePercent": 20,
+                "condition": {
+                  "metric": "living-allied-unit-count",
+                  "operator": "eq",
+                  "count": 1,
+                  "onlyLivingUnitIsSelf": true
+                },
+                "partIds": [
+                  "sct-speed"
+                ],
+                "summary": "仅自身存活时，SCT恢复速度+20%。",
+                "operation": "sct-speed-up",
+                "effectIdentity": "d542c5868da412e7:sct-speed",
+                "partyPredicate": {
+                  "clauses": [
+                    "仅自身存活"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "only-self-alive"
+                },
+                "sourceClause": "仅自身存活时，SCT恢复速度+20%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "仅自身存活"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关",
-        "队伍联动"
+        "特技相关"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -113938,7 +117830,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "skill-damage"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "allies-with-skill"
+            ]
           },
           "bindings": [
             {
@@ -113965,65 +117859,60 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "2a1da0c826ca8526:skill-damage"
             }
           ],
-          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
-        },
-        "队伍联动": {
-          "summary": "至少3名友方装备暴风龙四天王时，特技伤害+30%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "allies-with-skill"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。 适用条件：至少3名我方单位装备暴风龙四天王。",
+          "effectConditions": [
             {
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill"
-              },
-              "valuePercent": 30,
-              "condition": {
-                "metric": "allies-with-same-skill",
-                "requiredSkillId": "2a1da0c826ca8526",
-                "operator": "gte",
-                "count": 3
-              },
-              "partIds": [
+              "effectPartIds": [
                 "skill-damage"
               ],
-              "summary": "至少3名友方装备暴风龙四天王时，特技伤害+30%。",
-              "operation": "damage-up",
-              "effectIdentity": "2a1da0c826ca8526:skill-damage",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "allies-with-skill"
+              ],
+              "predicate": {
                 "clauses": [
                   "至少3名我方单位装备暴风龙四天王"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1874-skill-damage",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "装备“暴风龙四天王”的友方角色达到3名以上时，特技伤害+30%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "allies-with-skill",
-                  "text": "至少3名我方单位装备暴风龙四天王"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill"
+                },
+                "valuePercent": 30,
+                "condition": {
+                  "metric": "allies-with-same-skill",
+                  "requiredSkillId": "2a1da0c826ca8526",
+                  "operator": "gte",
+                  "count": 3
+                },
+                "partIds": [
+                  "skill-damage"
+                ],
+                "summary": "至少3名友方装备暴风龙四天王时，特技伤害+30%。",
+                "operation": "damage-up",
+                "effectIdentity": "2a1da0c826ca8526:skill-damage",
+                "partyPredicate": {
+                  "clauses": [
+                    "至少3名我方单位装备暴风龙四天王"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "装备“暴风龙四天王”的友方角色达到3名以上时，特技伤害+30%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "至少3名我方单位装备暴风龙四天王"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关",
-        "队伍联动"
+        "特技相关"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -114132,7 +118021,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "skill-cap"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "female-ally-alive"
+            ]
           },
           "bindings": [
             {
@@ -114159,7 +118050,59 @@ export const SKILL_LABELING_CATALOG = {
               "effectIdentity": "cb30f3c1c621732d:skill-cap"
             }
           ],
-          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+          "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。 适用条件：自身以外至少一名女性友方存活；不要求其余队友全为女性。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "skill-cap"
+              ],
+              "conditionPartIds": [
+                "female-ally-alive"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "otherLivingFemaleCountAtLeast": 1,
+                "requiresAllOtherAlliesFemale": false
+              },
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill",
+                  "enemyType": "boss"
+                },
+                "capPoints": 10000,
+                "condition": {
+                  "metric": "living-female-allies-excluding-self",
+                  "operator": "gte",
+                  "count": 1
+                },
+                "partIds": [
+                  "skill-cap"
+                ],
+                "summary": "自身以外至少一名女性友方存活时，对Boss特技上限+10,000。",
+                "operation": "cap-up",
+                "effectIdentity": "cb30f3c1c621732d:skill-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "otherLivingFemaleCountAtLeast": 1,
+                  "requiresAllOtherAlliesFemale": false
+                },
+                "sourceClause": "自身以外有女性友方存活时，对BOSS的特技和魔法伤害上限+10,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+            }
+          ]
         },
         "魔法": {
           "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000。",
@@ -114169,7 +118112,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "magic-cap"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "female-ally-alive"
+            ]
           },
           "bindings": [
             {
@@ -114197,7 +118142,60 @@ export const SKILL_LABELING_CATALOG = {
               "group": "boss-cap"
             }
           ],
-          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。 适用条件：自身以外至少一名女性友方存活；不要求其余队友全为女性。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "magic-cap"
+              ],
+              "conditionPartIds": [
+                "female-ally-alive"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "otherLivingFemaleCountAtLeast": 1,
+                "requiresAllOtherAlliesFemale": false
+              },
+              "effectBinding": {
+                "partIds": [
+                  "magic-cap"
+                ],
+                "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000",
+                "target": "self",
+                "isBuff": false,
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic",
+                  "enemyType": "boss"
+                },
+                "effectIdentity": "cb30f3c1c621732d:magic-cap",
+                "capPoints": 10000,
+                "condition": {
+                  "subject": "other-allies",
+                  "requireAnyLivingFemale": true,
+                  "excludeSelf": true,
+                  "requireAllFemale": false
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "otherLivingFemaleCountAtLeast": 1,
+                  "requiresAllOtherAlliesFemale": false
+                },
+                "sourceClause": "自身以外有女性友方存活时，对BOSS的特技和魔法伤害上限+10,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+            }
+          ]
         },
         "Boss": {
           "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000；自身以外至少一名女性友方存活时，对Boss特技上限+10,000。",
@@ -114209,7 +118207,8 @@ export const SKILL_LABELING_CATALOG = {
               "skill-cap"
             ],
             "conditionPartIds": [
-              "boss-target"
+              "boss-target",
+              "female-ally-alive"
             ]
           },
           "bindings": [
@@ -114263,41 +118262,16 @@ export const SKILL_LABELING_CATALOG = {
               "effectStacking": "once-per-skill"
             }
           ],
-          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。"
-        },
-        "队伍联动": {
-          "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000；自身以外至少一名女性友方存活时，对Boss特技上限+10,000。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "female-ally-alive"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "Boss目标、Boss伤害来源、非Boss及Boss Wave分别判断；保留攻击种类、装备与队伍条件。共用原效果片段，不重复计入；其他独立条件和未知机制见待判断项。 适用条件：自身以外至少一名女性友方存活；不要求其余队友全为女性。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "magic-cap"
               ],
-              "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000",
-              "target": "self",
-              "isBuff": false,
-              "operation": "cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "attack-magic",
-                "enemyType": "boss"
-              },
-              "effectIdentity": "cb30f3c1c621732d:magic-cap",
-              "capPoints": 10000,
-              "condition": {
-                "subject": "other-allies",
-                "requireAnyLivingFemale": true,
-                "excludeSelf": true,
-                "requireAllFemale": false
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "female-ally-alive"
+              ],
+              "predicate": {
                 "clauses": [
                   "自身以外至少一名女性友方存活；不要求其余队友全为女性"
                 ],
@@ -114306,42 +118280,49 @@ export const SKILL_LABELING_CATALOG = {
                 "otherLivingFemaleCountAtLeast": 1,
                 "requiresAllOtherAlliesFemale": false
               },
-              "group": "2028-magic-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "自身以外有女性友方存活时，对BOSS的特技和魔法伤害上限+10,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "female-ally-alive",
-                  "text": "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+              "effectBinding": {
+                "partIds": [
+                  "magic-cap"
+                ],
+                "summary": "自身以外有女性友方存活时，对Boss魔法伤害上限+10,000",
+                "target": "self",
+                "isBuff": false,
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic",
+                  "enemyType": "boss"
                 },
-                {
-                  "partId": "boss-target",
-                  "text": "目标敌人为Boss"
-                }
-              ],
-              "pendingPartIds": []
+                "effectIdentity": "cb30f3c1c621732d:magic-cap",
+                "capPoints": 10000,
+                "condition": {
+                  "subject": "other-allies",
+                  "requireAnyLivingFemale": true,
+                  "excludeSelf": true,
+                  "requireAllFemale": false
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "otherLivingFemaleCountAtLeast": 1,
+                  "requiresAllOtherAlliesFemale": false
+                },
+                "sourceClause": "自身以外有女性友方存活时，对BOSS的特技和魔法伤害上限+10,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外至少一名女性友方存活；不要求其余队友全为女性"
             },
             {
-              "target": "self",
-              "isBuff": false,
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "skill",
-                "enemyType": "boss"
-              },
-              "capPoints": 10000,
-              "condition": {
-                "metric": "living-female-allies-excluding-self",
-                "operator": "gte",
-                "count": 1
-              },
-              "partIds": [
+              "effectPartIds": [
                 "skill-cap"
               ],
-              "summary": "自身以外至少一名女性友方存活时，对Boss特技上限+10,000。",
-              "operation": "cap-up",
-              "effectIdentity": "cb30f3c1c621732d:skill-cap",
-              "partyPredicate": {
+              "conditionPartIds": [
+                "female-ally-alive"
+              ],
+              "predicate": {
                 "clauses": [
                   "自身以外至少一名女性友方存活；不要求其余队友全为女性"
                 ],
@@ -114350,31 +118331,48 @@ export const SKILL_LABELING_CATALOG = {
                 "otherLivingFemaleCountAtLeast": 1,
                 "requiresAllOtherAlliesFemale": false
               },
-              "group": "2028-skill-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "自身以外有女性友方存活时，对BOSS的特技和魔法伤害上限+10,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "female-ally-alive",
-                  "text": "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+              "effectBinding": {
+                "target": "self",
+                "isBuff": false,
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "skill",
+                  "enemyType": "boss"
                 },
-                {
-                  "partId": "boss-target",
-                  "text": "目标敌人为Boss"
-                }
-              ],
-              "pendingPartIds": []
+                "capPoints": 10000,
+                "condition": {
+                  "metric": "living-female-allies-excluding-self",
+                  "operator": "gte",
+                  "count": 1
+                },
+                "partIds": [
+                  "skill-cap"
+                ],
+                "summary": "自身以外至少一名女性友方存活时，对Boss特技上限+10,000。",
+                "operation": "cap-up",
+                "effectIdentity": "cb30f3c1c621732d:skill-cap",
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外至少一名女性友方存活；不要求其余队友全为女性"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "otherLivingFemaleCountAtLeast": 1,
+                  "requiresAllOtherAlliesFemale": false
+                },
+                "sourceClause": "自身以外有女性友方存活时，对BOSS的特技和魔法伤害上限+10,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外至少一名女性友方存活；不要求其余队友全为女性"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "特技相关",
         "魔法",
-        "Boss",
-        "队伍联动"
+        "Boss"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -118807,7 +122805,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "party-alive"
+            ]
           },
           "bindings": [
             {
@@ -118832,7 +122832,57 @@ export const SKILL_LABELING_CATALOG = {
               "group": "reduction"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：我方至少2名单位且全部存活；不能只检查当前存活人数。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-reduction"
+              ],
+              "conditionPartIds": [
+                "party-alive"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方至少2名单位且全部存活；不能只检查当前存活人数"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "minimumPartySize": 2,
+                "allPartyMembersAlive": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-reduction"
+                ],
+                "summary": "我方至少2名单位且全员存活时，受到敌人物理伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "4ad3b1d265b33240:physical-reduction",
+                "valuePercent": 10,
+                "condition": {
+                  "minimumPartyCount": 2,
+                  "allPartyMembersAlive": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "我方至少2名单位且全部存活；不能只检查当前存活人数"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "minimumPartySize": 2,
+                  "allPartyMembersAlive": true
+                },
+                "sourceClause": "当你有 2 个或更多友军单位且全部存活时， 你受到的敌方物理攻击伤害减少 10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "我方至少2名单位且全部存活；不能只检查当前存活人数"
+            }
+          ]
         },
         "防御": {
           "summary": "我方至少2名单位且全员存活时，受到敌人物理伤害-10%",
@@ -118842,7 +122892,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "party-alive"
+            ]
           },
           "bindings": [
             {
@@ -118875,38 +122927,16 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "我方至少2名单位且全员存活时，受到敌人物理伤害-10%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "party-alive"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：我方至少2名单位且全部存活；不能只检查当前存活人数。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "physical-reduction"
               ],
-              "summary": "我方至少2名单位且全员存活时，受到敌人物理伤害-10%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "physical"
-              },
-              "effectIdentity": "4ad3b1d265b33240:physical-reduction",
-              "valuePercent": 10,
-              "condition": {
-                "minimumPartyCount": 2,
-                "allPartyMembersAlive": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "party-alive"
+              ],
+              "predicate": {
                 "clauses": [
                   "我方至少2名单位且全部存活；不能只检查当前存活人数"
                 ],
@@ -118915,26 +122945,45 @@ export const SKILL_LABELING_CATALOG = {
                 "minimumPartySize": 2,
                 "allPartyMembersAlive": true
               },
-              "group": "770-physical-reduction",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "当你有 2 个或更多友军单位且全部存活时， 你受到的敌方物理攻击伤害减少 10%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "party-alive",
-                  "text": "我方至少2名单位且全部存活；不能只检查当前存活人数"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "physical-reduction"
+                ],
+                "summary": "我方至少2名单位且全员存活时，受到敌人物理伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "4ad3b1d265b33240:physical-reduction",
+                "valuePercent": 10,
+                "condition": {
+                  "minimumPartyCount": 2,
+                  "allPartyMembersAlive": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "我方至少2名单位且全部存活；不能只检查当前存活人数"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "minimumPartySize": 2,
+                  "allPartyMembersAlive": true
+                },
+                "sourceClause": "当你有 2 个或更多友军单位且全部存活时， 你受到的敌方物理攻击伤害减少 10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "我方至少2名单位且全部存活；不能只检查当前存活人数"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "防御",
-        "队伍联动"
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -119497,7 +123546,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "pair"
+            ]
           },
           "bindings": [
             {
@@ -119522,7 +123573,59 @@ export const SKILL_LABELING_CATALOG = {
               "group": "reduction"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：自身以外恰好1名友方装备同技能。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-reduction"
+              ],
+              "conditionPartIds": [
+                "pair"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外恰好1名友方装备同技能"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "1af9886755b25da9"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-reduction"
+                ],
+                "summary": "自身以外恰好1名友方装备共鸣障壁时，受到物理伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "1af9886755b25da9:physical-reduction",
+                "valuePercent": 10,
+                "pair": {
+                  "requiredSkillId": "1af9886755b25da9",
+                  "otherEquippedCount": 1
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好1名友方装备同技能"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "1af9886755b25da9"
+                },
+                "sourceClause": "自身以外恰好有1名友方装备「共鸣障壁」时，受到敌人的物理伤害-10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好1名友方装备同技能"
+            }
+          ]
         },
         "防御": {
           "summary": "自身以外恰好1名友方装备共鸣障壁时，受到物理伤害-10%",
@@ -119532,7 +123635,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "pair"
+            ]
           },
           "bindings": [
             {
@@ -119565,38 +123670,16 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "自身以外恰好1名友方装备共鸣障壁时，受到物理伤害-10%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "pair"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：自身以外恰好1名友方装备同技能。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "physical-reduction"
               ],
-              "summary": "自身以外恰好1名友方装备共鸣障壁时，受到物理伤害-10%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "physical"
-              },
-              "effectIdentity": "1af9886755b25da9:physical-reduction",
-              "valuePercent": 10,
-              "pair": {
-                "requiredSkillId": "1af9886755b25da9",
-                "otherEquippedCount": 1
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "pair"
+              ],
+              "predicate": {
                 "clauses": [
                   "自身以外恰好1名友方装备同技能"
                 ],
@@ -119606,26 +123689,46 @@ export const SKILL_LABELING_CATALOG = {
                 "otherEquippedCount": 1,
                 "requiredSkillId": "1af9886755b25da9"
               },
-              "group": "1027-physical-reduction",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "自身以外恰好有1名友方装备「共鸣障壁」时，受到敌人的物理伤害-10%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "pair",
-                  "text": "自身以外恰好1名友方装备同技能"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "physical-reduction"
+                ],
+                "summary": "自身以外恰好1名友方装备共鸣障壁时，受到物理伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "1af9886755b25da9:physical-reduction",
+                "valuePercent": 10,
+                "pair": {
+                  "requiredSkillId": "1af9886755b25da9",
+                  "otherEquippedCount": 1
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好1名友方装备同技能"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "1af9886755b25da9"
+                },
+                "sourceClause": "自身以外恰好有1名友方装备「共鸣障壁」时，受到敌人的物理伤害-10%。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好1名友方装备同技能"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "防御",
-        "队伍联动"
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -120560,7 +124663,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "same-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -120597,7 +124702,65 @@ export const SKILL_LABELING_CATALOG = {
               "group": "tiered-incoming-damage-down"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-reduction"
+              ],
+              "conditionPartIds": [
+                "same-skill-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-reduction"
+                ],
+                "summary": "同技能我方单位2／3／4名时，受到物理伤害分别-5%／-10%／-15%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "tiered-incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "7791e2dcb32f7841:physical-reduction",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "minimumCount": 2,
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "7791e2dcb32f7841",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "技能“自由之翼”装备于友方单位。根据装备此技能的 友方单位数量，受到的来自敌人的物理攻击和反击的 伤害降低 （2 个单位：-5%，3 个单位：-10%，4 个单位：-15%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
+            }
+          ]
         },
         "防御": {
           "summary": "同技能我方单位2／3／4名时，受到物理伤害分别-5%／-10%／-15%",
@@ -120607,7 +124770,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "same-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -120652,7 +124817,65 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-reduction"
+              ],
+              "conditionPartIds": [
+                "same-skill-count"
+              ],
+              "predicate": {
+                "clauses": [
+                  "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-reduction"
+                ],
+                "summary": "同技能我方单位2／3／4名时，受到物理伤害分别-5%／-10%／-15%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "tiered-incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "7791e2dcb32f7841:physical-reduction",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "minimumCount": 2,
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "7791e2dcb32f7841",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "技能“自由之翼”装备于友方单位。根据装备此技能的 友方单位数量，受到的来自敌人的物理攻击和反击的 伤害降低 （2 个单位：-5%，3 个单位：-10%，4 个单位：-15%）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
+            }
+          ]
         },
         "反击": {
           "summary": "实际装备自由之翼的我方单位2／3／4名时，受到反击伤害分别-5%／-10%／-15%；按当前人数取一档。",
@@ -120662,7 +124885,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "counter-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "same-skill-count"
+            ]
           },
           "bindings": [
             {
@@ -120709,125 +124934,72 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。"
-        },
-        "队伍联动": {
-          "summary": "同技能我方单位2／3／4名时，受到物理伤害分别-5%／-10%／-15%；实际装备自由之翼的我方单位2／3／4名时，受到反击伤害分别-5%／-10%／-15%；按当前人数取一档。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "same-skill-count"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "反击伤害、上限、种族特攻、触发收益、自身反击期间防护、受到反击减伤及敌方行动条件各自分组。同一效果跨页只计一次；只完成本类效果及对应触发条件，独立装备、人数、异常概率、数值基数和公式等按各自进度保留。 适用条件：统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档。",
+          "effectConditions": [
             {
-              "partIds": [
-                "physical-reduction"
-              ],
-              "summary": "同技能我方单位2／3／4名时，受到物理伤害分别-5%／-10%／-15%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "tiered-incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "physical"
-              },
-              "effectIdentity": "7791e2dcb32f7841:physical-reduction",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 15
-                }
-              ],
-              "minimumCount": 2,
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "7791e2dcb32f7841",
-              "partyPredicate": {
-                "clauses": [
-                  "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true
-              },
-              "group": "1296-physical-reduction",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "技能“自由之翼”装备于友方单位。根据装备此技能的 友方单位数量，受到的来自敌人的物理攻击和反击的 伤害降低 （2 个单位：-5%，3 个单位：-10%，4 个单位：-15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "same-skill-count",
-                  "text": "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "counter-reduction"
               ],
-              "summary": "实际装备自由之翼的我方单位2／3／4名时，受到反击伤害分别-5%／-10%／-15%；按当前人数取一档。",
-              "target": "self",
-              "isBuff": false,
-              "operation": "tiered-incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "counter"
-              },
-              "effectIdentity": "7791e2dcb32f7841:counter-reduction",
-              "tiers": [
-                {
-                  "count": 2,
-                  "valuePercent": 5
-                },
-                {
-                  "count": 3,
-                  "valuePercent": 10
-                },
-                {
-                  "count": 4,
-                  "valuePercent": 15
-                }
+              "conditionPartIds": [
+                "same-skill-count"
               ],
-              "minimumCount": 2,
-              "countMetric": "allies-with-same-skill",
-              "requiredSkillId": "7791e2dcb32f7841",
-              "sourceClause": "技能“自由之翼”装备于友方单位。根据装备此技能的 友方单位数量，受到的来自敌人的物理攻击和反击的 伤害降低 （2 个单位：-5%，3 个单位：-10%，4 个单位：-15%）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "same-skill-count",
-                  "text": "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
-                }
-              ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1296-counter-reduction",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "counter-reduction"
+                ],
+                "summary": "实际装备自由之翼的我方单位2／3／4名时，受到反击伤害分别-5%／-10%／-15%；按当前人数取一档。",
+                "target": "self",
+                "isBuff": false,
+                "operation": "tiered-incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "counter"
+                },
+                "effectIdentity": "7791e2dcb32f7841:counter-reduction",
+                "tiers": [
+                  {
+                    "count": 2,
+                    "valuePercent": 5
+                  },
+                  {
+                    "count": 3,
+                    "valuePercent": 10
+                  },
+                  {
+                    "count": 4,
+                    "valuePercent": 15
+                  }
+                ],
+                "minimumCount": 2,
+                "countMetric": "allies-with-same-skill",
+                "requiredSkillId": "7791e2dcb32f7841",
+                "sourceClause": "技能“自由之翼”装备于友方单位。根据装备此技能的 友方单位数量，受到的来自敌人的物理攻击和反击的 伤害降低 （2 个单位：-5%，3 个单位：-10%，4 个单位：-15%）。",
+                "partyPredicate": {
+                  "clauses": [
+                    "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "统计实际装备自由之翼的我方单位数量，至少2名；不能无条件采用4人档"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
         "防御",
-        "反击",
-        "队伍联动"
+        "反击"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -121819,7 +125991,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "physical-cap"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "pair"
+            ]
           },
           "bindings": [
             {
@@ -121844,7 +126018,59 @@ export const SKILL_LABELING_CATALOG = {
               "group": "cap"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：自身以外恰好1名友方装备共犯者。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "physical-cap"
+              ],
+              "conditionPartIds": [
+                "pair"
+              ],
+              "predicate": {
+                "clauses": [
+                  "自身以外恰好1名友方装备共犯者"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true,
+                "mode": "exact-other-same-skill-pair",
+                "otherEquippedCount": 1,
+                "requiredSkillId": "85715ffd27c809f3"
+              },
+              "effectBinding": {
+                "partIds": [
+                  "physical-cap"
+                ],
+                "summary": "自身以外恰好1名友方装备共犯者时，物理上限+2,000",
+                "target": "self",
+                "isBuff": false,
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "85715ffd27c809f3:physical-cap",
+                "capPoints": 2000,
+                "pair": {
+                  "requiredSkillId": "85715ffd27c809f3",
+                  "otherEquippedCount": 1
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好1名友方装备共犯者"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "85715ffd27c809f3"
+                },
+                "sourceClause": "若除自身外刚好只有1名友方单位也装备「共犯者」，则物理攻击和魔法攻击的伤害上限+2,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好1名友方装备共犯者"
+            }
+          ]
         },
         "魔法": {
           "summary": "自身以外恰好1名友方装备共犯者时，魔法上限+2,000。",
@@ -121854,7 +126080,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "magic-cap"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "pair"
+            ]
           },
           "bindings": [
             {
@@ -121882,80 +126110,16 @@ export const SKILL_LABELING_CATALOG = {
               "group": "cap"
             }
           ],
-          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
-        },
-        "队伍联动": {
-          "summary": "自身以外恰好1名友方装备共犯者时，物理上限+2,000；自身以外恰好1名友方装备共犯者时，魔法上限+2,000。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "pair"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。 适用条件：自身以外恰好1名友方装备共犯者。",
+          "effectConditions": [
             {
-              "partIds": [
-                "physical-cap"
-              ],
-              "summary": "自身以外恰好1名友方装备共犯者时，物理上限+2,000",
-              "target": "self",
-              "isBuff": false,
-              "operation": "cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "physical"
-              },
-              "effectIdentity": "85715ffd27c809f3:physical-cap",
-              "capPoints": 2000,
-              "pair": {
-                "requiredSkillId": "85715ffd27c809f3",
-                "otherEquippedCount": 1
-              },
-              "partyPredicate": {
-                "clauses": [
-                  "自身以外恰好1名友方装备共犯者"
-                ],
-                "logicalOperator": "AND",
-                "requiresActualPartyState": true,
-                "mode": "exact-other-same-skill-pair",
-                "otherEquippedCount": 1,
-                "requiredSkillId": "85715ffd27c809f3"
-              },
-              "group": "1666-physical-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "若除自身外刚好只有1名友方单位也装备「共犯者」，则物理攻击和魔法攻击的伤害上限+2,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "pair",
-                  "text": "自身以外恰好1名友方装备共犯者"
-                }
-              ],
-              "pendingPartIds": []
-            },
-            {
-              "partIds": [
+              "effectPartIds": [
                 "magic-cap"
               ],
-              "summary": "自身以外恰好1名友方装备共犯者时，魔法上限+2,000",
-              "target": "self",
-              "isBuff": false,
-              "operation": "cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "attack-magic"
-              },
-              "effectIdentity": "85715ffd27c809f3:magic-cap",
-              "capPoints": 2000,
-              "condition": {
-                "otherAlliesWithSameSkill": {
-                  "operator": "eq",
-                  "count": 1
-                },
-                "excludeSelf": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "pair"
+              ],
+              "predicate": {
                 "clauses": [
                   "自身以外恰好1名友方装备共犯者"
                 ],
@@ -121965,26 +126129,49 @@ export const SKILL_LABELING_CATALOG = {
                 "otherEquippedCount": 1,
                 "requiredSkillId": "85715ffd27c809f3"
               },
-              "group": "1666-magic-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "若除自身外刚好只有1名友方单位也装备「共犯者」，则物理攻击和魔法攻击的伤害上限+2,000。",
-              "skillReviewConditions": [
-                {
-                  "partId": "pair",
-                  "text": "自身以外恰好1名友方装备共犯者"
-                }
-              ],
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "magic-cap"
+                ],
+                "summary": "自身以外恰好1名友方装备共犯者时，魔法上限+2,000",
+                "target": "self",
+                "isBuff": false,
+                "operation": "cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "85715ffd27c809f3:magic-cap",
+                "capPoints": 2000,
+                "condition": {
+                  "otherAlliesWithSameSkill": {
+                    "operator": "eq",
+                    "count": 1
+                  },
+                  "excludeSelf": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好1名友方装备共犯者"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "85715ffd27c809f3"
+                },
+                "sourceClause": "若除自身外刚好只有1名友方单位也装备「共犯者」，则物理攻击和魔法攻击的伤害上限+2,000。"
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好1名友方装备共犯者"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "魔法",
-        "队伍联动"
+        "魔法"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -122636,7 +126823,11 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "faith-physical-mitigation"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "provider-god",
+              "recipient-faith",
+              "unique-source"
+            ]
           },
           "bindings": [
             {
@@ -122666,7 +126857,64 @@ export const SKILL_LABELING_CATALOG = {
               "group": "reduction"
             }
           ],
-          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+          "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。 适用条件：提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【守护】只计一次，提供与接受不重复相加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-physical-mitigation"
+              ],
+              "conditionPartIds": [
+                "provider-god",
+                "recipient-faith",
+                "unique-source"
+              ],
+              "predicate": {
+                "clauses": [
+                  "提供者必须为神类型",
+                  "受益者须装备信仰且提供者为自身以外的神类型友方",
+                  "同名神秘之力【守护】只计一次，提供与接受不重复相加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-mitigation"
+                ],
+                "summary": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "f063ab920fec3e4a:faith-physical-mitigation",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "f063ab920fec3e4a",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "提供者必须为神类型",
+                    "受益者须装备信仰且提供者为自身以外的神类型友方",
+                    "同名神秘之力【守护】只计一次，提供与接受不重复相加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：受到的物理攻击伤害-10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【守护】只计一次，提供与接受不重复相加"
+            }
+          ]
         },
         "神": {
           "summary": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%。",
@@ -122678,7 +126926,9 @@ export const SKILL_LABELING_CATALOG = {
               "faith-physical-mitigation"
             ],
             "conditionPartIds": [
-              "provider-god"
+              "provider-god",
+              "recipient-faith",
+              "unique-source"
             ]
           },
           "bindings": [
@@ -122720,7 +126970,64 @@ export const SKILL_LABELING_CATALOG = {
               "group": "faith-provide-physical-incoming-damage-down"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【守护】只计一次，提供与接受不重复相加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-physical-mitigation"
+              ],
+              "conditionPartIds": [
+                "provider-god",
+                "recipient-faith",
+                "unique-source"
+              ],
+              "predicate": {
+                "clauses": [
+                  "提供者必须为神类型",
+                  "受益者须装备信仰且提供者为自身以外的神类型友方",
+                  "同名神秘之力【守护】只计一次，提供与接受不重复相加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-mitigation"
+                ],
+                "summary": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
+                },
+                "effectIdentity": "f063ab920fec3e4a:faith-physical-mitigation",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "f063ab920fec3e4a",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "提供者必须为神类型",
+                    "受益者须装备信仰且提供者为自身以外的神类型友方",
+                    "同名神秘之力【守护】只计一次，提供与接受不重复相加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：受到的物理攻击伤害-10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【守护】只计一次，提供与接受不重复相加"
+            }
+          ]
         },
         "防御": {
           "summary": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%",
@@ -122730,7 +127037,11 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "faith-physical-mitigation"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "provider-god",
+              "recipient-faith",
+              "unique-source"
+            ]
           },
           "bindings": [
             {
@@ -122776,45 +127087,18 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "provider-god",
-              "recipient-faith",
-              "unique-source"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【守护】只计一次，提供与接受不重复相加。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "faith-physical-mitigation"
               ],
-              "summary": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%",
-              "target": "allies-with-faith",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "physical"
-              },
-              "effectIdentity": "f063ab920fec3e4a:faith-physical-mitigation",
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "f063ab920fec3e4a",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "provide",
-                "countProviderAndRecipientOnce": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "provider-god",
+                "recipient-faith",
+                "unique-source"
+              ],
+              "predicate": {
                 "clauses": [
                   "提供者必须为神类型",
                   "受益者须装备信仰且提供者为自身以外的神类型友方",
@@ -122823,35 +127107,51 @@ export const SKILL_LABELING_CATALOG = {
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1881-faith-physical-mitigation",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：受到的物理攻击伤害-10%。同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "provider-god",
-                  "text": "提供者必须为神类型"
+              "effectBinding": {
+                "partIds": [
+                  "faith-physical-mitigation"
+                ],
+                "summary": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "physical"
                 },
-                {
-                  "partId": "recipient-faith",
-                  "text": "受益者须装备信仰且提供者为自身以外的神类型友方"
+                "effectIdentity": "f063ab920fec3e4a:faith-physical-mitigation",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "f063ab920fec3e4a",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true
                 },
-                {
-                  "partId": "unique-source",
-                  "text": "同名神秘之力【守护】只计一次，提供与接受不重复相加"
-                }
-              ],
-              "pendingPartIds": []
+                "partyPredicate": {
+                  "clauses": [
+                    "提供者必须为神类型",
+                    "受益者须装备信仰且提供者为自身以外的神类型友方",
+                    "同名神秘之力【守护】只计一次，提供与接受不重复相加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：受到的物理攻击伤害-10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【守护】只计一次，提供与接受不重复相加"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
         "神",
-        "防御",
-        "队伍联动"
+        "防御"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -126933,7 +131233,11 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "faith-magic-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "provider-god",
+              "recipient-faith",
+              "unique-source"
+            ]
           },
           "bindings": [
             {
@@ -126963,7 +131267,64 @@ export const SKILL_LABELING_CATALOG = {
               "group": "reduction"
             }
           ],
-          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+          "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。 适用条件：提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【结界】仅计一次，提供与接受不重复相加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-magic-reduction"
+              ],
+              "conditionPartIds": [
+                "provider-god",
+                "recipient-faith",
+                "unique-source"
+              ],
+              "predicate": {
+                "clauses": [
+                  "提供者必须为神类型",
+                  "受益者须装备信仰且提供者为自身以外的神类型友方",
+                  "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-magic-reduction"
+                ],
+                "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "7611b3c1ae612f0e:faith-magic-reduction",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "7611b3c1ae612f0e",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "提供者必须为神类型",
+                    "受益者须装备信仰且提供者为自身以外的神类型友方",
+                    "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：受到的魔法攻击伤害-10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【结界】仅计一次，提供与接受不重复相加"
+            }
+          ]
         },
         "神": {
           "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%。",
@@ -126975,7 +131336,9 @@ export const SKILL_LABELING_CATALOG = {
               "faith-magic-reduction"
             ],
             "conditionPartIds": [
-              "provider-god"
+              "provider-god",
+              "recipient-faith",
+              "unique-source"
             ]
           },
           "bindings": [
@@ -127017,7 +131380,64 @@ export const SKILL_LABELING_CATALOG = {
               "group": "faith-provide-attack-magic-incoming-damage-down"
             }
           ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【结界】仅计一次，提供与接受不重复相加。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "faith-magic-reduction"
+              ],
+              "conditionPartIds": [
+                "provider-god",
+                "recipient-faith",
+                "unique-source"
+              ],
+              "predicate": {
+                "clauses": [
+                  "提供者必须为神类型",
+                  "受益者须装备信仰且提供者为自身以外的神类型友方",
+                  "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "faith-magic-reduction"
+                ],
+                "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "attack-magic"
+                },
+                "effectIdentity": "7611b3c1ae612f0e:faith-magic-reduction",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "7611b3c1ae612f0e",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true
+                },
+                "partyPredicate": {
+                  "clauses": [
+                    "提供者必须为神类型",
+                    "受益者须装备信仰且提供者为自身以外的神类型友方",
+                    "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：受到的魔法攻击伤害-10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【结界】仅计一次，提供与接受不重复相加"
+            }
+          ]
         },
         "魔抗": {
           "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%",
@@ -127027,7 +131447,11 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "faith-magic-reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "provider-god",
+              "recipient-faith",
+              "unique-source"
+            ]
           },
           "bindings": [
             {
@@ -127073,45 +131497,18 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "provider-god",
-              "recipient-faith",
-              "unique-source"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【结界】仅计一次，提供与接受不重复相加。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "faith-magic-reduction"
               ],
-              "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%",
-              "target": "allies-with-faith",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "attack-magic"
-              },
-              "effectIdentity": "7611b3c1ae612f0e:faith-magic-reduction",
-              "valuePercent": 10,
-              "grant": {
-                "providerSkillId": "7611b3c1ae612f0e",
-                "recipientSkillId": "5dbd4f977800ad88",
-                "providerType": "god",
-                "providerMustDifferFromRecipient": true,
-                "stacking": "one-per-same-named-provider-skill",
-                "flowRole": "provide",
-                "countProviderAndRecipientOnce": true
-              },
-              "partyPredicate": {
+              "conditionPartIds": [
+                "provider-god",
+                "recipient-faith",
+                "unique-source"
+              ],
+              "predicate": {
                 "clauses": [
                   "提供者必须为神类型",
                   "受益者须装备信仰且提供者为自身以外的神类型友方",
@@ -127120,35 +131517,51 @@ export const SKILL_LABELING_CATALOG = {
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1755-faith-magic-reduction",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：受到的魔法攻击伤害-10%。同名「神秘之力」效果不会叠加。",
-              "skillReviewConditions": [
-                {
-                  "partId": "provider-god",
-                  "text": "提供者必须为神类型"
+              "effectBinding": {
+                "partIds": [
+                  "faith-magic-reduction"
+                ],
+                "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%",
+                "target": "allies-with-faith",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "attack-magic"
                 },
-                {
-                  "partId": "recipient-faith",
-                  "text": "受益者须装备信仰且提供者为自身以外的神类型友方"
+                "effectIdentity": "7611b3c1ae612f0e:faith-magic-reduction",
+                "valuePercent": 10,
+                "grant": {
+                  "providerSkillId": "7611b3c1ae612f0e",
+                  "recipientSkillId": "5dbd4f977800ad88",
+                  "providerType": "god",
+                  "providerMustDifferFromRecipient": true,
+                  "stacking": "one-per-same-named-provider-skill",
+                  "flowRole": "provide",
+                  "countProviderAndRecipientOnce": true
                 },
-                {
-                  "partId": "unique-source",
-                  "text": "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
-                }
-              ],
-              "pendingPartIds": []
+                "partyPredicate": {
+                  "clauses": [
+                    "提供者必须为神类型",
+                    "受益者须装备信仰且提供者为自身以外的神类型友方",
+                    "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "自身为神类型时，使我方装备「信仰」的角色获得：受到的魔法攻击伤害-10%。同名「神秘之力」效果不会叠加。"
+              },
+              "numericEffectInjection": false,
+              "summary": "提供者必须为神类型；受益者须装备信仰且提供者为自身以外的神类型友方；同名神秘之力【结界】仅计一次，提供与接受不重复相加"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
         "魔法",
         "神",
-        "魔抗",
-        "队伍联动"
+        "魔抗"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -134034,338 +138447,7 @@ export const SKILL_LABELING_CATALOG = {
               "team-enemy-cap"
             ],
             "conditionPartIds": [
-              "enemy-race-beast"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "team-enemy-cap"
-              ],
-              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
-              "effectStacking": "once-per-skill",
-              "operation": "team-tiered-cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "enemyTypes": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "raceRelation": {
-                "subject": "target-enemy",
-                "operator": "any-of",
-                "races": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allies-with-same-skill",
-                "skillId": "9a9df999dd518e22",
-                "includesSelf": true,
-                "minCount": 2,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "capByCount": {
-                "2": 2500,
-                "3": 5000,
-                "4": 7500
-              },
-              "otherwiseCapPoints": 0,
-              "matchingMultipleRaces": "apply-once",
-              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "魔法生物": {
-          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
-          "relation": "race-effects-and-condition",
-          "race": "creature",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "team-enemy-cap"
-            ],
-            "conditionPartIds": [
-              "enemy-race-creature"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "team-enemy-cap"
-              ],
-              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
-              "effectStacking": "once-per-skill",
-              "operation": "team-tiered-cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "enemyTypes": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "raceRelation": {
-                "subject": "target-enemy",
-                "operator": "any-of",
-                "races": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allies-with-same-skill",
-                "skillId": "9a9df999dd518e22",
-                "includesSelf": true,
-                "minCount": 2,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "capByCount": {
-                "2": 2500,
-                "3": 5000,
-                "4": 7500
-              },
-              "otherwiseCapPoints": 0,
-              "matchingMultipleRaces": "apply-once",
-              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "不死生物": {
-          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
-          "relation": "race-effects-and-condition",
-          "race": "undead",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "team-enemy-cap"
-            ],
-            "conditionPartIds": [
-              "enemy-race-undead"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "team-enemy-cap"
-              ],
-              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
-              "effectStacking": "once-per-skill",
-              "operation": "team-tiered-cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "enemyTypes": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "raceRelation": {
-                "subject": "target-enemy",
-                "operator": "any-of",
-                "races": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allies-with-same-skill",
-                "skillId": "9a9df999dd518e22",
-                "includesSelf": true,
-                "minCount": 2,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "capByCount": {
-                "2": 2500,
-                "3": 5000,
-                "4": 7500
-              },
-              "otherwiseCapPoints": 0,
-              "matchingMultipleRaces": "apply-once",
-              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "精灵": {
-          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
-          "relation": "race-effects-and-condition",
-          "race": "spirit",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "team-enemy-cap"
-            ],
-            "conditionPartIds": [
-              "enemy-race-spirit"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "team-enemy-cap"
-              ],
-              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
-              "effectStacking": "once-per-skill",
-              "operation": "team-tiered-cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "enemyTypes": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "raceRelation": {
-                "subject": "target-enemy",
-                "operator": "any-of",
-                "races": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allies-with-same-skill",
-                "skillId": "9a9df999dd518e22",
-                "includesSelf": true,
-                "minCount": 2,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "capByCount": {
-                "2": 2500,
-                "3": 5000,
-                "4": 7500
-              },
-              "otherwiseCapPoints": 0,
-              "matchingMultipleRaces": "apply-once",
-              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "神": {
-          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
-          "relation": "race-effects-and-condition",
-          "race": "god",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [
-              "team-enemy-cap"
-            ],
-            "conditionPartIds": [
-              "enemy-race"
-            ]
-          },
-          "bindings": [
-            {
-              "partIds": [
-                "team-enemy-cap"
-              ],
-              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
-              "target": "self",
-              "isBuff": false,
-              "raceRole": "direct-effect",
-              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
-              "effectStacking": "once-per-skill",
-              "operation": "team-tiered-cap-up",
-              "scope": {
-                "direction": "outgoing",
-                "attackType": "unspecified",
-                "enemyTypes": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "raceRelation": {
-                "subject": "target-enemy",
-                "operator": "any-of",
-                "races": [
-                  "god",
-                  "beast",
-                  "creature",
-                  "undead",
-                  "spirit"
-                ]
-              },
-              "count": {
-                "metric": "allies-with-same-skill",
-                "skillId": "9a9df999dd518e22",
-                "includesSelf": true,
-                "minCount": 2,
-                "maxCount": 4,
-                "eachUnitCountsOnce": true
-              },
-              "capByCount": {
-                "2": 2500,
-                "3": 5000,
-                "4": 7500
-              },
-              "otherwiseCapPoints": 0,
-              "matchingMultipleRaces": "apply-once",
-              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
-            }
-          ],
-          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
-        },
-        "队伍联动": {
-          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
+              "enemy-race-beast",
               "same-skill-team"
             ]
           },
@@ -134377,6 +138459,7 @@ export const SKILL_LABELING_CATALOG = {
               "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
               "target": "self",
               "isBuff": false,
+              "raceRole": "direct-effect",
               "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
               "effectStacking": "once-per-skill",
               "operation": "team-tiered-cap-up",
@@ -134417,46 +138500,657 @@ export const SKILL_LABELING_CATALOG = {
               },
               "otherwiseCapPoints": 0,
               "matchingMultipleRaces": "apply-once",
-              "partyPredicate": {
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "team-enemy-cap"
+              ],
+              "conditionPartIds": [
+                "same-skill-team"
+              ],
+              "predicate": {
                 "clauses": [
                   "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
                 ],
                 "logicalOperator": "AND",
                 "requiresActualPartyState": true
               },
-              "group": "1963-team-enemy-cap",
-              "remainingRole": "condition-benefit",
-              "sourceClause": "装备“魔神讨伐队”的我方单位达到2名以上时，对神类型和魔族系（兽、魔法生物、不死生物、精灵）敌人的伤害上限提升（2名：+2,500；3名：+5,000；4名：+7,500）。",
-              "skillReviewConditions": [
-                {
-                  "partId": "enemy-race",
-                  "text": "目标类型选项：神（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+              "effectBinding": {
+                "partIds": [
+                  "team-enemy-cap"
+                ],
+                "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+                "effectStacking": "once-per-skill",
+                "operation": "team-tiered-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "enemyTypes": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
                 },
-                {
-                  "partId": "enemy-race-beast",
-                  "text": "目标类型选项：兽（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                "raceRelation": {
+                  "subject": "target-enemy",
+                  "operator": "any-of",
+                  "races": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
                 },
-                {
-                  "partId": "enemy-race-creature",
-                  "text": "目标类型选项：魔法生物（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                "count": {
+                  "metric": "allies-with-same-skill",
+                  "skillId": "9a9df999dd518e22",
+                  "includesSelf": true,
+                  "minCount": 2,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
                 },
-                {
-                  "partId": "enemy-race-undead",
-                  "text": "目标类型选项：不死生物（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                "capByCount": {
+                  "2": 2500,
+                  "3": 5000,
+                  "4": 7500
                 },
-                {
-                  "partId": "enemy-race-spirit",
-                  "text": "目标类型选项：精灵（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）"
+                "otherwiseCapPoints": 0,
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
                 },
-                {
-                  "partId": "same-skill-team",
-                  "text": "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
-                }
+                "sourceClause": "装备“魔神讨伐队”的我方单位达到2名以上时，对神类型和魔族系（兽、魔法生物、不死生物、精灵）敌人的伤害上限提升（2名：+2,500；3名：+5,000；4名：+7,500）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+            }
+          ]
+        },
+        "魔法生物": {
+          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "team-enemy-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-creature",
+              "same-skill-team"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "team-enemy-cap"
               ],
-              "pendingPartIds": []
+              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "team-tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allies-with-same-skill",
+                "skillId": "9a9df999dd518e22",
+                "includesSelf": true,
+                "minCount": 2,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capByCount": {
+                "2": 2500,
+                "3": 5000,
+                "4": 7500
+              },
+              "otherwiseCapPoints": 0,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
             }
           ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "team-enemy-cap"
+              ],
+              "conditionPartIds": [
+                "same-skill-team"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "team-enemy-cap"
+                ],
+                "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+                "effectStacking": "once-per-skill",
+                "operation": "team-tiered-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "enemyTypes": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "raceRelation": {
+                  "subject": "target-enemy",
+                  "operator": "any-of",
+                  "races": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "count": {
+                  "metric": "allies-with-same-skill",
+                  "skillId": "9a9df999dd518e22",
+                  "includesSelf": true,
+                  "minCount": 2,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "capByCount": {
+                  "2": 2500,
+                  "3": 5000,
+                  "4": 7500
+                },
+                "otherwiseCapPoints": 0,
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "装备“魔神讨伐队”的我方单位达到2名以上时，对神类型和魔族系（兽、魔法生物、不死生物、精灵）敌人的伤害上限提升（2名：+2,500；3名：+5,000；4名：+7,500）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+            }
+          ]
+        },
+        "不死生物": {
+          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "team-enemy-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-undead",
+              "same-skill-team"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "team-enemy-cap"
+              ],
+              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "team-tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allies-with-same-skill",
+                "skillId": "9a9df999dd518e22",
+                "includesSelf": true,
+                "minCount": 2,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capByCount": {
+                "2": 2500,
+                "3": 5000,
+                "4": 7500
+              },
+              "otherwiseCapPoints": 0,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "team-enemy-cap"
+              ],
+              "conditionPartIds": [
+                "same-skill-team"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "team-enemy-cap"
+                ],
+                "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+                "effectStacking": "once-per-skill",
+                "operation": "team-tiered-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "enemyTypes": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "raceRelation": {
+                  "subject": "target-enemy",
+                  "operator": "any-of",
+                  "races": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "count": {
+                  "metric": "allies-with-same-skill",
+                  "skillId": "9a9df999dd518e22",
+                  "includesSelf": true,
+                  "minCount": 2,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "capByCount": {
+                  "2": 2500,
+                  "3": 5000,
+                  "4": 7500
+                },
+                "otherwiseCapPoints": 0,
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "装备“魔神讨伐队”的我方单位达到2名以上时，对神类型和魔族系（兽、魔法生物、不死生物、精灵）敌人的伤害上限提升（2名：+2,500；3名：+5,000；4名：+7,500）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+            }
+          ]
+        },
+        "精灵": {
+          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "team-enemy-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-spirit",
+              "same-skill-team"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "team-enemy-cap"
+              ],
+              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "team-tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allies-with-same-skill",
+                "skillId": "9a9df999dd518e22",
+                "includesSelf": true,
+                "minCount": 2,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capByCount": {
+                "2": 2500,
+                "3": 5000,
+                "4": 7500
+              },
+              "otherwiseCapPoints": 0,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "team-enemy-cap"
+              ],
+              "conditionPartIds": [
+                "same-skill-team"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "team-enemy-cap"
+                ],
+                "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+                "effectStacking": "once-per-skill",
+                "operation": "team-tiered-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "enemyTypes": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "raceRelation": {
+                  "subject": "target-enemy",
+                  "operator": "any-of",
+                  "races": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "count": {
+                  "metric": "allies-with-same-skill",
+                  "skillId": "9a9df999dd518e22",
+                  "includesSelf": true,
+                  "minCount": 2,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "capByCount": {
+                  "2": 2500,
+                  "3": 5000,
+                  "4": 7500
+                },
+                "otherwiseCapPoints": 0,
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "装备“魔神讨伐队”的我方单位达到2名以上时，对神类型和魔族系（兽、魔法生物、不死生物、精灵）敌人的伤害上限提升（2名：+2,500；3名：+5,000；4名：+7,500）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+            }
+          ]
+        },
+        "神": {
+          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "team-enemy-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race",
+              "same-skill-team"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "team-enemy-cap"
+              ],
+              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "team-tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allies-with-same-skill",
+                "skillId": "9a9df999dd518e22",
+                "includesSelf": true,
+                "minCount": 2,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capByCount": {
+                "2": 2500,
+                "3": 5000,
+                "4": 7500
+              },
+              "otherwiseCapPoints": 0,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。 适用条件：我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名。",
+          "effectConditions": [
+            {
+              "effectPartIds": [
+                "team-enemy-cap"
+              ],
+              "conditionPartIds": [
+                "same-skill-team"
+              ],
+              "predicate": {
+                "clauses": [
+                  "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+                ],
+                "logicalOperator": "AND",
+                "requiresActualPartyState": true
+              },
+              "effectBinding": {
+                "partIds": [
+                  "team-enemy-cap"
+                ],
+                "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+                "target": "self",
+                "isBuff": false,
+                "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+                "effectStacking": "once-per-skill",
+                "operation": "team-tiered-cap-up",
+                "scope": {
+                  "direction": "outgoing",
+                  "attackType": "unspecified",
+                  "enemyTypes": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "raceRelation": {
+                  "subject": "target-enemy",
+                  "operator": "any-of",
+                  "races": [
+                    "god",
+                    "beast",
+                    "creature",
+                    "undead",
+                    "spirit"
+                  ]
+                },
+                "count": {
+                  "metric": "allies-with-same-skill",
+                  "skillId": "9a9df999dd518e22",
+                  "includesSelf": true,
+                  "minCount": 2,
+                  "maxCount": 4,
+                  "eachUnitCountsOnce": true
+                },
+                "capByCount": {
+                  "2": 2500,
+                  "3": 5000,
+                  "4": 7500
+                },
+                "otherwiseCapPoints": 0,
+                "matchingMultipleRaces": "apply-once",
+                "partyPredicate": {
+                  "clauses": [
+                    "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true
+                },
+                "sourceClause": "装备“魔神讨伐队”的我方单位达到2名以上时，对神类型和魔族系（兽、魔法生物、不死生物、精灵）敌人的伤害上限提升（2名：+2,500；3名：+5,000；4名：+7,500）。"
+              },
+              "numericEffectInjection": false,
+              "summary": "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+            }
+          ]
         }
       },
       "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
@@ -134465,8 +139159,7 @@ export const SKILL_LABELING_CATALOG = {
         "魔法生物",
         "不死生物",
         "精灵",
-        "神",
-        "队伍联动"
+        "神"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -138376,7 +143069,9 @@ export const SKILL_LABELING_CATALOG = {
             "effectPartIds": [
               "reduction"
             ],
-            "conditionPartIds": []
+            "conditionPartIds": [
+              "team-condition"
+            ]
           },
           "bindings": [
             {
@@ -138410,47 +143105,16 @@ export const SKILL_LABELING_CATALOG = {
               ]
             }
           ],
-          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。"
-        },
-        "队伍联动": {
-          "summary": "受到敌人的伤害-10%。",
-          "relation": "party-effects-and-condition",
-          "target": "bound-effects",
-          "coverage": {
-            "effectPartIds": [],
-            "conditionPartIds": [
-              "team-condition"
-            ]
-          },
-          "bindings": [
+          "calculationNote": "保留每条原始效果的攻击种类、装备、触发与对象限定；属性、承伤、参照、概率机制分别判断。Buff与被动分开，同类Buff只计有效最高一项；其他效果、条件及未知参数继续见待判断项。同一效果跨页复用，不重复叠加。 适用条件：自身以外恰好1名友方装备「拉钩约定」。",
+          "effectConditions": [
             {
-              "partIds": [
+              "effectPartIds": [
                 "reduction"
               ],
-              "summary": "受到敌人的伤害-10%",
-              "target": "self",
-              "isBuff": false,
-              "operation": "incoming-damage-down",
-              "scope": {
-                "direction": "incoming",
-                "attackType": "unspecified"
-              },
-              "valuePercent": 10,
-              "condition": {
-                "otherAlliesWithSameSkill": 1,
-                "operator": "eq",
-                "excludesSelf": true,
-                "sameSkillId": "5985cead77169d18"
-              },
-              "effectIdentity": "5985cead77169d18:reduction",
-              "sourceClause": "自身以外恰好有1名友方装备「拉钩约定」时，受到敌人的伤害-10%。",
-              "skillReviewConditions": [
-                {
-                  "partId": "team-condition",
-                  "text": "自身以外恰好1名友方装备「拉钩约定」"
-                }
+              "conditionPartIds": [
+                "team-condition"
               ],
-              "partyPredicate": {
+              "predicate": {
                 "clauses": [
                   "自身以外恰好1名友方装备「拉钩约定」"
                 ],
@@ -138460,17 +143124,46 @@ export const SKILL_LABELING_CATALOG = {
                 "otherEquippedCount": 1,
                 "requiredSkillId": "5985cead77169d18"
               },
-              "group": "1075-reduction",
-              "remainingRole": "condition-benefit",
-              "pendingPartIds": []
+              "effectBinding": {
+                "partIds": [
+                  "reduction"
+                ],
+                "summary": "受到敌人的伤害-10%",
+                "target": "self",
+                "isBuff": false,
+                "operation": "incoming-damage-down",
+                "scope": {
+                  "direction": "incoming",
+                  "attackType": "unspecified"
+                },
+                "valuePercent": 10,
+                "condition": {
+                  "otherAlliesWithSameSkill": 1,
+                  "operator": "eq",
+                  "excludesSelf": true,
+                  "sameSkillId": "5985cead77169d18"
+                },
+                "effectIdentity": "5985cead77169d18:reduction",
+                "sourceClause": "自身以外恰好有1名友方装备「拉钩约定」时，受到敌人的伤害-10%。",
+                "partyPredicate": {
+                  "clauses": [
+                    "自身以外恰好1名友方装备「拉钩约定」"
+                  ],
+                  "logicalOperator": "AND",
+                  "requiresActualPartyState": true,
+                  "mode": "exact-other-same-skill-pair",
+                  "otherEquippedCount": 1,
+                  "requiredSkillId": "5985cead77169d18"
+                }
+              },
+              "numericEffectInjection": false,
+              "summary": "自身以外恰好1名友方装备「拉钩约定」"
             }
-          ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          ]
         }
       },
       "assignedTags": [
-        "伤害减少",
-        "队伍联动"
+        "伤害减少"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -144768,9 +149461,9 @@ export const SKILL_LABELING_CATALOG = {
         }
       ],
       "tagDetails": {
-        "队伍联动": {
+        "杂项": {
           "summary": "作为「纳萨力克的统治者」技能统计阶层守护者人数的条件；本技能本身不直接提供属性或伤害加成。",
-          "relation": "party-effects-and-condition",
+          "relation": "misc-effects-and-condition",
           "target": "bound-effects",
           "coverage": {
             "effectPartIds": [
@@ -144793,7 +149486,7 @@ export const SKILL_LABELING_CATALOG = {
               "consumerSkillId": "d451135c6dde31c4",
               "grantsStatBonus": false,
               "grantsDamageBonus": false,
-              "group": "guardian-marker",
+              "group": "utility-guardian-marker",
               "remainingRole": "direct-effect",
               "effectIdentity": "2e619c768f1f382d:party-count-marker",
               "sourceClause": "作为「纳萨力克的统治者」技能统计阶层守护者人数的条件；本技能本身不直接提供属性或伤害加成。",
@@ -144801,11 +149494,11 @@ export const SKILL_LABELING_CATALOG = {
               "pendingPartIds": []
             }
           ],
-          "calculationNote": "只完成本分类的效果或条件，展示的独立收益仍沿用其对应标签。完整保留目标、攻击类型、属性、装备、人数、时点和OR／AND关系；未知概率、公式、时长与参数继续待确认。同一效果跨页不重复计算。"
+          "calculationNote": "本技能只是纳萨力克的统治者统计队友的标记，不直接提供属性或伤害加成。"
         }
       },
       "assignedTags": [
-        "队伍联动"
+        "杂项"
       ],
       "judgment": "ready",
       "remainingEffects": [],
@@ -144908,8 +149601,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 53,
-        "partial": 34,
+        "ready": 55,
+        "partial": 32,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -145107,8 +149800,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 123,
         "notRelatedUnique": 812,
-        "ready": 81,
-        "partial": 42,
+        "ready": 82,
+        "partial": 41,
         "unknown": 0
       }
     },
@@ -146880,8 +151573,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
-        "ready": 91,
-        "partial": 26,
+        "ready": 92,
+        "partial": 25,
         "unknown": 0
       }
     },
@@ -147658,8 +152351,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 32,
         "notRelatedUnique": 903,
-        "ready": 28,
-        "partial": 4,
+        "ready": 29,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -147745,8 +152438,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 31,
-        "partial": 6,
+        "ready": 32,
+        "partial": 5,
         "unknown": 0
       }
     },
@@ -147811,8 +152504,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 27,
         "notRelatedUnique": 908,
-        "ready": 26,
-        "partial": 1,
+        "ready": 27,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -147882,8 +152575,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 30,
         "notRelatedUnique": 905,
-        "ready": 29,
-        "partial": 1,
+        "ready": 30,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -148058,8 +152751,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 41,
         "notRelatedUnique": 894,
-        "ready": 38,
-        "partial": 3,
+        "ready": 39,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -148099,8 +152792,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 10,
         "notRelatedUnique": 925,
-        "ready": 9,
-        "partial": 1,
+        "ready": 10,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -149778,7 +154471,8 @@ export const SKILL_LABELING_CATALOG = {
         "713403dd798c7836",
         "e0f6942b8d0b10f7",
         "e61761228b58bde4",
-        "8ba52a420286cb67"
+        "8ba52a420286cb67",
+        "2e619c768f1f382d"
       ],
       "childKeys": [
         "misc-movement-low",
@@ -149808,16 +154502,17 @@ export const SKILL_LABELING_CATALOG = {
         "misc-real-clock-242-light-time-magic",
         "misc-continuous-movement",
         "misc-real-event-STR",
-        "misc-real-event-DEF"
+        "misc-real-event-DEF",
+        "misc-utility-guardian-marker"
       ],
       "overviewLabel": "全部杂项（分组）",
       "separateSections": true,
       "scopeDescription": "按效果、条件、对象和触发时点分别列组；同一效果跨页复用，未知数值与独立条件继续待确认。",
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 33,
-        "notRelatedUnique": 902,
-        "ready": 19,
+        "relatedUnique": 34,
+        "notRelatedUnique": 901,
+        "ready": 20,
         "partial": 14,
         "unknown": 0
       }
@@ -150073,134 +154768,6 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 931,
         "ready": 4,
         "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party": {
-      "label": "队伍联动",
-      "passKind": "party-effects-and-condition",
-      "displayOrder": [
-        "cae22c8f6e9a70ef",
-        "3e86dffa826956a7",
-        "edc04a2cb5cbc357",
-        "eb659c714ed39fd6",
-        "619c3ef058c4b219",
-        "a17f779989645fb0",
-        "9c0bd935e13111e8",
-        "4ad3b1d265b33240",
-        "全部技能:all:572",
-        "1af9886755b25da9",
-        "31e0fc5aedd96ccb",
-        "5985cead77169d18",
-        "4aafd29a15ad98c4",
-        "7498b3dbd8ba7e5d",
-        "1da4935f9a387557",
-        "6958b9c4d7aad7cb",
-        "7791e2dcb32f7841",
-        "d451135c6dde31c4",
-        "4810345440e1ca42",
-        "3f8ac48a18f25fa8",
-        "b1235f3ab30aff73",
-        "85715ffd27c809f3",
-        "d611639ee456760f",
-        "3651039f5585a575",
-        "34045351ea740196",
-        "00001521ecae775f",
-        "d542c5868da412e7",
-        "2a1da0c826ca8526",
-        "9a9df999dd518e22",
-        "cb30f3c1c621732d",
-        "d291d901e1625ee2",
-        "b50f1be94e5ec002",
-        "869205f984d49c10",
-        "5dbd4f977800ad88",
-        "7611b3c1ae612f0e",
-        "8c11c64768072670",
-        "f063ab920fec3e4a",
-        "ca8779066b942675",
-        "7bc369d4036dd098",
-        "2e619c768f1f382d"
-      ],
-      "childKeys": [
-        "party-1000-light-damage",
-        "party-284-attack",
-        "party-284-effect-1",
-        "party-284-effect-2",
-        "party-284-effect-3",
-        "party-514-attack",
-        "party-514-effect-1",
-        "party-514-effect-2",
-        "party-514-effect-3",
-        "party-655-damage",
-        "party-655-effect-1",
-        "party-696-effect-1",
-        "party-720-physical-damage",
-        "party-754-physical-damage",
-        "party-754-effect-1",
-        "party-770-physical-reduction",
-        "party-976-ultimate-damage",
-        "party-976-ultimate-cap",
-        "party-976-skill-damage",
-        "party-976-skill-cap",
-        "party-976-incoming-reduction",
-        "party-1027-physical-reduction",
-        "party-1067-skill-cap",
-        "party-1075-reduction",
-        "party-1191-skill-cap",
-        "party-1191-counter-cap",
-        "party-1191-ultimate-cap",
-        "party-1212-attack",
-        "party-1256-attack",
-        "party-1256-effect-1",
-        "party-1271-hp-restore",
-        "party-1271-sct-restore",
-        "party-1296-physical-reduction",
-        "party-1296-counter-reduction",
-        "party-1478-damage",
-        "party-1478-effect-1",
-        "party-1507-physical-damage",
-        "party-1507-effect-1",
-        "party-1547-ultimate-damage",
-        "party-1547-ultimate-cap",
-        "party-1607-skill-cap",
-        "party-1607-ultimate-cap",
-        "party-1666-physical-cap",
-        "party-1666-magic-cap",
-        "party-1706-effect-1",
-        "party-1708-ultimate-cap",
-        "party-1801-attack",
-        "party-1802-magic",
-        "party-1856-sct-speed",
-        "party-1874-skill-damage",
-        "party-1963-team-enemy-cap",
-        "party-2028-magic-cap",
-        "party-2028-skill-cap",
-        "party-1462-physical-damage",
-        "party-1776-opening-effect-1",
-        "party-1776-opening-effect-2",
-        "party-1799-magic-damage",
-        "party-1799-effect-1",
-        "party-1754-attack",
-        "party-1754-effect-1",
-        "party-1754-faith-physical-mitigation",
-        "party-1754-faith-light-damage",
-        "party-1754-faith-physical-damage",
-        "party-1755-faith-magic-reduction",
-        "party-1756-physical-damage",
-        "party-1881-faith-physical-mitigation",
-        "party-2000-light-aura-damage",
-        "party-2001-attack",
-        "party-guardian-marker"
-      ],
-      "overviewLabel": "全部队伍联动（分组）",
-      "separateSections": true,
-      "scopeDescription": "按效果、条件、对象和触发时点分别列组；同一效果跨页复用，未知数值与独立条件继续待确认。",
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 40,
-        "notRelatedUnique": 895,
-        "ready": 36,
-        "partial": 4,
         "unknown": 0
       }
     },
@@ -150621,8 +155188,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 14,
         "notRelatedUnique": 921,
-        "ready": 10,
-        "partial": 4,
+        "ready": 11,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -154699,8 +159266,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -155143,8 +159710,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -155671,8 +160238,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -156063,8 +160630,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -156943,8 +161510,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -157360,8 +161927,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -172910,8 +177477,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 23,
         "notRelatedUnique": 912,
-        "ready": 20,
-        "partial": 3,
+        "ready": 21,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -179607,1179 +184174,6 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
-    "party-1000-light-damage": {
-      "label": "神圣合奏 · 至少2名我方角色装备神圣合奏：2人+10%、3人+20%、4人+30%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1000-light-damage",
-      "displayOrder": [
-        "cae22c8f6e9a70ef"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-284-attack": {
-      "label": "魔兽同盟 · 队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "284-attack",
-      "displayOrder": [
-        "3e86dffa826956a7"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-284-effect-1": {
-      "label": "魔兽同盟 · 队伍中含自身装备「魔兽同盟」的单位2／3／4人时，防御力分别+5%／10%／15%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "284-effect-1",
-      "displayOrder": [
-        "3e86dffa826956a7"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-284-effect-2": {
-      "label": "魔兽同盟 · 队伍中至少2人装备「魔兽同盟」时，攻击力、防御力、魔力、魔抗提升（2人：5%；3人：10%；4人：15%）",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "284-effect-2",
-      "displayOrder": [
-        "3e86dffa826956a7"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-284-effect-3": {
-      "label": "魔兽同盟 · 队伍中含自身装备「魔兽同盟」的单位2／3／4人时，魔抗分别+5%／10%／15%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "284-effect-3",
-      "displayOrder": [
-        "3e86dffa826956a7"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-514-attack": {
-      "label": "英雄之绊 · 队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "514-attack",
-      "displayOrder": [
-        "edc04a2cb5cbc357"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-514-effect-1": {
-      "label": "英雄之绊 · 队伍中含自身装备「英雄之绊」的单位2／3／4人时，防御力分别+7%／14%／21%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "514-effect-1",
-      "displayOrder": [
-        "edc04a2cb5cbc357"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-514-effect-2": {
-      "label": "英雄之绊 · 队伍中至少2人装备「英雄之绊」时，攻击力、防御力、魔力、魔抗提升（2人：7%；3人：14%；4人：21%）",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "514-effect-2",
-      "displayOrder": [
-        "edc04a2cb5cbc357"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-514-effect-3": {
-      "label": "英雄之绊 · 队伍中含自身装备「英雄之绊」的单位2／3／4人时，魔抗分别+7%／14%／21%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "514-effect-3",
-      "displayOrder": [
-        "edc04a2cb5cbc357"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-655-damage": {
-      "label": "阵形：进击的奥尔达纳 · 队伍至少2名且全员存活时，自身造成伤害+5%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "655-damage",
-      "displayOrder": [
-        "eb659c714ed39fd6"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-655-effect-1": {
-      "label": "阵形：进击的奥尔达纳 · 受到的伤害-5%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "655-effect-1",
-      "displayOrder": [
-        "eb659c714ed39fd6"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-696-effect-1": {
-      "label": "惊喜礼物 · 给选中友方赋予特攻伤害上限+5,000的40秒Buff",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "696-effect-1",
-      "displayOrder": [
-        "619c3ef058c4b219"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-720-physical-damage": {
-      "label": "调查兵团 · 对Boss的物理攻击伤害随装备调查兵团的人数提高：1人6%、2人12%、3人18%、4人24%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "720-physical-damage",
-      "displayOrder": [
-        "a17f779989645fb0"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-754-physical-damage": {
-      "label": "永远的挚友 · 满足永远的挚友配对条件时，物理攻击伤害+15%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "754-physical-damage",
-      "displayOrder": [
-        "9c0bd935e13111e8"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-754-effect-1": {
-      "label": "永远的挚友 · 魔法攻击伤害+15%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "754-effect-1",
-      "displayOrder": [
-        "9c0bd935e13111e8"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-770-physical-reduction": {
-      "label": "铁壁的奥尔达纳 · 我方至少2名单位且全员存活时，受到敌人物理伤害-10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "770-physical-reduction",
-      "displayOrder": [
-        "4ad3b1d265b33240"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-976-ultimate-damage": {
-      "label": "孤高 · 单人参战时，必杀伤害+20%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "976-ultimate-damage",
-      "displayOrder": [
-        "全部技能:all:572"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-976-ultimate-cap": {
-      "label": "孤高 · 单人参战时，必杀上限+3,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "976-ultimate-cap",
-      "displayOrder": [
-        "全部技能:all:572"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-976-skill-damage": {
-      "label": "孤高 · 仅自身一人参战时，特技伤害+20%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "976-skill-damage",
-      "displayOrder": [
-        "全部技能:all:572"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-976-skill-cap": {
-      "label": "孤高 · 仅自身一人参战时，特技上限+3,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "976-skill-cap",
-      "displayOrder": [
-        "全部技能:all:572"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-976-incoming-reduction": {
-      "label": "孤高 · 单人参战时，受到敌人伤害-10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "976-incoming-reduction",
-      "displayOrder": [
-        "全部技能:all:572"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1027-physical-reduction": {
-      "label": "共鸣障壁 · 自身以外恰好1名友方装备共鸣障壁时，受到物理伤害-10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1027-physical-reduction",
-      "displayOrder": [
-        "1af9886755b25da9"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1067-skill-cap": {
-      "label": "黑色骑士团 · 装备黑色骑士团的我方单位2／3／4名时，特技上限分别+1,000／2,000／3,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1067-skill-cap",
-      "displayOrder": [
-        "31e0fc5aedd96ccb"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1075-reduction": {
-      "label": "拉钩约定 · 受到敌人的伤害-10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1075-reduction",
-      "displayOrder": [
-        "5985cead77169d18"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1191-skill-cap": {
-      "label": "YoRHa部队 · 每名机械类型我方单位使特技上限+1,000，最多4名",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1191-skill-cap",
-      "displayOrder": [
-        "4aafd29a15ad98c4"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1191-counter-cap": {
-      "label": "YoRHa部队 · 每名机械类型我方单位使反击上限+1,000，最多4名",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1191-counter-cap",
-      "displayOrder": [
-        "4aafd29a15ad98c4"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1191-ultimate-cap": {
-      "label": "YoRHa部队 · 每名我方机械类型单位使必杀上限+1,000，最多4名、最高+4,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1191-ultimate-cap",
-      "displayOrder": [
-        "4aafd29a15ad98c4"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1212-attack": {
-      "label": "复仇心 · 至少一名其他友方处于战斗不能状态时，自身攻击力+20%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1212-attack",
-      "displayOrder": [
-        "7498b3dbd8ba7e5d"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1256-attack": {
-      "label": "师徒之绊 · 除自身外恰好1人装备师徒之绊时，每Wave开场自身攻击力+35%，持续40秒",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1256-attack",
-      "displayOrder": [
-        "1da4935f9a387557"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1256-effect-1": {
-      "label": "师徒之绊 · 除自身外恰好1人装备师徒之绊：开场防御力+35%，40秒",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1256-effect-1",
-      "displayOrder": [
-        "1da4935f9a387557"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1271-hp-restore": {
-      "label": "Dear Hearts · 自身倒下时，使仍存活的Dear Hearts配对角色大幅回复HP；除自身外必须刚好1人装备同技能，每对仅触发1次，回复量待确认",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1271-hp-restore",
-      "displayOrder": [
-        "6958b9c4d7aad7cb"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
-    "party-1271-sct-restore": {
-      "label": "Dear Hearts · 自身倒下时，仍存活的Dear Hearts配对角色所有特技SCT回复15秒；每对仅1次",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1271-sct-restore",
-      "displayOrder": [
-        "6958b9c4d7aad7cb"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
-    "party-1296-physical-reduction": {
-      "label": "自由之翼 · 同技能我方单位2／3／4名时，受到物理伤害分别-5%／-10%／-15%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1296-physical-reduction",
-      "displayOrder": [
-        "7791e2dcb32f7841"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1296-counter-reduction": {
-      "label": "自由之翼 · 实际装备自由之翼的我方单位2／3／4名时，受到反击伤害分别-5%／-10%／-15%；按当前人数取一档",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1296-counter-reduction",
-      "displayOrder": [
-        "7791e2dcb32f7841"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1478-damage": {
-      "label": "纳萨力克的统治者 · 全队只有自身装备纳萨力克的统治者时，按其他装备阶层守护者的友方人数提升伤害；3名最高+36%，1／2名档位待确认",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1478-damage",
-      "displayOrder": [
-        "d451135c6dde31c4"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
-    "party-1478-effect-1": {
-      "label": "纳萨力克的统治者 · 按相同人数条件减少自身受到的伤害，3名时最高-15%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1478-effect-1",
-      "displayOrder": [
-        "d451135c6dde31c4"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
-    "party-1507-physical-damage": {
-      "label": "圣诞夜的槲寄生 · 满足圣诞夜的槲寄生技能配对与性别条件时，物理攻击伤害+20%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1507-physical-damage",
-      "displayOrder": [
-        "4810345440e1ca42"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1507-effect-1": {
-      "label": "圣诞夜的槲寄生 · 魔法攻击伤害+20%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1507-effect-1",
-      "displayOrder": [
-        "4810345440e1ca42"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1547-ultimate-damage": {
-      "label": "让你见识孤独的极限！ · 仅自身存活时，必杀伤害+50%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1547-ultimate-damage",
-      "displayOrder": [
-        "3f8ac48a18f25fa8"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1547-ultimate-cap": {
-      "label": "让你见识孤独的极限！ · 仅自身存活时，必杀上限+10,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1547-ultimate-cap",
-      "displayOrder": [
-        "3f8ac48a18f25fa8"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1607-skill-cap": {
-      "label": "剑阵 · 每名士兵类型我方单位使特技上限+1,000，最多4名",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1607-skill-cap",
-      "displayOrder": [
-        "b1235f3ab30aff73"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1607-ultimate-cap": {
-      "label": "剑阵 · 每名我方士兵类型单位使必杀上限+1,000，最多4名、最高+4,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1607-ultimate-cap",
-      "displayOrder": [
-        "b1235f3ab30aff73"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1666-physical-cap": {
-      "label": "共犯者 · 自身以外恰好1名友方装备共犯者时，物理上限+2,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1666-physical-cap",
-      "displayOrder": [
-        "85715ffd27c809f3"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1666-magic-cap": {
-      "label": "共犯者 · 自身以外恰好1名友方装备共犯者时，魔法上限+2,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1666-magic-cap",
-      "displayOrder": [
-        "85715ffd27c809f3"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1706-effect-1": {
-      "label": "星之所在 · 给除自身外攻击力最高的1名友方：物理伤害上限+5,000，90秒；不提高攻击力",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1706-effect-1",
-      "displayOrder": [
-        "d611639ee456760f"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1708-ultimate-cap": {
-      "label": "英雄传说 · 对Boss必杀上限按装备英雄传说的我方人数提升：2名+5,000、3名+10,000、4名+15,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1708-ultimate-cap",
-      "displayOrder": [
-        "3651039f5585a575"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1801-attack": {
-      "label": "精灵骑士 · 战斗开始时，若全队只有自身装备“精灵骑士”，且除自身外刚好只有1名友方角色装备“禁书库的大精灵”，则自身攻击力+25%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1801-attack",
-      "displayOrder": [
-        "34045351ea740196"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1802-magic": {
-      "label": "禁书库的大精灵 · 战斗开始时，若己方只有自身装备“禁书库的大精灵”，且恰好有1名其他友方装备“精灵骑士”，则魔力+25%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1802-magic",
-      "displayOrder": [
-        "00001521ecae775f"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1856-sct-speed": {
-      "label": "预测演算 · 仅自身存活时，SCT恢复速度+20%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1856-sct-speed",
-      "displayOrder": [
-        "d542c5868da412e7"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1874-skill-damage": {
-      "label": "暴风龙四天王 · 至少3名友方装备暴风龙四天王时，特技伤害+30%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1874-skill-damage",
-      "displayOrder": [
-        "2a1da0c826ca8526"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1963-team-enemy-cap": {
-      "label": "魔神讨伐队 · 装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1963-team-enemy-cap",
-      "displayOrder": [
-        "9a9df999dd518e22"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-2028-magic-cap": {
-      "label": "格雷拉特家的血统 · 自身以外有女性友方存活时，对Boss魔法伤害上限+10,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "2028-magic-cap",
-      "displayOrder": [
-        "cb30f3c1c621732d"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-2028-skill-cap": {
-      "label": "格雷拉特家的血统 · 自身以外至少一名女性友方存活时，对Boss特技上限+10,000",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "2028-skill-cap",
-      "displayOrder": [
-        "cb30f3c1c621732d"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1462-physical-damage": {
-      "label": "诡异行军 · 开场判断我方全员为恐怖系时，物理攻击伤害+10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1462-physical-damage",
-      "displayOrder": [
-        "d291d901e1625ee2"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1776-opening-effect-1": {
-      "label": "不为人知的决战 · 按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1776-opening-effect-1",
-      "displayOrder": [
-        "b50f1be94e5ec002"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
-    "party-1776-opening-effect-2": {
-      "label": "不为人知的决战 · 按我方人类系人数提高光属性伤害，最多4名、最高+20%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1776-opening-effect-2",
-      "displayOrder": [
-        "b50f1be94e5ec002"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
-    "party-1799-magic-damage": {
-      "label": "圣诞派对！ · 开场按指定友方类型的人数提高魔法伤害，最多4名、最高+20%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1799-magic-damage",
-      "displayOrder": [
-        "869205f984d49c10"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
-    "party-1799-effect-1": {
-      "label": "圣诞派对！ · 开场按我方士兵、骑士、狙击手、魔法师、精灵类型单位数量增加特技伤害，最多4名、最高20%；各人数档位待确认",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1799-effect-1",
-      "displayOrder": [
-        "869205f984d49c10"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
-        "unknown": 0
-      }
-    },
-    "party-1754-attack": {
-      "label": "信仰 · 从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1754-attack",
-      "displayOrder": [
-        "5dbd4f977800ad88"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1754-effect-1": {
-      "label": "信仰 · 从神秘之力【结界】获得受到的魔法攻击伤害-10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1754-effect-1",
-      "displayOrder": [
-        "5dbd4f977800ad88"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1754-faith-physical-mitigation": {
-      "label": "信仰 · 从神秘之力【守护】获得受到的物理攻击伤害-10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1754-faith-physical-mitigation",
-      "displayOrder": [
-        "5dbd4f977800ad88"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1754-faith-light-damage": {
-      "label": "信仰 · 从神秘之力【轮光】获得光属性伤害+10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1754-faith-light-damage",
-      "displayOrder": [
-        "5dbd4f977800ad88"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1754-faith-physical-damage": {
-      "label": "信仰 · 从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1754-faith-physical-damage",
-      "displayOrder": [
-        "5dbd4f977800ad88"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1755-faith-magic-reduction": {
-      "label": "神秘之力【结界】 · 自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1755-faith-magic-reduction",
-      "displayOrder": [
-        "7611b3c1ae612f0e"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1756-physical-damage": {
-      "label": "神秘之力【铁锤】 · 自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1756-physical-damage",
-      "displayOrder": [
-        "8c11c64768072670"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-1881-faith-physical-mitigation": {
-      "label": "神秘之力【守护】 · 自身为神类型时，向装备信仰的我方提供受到物理伤害-10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "1881-faith-physical-mitigation",
-      "displayOrder": [
-        "f063ab920fec3e4a"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-2000-light-aura-damage": {
-      "label": "神秘之力【轮光】 · 使我方装备信仰的角色获得光属性伤害+10%",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "2000-light-aura-damage",
-      "displayOrder": [
-        "ca8779066b942675"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-2001-attack": {
-      "label": "神秘之力【武威】 · 自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "2001-attack",
-      "displayOrder": [
-        "7bc369d4036dd098"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
-    "party-guardian-marker": {
-      "label": "阶层守护者 · 队伍统计标记",
-      "parent": "party",
-      "conditionTag": "队伍联动",
-      "effectGroup": "guardian-marker",
-      "displayOrder": [
-        "2e619c768f1f382d"
-      ],
-      "counts": {
-        "reviewedUnique": 935,
-        "relatedUnique": 1,
-        "notRelatedUnique": 934,
-        "ready": 1,
-        "partial": 0,
-        "unknown": 0
-      }
-    },
     "battle-time-110-permanent-effect": {
       "label": "自动再生 · 永久再生：每6秒回复自身HP，无固定倒计时；具体回复量与公式待确认，同类型再生Buff只取当前最高一项",
       "parent": "battle-time",
@@ -182584,6 +185978,23 @@ export const SKILL_LABELING_CATALOG = {
         "unknown": 0
       }
     },
+    "misc-utility-guardian-marker": {
+      "label": "技能联动标记 · 无直接数值加成",
+      "parent": "misc",
+      "conditionTag": "杂项",
+      "effectGroup": "utility-guardian-marker",
+      "displayOrder": [
+        "2e619c768f1f382d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
     "all": {
       "label": "全部已贴标签",
       "displayOrder": [
@@ -183527,8 +186938,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 935,
         "notRelatedUnique": 0,
-        "ready": 749,
-        "partial": 186,
+        "ready": 757,
+        "partial": 178,
         "unknown": 0
       }
     }
