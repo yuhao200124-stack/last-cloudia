@@ -1,3 +1,4 @@
+import {ADDITIONAL_RACE_TAGS,partsBeforeRaces} from './race-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -29,26 +30,26 @@ test('opening pass audits the full 935-skill library, including previously untag
   assert.equal(decision.decision==='related',opening.entries.some(e=>e.id===row.id),row.name);
  }
  assert.deepEqual(numbers('battle-start').filter(n=>!permanentNumbers.includes(n)),[102,103,104,105,164,201,203,207,208,210,214,234,243,256,305,324,353,358,381,390,402,431,460,471,473,508,512,524,560,592,620,627,639,649,692,696,699,746,830,831,851,859,867,886,906,916,984,992,994,1009,1028,1066,1074,1092,1103,1144,1205,1231,1241,1256,1365,1378,1425,1432,1459,1462,1482,1604,1605,1616,1629,1674,1693,1706,1747,1753,1776,1799,1801,1802,1812,1813,1873,1879,1884,1941,1954,1981,1987,1988,2016]);
- const newEntries=opening.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).length===1);
- assert.equal(newEntries.length,22);assert(newEntries.every(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag))[0]==='战斗开始'));
- assert.equal(catalog.views.all.counts.relatedUnique,776);assert.equal(catalog.numericEffectInjection,false);
+ const newEntries=opening.entries.filter(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).length===1);
+ assert.equal(newEntries.length,22);assert(newEntries.every(e=>e.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag))[0]==='战斗开始'));
+ assert.equal(catalog.views.all.counts.relatedUnique,838);assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('attack and magic opening clauses occupy different groups while compound skills share stable labels',()=>{
  assert.deepEqual(numbers('battle-start-attack-up'),[102,106,210,305,390,851,969,984,1103,1231,1256,1365,1747,1801]);
  assert.deepEqual(numbers('battle-start-magic-up'),[103,108,210,305,592,1088,1103,1144,1802,1813]);
- assert.deepEqual(entry(102).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['攻击力','战斗开始']);
- assert.deepEqual(entry(103).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['魔力','战斗开始']);
+ assert.deepEqual(entry(102).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','战斗开始']);
+ assert.deepEqual(entry(103).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['魔力','战斗开始']);
  for(const n of [210,1103]){
   assert.deepEqual(groups(n),['attack-up','magic-up','physical-reduction','magic-reduction']);
   assert.strictEqual(labelingView(catalog,'battle-start-attack-up').entries.find(e=>e.id===entry(n).id),labelingView(catalog,'battle-start-magic-up').entries.find(e=>e.id===entry(n).id));
   assert.equal(entry(n).judgment,'ready');assert.deepEqual(entry(n).remainingEffects,[]);
  }
- assert.equal(opening.counts.relatedUnique,117);assert.equal(opening.counts.ready,70);assert.equal(opening.counts.partial,47);
+ assert.equal(opening.counts.relatedUnique,117);assert.equal(opening.counts.ready,72);assert.equal(opening.counts.partial,45);
  const union=new Set(opening.childKeys.flatMap(k=>labelingView(catalog,k).entries.map(e=>e.id)));
  assert.deepEqual([...union].sort(),opening.entries.map(e=>e.id).sort());
  assert.equal(opening.childKeys.length,59);
- assert.equal(catalog.views.all.counts.ready,370);assert.equal(catalog.views.all.counts.partial,406);
+ assert.equal(catalog.views.all.counts.ready,510);assert.equal(catalog.views.all.counts.partial,328);
 });
 
 test('opening grouping follows its own clause, never passive stats, comparison operands, delayed damage or a maximum',()=>{
@@ -62,8 +63,8 @@ test('opening grouping follows its own clause, never passive stats, comparison o
  assert.deepEqual(groups(560),['magic-lock']);assert.deepEqual(groups(831),['skill-lock']);assert.deepEqual(groups(1378),['speed-down']);
  assert.deepEqual(numbers('battle-start-reset'),[1629,1981,1987]);
  for(const n of [1629,1981,1987]){assert(entry(n).remainingConditions.length);assert.match(detail(n).calculationNote,/不自动取得最高加成/);}
- assert.deepEqual(groups(1241),['light-damage']);assert(!entry(1241).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).includes('伤害增加'));
- assert.deepEqual(groups(1884),['ultimate-critical-cap']);assert(!entry(1884).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).includes('Boss暴击伤害增加'));
+ assert.deepEqual(groups(1241),['light-damage']);assert(!entry(1241).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('伤害增加'));
+ assert.deepEqual(groups(1884),['ultimate-critical-cap']);assert(!entry(1884).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('Boss暴击伤害增加'));
  assert.match(detail(305).bindings.find(b=>b.group==='science-magic-damage').summary,/\+5%/);
 });
 
@@ -73,9 +74,9 @@ test('the condition pass completes known opening buffs but leaves equipment, par
  const before=structuredClone(registry);before.tagPasses=before.tagPasses.filter(p=>p.tag!=='战斗开始');
  const old=resolveSkillLabels(before);
  const promoted=opening.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b);
- assert.deepEqual(promoted,[102,103,104,105,106,107,108,109,112,164,201,207,210,214,234,239,243,256,353,358,471,473,508,560,592,636,639,649,683,692,700,710,746,830,831,851,867,886,887,899,906,969,994,1028,1088,1103,1144,1190,1205,1221,1241,1250,1312,1364,1381,1395,1425,1432,1459,1482,1605,1616,1674,1693,1753,1768,1828,1879,1954,1988]);
+ assert.deepEqual(promoted,[102,103,104,105,106,107,108,109,112,164,201,207,210,214,234,239,243,256,353,358,471,473,508,560,592,636,639,649,683,692,700,710,746,830,831,851,867,886,887,899,906,969,994,1028,1088,1103,1144,1190,1205,1221,1241,1250,1312,1364,1381,1395,1425,1432,1459,1462,1482,1605,1616,1674,1693,1753,1768,1828,1879,1884,1954,1988]);
  for(const n of promoted){const current=entry(n);assert.equal(old.find(e=>e.id===current.id).judgment,'partial');assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).remainingConditions,[]);}
- for(const n of [305,524,696,1066,1231,1256,1365,1747,1799,1801,1802,1813,1884,1941,2016]){assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingConditions.length,entry(n).name);}
+ for(const n of [305,524,696,1066,1231,1256,1365,1747,1799,1801,1802,1813,1941,2016]){assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingConditions.length,entry(n).name);}
  assert(!entry(390).remainingEffects.some(t=>t.includes('暴击率')));assert(entry(390).remainingEffects.some(t=>t.includes('速度')));
  assert(entry(402).remainingEffects.some(t=>t.includes('魔抗')));
  assert.deepEqual(entry(1884).remainingEffects,[]);
@@ -104,9 +105,9 @@ function page(edits={}){
 
 test('opening overview separates effect tables, counts unique skills and preserves judgment sorting and search',()=>{
  const {get,click}=page();
- assert.match(get('#labelCoverage').textContent,/935.*117.*818/);assert.match(get('#judgmentSummary').textContent,/70.*47.*0/);
+ assert.match(get('#labelCoverage').textContent,/935.*117.*818/);assert.match(get('#judgmentSummary').textContent,/72.*45.*0/);
  assert.match(get('#labelResultCount').textContent,/117 \/ 117/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,40);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,56);
  assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,60);
  const sections=get('#labelTable').innerHTML.split('<section ').slice(1);
  assert.equal(sections.length,59);
@@ -155,17 +156,17 @@ test('permanent named statuses are the exact user-approved extension and retain 
    assert.match(b.summary,/永久获得.*无固定倒计时/);
   }
  }
- assert.equal(catalog.entries.filter(e=>e.tagDetails['战斗开始']?.activationMode==='permanent-status' && e.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).length===1).length,7);
+ assert.equal(catalog.entries.filter(e=>e.tagDetails['战斗开始']?.activationMode==='permanent-status' && e.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).length===1).length,7);
  assert.deepEqual(permanent.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[106,107,108,109,112,239,636,683,700,710,887,899,969,1088,1190,1221,1250,1312,1364,1381,1395,1768,1828]);
  assert.equal(registry.tagPasses.filter(p=>p.tag==='战斗开始').length,1);
- assert.equal(registry.tagPasses.length,46);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,62);assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('permanent effect groups preserve stats, HP caps, speed, recovery and self-only elemental walls separately',()=>{
  for(const [n,expected] of [[106,'attack-up'],[108,'magic-up'],[636,'defense-up'],[350,'mnd-up'],[1221,'hp-max'],[1768,'hp-max'],[110,'hp-regen'],[112,'sct-speed'],[406,'speed-up'],[239,'critical-rate'],[107,'physical-reduction'],[109,'magic-reduction'],[683,'received-thunder'],[700,'received-fire'],[710,'received-dark'],[887,'received-light'],[1190,'received-tree'],[1250,'received-ice'],[1312,'received-dark'],[1381,'received-tree'],[1395,'received-light'],[1828,'received-thunder']])assert.deepEqual(groups(n),[expected]);
  assert.match(detail(106).calculationNote,/与开场限时.*同类型Buff.*最高一项/);
  assert.match(detail(969).calculationNote,/更高的限时Buff结束后，仍有永久状态/);
- for(const n of [683,710,887,1190,1250,1312,1381,1395,1828]){assert.equal(entry(n).judgment,'ready');assert.equal(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag))[0],'战斗开始');assert.equal(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).length,2);assert.match(detail(n).calculationNote,/仅作用于自身.*不是提高属性耐性/);}
+ for(const n of [683,710,887,1190,1250,1312,1381,1395,1828]){assert.equal(entry(n).judgment,'ready');assert.equal(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag))[0],'战斗开始');assert.equal(entry(n).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).length,2);assert.match(detail(n).calculationNote,/仅作用于自身.*不是提高属性耐性/);}
  // A barrier consumed by the first blocked status and triggered buffs lasting
  // until death are not the same thing as an always-active permanent status.
  for(const n of [324,746,916,1009,1378])assert.notEqual(detail(n).activationMode,'permanent-status');

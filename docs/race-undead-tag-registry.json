@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "label": "不死生物",
+  "race": "undead",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "race-effects-and-condition",
+  "skillIds": [
+    "6439186351318d8f",
+    "656a173aeaa46d8b",
+    "11d8aa780c551990",
+    "21179861f90ff29d",
+    "b34a5ea033cff851",
+    "全部技能:all:459",
+    "全部技能:all:626",
+    "9df5299c661312ec",
+    "08ba2a63471cced7",
+    "d291d901e1625ee2",
+    "045d456028e01684",
+    "全部技能:all:917",
+    "9a9df999dd518e22"
+  ]
+}

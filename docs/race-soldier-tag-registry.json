@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 2,
+  "label": "士兵",
+  "race": "soldier",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "race-effects-and-condition",
+  "skillIds": [
+    "全部技能:all:66",
+    "全部技能:all:67",
+    "全部技能:all:242",
+    "全部技能:all:364",
+    "1b43c763fc514311",
+    "8ba52a420286cb67",
+    "858365fd1fc6ea73",
+    "ae4a9316a61a0384",
+    "全部技能:all:632",
+    "全部技能:all:684",
+    "90487d6c687abdbc",
+    "全部技能:all:769",
+    "31b0f1c6d90ec0cf",
+    "全部技能:all:802",
+    "b1235f3ab30aff73",
+    "b50f1be94e5ec002",
+    "869205f984d49c10"
+  ]
+}

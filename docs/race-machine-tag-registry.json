@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "label": "机械种族",
+  "race": "machine",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "race-effects-and-condition",
+  "skillIds": [
+    "32babdfb0554ed43",
+    "bb1b82cb4d89be58",
+    "1678d46d7c6ab2ee",
+    "ed504f94c8b57e47",
+    "7ee810a4231404fe",
+    "bd3af6ef7a1da443",
+    "85cce3de46a53780",
+    "edaa295f9aa089b8",
+    "4aafd29a15ad98c4"
+  ]
+}

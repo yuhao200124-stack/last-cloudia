@@ -1,0 +1,82 @@
+[
+  {
+    "key": "race-beast",
+    "label": "兽",
+    "race": "beast"
+  },
+  {
+    "key": "race-plant",
+    "label": "植物",
+    "race": "plant"
+  },
+  {
+    "key": "race-insect",
+    "label": "昆虫",
+    "race": "insect"
+  },
+  {
+    "key": "race-creature",
+    "label": "魔法生物",
+    "race": "creature"
+  },
+  {
+    "key": "race-undead",
+    "label": "不死生物",
+    "race": "undead"
+  },
+  {
+    "key": "race-stone",
+    "label": "矿石",
+    "race": "stone"
+  },
+  {
+    "key": "race-machine",
+    "label": "机械种族",
+    "race": "machine"
+  },
+  {
+    "key": "race-fish",
+    "label": "鱼",
+    "race": "fish"
+  },
+  {
+    "key": "race-spirit",
+    "label": "精灵",
+    "race": "spirit"
+  },
+  {
+    "key": "race-dragon",
+    "label": "龙",
+    "race": "dragon"
+  },
+  {
+    "key": "race-god",
+    "label": "神",
+    "race": "god"
+  },
+  {
+    "key": "race-soldier",
+    "label": "士兵",
+    "race": "soldier"
+  },
+  {
+    "key": "race-knight",
+    "label": "骑士",
+    "race": "knight"
+  },
+  {
+    "key": "race-sniper",
+    "label": "狙击手",
+    "race": "sniper"
+  },
+  {
+    "key": "race-sorcerer",
+    "label": "魔法师",
+    "race": "sorcerer"
+  },
+  {
+    "key": "race-common",
+    "label": "种族／特攻共通",
+    "race": "common"
+  }
+]

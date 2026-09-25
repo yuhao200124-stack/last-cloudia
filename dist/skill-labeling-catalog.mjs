@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "bird",
+  "activeView": "race-beast",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -2728,16 +2728,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "龙": {
+          "summary": "类型追加“龙”。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "类型追加“龙”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "c16c507cf0c2f9db:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "dragon"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "物理"
+        "物理",
+        "龙"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“龙”"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -3692,17 +3734,219 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "士兵": {
+          "summary": "开场随机追加类型。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8ba52a420286cb67:effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "random-one-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "selection": "one-of-candidates",
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "battle-end",
+              "candidatePoolStatus": "confirmed",
+              "group": "random-type-soldier-knight-sniper-sorcerer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "骑士": {
+          "summary": "开场随机追加类型。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8ba52a420286cb67:effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "random-one-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "selection": "one-of-candidates",
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "battle-end",
+              "candidatePoolStatus": "confirmed",
+              "group": "random-type-soldier-knight-sniper-sorcerer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "狙击手": {
+          "summary": "开场随机追加类型。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8ba52a420286cb67:effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "random-one-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "selection": "one-of-candidates",
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "battle-end",
+              "candidatePoolStatus": "confirmed",
+              "group": "random-type-soldier-knight-sniper-sorcerer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法师": {
+          "summary": "开场随机追加类型。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8ba52a420286cb67:effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "random-one-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "selection": "one-of-candidates",
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "battle-end",
+              "candidatePoolStatus": "confirmed",
+              "group": "random-type-soldier-knight-sniper-sorcerer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "战斗开始"
+        "战斗开始",
+        "士兵",
+        "骑士",
+        "狙击手",
+        "魔法师"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "开场随机追加类型"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "攻击力与防御力加成为限时效果，适用活动时间待确认"
       ]
@@ -3779,19 +4023,66 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "种族／特攻共通": {
+          "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-3"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff",
+              "target": "selected-other-ally",
+              "isBuff": true,
+              "raceRole": "direct-effect",
+              "effectIdentity": "619c3ef058c4b219:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "buffType": "killer-damage-cap-up",
+              "capPoints": 5000,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              },
+              "selection": {
+                "subject": "other-allies",
+                "metric": "STR",
+                "order": "highest",
+                "count": 1,
+                "excludeSelf": true
+              },
+              "group": "outgoing-unspecified-cap-up-buff"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "种族／特攻共通"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "给选中友方赋予特攻伤害上限+5,000的40秒Buff"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "选中除自身外攻击力最高的1名友方",
-        "触发特攻时生效"
+        "选中除自身外攻击力最高的1名友方"
       ]
     },
     {
@@ -8222,20 +8513,225 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "神": {
+          "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%；从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加；从神秘之力【守护】获得受到的物理攻击伤害-10%；从神秘之力【轮光】获得光属性伤害+10%；从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1",
+              "faith-physical-damage",
+              "faith-physical-mitigation",
+              "faith-light-damage",
+              "attack"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "7611b3c1ae612f0e",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "7611b3c1ae612f0e:faith-magic-reduction"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-attack-magic-incoming-damage-down"
+            },
+            {
+              "partIds": [
+                "faith-physical-damage"
+              ],
+              "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "8c11c64768072670",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "8c11c64768072670:physical-damage"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-physical-damage-up"
+            },
+            {
+              "partIds": [
+                "faith-physical-mitigation"
+              ],
+              "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "f063ab920fec3e4a",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "f063ab920fec3e4a:faith-physical-mitigation"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-physical-incoming-damage-down"
+            },
+            {
+              "partIds": [
+                "faith-light-damage"
+              ],
+              "summary": "从神秘之力【轮光】获得光属性伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:faith-light-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "ca8779066b942675",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-unspecifiedlight-damage-up"
+            },
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:attack",
+              "effectStacking": "once-per-skill",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "attribute"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "stat": "STR",
+              "grant": {
+                "providerSkillId": "7bc369d4036dd098",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "7bc369d4036dd098:attack"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-STR-stat-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "物理伤害增加",
         "物理",
-        "魔法"
+        "魔法",
+        "神"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "从神秘之力【轮光】获得光属性伤害+10%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "效果来自自身以外的神类型友方",
         "该友方须装备相应“神秘之力”技能",
         "同名“神秘之力”效果不叠加"
       ]
@@ -8724,21 +9220,63 @@ export const SKILL_LABELING_CATALOG = {
             "stat": "STR"
           },
           "groupingOnly": true,
-          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型和Boss Wave条件仍待判断。",
+          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型已完成，Boss Wave条件继续待判断。",
           "existingRuleIds": [
             "basic:86c11809d76a7959:1"
           ],
           "relatedSkillIds": []
+        },
+        "龙": {
+          "summary": "类型追加“龙”。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "类型追加“龙”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "86c11809d76a7959:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "dragon"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "Boss物理伤害增加"
+        "Boss物理伤害增加",
+        "龙"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“龙”"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "BOSS Wave中生效"
       ]
@@ -9528,15 +10066,69 @@ export const SKILL_LABELING_CATALOG = {
             "basic:7bc369d4036dd098:1"
           ],
           "relatedSkillIds": []
+        },
+        "神": {
+          "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
+              "target": "allies-with-faith",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "7bc369d4036dd098:attack",
+              "effectStacking": "once-per-skill",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "attribute"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "stat": "STR",
+              "grant": {
+                "providerSkillId": "7bc369d4036dd098",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "provide",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "7bc369d4036dd098:attack"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-provide-STR-stat-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "神"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "自身为神类型",
         "效果给予装备“信仰”的我方角色",
         "同名“神秘之力”效果不叠加"
       ]
@@ -10176,14 +10768,57 @@ export const SKILL_LABELING_CATALOG = {
             "basic:94cdc5cc53c80e9b:1"
           ],
           "relatedSkillIds": []
+        },
+        "矿石": {
+          "summary": "类型追加“矿石”。",
+          "relation": "race-effects-and-condition",
+          "race": "stone",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "类型追加“矿石”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "94cdc5cc53c80e9b:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "stone"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "stone"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "矿石"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "类型追加“矿石”",
         "免疫敌人的贯通效果"
       ],
       "remainingConditions": []
@@ -11436,15 +12071,57 @@ export const SKILL_LABELING_CATALOG = {
             "basic:7ee810a4231404fe:1"
           ],
           "relatedSkillIds": []
+        },
+        "机械种族": {
+          "summary": "类型追加“机械”。",
+          "relation": "race-effects-and-condition",
+          "race": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "类型追加“机械”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "7ee810a4231404fe:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "machine"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "防御力"
+        "防御力",
+        "机械种族"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“机械”"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20104,16 +20781,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "机械种族": {
+          "summary": "类型追加“机械”。",
+          "relation": "race-effects-and-condition",
+          "race": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "类型追加“机械”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "ed504f94c8b57e47:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "machine"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "物理"
+        "物理",
+        "机械种族"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“机械”"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -28041,7 +28760,29 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-2",
           "kind": "condition",
-          "text": "我方全员均为恐怖系（魔法生物、不死生物、精灵）"
+          "text": "每名友方均须符合允许类型之一：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-2-race-choice",
+          "logicalOperator": "OR",
+          "race": "creature",
+          "subject": "all-allies"
+        },
+        {
+          "id": "condition-2-undead",
+          "kind": "condition",
+          "text": "每名友方均须符合允许类型之一：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-2-race-choice",
+          "logicalOperator": "OR",
+          "race": "undead",
+          "subject": "all-allies"
+        },
+        {
+          "id": "condition-2-spirit",
+          "kind": "condition",
+          "text": "每名友方均须符合允许类型之一：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-2-race-choice",
+          "logicalOperator": "OR",
+          "race": "spirit",
+          "subject": "all-allies"
         }
       ],
       "tagDetails": {
@@ -28114,18 +28855,190 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法生物": {
+          "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d291d901e1625ee2:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "all-allies",
+                "operator": "any-of",
+                "races": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "condition": {
+                "allAlliesHaveOneOfTypes": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "snapshot": "wave-start"
+              },
+              "trigger": {
+                "event": "battle-start"
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "all-allies-any-of-creature-undead-spirit-physical--damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "不死生物": {
+          "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "condition-2-undead"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d291d901e1625ee2:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "all-allies",
+                "operator": "any-of",
+                "races": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "condition": {
+                "allAlliesHaveOneOfTypes": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "snapshot": "wave-start"
+              },
+              "trigger": {
+                "event": "battle-start"
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "all-allies-any-of-creature-undead-spirit-physical--damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "精灵": {
+          "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "condition-2-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "开场我方全员均为恐怖系时，物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d291d901e1625ee2:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "all-allies",
+                "operator": "any-of",
+                "races": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "condition": {
+                "allAlliesHaveOneOfTypes": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "snapshot": "wave-start"
+              },
+              "trigger": {
+                "event": "battle-start"
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "all-allies-any-of-creature-undead-spirit-physical--damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
         "战斗开始",
-        "物理"
+        "物理",
+        "魔法生物",
+        "不死生物",
+        "精灵"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "我方全员均为恐怖系（魔法生物、不死生物、精灵）"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "835e1d7e70f4a6d3",
@@ -30427,16 +31340,70 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "神": {
+          "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "自身为神类型时，使装备信仰的我方角色获得物理攻击伤害+10%",
+              "target": "allies-with-faith",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8c11c64768072670:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "8c11c64768072670",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "provide",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "8c11c64768072670:physical-damage"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-provide-physical-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "物理伤害增加",
-        "物理"
+        "物理",
+        "神"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "自身为神类型",
         "受益的我方角色须装备信仰",
         "同名神秘之力【铁锤】效果不叠加"
       ]
@@ -31636,16 +32603,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "龙": {
+          "summary": "类型追加“龙”。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "类型追加“龙”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "911c90d5593ecf69:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "dragon"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
-        "魔法"
+        "魔法",
+        "龙"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“龙”"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -31901,7 +32910,47 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-2",
           "kind": "condition",
-          "text": "统计我方士兵、骑士、狙击手、魔法师、精灵类型的单位，最多4名"
+          "text": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-2-race-choice",
+          "logicalOperator": "OR",
+          "race": "soldier",
+          "subject": "allied-unit-count"
+        },
+        {
+          "id": "condition-2-knight",
+          "kind": "condition",
+          "text": "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-2-race-choice",
+          "logicalOperator": "OR",
+          "race": "knight",
+          "subject": "allied-unit-count"
+        },
+        {
+          "id": "condition-2-sniper",
+          "kind": "condition",
+          "text": "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-2-race-choice",
+          "logicalOperator": "OR",
+          "race": "sniper",
+          "subject": "allied-unit-count"
+        },
+        {
+          "id": "condition-2-sorcerer",
+          "kind": "condition",
+          "text": "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-2-race-choice",
+          "logicalOperator": "OR",
+          "race": "sorcerer",
+          "subject": "allied-unit-count"
+        },
+        {
+          "id": "condition-2-spirit",
+          "kind": "condition",
+          "text": "队伍人数统计的允许类型之一：精灵（士兵／骑士／狙击手／魔法师／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-2-race-choice",
+          "logicalOperator": "OR",
+          "race": "spirit",
+          "subject": "allied-unit-count"
         },
         {
           "id": "condition-3",
@@ -32039,18 +33088,592 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "精灵": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "按相同人数条件提高特技伤害，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "士兵": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "按相同人数条件提高特技伤害，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "骑士": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2-knight"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "按相同人数条件提高特技伤害，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "狙击手": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2-sniper"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "按相同人数条件提高特技伤害，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法师": {
+          "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）；按相同人数条件提高特技伤害，最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-damage",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-2-sorcerer"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-damage"
+              ],
+              "summary": "战斗开始时，按符合指定类型的友方单位人数提高魔法攻击伤害（最多4名，最高+20%）",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:magic-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "按相同人数条件提高特技伤害，最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "869205f984d49c10:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer",
+                  "spirit"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "魔法伤害增加",
         "战斗开始",
         "特技相关",
-        "魔法"
+        "魔法",
+        "精灵",
+        "士兵",
+        "骑士",
+        "狙击手",
+        "魔法师"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "统计我方士兵、骑士、狙击手、魔法师、精灵类型的单位，最多4名",
         "各人数对应的增幅待确认，不能无条件取最高20%"
       ]
     },
@@ -36706,15 +38329,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "持续至战斗不能，不按40秒倒计时。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "种族／特攻共通": {
+          "summary": "开场随机追加1种类型，持续至战斗不能。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场随机追加1种类型，持续至战斗不能",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "719b23004e804e89:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "incapacitated",
+              "candidatePoolStatus": "unconfirmed",
+              "group": "random-type-"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "种族／特攻共通"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "开场随机追加1种类型，持续至战斗不能"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "随机追加类型的候选范围待确认"
       ]
@@ -38053,7 +39714,38 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "condition-1",
           "kind": "condition",
-          "text": "开场统计我方士兵、骑士、狙击手、魔法师类型的单位，最多4名"
+          "text": "队伍人数统计的允许类型之一：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-1-race-choice",
+          "logicalOperator": "OR",
+          "race": "soldier",
+          "subject": "allied-unit-count"
+        },
+        {
+          "id": "condition-1-knight",
+          "kind": "condition",
+          "text": "队伍人数统计的允许类型之一：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-1-race-choice",
+          "logicalOperator": "OR",
+          "race": "knight",
+          "subject": "allied-unit-count"
+        },
+        {
+          "id": "condition-1-sniper",
+          "kind": "condition",
+          "text": "队伍人数统计的允许类型之一：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-1-race-choice",
+          "logicalOperator": "OR",
+          "race": "sniper",
+          "subject": "allied-unit-count"
+        },
+        {
+          "id": "condition-1-sorcerer",
+          "kind": "condition",
+          "text": "队伍人数统计的允许类型之一：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "condition-1-race-choice",
+          "logicalOperator": "OR",
+          "race": "sorcerer",
+          "subject": "allied-unit-count"
         },
         {
           "id": "condition-2",
@@ -38130,7 +39822,7 @@ export const SKILL_LABELING_CATALOG = {
               "tiersStatus": "unconfirmed"
             }
           ],
-          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；沿用开场标签，队伍和档位条件待判断。"
+          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；开场与队伍类型条件已完成，人数档位参数继续待确认。"
         },
         "光属性": {
           "summary": "开场按我方人类系单位人数提高光属性伤害，最多4名、最高+20%。",
@@ -38174,18 +39866,469 @@ export const SKILL_LABELING_CATALOG = {
               "tiersStatus": "unconfirmed"
             }
           ],
-          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；沿用开场标签，队伍和档位条件待判断。"
+          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；开场与队伍类型条件已完成，人数档位参数继续待确认。"
+        },
+        "士兵": {
+          "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1",
+              "opening-effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "骑士": {
+          "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1",
+              "opening-effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1-knight"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "狙击手": {
+          "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1",
+              "opening-effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1-sniper"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法师": {
+          "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%；按我方人类系人数提高光属性伤害，最多4名、最高+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1",
+              "opening-effect-2"
+            ],
+            "conditionPartIds": [
+              "condition-1-sorcerer"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up"
+            },
+            {
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "按我方人类系人数提高光属性伤害，最多4名、最高+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b50f1be94e5ec002:opening-effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "team-scaled-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-any-race",
+                "raceAnyOf": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ],
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "maxValuePercent": 20,
+              "curveStatus": "unconfirmed",
+              "trigger": {
+                "event": "battle-start",
+                "snapshot": true
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "战斗开始",
         "冰属性",
-        "光属性"
+        "光属性",
+        "士兵",
+        "骑士",
+        "狙击手",
+        "魔法师"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "开场统计我方士兵、骑士、狙击手、魔法师类型的单位，最多4名",
         "各人数对应的具体增幅待确认，不能直接取最高20%"
       ]
     },
@@ -38380,7 +40523,7 @@ export const SKILL_LABELING_CATALOG = {
               "guaranteedCritical": false
             }
           ],
-          "calculationNote": "开场标签只绑定上限效果；必杀暴击资格是另一个独立效果，不把两者合成一条开场Buff。龙类型条件仍待标签，不赋予龙类型，不增加暴击率，也不为所有攻击加上限。"
+          "calculationNote": "开场标签只绑定上限效果；必杀暴击资格是另一个独立效果，不把两者合成一条开场Buff。龙类型条件已由龙标签完成，不赋予龙类型，不增加暴击率，也不为所有攻击加上限。"
         },
         "必杀相关": {
           "summary": "战斗开始时，自身为龙类型，必杀暴击伤害上限+100,000。；仅龙类型：必杀获得暴击资格，不是必定暴击。",
@@ -38438,18 +40581,95 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "龙": {
+          "summary": "战斗开始时，自身为龙类型，必杀暴击伤害上限+100,000。；仅龙类型：必杀获得暴击资格，不是必定暴击。。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1",
+              "other-effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，自身为龙类型，必杀暴击伤害上限+100,000。",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "0d45e653455b29d1:opening-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "selfRace": "dragon"
+              },
+              "capPoints": 100000,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "raceRelation": {
+                "subject": "self",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "self-any-of-dragon-ultimate--cap-up-critical"
+            },
+            {
+              "partIds": [
+                "other-effect-1"
+              ],
+              "summary": "仅龙类型：必杀获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "0d45e653455b29d1:other-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "selfRace": "dragon"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false,
+              "raceRelation": {
+                "subject": "self",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "self-any-of-dragon-ultimate--enable-critical"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "战斗开始",
         "必杀相关",
-        "暴击"
+        "暴击",
+        "龙"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "自身类型为龙"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "d53c1518b71c0259",
@@ -41013,15 +43233,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "只在自身进入濒死范围时触发，每个Wave最多1次。本项是即时HP回复。每Wave次数限制仍单独留待标签判断。"
+        },
+        "魔法生物": {
+          "summary": "类型追加“魔法生物”。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "other-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "other-effect-1"
+              ],
+              "summary": "类型追加“魔法生物”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1f5b1ff3daa03f19:other-effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "creature"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "濒死"
+        "濒死",
+        "魔法生物"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "自身濒死时大幅回复HP",
-        "类型追加“魔法生物”"
+        "自身濒死时大幅回复HP"
       ],
       "remainingConditions": [
         "每个Wave最多回复1次"
@@ -48225,17 +50488,63 @@ export const SKILL_LABELING_CATALOG = {
               "grantsCriticalEligibility": false
             }
           ],
-          "calculationNote": "保留目标矿石类型限制，不当作对所有敌人的通用暴击率；敌人类型条件仍待判断。"
+          "calculationNote": "保留目标矿石类型限制，不当作对所有敌人的通用暴击率；矿石目标条件已由矿石标签完成。"
+        },
+        "矿石": {
+          "summary": "对矿石类型敌人的暴击率+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "stone",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate"
+            ],
+            "conditionPartIds": [
+              "enemy-type"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "对矿石类型敌人的暴击率+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "22f55aaac7d9b369:critical-rate",
+              "effectStacking": "once-per-skill",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "stone"
+                ]
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-stone-unspecified--rate-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "矿石"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为矿石类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "cb768af6b608c5b6",
@@ -62702,7 +65011,29 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "horror-target",
           "kind": "condition",
-          "text": "目标为恐怖系：魔法生物、不死生物、精灵"
+          "text": "目标类型选项：魔法生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "horror-target-race-choice",
+          "logicalOperator": "OR",
+          "race": "creature",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "horror-target-undead",
+          "kind": "condition",
+          "text": "目标类型选项：不死生物（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "horror-target-race-choice",
+          "logicalOperator": "OR",
+          "race": "undead",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "horror-target-spirit",
+          "kind": "condition",
+          "text": "目标类型选项：精灵（魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "horror-target-race-choice",
+          "logicalOperator": "OR",
+          "race": "spirit",
+          "subject": "target-enemy"
         }
       ],
       "tagDetails": {
@@ -62742,17 +65073,171 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 15
             }
           ],
-          "calculationNote": "保留目标类型限定；不是无条件光增伤，也不等于暴击或属性弱点。种族条件继续待判断。"
+          "calculationNote": "保留目标类型限定；不是无条件光增伤，也不等于暴击或属性弱点。恐怖系的三种族分支已全部完成。"
+        },
+        "魔法生物": {
+          "summary": "对恐怖系敌人的光属性攻击伤害+15%。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-horror-damage"
+            ],
+            "conditionPartIds": [
+              "horror-target"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-horror-damage"
+              ],
+              "summary": "对恐怖系敌人的光属性攻击伤害+15%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9df5299c661312ec:light-horror-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyTypes": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "valuePercent": 15,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "不死生物": {
+          "summary": "对恐怖系敌人的光属性攻击伤害+15%。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-horror-damage"
+            ],
+            "conditionPartIds": [
+              "horror-target-undead"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-horror-damage"
+              ],
+              "summary": "对恐怖系敌人的光属性攻击伤害+15%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9df5299c661312ec:light-horror-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyTypes": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "valuePercent": 15,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "精灵": {
+          "summary": "对恐怖系敌人的光属性攻击伤害+15%。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-horror-damage"
+            ],
+            "conditionPartIds": [
+              "horror-target-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-horror-damage"
+              ],
+              "summary": "对恐怖系敌人的光属性攻击伤害+15%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9df5299c661312ec:light-horror-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyTypes": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "valuePercent": 15,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "魔法生物",
+        "不死生物",
+        "精灵"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标为恐怖系：魔法生物、不死生物、精灵"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "ca8779066b942675",
@@ -62821,16 +65306,71 @@ export const SKILL_LABELING_CATALOG = {
               "sameNameStacking": "one-instance-only"
             }
           ],
-          "calculationNote": "持有者与受益者分开；不能直接给全队或默认给自身。类型、信仰装备和同名不叠加机制仍待标签。"
+          "calculationNote": "持有者与受益者分开；不能直接给全队或默认给自身。神类型条件已完成；信仰装备与同名不叠加条件仍待后续标签。"
+        },
+        "神": {
+          "summary": "使我方装备信仰的角色获得光属性伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-aura-damage"
+            ],
+            "conditionPartIds": [
+              "self-god"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "light-aura-damage"
+              ],
+              "summary": "使我方装备信仰的角色获得光属性伤害+10%",
+              "target": "allies-with-faith",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "ca8779066b942675:light-aura-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "ca8779066b942675",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "provide",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-provide-unspecifiedlight-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "光属性"
+        "光属性",
+        "神"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "技能持有者自身为神类型",
         "受益角色装备信仰",
         "同名神秘之力技能不叠加"
       ]
@@ -67251,7 +69791,7 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 20
             }
           ],
-          "calculationNote": "特攻与弱点属性是两个独立分支，不互相代替，也不并成无条件伤害+40%。本轮只贴枪条件；单武器条件已贴标签，各分支增伤及命中条件待各自标签。"
+          "calculationNote": "特攻与弱点属性是两个独立分支，不互相代替，也不并成无条件伤害+40%。枪、单武器条件及特攻分支已完成；属性弱点分支继续待对应标签。"
         },
         "单手": {
           "summary": "仅装备1把枪，且本次攻击触发特攻时，伤害+20%。；仅装备1把枪，且本次攻击命中敌人弱点属性时，伤害+20%。",
@@ -67318,19 +69858,59 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "仅装备1把武器；“两手”技能名不表示双武器。沿用武器类型、属性、特攻等独立条件；只完成单武器数量，未处理的效果和其他条件继续待判断。"
+        },
+        "种族／特攻共通": {
+          "summary": "仅装备1把枪时，触发特攻的伤害+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-damage"
+            ],
+            "conditionPartIds": [
+              "killer-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-damage"
+              ],
+              "summary": "仅装备1把枪时，触发特攻的伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b59538669bf4ade7:killer-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponType": "spear",
+                  "weaponCount": 1
+                },
+                "requiresKillerHit": true
+              },
+              "valuePercent": 20,
+              "grantsKillerEligibility": false,
+              "group": "outgoing-unspecified-damage-up-single-spear"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "枪",
-        "单手"
+        "单手",
+        "种族／特攻共通"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "仅装备1把枪时，触发特攻的伤害+20%",
         "仅装备1把枪时，攻击弱点属性的伤害+20%"
       ],
       "remainingConditions": [
-        "本次攻击触发特攻，仅限制特攻增伤分支",
         "本次攻击命中敌人弱点属性，仅限制弱点属性增伤分支"
       ]
     },
@@ -68551,18 +71131,63 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "种族／特攻共通": {
+          "summary": "特攻时上限+1000；仅1把武器时替换为+2000。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-cap"
+            ],
+            "conditionPartIds": [
+              "killer-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-cap"
+              ],
+              "summary": "特攻时上限+1000；仅1把武器时替换为+2000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "f00b7298670734fe:killer-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "group": "outgoing-unspecified-conditional-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "种族／特攻共通"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特攻时上限+1000；仅1把武器时替换为+2000"
-      ],
-      "remainingConditions": [
-        "本次攻击触发特攻"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "0f9fbe87a80cc013",
@@ -68639,18 +71264,63 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "种族／特攻共通": {
+          "summary": "特攻时上限+2000；仅1把武器时替换为+4000。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-cap"
+            ],
+            "conditionPartIds": [
+              "killer-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-cap"
+              ],
+              "summary": "特攻时上限+2000；仅1把武器时替换为+4000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "0f9fbe87a80cc013:killer-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "group": "outgoing-unspecified-conditional-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "种族／特攻共通"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特攻时上限+2000；仅1把武器时替换为+4000"
-      ],
-      "remainingConditions": [
-        "本次攻击触发特攻"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "cc874bcc3159e258",
@@ -68727,18 +71397,63 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "种族／特攻共通": {
+          "summary": "特攻时上限+3000；仅1把武器时替换为+6000。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-cap"
+            ],
+            "conditionPartIds": [
+              "killer-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-cap"
+              ],
+              "summary": "特攻时上限+3000；仅1把武器时替换为+6000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "cc874bcc3159e258:killer-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "group": "outgoing-unspecified-conditional-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "种族／特攻共通"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特攻时上限+3000；仅1把武器时替换为+6000"
-      ],
-      "remainingConditions": [
-        "本次攻击触发特攻"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "0725be276a780aef",
@@ -68815,18 +71530,63 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "本轮只完成武器数量或空装备条件；显示的伤害、上限、Break等效果仍按各自标签进度判断，同一技能跨组只计一次。"
+        },
+        "种族／特攻共通": {
+          "summary": "特攻时上限+5000；仅1把武器时替换为+10000。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-cap"
+            ],
+            "conditionPartIds": [
+              "killer-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-cap"
+              ],
+              "summary": "特攻时上限+5000；仅1把武器时替换为+10000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "0725be276a780aef:killer-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 10000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 5000
+                }
+              ],
+              "branches": "mutually-exclusive",
+              "group": "outgoing-unspecified-conditional-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "单手"
+        "单手",
+        "种族／特攻共通"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "特攻时上限+5000；仅1把武器时替换为+10000"
-      ],
-      "remainingConditions": [
-        "本次攻击触发特攻"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "810e5630e720f446",
@@ -70710,16 +73470,58 @@ export const SKILL_LABELING_CATALOG = {
             ],
             "conditionPartIds": []
           }
+        },
+        "神": {
+          "summary": "类型追加“神”。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "类型追加“神”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b3b20e5b26417ee0:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "god"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "必杀相关"
+        "必杀相关",
+        "神"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“神”"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -71212,20 +74014,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "神": {
+          "summary": "物理攻击对神类型敌人触发特攻；必杀对神类型敌人触发特攻；反击对神类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对神类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "99a9a562aa4868a1:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对神类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "99a9a562aa4868a1:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对神类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "99a9a562aa4868a1:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "神"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对神类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为神类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "edaa295f9aa089b8",
@@ -71324,20 +74235,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "机械种族": {
+          "summary": "物理攻击对机械类型敌人触发特攻；必杀对机械类型敌人触发特攻；反击对机械类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对机械类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "edaa295f9aa089b8:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "machine"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-machine-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对机械类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "edaa295f9aa089b8:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "machine"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-machine-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对机械类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "edaa295f9aa089b8:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "machine"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-machine-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "机械种族"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对机械类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为机械类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "e60d08454c99c899",
@@ -71436,20 +74456,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "鱼": {
+          "summary": "物理攻击对鱼类型敌人触发特攻；必杀对鱼类型敌人触发特攻；反击对鱼类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对鱼类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "e60d08454c99c899:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-fish-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对鱼类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "e60d08454c99c899:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-fish-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对鱼类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "e60d08454c99c899:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-fish-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "鱼"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对鱼类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为鱼类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:538",
@@ -71548,20 +74677,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法生物": {
+          "summary": "物理攻击对魔法生物类型敌人触发特攻；必杀对魔法生物类型敌人触发特攻；反击对魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:538:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-creature-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:538:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-creature-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:538:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-creature-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "魔法生物"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对魔法生物类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为魔法生物类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "8cbe5117030485dc",
@@ -71941,20 +75179,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "不死生物": {
+          "summary": "物理攻击对不死生物类型敌人触发特攻；必杀对不死生物类型敌人触发特攻；反击对不死生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:626:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-undead-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:626:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-undead-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:626:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-undead-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "不死生物"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对不死生物类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为不死生物类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:632",
@@ -72053,20 +75400,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "士兵": {
+          "summary": "物理攻击对士兵类型敌人触发特攻；必杀对士兵类型敌人触发特攻；反击对士兵类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对士兵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:632:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对士兵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:632:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对士兵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:632:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "士兵"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对士兵类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为士兵类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "eca09257aafff0da",
@@ -72207,18 +75663,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "精灵": {
+          "summary": "对精灵类型敌人物理攻击伤害+10%；对精灵类型敌人物理攻击伤害上限+2,000；对精灵类型敌人必杀伤害+10%；对精灵类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对精灵类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "eca09257aafff0da:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-spirit-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对精灵类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "eca09257aafff0da:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-spirit-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对精灵类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "eca09257aafff0da:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-spirit-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对精灵类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "eca09257aafff0da:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-spirit-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "精灵"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为精灵类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4aafd29a15ad98c4",
@@ -72329,21 +75922,167 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "机械种族": {
+          "summary": "类型追加“机械”；每名机械类型我方单位使特技上限+1,000，最多4名；每名机械类型我方单位使必杀上限+1,000，最多4名；每名机械类型我方单位使反击上限+1,000，最多4名。",
+          "relation": "race-effects-and-condition",
+          "race": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race",
+              "skill-cap",
+              "ultimate-cap",
+              "counter-cap"
+            ],
+            "conditionPartIds": [
+              "ally-race-count"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "类型追加“机械”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "4aafd29a15ad98c4:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "machine"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            },
+            {
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "每名机械类型我方单位使特技上限+1,000，最多4名",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "4aafd29a15ad98c4:skill-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "count-scaled-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-race",
+                "race": "machine",
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capPerUnit": 1000,
+              "maxCapPoints": 4000,
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-machine-skill--count-scaled-cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "每名机械类型我方单位使必杀上限+1,000，最多4名",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "4aafd29a15ad98c4:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "count-scaled-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-race",
+                "race": "machine",
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capPerUnit": 1000,
+              "maxCapPoints": 4000,
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-machine-ultimate--count-scaled-cap-up"
+            },
+            {
+              "partIds": [
+                "counter-cap"
+              ],
+              "summary": "每名机械类型我方单位使反击上限+1,000，最多4名",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "4aafd29a15ad98c4:counter-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "count-scaled-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-race",
+                "race": "machine",
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capPerUnit": 1000,
+              "maxCapPoints": 4000,
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-machine-counter--count-scaled-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "特技相关"
+        "特技相关",
+        "机械种族"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“机械”",
-        "每名机械类型我方单位使反击上限+1,000，最多4名"
-      ],
-      "remainingConditions": [
-        "统计我方机械类型单位，包含自身，最多4名"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:660",
@@ -72484,18 +76223,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法生物": {
+          "summary": "对魔法生物类型敌人物理攻击伤害+10%；对魔法生物类型敌人物理攻击伤害上限+2,000；对魔法生物类型敌人必杀伤害+10%；对魔法生物类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对魔法生物类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:660:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-creature-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对魔法生物类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:660:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-creature-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对魔法生物类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:660:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-creature-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对魔法生物类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:660:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-creature-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "魔法生物"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为魔法生物类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "7b6e96149fd8ff79",
@@ -72636,18 +76512,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "神": {
+          "summary": "对神类型敌人物理攻击伤害+10%；对神类型敌人物理攻击伤害上限+2,000；对神类型敌人必杀伤害+10%；对神类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对神类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "7b6e96149fd8ff79:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-god-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对神类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "7b6e96149fd8ff79:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-god-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对神类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "7b6e96149fd8ff79:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-god-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对神类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "7b6e96149fd8ff79:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-god-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "神"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为神类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:704",
@@ -72746,20 +76759,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "狙击手": {
+          "summary": "物理攻击对狙击手类型敌人触发特攻；必杀对狙击手类型敌人触发特攻；反击对狙击手类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对狙击手类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:704:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sniper-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对狙击手类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:704:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sniper-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对狙击手类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:704:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sniper-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "狙击手"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对狙击手类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为狙击手类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:728",
@@ -72900,18 +77022,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "兽": {
+          "summary": "对兽类型敌人物理攻击伤害+10%；对兽类型敌人物理攻击伤害上限+2,000；对兽类型敌人必杀伤害+10%；对兽类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对兽类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:728:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-beast-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对兽类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:728:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-beast-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对兽类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:728:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-beast-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对兽类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:728:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-beast-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "兽"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为兽类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "fe3ad93438c245be",
@@ -73052,18 +77311,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "鱼": {
+          "summary": "对鱼类型敌人物理攻击伤害+10%；对鱼类型敌人物理攻击伤害上限+2,000；对鱼类型敌人必杀伤害+10%；对鱼类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对鱼类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "fe3ad93438c245be:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-fish-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对鱼类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "fe3ad93438c245be:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-fish-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对鱼类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "fe3ad93438c245be:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-fish-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对鱼类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "fe3ad93438c245be:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-fish-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "鱼"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为鱼类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:738",
@@ -73162,20 +77558,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法师": {
+          "summary": "物理攻击对魔法师类型敌人触发特攻；必杀对魔法师类型敌人触发特攻；反击对魔法师类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:738:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sorcerer-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:738:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sorcerer-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:738:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sorcerer-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "魔法师"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对魔法师类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为魔法师类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "3f8ac48a18f25fa8",
@@ -73412,18 +77917,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "士兵": {
+          "summary": "对士兵类型敌人物理攻击伤害+10%；对士兵类型敌人物理攻击伤害上限+2,000；对士兵类型敌人必杀伤害+10%；对士兵类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对士兵类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:802:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-soldier-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对士兵类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:802:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-soldier-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对士兵类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:802:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-soldier-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对士兵类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:802:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-soldier-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "士兵"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为士兵类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "b1235f3ab30aff73",
@@ -73529,20 +78171,132 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "士兵": {
+          "summary": "类型追加“士兵”；每名士兵类型我方单位使特技上限+1,000，最多4名；每名士兵类型我方单位使必杀上限+1,000，最多4名。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race",
+              "skill-cap",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "ally-race-count"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "类型追加“士兵”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b1235f3ab30aff73:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "soldier"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            },
+            {
+              "partIds": [
+                "skill-cap"
+              ],
+              "summary": "每名士兵类型我方单位使特技上限+1,000，最多4名",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b1235f3ab30aff73:skill-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "count-scaled-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-race",
+                "race": "soldier",
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capPerUnit": 1000,
+              "maxCapPoints": 4000,
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-skill--count-scaled-cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "每名士兵类型我方单位使必杀上限+1,000，最多4名",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b1235f3ab30aff73:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "count-scaled-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate"
+              },
+              "raceRelation": {
+                "subject": "allied-unit-count",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "count": {
+                "metric": "allied-units-of-race",
+                "race": "soldier",
+                "includesSelf": true,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capPerUnit": 1000,
+              "maxCapPoints": 4000,
+              "matchingMultipleRaces": "apply-once",
+              "group": "allied-unit-count-any-of-soldier-ultimate--count-scaled-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "特技相关"
+        "特技相关",
+        "士兵"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“士兵”"
-      ],
-      "remainingConditions": [
-        "统计我方士兵类型单位，包含自身，最多4名"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "011b1a6b3ec0b62f",
@@ -73683,18 +78437,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "骑士": {
+          "summary": "对骑士类型敌人物理攻击伤害+10%；对骑士类型敌人物理攻击伤害上限+2,000；对骑士类型敌人必杀伤害+10%；对骑士类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对骑士类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "011b1a6b3ec0b62f:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-knight-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对骑士类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "011b1a6b3ec0b62f:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-knight-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对骑士类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "011b1a6b3ec0b62f:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-knight-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对骑士类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "011b1a6b3ec0b62f:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-knight-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "骑士"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为骑士类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "75d1684f4522a2de",
@@ -73793,20 +78684,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "龙": {
+          "summary": "物理攻击对龙类型敌人触发特攻；必杀对龙类型敌人触发特攻；反击对龙类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对龙类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "75d1684f4522a2de:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-dragon-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对龙类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "75d1684f4522a2de:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-dragon-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对龙类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "75d1684f4522a2de:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-dragon-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "龙"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对龙类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为龙类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "3d51ab68dddbe948",
@@ -74049,23 +79049,502 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
+        },
+        "兽": {
+          "summary": "对魔兽系敌人物理伤害上限+5,000；对魔兽系敌人必杀伤害上限+5,000。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-cap",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-beast"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对魔兽系敌人物理伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对魔兽系敌人必杀伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "植物": {
+          "summary": "对魔兽系敌人物理伤害上限+5,000；对魔兽系敌人必杀伤害上限+5,000。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-cap",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-plant"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对魔兽系敌人物理伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对魔兽系敌人必杀伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "昆虫": {
+          "summary": "对魔兽系敌人物理伤害上限+5,000；对魔兽系敌人必杀伤害上限+5,000。",
+          "relation": "race-effects-and-condition",
+          "race": "insect",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-cap",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-insect"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对魔兽系敌人物理伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对魔兽系敌人必杀伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法生物": {
+          "summary": "对魔兽系敌人物理伤害上限+5,000；对魔兽系敌人必杀伤害上限+5,000。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-cap",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-creature"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对魔兽系敌人物理伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对魔兽系敌人必杀伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "鱼": {
+          "summary": "对魔兽系敌人物理伤害上限+5,000；对魔兽系敌人必杀伤害上限+5,000。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-cap",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-fish"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对魔兽系敌人物理伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对魔兽系敌人必杀伤害上限+5,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3d51ab68dddbe948:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 5000,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
         "物理",
-        "鸟"
+        "鸟",
+        "兽",
+        "植物",
+        "昆虫",
+        "魔法生物",
+        "鱼"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "3651039f5585a575",
@@ -74291,18 +79770,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "昆虫": {
+          "summary": "对昆虫类型敌人物理攻击伤害+10%；对昆虫类型敌人物理攻击伤害上限+2,000；对昆虫类型敌人必杀伤害+10%；对昆虫类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "insect",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对昆虫类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d02a81c812dbec73:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "insect"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-insect-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对昆虫类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d02a81c812dbec73:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "insect"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-insect-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对昆虫类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d02a81c812dbec73:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "insect"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-insect-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对昆虫类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d02a81c812dbec73:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "insect"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-insect-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "昆虫"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为昆虫类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f774ee12bcd73741",
@@ -74499,20 +80115,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "兽": {
+          "summary": "物理攻击对兽类型敌人触发特攻；必杀对兽类型敌人触发特攻；反击对兽类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对兽类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:876:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对兽类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:876:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对兽类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:876:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "兽"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对兽类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为兽类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "251b1a2c2e5147f5",
@@ -74653,18 +80378,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "植物": {
+          "summary": "对植物类型敌人物理攻击伤害+10%；对植物类型敌人物理攻击伤害上限+2,000；对植物类型敌人必杀伤害+10%；对植物类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对植物类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "251b1a2c2e5147f5:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "plant"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-plant-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对植物类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "251b1a2c2e5147f5:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "plant"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-plant-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对植物类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "251b1a2c2e5147f5:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "plant"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-plant-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对植物类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "251b1a2c2e5147f5:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "plant"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-plant-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "植物"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为植物类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "1142a097127c9dee",
@@ -74763,20 +80625,129 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "骑士": {
+          "summary": "物理攻击对骑士类型敌人触发特攻；必杀对骑士类型敌人触发特攻；反击对骑士类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer",
+              "ultimate-killer",
+              "counter-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对骑士类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1142a097127c9dee:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-knight-physical--enable-killer"
+            },
+            {
+              "partIds": [
+                "ultimate-killer"
+              ],
+              "summary": "必杀对骑士类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1142a097127c9dee:ultimate-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-knight-ultimate--enable-killer"
+            },
+            {
+              "partIds": [
+                "counter-killer"
+              ],
+              "summary": "反击对骑士类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1142a097127c9dee:counter-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-knight-counter--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "骑士"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "反击对骑士类型敌人触发特攻"
-      ],
-      "remainingConditions": [
-        "目标敌人为骑士类型"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:910",
@@ -74917,18 +80888,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "狙击手": {
+          "summary": "对狙击手类型敌人物理攻击伤害+10%；对狙击手类型敌人物理攻击伤害上限+2,000；对狙击手类型敌人必杀伤害+10%；对狙击手类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对狙击手类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:910:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-sniper-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对狙击手类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:910:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-sniper-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对狙击手类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:910:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-sniper-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对狙击手类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:910:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-sniper-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "狙击手"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为狙击手类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:917",
@@ -75069,18 +81177,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "不死生物": {
+          "summary": "对不死生物类型敌人物理攻击伤害+10%；对不死生物类型敌人物理攻击伤害上限+2,000；对不死生物类型敌人必杀伤害+10%；对不死生物类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对不死生物类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:917:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-undead-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对不死生物类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:917:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-undead-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对不死生物类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:917:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-undead-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对不死生物类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:917:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-undead-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "不死生物"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为不死生物类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f06cd362877374b9",
@@ -75615,18 +81860,155 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "龙": {
+          "summary": "对龙类型敌人物理攻击伤害+10%；对龙类型敌人物理攻击伤害上限+2,000；对龙类型敌人必杀伤害+10%；对龙类型敌人必杀伤害上限+2,000。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage",
+              "physical-cap",
+              "ultimate-damage",
+              "ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对龙类型敌人物理攻击伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "af2b1b7f6ebbb498:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-dragon-physical--damage-up"
+            },
+            {
+              "partIds": [
+                "physical-cap"
+              ],
+              "summary": "对龙类型敌人物理攻击伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "af2b1b7f6ebbb498:physical-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-dragon-physical--cap-up"
+            },
+            {
+              "partIds": [
+                "ultimate-damage"
+              ],
+              "summary": "对龙类型敌人必杀伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "af2b1b7f6ebbb498:ultimate-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-dragon-ultimate--damage-up"
+            },
+            {
+              "partIds": [
+                "ultimate-cap"
+              ],
+              "summary": "对龙类型敌人必杀伤害上限+2,000",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "af2b1b7f6ebbb498:ultimate-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "capPoints": 2000,
+              "group": "target-enemy-any-of-dragon-ultimate--cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
         "必杀相关",
-        "物理"
+        "物理",
+        "龙"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为龙类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "9644f0427e3b56be",
@@ -76934,16 +83316,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "特技触发、增伤／上限、SCT秒数／库存／恢复速度与特殊效果分别标注；既有标签保留，同一效果跨页共用。尚未完成的其他效果、条件及未知参数见待判断项。"
+        },
+        "兽": {
+          "summary": "类型追加“兽”。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "类型追加“兽”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "cb8a66108ee1f3e0:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "beast"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "relatedSkillIds": [],
       "assignedTags": [
-        "特技相关"
+        "特技相关",
+        "兽"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“兽”"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -78141,17 +84565,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "兽": {
+          "summary": "物理攻击对兽类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对兽类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9cd6151ac492da12:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "兽"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为兽类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4b05ef4d9f635c71",
@@ -78206,17 +84677,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "植物": {
+          "summary": "物理攻击对植物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对植物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "4b05ef4d9f635c71:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "plant"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-plant-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "植物"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为植物类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "d22f68145216f042",
@@ -78271,17 +84789,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "昆虫": {
+          "summary": "物理攻击对昆虫类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "insect",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对昆虫类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d22f68145216f042:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "insect"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-insect-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "昆虫"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为昆虫类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "258a551f597f7933",
@@ -78448,17 +85013,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法生物": {
+          "summary": "物理攻击对魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "4f28c098f1f146e8:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-creature-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "魔法生物"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为魔法生物类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "656a173aeaa46d8b",
@@ -78513,17 +85125,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "不死生物": {
+          "summary": "物理攻击对不死生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "656a173aeaa46d8b:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-undead-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "不死生物"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为不死生物类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "1cbc7da1f069d4f4",
@@ -78578,17 +85237,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "矿石": {
+          "summary": "物理攻击对矿石类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "stone",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对矿石类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1cbc7da1f069d4f4:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "stone"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-stone-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "矿石"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为矿石类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "bb1b82cb4d89be58",
@@ -78643,17 +85349,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "机械种族": {
+          "summary": "物理攻击对机械类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对机械类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "bb1b82cb4d89be58:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "machine"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-machine-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "机械种族"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为机械类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "2f2b008db9812d80",
@@ -78708,17 +85461,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "鱼": {
+          "summary": "物理攻击对鱼类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对鱼类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "2f2b008db9812d80:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-fish-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "鱼"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为鱼类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4e8aaad97bf6484f",
@@ -78773,17 +85573,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "精灵": {
+          "summary": "物理攻击对精灵类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对精灵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "4e8aaad97bf6484f:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-spirit-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "精灵"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为精灵类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "8ebe295ff024625c",
@@ -78838,17 +85685,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "龙": {
+          "summary": "物理攻击对龙类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对龙类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8ebe295ff024625c:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-dragon-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "龙"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为龙类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "53507ad574cacf9f",
@@ -78903,17 +85797,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "神": {
+          "summary": "物理攻击对神类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对神类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "53507ad574cacf9f:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "神"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为神类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:67",
@@ -78968,17 +85909,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "士兵": {
+          "summary": "物理攻击对士兵类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对士兵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:67:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "士兵"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为士兵类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "36b22a9034809a96",
@@ -79033,17 +86021,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "骑士": {
+          "summary": "物理攻击对骑士类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对骑士类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "36b22a9034809a96:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-knight-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "骑士"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为骑士类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:71",
@@ -79098,17 +86133,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "狙击手": {
+          "summary": "物理攻击对狙击手类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对狙击手类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:71:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sniper-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "狙击手"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为狙击手类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "bad368f9b1df2b7d",
@@ -79163,17 +86245,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "魔法师": {
+          "summary": "物理攻击对魔法师类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "bad368f9b1df2b7d:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sorcerer-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "魔法师"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为魔法师类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "088d62f108c82b62",
@@ -79334,22 +86463,311 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
+        },
+        "兽": {
+          "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-beast"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "088d62f108c82b62:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "植物": {
+          "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-plant"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "088d62f108c82b62:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "昆虫": {
+          "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "insect",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-insect"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "088d62f108c82b62:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法生物": {
+          "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-creature"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "088d62f108c82b62:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "鱼": {
+          "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-fish"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "088d62f108c82b62:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "鸟"
+        "鸟",
+        "兽",
+        "植物",
+        "昆虫",
+        "魔法生物",
+        "鱼"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "b34a5ea033cff851",
@@ -79366,7 +86784,38 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "enemy-race",
           "kind": "condition",
-          "text": "目标敌人为神、龙、精灵、不死生物中的任一类型"
+          "text": "目标类型选项：神（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "god",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-dragon",
+          "kind": "condition",
+          "text": "目标类型选项：龙（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "dragon",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-spirit",
+          "kind": "condition",
+          "text": "目标类型选项：精灵（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "spirit",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-undead",
+          "kind": "condition",
+          "text": "目标类型选项：不死生物（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "undead",
+          "subject": "target-enemy"
         }
       ],
       "tagDetails": {
@@ -79407,17 +86856,235 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "不死生物": {
+          "summary": "物理攻击对神、龙、精灵、不死生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-undead"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对神、龙、精灵、不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b34a5ea033cff851:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "精灵": {
+          "summary": "物理攻击对神、龙、精灵、不死生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对神、龙、精灵、不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b34a5ea033cff851:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "龙": {
+          "summary": "物理攻击对神、龙、精灵、不死生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-dragon"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对神、龙、精灵、不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b34a5ea033cff851:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "神": {
+          "summary": "物理攻击对神、龙、精灵、不死生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对神、龙、精灵、不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b34a5ea033cff851:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "不死生物",
+        "精灵",
+        "龙",
+        "神"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为神、龙、精灵、不死生物中的任一类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "1b43c763fc514311",
@@ -79434,7 +87101,38 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "enemy-race",
           "kind": "condition",
-          "text": "目标敌人为士兵、鱼、龙、矿石中的任一类型"
+          "text": "目标类型选项：士兵（士兵／鱼／龙／矿石任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "soldier",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-fish",
+          "kind": "condition",
+          "text": "目标类型选项：鱼（士兵／鱼／龙／矿石任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "fish",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-dragon",
+          "kind": "condition",
+          "text": "目标类型选项：龙（士兵／鱼／龙／矿石任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "dragon",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-stone",
+          "kind": "condition",
+          "text": "目标类型选项：矿石（士兵／鱼／龙／矿石任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "stone",
+          "subject": "target-enemy"
         }
       ],
       "tagDetails": {
@@ -79475,17 +87173,235 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "矿石": {
+          "summary": "物理攻击对士兵、鱼、龙、矿石类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "stone",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-stone"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对士兵、鱼、龙、矿石类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1b43c763fc514311:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "soldier",
+                  "fish",
+                  "dragon",
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "fish",
+                  "dragon",
+                  "stone"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "鱼": {
+          "summary": "物理攻击对士兵、鱼、龙、矿石类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-fish"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对士兵、鱼、龙、矿石类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1b43c763fc514311:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "soldier",
+                  "fish",
+                  "dragon",
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "fish",
+                  "dragon",
+                  "stone"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "龙": {
+          "summary": "物理攻击对士兵、鱼、龙、矿石类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-dragon"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对士兵、鱼、龙、矿石类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1b43c763fc514311:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "soldier",
+                  "fish",
+                  "dragon",
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "fish",
+                  "dragon",
+                  "stone"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "士兵": {
+          "summary": "物理攻击对士兵、鱼、龙、矿石类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-killer"
+              ],
+              "summary": "物理攻击对士兵、鱼、龙、矿石类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1b43c763fc514311:physical-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "soldier",
+                  "fish",
+                  "dragon",
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "fish",
+                  "dragon",
+                  "stone"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "矿石",
+        "鱼",
+        "龙",
+        "士兵"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为士兵、鱼、龙、矿石中的任一类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f4bf8f6c759cece0",
@@ -80347,17 +88263,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "种族／特攻共通": {
+          "summary": "对与自身类型相同的敌人，物理伤害+15%。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "same-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对与自身类型相同的敌人，物理伤害+15%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9e714945b3c31514:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "target-enemy-and-self",
+                "operator": "shared-type",
+                "races": []
+              },
+              "sharedTypeMatch": "at-least-one-common-type",
+              "valuePercent": 15,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-and-self-shared-type--physical--damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "种族／特攻共通"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标与自身具有相同类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f0d4e2e81fd7c665",
@@ -80768,19 +88725,120 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
+        },
+        "兽": {
+          "summary": "对兽、鱼、鸟类型敌人物理伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "enemy-race-beast"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对兽、鱼、鸟类型敌人物理伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "20486fa2dfba235e:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "fish",
+                  "bird"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "fish",
+                  "bird"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-beast-fish-bird-physical--damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "鱼": {
+          "summary": "对兽、鱼、鸟类型敌人物理伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-damage"
+            ],
+            "conditionPartIds": [
+              "enemy-race-fish"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-damage"
+              ],
+              "summary": "对兽、鱼、鸟类型敌人物理伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "20486fa2dfba235e:physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyTypes": [
+                  "beast",
+                  "fish",
+                  "bird"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "fish",
+                  "bird"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "target-enemy-any-of-beast-fish-bird-physical--damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
         "物理",
-        "鸟"
+        "鸟",
+        "兽",
+        "鱼"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标类型选项：兽（兽／鱼／鸟任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：鱼（兽／鱼／鸟任一类型满足即可；同一效果不按命中类型数重复）"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:627",
@@ -80886,17 +88944,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "种族／特攻共通": {
+          "summary": "受到与自身类型相同的敌人的物理攻击时，伤害-15%。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "physical-reduction"
+            ],
+            "conditionPartIds": [
+              "same-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "physical-reduction"
+              ],
+              "summary": "受到与自身类型相同的敌人的物理攻击时，伤害-15%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "a00efae59bd351ce:physical-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy-and-self",
+                "operator": "shared-type",
+                "races": []
+              },
+              "sharedTypeMatch": "at-least-one-common-type",
+              "valuePercent": 15,
+              "matchingMultipleRaces": "apply-once",
+              "group": "attacking-enemy-and-self-shared-type--physical--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "种族／特攻共通"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "攻击者与自身具有相同类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "b9086cf11c0cf674",
@@ -82093,16 +90192,70 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "神": {
+          "summary": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "faith-physical-mitigation"
+            ],
+            "conditionPartIds": [
+              "provider-god"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "faith-physical-mitigation"
+              ],
+              "summary": "自身为神类型时，向装备信仰的我方提供受到物理伤害-10%",
+              "target": "allies-with-faith",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "f063ab920fec3e4a:faith-physical-mitigation",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "f063ab920fec3e4a",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "provide",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "f063ab920fec3e4a:faith-physical-mitigation"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-provide-physical-incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "物理相关片段与其余效果分别审核；未确认的数值、条件继续保留待判断。",
       "assignedTags": [
-        "物理"
+        "物理",
+        "神"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "提供者必须为神类型",
         "受益者须装备信仰且提供者为自身以外的神类型友方",
         "同名神秘之力【守护】只计一次，提供与接受不重复相加"
       ]
@@ -82715,7 +90868,38 @@ export const SKILL_LABELING_CATALOG = {
         {
           "id": "enemy-race",
           "kind": "condition",
-          "text": "目标敌人为士兵／骑士／狙击手／魔法师中的任一"
+          "text": "目标类型选项：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "soldier",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-knight",
+          "kind": "condition",
+          "text": "目标类型选项：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "knight",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-sniper",
+          "kind": "condition",
+          "text": "目标类型选项：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "sniper",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-sorcerer",
+          "kind": "condition",
+          "text": "目标类型选项：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "sorcerer",
+          "subject": "target-enemy"
         }
       ],
       "tagDetails": {
@@ -82756,17 +90940,235 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "士兵": {
+          "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "858365fd1fc6ea73:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "骑士": {
+          "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-knight"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "858365fd1fc6ea73:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "狙击手": {
+          "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-sniper"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "858365fd1fc6ea73:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法师": {
+          "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-sorcerer"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对士兵／骑士／狙击手／魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "858365fd1fc6ea73:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "士兵",
+        "骑士",
+        "狙击手",
+        "魔法师"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为士兵／骑士／狙击手／魔法师中的任一"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:442",
@@ -82821,17 +91223,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "魔法生物": {
+          "summary": "魔法攻击对魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:442:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-creature-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "魔法生物"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为魔法生物类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "e677b6a7691dc515",
@@ -82886,17 +91335,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "龙": {
+          "summary": "魔法攻击对龙类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对龙类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "e677b6a7691dc515:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-dragon-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "龙"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为龙类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:459",
@@ -82951,17 +91447,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "不死生物": {
+          "summary": "魔法攻击对不死生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:459:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-undead-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "不死生物"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为不死生物类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "01dd6357b37ee5ef",
@@ -83016,17 +91559,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "矿石": {
+          "summary": "魔法攻击对矿石类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "stone",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对矿石类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "01dd6357b37ee5ef:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "stone"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-stone-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "矿石"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为矿石类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "85cce3de46a53780",
@@ -83081,17 +91671,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "机械种族": {
+          "summary": "魔法攻击对机械类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对机械类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "85cce3de46a53780:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "machine"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-machine-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "机械种族"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为机械类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:478",
@@ -83146,17 +91783,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "魔法师": {
+          "summary": "魔法攻击对魔法师类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:478:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sorcerer-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "魔法师"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为魔法师类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "420153e0bbd5a460",
@@ -83211,17 +91895,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "神": {
+          "summary": "魔法攻击对神类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对神类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "420153e0bbd5a460:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "神"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为神类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "7652b90251d97956",
@@ -83276,17 +92007,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "植物": {
+          "summary": "魔法攻击对植物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对植物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "7652b90251d97956:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "plant"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-plant-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "植物"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为植物类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f851cc57b094612a",
@@ -83453,17 +92231,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "精灵": {
+          "summary": "魔法攻击对精灵类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对精灵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "57d0535b82a9b33c:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-spirit-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "精灵"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为精灵类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "8c2b1825c169cf3b",
@@ -83518,17 +92343,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "鱼": {
+          "summary": "魔法攻击对鱼类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对鱼类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8c2b1825c169cf3b:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-fish-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "鱼"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为鱼类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "b5a0235fc70d847c",
@@ -83583,17 +92455,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "骑士": {
+          "summary": "魔法攻击对骑士类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对骑士类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b5a0235fc70d847c:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-knight-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "骑士"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为骑士类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:723",
@@ -83648,17 +92567,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "兽": {
+          "summary": "魔法攻击对兽类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对兽类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:723:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "兽"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为兽类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "c978c292114505f1",
@@ -83713,17 +92679,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "昆虫": {
+          "summary": "魔法攻击对昆虫类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "insect",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对昆虫类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "c978c292114505f1:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "insect"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-insect-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "昆虫"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为昆虫类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:769",
@@ -83778,17 +92791,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "士兵": {
+          "summary": "魔法攻击对士兵类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对士兵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:769:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "士兵"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为士兵类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:845",
@@ -83843,17 +92903,64 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "狙击手": {
+          "summary": "魔法攻击对狙击手类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "magic-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "magic-killer"
+              ],
+              "summary": "魔法攻击对狙击手类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:845:magic-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sniper-attack-magic--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "狙击手"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "目标敌人为狙击手类型"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "12feb359b0670804",
@@ -83968,17 +93075,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "种族／特攻共通": {
+          "summary": "攻击魔法触发特攻时，伤害+20%。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-magic-damage"
+            ],
+            "conditionPartIds": [
+              "killer-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-magic-damage"
+              ],
+              "summary": "攻击魔法触发特攻时，伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5f13abe1484bc2c7:killer-magic-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "requiresKillerHit": true
+              },
+              "valuePercent": 20,
+              "grantsKillerEligibility": false,
+              "group": "outgoing-attack-magic-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "种族／特攻共通"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "本次攻击魔法必须实际触发特攻；本技能不额外赋予特攻资格"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "全部技能:all:630",
@@ -84178,16 +93321,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "不死生物": {
+          "summary": "自身类型追加不死生物。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "type-undead"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "type-undead"
+              ],
+              "summary": "自身类型追加不死生物",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "045d456028e01684:type-undead",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "undead"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "不死生物"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身类型追加不死生物"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -84342,16 +93527,58 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "精灵": {
+          "summary": "自身类型追加精灵。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "type-spirit"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "type-spirit"
+              ],
+              "summary": "自身类型追加精灵",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8545a75056e827a4:type-spirit",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "spirit"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "精灵"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "自身类型追加精灵"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -84492,16 +93719,70 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "神": {
+          "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "faith-magic-reduction"
+            ],
+            "conditionPartIds": [
+              "provider-god"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "faith-magic-reduction"
+              ],
+              "summary": "自身为神类型时，向装备信仰的友方提供受到魔法伤害-10%",
+              "target": "allies-with-faith",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "7611b3c1ae612f0e:faith-magic-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "7611b3c1ae612f0e",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "provide",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "7611b3c1ae612f0e:faith-magic-reduction"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-provide-attack-magic-incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "魔法相关效果按完整限定拆分，其他效果与独立条件保留待判断；没有确认的机制不补造数值。",
       "assignedTags": [
-        "魔法"
+        "魔法",
+        "神"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "提供者必须为神类型",
         "受益者须装备信仰且提供者为自身以外的神类型友方",
         "同名神秘之力【结界】仅计一次，提供与接受不重复相加"
       ]
@@ -84834,20 +94115,6131 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "区分攻击目标、来袭敌人和自身追加类型。多种族条件为任一满足，同一片段只计一次；本轮完成鸟分支，其他种族分支按各自标签累计。特攻资格不等于固定增伤、必定暴击或即死；拟态不等于处于空中。"
+        },
+        "兽": {
+          "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-beast"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "dda1c38d5e1c90f8:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "植物": {
+          "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-plant"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "dda1c38d5e1c90f8:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "昆虫": {
+          "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "insect",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-insect"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "dda1c38d5e1c90f8:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法生物": {
+          "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-creature"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "dda1c38d5e1c90f8:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "鱼": {
+          "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-fish"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对兽、植物、昆虫、鸟、鱼、魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "dda1c38d5e1c90f8:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast",
+                  "plant",
+                  "insect",
+                  "bird",
+                  "fish",
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "calculationNote": "鸟相关效果保留攻击种类和种族主体；多种族为OR，同一效果只计一次。特攻资格不擅自补造倍率。",
       "assignedTags": [
-        "鸟"
+        "鸟",
+        "兽",
+        "植物",
+        "昆虫",
+        "魔法生物",
+        "鱼"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "35eec30328c81b5c",
+      "url": "https://altema.jp/lastcloudia/gino/41",
+      "name": "野兽克星",
+      "text": "普通攻击对兽系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对兽类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为兽类型"
+        }
+      ],
+      "tagDetails": {
+        "兽": {
+          "summary": "普通攻击对兽类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对兽类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "35eec30328c81b5c:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-beast-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "兽"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "ad2eadc4169ea477",
+      "url": "https://altema.jp/lastcloudia/gino/43",
+      "name": "植物克星",
+      "text": "普通攻击对植物系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对植物类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为植物类型"
+        }
+      ],
+      "tagDetails": {
+        "植物": {
+          "summary": "普通攻击对植物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对植物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "ad2eadc4169ea477:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "plant"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-plant-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "植物"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "25fa2b5f258876bd",
+      "url": "https://altema.jp/lastcloudia/gino/45",
+      "name": "昆虫克星",
+      "text": "普通攻击对昆虫系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对昆虫类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为昆虫类型"
+        }
+      ],
+      "tagDetails": {
+        "昆虫": {
+          "summary": "普通攻击对昆虫类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "insect",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对昆虫类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "25fa2b5f258876bd:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "insect"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-insect-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "昆虫"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "f613b94a7fe3eac3",
+      "url": "https://altema.jp/lastcloudia/gino/49",
+      "name": "魔法生物克星",
+      "text": "普通攻击对魔法生物系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对魔法生物类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为魔法生物类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法生物": {
+          "summary": "普通攻击对魔法生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对魔法生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "f613b94a7fe3eac3:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-creature-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "魔法生物"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "6439186351318d8f",
+      "url": "https://altema.jp/lastcloudia/gino/51",
+      "name": "不死生物克星",
+      "text": "普通攻击对不死生物系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对不死生物类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为不死生物类型"
+        }
+      ],
+      "tagDetails": {
+        "不死生物": {
+          "summary": "普通攻击对不死生物类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对不死生物类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "6439186351318d8f:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-undead-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "不死生物"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "c3f6df4b71e94a5f",
+      "url": "https://altema.jp/lastcloudia/gino/53",
+      "name": "矿石克星",
+      "text": "普通攻击对矿石系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对矿石类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为矿石类型"
+        }
+      ],
+      "tagDetails": {
+        "矿石": {
+          "summary": "普通攻击对矿石类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "stone",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对矿石类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "c3f6df4b71e94a5f:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "stone"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-stone-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "矿石"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "32babdfb0554ed43",
+      "url": "https://altema.jp/lastcloudia/gino/55",
+      "name": "机械克星",
+      "text": "普通攻击对机械系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对机械类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为机械类型"
+        }
+      ],
+      "tagDetails": {
+        "机械种族": {
+          "summary": "普通攻击对机械类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对机械类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "32babdfb0554ed43:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "machine"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-machine-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "机械种族"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1549fe8ad94d1f32",
+      "url": "https://altema.jp/lastcloudia/gino/57",
+      "name": "鱼类克星",
+      "text": "普通攻击对鱼系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对鱼类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为鱼类型"
+        }
+      ],
+      "tagDetails": {
+        "鱼": {
+          "summary": "普通攻击对鱼类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对鱼类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1549fe8ad94d1f32:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-fish-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "鱼"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "e6e5ad9aa042cbb4",
+      "url": "https://altema.jp/lastcloudia/gino/59",
+      "name": "精灵克星",
+      "text": "普通攻击对精灵系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对精灵类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为精灵类型"
+        }
+      ],
+      "tagDetails": {
+        "精灵": {
+          "summary": "普通攻击对精灵类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对精灵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "e6e5ad9aa042cbb4:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-spirit-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "精灵"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "2b30173ab0d7d7f6",
+      "url": "https://altema.jp/lastcloudia/gino/61",
+      "name": "龙族克星",
+      "text": "普通攻击对龙系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对龙类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为龙类型"
+        }
+      ],
+      "tagDetails": {
+        "龙": {
+          "summary": "普通攻击对龙类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对龙类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "2b30173ab0d7d7f6:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-dragon-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "龙"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "517660b4dbea46e3",
+      "url": "https://altema.jp/lastcloudia/gino/63",
+      "name": "神族克星",
+      "text": "普通攻击对神系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对神类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为神类型"
+        }
+      ],
+      "tagDetails": {
+        "神": {
+          "summary": "普通攻击对神类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对神类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "517660b4dbea46e3:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "神"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:66",
+      "url": "https://altema.jp/lastcloudia/gino/65",
+      "name": "战士克星",
+      "text": "普通攻击对士兵类型敌人产生特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对士兵类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为士兵类型"
+        }
+      ],
+      "tagDetails": {
+        "士兵": {
+          "summary": "普通攻击对士兵类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对士兵类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:66:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "士兵"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b1b5416e553b19cd",
+      "url": "https://altema.jp/lastcloudia/gino/67",
+      "name": "骑士克星",
+      "text": "普通攻击对骑士系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对骑士类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为骑士类型"
+        }
+      ],
+      "tagDetails": {
+        "骑士": {
+          "summary": "普通攻击对骑士类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对骑士类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b1b5416e553b19cd:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-knight-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "骑士"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:70",
+      "url": "https://altema.jp/lastcloudia/gino/69",
+      "name": "射手克星",
+      "text": "普通攻击对狙击类型敌人产生特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对狙击手类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为狙击手类型"
+        }
+      ],
+      "tagDetails": {
+        "狙击手": {
+          "summary": "普通攻击对狙击手类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对狙击手类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:70:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sniper-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "狙击手"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "034b0063a9477540",
+      "url": "https://altema.jp/lastcloudia/gino/71",
+      "name": "魔法师克星",
+      "text": "普通攻击对魔法师系敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对魔法师类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标敌人为魔法师类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法师": {
+          "summary": "普通攻击对魔法师类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对魔法师类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "034b0063a9477540:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-sorcerer-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "魔法师"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "ae4a9316a61a0384",
+      "url": "https://altema.jp/lastcloudia/gino/907",
+      "name": "人类克星",
+      "text": "普通攻击对人类系（士兵、骑士、狙击手、魔法师）敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标类型选项：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "soldier",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-knight",
+          "kind": "condition",
+          "text": "目标类型选项：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "knight",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-sniper",
+          "kind": "condition",
+          "text": "目标类型选项：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "sniper",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-sorcerer",
+          "kind": "condition",
+          "text": "目标类型选项：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "sorcerer",
+          "subject": "target-enemy"
+        }
+      ],
+      "tagDetails": {
+        "士兵": {
+          "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "ae4a9316a61a0384:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "骑士": {
+          "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-knight"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "ae4a9316a61a0384:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "狙击手": {
+          "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-sniper"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "ae4a9316a61a0384:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法师": {
+          "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-sorcerer"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对士兵／骑士／狙击手／魔法师任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "ae4a9316a61a0384:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "士兵",
+        "骑士",
+        "狙击手",
+        "魔法师"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "08ba2a63471cced7",
+      "url": "https://altema.jp/lastcloudia/gino/1354",
+      "name": "天灵克星",
+      "text": "普通攻击对天灵系（神、龙、精灵、不死生物）敌人触发特攻。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "normal-killer",
+          "kind": "effect",
+          "text": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标类型选项：神（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "god",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-dragon",
+          "kind": "condition",
+          "text": "目标类型选项：龙（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "dragon",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-spirit",
+          "kind": "condition",
+          "text": "目标类型选项：精灵（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "spirit",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-undead",
+          "kind": "condition",
+          "text": "目标类型选项：不死生物（神／龙／精灵／不死生物任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "undead",
+          "subject": "target-enemy"
+        }
+      ],
+      "tagDetails": {
+        "不死生物": {
+          "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-undead"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "08ba2a63471cced7:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "精灵": {
+          "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "08ba2a63471cced7:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "龙": {
+          "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race-dragon"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "08ba2a63471cced7:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "神": {
+          "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "normal-killer"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "normal-killer"
+              ],
+              "summary": "普通攻击对神／龙／精灵／不死生物任一类型敌人触发特攻",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "08ba2a63471cced7:normal-killer",
+              "effectStacking": "once-per-skill",
+              "operation": "enable-killer",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "normal-attack",
+                "enemyTypes": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "dragon",
+                  "spirit",
+                  "undead"
+                ]
+              },
+              "matchingMultipleRaces": "apply-once",
+              "grantsKillerEligibility": true,
+              "guaranteedCritical": false,
+              "guaranteedInstantKill": false,
+              "group": "target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "不死生物",
+        "精灵",
+        "龙",
+        "神"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "976ffd1698aff8cb",
+      "url": "https://altema.jp/lastcloudia/gino/232",
+      "name": "神之护盾",
+      "text": "受到神系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到神类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为神类型"
+        }
+      ],
+      "tagDetails": {
+        "神": {
+          "summary": "受到神类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到神类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "976ffd1698aff8cb:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-god-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "神"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:242",
+      "url": "https://altema.jp/lastcloudia/gino/255",
+      "name": "战士护盾",
+      "text": "受到士兵系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到士兵类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为士兵类型"
+        }
+      ],
+      "tagDetails": {
+        "士兵": {
+          "summary": "受到士兵类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到士兵类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:242:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-soldier-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "士兵"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "11d8aa780c551990",
+      "url": "https://altema.jp/lastcloudia/gino/257",
+      "name": "不死生物护盾",
+      "text": "受到不死生物系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到不死生物类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为不死生物类型"
+        }
+      ],
+      "tagDetails": {
+        "不死生物": {
+          "summary": "受到不死生物类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到不死生物类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "11d8aa780c551990:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "undead"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-undead-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "不死生物"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:256",
+      "url": "https://altema.jp/lastcloudia/gino/276",
+      "name": "魔法师护盾",
+      "text": "受到魔法师类型敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到魔法师类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为魔法师类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法师": {
+          "summary": "受到魔法师类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到魔法师类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:256:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "魔法师"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "95fd375fdfe9cfdc",
+      "url": "https://altema.jp/lastcloudia/gino/280",
+      "name": "龙护盾",
+      "text": "受到龙系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到龙类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为龙类型"
+        }
+      ],
+      "tagDetails": {
+        "龙": {
+          "summary": "受到龙类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到龙类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "95fd375fdfe9cfdc:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "dragon"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-dragon-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "龙"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "ea6a22aff62a9e0b",
+      "url": "https://altema.jp/lastcloudia/gino/334",
+      "name": "野兽护盾",
+      "text": "受到兽系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到兽类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为兽类型"
+        }
+      ],
+      "tagDetails": {
+        "兽": {
+          "summary": "受到兽类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到兽类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "ea6a22aff62a9e0b:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "beast"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-beast-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "兽"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "bf12a6d2d0d325ec",
+      "url": "https://altema.jp/lastcloudia/gino/347",
+      "name": "精灵护盾",
+      "text": "受到精灵系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到精灵类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为精灵类型"
+        }
+      ],
+      "tagDetails": {
+        "精灵": {
+          "summary": "受到精灵类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到精灵类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "bf12a6d2d0d325ec:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-spirit-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "精灵"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:353",
+      "url": "https://altema.jp/lastcloudia/gino/459",
+      "name": "魔法生物护罩",
+      "text": "来自魔法生物类型敌人的伤害 -10%",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到魔法生物类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为魔法生物类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法生物": {
+          "summary": "受到魔法生物类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到魔法生物类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:353:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "creature"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-creature-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "魔法生物"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "d17b229ba3d183d3",
+      "url": "https://altema.jp/lastcloudia/gino/491",
+      "name": "石盾",
+      "text": "受到矿石系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到矿石类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为矿石类型"
+        }
+      ],
+      "tagDetails": {
+        "矿石": {
+          "summary": "受到矿石类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "stone",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到矿石类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d17b229ba3d183d3:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "stone"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "stone"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-stone-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "矿石"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "683858bd752288dd",
+      "url": "https://altema.jp/lastcloudia/gino/591",
+      "name": "鱼类护罩",
+      "text": "受到鱼系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到鱼类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为鱼类型"
+        }
+      ],
+      "tagDetails": {
+        "鱼": {
+          "summary": "受到鱼类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到鱼类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "683858bd752288dd:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "fish"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-fish-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "鱼"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "bd3af6ef7a1da443",
+      "url": "https://altema.jp/lastcloudia/gino/715",
+      "name": "机械护罩",
+      "text": "受到机械系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到机械类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为机械类型"
+        }
+      ],
+      "tagDetails": {
+        "机械种族": {
+          "summary": "受到机械类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到机械类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "bd3af6ef7a1da443:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "machine"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-machine-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "机械种族"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:489",
+      "url": "https://altema.jp/lastcloudia/gino/769",
+      "name": "射手护罩",
+      "text": "受到狙击类型敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到狙击手类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为狙击手类型"
+        }
+      ],
+      "tagDetails": {
+        "狙击手": {
+          "summary": "受到狙击手类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到狙击手类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:489:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "sniper"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-sniper-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "狙击手"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b4f171fe71f50e84",
+      "url": "https://altema.jp/lastcloudia/gino/1086",
+      "name": "植物护罩",
+      "text": "受到植物系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到植物类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为植物类型"
+        }
+      ],
+      "tagDetails": {
+        "植物": {
+          "summary": "受到植物类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到植物类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b4f171fe71f50e84:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "plant"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-plant-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "植物"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:684",
+      "url": "https://altema.jp/lastcloudia/gino/1275",
+      "name": "战士护罩2",
+      "text": "受到士兵系敌人的伤害-20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到士兵类型敌人的伤害-20%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为士兵类型"
+        }
+      ],
+      "tagDetails": {
+        "士兵": {
+          "summary": "受到士兵类型敌人的伤害-20%。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到士兵类型敌人的伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:684:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "soldier"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "valuePercent": 20,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-soldier-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "士兵"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "e604afe712f284b5",
+      "url": "https://altema.jp/lastcloudia/gino/1351",
+      "name": "骑士护罩",
+      "text": "受到骑士系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到骑士类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为骑士类型"
+        }
+      ],
+      "tagDetails": {
+        "骑士": {
+          "summary": "受到骑士类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到骑士类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "e604afe712f284b5:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "knight"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-knight-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "骑士"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "aba38f88e29c5cdf",
+      "url": "https://altema.jp/lastcloudia/gino/1388",
+      "name": "昆虫护罩",
+      "text": "受到昆虫系敌人的伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到昆虫类型敌人的伤害-10%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为昆虫类型"
+        }
+      ],
+      "tagDetails": {
+        "昆虫": {
+          "summary": "受到昆虫类型敌人的伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "insect",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到昆虫类型敌人的伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "aba38f88e29c5cdf:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "insect"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-insect-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "昆虫"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "c39ff53ef05006ec",
+      "url": "https://altema.jp/lastcloudia/gino/1445",
+      "name": "神族护罩2",
+      "text": "受到神系敌人的伤害-20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到神类型敌人的伤害-20%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为神类型"
+        }
+      ],
+      "tagDetails": {
+        "神": {
+          "summary": "受到神类型敌人的伤害-20%。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到神类型敌人的伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "c39ff53ef05006ec:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "god"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 20,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-god-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "神"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:922",
+      "url": "https://altema.jp/lastcloudia/gino/1972",
+      "name": "魔法师护罩2",
+      "text": "受到魔法师类型敌人的伤害-20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到魔法师类型敌人的伤害-20%"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "造成伤害的敌人为魔法师类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法师": {
+          "summary": "受到魔法师类型敌人的伤害-20%。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到魔法师类型敌人的伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:922:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 20,
+              "matchingMultipleRaces": "apply-once",
+              "changesDefenseStat": false,
+              "group": "attacking-enemy-any-of-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "魔法师"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "d3a16e600a57daad",
+      "url": "https://altema.jp/lastcloudia/gino/500",
+      "name": "破神的加护",
+      "text": "受到非神类型敌人的伤害-7%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "incoming-reduction",
+          "kind": "effect",
+          "text": "受到非神类型敌人的伤害-7%"
+        },
+        {
+          "id": "non-god",
+          "kind": "condition",
+          "text": "造成伤害的敌人不具备神类型；即使兼有其他类型，只要含神类型仍不满足"
+        }
+      ],
+      "tagDetails": {
+        "神": {
+          "summary": "受到非神类型敌人的伤害-7%。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-reduction"
+            ],
+            "conditionPartIds": [
+              "non-god"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "incoming-reduction"
+              ],
+              "summary": "受到非神类型敌人的伤害-7%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "d3a16e600a57daad:incoming-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "none-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 7,
+              "matchingMultipleRaces": "apply-once",
+              "group": "attacking-enemy-none-of-god-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "神"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "f9c63a04f63f89ea",
+      "url": "https://altema.jp/lastcloudia/gino/832",
+      "name": "破神的神谕",
+      "text": "对非神类型敌人的伤害+10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "damage",
+          "kind": "effect",
+          "text": "对非神类型敌人的伤害+10%"
+        },
+        {
+          "id": "non-god",
+          "kind": "condition",
+          "text": "目标敌人不具备神类型；即使兼有其他类型，只要含神类型仍不满足"
+        }
+      ],
+      "tagDetails": {
+        "神": {
+          "summary": "对非神类型敌人的伤害+10%。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "damage"
+            ],
+            "conditionPartIds": [
+              "non-god"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "damage"
+              ],
+              "summary": "对非神类型敌人的伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "f9c63a04f63f89ea:damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "none-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-none-of-god-unspecified--damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "神"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "0fdb64bdd938cb23",
+      "url": "https://altema.jp/lastcloudia/gino/211",
+      "name": "拟态【植物】",
+      "text": "类型追加“植物”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加植物类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "植物": {
+          "summary": "自身追加植物类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加植物类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "0fdb64bdd938cb23:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "plant"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "植物"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "3aef06f6e8cfc48a",
+      "url": "https://altema.jp/lastcloudia/gino/235",
+      "name": "拟态【龙】",
+      "text": "类型追加“龙”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加龙类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "龙": {
+          "summary": "自身追加龙类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加龙类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3aef06f6e8cfc48a:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "dragon"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "龙"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "8b41a79842e5b92a",
+      "url": "https://altema.jp/lastcloudia/gino/248",
+      "name": "拟态【神】",
+      "text": "类型追加“神”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加神类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "神": {
+          "summary": "自身追加神类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加神类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8b41a79842e5b92a:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "god"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "神"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "9af75e5034ae0811",
+      "url": "https://altema.jp/lastcloudia/gino/259",
+      "name": "拟态【魔法师】",
+      "text": "类型追加“魔法师”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加魔法师类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法师": {
+          "summary": "自身追加魔法师类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加魔法师类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9af75e5034ae0811:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "sorcerer"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "sorcerer"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "魔法师"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "21179861f90ff29d",
+      "url": "https://altema.jp/lastcloudia/gino/271",
+      "name": "拟态【不死生物】",
+      "text": "类型追加“不死生物”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加不死生物类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "不死生物": {
+          "summary": "自身追加不死生物类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加不死生物类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "21179861f90ff29d:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "undead"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "undead"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "不死生物"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "3a50f5b2dda762d5",
+      "url": "https://altema.jp/lastcloudia/gino/288",
+      "name": "拟态【野兽】",
+      "text": "类型追加“兽”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加兽类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "兽": {
+          "summary": "自身追加兽类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加兽类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "3a50f5b2dda762d5:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "beast"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "beast"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "兽"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:324",
+      "url": "https://altema.jp/lastcloudia/gino/400",
+      "name": "拟态【魔法生物】",
+      "text": "为自身追加「魔法生物」类型。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加魔法生物类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "魔法生物": {
+          "summary": "自身追加魔法生物类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加魔法生物类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:324:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "creature"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "creature"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "魔法生物"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1678d46d7c6ab2ee",
+      "url": "https://altema.jp/lastcloudia/gino/424",
+      "name": "拟态【机械】",
+      "text": "类型追加“机械”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加机械类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "机械种族": {
+          "summary": "自身追加机械类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "machine",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加机械类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1678d46d7c6ab2ee:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "machine"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "machine"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "机械种族"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:344",
+      "url": "https://altema.jp/lastcloudia/gino/438",
+      "name": "拟态【矿石】",
+      "text": "为自身追加「矿石」类型。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加矿石类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "矿石": {
+          "summary": "自身追加矿石类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "stone",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加矿石类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:344:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "stone"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "stone"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "矿石"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:364",
+      "url": "https://altema.jp/lastcloudia/gino/494",
+      "name": "拟态【战士】",
+      "text": "为自身追加「士兵」类型。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加士兵类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "士兵": {
+          "summary": "自身追加士兵类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加士兵类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:364:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "soldier"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "soldier"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "士兵"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "e40393f75e668fa8",
+      "url": "https://altema.jp/lastcloudia/gino/534",
+      "name": "拟态【鱼】",
+      "text": "类型追加“鱼”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加鱼类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "鱼": {
+          "summary": "自身追加鱼类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "fish",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加鱼类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "e40393f75e668fa8:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "fish"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "fish"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "鱼"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b25e8f7c8b0f317e",
+      "url": "https://altema.jp/lastcloudia/gino/545",
+      "name": "拟态【骑士】",
+      "text": "类型追加“骑士”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加骑士类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "骑士": {
+          "summary": "自身追加骑士类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加骑士类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b25e8f7c8b0f317e:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "knight"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "knight"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "骑士"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:410",
+      "url": "https://altema.jp/lastcloudia/gino/602",
+      "name": "拟态【射手】",
+      "text": "类型追加“狙击手”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加狙击手类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "狙击手": {
+          "summary": "自身追加狙击手类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加狙击手类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:410:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "sniper"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "sniper"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "狙击手"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:439",
+      "url": "https://altema.jp/lastcloudia/gino/661",
+      "name": "拟态【精灵】",
+      "text": "为自身追加「精灵」类型。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加精灵类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "精灵": {
+          "summary": "自身追加精灵类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加精灵类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "全部技能:all:439:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "spirit"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "spirit"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "精灵"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "c29d9aca92cef0ef",
+      "url": "https://altema.jp/lastcloudia/gino/1396",
+      "name": "拟态【昆虫】",
+      "text": "类型追加“昆虫”。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加昆虫类型，保留原有类型"
+        }
+      ],
+      "tagDetails": {
+        "昆虫": {
+          "summary": "自身追加昆虫类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "insect",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加昆虫类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "c29d9aca92cef0ef:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "insect"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "insect"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "昆虫"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "92c0f8785ea384d7",
+      "url": "https://altema.jp/lastcloudia/gino/1517",
+      "name": "驱邪波库鲁",
+      "text": "类型追加「植物」。疾病耐性、诅咒耐性+1。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "added-race",
+          "kind": "effect",
+          "text": "自身追加植物类型，保留原有类型"
+        },
+        {
+          "id": "disease-resistance",
+          "kind": "effect",
+          "text": "疾病耐性+1"
+        },
+        {
+          "id": "curse-resistance",
+          "kind": "effect",
+          "text": "诅咒耐性+1"
+        }
+      ],
+      "tagDetails": {
+        "植物": {
+          "summary": "自身追加植物类型，保留原有类型。",
+          "relation": "race-effects-and-condition",
+          "race": "plant",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "added-race"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "added-race"
+              ],
+              "summary": "自身追加植物类型，保留原有类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "92c0f8785ea384d7:added-race",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "plant"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "plant"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "植物"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "疾病耐性+1",
+        "诅咒耐性+1"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "90487d6c687abdbc",
+      "url": "https://altema.jp/lastcloudia/gino/1481",
+      "name": "【拟态】女仆",
+      "text": "自身不具有人类系类型时，受到的伤害-10%（若自身拥有人类系类型则无效）。",
+      "notes": "人类系包含士兵、骑士、狙击、魔法师类型；只要自身具备其中任意一种，即不满足条件。",
+      "parts": [
+        {
+          "id": "self-nonhuman-reduction",
+          "kind": "effect",
+          "text": "自身不具备士兵、骑士、狙击手、魔法师任一类型时，受到伤害-10%"
+        },
+        {
+          "id": "self-no-human",
+          "kind": "condition",
+          "text": "自身不具备士兵类型（须同时不具备士兵／骑士／狙击手／魔法师全部类型；任一存在即失效）",
+          "alternativeGroup": "self-no-human-race-choice",
+          "logicalOperator": "AND",
+          "race": "soldier",
+          "subject": "self"
+        },
+        {
+          "id": "self-no-human-knight",
+          "kind": "condition",
+          "text": "自身不具备骑士类型（须同时不具备士兵／骑士／狙击手／魔法师全部类型；任一存在即失效）",
+          "alternativeGroup": "self-no-human-race-choice",
+          "logicalOperator": "AND",
+          "race": "knight",
+          "subject": "self"
+        },
+        {
+          "id": "self-no-human-sniper",
+          "kind": "condition",
+          "text": "自身不具备狙击手类型（须同时不具备士兵／骑士／狙击手／魔法师全部类型；任一存在即失效）",
+          "alternativeGroup": "self-no-human-race-choice",
+          "logicalOperator": "AND",
+          "race": "sniper",
+          "subject": "self"
+        },
+        {
+          "id": "self-no-human-sorcerer",
+          "kind": "condition",
+          "text": "自身不具备魔法师类型（须同时不具备士兵／骑士／狙击手／魔法师全部类型；任一存在即失效）",
+          "alternativeGroup": "self-no-human-race-choice",
+          "logicalOperator": "AND",
+          "race": "sorcerer",
+          "subject": "self"
+        }
+      ],
+      "tagDetails": {
+        "士兵": {
+          "summary": "自身不具备士兵、骑士、狙击手、魔法师任一类型时，受到伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "self-nonhuman-reduction"
+            ],
+            "conditionPartIds": [
+              "self-no-human"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "self-nonhuman-reduction"
+              ],
+              "summary": "自身不具备士兵、骑士、狙击手、魔法师任一类型时，受到伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "90487d6c687abdbc:self-nonhuman-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "raceRelation": {
+                "subject": "self",
+                "operator": "none-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "骑士": {
+          "summary": "自身不具备士兵、骑士、狙击手、魔法师任一类型时，受到伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "self-nonhuman-reduction"
+            ],
+            "conditionPartIds": [
+              "self-no-human-knight"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "self-nonhuman-reduction"
+              ],
+              "summary": "自身不具备士兵、骑士、狙击手、魔法师任一类型时，受到伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "90487d6c687abdbc:self-nonhuman-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "raceRelation": {
+                "subject": "self",
+                "operator": "none-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "狙击手": {
+          "summary": "自身不具备士兵、骑士、狙击手、魔法师任一类型时，受到伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "self-nonhuman-reduction"
+            ],
+            "conditionPartIds": [
+              "self-no-human-sniper"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "self-nonhuman-reduction"
+              ],
+              "summary": "自身不具备士兵、骑士、狙击手、魔法师任一类型时，受到伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "90487d6c687abdbc:self-nonhuman-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "raceRelation": {
+                "subject": "self",
+                "operator": "none-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法师": {
+          "summary": "自身不具备士兵、骑士、狙击手、魔法师任一类型时，受到伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "self-nonhuman-reduction"
+            ],
+            "conditionPartIds": [
+              "self-no-human-sorcerer"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "self-nonhuman-reduction"
+              ],
+              "summary": "自身不具备士兵、骑士、狙击手、魔法师任一类型时，受到伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "90487d6c687abdbc:self-nonhuman-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "raceRelation": {
+                "subject": "self",
+                "operator": "none-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "士兵",
+        "骑士",
+        "狙击手",
+        "魔法师"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "31b0f1c6d90ec0cf",
+      "url": "https://altema.jp/lastcloudia/gino/1527",
+      "name": "女神的宠爱",
+      "text": "对人类系敌人的伤害+10%，受到人类系敌人的伤害-5%（人类系：士兵、骑士、狙击手、魔法师）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "human-damage",
+          "kind": "effect",
+          "text": "对人类系敌人的伤害+10%"
+        },
+        {
+          "id": "human-reduction",
+          "kind": "effect",
+          "text": "受到人类系敌人的伤害-5%"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标类型选项：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "soldier",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-knight",
+          "kind": "condition",
+          "text": "目标类型选项：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "knight",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-sniper",
+          "kind": "condition",
+          "text": "目标类型选项：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "sniper",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-sorcerer",
+          "kind": "condition",
+          "text": "目标类型选项：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "sorcerer",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "attacker-race",
+          "kind": "condition",
+          "text": "目标类型选项：士兵（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "attacker-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "soldier",
+          "subject": "attacking-enemy"
+        },
+        {
+          "id": "attacker-race-knight",
+          "kind": "condition",
+          "text": "目标类型选项：骑士（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "attacker-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "knight",
+          "subject": "attacking-enemy"
+        },
+        {
+          "id": "attacker-race-sniper",
+          "kind": "condition",
+          "text": "目标类型选项：狙击手（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "attacker-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "sniper",
+          "subject": "attacking-enemy"
+        },
+        {
+          "id": "attacker-race-sorcerer",
+          "kind": "condition",
+          "text": "目标类型选项：魔法师（士兵／骑士／狙击手／魔法师任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "attacker-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "sorcerer",
+          "subject": "attacking-enemy"
+        }
+      ],
+      "tagDetails": {
+        "士兵": {
+          "summary": "对人类系敌人的伤害+10%；受到人类系敌人的伤害-5%。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "human-damage",
+              "human-reduction"
+            ],
+            "conditionPartIds": [
+              "enemy-race",
+              "attacker-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "human-damage"
+              ],
+              "summary": "对人类系敌人的伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "31b0f1c6d90ec0cf:human-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up"
+            },
+            {
+              "partIds": [
+                "human-reduction"
+              ],
+              "summary": "受到人类系敌人的伤害-5%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "31b0f1c6d90ec0cf:human-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 5,
+              "matchingMultipleRaces": "apply-once",
+              "group": "attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "骑士": {
+          "summary": "对人类系敌人的伤害+10%；受到人类系敌人的伤害-5%。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "human-damage",
+              "human-reduction"
+            ],
+            "conditionPartIds": [
+              "enemy-race-knight",
+              "attacker-race-knight"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "human-damage"
+              ],
+              "summary": "对人类系敌人的伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "31b0f1c6d90ec0cf:human-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up"
+            },
+            {
+              "partIds": [
+                "human-reduction"
+              ],
+              "summary": "受到人类系敌人的伤害-5%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "31b0f1c6d90ec0cf:human-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 5,
+              "matchingMultipleRaces": "apply-once",
+              "group": "attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "狙击手": {
+          "summary": "对人类系敌人的伤害+10%；受到人类系敌人的伤害-5%。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "human-damage",
+              "human-reduction"
+            ],
+            "conditionPartIds": [
+              "enemy-race-sniper",
+              "attacker-race-sniper"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "human-damage"
+              ],
+              "summary": "对人类系敌人的伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "31b0f1c6d90ec0cf:human-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up"
+            },
+            {
+              "partIds": [
+                "human-reduction"
+              ],
+              "summary": "受到人类系敌人的伤害-5%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "31b0f1c6d90ec0cf:human-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 5,
+              "matchingMultipleRaces": "apply-once",
+              "group": "attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法师": {
+          "summary": "对人类系敌人的伤害+10%；受到人类系敌人的伤害-5%。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "human-damage",
+              "human-reduction"
+            ],
+            "conditionPartIds": [
+              "enemy-race-sorcerer",
+              "attacker-race-sorcerer"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "human-damage"
+              ],
+              "summary": "对人类系敌人的伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "31b0f1c6d90ec0cf:human-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up"
+            },
+            {
+              "partIds": [
+                "human-reduction"
+              ],
+              "summary": "受到人类系敌人的伤害-5%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "31b0f1c6d90ec0cf:human-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "attackerTypes": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "raceRelation": {
+                "subject": "attacking-enemy",
+                "operator": "any-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "valuePercent": 5,
+              "matchingMultipleRaces": "apply-once",
+              "group": "attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "士兵",
+        "骑士",
+        "狙击手",
+        "魔法师"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "9a9df999dd518e22",
+      "url": "https://altema.jp/lastcloudia/gino/1963",
+      "name": "魔神讨伐队",
+      "text": "装备“魔神讨伐队”的我方单位达到2名以上时，对神类型和魔族系（兽、魔法生物、不死生物、精灵）敌人的伤害上限提升（2名：+2,500；3名：+5,000；4名：+7,500）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "team-enemy-cap",
+          "kind": "effect",
+          "text": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500"
+        },
+        {
+          "id": "enemy-race",
+          "kind": "condition",
+          "text": "目标类型选项：神（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "god",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-beast",
+          "kind": "condition",
+          "text": "目标类型选项：兽（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "beast",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-creature",
+          "kind": "condition",
+          "text": "目标类型选项：魔法生物（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "creature",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-undead",
+          "kind": "condition",
+          "text": "目标类型选项：不死生物（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "undead",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "enemy-race-spirit",
+          "kind": "condition",
+          "text": "目标类型选项：精灵（神／兽／魔法生物／不死生物／精灵任一匹配，同一单位或效果只计一次）",
+          "alternativeGroup": "enemy-race-race-choice",
+          "logicalOperator": "OR",
+          "race": "spirit",
+          "subject": "target-enemy"
+        },
+        {
+          "id": "same-skill-team",
+          "kind": "condition",
+          "text": "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+        }
+      ],
+      "tagDetails": {
+        "兽": {
+          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
+          "relation": "race-effects-and-condition",
+          "race": "beast",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "team-enemy-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-beast"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "team-enemy-cap"
+              ],
+              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "team-tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allies-with-same-skill",
+                "skillId": "9a9df999dd518e22",
+                "includesSelf": true,
+                "minCount": 2,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capByCount": {
+                "2": 2500,
+                "3": 5000,
+                "4": 7500
+              },
+              "otherwiseCapPoints": 0,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法生物": {
+          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
+          "relation": "race-effects-and-condition",
+          "race": "creature",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "team-enemy-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-creature"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "team-enemy-cap"
+              ],
+              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "team-tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allies-with-same-skill",
+                "skillId": "9a9df999dd518e22",
+                "includesSelf": true,
+                "minCount": 2,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capByCount": {
+                "2": 2500,
+                "3": 5000,
+                "4": 7500
+              },
+              "otherwiseCapPoints": 0,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "不死生物": {
+          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
+          "relation": "race-effects-and-condition",
+          "race": "undead",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "team-enemy-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-undead"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "team-enemy-cap"
+              ],
+              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "team-tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allies-with-same-skill",
+                "skillId": "9a9df999dd518e22",
+                "includesSelf": true,
+                "minCount": 2,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capByCount": {
+                "2": 2500,
+                "3": 5000,
+                "4": 7500
+              },
+              "otherwiseCapPoints": 0,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "精灵": {
+          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
+          "relation": "race-effects-and-condition",
+          "race": "spirit",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "team-enemy-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race-spirit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "team-enemy-cap"
+              ],
+              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "team-tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allies-with-same-skill",
+                "skillId": "9a9df999dd518e22",
+                "includesSelf": true,
+                "minCount": 2,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capByCount": {
+                "2": 2500,
+                "3": 5000,
+                "4": 7500
+              },
+              "otherwiseCapPoints": 0,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "神": {
+          "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "team-enemy-cap"
+            ],
+            "conditionPartIds": [
+              "enemy-race"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "team-enemy-cap"
+              ],
+              "summary": "装备魔神讨伐队的我方达到2名时，对神／兽／魔法生物／不死生物／精灵上限+2,500；3名+5,000；4名+7,500",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9a9df999dd518e22:team-enemy-cap",
+              "effectStacking": "once-per-skill",
+              "operation": "team-tiered-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyTypes": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "raceRelation": {
+                "subject": "target-enemy",
+                "operator": "any-of",
+                "races": [
+                  "god",
+                  "beast",
+                  "creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "count": {
+                "metric": "allies-with-same-skill",
+                "skillId": "9a9df999dd518e22",
+                "includesSelf": true,
+                "minCount": 2,
+                "maxCount": 4,
+                "eachUnitCountsOnce": true
+              },
+              "capByCount": {
+                "2": 2500,
+                "3": 5000,
+                "4": 7500
+              },
+              "otherwiseCapPoints": 0,
+              "matchingMultipleRaces": "apply-once",
+              "group": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "兽",
+        "魔法生物",
+        "不死生物",
+        "精灵",
+        "神"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "目标类型选项：兽（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：植物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：昆虫（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：鱼（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）",
-        "目标类型选项：魔法生物（兽／植物／昆虫／鸟／鱼／魔法生物任一类型满足即可；同一效果不按命中类型数重复）"
+        "我方装备同名魔神讨伐队的单位至少2名，按实际人数取档，不默认4名"
+      ]
+    },
+    {
+      "id": "9146eb2670c69122",
+      "url": "https://altema.jp/lastcloudia/gino/206",
+      "name": "特攻增幅",
+      "text": "触发特攻时，伤害+50%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "killer-damage",
+          "kind": "effect",
+          "text": "触发特攻时伤害+50%"
+        },
+        {
+          "id": "killer-hit",
+          "kind": "condition",
+          "text": "本次攻击实际触发特攻"
+        }
+      ],
+      "tagDetails": {
+        "种族／特攻共通": {
+          "summary": "触发特攻时伤害+50%。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-damage"
+            ],
+            "conditionPartIds": [
+              "killer-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-damage"
+              ],
+              "summary": "触发特攻时伤害+50%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "9146eb2670c69122:killer-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "valuePercent": 50,
+              "grantsKillerEligibility": false,
+              "group": "outgoing-unspecified-damage-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "种族／特攻共通"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b8d0c68c7255f2dd",
+      "url": "https://altema.jp/lastcloudia/gino/791",
+      "name": "特攻护罩",
+      "text": "受到敌人特攻伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "killer-reduction",
+          "kind": "effect",
+          "text": "受到敌人特攻伤害-10%"
+        },
+        {
+          "id": "killer-hit",
+          "kind": "condition",
+          "text": "来袭攻击实际触发特攻"
+        }
+      ],
+      "tagDetails": {
+        "种族／特攻共通": {
+          "summary": "受到敌人特攻伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-reduction"
+            ],
+            "conditionPartIds": [
+              "killer-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-reduction"
+              ],
+              "summary": "受到敌人特攻伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "b8d0c68c7255f2dd:killer-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "incoming-unspecified-incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "种族／特攻共通"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "92cbaf3db3586d0d",
+      "url": "https://altema.jp/lastcloudia/gino/1433",
+      "name": "特攻护罩2",
+      "text": "受到敌人特攻伤害-20%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "killer-reduction",
+          "kind": "effect",
+          "text": "受到敌人特攻伤害-20%"
+        },
+        {
+          "id": "killer-hit",
+          "kind": "condition",
+          "text": "来袭攻击实际触发特攻"
+        }
+      ],
+      "tagDetails": {
+        "种族／特攻共通": {
+          "summary": "受到敌人特攻伤害-20%。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-reduction"
+            ],
+            "conditionPartIds": [
+              "killer-hit"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-reduction"
+              ],
+              "summary": "受到敌人特攻伤害-20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "92cbaf3db3586d0d:killer-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "valuePercent": 20,
+              "grantsKillerEligibility": false,
+              "group": "incoming-unspecified-incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "种族／特攻共通"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "32f98ad19af760dc",
+      "url": "https://altema.jp/lastcloudia/gino/942",
+      "name": "看来我们彼此无法相容",
+      "text": "触发特攻时，伤害+20%；受到敌方特攻伤害-10%。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "killer-damage",
+          "kind": "effect",
+          "text": "触发特攻时，伤害+20%"
+        },
+        {
+          "id": "killer-reduction",
+          "kind": "effect",
+          "text": "受到敌人的特攻伤害-10%"
+        },
+        {
+          "id": "killer-outgoing",
+          "kind": "condition",
+          "text": "本次攻击实际触发特攻"
+        },
+        {
+          "id": "killer-incoming",
+          "kind": "condition",
+          "text": "来袭攻击实际触发特攻"
+        }
+      ],
+      "tagDetails": {
+        "种族／特攻共通": {
+          "summary": "触发特攻时，伤害+20%；受到敌人的特攻伤害-10%。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-damage",
+              "killer-reduction"
+            ],
+            "conditionPartIds": [
+              "killer-outgoing",
+              "killer-incoming"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-damage"
+              ],
+              "summary": "触发特攻时，伤害+20%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "32f98ad19af760dc:killer-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "valuePercent": 20,
+              "grantsKillerEligibility": false,
+              "group": "outgoing-unspecified-damage-up"
+            },
+            {
+              "partIds": [
+                "killer-reduction"
+              ],
+              "summary": "受到敌人的特攻伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "32f98ad19af760dc:killer-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "valuePercent": 10,
+              "grantsKillerEligibility": false,
+              "group": "incoming-unspecified-incoming-damage-down"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "种族／特攻共通"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1faea4cee43b7137",
+      "url": "https://altema.jp/lastcloudia/gino/917",
+      "name": "万圣节驾驶",
+      "text": "自身拥有2种以上类型时，自动获得「速度」效果（持续至战斗不能，每Wave最多1次）。",
+      "notes": "速度为移动速度+2，不是SCT加速；该增益持续到自身战斗不能，每个Wave最多触发1次。",
+      "parts": [
+        {
+          "id": "type-count-speed",
+          "kind": "effect",
+          "text": "自身拥有至少2种类型时，获得速度Buff：移动速度+2，持续至战斗不能，每Wave最多触发1次"
+        },
+        {
+          "id": "self-type-count",
+          "kind": "condition",
+          "text": "自身当前类型数至少为2"
+        }
+      ],
+      "tagDetails": {
+        "种族／特攻共通": {
+          "summary": "自身拥有至少2种类型时，获得速度Buff：移动速度+2，持续至战斗不能，每Wave最多触发1次。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "type-count-speed"
+            ],
+            "conditionPartIds": [
+              "self-type-count"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "type-count-speed"
+              ],
+              "summary": "自身拥有至少2种类型时，获得速度Buff：移动速度+2，持续至战斗不能，每Wave最多触发1次",
+              "target": "self",
+              "isBuff": true,
+              "raceRole": "direct-effect",
+              "effectIdentity": "1faea4cee43b7137:type-count-speed",
+              "effectStacking": "once-per-skill",
+              "operation": "movement-speed-up",
+              "scope": {
+                "direction": "movement"
+              },
+              "buffType": "speed",
+              "movementSpeedPoints": 2,
+              "changesSctSpeed": false,
+              "condition": {
+                "subject": "self",
+                "metric": "type-count",
+                "operator": "gte",
+                "count": 2
+              },
+              "trigger": {
+                "event": "type-count-qualified",
+                "maxTriggersPerWave": 1
+              },
+              "endsOn": "incapacitated",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "group": "movement--movement-speed-up-buff"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "种族／特攻共通"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "49f537942bfaa37d",
+      "url": "https://altema.jp/lastcloudia/gino/1123",
+      "name": "艾因赫里亚",
+      "text": "受到敌人特攻或弱点属性攻击时，伤害-10%（同时满足两项时效果不叠加）。",
+      "notes": "",
+      "parts": [
+        {
+          "id": "killer-or-weakness-reduction",
+          "kind": "effect",
+          "text": "受到特攻或命中自身属性弱点的攻击时，伤害-10%；同时满足也只减10%"
+        },
+        {
+          "id": "killer-incoming",
+          "kind": "condition",
+          "text": "来袭攻击触发特攻；与属性弱点条件为OR，共用同一减伤效果"
+        },
+        {
+          "id": "element-weakness-incoming",
+          "kind": "condition",
+          "text": "来袭攻击命中自身属性弱点；与特攻条件为OR，共用同一减伤效果"
+        }
+      ],
+      "tagDetails": {
+        "种族／特攻共通": {
+          "summary": "受到特攻或命中自身属性弱点的攻击时，伤害-10%；同时满足也只减10%。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "killer-or-weakness-reduction"
+            ],
+            "conditionPartIds": [
+              "killer-incoming"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "killer-or-weakness-reduction"
+              ],
+              "summary": "受到特攻或命中自身属性弱点的攻击时，伤害-10%；同时满足也只减10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "49f537942bfaa37d:killer-or-weakness-reduction",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "condition": {
+                "operator": "OR",
+                "events": [
+                  "incoming-killer-hit",
+                  "incoming-element-weakness-hit"
+                ]
+              },
+              "valuePercent": 10,
+              "matchingMultipleConditions": "apply-once",
+              "group": "incoming-unspecified-incoming-damage-down-or-weakness"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        }
+      },
+      "calculationNote": "种族效果按完整限定拆分；攻击目标、来袭敌人、自身类型及队伍条件分别判断。已知数值与未确认机制分开，同一效果跨页只计一次。",
+      "assignedTags": [
+        "种族／特攻共通"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "来袭攻击命中自身属性弱点；与特攻条件为OR，共用同一减伤效果"
       ]
     }
   ],
@@ -84947,8 +100339,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 34,
-        "partial": 53,
+        "ready": 35,
+        "partial": 52,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -85032,8 +100424,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 70,
         "notRelatedUnique": 865,
-        "ready": 24,
-        "partial": 46,
+        "ready": 25,
+        "partial": 45,
         "unknown": 0,
         "previousBasicDefenseUnique": 64,
         "additionalRelatedUnique": 6
@@ -85579,8 +100971,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 230,
         "notRelatedUnique": 705,
-        "ready": 96,
-        "partial": 134,
+        "ready": 144,
+        "partial": 86,
         "unknown": 0
       }
     },
@@ -85799,8 +101191,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 130,
         "notRelatedUnique": 805,
-        "ready": 60,
-        "partial": 70,
+        "ready": 80,
+        "partial": 50,
         "unknown": 0
       }
     },
@@ -86114,8 +101506,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
-        "ready": 70,
-        "partial": 47,
+        "ready": 72,
+        "partial": 45,
         "unknown": 0
       }
     },
@@ -86476,8 +101868,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 113,
         "notRelatedUnique": 822,
-        "ready": 68,
-        "partial": 45,
+        "ready": 96,
+        "partial": 17,
         "unknown": 0
       }
     },
@@ -86632,8 +102024,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 82,
         "notRelatedUnique": 853,
-        "ready": 38,
-        "partial": 44,
+        "ready": 41,
+        "partial": 41,
         "unknown": 0
       }
     },
@@ -86815,8 +102207,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 45,
         "notRelatedUnique": 890,
-        "ready": 34,
-        "partial": 11,
+        "ready": 36,
+        "partial": 9,
         "unknown": 0
       }
     },
@@ -87201,8 +102593,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 39,
         "notRelatedUnique": 896,
-        "ready": 25,
-        "partial": 14,
+        "ready": 26,
+        "partial": 13,
         "unknown": 0
       }
     },
@@ -87806,8 +103198,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 58,
         "notRelatedUnique": 877,
-        "ready": 31,
-        "partial": 27,
+        "ready": 35,
+        "partial": 23,
         "unknown": 0
       }
     },
@@ -87999,7 +103391,800 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 10,
         "notRelatedUnique": 925,
-        "ready": 6,
+        "ready": 10,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast": {
+      "label": "兽",
+      "passKind": "race-effects-and-condition",
+      "race": "beast",
+      "displayOrder": [
+        "35eec30328c81b5c",
+        "9cd6151ac492da12",
+        "3a50f5b2dda762d5",
+        "088d62f108c82b62",
+        "ea6a22aff62a9e0b",
+        "cb8a66108ee1f3e0",
+        "20486fa2dfba235e",
+        "全部技能:all:723",
+        "全部技能:all:728",
+        "dda1c38d5e1c90f8",
+        "3d51ab68dddbe948",
+        "全部技能:all:876",
+        "9a9df999dd518e22"
+      ],
+      "childKeys": [
+        "race-beast-target-enemy-any-of-beast-normal-attack--enable-killer",
+        "race-beast-target-enemy-any-of-beast-physical--enable-killer",
+        "race-beast-self-add-type",
+        "race-beast-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+        "race-beast-attacking-enemy-any-of-beast-unspecified--incoming-damage-down",
+        "race-beast-target-enemy-any-of-beast-fish-bird-physical--damage-up",
+        "race-beast-target-enemy-any-of-beast-attack-magic--enable-killer",
+        "race-beast-target-enemy-any-of-beast-physical--damage-up",
+        "race-beast-target-enemy-any-of-beast-physical--cap-up",
+        "race-beast-target-enemy-any-of-beast-ultimate--damage-up",
+        "race-beast-target-enemy-any-of-beast-ultimate--cap-up",
+        "race-beast-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+        "race-beast-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+        "race-beast-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up",
+        "race-beast-target-enemy-any-of-beast-ultimate--enable-killer",
+        "race-beast-target-enemy-any-of-beast-counter--enable-killer",
+        "race-beast-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+      ],
+      "overviewLabel": "全部兽相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 13,
+        "notRelatedUnique": 922,
+        "ready": 12,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-plant": {
+      "label": "植物",
+      "passKind": "race-effects-and-condition",
+      "race": "plant",
+      "displayOrder": [
+        "ad2eadc4169ea477",
+        "4b05ef4d9f635c71",
+        "0fdb64bdd938cb23",
+        "088d62f108c82b62",
+        "7652b90251d97956",
+        "b4f171fe71f50e84",
+        "92c0f8785ea384d7",
+        "dda1c38d5e1c90f8",
+        "3d51ab68dddbe948",
+        "251b1a2c2e5147f5"
+      ],
+      "childKeys": [
+        "race-plant-target-enemy-any-of-plant-normal-attack--enable-killer",
+        "race-plant-target-enemy-any-of-plant-physical--enable-killer",
+        "race-plant-self-add-type",
+        "race-plant-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+        "race-plant-target-enemy-any-of-plant-attack-magic--enable-killer",
+        "race-plant-attacking-enemy-any-of-plant-unspecified--incoming-damage-down",
+        "race-plant-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+        "race-plant-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+        "race-plant-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up",
+        "race-plant-target-enemy-any-of-plant-physical--damage-up",
+        "race-plant-target-enemy-any-of-plant-physical--cap-up",
+        "race-plant-target-enemy-any-of-plant-ultimate--damage-up",
+        "race-plant-target-enemy-any-of-plant-ultimate--cap-up"
+      ],
+      "overviewLabel": "全部植物相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 10,
+        "notRelatedUnique": 925,
+        "ready": 9,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-insect": {
+      "label": "昆虫",
+      "passKind": "race-effects-and-condition",
+      "race": "insect",
+      "displayOrder": [
+        "25fa2b5f258876bd",
+        "d22f68145216f042",
+        "088d62f108c82b62",
+        "aba38f88e29c5cdf",
+        "c29d9aca92cef0ef",
+        "c978c292114505f1",
+        "dda1c38d5e1c90f8",
+        "3d51ab68dddbe948",
+        "d02a81c812dbec73"
+      ],
+      "childKeys": [
+        "race-insect-target-enemy-any-of-insect-normal-attack--enable-killer",
+        "race-insect-target-enemy-any-of-insect-physical--enable-killer",
+        "race-insect-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+        "race-insect-attacking-enemy-any-of-insect-unspecified--incoming-damage-down",
+        "race-insect-self-add-type",
+        "race-insect-target-enemy-any-of-insect-attack-magic--enable-killer",
+        "race-insect-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+        "race-insect-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+        "race-insect-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up",
+        "race-insect-target-enemy-any-of-insect-physical--damage-up",
+        "race-insect-target-enemy-any-of-insect-physical--cap-up",
+        "race-insect-target-enemy-any-of-insect-ultimate--damage-up",
+        "race-insect-target-enemy-any-of-insect-ultimate--cap-up"
+      ],
+      "overviewLabel": "全部昆虫相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 9,
+        "notRelatedUnique": 926,
+        "ready": 9,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature": {
+      "label": "魔法生物",
+      "passKind": "race-effects-and-condition",
+      "race": "creature",
+      "displayOrder": [
+        "f613b94a7fe3eac3",
+        "4f28c098f1f146e8",
+        "088d62f108c82b62",
+        "全部技能:all:324",
+        "全部技能:all:353",
+        "全部技能:all:442",
+        "全部技能:all:538",
+        "1f5b1ff3daa03f19",
+        "9df5299c661312ec",
+        "全部技能:all:660",
+        "d291d901e1625ee2",
+        "dda1c38d5e1c90f8",
+        "3d51ab68dddbe948",
+        "9a9df999dd518e22"
+      ],
+      "childKeys": [
+        "race-creature-target-enemy-any-of-creature-normal-attack--enable-killer",
+        "race-creature-target-enemy-any-of-creature-physical--enable-killer",
+        "race-creature-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+        "race-creature-self-add-type",
+        "race-creature-attacking-enemy-any-of-creature-unspecified--incoming-damage-down",
+        "race-creature-target-enemy-any-of-creature-attack-magic--enable-killer",
+        "race-creature-target-enemy-any-of-creature-ultimate--enable-killer",
+        "race-creature-target-enemy-any-of-creature-counter--enable-killer",
+        "race-creature-target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up",
+        "race-creature-target-enemy-any-of-creature-physical--damage-up",
+        "race-creature-target-enemy-any-of-creature-physical--cap-up",
+        "race-creature-target-enemy-any-of-creature-ultimate--damage-up",
+        "race-creature-target-enemy-any-of-creature-ultimate--cap-up",
+        "race-creature-all-allies-any-of-creature-undead-spirit-physical--damage-up",
+        "race-creature-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+        "race-creature-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+        "race-creature-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up",
+        "race-creature-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+      ],
+      "overviewLabel": "全部魔法生物相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 14,
+        "notRelatedUnique": 921,
+        "ready": 12,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "race-undead": {
+      "label": "不死生物",
+      "passKind": "race-effects-and-condition",
+      "race": "undead",
+      "displayOrder": [
+        "6439186351318d8f",
+        "656a173aeaa46d8b",
+        "11d8aa780c551990",
+        "21179861f90ff29d",
+        "b34a5ea033cff851",
+        "全部技能:all:459",
+        "全部技能:all:626",
+        "9df5299c661312ec",
+        "08ba2a63471cced7",
+        "d291d901e1625ee2",
+        "045d456028e01684",
+        "全部技能:all:917",
+        "9a9df999dd518e22"
+      ],
+      "childKeys": [
+        "race-undead-target-enemy-any-of-undead-normal-attack--enable-killer",
+        "race-undead-target-enemy-any-of-undead-physical--enable-killer",
+        "race-undead-attacking-enemy-any-of-undead-unspecified--incoming-damage-down",
+        "race-undead-self-add-type",
+        "race-undead-target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer",
+        "race-undead-target-enemy-any-of-undead-attack-magic--enable-killer",
+        "race-undead-target-enemy-any-of-undead-ultimate--enable-killer",
+        "race-undead-target-enemy-any-of-undead-counter--enable-killer",
+        "race-undead-target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up",
+        "race-undead-target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer",
+        "race-undead-all-allies-any-of-creature-undead-spirit-physical--damage-up",
+        "race-undead-target-enemy-any-of-undead-physical--damage-up",
+        "race-undead-target-enemy-any-of-undead-physical--cap-up",
+        "race-undead-target-enemy-any-of-undead-ultimate--damage-up",
+        "race-undead-target-enemy-any-of-undead-ultimate--cap-up",
+        "race-undead-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+      ],
+      "overviewLabel": "全部不死生物相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 13,
+        "notRelatedUnique": 922,
+        "ready": 12,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-stone": {
+      "label": "矿石",
+      "passKind": "race-effects-and-condition",
+      "race": "stone",
+      "displayOrder": [
+        "c3f6df4b71e94a5f",
+        "1cbc7da1f069d4f4",
+        "22f55aaac7d9b369",
+        "94cdc5cc53c80e9b",
+        "全部技能:all:344",
+        "d17b229ba3d183d3",
+        "1b43c763fc514311",
+        "01dd6357b37ee5ef"
+      ],
+      "childKeys": [
+        "race-stone-target-enemy-any-of-stone-normal-attack--enable-killer",
+        "race-stone-target-enemy-any-of-stone-physical--enable-killer",
+        "race-stone-target-enemy-any-of-stone-unspecified--rate-up",
+        "race-stone-self-add-type",
+        "race-stone-attacking-enemy-any-of-stone-unspecified--incoming-damage-down",
+        "race-stone-target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer",
+        "race-stone-target-enemy-any-of-stone-attack-magic--enable-killer"
+      ],
+      "overviewLabel": "全部矿石相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 8,
+        "notRelatedUnique": 927,
+        "ready": 7,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-machine": {
+      "label": "机械种族",
+      "passKind": "race-effects-and-condition",
+      "race": "machine",
+      "displayOrder": [
+        "32babdfb0554ed43",
+        "bb1b82cb4d89be58",
+        "1678d46d7c6ab2ee",
+        "ed504f94c8b57e47",
+        "7ee810a4231404fe",
+        "bd3af6ef7a1da443",
+        "85cce3de46a53780",
+        "edaa295f9aa089b8",
+        "4aafd29a15ad98c4"
+      ],
+      "childKeys": [
+        "race-machine-target-enemy-any-of-machine-normal-attack--enable-killer",
+        "race-machine-target-enemy-any-of-machine-physical--enable-killer",
+        "race-machine-self-add-type",
+        "race-machine-attacking-enemy-any-of-machine-unspecified--incoming-damage-down",
+        "race-machine-target-enemy-any-of-machine-attack-magic--enable-killer",
+        "race-machine-target-enemy-any-of-machine-ultimate--enable-killer",
+        "race-machine-target-enemy-any-of-machine-counter--enable-killer",
+        "race-machine-allied-unit-count-any-of-machine-skill--count-scaled-cap-up",
+        "race-machine-allied-unit-count-any-of-machine-ultimate--count-scaled-cap-up",
+        "race-machine-allied-unit-count-any-of-machine-counter--count-scaled-cap-up"
+      ],
+      "overviewLabel": "全部机械种族相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 9,
+        "notRelatedUnique": 926,
+        "ready": 9,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish": {
+      "label": "鱼",
+      "passKind": "race-effects-and-condition",
+      "race": "fish",
+      "displayOrder": [
+        "1549fe8ad94d1f32",
+        "2f2b008db9812d80",
+        "088d62f108c82b62",
+        "e40393f75e668fa8",
+        "1b43c763fc514311",
+        "683858bd752288dd",
+        "e60d08454c99c899",
+        "8c2b1825c169cf3b",
+        "20486fa2dfba235e",
+        "fe3ad93438c245be",
+        "dda1c38d5e1c90f8",
+        "3d51ab68dddbe948"
+      ],
+      "childKeys": [
+        "race-fish-target-enemy-any-of-fish-normal-attack--enable-killer",
+        "race-fish-target-enemy-any-of-fish-physical--enable-killer",
+        "race-fish-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+        "race-fish-self-add-type",
+        "race-fish-target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer",
+        "race-fish-attacking-enemy-any-of-fish-unspecified--incoming-damage-down",
+        "race-fish-target-enemy-any-of-fish-ultimate--enable-killer",
+        "race-fish-target-enemy-any-of-fish-counter--enable-killer",
+        "race-fish-target-enemy-any-of-fish-attack-magic--enable-killer",
+        "race-fish-target-enemy-any-of-beast-fish-bird-physical--damage-up",
+        "race-fish-target-enemy-any-of-fish-physical--damage-up",
+        "race-fish-target-enemy-any-of-fish-physical--cap-up",
+        "race-fish-target-enemy-any-of-fish-ultimate--damage-up",
+        "race-fish-target-enemy-any-of-fish-ultimate--cap-up",
+        "race-fish-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+        "race-fish-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+        "race-fish-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up"
+      ],
+      "overviewLabel": "全部鱼相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 12,
+        "notRelatedUnique": 923,
+        "ready": 12,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit": {
+      "label": "精灵",
+      "passKind": "race-effects-and-condition",
+      "race": "spirit",
+      "displayOrder": [
+        "e6e5ad9aa042cbb4",
+        "4e8aaad97bf6484f",
+        "bf12a6d2d0d325ec",
+        "b34a5ea033cff851",
+        "全部技能:all:439",
+        "57d0535b82a9b33c",
+        "9df5299c661312ec",
+        "eca09257aafff0da",
+        "08ba2a63471cced7",
+        "d291d901e1625ee2",
+        "869205f984d49c10",
+        "8545a75056e827a4",
+        "9a9df999dd518e22"
+      ],
+      "childKeys": [
+        "race-spirit-target-enemy-any-of-spirit-normal-attack--enable-killer",
+        "race-spirit-target-enemy-any-of-spirit-physical--enable-killer",
+        "race-spirit-attacking-enemy-any-of-spirit-unspecified--incoming-damage-down",
+        "race-spirit-target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer",
+        "race-spirit-self-add-type",
+        "race-spirit-target-enemy-any-of-spirit-attack-magic--enable-killer",
+        "race-spirit-target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up",
+        "race-spirit-target-enemy-any-of-spirit-physical--damage-up",
+        "race-spirit-target-enemy-any-of-spirit-physical--cap-up",
+        "race-spirit-target-enemy-any-of-spirit-ultimate--damage-up",
+        "race-spirit-target-enemy-any-of-spirit-ultimate--cap-up",
+        "race-spirit-target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer",
+        "race-spirit-all-allies-any-of-creature-undead-spirit-physical--damage-up",
+        "race-spirit-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+        "race-spirit-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up",
+        "race-spirit-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up"
+      ],
+      "overviewLabel": "全部精灵相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 13,
+        "notRelatedUnique": 922,
+        "ready": 11,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "race-dragon": {
+      "label": "龙",
+      "passKind": "race-effects-and-condition",
+      "race": "dragon",
+      "displayOrder": [
+        "2b30173ab0d7d7f6",
+        "8ebe295ff024625c",
+        "3aef06f6e8cfc48a",
+        "95fd375fdfe9cfdc",
+        "c16c507cf0c2f9db",
+        "b34a5ea033cff851",
+        "1b43c763fc514311",
+        "e677b6a7691dc515",
+        "911c90d5593ecf69",
+        "08ba2a63471cced7",
+        "75d1684f4522a2de",
+        "86c11809d76a7959",
+        "0d45e653455b29d1",
+        "af2b1b7f6ebbb498"
+      ],
+      "childKeys": [
+        "race-dragon-target-enemy-any-of-dragon-normal-attack--enable-killer",
+        "race-dragon-target-enemy-any-of-dragon-physical--enable-killer",
+        "race-dragon-self-add-type",
+        "race-dragon-attacking-enemy-any-of-dragon-unspecified--incoming-damage-down",
+        "race-dragon-target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer",
+        "race-dragon-target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer",
+        "race-dragon-target-enemy-any-of-dragon-attack-magic--enable-killer",
+        "race-dragon-target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer",
+        "race-dragon-target-enemy-any-of-dragon-ultimate--enable-killer",
+        "race-dragon-target-enemy-any-of-dragon-counter--enable-killer",
+        "race-dragon-self-any-of-dragon-ultimate--cap-up-critical",
+        "race-dragon-self-any-of-dragon-ultimate--enable-critical",
+        "race-dragon-target-enemy-any-of-dragon-physical--damage-up",
+        "race-dragon-target-enemy-any-of-dragon-physical--cap-up",
+        "race-dragon-target-enemy-any-of-dragon-ultimate--damage-up",
+        "race-dragon-target-enemy-any-of-dragon-ultimate--cap-up"
+      ],
+      "overviewLabel": "全部龙相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 14,
+        "notRelatedUnique": 921,
+        "ready": 13,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god": {
+      "label": "神",
+      "passKind": "race-effects-and-condition",
+      "race": "god",
+      "displayOrder": [
+        "517660b4dbea46e3",
+        "53507ad574cacf9f",
+        "976ffd1698aff8cb",
+        "8b41a79842e5b92a",
+        "b34a5ea033cff851",
+        "d3a16e600a57daad",
+        "99a9a562aa4868a1",
+        "f9c63a04f63f89ea",
+        "420153e0bbd5a460",
+        "7b6e96149fd8ff79",
+        "08ba2a63471cced7",
+        "c39ff53ef05006ec",
+        "b3b20e5b26417ee0",
+        "5dbd4f977800ad88",
+        "7611b3c1ae612f0e",
+        "8c11c64768072670",
+        "f063ab920fec3e4a",
+        "9a9df999dd518e22",
+        "ca8779066b942675",
+        "7bc369d4036dd098"
+      ],
+      "childKeys": [
+        "race-god-target-enemy-any-of-god-normal-attack--enable-killer",
+        "race-god-target-enemy-any-of-god-physical--enable-killer",
+        "race-god-attacking-enemy-any-of-god-unspecified--incoming-damage-down",
+        "race-god-self-add-type",
+        "race-god-target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer",
+        "race-god-attacking-enemy-none-of-god-unspecified--incoming-damage-down",
+        "race-god-target-enemy-any-of-god-ultimate--enable-killer",
+        "race-god-target-enemy-any-of-god-counter--enable-killer",
+        "race-god-target-enemy-none-of-god-unspecified--damage-up",
+        "race-god-target-enemy-any-of-god-attack-magic--enable-killer",
+        "race-god-target-enemy-any-of-god-physical--damage-up",
+        "race-god-target-enemy-any-of-god-physical--cap-up",
+        "race-god-target-enemy-any-of-god-ultimate--damage-up",
+        "race-god-target-enemy-any-of-god-ultimate--cap-up",
+        "race-god-target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer",
+        "race-god-faith-receive-attack-magic-incoming-damage-down",
+        "race-god-faith-receive-physical-damage-up",
+        "race-god-faith-receive-physical-incoming-damage-down",
+        "race-god-faith-receive-unspecifiedlight-damage-up",
+        "race-god-faith-receive-STR-stat-up",
+        "race-god-faith-provide-attack-magic-incoming-damage-down",
+        "race-god-faith-provide-physical-damage-up",
+        "race-god-faith-provide-physical-incoming-damage-down",
+        "race-god-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up",
+        "race-god-faith-provide-unspecifiedlight-damage-up",
+        "race-god-faith-provide-STR-stat-up"
+      ],
+      "overviewLabel": "全部神相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 20,
+        "notRelatedUnique": 915,
+        "ready": 13,
+        "partial": 7,
+        "unknown": 0
+      }
+    },
+    "race-soldier": {
+      "label": "士兵",
+      "passKind": "race-effects-and-condition",
+      "race": "soldier",
+      "displayOrder": [
+        "全部技能:all:66",
+        "全部技能:all:67",
+        "全部技能:all:242",
+        "全部技能:all:364",
+        "1b43c763fc514311",
+        "8ba52a420286cb67",
+        "858365fd1fc6ea73",
+        "ae4a9316a61a0384",
+        "全部技能:all:632",
+        "全部技能:all:684",
+        "90487d6c687abdbc",
+        "全部技能:all:769",
+        "31b0f1c6d90ec0cf",
+        "全部技能:all:802",
+        "b1235f3ab30aff73",
+        "b50f1be94e5ec002",
+        "869205f984d49c10"
+      ],
+      "childKeys": [
+        "race-soldier-target-enemy-any-of-soldier-normal-attack--enable-killer",
+        "race-soldier-target-enemy-any-of-soldier-physical--enable-killer",
+        "race-soldier-attacking-enemy-any-of-soldier-unspecified--incoming-damage-down",
+        "race-soldier-self-add-type",
+        "race-soldier-target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer",
+        "race-soldier-random-type-soldier-knight-sniper-sorcerer",
+        "race-soldier-target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer",
+        "race-soldier-target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer",
+        "race-soldier-target-enemy-any-of-soldier-ultimate--enable-killer",
+        "race-soldier-target-enemy-any-of-soldier-counter--enable-killer",
+        "race-soldier-self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+        "race-soldier-target-enemy-any-of-soldier-attack-magic--enable-killer",
+        "race-soldier-target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up",
+        "race-soldier-attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+        "race-soldier-target-enemy-any-of-soldier-physical--damage-up",
+        "race-soldier-target-enemy-any-of-soldier-physical--cap-up",
+        "race-soldier-target-enemy-any-of-soldier-ultimate--damage-up",
+        "race-soldier-target-enemy-any-of-soldier-ultimate--cap-up",
+        "race-soldier-allied-unit-count-any-of-soldier-skill--count-scaled-cap-up",
+        "race-soldier-allied-unit-count-any-of-soldier-ultimate--count-scaled-cap-up",
+        "race-soldier-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up",
+        "race-soldier-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up",
+        "race-soldier-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+        "race-soldier-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+      ],
+      "overviewLabel": "全部士兵相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 17,
+        "notRelatedUnique": 918,
+        "ready": 14,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "race-knight": {
+      "label": "骑士",
+      "passKind": "race-effects-and-condition",
+      "race": "knight",
+      "displayOrder": [
+        "b1b5416e553b19cd",
+        "36b22a9034809a96",
+        "b25e8f7c8b0f317e",
+        "8ba52a420286cb67",
+        "858365fd1fc6ea73",
+        "ae4a9316a61a0384",
+        "b5a0235fc70d847c",
+        "e604afe712f284b5",
+        "90487d6c687abdbc",
+        "31b0f1c6d90ec0cf",
+        "011b1a6b3ec0b62f",
+        "b50f1be94e5ec002",
+        "869205f984d49c10",
+        "1142a097127c9dee"
+      ],
+      "childKeys": [
+        "race-knight-target-enemy-any-of-knight-normal-attack--enable-killer",
+        "race-knight-target-enemy-any-of-knight-physical--enable-killer",
+        "race-knight-self-add-type",
+        "race-knight-random-type-soldier-knight-sniper-sorcerer",
+        "race-knight-target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer",
+        "race-knight-target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer",
+        "race-knight-target-enemy-any-of-knight-attack-magic--enable-killer",
+        "race-knight-attacking-enemy-any-of-knight-unspecified--incoming-damage-down",
+        "race-knight-self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+        "race-knight-target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up",
+        "race-knight-attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+        "race-knight-target-enemy-any-of-knight-physical--damage-up",
+        "race-knight-target-enemy-any-of-knight-physical--cap-up",
+        "race-knight-target-enemy-any-of-knight-ultimate--damage-up",
+        "race-knight-target-enemy-any-of-knight-ultimate--cap-up",
+        "race-knight-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up",
+        "race-knight-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up",
+        "race-knight-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+        "race-knight-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up",
+        "race-knight-target-enemy-any-of-knight-ultimate--enable-killer",
+        "race-knight-target-enemy-any-of-knight-counter--enable-killer"
+      ],
+      "overviewLabel": "全部骑士相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 14,
+        "notRelatedUnique": 921,
+        "ready": 11,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "race-sniper": {
+      "label": "狙击手",
+      "passKind": "race-effects-and-condition",
+      "race": "sniper",
+      "displayOrder": [
+        "全部技能:all:70",
+        "全部技能:all:71",
+        "全部技能:all:410",
+        "8ba52a420286cb67",
+        "858365fd1fc6ea73",
+        "全部技能:all:489",
+        "ae4a9316a61a0384",
+        "全部技能:all:704",
+        "90487d6c687abdbc",
+        "31b0f1c6d90ec0cf",
+        "全部技能:all:845",
+        "b50f1be94e5ec002",
+        "869205f984d49c10",
+        "全部技能:all:910"
+      ],
+      "childKeys": [
+        "race-sniper-target-enemy-any-of-sniper-normal-attack--enable-killer",
+        "race-sniper-target-enemy-any-of-sniper-physical--enable-killer",
+        "race-sniper-self-add-type",
+        "race-sniper-random-type-soldier-knight-sniper-sorcerer",
+        "race-sniper-target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer",
+        "race-sniper-attacking-enemy-any-of-sniper-unspecified--incoming-damage-down",
+        "race-sniper-target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer",
+        "race-sniper-target-enemy-any-of-sniper-ultimate--enable-killer",
+        "race-sniper-target-enemy-any-of-sniper-counter--enable-killer",
+        "race-sniper-self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+        "race-sniper-target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up",
+        "race-sniper-attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+        "race-sniper-target-enemy-any-of-sniper-attack-magic--enable-killer",
+        "race-sniper-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up",
+        "race-sniper-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up",
+        "race-sniper-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+        "race-sniper-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up",
+        "race-sniper-target-enemy-any-of-sniper-physical--damage-up",
+        "race-sniper-target-enemy-any-of-sniper-physical--cap-up",
+        "race-sniper-target-enemy-any-of-sniper-ultimate--damage-up",
+        "race-sniper-target-enemy-any-of-sniper-ultimate--cap-up"
+      ],
+      "overviewLabel": "全部狙击手相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 14,
+        "notRelatedUnique": 921,
+        "ready": 11,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer": {
+      "label": "魔法师",
+      "passKind": "race-effects-and-condition",
+      "race": "sorcerer",
+      "displayOrder": [
+        "034b0063a9477540",
+        "bad368f9b1df2b7d",
+        "9af75e5034ae0811",
+        "全部技能:all:256",
+        "8ba52a420286cb67",
+        "858365fd1fc6ea73",
+        "全部技能:all:478",
+        "ae4a9316a61a0384",
+        "全部技能:all:738",
+        "90487d6c687abdbc",
+        "31b0f1c6d90ec0cf",
+        "b50f1be94e5ec002",
+        "869205f984d49c10",
+        "全部技能:all:922"
+      ],
+      "childKeys": [
+        "race-sorcerer-target-enemy-any-of-sorcerer-normal-attack--enable-killer",
+        "race-sorcerer-target-enemy-any-of-sorcerer-physical--enable-killer",
+        "race-sorcerer-self-add-type",
+        "race-sorcerer-attacking-enemy-any-of-sorcerer-unspecified--incoming-damage-down",
+        "race-sorcerer-random-type-soldier-knight-sniper-sorcerer",
+        "race-sorcerer-target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer",
+        "race-sorcerer-target-enemy-any-of-sorcerer-attack-magic--enable-killer",
+        "race-sorcerer-target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer",
+        "race-sorcerer-target-enemy-any-of-sorcerer-ultimate--enable-killer",
+        "race-sorcerer-target-enemy-any-of-sorcerer-counter--enable-killer",
+        "race-sorcerer-self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+        "race-sorcerer-target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up",
+        "race-sorcerer-attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+        "race-sorcerer-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up",
+        "race-sorcerer-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up",
+        "race-sorcerer-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+        "race-sorcerer-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up"
+      ],
+      "overviewLabel": "全部魔法师相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "区分攻击目标、来袭敌人、自身类型、类型追加和队伍条件。复合种族保留完整范围并按分支累计；机械种族与机械武器分开，魔法生物与魔法攻击分开。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 14,
+        "notRelatedUnique": 921,
+        "ready": 11,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "race-common": {
+      "label": "种族／特攻共通",
+      "passKind": "race-effects-and-condition",
+      "race": "common",
+      "displayOrder": [
+        "9146eb2670c69122",
+        "619c3ef058c4b219",
+        "b8d0c68c7255f2dd",
+        "9e714945b3c31514",
+        "5f13abe1484bc2c7",
+        "719b23004e804e89",
+        "1faea4cee43b7137",
+        "32f98ad19af760dc",
+        "f00b7298670734fe",
+        "0f9fbe87a80cc013",
+        "49f537942bfaa37d",
+        "a00efae59bd351ce",
+        "cc874bcc3159e258",
+        "92cbaf3db3586d0d",
+        "b59538669bf4ade7",
+        "0725be276a780aef"
+      ],
+      "childKeys": [
+        "race-common-outgoing-unspecified-damage-up",
+        "race-common-outgoing-unspecified-cap-up-buff",
+        "race-common-incoming-unspecified-incoming-damage-down",
+        "race-common-target-enemy-and-self-shared-type--physical--damage-up",
+        "race-common-outgoing-attack-magic-damage-up",
+        "race-common-random-type-",
+        "race-common-movement--movement-speed-up-buff",
+        "race-common-outgoing-unspecified-conditional-cap-up",
+        "race-common-incoming-unspecified-incoming-damage-down-or-weakness",
+        "race-common-attacking-enemy-and-self-shared-type--physical--incoming-damage-down",
+        "race-common-outgoing-unspecified-damage-up-single-spear"
+      ],
+      "overviewLabel": "全部种族／特攻共通相关（分组）",
+      "separateSections": true,
+      "scopeDescription": "同类型、随机追加类型、类型数量及实际触发特攻单列；特攻与属性弱点不同，未限定攻击类型的效果不改写为只对物理生效。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 16,
+        "notRelatedUnique": 919,
+        "ready": 12,
         "partial": 4,
         "unknown": 0
       }
@@ -88245,8 +104430,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 2,
-        "partial": 2,
+        "ready": 3,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -89107,8 +105292,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -90118,8 +106303,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 26,
         "notRelatedUnique": 909,
-        "ready": 20,
-        "partial": 6,
+        "ready": 21,
+        "partial": 5,
         "unknown": 0
       }
     },
@@ -90157,8 +106342,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 23,
         "notRelatedUnique": 912,
-        "ready": 18,
-        "partial": 5,
+        "ready": 19,
+        "partial": 4,
         "unknown": 0
       }
     },
@@ -91186,8 +107371,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -91782,8 +107967,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -91799,8 +107984,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -94077,8 +110262,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -97479,8 +113664,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 0,
-        "partial": 4,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99045,8 +115230,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99062,8 +115247,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99079,8 +115264,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99096,8 +115281,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99113,8 +115298,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99130,8 +115315,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99147,8 +115332,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99164,8 +115349,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99181,8 +115366,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99198,8 +115383,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99215,8 +115400,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99232,8 +115417,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99249,8 +115434,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99266,8 +115451,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99283,8 +115468,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99300,8 +115485,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99317,8 +115502,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99334,8 +115519,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99351,8 +115536,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99368,8 +115553,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99385,8 +115570,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99402,8 +115587,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99419,8 +115604,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99436,8 +115621,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99453,8 +115638,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99470,8 +115655,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99487,8 +115672,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99504,8 +115689,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99521,8 +115706,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99538,8 +115723,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99555,8 +115740,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99572,8 +115757,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99589,8 +115774,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99606,8 +115791,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99623,8 +115808,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99674,8 +115859,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99691,8 +115876,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99708,8 +115893,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99725,8 +115910,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99742,8 +115927,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -99917,8 +116102,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 17,
         "notRelatedUnique": 918,
-        "ready": 6,
-        "partial": 11,
+        "ready": 7,
+        "partial": 10,
         "unknown": 0
       }
     },
@@ -99958,8 +116143,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 8,
         "notRelatedUnique": 927,
-        "ready": 2,
-        "partial": 6,
+        "ready": 3,
+        "partial": 5,
         "unknown": 0
       }
     },
@@ -100187,8 +116372,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -100204,8 +116389,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -100870,8 +117055,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 74,
         "notRelatedUnique": 861,
-        "ready": 51,
-        "partial": 23,
+        "ready": 53,
+        "partial": 21,
         "unknown": 0
       }
     },
@@ -100978,8 +117163,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 37,
         "notRelatedUnique": 898,
-        "ready": 13,
-        "partial": 24,
+        "ready": 15,
+        "partial": 22,
         "unknown": 0
       }
     },
@@ -101047,8 +117232,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101064,8 +117249,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101081,8 +117266,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101116,8 +117301,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101134,8 +117319,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101151,8 +117336,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101169,8 +117354,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101187,8 +117372,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101204,8 +117389,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101222,8 +117407,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101240,8 +117425,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101258,8 +117443,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101276,8 +117461,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101294,8 +117479,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101312,8 +117497,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101555,8 +117740,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101628,8 +117813,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101803,8 +117988,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -101983,8 +118168,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102068,8 +118253,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102120,8 +118305,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102154,8 +118339,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102171,8 +118356,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102188,8 +118373,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102205,8 +118390,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102256,8 +118441,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102273,8 +118458,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102307,8 +118492,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102324,8 +118509,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102341,8 +118526,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102358,8 +118543,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102444,8 +118629,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102461,8 +118646,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102478,8 +118663,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102495,8 +118680,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102548,8 +118733,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102651,8 +118836,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102668,8 +118853,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102685,8 +118870,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102702,8 +118887,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102736,8 +118921,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102753,8 +118938,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102787,8 +118972,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102804,8 +118989,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102855,8 +119040,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102872,8 +119057,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -102907,8 +119092,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 19,
         "notRelatedUnique": 916,
-        "ready": 6,
-        "partial": 13,
+        "ready": 7,
+        "partial": 12,
         "unknown": 0
       }
     },
@@ -102929,8 +119114,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 6,
         "notRelatedUnique": 929,
-        "ready": 1,
-        "partial": 5,
+        "ready": 3,
+        "partial": 3,
         "unknown": 0
       }
     },
@@ -103617,8 +119802,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103634,8 +119819,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103651,8 +119836,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103702,8 +119887,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103719,8 +119904,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103736,8 +119921,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103753,8 +119938,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103807,8 +119992,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103824,8 +120009,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103841,8 +120026,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103875,8 +120060,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103892,8 +120077,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103946,8 +120131,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103980,8 +120165,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -103997,8 +120182,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104034,8 +120219,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 0,
-        "partial": 4,
+        "ready": 2,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -104085,8 +120270,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104120,8 +120305,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104222,8 +120407,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104273,8 +120458,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104307,8 +120492,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104324,8 +120509,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104341,8 +120526,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -104411,6 +120596,4511 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 934,
         "ready": 1,
         "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-normal-attack--enable-killer": {
+      "label": "对兽类型：普通攻击特攻资格",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-normal-attack--enable-killer",
+      "displayOrder": [
+        "35eec30328c81b5c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-physical--enable-killer": {
+      "label": "对兽类型：物理攻击特攻资格",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-physical--enable-killer",
+      "displayOrder": [
+        "9cd6151ac492da12",
+        "全部技能:all:876"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "3a50f5b2dda762d5",
+        "cb8a66108ee1f3e0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击特攻资格",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+      "displayOrder": [
+        "088d62f108c82b62"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-attacking-enemy-any-of-beast-unspecified--incoming-damage-down": {
+      "label": "受到兽类型：伤害减少",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "attacking-enemy-any-of-beast-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "ea6a22aff62a9e0b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-fish-bird-physical--damage-up": {
+      "label": "对兽／鱼／鸟类型：物理攻击伤害增加",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-fish-bird-physical--damage-up",
+      "displayOrder": [
+        "20486fa2dfba235e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-attack-magic--enable-killer": {
+      "label": "对兽类型：魔法攻击特攻资格",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-attack-magic--enable-killer",
+      "displayOrder": [
+        "全部技能:all:723"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-physical--damage-up": {
+      "label": "对兽类型：物理攻击伤害增加",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-physical--damage-up",
+      "displayOrder": [
+        "全部技能:all:728"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-physical--cap-up": {
+      "label": "对兽类型：物理攻击伤害上限增加",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-physical--cap-up",
+      "displayOrder": [
+        "全部技能:all:728"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-ultimate--damage-up": {
+      "label": "对兽类型：必杀伤害增加",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-ultimate--damage-up",
+      "displayOrder": [
+        "全部技能:all:728"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-ultimate--cap-up": {
+      "label": "对兽类型：必杀伤害上限增加",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-ultimate--cap-up",
+      "displayOrder": [
+        "全部技能:all:728"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：普通攻击特攻资格",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+      "displayOrder": [
+        "dda1c38d5e1c90f8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击伤害上限增加",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：必杀伤害上限增加",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-ultimate--enable-killer": {
+      "label": "对兽类型：必杀特攻资格",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-ultimate--enable-killer",
+      "displayOrder": [
+        "全部技能:all:876"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-beast-counter--enable-killer": {
+      "label": "对兽类型：反击特攻资格",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-beast-counter--enable-killer",
+      "displayOrder": [
+        "全部技能:all:876"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-beast-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up": {
+      "label": "对神／兽／魔法生物／不死生物／精灵类型：伤害上限按同名技能人数增加",
+      "parent": "race-beast",
+      "conditionTag": "兽",
+      "effectGroup": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up",
+      "displayOrder": [
+        "9a9df999dd518e22"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-plant-normal-attack--enable-killer": {
+      "label": "对植物类型：普通攻击特攻资格",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-plant-normal-attack--enable-killer",
+      "displayOrder": [
+        "ad2eadc4169ea477"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-plant-physical--enable-killer": {
+      "label": "对植物类型：物理攻击特攻资格",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-plant-physical--enable-killer",
+      "displayOrder": [
+        "4b05ef4d9f635c71"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "0fdb64bdd938cb23",
+        "92c0f8785ea384d7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 1,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击特攻资格",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+      "displayOrder": [
+        "088d62f108c82b62"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-plant-attack-magic--enable-killer": {
+      "label": "对植物类型：魔法攻击特攻资格",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-plant-attack-magic--enable-killer",
+      "displayOrder": [
+        "7652b90251d97956"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-attacking-enemy-any-of-plant-unspecified--incoming-damage-down": {
+      "label": "受到植物类型：伤害减少",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "attacking-enemy-any-of-plant-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "b4f171fe71f50e84"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：普通攻击特攻资格",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+      "displayOrder": [
+        "dda1c38d5e1c90f8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击伤害上限增加",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：必杀伤害上限增加",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-plant-physical--damage-up": {
+      "label": "对植物类型：物理攻击伤害增加",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-plant-physical--damage-up",
+      "displayOrder": [
+        "251b1a2c2e5147f5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-plant-physical--cap-up": {
+      "label": "对植物类型：物理攻击伤害上限增加",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-plant-physical--cap-up",
+      "displayOrder": [
+        "251b1a2c2e5147f5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-plant-ultimate--damage-up": {
+      "label": "对植物类型：必杀伤害增加",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-plant-ultimate--damage-up",
+      "displayOrder": [
+        "251b1a2c2e5147f5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-plant-target-enemy-any-of-plant-ultimate--cap-up": {
+      "label": "对植物类型：必杀伤害上限增加",
+      "parent": "race-plant",
+      "conditionTag": "植物",
+      "effectGroup": "target-enemy-any-of-plant-ultimate--cap-up",
+      "displayOrder": [
+        "251b1a2c2e5147f5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-insect-normal-attack--enable-killer": {
+      "label": "对昆虫类型：普通攻击特攻资格",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-insect-normal-attack--enable-killer",
+      "displayOrder": [
+        "25fa2b5f258876bd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-insect-physical--enable-killer": {
+      "label": "对昆虫类型：物理攻击特攻资格",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-insect-physical--enable-killer",
+      "displayOrder": [
+        "d22f68145216f042"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击特攻资格",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+      "displayOrder": [
+        "088d62f108c82b62"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-attacking-enemy-any-of-insect-unspecified--incoming-damage-down": {
+      "label": "受到昆虫类型：伤害减少",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "attacking-enemy-any-of-insect-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "aba38f88e29c5cdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "c29d9aca92cef0ef"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-insect-attack-magic--enable-killer": {
+      "label": "对昆虫类型：魔法攻击特攻资格",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-insect-attack-magic--enable-killer",
+      "displayOrder": [
+        "c978c292114505f1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：普通攻击特攻资格",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+      "displayOrder": [
+        "dda1c38d5e1c90f8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击伤害上限增加",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：必杀伤害上限增加",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-insect-physical--damage-up": {
+      "label": "对昆虫类型：物理攻击伤害增加",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-insect-physical--damage-up",
+      "displayOrder": [
+        "d02a81c812dbec73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-insect-physical--cap-up": {
+      "label": "对昆虫类型：物理攻击伤害上限增加",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-insect-physical--cap-up",
+      "displayOrder": [
+        "d02a81c812dbec73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-insect-ultimate--damage-up": {
+      "label": "对昆虫类型：必杀伤害增加",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-insect-ultimate--damage-up",
+      "displayOrder": [
+        "d02a81c812dbec73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-insect-target-enemy-any-of-insect-ultimate--cap-up": {
+      "label": "对昆虫类型：必杀伤害上限增加",
+      "parent": "race-insect",
+      "conditionTag": "昆虫",
+      "effectGroup": "target-enemy-any-of-insect-ultimate--cap-up",
+      "displayOrder": [
+        "d02a81c812dbec73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-normal-attack--enable-killer": {
+      "label": "对魔法生物类型：普通攻击特攻资格",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-normal-attack--enable-killer",
+      "displayOrder": [
+        "f613b94a7fe3eac3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-physical--enable-killer": {
+      "label": "对魔法生物类型：物理攻击特攻资格",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-physical--enable-killer",
+      "displayOrder": [
+        "4f28c098f1f146e8",
+        "全部技能:all:538"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击特攻资格",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+      "displayOrder": [
+        "088d62f108c82b62"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "全部技能:all:324",
+        "1f5b1ff3daa03f19"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 1,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-creature-attacking-enemy-any-of-creature-unspecified--incoming-damage-down": {
+      "label": "受到魔法生物类型：伤害减少",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "attacking-enemy-any-of-creature-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "全部技能:all:353"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-attack-magic--enable-killer": {
+      "label": "对魔法生物类型：魔法攻击特攻资格",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-attack-magic--enable-killer",
+      "displayOrder": [
+        "全部技能:all:442"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-ultimate--enable-killer": {
+      "label": "对魔法生物类型：必杀特攻资格",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-ultimate--enable-killer",
+      "displayOrder": [
+        "全部技能:all:538"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-counter--enable-killer": {
+      "label": "对魔法生物类型：反击特攻资格",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-counter--enable-killer",
+      "displayOrder": [
+        "全部技能:all:538"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up": {
+      "label": "对魔法生物／不死生物／精灵类型：光属性伤害增加",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up",
+      "displayOrder": [
+        "9df5299c661312ec"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-physical--damage-up": {
+      "label": "对魔法生物类型：物理攻击伤害增加",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-physical--damage-up",
+      "displayOrder": [
+        "全部技能:all:660"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-physical--cap-up": {
+      "label": "对魔法生物类型：物理攻击伤害上限增加",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-physical--cap-up",
+      "displayOrder": [
+        "全部技能:all:660"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-ultimate--damage-up": {
+      "label": "对魔法生物类型：必杀伤害增加",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-ultimate--damage-up",
+      "displayOrder": [
+        "全部技能:all:660"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-creature-ultimate--cap-up": {
+      "label": "对魔法生物类型：必杀伤害上限增加",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-creature-ultimate--cap-up",
+      "displayOrder": [
+        "全部技能:all:660"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-all-allies-any-of-creature-undead-spirit-physical--damage-up": {
+      "label": "开场全队均为魔法生物／不死生物／精灵类型：物理攻击伤害增加",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "all-allies-any-of-creature-undead-spirit-physical--damage-up",
+      "displayOrder": [
+        "d291d901e1625ee2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：普通攻击特攻资格",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+      "displayOrder": [
+        "dda1c38d5e1c90f8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击伤害上限增加",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：必杀伤害上限增加",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-creature-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up": {
+      "label": "对神／兽／魔法生物／不死生物／精灵类型：伤害上限按同名技能人数增加",
+      "parent": "race-creature",
+      "conditionTag": "魔法生物",
+      "effectGroup": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up",
+      "displayOrder": [
+        "9a9df999dd518e22"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-undead-normal-attack--enable-killer": {
+      "label": "对不死生物类型：普通攻击特攻资格",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-undead-normal-attack--enable-killer",
+      "displayOrder": [
+        "6439186351318d8f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-undead-physical--enable-killer": {
+      "label": "对不死生物类型：物理攻击特攻资格",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-undead-physical--enable-killer",
+      "displayOrder": [
+        "656a173aeaa46d8b",
+        "全部技能:all:626"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-attacking-enemy-any-of-undead-unspecified--incoming-damage-down": {
+      "label": "受到不死生物类型：伤害减少",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "attacking-enemy-any-of-undead-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "11d8aa780c551990"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "21179861f90ff29d",
+        "045d456028e01684"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer": {
+      "label": "对神／龙／精灵／不死生物类型：物理攻击特攻资格",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer",
+      "displayOrder": [
+        "b34a5ea033cff851"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-undead-attack-magic--enable-killer": {
+      "label": "对不死生物类型：魔法攻击特攻资格",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-undead-attack-magic--enable-killer",
+      "displayOrder": [
+        "全部技能:all:459"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-undead-ultimate--enable-killer": {
+      "label": "对不死生物类型：必杀特攻资格",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-undead-ultimate--enable-killer",
+      "displayOrder": [
+        "全部技能:all:626"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-undead-counter--enable-killer": {
+      "label": "对不死生物类型：反击特攻资格",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-undead-counter--enable-killer",
+      "displayOrder": [
+        "全部技能:all:626"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up": {
+      "label": "对魔法生物／不死生物／精灵类型：光属性伤害增加",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up",
+      "displayOrder": [
+        "9df5299c661312ec"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer": {
+      "label": "对神／龙／精灵／不死生物类型：普通攻击特攻资格",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer",
+      "displayOrder": [
+        "08ba2a63471cced7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-all-allies-any-of-creature-undead-spirit-physical--damage-up": {
+      "label": "开场全队均为魔法生物／不死生物／精灵类型：物理攻击伤害增加",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "all-allies-any-of-creature-undead-spirit-physical--damage-up",
+      "displayOrder": [
+        "d291d901e1625ee2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-undead-physical--damage-up": {
+      "label": "对不死生物类型：物理攻击伤害增加",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-undead-physical--damage-up",
+      "displayOrder": [
+        "全部技能:all:917"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-undead-physical--cap-up": {
+      "label": "对不死生物类型：物理攻击伤害上限增加",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-undead-physical--cap-up",
+      "displayOrder": [
+        "全部技能:all:917"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-undead-ultimate--damage-up": {
+      "label": "对不死生物类型：必杀伤害增加",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-undead-ultimate--damage-up",
+      "displayOrder": [
+        "全部技能:all:917"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-undead-ultimate--cap-up": {
+      "label": "对不死生物类型：必杀伤害上限增加",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-undead-ultimate--cap-up",
+      "displayOrder": [
+        "全部技能:all:917"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-undead-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up": {
+      "label": "对神／兽／魔法生物／不死生物／精灵类型：伤害上限按同名技能人数增加",
+      "parent": "race-undead",
+      "conditionTag": "不死生物",
+      "effectGroup": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up",
+      "displayOrder": [
+        "9a9df999dd518e22"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-stone-target-enemy-any-of-stone-normal-attack--enable-killer": {
+      "label": "对矿石类型：普通攻击特攻资格",
+      "parent": "race-stone",
+      "conditionTag": "矿石",
+      "effectGroup": "target-enemy-any-of-stone-normal-attack--enable-killer",
+      "displayOrder": [
+        "c3f6df4b71e94a5f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-stone-target-enemy-any-of-stone-physical--enable-killer": {
+      "label": "对矿石类型：物理攻击特攻资格",
+      "parent": "race-stone",
+      "conditionTag": "矿石",
+      "effectGroup": "target-enemy-any-of-stone-physical--enable-killer",
+      "displayOrder": [
+        "1cbc7da1f069d4f4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-stone-target-enemy-any-of-stone-unspecified--rate-up": {
+      "label": "对矿石类型：暴击率增加",
+      "parent": "race-stone",
+      "conditionTag": "矿石",
+      "effectGroup": "target-enemy-any-of-stone-unspecified--rate-up",
+      "displayOrder": [
+        "22f55aaac7d9b369"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-stone-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-stone",
+      "conditionTag": "矿石",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "94cdc5cc53c80e9b",
+        "全部技能:all:344"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 1,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-stone-attacking-enemy-any-of-stone-unspecified--incoming-damage-down": {
+      "label": "受到矿石类型：伤害减少",
+      "parent": "race-stone",
+      "conditionTag": "矿石",
+      "effectGroup": "attacking-enemy-any-of-stone-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "d17b229ba3d183d3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-stone-target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer": {
+      "label": "对士兵／鱼／龙／矿石类型：物理攻击特攻资格",
+      "parent": "race-stone",
+      "conditionTag": "矿石",
+      "effectGroup": "target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer",
+      "displayOrder": [
+        "1b43c763fc514311"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-stone-target-enemy-any-of-stone-attack-magic--enable-killer": {
+      "label": "对矿石类型：魔法攻击特攻资格",
+      "parent": "race-stone",
+      "conditionTag": "矿石",
+      "effectGroup": "target-enemy-any-of-stone-attack-magic--enable-killer",
+      "displayOrder": [
+        "01dd6357b37ee5ef"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-target-enemy-any-of-machine-normal-attack--enable-killer": {
+      "label": "对机械类型：普通攻击特攻资格",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "target-enemy-any-of-machine-normal-attack--enable-killer",
+      "displayOrder": [
+        "32babdfb0554ed43"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-target-enemy-any-of-machine-physical--enable-killer": {
+      "label": "对机械类型：物理攻击特攻资格",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "target-enemy-any-of-machine-physical--enable-killer",
+      "displayOrder": [
+        "bb1b82cb4d89be58",
+        "edaa295f9aa089b8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "1678d46d7c6ab2ee",
+        "ed504f94c8b57e47",
+        "7ee810a4231404fe",
+        "4aafd29a15ad98c4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 4,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-attacking-enemy-any-of-machine-unspecified--incoming-damage-down": {
+      "label": "受到机械类型：伤害减少",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "attacking-enemy-any-of-machine-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "bd3af6ef7a1da443"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-target-enemy-any-of-machine-attack-magic--enable-killer": {
+      "label": "对机械类型：魔法攻击特攻资格",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "target-enemy-any-of-machine-attack-magic--enable-killer",
+      "displayOrder": [
+        "85cce3de46a53780"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-target-enemy-any-of-machine-ultimate--enable-killer": {
+      "label": "对机械类型：必杀特攻资格",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "target-enemy-any-of-machine-ultimate--enable-killer",
+      "displayOrder": [
+        "edaa295f9aa089b8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-target-enemy-any-of-machine-counter--enable-killer": {
+      "label": "对机械类型：反击特攻资格",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "target-enemy-any-of-machine-counter--enable-killer",
+      "displayOrder": [
+        "edaa295f9aa089b8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-allied-unit-count-any-of-machine-skill--count-scaled-cap-up": {
+      "label": "按我方机械类型人数：特技上限增加",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "allied-unit-count-any-of-machine-skill--count-scaled-cap-up",
+      "displayOrder": [
+        "4aafd29a15ad98c4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-allied-unit-count-any-of-machine-ultimate--count-scaled-cap-up": {
+      "label": "按我方机械类型人数：必杀上限增加",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "allied-unit-count-any-of-machine-ultimate--count-scaled-cap-up",
+      "displayOrder": [
+        "4aafd29a15ad98c4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-machine-allied-unit-count-any-of-machine-counter--count-scaled-cap-up": {
+      "label": "按我方机械类型人数：反击上限增加",
+      "parent": "race-machine",
+      "conditionTag": "机械种族",
+      "effectGroup": "allied-unit-count-any-of-machine-counter--count-scaled-cap-up",
+      "displayOrder": [
+        "4aafd29a15ad98c4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-fish-normal-attack--enable-killer": {
+      "label": "对鱼类型：普通攻击特攻资格",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-fish-normal-attack--enable-killer",
+      "displayOrder": [
+        "1549fe8ad94d1f32"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-fish-physical--enable-killer": {
+      "label": "对鱼类型：物理攻击特攻资格",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-fish-physical--enable-killer",
+      "displayOrder": [
+        "2f2b008db9812d80",
+        "e60d08454c99c899"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击特攻资格",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--enable-killer",
+      "displayOrder": [
+        "088d62f108c82b62"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "e40393f75e668fa8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer": {
+      "label": "对士兵／鱼／龙／矿石类型：物理攻击特攻资格",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer",
+      "displayOrder": [
+        "1b43c763fc514311"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-attacking-enemy-any-of-fish-unspecified--incoming-damage-down": {
+      "label": "受到鱼类型：伤害减少",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "attacking-enemy-any-of-fish-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "683858bd752288dd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-fish-ultimate--enable-killer": {
+      "label": "对鱼类型：必杀特攻资格",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-fish-ultimate--enable-killer",
+      "displayOrder": [
+        "e60d08454c99c899"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-fish-counter--enable-killer": {
+      "label": "对鱼类型：反击特攻资格",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-fish-counter--enable-killer",
+      "displayOrder": [
+        "e60d08454c99c899"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-fish-attack-magic--enable-killer": {
+      "label": "对鱼类型：魔法攻击特攻资格",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-fish-attack-magic--enable-killer",
+      "displayOrder": [
+        "8c2b1825c169cf3b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-beast-fish-bird-physical--damage-up": {
+      "label": "对兽／鱼／鸟类型：物理攻击伤害增加",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-beast-fish-bird-physical--damage-up",
+      "displayOrder": [
+        "20486fa2dfba235e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-fish-physical--damage-up": {
+      "label": "对鱼类型：物理攻击伤害增加",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-fish-physical--damage-up",
+      "displayOrder": [
+        "fe3ad93438c245be"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-fish-physical--cap-up": {
+      "label": "对鱼类型：物理攻击伤害上限增加",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-fish-physical--cap-up",
+      "displayOrder": [
+        "fe3ad93438c245be"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-fish-ultimate--damage-up": {
+      "label": "对鱼类型：必杀伤害增加",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-fish-ultimate--damage-up",
+      "displayOrder": [
+        "fe3ad93438c245be"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-fish-ultimate--cap-up": {
+      "label": "对鱼类型：必杀伤害上限增加",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-fish-ultimate--cap-up",
+      "displayOrder": [
+        "fe3ad93438c245be"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：普通攻击特攻资格",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-normal-attack--enable-killer",
+      "displayOrder": [
+        "dda1c38d5e1c90f8"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：物理攻击伤害上限增加",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-physical--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-fish-target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up": {
+      "label": "对兽／植物／昆虫／鸟／鱼／魔法生物类型：必杀伤害上限增加",
+      "parent": "race-fish",
+      "conditionTag": "鱼",
+      "effectGroup": "target-enemy-any-of-beast-plant-insect-bird-fish-creature-ultimate--cap-up",
+      "displayOrder": [
+        "3d51ab68dddbe948"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-spirit-normal-attack--enable-killer": {
+      "label": "对精灵类型：普通攻击特攻资格",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-spirit-normal-attack--enable-killer",
+      "displayOrder": [
+        "e6e5ad9aa042cbb4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-spirit-physical--enable-killer": {
+      "label": "对精灵类型：物理攻击特攻资格",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-spirit-physical--enable-killer",
+      "displayOrder": [
+        "4e8aaad97bf6484f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-attacking-enemy-any-of-spirit-unspecified--incoming-damage-down": {
+      "label": "受到精灵类型：伤害减少",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "attacking-enemy-any-of-spirit-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "bf12a6d2d0d325ec"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer": {
+      "label": "对神／龙／精灵／不死生物类型：物理攻击特攻资格",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer",
+      "displayOrder": [
+        "b34a5ea033cff851"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "全部技能:all:439",
+        "8545a75056e827a4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-spirit-attack-magic--enable-killer": {
+      "label": "对精灵类型：魔法攻击特攻资格",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-spirit-attack-magic--enable-killer",
+      "displayOrder": [
+        "57d0535b82a9b33c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up": {
+      "label": "对魔法生物／不死生物／精灵类型：光属性伤害增加",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-creature-undead-spirit-unspecified-light-damage-up",
+      "displayOrder": [
+        "9df5299c661312ec"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-spirit-physical--damage-up": {
+      "label": "对精灵类型：物理攻击伤害增加",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-spirit-physical--damage-up",
+      "displayOrder": [
+        "eca09257aafff0da"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-spirit-physical--cap-up": {
+      "label": "对精灵类型：物理攻击伤害上限增加",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-spirit-physical--cap-up",
+      "displayOrder": [
+        "eca09257aafff0da"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-spirit-ultimate--damage-up": {
+      "label": "对精灵类型：必杀伤害增加",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-spirit-ultimate--damage-up",
+      "displayOrder": [
+        "eca09257aafff0da"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-spirit-ultimate--cap-up": {
+      "label": "对精灵类型：必杀伤害上限增加",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-spirit-ultimate--cap-up",
+      "displayOrder": [
+        "eca09257aafff0da"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer": {
+      "label": "对神／龙／精灵／不死生物类型：普通攻击特攻资格",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer",
+      "displayOrder": [
+        "08ba2a63471cced7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-all-allies-any-of-creature-undead-spirit-physical--damage-up": {
+      "label": "开场全队均为魔法生物／不死生物／精灵类型：物理攻击伤害增加",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "all-allies-any-of-creature-undead-spirit-physical--damage-up",
+      "displayOrder": [
+        "d291d901e1625ee2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-spirit-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：魔法攻击伤害按人数增加",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-spirit-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：特技伤害按人数增加",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-spirit-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up": {
+      "label": "对神／兽／魔法生物／不死生物／精灵类型：伤害上限按同名技能人数增加",
+      "parent": "race-spirit",
+      "conditionTag": "精灵",
+      "effectGroup": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up",
+      "displayOrder": [
+        "9a9df999dd518e22"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-dragon-normal-attack--enable-killer": {
+      "label": "对龙类型：普通攻击特攻资格",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-dragon-normal-attack--enable-killer",
+      "displayOrder": [
+        "2b30173ab0d7d7f6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-dragon-physical--enable-killer": {
+      "label": "对龙类型：物理攻击特攻资格",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-dragon-physical--enable-killer",
+      "displayOrder": [
+        "8ebe295ff024625c",
+        "75d1684f4522a2de"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "3aef06f6e8cfc48a",
+        "c16c507cf0c2f9db",
+        "911c90d5593ecf69",
+        "86c11809d76a7959"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 3,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-dragon-attacking-enemy-any-of-dragon-unspecified--incoming-damage-down": {
+      "label": "受到龙类型：伤害减少",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "attacking-enemy-any-of-dragon-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "95fd375fdfe9cfdc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer": {
+      "label": "对神／龙／精灵／不死生物类型：物理攻击特攻资格",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer",
+      "displayOrder": [
+        "b34a5ea033cff851"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer": {
+      "label": "对士兵／鱼／龙／矿石类型：物理攻击特攻资格",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer",
+      "displayOrder": [
+        "1b43c763fc514311"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-dragon-attack-magic--enable-killer": {
+      "label": "对龙类型：魔法攻击特攻资格",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-dragon-attack-magic--enable-killer",
+      "displayOrder": [
+        "e677b6a7691dc515"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer": {
+      "label": "对神／龙／精灵／不死生物类型：普通攻击特攻资格",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer",
+      "displayOrder": [
+        "08ba2a63471cced7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-dragon-ultimate--enable-killer": {
+      "label": "对龙类型：必杀特攻资格",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-dragon-ultimate--enable-killer",
+      "displayOrder": [
+        "75d1684f4522a2de"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-dragon-counter--enable-killer": {
+      "label": "对龙类型：反击特攻资格",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-dragon-counter--enable-killer",
+      "displayOrder": [
+        "75d1684f4522a2de"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-self-any-of-dragon-ultimate--cap-up-critical": {
+      "label": "自身为龙类型：必杀暴击伤害上限增加",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "self-any-of-dragon-ultimate--cap-up-critical",
+      "displayOrder": [
+        "0d45e653455b29d1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-self-any-of-dragon-ultimate--enable-critical": {
+      "label": "自身为龙类型：必杀暴击资格",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "self-any-of-dragon-ultimate--enable-critical",
+      "displayOrder": [
+        "0d45e653455b29d1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-dragon-physical--damage-up": {
+      "label": "对龙类型：物理攻击伤害增加",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-dragon-physical--damage-up",
+      "displayOrder": [
+        "af2b1b7f6ebbb498"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-dragon-physical--cap-up": {
+      "label": "对龙类型：物理攻击伤害上限增加",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-dragon-physical--cap-up",
+      "displayOrder": [
+        "af2b1b7f6ebbb498"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-dragon-ultimate--damage-up": {
+      "label": "对龙类型：必杀伤害增加",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-dragon-ultimate--damage-up",
+      "displayOrder": [
+        "af2b1b7f6ebbb498"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-dragon-target-enemy-any-of-dragon-ultimate--cap-up": {
+      "label": "对龙类型：必杀伤害上限增加",
+      "parent": "race-dragon",
+      "conditionTag": "龙",
+      "effectGroup": "target-enemy-any-of-dragon-ultimate--cap-up",
+      "displayOrder": [
+        "af2b1b7f6ebbb498"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-normal-attack--enable-killer": {
+      "label": "对神类型：普通攻击特攻资格",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-normal-attack--enable-killer",
+      "displayOrder": [
+        "517660b4dbea46e3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-physical--enable-killer": {
+      "label": "对神类型：物理攻击特攻资格",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-physical--enable-killer",
+      "displayOrder": [
+        "53507ad574cacf9f",
+        "99a9a562aa4868a1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-attacking-enemy-any-of-god-unspecified--incoming-damage-down": {
+      "label": "受到神类型：伤害减少",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "attacking-enemy-any-of-god-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "976ffd1698aff8cb",
+        "c39ff53ef05006ec"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "8b41a79842e5b92a",
+        "b3b20e5b26417ee0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer": {
+      "label": "对神／龙／精灵／不死生物类型：物理攻击特攻资格",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-dragon-spirit-undead-physical--enable-killer",
+      "displayOrder": [
+        "b34a5ea033cff851"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-attacking-enemy-none-of-god-unspecified--incoming-damage-down": {
+      "label": "受到不具备神类型：伤害减少",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "attacking-enemy-none-of-god-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "d3a16e600a57daad"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-ultimate--enable-killer": {
+      "label": "对神类型：必杀特攻资格",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-ultimate--enable-killer",
+      "displayOrder": [
+        "99a9a562aa4868a1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-counter--enable-killer": {
+      "label": "对神类型：反击特攻资格",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-counter--enable-killer",
+      "displayOrder": [
+        "99a9a562aa4868a1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-none-of-god-unspecified--damage-up": {
+      "label": "对不具备神类型：伤害增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-none-of-god-unspecified--damage-up",
+      "displayOrder": [
+        "f9c63a04f63f89ea"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-attack-magic--enable-killer": {
+      "label": "对神类型：魔法攻击特攻资格",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-attack-magic--enable-killer",
+      "displayOrder": [
+        "420153e0bbd5a460"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-physical--damage-up": {
+      "label": "对神类型：物理攻击伤害增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-physical--damage-up",
+      "displayOrder": [
+        "7b6e96149fd8ff79"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-physical--cap-up": {
+      "label": "对神类型：物理攻击伤害上限增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-physical--cap-up",
+      "displayOrder": [
+        "7b6e96149fd8ff79"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-ultimate--damage-up": {
+      "label": "对神类型：必杀伤害增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-ultimate--damage-up",
+      "displayOrder": [
+        "7b6e96149fd8ff79"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-ultimate--cap-up": {
+      "label": "对神类型：必杀伤害上限增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-ultimate--cap-up",
+      "displayOrder": [
+        "7b6e96149fd8ff79"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer": {
+      "label": "对神／龙／精灵／不死生物类型：普通攻击特攻资格",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-dragon-spirit-undead-normal-attack--enable-killer",
+      "displayOrder": [
+        "08ba2a63471cced7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-receive-attack-magic-incoming-damage-down": {
+      "label": "信仰接受：受到魔法攻击伤害减少",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-receive-attack-magic-incoming-damage-down",
+      "displayOrder": [
+        "5dbd4f977800ad88"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-receive-physical-damage-up": {
+      "label": "信仰接受：物理攻击伤害增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-receive-physical-damage-up",
+      "displayOrder": [
+        "5dbd4f977800ad88"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-receive-physical-incoming-damage-down": {
+      "label": "信仰接受：受到物理攻击伤害减少",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-receive-physical-incoming-damage-down",
+      "displayOrder": [
+        "5dbd4f977800ad88"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-receive-unspecifiedlight-damage-up": {
+      "label": "信仰接受：光属性伤害增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-receive-unspecifiedlight-damage-up",
+      "displayOrder": [
+        "5dbd4f977800ad88"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-receive-STR-stat-up": {
+      "label": "信仰接受：攻击力增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-receive-STR-stat-up",
+      "displayOrder": [
+        "5dbd4f977800ad88"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-provide-attack-magic-incoming-damage-down": {
+      "label": "神类型提供者：受到魔法攻击伤害减少",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-provide-attack-magic-incoming-damage-down",
+      "displayOrder": [
+        "7611b3c1ae612f0e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-provide-physical-damage-up": {
+      "label": "神类型提供者：物理攻击伤害增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-provide-physical-damage-up",
+      "displayOrder": [
+        "8c11c64768072670"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-provide-physical-incoming-damage-down": {
+      "label": "神类型提供者：受到物理攻击伤害减少",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-provide-physical-incoming-damage-down",
+      "displayOrder": [
+        "f063ab920fec3e4a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up": {
+      "label": "对神／兽／魔法生物／不死生物／精灵类型：伤害上限按同名技能人数增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "target-enemy-any-of-god-beast-creature-undead-spirit-unspecified--team-tiered-cap-up",
+      "displayOrder": [
+        "9a9df999dd518e22"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-provide-unspecifiedlight-damage-up": {
+      "label": "神类型提供者：光属性伤害增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-provide-unspecifiedlight-damage-up",
+      "displayOrder": [
+        "ca8779066b942675"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-god-faith-provide-STR-stat-up": {
+      "label": "神类型提供者：攻击力增加",
+      "parent": "race-god",
+      "conditionTag": "神",
+      "effectGroup": "faith-provide-STR-stat-up",
+      "displayOrder": [
+        "7bc369d4036dd098"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-normal-attack--enable-killer": {
+      "label": "对士兵类型：普通攻击特攻资格",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-normal-attack--enable-killer",
+      "displayOrder": [
+        "全部技能:all:66"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-physical--enable-killer": {
+      "label": "对士兵类型：物理攻击特攻资格",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-physical--enable-killer",
+      "displayOrder": [
+        "全部技能:all:67",
+        "全部技能:all:632"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-attacking-enemy-any-of-soldier-unspecified--incoming-damage-down": {
+      "label": "受到士兵类型：伤害减少",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "attacking-enemy-any-of-soldier-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "全部技能:all:242",
+        "全部技能:all:684"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "全部技能:all:364",
+        "b1235f3ab30aff73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer": {
+      "label": "对士兵／鱼／龙／矿石类型：物理攻击特攻资格",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-fish-dragon-stone-physical--enable-killer",
+      "displayOrder": [
+        "1b43c763fc514311"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-random-type-soldier-knight-sniper-sorcerer": {
+      "label": "开场：随机追加人类系1种类型",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "random-type-soldier-knight-sniper-sorcerer",
+      "displayOrder": [
+        "8ba52a420286cb67"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：魔法攻击特攻资格",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer",
+      "displayOrder": [
+        "858365fd1fc6ea73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：普通攻击特攻资格",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer",
+      "displayOrder": [
+        "ae4a9316a61a0384"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-ultimate--enable-killer": {
+      "label": "对士兵类型：必杀特攻资格",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-ultimate--enable-killer",
+      "displayOrder": [
+        "全部技能:all:632"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-counter--enable-killer": {
+      "label": "对士兵类型：反击特攻资格",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-counter--enable-killer",
+      "displayOrder": [
+        "全部技能:all:632"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down": {
+      "label": "自身不具备人类系任何类型：受到伤害减少",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "90487d6c687abdbc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-attack-magic--enable-killer": {
+      "label": "对士兵类型：魔法攻击特攻资格",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-attack-magic--enable-killer",
+      "displayOrder": [
+        "全部技能:all:769"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：伤害增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up",
+      "displayOrder": [
+        "31b0f1c6d90ec0cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down": {
+      "label": "受到士兵／骑士／狙击手／魔法师类型：伤害减少",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "31b0f1c6d90ec0cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-physical--damage-up": {
+      "label": "对士兵类型：物理攻击伤害增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-physical--damage-up",
+      "displayOrder": [
+        "全部技能:all:802"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-physical--cap-up": {
+      "label": "对士兵类型：物理攻击伤害上限增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-physical--cap-up",
+      "displayOrder": [
+        "全部技能:all:802"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-ultimate--damage-up": {
+      "label": "对士兵类型：必杀伤害增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-ultimate--damage-up",
+      "displayOrder": [
+        "全部技能:all:802"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-target-enemy-any-of-soldier-ultimate--cap-up": {
+      "label": "对士兵类型：必杀伤害上限增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "target-enemy-any-of-soldier-ultimate--cap-up",
+      "displayOrder": [
+        "全部技能:all:802"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-allied-unit-count-any-of-soldier-skill--count-scaled-cap-up": {
+      "label": "按我方士兵类型人数：特技上限增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "allied-unit-count-any-of-soldier-skill--count-scaled-cap-up",
+      "displayOrder": [
+        "b1235f3ab30aff73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-allied-unit-count-any-of-soldier-ultimate--count-scaled-cap-up": {
+      "label": "按我方士兵类型人数：必杀上限增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "allied-unit-count-any-of-soldier-ultimate--count-scaled-cap-up",
+      "displayOrder": [
+        "b1235f3ab30aff73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-soldier-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师类型：冰属性伤害按人数增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-soldier-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师类型：光属性伤害按人数增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-soldier-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：魔法攻击伤害按人数增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-soldier-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：特技伤害按人数增加",
+      "parent": "race-soldier",
+      "conditionTag": "士兵",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-knight-normal-attack--enable-killer": {
+      "label": "对骑士类型：普通攻击特攻资格",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-knight-normal-attack--enable-killer",
+      "displayOrder": [
+        "b1b5416e553b19cd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-knight-physical--enable-killer": {
+      "label": "对骑士类型：物理攻击特攻资格",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-knight-physical--enable-killer",
+      "displayOrder": [
+        "36b22a9034809a96",
+        "1142a097127c9dee"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "b25e8f7c8b0f317e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-random-type-soldier-knight-sniper-sorcerer": {
+      "label": "开场：随机追加人类系1种类型",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "random-type-soldier-knight-sniper-sorcerer",
+      "displayOrder": [
+        "8ba52a420286cb67"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：魔法攻击特攻资格",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer",
+      "displayOrder": [
+        "858365fd1fc6ea73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：普通攻击特攻资格",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer",
+      "displayOrder": [
+        "ae4a9316a61a0384"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-knight-attack-magic--enable-killer": {
+      "label": "对骑士类型：魔法攻击特攻资格",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-knight-attack-magic--enable-killer",
+      "displayOrder": [
+        "b5a0235fc70d847c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-attacking-enemy-any-of-knight-unspecified--incoming-damage-down": {
+      "label": "受到骑士类型：伤害减少",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "attacking-enemy-any-of-knight-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "e604afe712f284b5"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down": {
+      "label": "自身不具备人类系任何类型：受到伤害减少",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "90487d6c687abdbc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：伤害增加",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up",
+      "displayOrder": [
+        "31b0f1c6d90ec0cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down": {
+      "label": "受到士兵／骑士／狙击手／魔法师类型：伤害减少",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "31b0f1c6d90ec0cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-knight-physical--damage-up": {
+      "label": "对骑士类型：物理攻击伤害增加",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-knight-physical--damage-up",
+      "displayOrder": [
+        "011b1a6b3ec0b62f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-knight-physical--cap-up": {
+      "label": "对骑士类型：物理攻击伤害上限增加",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-knight-physical--cap-up",
+      "displayOrder": [
+        "011b1a6b3ec0b62f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-knight-ultimate--damage-up": {
+      "label": "对骑士类型：必杀伤害增加",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-knight-ultimate--damage-up",
+      "displayOrder": [
+        "011b1a6b3ec0b62f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-knight-ultimate--cap-up": {
+      "label": "对骑士类型：必杀伤害上限增加",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-knight-ultimate--cap-up",
+      "displayOrder": [
+        "011b1a6b3ec0b62f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师类型：冰属性伤害按人数增加",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-knight-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师类型：光属性伤害按人数增加",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-knight-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：魔法攻击伤害按人数增加",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-knight-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：特技伤害按人数增加",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-knight-ultimate--enable-killer": {
+      "label": "对骑士类型：必杀特攻资格",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-knight-ultimate--enable-killer",
+      "displayOrder": [
+        "1142a097127c9dee"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-knight-target-enemy-any-of-knight-counter--enable-killer": {
+      "label": "对骑士类型：反击特攻资格",
+      "parent": "race-knight",
+      "conditionTag": "骑士",
+      "effectGroup": "target-enemy-any-of-knight-counter--enable-killer",
+      "displayOrder": [
+        "1142a097127c9dee"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-sniper-normal-attack--enable-killer": {
+      "label": "对狙击手类型：普通攻击特攻资格",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-sniper-normal-attack--enable-killer",
+      "displayOrder": [
+        "全部技能:all:70"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-sniper-physical--enable-killer": {
+      "label": "对狙击手类型：物理攻击特攻资格",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-sniper-physical--enable-killer",
+      "displayOrder": [
+        "全部技能:all:71",
+        "全部技能:all:704"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "全部技能:all:410"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-random-type-soldier-knight-sniper-sorcerer": {
+      "label": "开场：随机追加人类系1种类型",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "random-type-soldier-knight-sniper-sorcerer",
+      "displayOrder": [
+        "8ba52a420286cb67"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：魔法攻击特攻资格",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer",
+      "displayOrder": [
+        "858365fd1fc6ea73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-attacking-enemy-any-of-sniper-unspecified--incoming-damage-down": {
+      "label": "受到狙击手类型：伤害减少",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "attacking-enemy-any-of-sniper-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "全部技能:all:489"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：普通攻击特攻资格",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer",
+      "displayOrder": [
+        "ae4a9316a61a0384"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-sniper-ultimate--enable-killer": {
+      "label": "对狙击手类型：必杀特攻资格",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-sniper-ultimate--enable-killer",
+      "displayOrder": [
+        "全部技能:all:704"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-sniper-counter--enable-killer": {
+      "label": "对狙击手类型：反击特攻资格",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-sniper-counter--enable-killer",
+      "displayOrder": [
+        "全部技能:all:704"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down": {
+      "label": "自身不具备人类系任何类型：受到伤害减少",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "90487d6c687abdbc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：伤害增加",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up",
+      "displayOrder": [
+        "31b0f1c6d90ec0cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down": {
+      "label": "受到士兵／骑士／狙击手／魔法师类型：伤害减少",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "31b0f1c6d90ec0cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-sniper-attack-magic--enable-killer": {
+      "label": "对狙击手类型：魔法攻击特攻资格",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-sniper-attack-magic--enable-killer",
+      "displayOrder": [
+        "全部技能:all:845"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师类型：冰属性伤害按人数增加",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-sniper-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师类型：光属性伤害按人数增加",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-sniper-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：魔法攻击伤害按人数增加",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-sniper-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：特技伤害按人数增加",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-sniper-physical--damage-up": {
+      "label": "对狙击手类型：物理攻击伤害增加",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-sniper-physical--damage-up",
+      "displayOrder": [
+        "全部技能:all:910"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-sniper-physical--cap-up": {
+      "label": "对狙击手类型：物理攻击伤害上限增加",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-sniper-physical--cap-up",
+      "displayOrder": [
+        "全部技能:all:910"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-sniper-ultimate--damage-up": {
+      "label": "对狙击手类型：必杀伤害增加",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-sniper-ultimate--damage-up",
+      "displayOrder": [
+        "全部技能:all:910"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sniper-target-enemy-any-of-sniper-ultimate--cap-up": {
+      "label": "对狙击手类型：必杀伤害上限增加",
+      "parent": "race-sniper",
+      "conditionTag": "狙击手",
+      "effectGroup": "target-enemy-any-of-sniper-ultimate--cap-up",
+      "displayOrder": [
+        "全部技能:all:910"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-target-enemy-any-of-sorcerer-normal-attack--enable-killer": {
+      "label": "对魔法师类型：普通攻击特攻资格",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "target-enemy-any-of-sorcerer-normal-attack--enable-killer",
+      "displayOrder": [
+        "034b0063a9477540"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-target-enemy-any-of-sorcerer-physical--enable-killer": {
+      "label": "对魔法师类型：物理攻击特攻资格",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "target-enemy-any-of-sorcerer-physical--enable-killer",
+      "displayOrder": [
+        "bad368f9b1df2b7d",
+        "全部技能:all:738"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-self-add-type": {
+      "label": "自身追加类型",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "self-add-type",
+      "displayOrder": [
+        "9af75e5034ae0811"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-attacking-enemy-any-of-sorcerer-unspecified--incoming-damage-down": {
+      "label": "受到魔法师类型：伤害减少",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "attacking-enemy-any-of-sorcerer-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "全部技能:all:256",
+        "全部技能:all:922"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-random-type-soldier-knight-sniper-sorcerer": {
+      "label": "开场：随机追加人类系1种类型",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "random-type-soldier-knight-sniper-sorcerer",
+      "displayOrder": [
+        "8ba52a420286cb67"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：魔法攻击特攻资格",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-attack-magic--enable-killer",
+      "displayOrder": [
+        "858365fd1fc6ea73"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-target-enemy-any-of-sorcerer-attack-magic--enable-killer": {
+      "label": "对魔法师类型：魔法攻击特攻资格",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "target-enemy-any-of-sorcerer-attack-magic--enable-killer",
+      "displayOrder": [
+        "全部技能:all:478"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：普通攻击特攻资格",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-normal-attack--enable-killer",
+      "displayOrder": [
+        "ae4a9316a61a0384"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-target-enemy-any-of-sorcerer-ultimate--enable-killer": {
+      "label": "对魔法师类型：必杀特攻资格",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "target-enemy-any-of-sorcerer-ultimate--enable-killer",
+      "displayOrder": [
+        "全部技能:all:738"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-target-enemy-any-of-sorcerer-counter--enable-killer": {
+      "label": "对魔法师类型：反击特攻资格",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "target-enemy-any-of-sorcerer-counter--enable-killer",
+      "displayOrder": [
+        "全部技能:all:738"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down": {
+      "label": "自身不具备人类系任何类型：受到伤害减少",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "self-none-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "90487d6c687abdbc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up": {
+      "label": "对士兵／骑士／狙击手／魔法师类型：伤害增加",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "target-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--damage-up",
+      "displayOrder": [
+        "31b0f1c6d90ec0cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down": {
+      "label": "受到士兵／骑士／狙击手／魔法师类型：伤害减少",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "attacking-enemy-any-of-soldier-knight-sniper-sorcerer-unspecified--incoming-damage-down",
+      "displayOrder": [
+        "31b0f1c6d90ec0cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师类型：冰属性伤害按人数增加",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-ice-team-scaled-damage-up",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师类型：光属性伤害按人数增加",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-unspecified-light-team-scaled-damage-up",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：魔法攻击伤害按人数增加",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-attack-magic--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-sorcerer-allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up": {
+      "label": "开场统计我方士兵／骑士／狙击手／魔法师／精灵类型：特技伤害按人数增加",
+      "parent": "race-sorcerer",
+      "conditionTag": "魔法师",
+      "effectGroup": "allied-unit-count-any-of-soldier-knight-sniper-sorcerer-spirit-skill--team-scaled-damage-up",
+      "displayOrder": [
+        "869205f984d49c10"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-common-outgoing-unspecified-damage-up": {
+      "label": "触发特攻：伤害增加",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "outgoing-unspecified-damage-up",
+      "displayOrder": [
+        "9146eb2670c69122",
+        "32f98ad19af760dc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-common-outgoing-unspecified-cap-up-buff": {
+      "label": "开场赋予其他友方：触发特攻：伤害上限增加",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "outgoing-unspecified-cap-up-buff",
+      "displayOrder": [
+        "619c3ef058c4b219"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-common-incoming-unspecified-incoming-damage-down": {
+      "label": "受到特攻：伤害减少",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "incoming-unspecified-incoming-damage-down",
+      "displayOrder": [
+        "b8d0c68c7255f2dd",
+        "32f98ad19af760dc",
+        "92cbaf3db3586d0d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-common-target-enemy-and-self-shared-type--physical--damage-up": {
+      "label": "目标与自身同类型：物理攻击伤害增加",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "target-enemy-and-self-shared-type--physical--damage-up",
+      "displayOrder": [
+        "9e714945b3c31514"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-common-outgoing-attack-magic-damage-up": {
+      "label": "触发特攻：魔法攻击伤害增加",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "outgoing-attack-magic-damage-up",
+      "displayOrder": [
+        "5f13abe1484bc2c7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-common-random-type-": {
+      "label": "开场：随机追加1种类型",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "random-type-",
+      "displayOrder": [
+        "719b23004e804e89"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-common-movement--movement-speed-up-buff": {
+      "label": "自身至少2种类型：速度Buff",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "movement--movement-speed-up-buff",
+      "displayOrder": [
+        "1faea4cee43b7137"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-common-outgoing-unspecified-conditional-cap-up": {
+      "label": "触发特攻：特攻伤害上限按武器数量取档",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "outgoing-unspecified-conditional-cap-up",
+      "displayOrder": [
+        "f00b7298670734fe",
+        "0f9fbe87a80cc013",
+        "cc874bcc3159e258",
+        "0725be276a780aef"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 4,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-common-incoming-unspecified-incoming-damage-down-or-weakness": {
+      "label": "受到特攻或属性弱点伤害减少（不叠加）",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "incoming-unspecified-incoming-damage-down-or-weakness",
+      "displayOrder": [
+        "49f537942bfaa37d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "race-common-attacking-enemy-and-self-shared-type--physical--incoming-damage-down": {
+      "label": "攻击者与自身同类型：物理攻击伤害减少",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "attacking-enemy-and-self-shared-type--physical--incoming-damage-down",
+      "displayOrder": [
+        "a00efae59bd351ce"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "race-common-outgoing-unspecified-damage-up-single-spear": {
+      "label": "仅装备一把枪：触发特攻：伤害增加",
+      "parent": "race-common",
+      "conditionTag": "种族／特攻共通",
+      "effectGroup": "outgoing-unspecified-damage-up-single-spear",
+      "displayOrder": [
+        "b59538669bf4ade7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -105192,14 +125882,76 @@ export const SKILL_LABELING_CATALOG = {
         "cd58d19d280ac44f",
         "a4f12207dfb9a3df",
         "181c27a332185ca2",
-        "dda1c38d5e1c90f8"
+        "dda1c38d5e1c90f8",
+        "35eec30328c81b5c",
+        "ad2eadc4169ea477",
+        "25fa2b5f258876bd",
+        "f613b94a7fe3eac3",
+        "6439186351318d8f",
+        "c3f6df4b71e94a5f",
+        "32babdfb0554ed43",
+        "1549fe8ad94d1f32",
+        "e6e5ad9aa042cbb4",
+        "2b30173ab0d7d7f6",
+        "517660b4dbea46e3",
+        "全部技能:all:66",
+        "b1b5416e553b19cd",
+        "全部技能:all:70",
+        "034b0063a9477540",
+        "ae4a9316a61a0384",
+        "08ba2a63471cced7",
+        "976ffd1698aff8cb",
+        "全部技能:all:242",
+        "11d8aa780c551990",
+        "全部技能:all:256",
+        "95fd375fdfe9cfdc",
+        "ea6a22aff62a9e0b",
+        "bf12a6d2d0d325ec",
+        "全部技能:all:353",
+        "d17b229ba3d183d3",
+        "683858bd752288dd",
+        "bd3af6ef7a1da443",
+        "全部技能:all:489",
+        "b4f171fe71f50e84",
+        "全部技能:all:684",
+        "e604afe712f284b5",
+        "aba38f88e29c5cdf",
+        "c39ff53ef05006ec",
+        "全部技能:all:922",
+        "d3a16e600a57daad",
+        "f9c63a04f63f89ea",
+        "0fdb64bdd938cb23",
+        "3aef06f6e8cfc48a",
+        "8b41a79842e5b92a",
+        "9af75e5034ae0811",
+        "21179861f90ff29d",
+        "3a50f5b2dda762d5",
+        "全部技能:all:324",
+        "1678d46d7c6ab2ee",
+        "全部技能:all:344",
+        "全部技能:all:364",
+        "e40393f75e668fa8",
+        "b25e8f7c8b0f317e",
+        "全部技能:all:410",
+        "全部技能:all:439",
+        "c29d9aca92cef0ef",
+        "92c0f8785ea384d7",
+        "90487d6c687abdbc",
+        "31b0f1c6d90ec0cf",
+        "9a9df999dd518e22",
+        "9146eb2670c69122",
+        "b8d0c68c7255f2dd",
+        "92cbaf3db3586d0d",
+        "32f98ad19af760dc",
+        "1faea4cee43b7137",
+        "49f537942bfaa37d"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 776,
-        "notRelatedUnique": 159,
-        "ready": 370,
-        "partial": 406,
+        "relatedUnique": 838,
+        "notRelatedUnique": 97,
+        "ready": 510,
+        "partial": 328,
         "unknown": 0
       }
     }

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "label": "鱼",
+  "race": "fish",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "race-effects-and-condition",
+  "skillIds": [
+    "1549fe8ad94d1f32",
+    "2f2b008db9812d80",
+    "088d62f108c82b62",
+    "e40393f75e668fa8",
+    "1b43c763fc514311",
+    "683858bd752288dd",
+    "e60d08454c99c899",
+    "8c2b1825c169cf3b",
+    "20486fa2dfba235e",
+    "fe3ad93438c245be",
+    "dda1c38d5e1c90f8",
+    "3d51ab68dddbe948"
+  ]
+}

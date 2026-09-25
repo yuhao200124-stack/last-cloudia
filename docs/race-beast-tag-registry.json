@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "label": "兽",
+  "race": "beast",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "race-effects-and-condition",
+  "skillIds": [
+    "35eec30328c81b5c",
+    "9cd6151ac492da12",
+    "3a50f5b2dda762d5",
+    "088d62f108c82b62",
+    "ea6a22aff62a9e0b",
+    "cb8a66108ee1f3e0",
+    "20486fa2dfba235e",
+    "全部技能:all:723",
+    "全部技能:all:728",
+    "dda1c38d5e1c90f8",
+    "3d51ab68dddbe948",
+    "全部技能:all:876",
+    "9a9df999dd518e22"
+  ]
+}

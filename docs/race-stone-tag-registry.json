@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "label": "矿石",
+  "race": "stone",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "race-effects-and-condition",
+  "skillIds": [
+    "c3f6df4b71e94a5f",
+    "1cbc7da1f069d4f4",
+    "22f55aaac7d9b369",
+    "94cdc5cc53c80e9b",
+    "全部技能:all:344",
+    "d17b229ba3d183d3",
+    "1b43c763fc514311",
+    "01dd6357b37ee5ef"
+  ]
+}

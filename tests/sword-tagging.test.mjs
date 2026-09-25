@@ -1,3 +1,4 @@
+import {ADDITIONAL_RACE_TAGS,partsBeforeRaces} from './race-preservation-helpers.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import {createHash} from 'node:crypto';
 import {SKILL_LABELING_CATALOG as catalog} from '../dist/skill-labeling-catalog.mjs';import {canonicalSkillRows,labelingView,skillLabelRows,filterLabelRows,resolveSkillLabels} from '../dist/skill-labeling-model.mjs';
 const read=p=>fs.readFileSync(new URL(p,import.meta.url),'utf8'),registry=JSON.parse(read('../docs/skill-labeling-registry.json')),audit=JSON.parse(read('../docs/sword-tag-audit.json'));const box={window:{}};vm.runInNewContext(read('../dist/data.js'),box);const data=box.window.SKILL_DATA,all=canonicalSkillRows(data),view=labelingView(catalog,'sword'),source=n=>all.find(r=>r.url.endsWith(`/gino/${n}`)),entry=n=>catalog.entries.find(e=>e.id===source(n).id),detail=n=>entry(n).tagDetails['剑'];
@@ -26,10 +27,10 @@ test('sword element matching and enemy weakness preserve their separate conditio
  for(const n of[502,777,829,901,938,1727])assert(!entry(n).remainingConditions.some(x=>x.includes('仅装备一把武器')));assert(entry(938).remainingConditions.some(x=>x.includes('属性')));
  for(const n of[293,775])assert(entry(n).remainingConditions.some(x=>x.includes('盔甲')));for(const n of[823,828]){assert(entry(n).remainingConditions.some(x=>x.includes('衣服')));assert(entry(n).remainingEffects.some(x=>x.includes('魔抗')));}
  assert.deepEqual(entry(1538).remainingConditions,[]);assert.deepEqual(entry(1548).remainingConditions,[]);assert.equal(entry(1548).judgment,'partial');assert(entry(1548).remainingEffects.some(x=>x.includes('HP')));assert(!entry(1548).remainingEffects.some(x=>x.includes('上限')));
- assert.equal(catalog.views.physical.counts.ready,96);assert.equal(catalog.views.fire.counts.ready,21);assert.equal(catalog.views.all.counts.relatedUnique,776);
+ assert.equal(catalog.views.physical.counts.ready,144);assert.equal(catalog.views.fire.counts.ready,21);assert.equal(catalog.views.all.counts.relatedUnique,838);
  // Claw completes the paired condition; the physical pass covers the cap.
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='爪');assert(resolveSkillLabels(earlier).find(e=>e.id===source(1538).id).remainingConditions.some(x=>x.includes('爪')));
- assert.equal(entry(1538).judgment,'ready');assert(entry(1538).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).includes('剑'));assert(entry(1538).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).includes('爪'));
+ assert.equal(entry(1538).judgment,'ready');assert(entry(1538).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('剑'));assert(entry(1538).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('爪'));
 });
 test('sword page separates 21 groups, counts 17 identities, sorts judgments and reviews edited descriptions',()=>{
  const elements=new Map(),get=k=>{if(!elements.has(k))elements.set(k,{value:'',textContent:'',innerHTML:'',hidden:false,listeners:{},addEventListener(k,v){this.listeners[k]=v;},setAttribute(){},focus(){}});return elements.get(k);};

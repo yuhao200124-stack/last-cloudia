@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 2,
+  "label": "骑士",
+  "race": "knight",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "race-effects-and-condition",
+  "skillIds": [
+    "b1b5416e553b19cd",
+    "36b22a9034809a96",
+    "b25e8f7c8b0f317e",
+    "8ba52a420286cb67",
+    "858365fd1fc6ea73",
+    "ae4a9316a61a0384",
+    "b5a0235fc70d847c",
+    "e604afe712f284b5",
+    "90487d6c687abdbc",
+    "31b0f1c6d90ec0cf",
+    "011b1a6b3ec0b62f",
+    "b50f1be94e5ec002",
+    "869205f984d49c10",
+    "1142a097127c9dee"
+  ]
+}

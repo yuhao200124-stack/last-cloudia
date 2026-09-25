@@ -2819,16 +2819,58 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "物理伤害、上限、受到物理伤害、特攻资格、暴击、参照计算与触发效果分别标注，保留属性／目标／装备等完整限制；原标签与跨页片段共用，未确认机制继续待判断。"
+        },
+        "龙": {
+          "summary": "类型追加“龙”。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "类型追加“龙”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "c16c507cf0c2f9db:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "dragon"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "物理"
+        "物理",
+        "龙"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“龙”"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -3783,17 +3825,219 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "士兵": {
+          "summary": "开场随机追加类型。",
+          "relation": "race-effects-and-condition",
+          "race": "soldier",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8ba52a420286cb67:effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "random-one-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "selection": "one-of-candidates",
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "battle-end",
+              "candidatePoolStatus": "confirmed",
+              "group": "random-type-soldier-knight-sniper-sorcerer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "骑士": {
+          "summary": "开场随机追加类型。",
+          "relation": "race-effects-and-condition",
+          "race": "knight",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8ba52a420286cb67:effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "random-one-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "selection": "one-of-candidates",
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "battle-end",
+              "candidatePoolStatus": "confirmed",
+              "group": "random-type-soldier-knight-sniper-sorcerer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "狙击手": {
+          "summary": "开场随机追加类型。",
+          "relation": "race-effects-and-condition",
+          "race": "sniper",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8ba52a420286cb67:effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "random-one-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "selection": "one-of-candidates",
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "battle-end",
+              "candidatePoolStatus": "confirmed",
+              "group": "random-type-soldier-knight-sniper-sorcerer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
+        },
+        "魔法师": {
+          "summary": "开场随机追加类型。",
+          "relation": "race-effects-and-condition",
+          "race": "sorcerer",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "开场随机追加类型",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "8ba52a420286cb67:effect-2",
+              "effectStacking": "once-per-skill",
+              "operation": "add-random-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "random-one-of",
+                "races": [
+                  "soldier",
+                  "knight",
+                  "sniper",
+                  "sorcerer"
+                ]
+              },
+              "selection": "one-of-candidates",
+              "addedTypeCount": 1,
+              "preservesExistingTypes": true,
+              "trigger": {
+                "event": "battle-start"
+              },
+              "endsOn": "battle-end",
+              "candidatePoolStatus": "confirmed",
+              "group": "random-type-soldier-knight-sniper-sorcerer"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "防御力",
-        "战斗开始"
+        "战斗开始",
+        "士兵",
+        "骑士",
+        "狙击手",
+        "魔法师"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "开场随机追加类型"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "攻击力与防御力加成为限时效果，适用活动时间待确认"
       ]
@@ -3870,19 +4114,66 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "种族／特攻共通": {
+          "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff。",
+          "relation": "race-effects-and-condition",
+          "race": "common",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-3"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "给选中友方赋予特攻伤害上限+5,000的40秒Buff",
+              "target": "selected-other-ally",
+              "isBuff": true,
+              "raceRole": "direct-effect",
+              "effectIdentity": "619c3ef058c4b219:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "requiresKillerHit": true
+              },
+              "buffType": "killer-damage-cap-up",
+              "capPoints": 5000,
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              },
+              "selection": {
+                "subject": "other-allies",
+                "metric": "STR",
+                "order": "highest",
+                "count": 1,
+                "excludeSelf": true
+              },
+              "group": "outgoing-unspecified-cap-up-buff"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "种族／特攻共通"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "给选中友方赋予特攻伤害上限+5,000的40秒Buff"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "选中除自身外攻击力最高的1名友方",
-        "触发特攻时生效"
+        "选中除自身外攻击力最高的1名友方"
       ]
     },
     {
@@ -8313,20 +8604,225 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "魔法增伤、上限、回复量、咏唱、暴击资格、特攻资格、承伤及触发效果分别标注；保留属性、目标、装备和施法种类限制。同一片段跨页共用，独立条件与未知参数继续待判断。"
+        },
+        "神": {
+          "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%；从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加；从神秘之力【守护】获得受到的物理攻击伤害-10%；从神秘之力【轮光】获得光属性伤害+10%；从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1",
+              "faith-physical-damage",
+              "faith-physical-mitigation",
+              "faith-light-damage",
+              "attack"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "从神秘之力【结界】获得受到的魔法攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "attack-magic"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "7611b3c1ae612f0e",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "7611b3c1ae612f0e:faith-magic-reduction"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-attack-magic-incoming-damage-down"
+            },
+            {
+              "partIds": [
+                "faith-physical-damage"
+              ],
+              "summary": "从其他神类型友方的神秘之力【铁锤】获得物理攻击伤害+10%；同名效果不叠加",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:faith-physical-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "8c11c64768072670",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "8c11c64768072670:physical-damage"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-physical-damage-up"
+            },
+            {
+              "partIds": [
+                "faith-physical-mitigation"
+              ],
+              "summary": "从神秘之力【守护】获得受到的物理攻击伤害-10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:faith-physical-mitigation",
+              "effectStacking": "once-per-skill",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "physical"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "f063ab920fec3e4a",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "f063ab920fec3e4a:faith-physical-mitigation"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-physical-incoming-damage-down"
+            },
+            {
+              "partIds": [
+                "faith-light-damage"
+              ],
+              "summary": "从神秘之力【轮光】获得光属性伤害+10%",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:faith-light-damage",
+              "effectStacking": "once-per-skill",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "grant": {
+                "providerSkillId": "ca8779066b942675",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "ca8779066b942675:light-aura-damage"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-unspecifiedlight-damage-up"
+            },
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "从其他神类型友方的“神秘之力【武威】”获得攻击力+10%；同名效果不叠加",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "5dbd4f977800ad88:attack",
+              "effectStacking": "once-per-skill",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "attribute"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "stat": "STR",
+              "grant": {
+                "providerSkillId": "7bc369d4036dd098",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "receive",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "7bc369d4036dd098:attack"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-receive-STR-stat-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "物理伤害增加",
         "物理",
-        "魔法"
+        "魔法",
+        "神"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "从神秘之力【轮光】获得光属性伤害+10%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
-        "效果来自自身以外的神类型友方",
         "该友方须装备相应“神秘之力”技能",
         "同名“神秘之力”效果不叠加"
       ]
@@ -8815,21 +9311,63 @@ export const ATTACK_TAG_CATALOG = {
             "stat": "STR"
           },
           "groupingOnly": true,
-          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型和Boss Wave条件仍待判断。",
+          "calculationNote": "按指定列入Boss物理伤害列表。实际提升攻击力，不能按物理伤害直接+20%计算；与攻击力标签共用同一项属性加成，不重复计入。追加龙类型已完成，Boss Wave条件继续待判断。",
           "existingRuleIds": [
             "basic:86c11809d76a7959:1"
           ],
           "relatedSkillIds": []
+        },
+        "龙": {
+          "summary": "类型追加“龙”。",
+          "relation": "race-effects-and-condition",
+          "race": "dragon",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "类型追加“龙”",
+              "target": "self",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "86c11809d76a7959:effect-1",
+              "effectStacking": "once-per-skill",
+              "operation": "add-race",
+              "scope": {
+                "direction": "self-type",
+                "subject": "self",
+                "addsRace": "dragon"
+              },
+              "raceRelation": {
+                "subject": "self-type-addition",
+                "operator": "any-of",
+                "races": [
+                  "dragon"
+                ]
+              },
+              "preservesExistingTypes": true,
+              "grantsOtherRaceSkills": false,
+              "grantsAirborneState": false,
+              "group": "self-add-type"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "Boss物理伤害增加"
+        "Boss物理伤害增加",
+        "龙"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "类型追加“龙”"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "BOSS Wave中生效"
       ]
@@ -9619,15 +10157,69 @@ export const ATTACK_TAG_CATALOG = {
             "basic:7bc369d4036dd098:1"
           ],
           "relatedSkillIds": []
+        },
+        "神": {
+          "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加。",
+          "relation": "race-effects-and-condition",
+          "race": "god",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "bindings": [
+            {
+              "partIds": [
+                "attack"
+              ],
+              "summary": "自身为神类型时，使装备“信仰”的友方获得攻击力+10%；同名效果不叠加",
+              "target": "allies-with-faith",
+              "isBuff": false,
+              "raceRole": "direct-effect",
+              "effectIdentity": "7bc369d4036dd098:attack",
+              "effectStacking": "once-per-skill",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "attribute"
+              },
+              "raceRelation": {
+                "subject": "provider",
+                "operator": "any-of",
+                "races": [
+                  "god"
+                ]
+              },
+              "valuePercent": 10,
+              "stat": "STR",
+              "grant": {
+                "providerSkillId": "7bc369d4036dd098",
+                "recipientSkillId": "5dbd4f977800ad88",
+                "providerType": "god",
+                "providerMustDifferFromRecipient": true,
+                "recipientMustEquipFaith": true,
+                "stacking": "one-per-same-named-provider-skill",
+                "flowRole": "provide",
+                "countProviderAndRecipientOnce": true,
+                "providerEffectIdentity": "7bc369d4036dd098:attack"
+              },
+              "matchingMultipleRaces": "apply-once",
+              "group": "faith-provide-STR-stat-up"
+            }
+          ],
+          "calculationNote": "种族主体、正反条件和攻击种类均按完整效果保留；复合类型任一满足，同一单位与效果不重复计入。类型追加不会获得其他种族技能；独立装备、队伍配置和未确认参数继续分别判断。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "神"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "自身为神类型",
         "效果给予装备“信仰”的我方角色",
         "同名“神秘之力”效果不叠加"
       ]
@@ -9726,8 +10318,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 34,
-    "partial": 53,
+    "ready": 35,
+    "partial": 52,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

@@ -1,3 +1,4 @@
+import {ADDITIONAL_RACE_TAGS,partsBeforeRaces} from './race-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -31,7 +32,7 @@ test('Hero Soul covers only outgoing Boss damage and remains partial for incomin
  assert.equal(hero.name,'勇者之魂');
  assert.deepEqual(hero.tagDetails['Boss伤害增加'].scope,{boss:true});
  assert.equal(hero.tagDetails['Boss伤害增加'].summary,'对Boss造成的伤害+20%');
- assert.deepEqual(hero.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['Boss伤害增加']);
+ assert.deepEqual(hero.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['Boss伤害增加']);
  assert.deepEqual(hero.remainingEffects,['受到Boss的伤害-20%']);
  assert.deepEqual(hero.remainingConditions,['减伤要求攻击来源为Boss']);
  assert.equal(hero.judgment,'partial');
@@ -46,9 +47,9 @@ test('specific Boss bonuses enter neither broad damage view while source skills 
   assert(source(n));
   for(const key of ['physical-damage','magic-damage-damage','damage','boss-damage'])assert(!labelingView(catalog,key).entries.some(e=>e.id===source(n).id));
  }
- assert.equal(catalog.views['magic-damage'].counts.ready,60);
- assert.equal(catalog.views['magic-damage'].counts.partial,70);
+ assert.equal(catalog.views['magic-damage'].counts.ready,80);
+ assert.equal(catalog.views['magic-damage'].counts.partial,50);
  assert.equal(catalog.views.damage.counts.relatedUnique,7);
- assert.equal(catalog.entries.length,776);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,776);
- assert.equal(catalog.views.all.counts.ready,370);assert.equal(catalog.views.all.counts.partial,406);
+ assert.equal(catalog.entries.length,838);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,838);
+ assert.equal(catalog.views.all.counts.ready,510);assert.equal(catalog.views.all.counts.partial,328);
 });

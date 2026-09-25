@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 2,
+  "label": "狙击手",
+  "race": "sniper",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "race-effects-and-condition",
+  "skillIds": [
+    "全部技能:all:70",
+    "全部技能:all:71",
+    "全部技能:all:410",
+    "8ba52a420286cb67",
+    "858365fd1fc6ea73",
+    "全部技能:all:489",
+    "ae4a9316a61a0384",
+    "全部技能:all:704",
+    "90487d6c687abdbc",
+    "31b0f1c6d90ec0cf",
+    "全部技能:all:845",
+    "b50f1be94e5ec002",
+    "869205f984d49c10",
+    "全部技能:all:910"
+  ]
+}

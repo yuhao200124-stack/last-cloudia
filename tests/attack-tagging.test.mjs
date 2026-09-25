@@ -1,3 +1,4 @@
+import {ADDITIONAL_RACE_TAGS,partsBeforeRaces} from './race-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -30,15 +31,15 @@ test('the attack pass audits all unique skills including category-only rows and 
 });
 
 test('the previous attack tag is retained while only reviewed attribute fragments are added', () => {
-  for(const row of catalog.entries){assert.equal(row.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag))[0],'攻击力');assert(row.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).every(tag=>['攻击力','防御力','生命力','魔力','MP','物理伤害增加','魔法伤害增加','战斗开始','濒死','满HP','受到攻击','必杀相关','特技相关','复活','友军死亡','暴击','雷属性','暗属性','剑','斧','枪','锤','弓','机械','爪','杖','单手','双手','空武器','空防具','空武器+防具'].includes(tag) || (tag==='Boss物理伤害增加' && row.id===skill(1883).id)));}
-  assert.equal(catalog.entries.filter(row=>row.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).includes('防御力')).length,26);
-  assert.equal(catalog.counts.ready,34);
-  assert.equal(catalog.counts.partial,53);
-  assert.deepEqual(catalog.entries.filter(row=>row.judgment==='ready').map(row=>Number(row.url.split('/').pop())),[9,10,11,12,102,106,113,119,210,218,251,273,281,387,393,528,552,725,746,787,796,851,969,986,1103,1107,1147,1212,1318,1571,1707,1727,1864,1912]);
+  for(const row of catalog.entries){assert.equal(row.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag))[0],'攻击力');assert(row.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).every(tag=>['攻击力','防御力','生命力','魔力','MP','物理伤害增加','魔法伤害增加','战斗开始','濒死','满HP','受到攻击','必杀相关','特技相关','复活','友军死亡','暴击','雷属性','暗属性','剑','斧','枪','锤','弓','机械','爪','杖','单手','双手','空武器','空防具','空武器+防具'].includes(tag) || (tag==='Boss物理伤害增加' && row.id===skill(1883).id)));}
+  assert.equal(catalog.entries.filter(row=>row.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('防御力')).length,26);
+  assert.equal(catalog.counts.ready,35);
+  assert.equal(catalog.counts.partial,52);
+  assert.deepEqual(catalog.entries.filter(row=>row.judgment==='ready').map(row=>Number(row.url.split('/').pop())),[9,10,11,12,102,106,113,119,210,218,251,273,281,339,387,393,528,552,725,746,787,796,851,969,986,1103,1107,1147,1212,1318,1571,1707,1727,1864,1912]);
   assert.equal(skill(387).basicStats.status,'ready');
   assert.equal(entry(387).judgment,'ready');
   assert.deepEqual(entry(387).remainingEffects,[]);
-  assert.deepEqual(entry(339).remainingEffects,['类型追加“龙”']);
+  assert.deepEqual(entry(339).remainingEffects,[]);
   assert.equal(entry(9).judgment,'ready');
   assert.equal(entry(267).judgment,'partial');
   assert.match(entry(267).calculationNote,/按当前HP计算.*不能.*最高50%/);
@@ -50,7 +51,7 @@ test('the previous attack tag is retained while only reviewed attribute fragment
   assert.deepEqual(entry(119).remainingConditions,[]);
   assert.equal(entry(1747).remainingConditions.length,1);
   assert.equal(entry(1801).remainingConditions.length,2);
-  assert.equal(entry(2001).remainingConditions.length,3);
+  assert.equal(entry(2001).remainingConditions.length,2);
 });
 
 test('later passes accumulate on the same skill and promote newly complete skills ahead of partial skills', () => {
@@ -59,12 +60,12 @@ test('later passes accumulate on the same skill and promote newly complete skill
   shared.tagPasses=shared.tagPasses.filter(pass=>pass.tag!=='满HP');
   shared.tagPasses.push({tag:'满HP',assignments:[{skillId:skill(119).id,partIds:['full-hp']}]});
   shared.tagPasses.push({tag:'神类型条件',assignments:[{skillId:skill(2001).id,partIds:['condition-1']}]});
-  const updated={...catalog,entries:resolveSkillLabels(shared).filter(row=>row.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)).includes('攻击力'))};
+  const updated={...catalog,entries:resolveSkillLabels(shared).filter(row=>row.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)).includes('攻击力'))};
   const rows=attackLabelRows(data,updated);
   const full=rows.find(row=>row.id===skill(119).id);
-  assert.deepEqual(full.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['攻击力','满HP']);
+  assert.deepEqual(full.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','满HP']);
   assert.equal(full.judgment,'ready');assert.deepEqual(full.remainingConditions,[]);
-  assert.deepEqual(rows.find(row=>row.id===skill(387).id).assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),['攻击力','生命力']);
+  assert.deepEqual(rows.find(row=>row.id===skill(387).id).assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),['攻击力','生命力']);
   assert.equal(rows.find(row=>row.id===skill(387).id).judgment,'ready');
   const deity=rows.find(row=>row.id===skill(2001).id);
   assert.equal(deity.judgment,'partial');assert.equal(deity.remainingConditions.length,2);
@@ -102,7 +103,7 @@ test('saved description changes invalidate both positive tags and old exclusions
   assert.equal(rows.length,88);
   for(const n of [9,1]){
     const row=rows.find(row=>row.id===skill(n).id);
-    assert.equal(row.judgment,'unknown');assert.deepEqual(row.assignedTags.filter(tag=>!['物理','魔法','鸟'].includes(tag)),[]);
+    assert.equal(row.judgment,'unknown');assert.deepEqual(row.assignedTags.filter(tag=>!['物理','魔法','鸟',...ADDITIONAL_RACE_TAGS].includes(tag)),[]);
   }
   assert.equal(rows.find(row=>row.id===skill(9).id).name,'我的攻击提升');
   assert.equal(JSON.stringify(edits),before);
@@ -126,7 +127,7 @@ test('the new table exposes only the agreed columns and scopes color classes to 
   assert(!html.includes('获得方式'));
   assert(!html.includes('data-edit-field="sc"'));
   const filtered=filterLabelRows(rows,'暴风龙的加护');assert.equal(filtered.length,1);
-  assert.equal(filtered[0].judgment,'partial');
+  assert.equal(filtered[0].judgment,'ready');
   const escaped=renderLabelTable([{...rows[0],name:'<img onerror=bad>',effect:'<script>bad</script>'}]);
   assert(!escaped.includes('<img'));assert(!escaped.includes('<script>'));
 });
@@ -140,8 +141,8 @@ test('the page groups Boss labels, switches cumulative views, filters and clears
   assert.match(get('#labelCoverage').textContent,/935.*13.*922/);
   assert.match(get('#judgmentSummary').textContent,/10.*3.*0/);
   const tabs=get('#labelTabs');
-  assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,40);
-  assert(tabs.innerHTML.includes('全部已贴标签（776）'));
+  assert.equal((tabs.innerHTML.match(/role="tab"/g)||[]).length,56);
+  assert(tabs.innerHTML.includes('全部已贴标签（838）'));
   assert(tabs.innerHTML.includes('攻击力（87）'));
   assert(tabs.innerHTML.includes('防御力（70）'));
   assert(tabs.innerHTML.includes('生命力（25）'));
@@ -183,15 +184,15 @@ test('the page groups Boss labels, switches cumulative views, filters and clears
   clickTab('attack');
   assert.equal(sub.hidden,true);
   assert.match(get('#labelCoverage').textContent,/935.*87.*848/);
-  assert.match(get('#judgmentSummary').textContent,/34.*53.*0/);
+  assert.match(get('#judgmentSummary').textContent,/35.*52.*0/);
   clickTab('all');
-  assert.match(get('#labelCoverage').textContent,/935.*776.*159/);
-  assert.match(get('#judgmentSummary').textContent,/370.*406.*0/);
+  assert.match(get('#labelCoverage').textContent,/935.*838.*97/);
+  assert.match(get('#judgmentSummary').textContent,/510.*328.*0/);
   const rowStatuses=[...get('#labelTable').innerHTML.matchAll(/judgment-label judgment-(ready|partial|unknown)/g)].map(match=>match[1]);
-  assert.deepEqual(rowStatuses.slice(0,370),Array(370).fill('ready'));
-  assert(rowStatuses.slice(370).every(status=>status==='partial'));
+  assert.deepEqual(rowStatuses.slice(0,510),Array(510).fill('ready'));
+  assert(rowStatuses.slice(510).every(status=>status==='partial'));
   const search=get('#labelSearch');search.value='没有这个技能123';search.listeners.input();
   assert.equal(get('#labelEmpty').hidden,false);assert.equal(get('#labelTable').innerHTML,'');
   get('#clearLabelSearch').listeners.click();assert.equal(get('#labelEmpty').hidden,true);
-  assert.match(get('#labelResultCount').textContent,/776 \/ 776/);
+  assert.match(get('#labelResultCount').textContent,/838 \/ 838/);
 });

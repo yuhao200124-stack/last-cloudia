@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 2,
+  "label": "龙",
+  "race": "dragon",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "passKind": "race-effects-and-condition",
+  "skillIds": [
+    "2b30173ab0d7d7f6",
+    "8ebe295ff024625c",
+    "3aef06f6e8cfc48a",
+    "95fd375fdfe9cfdc",
+    "c16c507cf0c2f9db",
+    "b34a5ea033cff851",
+    "1b43c763fc514311",
+    "e677b6a7691dc515",
+    "911c90d5593ecf69",
+    "08ba2a63471cced7",
+    "75d1684f4522a2de",
+    "86c11809d76a7959",
+    "0d45e653455b29d1",
+    "af2b1b7f6ebbb498"
+  ]
+}
