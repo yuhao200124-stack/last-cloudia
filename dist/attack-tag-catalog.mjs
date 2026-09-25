@@ -1077,8 +1077,8 @@ export const ATTACK_TAG_CATALOG = {
           "relatedSkillIds": []
         },
         "必杀相关": {
-          "summary": "自身必杀槽满时",
-          "relation": "ultimate-condition",
+          "summary": "必杀槽满时，自身攻击力+30%。",
+          "relation": "ultimate-effect-or-condition",
           "target": "bound-effects",
           "condition": {
             "mode": "ultimate-gauge-full",
@@ -1097,10 +1097,34 @@ export const ATTACK_TAG_CATALOG = {
               "target": "self",
               "isBuff": false,
               "activationMode": "ultimate-gauge-full",
-              "phase": "current-state"
+              "phase": "current-state",
+              "ultimateRole": "direct-effect",
+              "operation": "stat-up",
+              "effectIdentity": "7305afeb3e366f19:attack",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "not-an-attack"
+              },
+              "stat": "STR",
+              "valuePercent": 30,
+              "condition": {
+                "mode": "ultimate-gauge-full",
+                "subject": "self",
+                "metric": "current-ultimate-gauge-percent",
+                "operator": "eq",
+                "thresholdPercent": 100
+              }
             }
           ],
-          "calculationNote": "按当前必杀槽是否满槽判断；槽不满时失效，重新蓄满后恢复。这是条件加成，不是发动必杀后的Buff，可与同属性Buff并存。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+          "calculationNote": "按当前必杀槽是否满槽判断；槽不满时失效，重新蓄满后恢复。这是条件加成，不是发动必杀后的Buff，可与同属性Buff并存。 本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
+          "coverage": {
+            "effectPartIds": [
+              "attack"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          }
         }
       },
       "assignedTags": [
@@ -2894,8 +2918,8 @@ export const ATTACK_TAG_CATALOG = {
           "relatedSkillIds": []
         },
         "必杀相关": {
-          "summary": "敌人发动必杀时",
-          "relation": "ultimate-condition",
+          "summary": "敌人发动必杀时，自身获得勇敢：攻击力+20%。持续时间待确认。；敌人发动必杀时，自身获得堡垒：防御力+20%。持续时间待确认。",
+          "relation": "ultimate-effect-or-condition",
           "target": "bound-effects",
           "condition": {
             "mode": "ultimate-use",
@@ -2916,7 +2940,19 @@ export const ATTACK_TAG_CATALOG = {
               "buffType": "brave",
               "durationStatus": "unconfirmed",
               "stacking": "highest-active-buff-of-same-type-only",
-              "valuePercent": 20
+              "valuePercent": 20,
+              "ultimateRole": "direct-effect",
+              "operation": "stat-up",
+              "effectIdentity": "7caf7c48fe8b8715:attack",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "not-an-attack"
+              },
+              "stat": "STR",
+              "trigger": {
+                "actor": "enemy",
+                "event": "ultimate-used"
+              }
             },
             {
               "group": "defense-up",
@@ -2931,10 +2967,32 @@ export const ATTACK_TAG_CATALOG = {
               "buffType": "fort",
               "durationStatus": "unconfirmed",
               "stacking": "highest-active-buff-of-same-type-only",
-              "valuePercent": 20
+              "valuePercent": 20,
+              "ultimateRole": "direct-effect",
+              "operation": "stat-up",
+              "effectIdentity": "7caf7c48fe8b8715:effect-1",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "not-an-attack"
+              },
+              "stat": "DEF",
+              "trigger": {
+                "actor": "enemy",
+                "event": "ultimate-used"
+              }
             }
           ],
-          "calculationNote": "触发者是敌人，Buff作用于自身；不改成自身发动必杀或受到必杀伤害后才生效。现有资料没有写出持续时间，不套用其他Buff的40秒。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+          "calculationNote": "触发者是敌人，Buff作用于自身；不改成自身发动必杀或受到必杀伤害后才生效。现有资料没有写出持续时间，不套用其他Buff的40秒。 本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1",
+              "condition-2"
+            ]
+          }
         }
       },
       "assignedTags": [
@@ -2945,7 +3003,6 @@ export const ATTACK_TAG_CATALOG = {
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "勇敢／堡垒Buff；各同类型Buff同时只计一项",
         "勇敢和堡垒Buff持续时间待确认"
       ]
     },
@@ -8327,12 +8384,12 @@ export const ATTACK_TAG_CATALOG = {
         {
           "id": "effect-1",
           "kind": "effect",
-          "text": "对Boss物理攻击和必杀伤害上限+10,000"
+          "text": "对Boss物理攻击伤害上限+10,000"
         },
         {
           "id": "effect-2",
           "kind": "effect",
-          "text": "单武器额外上限+10,000"
+          "text": "单武器时，对Boss物理攻击伤害上限额外+10,000"
         },
         {
           "id": "condition-1",
@@ -8358,6 +8415,16 @@ export const ATTACK_TAG_CATALOG = {
           "id": "ultimate-condition",
           "kind": "condition",
           "text": "发动必杀时（与发动物理攻击是“或”关系，任一满足）"
+        },
+        {
+          "id": "boss-ultimate-cap",
+          "kind": "effect",
+          "text": "对Boss必杀伤害上限+10,000"
+        },
+        {
+          "id": "single-boss-ultimate-cap",
+          "kind": "effect",
+          "text": "单武器时，对Boss必杀伤害上限额外+10,000"
         }
       ],
       "tagDetails": {
@@ -8372,8 +8439,8 @@ export const ATTACK_TAG_CATALOG = {
           "relatedSkillIds": []
         },
         "必杀相关": {
-          "summary": "自身发动必杀时",
-          "relation": "ultimate-condition",
+          "summary": "发动必杀时，该次伤害以自身攻击力+30%的状态计算。；对Boss的必杀伤害上限+10,000。；仅1把武器时，对Boss必杀上限在基础+10,000之外再+10,000。",
+          "relation": "ultimate-effect-or-condition",
           "target": "bound-effects",
           "condition": {
             "mode": "ultimate-use",
@@ -8398,10 +8465,72 @@ export const ATTACK_TAG_CATALOG = {
               "phase": "damage-calculation",
               "referenceTarget": "self",
               "referenceStat": "STR",
-              "referencePercent": 30
+              "referencePercent": 30,
+              "ultimateRole": "direct-effect",
+              "operation": "stat-reference-up",
+              "effectIdentity": "899aa4edeab83540:attack",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate"
+              },
+              "trigger": {
+                "actor": "self",
+                "event": "ultimate-used"
+              }
+            },
+            {
+              "group": "boss-ultimate-cap",
+              "partIds": [
+                "boss-ultimate-cap"
+              ],
+              "summary": "对Boss的必杀伤害上限+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss"
+              },
+              "capPoints": 10000,
+              "ultimateRole": "direct-effect",
+              "effectIdentity": "899aa4edeab83540:boss-ultimate-cap"
+            },
+            {
+              "group": "boss-ultimate-cap",
+              "partIds": [
+                "single-boss-ultimate-cap"
+              ],
+              "summary": "仅1把武器时，对Boss必杀上限在基础+10,000之外再+10,000。",
+              "target": "self",
+              "isBuff": false,
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "enemyType": "boss",
+                "equipment": {
+                  "weaponCount": 1
+                }
+              },
+              "capPoints": 10000,
+              "addsToPartId": "boss-ultimate-cap",
+              "ultimateRole": "direct-effect",
+              "effectIdentity": "899aa4edeab83540:single-boss-ultimate-cap"
             }
           ],
-          "calculationNote": "原文是物理攻击或必杀，任一满足即可；本轮只覆盖必杀分支，物理攻击分支仍保留待判断。这里不是必杀伤害直接+30%；Boss上限和单武器额外上限不挂在这条触发效果里。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+          "calculationNote": "原文是物理攻击或必杀，任一满足即可；本轮只覆盖必杀分支，物理攻击分支仍保留待判断。这里不是必杀伤害直接+30%；Boss上限和单武器额外上限不挂在这条触发效果里。 本页已标注对应必杀效果；未完成的其他效果、条件与未知参数见待判断项。同一效果跨页共用，不重复计入。",
+          "coverage": {
+            "effectPartIds": [
+              "attack",
+              "boss-ultimate-cap",
+              "single-boss-ultimate-cap"
+            ],
+            "conditionPartIds": [
+              "ultimate-condition",
+              "condition-2"
+            ]
+          }
         },
         "单手": {
           "summary": "仅1把武器时，对Boss的物理伤害上限在基础+10,000之外再+10,000。；仅1把武器时，对Boss的必杀伤害上限在基础+10,000之外再+10,000。",
@@ -8443,7 +8572,7 @@ export const ATTACK_TAG_CATALOG = {
             {
               "group": "boss-extra-ultimate-cap",
               "partIds": [
-                "effect-2"
+                "single-boss-ultimate-cap"
               ],
               "summary": "仅1把武器时，对Boss的必杀伤害上限在基础+10,000之外再+10,000。",
               "target": "self",
@@ -8460,7 +8589,7 @@ export const ATTACK_TAG_CATALOG = {
               },
               "effectStacking": "once-per-skill",
               "capPoints": 10000,
-              "addsToPartId": "effect-1"
+              "addsToPartId": "boss-ultimate-cap"
             }
           ],
           "calculationNote": "只绑定单武器额外上限；STR参照修正和基础Boss上限不以单武器为条件。"
@@ -8473,12 +8602,11 @@ export const ATTACK_TAG_CATALOG = {
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "对Boss物理攻击和必杀伤害上限+10,000",
-        "单武器额外上限+10,000"
+        "对Boss物理攻击伤害上限+10,000",
+        "单武器时，对Boss物理攻击伤害上限额外+10,000"
       ],
       "remainingConditions": [
         "发动物理攻击时（与发动必杀是“或”关系，任一满足）",
-        "攻击力只在该次伤害计算中提高",
         "对Boss时才有对应伤害上限加成"
       ]
     },

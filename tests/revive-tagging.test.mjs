@@ -14,7 +14,7 @@ test('revival audits the full library and distinguishes resurrection from surviv
  for(const [g,ns] of Object.entries(mapping))assert.deepEqual(numbers(labelingView(catalog,'revive-'+g)),ns,g);
  assert.equal(view.childKeys.length,9);assert.equal(view.childKeys.reduce((n,k)=>n+catalog.views[k].counts.relatedUnique,0),10);
  for(const n of [110,113,118,184,195,219,389,493,584,690,726,849,890,916,917,939,948,976,1009,1015,1022,1092,1212,1270,1271,1305,1316,1378])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
- assert.equal(catalog.entries.length,608);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,608);
+ assert.equal(catalog.entries.length,653);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,653);
 });
 
 test('revival preserves initial HP, Wave versus quest limits, recipient identity, Buff lifetime and distinct SCT units',()=>{
@@ -33,7 +33,7 @@ test('revival operations and conditions accumulate without completing other effe
  assert.deepEqual(entry(272).assignedTags,['攻击力','魔力','复活','暴击']);assert.deepEqual(entry(1060).assignedTags,['物理伤害增加','魔法伤害增加','复活']);assert.deepEqual(entry(753).assignedTags,['MP','复活']);assert.deepEqual(entry(431).assignedTags,['战斗开始','复活']);
  assert.deepEqual(entry(272).remainingEffects,[]);assert(entry(1060).remainingConditions.some(c=>c.includes('40秒')));assert(entry(753).remainingEffects.includes('自身SCT回复15秒'));assert(entry(753).remainingConditions.includes('每Wave最多一次'));assert(entry(1998).remainingConditions.includes('随机选择1个特技'));
  for(const n of [183,431])assert(entry(n).remainingConditions.some(c=>c.includes('最多')));
- assert.equal(view.counts.ready,0);assert.equal(view.counts.partial,6);assert.equal(catalog.views.all.counts.ready,240);assert.equal(catalog.views.all.counts.partial,368);
+ assert.equal(view.counts.ready,0);assert.equal(view.counts.partial,6);assert.equal(catalog.views.all.counts.ready,261);assert.equal(catalog.views.all.counts.partial,392);
  assert.deepEqual(labelingView(catalog,'attack').entries.find(e=>e.id===source(272).id),entry(272));assert.deepEqual(labelingView(catalog,'mp').entries.find(e=>e.id===source(753).id),entry(753));
 });
 
@@ -49,6 +49,6 @@ test('revival page separates self and ally benefits, deduplicates grouped search
  const search=get('#labelSearch');search.value='黄泉之理';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 6/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,3);
  get('#clearLabelSearch').listeners.click();click('#labelSubTabs','revive-sct-ally');assert(get('#labelTable').innerHTML.includes('守护至今的约定'));assert(!get('#labelTable').innerHTML.includes('再起之种'));
  click('#labelSubTabs','revive-self');assert(get('#labelTable').innerHTML.includes('诱饵'));assert(get('#labelTable').innerHTML.includes('转生'));assert(!get('#labelTable').innerHTML.includes('黄泉之理'));
- for(const [key,count] of [['mp',32],['ultimate',15],['received-attack',21],['full-hp',6],['low-hp',26],['battle-start',117],['boss',13]]){click('#labelTabs',key);assert.equal(get('#labelResultCount').textContent,`显示 ${count} / ${count} 个技能（去重）`);}
+ for(const [key,count] of [['mp',32],['ultimate',113],['received-attack',21],['full-hp',6],['low-hp',26],['battle-start',117],['boss',13]]){click('#labelTabs',key);assert.equal(get('#labelResultCount').textContent,`显示 ${count} / ${count} 个技能（去重）`);}
  const edits={[`skill:${source(272).id}`]:{effect:'未知效果'},[`skill:${source(9).id}`]:{effect:'新复活条件'}};const changed=page(edits);assert.match(changed.get('#labelResultCount').textContent,/7 \/ 7/);assert.match(changed.get('#labelTable').innerHTML,/描述已修改，待重新判断（2）/);const stale=skillLabelRows(data,view,edits).find(e=>e.id===source(272).id);assert.equal(stale.judgment,'unknown');assert.deepEqual(stale.conditionBindings,{});
 });

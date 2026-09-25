@@ -57,8 +57,8 @@ test('magic damage accumulates across old views and only finishes after remainin
  assert.deepEqual(entry(241).remainingEffects,[]);assert.deepEqual(entry(241).remainingConditions,[]);
  const earlier=structuredClone(registry);earlier.tagPasses=earlier.tagPasses.filter(p=>p.tag!=='杖');
  assert.equal(resolveSkillLabels(earlier).find(e=>e.id===source(241).id).judgment,'partial');assert.equal(entry(241).judgment,'ready');
- assert.equal(catalog.entries.length,608);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,608);
- assert.equal(catalog.views.all.counts.ready,240);assert.equal(catalog.views.all.counts.partial,368);
+ assert.equal(catalog.entries.length,653);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,653);
+ assert.equal(catalog.views.all.counts.ready,261);assert.equal(catalog.views.all.counts.partial,392);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,240).every(r=>r.judgment==='ready'));assert(sorted.slice(240).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,261).every(r=>r.judgment==='ready'));assert(sorted.slice(261).every(r=>r.judgment==='partial'));
 });

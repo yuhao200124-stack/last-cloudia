@@ -1,3 +1,4 @@
+import {validateUltimateCoverage,validateUltimateBinding} from './validate-ultimate-labels.mjs';
 import {equipmentStateKeys,validateEquipmentStateCoverage,validateEquipmentStateBinding} from './validate-equipment-state-labels.mjs';
 import fs from 'node:fs';
 import {additionalWeapons,validateWeaponCoverage,validateWeaponBinding,validateSwordCoverage,validateSwordBinding} from './validate-weapon-labels.mjs';
@@ -120,6 +121,8 @@ for(const [key,view] of Object.entries(views)){
       validateWeaponCoverage(key,view,detail,assignment,entry);
     }else if(additionalElements.includes(key)){
       validateElementCoverage(key,view,detail,assignment,entry);
+    }else if(key==='ultimate'){
+      validateUltimateCoverage(view,detail,assignment,entry);
     }else if(key==='critical'){
       const coverage=detail.coverage;
       if(view.passKind!=='critical-effects-and-condition' || !Array.isArray(coverage?.effectPartIds) || !Array.isArray(coverage?.conditionPartIds))throw Error('Missing critical coverage.');
@@ -159,14 +162,6 @@ for(const [key,view] of Object.entries(views)){
     if(key==='received-attack'){
       const condition=detail.condition;
       if(condition?.subject!=='self' || !['attack-received','damage-received'].includes(condition.event) || !['any','physical','magic'].includes(condition.incomingType) || condition.requiresHpDamage!==(condition.event==='damage-received'))throw Error('Received attack and actual received damage must be distinguished.');
-    }
-    if(key==='ultimate'){
-      const condition=detail.condition;
-      if(!['ultimate-use','ultimate-gauge-full','next-ultimate-use'].includes(condition?.mode) || !['self','enemy'].includes(condition.subject))throw Error('Missing ultimate condition mode or actor.');
-      if(condition.mode==='ultimate-gauge-full' && (condition.subject!=='self' || condition.metric!=='current-ultimate-gauge-percent' || condition.operator!=='eq' || condition.thresholdPercent!==100))throw Error('Ultimate gauge state must require a full current gauge.');
-      if(condition.mode!=='ultimate-gauge-full' && condition.event!=='ultimate-used')throw Error('Ultimate use event must be explicit.');
-      if(condition.mode==='next-ultimate-use' && (condition.subject!=='self' || condition.requiresActiveBuff!==true))throw Error('Next ultimate requires the previously granted Buff.');
-      if(condition.alternativeEvents && (condition.operator!=='or' || !condition.alternativeEvents.includes('ultimate-used') && !condition.alternativeEvents.includes('ice-ultimate-used')))throw Error('Ultimate alternatives must preserve OR semantics.');
     }
     if(key==='ally-death'){
       const c=detail.condition;
@@ -256,17 +251,7 @@ for(const [key,view] of Object.entries(views)){
         }else if(Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'stacking'))throw Error('Per-hit effects are not lasting Buffs.');
         if(binding.activationMode==='per-hit-stat-reference' && (binding.phase!=='damage-calculation' || binding.isBuff || !['self','attacking-enemy'].includes(binding.referenceTarget)))throw Error('Invalid incoming damage stat reference.');
       }
-      if(key==='ultimate'){
-        if(binding.target!=='self' || typeof binding.isBuff!=='boolean')throw Error('Ultimate trigger actor must not replace the effect target.');
-        if(detail.condition.mode==='ultimate-gauge-full' && (binding.activationMode!=='ultimate-gauge-full' || binding.phase!=='current-state' || binding.isBuff))throw Error('Full gauge attributes are current-state bonuses.');
-        if(binding.isBuff){
-          if(binding.stacking!=='highest-active-buff-of-same-type-only')throw Error('Ultimate Buff stacking must be explicit.');
-          if(binding.activationMode==='next-use-buff'){
-            if(detail.condition.mode!=='next-ultimate-use' || binding.uses!==1 || binding.phase!=='next-ultimate' || Object.hasOwn(binding,'durationSeconds'))throw Error('Periodic grant interval is not a next-use Buff duration.');
-          }else if(binding.activationMode!=='triggered-buff' || binding.phase!=='on-ultimate-use' || !((binding.durationSeconds>0 && !binding.durationStatus) || (binding.durationStatus==='unconfirmed' && !Object.hasOwn(binding,'durationSeconds'))))throw Error('Triggered ultimate Buff needs a known duration or an explicit unknown.');
-        }else if(Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'durationStatus') || Object.hasOwn(binding,'stacking'))throw Error('Non-Buff ultimate effects must not gain Buff metadata.');
-        if(binding.activationMode==='per-ultimate-stat-reference' && (binding.isBuff || binding.phase!=='damage-calculation' || binding.referenceTarget!=='self'))throw Error('Ultimate stat reference must stay within the current damage calculation.');
-      }
+      if(key==='ultimate')validateUltimateBinding(detail,assignment,binding);
     }
   }
 }

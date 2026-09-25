@@ -34,10 +34,10 @@ test('each Boss attack-type pass audits the full library and keeps the complete 
 
 test('parallel skill and ultimate clauses share one record and finish only after both type labels',()=>{
  const giant=entry(411),skill=labelingView(catalog,'boss-skill-damage'),ultimate=labelingView(catalog,'boss-ultimate-damage');
- assert.deepEqual(giant.assignedTags,['Boss特技伤害增加','Boss必杀伤害增加']);
+ assert.deepEqual(giant.assignedTags,['Boss特技伤害增加','Boss必杀伤害增加','必杀相关']);
  assert.strictEqual(skill.entries.find(e=>e.id===giant.id),ultimate.entries.find(e=>e.id===giant.id));
  assert.equal(giant.judgment,'ready');assert.deepEqual(giant.remainingEffects,[]);assert.deepEqual(giant.remainingConditions,[]);
- const beforeUltimate=structuredClone(registry);beforeUltimate.tagPasses=beforeUltimate.tagPasses.filter(p=>p.tag!=='Boss必杀伤害增加');
+ const beforeUltimate=structuredClone(registry);beforeUltimate.tagPasses=beforeUltimate.tagPasses.filter(p=>!['Boss必杀伤害增加','必杀相关'].includes(p.tag));
  const unfinished=resolveSkillLabels(beforeUltimate).find(e=>e.id===giant.id);
  assert.equal(unfinished.judgment,'partial');assert.deepEqual(unfinished.remainingEffects,['对Boss的必杀伤害+20%']);
  assert.equal(giant.parts.filter(p=>p.kind==='effect').length,2);
@@ -45,8 +45,8 @@ test('parallel skill and ultimate clauses share one record and finish only after
 
 test('typed Boss bonuses leave caps and party counts pending without injecting damage twice',()=>{
  assert.equal(entry(837).judgment,'ready');
- for(const n of [624,1041,1311]){assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,2);assert(entry(n).remainingEffects.every(t=>t.includes('上限')));}
- for(const n of [985,1159,1644,1814]){assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,1);assert(entry(n).remainingEffects[0].includes('上限'));}
+ for(const n of [624,1041,1311]){assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,1);assert(entry(n).remainingEffects.every(t=>t.includes('上限')));}
+ for(const n of [1159,1644,1814]){assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,1);assert(entry(n).remainingEffects[0].includes('上限'));}
  assert.equal(entry(720).judgment,'partial');assert.deepEqual(entry(720).remainingConditions,['按队伍中装备调查兵团的单位数量计算']);
  assert.match(entry(720).tagDetails['Boss物理伤害增加'].summary,/1名\+6%.*2名\+12%.*3名\+18%.*4名\+24%/);
  assert.equal(catalog.numericEffectInjection,false);
@@ -55,13 +55,13 @@ test('typed Boss bonuses leave caps and party counts pending without injecting d
 test('Boss page is a deduplicated union of six categories, not an extra bonus tag',()=>{
  const boss=labelingView(catalog,'boss');
  assert.equal(boss.entries.length,13);assert.equal(new Set(boss.entries.map(e=>e.id)).size,13);
- assert.equal(boss.counts.ready,3);assert.equal(boss.counts.partial,10);
+ assert.equal(boss.counts.ready,4);assert.equal(boss.counts.partial,9);
  assert.equal(boss.tagKeys.reduce((sum,key)=>sum+catalog.views[key].counts.relatedUnique,0),17);
- assert.deepEqual(boss.entries.filter(e=>e.judgment==='ready').map(e=>e.name).sort(),['巨人杀手','巨型净化','锐利一击']);
+ assert.deepEqual(boss.entries.filter(e=>e.judgment==='ready').map(e=>e.name).sort(),['巨人杀手','巨型净化','邪恶织法','锐利一击']);
  assert(boss.entries.every(e=>!e.assignedTags.includes('Boss增伤')));
  const rows=skillLabelRows(box.window.SKILL_DATA,boss);
- assert(rows.slice(0,3).every(r=>r.judgment==='ready'));assert(rows.slice(3).every(r=>r.judgment==='partial'));
- assert.equal(catalog.views.all.counts.relatedUnique,608);assert.equal(catalog.views.all.counts.ready,240);assert.equal(catalog.views.all.counts.partial,368);
+ assert(rows.slice(0,4).every(r=>r.judgment==='ready'));assert(rows.slice(4).every(r=>r.judgment==='partial'));
+ assert.equal(catalog.views.all.counts.relatedUnique,653);assert.equal(catalog.views.all.counts.ready,261);assert.equal(catalog.views.all.counts.partial,392);
  assert.equal(catalog.views.physical.counts.relatedUnique,78);assert.equal(catalog.views['magic-damage'].counts.relatedUnique,22);
 });
 

@@ -55,8 +55,8 @@ test('magic accumulates with other tags and completes only fully covered attribu
  assert.deepEqual(entry(304).assignedTags,['攻击力','防御力','魔力','空武器','空防具','空武器+防具']);
  assert.deepEqual(entry(304).remainingEffects,['魔抗+10%']);
  assert.deepEqual(entry(304).remainingConditions,[]);
- assert.equal(catalog.views.all.counts.relatedUnique,608);assert.equal(catalog.views.all.counts.ready,240);
- assert.equal(new Set(catalog.entries.map(e=>e.id)).size,608);
+ assert.equal(catalog.views.all.counts.relatedUnique,653);assert.equal(catalog.views.all.counts.ready,261);
+ assert.equal(new Set(catalog.entries.map(e=>e.id)).size,653);
  const rows=skillLabelRows(box.window.SKILL_DATA,magic);
  assert(rows.slice(0,22).every(r=>r.judgment==='ready'));
  assert(rows.slice(22).every(r=>r.judgment==='partial'));
