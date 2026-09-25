@@ -22,7 +22,7 @@ test('physical damage audits all 935 skills and excludes complete elemental and 
   assert(!entry(n),source(n).name);
   assert.equal(audit.rows.find(r=>r.id===source(n).id).decision,'not-related');
  }
- for(const n of [365,410,502,556,594,619,977]){assert(entry(n).remainingEffects.includes('暴击率+10%'));assert(entry(n).remainingConditions.some(t=>/仅装备一把武器/.test(t)));}
+ for(const n of [365,410,502,556,594,619,977]){assert(!entry(n).remainingEffects.includes('暴击率+10%'));assert(entry(n).assignedTags.includes('暴击'));assert(entry(n).remainingConditions.some(t=>/仅装备一把武器/.test(t)));}
  assert.equal(catalog.numericEffectInjection,false);
 });
 
@@ -44,13 +44,13 @@ test('physical bonuses remain distinct from caps, crits, killers, stat changes, 
 
 test('physical tags accumulate and leave each unfinished effect/condition pending until its own pass',()=>{
  assert.equal(physical.counts.ready,2);assert.equal(physical.counts.partial,76);assert.equal(physical.counts.unknown,0);
- assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,24);
+ assert.equal(physical.entries.filter(e=>e.assignedTags.length>1).length,34);
  for(const [n,key] of [[273,'attack'],[281,'attack'],[398,'defense'],[1704,'defense'],[357,'magic'],[441,'magic']])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  assert.deepEqual(entry(273).remainingEffects,[]);assert.deepEqual(entry(273).remainingConditions,['装备锤时生效']);
  assert(entry(1228).remainingEffects.includes('自身受到来自敌人的伤害+10%'));
- assert.equal(catalog.entries.length,411);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,411);
+ assert.equal(catalog.entries.length,435);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,435);
  const allRows=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(allRows.slice(0,80).every(r=>r.judgment==='ready'));assert(allRows.slice(80).every(r=>r.judgment==='partial'));
+ assert(allRows.slice(0,91).every(r=>r.judgment==='ready'));assert(allRows.slice(91).every(r=>r.judgment==='partial'));
  // A later equipment pass should complete a compound only after both its
  // attack and physical-damage fragments were already covered.
  const future=structuredClone(registry);

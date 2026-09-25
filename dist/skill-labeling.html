@@ -6,8 +6,8 @@
     <meta name="description" content="按完整效果词条逐类贴标签，核对已有分类与未完成条件。" />
     <title>技能列表打标签用的｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260925-ally-death" />
-    <link rel="stylesheet" href="./skill-labeling.css?v=20260925-ally-death" />
+    <link rel="stylesheet" href="./styles.css?v=20260925-critical" />
+    <link rel="stylesheet" href="./skill-labeling.css?v=20260925-critical" />
   </head>
   <body>
     <header class="site-header">
@@ -22,18 +22,18 @@
     <main>
       <section class="workspace labeling-workspace" aria-label="技能标签核对列表">
         <nav class="sheet-tabs label-tabs" id="labelTabs" role="tablist" aria-label="技能标签分类" aria-orientation="horizontal"></nav>
-        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-ally-death">
-        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">友军死亡</h2></div></div>
-        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="友军死亡子分类" aria-orientation="horizontal" hidden></nav>
+        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-critical">
+        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">暴击</h2></div></div>
+        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="暴击子分类" aria-orientation="horizontal" hidden></nav>
         <div class="labeling-overview">
           <p id="labelCoverage">正在读取全库核对结果…</p>
           <p id="judgmentSummary" aria-live="polite"></p>
           <p id="cumulativeCoverage"></p>
           <p>按完整效果词条分类：属性、Boss、种族、空中、弱点等限定增伤不拆成宽泛增伤标签。装备、队伍、自身状态、时间等启用条件继续独立判断；并列效果各自贴标签。</p>
-          <p id="conditionScope">友军死亡指自身以外的我方角色陷入战斗不能。倒下时触发的Buff、即时回复，以及有友军倒下期间的属性加成分别列组；激怒的攻击提高、防御降低和无法施法分别显示。同一技能跨组只计一次，已有标签和判断同步。</p>
+          <p id="conditionScope">暴击率、暴击伤害、暴击上限、允许暴击、暴击触发回复、所受暴击减免分别列组。属性、Boss、物理、反击、武器、满HP和Buff限制分别保留；允许暴击不等于必定暴击。已有标签和判断同步，同一技能跨组只计一次。</p>
         </div>
         <div class="toolbar">
-          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索友军死亡相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
+          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索暴击相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
           <div id="labelResultCount" class="result-summary" aria-live="polite"></div>
         </div>
         <div id="labelTable" class="table-area"></div>
@@ -43,6 +43,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260925-ally-death"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260925-critical"></script>
   </body>
 </html>

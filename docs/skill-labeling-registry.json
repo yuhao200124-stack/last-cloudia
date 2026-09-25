@@ -1152,6 +1152,44 @@
             }
           ],
           "calculationNote": "黄泉之理不提供自动复活能力；自身实际复活后才获得三项Buff。攻击力、魔力和暴击率分别列组；同类型Buff同时只计最高已生效一项。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
+        },
+        "暴击": {
+          "summary": "自身复活后，暴击率+15个百分点，持续40秒。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-revival",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身复活后，暴击率+15个百分点，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 15,
+              "grantsCriticalEligibility": false,
+              "buffType": "critical-rate-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "self-revived"
+              }
+            }
+          ],
+          "calculationNote": "复活标签及攻击力、魔力效果沿用；本轮已补暴击率，原说明中“暴击率待接入”是早期记录，以当前标签为准。复活Buff机制仍待判断。"
         }
       }
     },
@@ -1779,6 +1817,44 @@
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "暴击": {
+          "summary": "战斗开始时，自身暴击率+15个百分点，持续40秒。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-opening",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "战斗开始时，自身暴击率+15个百分点，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 15,
+              "grantsCriticalEligibility": false,
+              "buffType": "critical-rate-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              }
+            }
+          ],
+          "calculationNote": "大勇敢的攻击力、暴击的暴击率、速度的移动速度分别处理。开场与攻击力标签保留；速度及Buff机制仍待判断。"
         }
       }
     },
@@ -5147,6 +5223,38 @@
             "basic:6bd2eb47018db33f:1"
           ],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "自身暴击伤害+15%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身暴击伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 15,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "攻击力标签保留；受到伤害+10%是负面效果，仍单独待判断，不因暴伤完成而漏掉。"
         }
       }
     },
@@ -7824,6 +7932,37 @@
             "basic:448ba5ba48be6d12:1"
           ],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "受到的暴击伤害-10%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "incoming-damage-down",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "受到的暴击伤害-10%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 10,
+              "requiresCriticalHit": true
+            }
+          ],
+          "calculationNote": "HP与防御力标签沿用；本轮补齐所受暴击伤害减少后，技能三项效果全部完成。"
         }
       }
     },
@@ -10650,6 +10789,39 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "装备爪时，暴击伤害+20%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-claw",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备爪时，暴击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "weaponType": "claw"
+              },
+              "valuePercent": 20,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "原文暴伤部分未另外写“物理攻击”，保留未指定攻击类型，不与爪超阶／极阶的物理暴伤合并；装备爪条件仍待判断。"
         }
       }
     },
@@ -10795,6 +10967,41 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "仅装备1把枪类武器时，暴击率+10个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-single-spear",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把枪类武器时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1,
+                  "weaponType": "spear"
+                }
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "仅一把指定武器的条件保留，不能泛化为任意单武器或双武器；物理伤害上限是独立效果，本轮不标为暴击上限。暴击率提高不额外赋予魔法暴击资格。"
         }
       }
     },
@@ -10865,6 +11072,41 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "仅装备1把锤类武器时，暴击率+10个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-single-hammer",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把锤类武器时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1,
+                  "weaponType": "hammer"
+                }
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "仅一把指定武器的条件保留，不能泛化为任意单武器或双武器；物理伤害上限是独立效果，本轮不标为暴击上限。暴击率提高不额外赋予魔法暴击资格。"
         }
       }
     },
@@ -10975,6 +11217,41 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "仅装备1把剑类武器时，暴击率+10个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-single-sword",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把剑类武器时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1,
+                  "weaponType": "sword"
+                }
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "仅一把指定武器的条件保留，不能泛化为任意单武器或双武器；物理伤害上限是独立效果，本轮不标为暴击上限。暴击率提高不额外赋予魔法暴击资格。"
         }
       }
     },
@@ -11080,6 +11357,41 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "仅装备1把斧类武器时，暴击率+10个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-single-axe",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把斧类武器时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1,
+                  "weaponType": "axe"
+                }
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "仅一把指定武器的条件保留，不能泛化为任意单武器或双武器；物理伤害上限是独立效果，本轮不标为暴击上限。暴击率提高不额外赋予魔法暴击资格。"
         }
       }
     },
@@ -11155,6 +11467,41 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "仅装备1把爪类武器时，暴击率+10个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-single-claw",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把爪类武器时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1,
+                  "weaponType": "claw"
+                }
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "仅一把指定武器的条件保留，不能泛化为任意单武器或双武器；物理伤害上限是独立效果，本轮不标为暴击上限。暴击率提高不额外赋予魔法暴击资格。"
         }
       }
     },
@@ -11195,6 +11542,39 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "装备爪时，物理攻击的暴击伤害+20%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-claw-physical",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "装备爪时，物理攻击的暴击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "weaponType": "claw"
+              },
+              "valuePercent": 20,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "只作用于物理攻击暴击伤害；装备条件和物理伤害上限仍独立待判断，不能扩展到魔法暴伤。"
         }
       }
     },
@@ -11265,6 +11645,41 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "仅装备1把机械类武器时，暴击率+10个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-single-machine",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把机械类武器时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1,
+                  "weaponType": "machine"
+                }
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "仅一把指定武器的条件保留，不能泛化为任意单武器或双武器；物理伤害上限是独立效果，本轮不标为暴击上限。暴击率提高不额外赋予魔法暴击资格。"
         }
       }
     },
@@ -11707,6 +12122,41 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "仅装备1把弓类武器时，暴击率+10个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-single-bow",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "仅装备1把弓类武器时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "equipment": {
+                  "weaponCount": 1,
+                  "weaponType": "bow"
+                }
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "仅一把指定武器的条件保留，不能泛化为任意单武器或双武器；物理伤害上限是独立效果，本轮不标为暴击上限。暴击率提高不额外赋予魔法暴击资格。"
         }
       }
     },
@@ -12145,6 +12595,39 @@
           "calculationNote": "本轮只覆盖物理增伤效果；其它效果及生效条件仍分别判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "装备爪时，物理攻击的暴击伤害+20%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-claw-physical",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "装备爪时，物理攻击的暴击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "weaponType": "claw"
+              },
+              "valuePercent": 20,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "只作用于物理攻击暴击伤害；装备条件和物理伤害上限仍独立待判断，不能扩展到魔法暴伤。"
         }
       }
     },
@@ -14609,6 +15092,65 @@
           "calculationNote": "仅目标为Boss且本次实际暴击时适用。该技能不提高暴击率，也不赋予魔法暴击资格；暴击伤害上限+2,000仍待判断。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "对Boss发生暴击时，暴击伤害+10%。；对Boss发生暴击时，暴击伤害上限+2,000。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "boss-critical-damage",
+              "critical-cap"
+            ],
+            "conditionPartIds": [
+              "critical-hit"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "event": "critical-hit"
+          },
+          "bindings": [
+            {
+              "group": "damage-boss",
+              "partIds": [
+                "boss-critical-damage"
+              ],
+              "summary": "对Boss发生暴击时，暴击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyIsBoss": true
+              },
+              "valuePercent": 10,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "cap-boss",
+              "partIds": [
+                "critical-cap"
+              ],
+              "summary": "对Boss发生暴击时，暴击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyIsBoss": true
+              },
+              "capPoints": 2000,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "Boss暴伤标签已经覆盖Boss目标与实际暴击范围，本轮补齐暴击上限。原Boss标签说明中的“上限待判断”是早期记录，以当前累计判断为准；同一效果跨页展示不重复计入。"
         }
       }
     },
@@ -14779,6 +15321,44 @@
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "暴击": {
+          "summary": "每Wave开始时，自身暴击率+15个百分点，持续40秒。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，自身暴击率+15个百分点，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 15,
+              "grantsCriticalEligibility": false,
+              "buffType": "critical-rate-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签；与自动暴击及其他同类型暴击率Buff只计最高已生效一项，不把15%当必定暴击或魔法暴击资格。"
         }
       }
     },
@@ -16175,6 +16755,44 @@
             }
           ],
           "calculationNote": "持续至战斗不能，不按40秒倒计时。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "暴击": {
+          "summary": "开场获得暴击率+15个百分点Buff，持续至自身战斗不能。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-until-death",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场获得暴击率+15个百分点Buff，持续至自身战斗不能。",
+              "target": "self",
+              "isBuff": true,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 15,
+              "grantsCriticalEligibility": false,
+              "buffType": "critical-rate-up",
+              "activationMode": "triggered-buff",
+              "endsOn": "incapacitated",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              }
+            }
+          ],
+          "calculationNote": "持续至战斗不能，不写成40秒；同类型暴击率Buff只计最高一项。Break值提升是独立效果，仍待判断。"
         }
       }
     },
@@ -16863,6 +17481,61 @@
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "暴击": {
+          "summary": "战斗开始时，自身为龙类型，必杀暴击伤害上限+100,000。；仅龙类型：必杀获得暴击资格，不是必定暴击。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1",
+              "other-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-ultimate-dragon",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，自身为龙类型，必杀暴击伤害上限+100,000。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "selfRace": "dragon"
+              },
+              "capPoints": 100000,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false,
+              "trigger": {
+                "event": "battle-start"
+              }
+            },
+            {
+              "group": "permission-ultimate-dragon",
+              "partIds": [
+                "other-effect-1"
+              ],
+              "summary": "仅龙类型：必杀获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "selfRace": "dragon"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "开场标签只绑定上限效果；必杀暴击资格是另一个独立效果，不把两者合成一条开场Buff。龙类型条件仍待标签，不赋予龙类型，不增加暴击率，也不为所有攻击加上限。"
         }
       }
     },
@@ -17276,6 +17949,41 @@
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。"
+        },
+        "暴击": {
+          "summary": "永久获得暴击率+15个百分点的暴击Buff。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得暴击率+15个百分点的暴击Buff。",
+              "target": "self",
+              "isBuff": true,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 15,
+              "grantsCriticalEligibility": false,
+              "buffType": "critical-rate-up",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent",
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "永久状态已有标签。与限时同类型Buff只计最高一项，无固定倒计时；不使所有攻击必定暴击，不提供魔法或必杀暴击资格。"
         }
       }
     },
@@ -18769,6 +19477,39 @@
             }
           ],
           "calculationNote": "这是随当前HP状态变化的条件加成，不是Buff。当前HP少于最大HP时不生效，恢复到满HP后重新满足条件；不设持续倒计时。"
+        },
+        "暴击": {
+          "summary": "自身满HP时，暴击率+10个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "full-hp-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-full-hp",
+              "partIds": [
+                "full-hp-effect"
+              ],
+              "summary": "自身满HP时，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "selfHpPercent": 100
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false,
+              "activationMode": "current-state"
+            }
+          ],
+          "calculationNote": "沿用满HP条件；这是当前状态属性加成，没有40秒Buff倒计时，离开满HP即失效。"
         }
       }
     },
@@ -19022,6 +19763,43 @@
             }
           ],
           "calculationNote": "仅改变该次暴击的伤害判定，不是免疫攻击，也不是暴击伤害固定减少50%。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "暴击": {
+          "summary": "受到暴击时，50%概率将该次暴击转为普通伤害。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-conversion"
+            ],
+            "conditionPartIds": [
+              "received-trigger"
+            ]
+          },
+          "condition": {
+            "subject": "enemy-attack",
+            "event": "critical-hit-received"
+          },
+          "bindings": [
+            {
+              "group": "incoming-to-normal",
+              "partIds": [
+                "critical-conversion"
+              ],
+              "summary": "受到暴击时，50%概率将该次暴击转为普通伤害。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "convert-to-normal",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "chancePercent": 50,
+              "phase": "before-damage"
+            }
+          ],
+          "calculationNote": "50%是触发概率，不是受到暴击伤害减少50%，也不是免疫这次攻击。受到攻击标签沿用，概率机制继续待判断。"
         }
       }
     },
@@ -21616,6 +22394,1498 @@
             }
           ],
           "calculationNote": "回复给仍能行动的自身，不复活倒下的友军。特技库存是次数，不是固定SCT秒数，也不是SCT回复速度；回复量和每Wave次数限制继续待判断。"
+        }
+      }
+    },
+    {
+      "id": "e4203cbe63a20722",
+      "name": "暴击提升",
+      "url": "https://altema.jp/lastcloudia/gino/25",
+      "text": "暴击率+2%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "暴击率+2%"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "暴击率+2个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-general",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "暴击率+2个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 2,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "提高暴击率，不等于必定暴击；不额外赋予魔法或必杀暴击资格。"
+        }
+      }
+    },
+    {
+      "id": "5881746a24e0069e",
+      "name": "暴击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/26",
+      "text": "暴击率+5%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "暴击率+5%"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "暴击率+5个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-general",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "提高暴击率，不等于必定暴击；不额外赋予魔法或必杀暴击资格。"
+        }
+      }
+    },
+    {
+      "id": "f201c9d8e9ee87ed",
+      "name": "暴击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/27",
+      "text": "暴击率+8%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "暴击率+8%"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "暴击率+8个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-general",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "暴击率+8个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 8,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "提高暴击率，不等于必定暴击；不额外赋予魔法或必杀暴击资格。"
+        }
+      }
+    },
+    {
+      "id": "a9fc8f38be630b02",
+      "name": "瞄准要害",
+      "url": "https://altema.jp/lastcloudia/gino/28",
+      "text": "暴击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "暴击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "暴击伤害+30%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "暴击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 30,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "仅作用于实际发生的暴击伤害，不提高暴击率、暴击资格或伤害上限；不把该数值当所有攻击的最终倍率。"
+        }
+      }
+    },
+    {
+      "id": "4dad2c45a6235934",
+      "name": "瞄准要害·改",
+      "url": "https://altema.jp/lastcloudia/gino/216",
+      "text": "暴击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "暴击伤害+50%"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "暴击伤害+50%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "仅作用于实际发生的暴击伤害，不提高暴击率、暴击资格或伤害上限；不把该数值当所有攻击的最终倍率。"
+        }
+      }
+    },
+    {
+      "id": "全部技能:all:30",
+      "name": "骄傲之力",
+      "url": "https://altema.jp/lastcloudia/gino/29",
+      "text": "发生暴击时，恢复HP。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-hit",
+          "kind": "condition",
+          "text": "自身攻击实际发生暴击时"
+        },
+        {
+          "id": "hp-restore",
+          "kind": "effect",
+          "text": "暴击后回复自身HP，具体回复量与计算公式待确认"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "自身攻击暴击后回复自身HP，具体回复量与公式待确认。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "critical-hit"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "event": "critical-hit"
+          },
+          "bindings": [
+            {
+              "group": "on-critical-hp",
+              "partIds": [
+                "hp-restore"
+              ],
+              "summary": "自身攻击暴击后回复自身HP，具体回复量与公式待确认。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "condition-benefit",
+              "operation": "restore-current-hp",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "phase": "after-critical-hit",
+              "resource": "HP",
+              "amountStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "本轮仅完成“发生暴击”条件，HP回复效果仍待判断；不是吸血比例、受到暴击回血或必定暴击。"
+        }
+      }
+    },
+    {
+      "id": "12fb48061bb074e5",
+      "name": "炎暴击",
+      "url": "https://altema.jp/lastcloudia/gino/141",
+      "text": "火属性攻击魔法可暴击。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-permission",
+          "kind": "effect",
+          "text": "火属性攻击魔法可以暴击"
+        },
+        {
+          "id": "attack-scope",
+          "kind": "condition",
+          "text": "仅限火属性攻击魔法，不包含同属性物理攻击或必杀"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "火属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "permission-fire",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "火属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "fire"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+        }
+      }
+    },
+    {
+      "id": "2083b650aa52252c",
+      "name": "冰暴击",
+      "url": "https://altema.jp/lastcloudia/gino/142",
+      "text": "冰属性攻击魔法可暴击。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-permission",
+          "kind": "effect",
+          "text": "冰属性攻击魔法可以暴击"
+        },
+        {
+          "id": "attack-scope",
+          "kind": "condition",
+          "text": "仅限冰属性攻击魔法，不包含同属性物理攻击或必杀"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "冰属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "permission-ice",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "冰属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+        }
+      }
+    },
+    {
+      "id": "0b725106ff374bdf",
+      "name": "树暴击",
+      "url": "https://altema.jp/lastcloudia/gino/143",
+      "text": "树属性攻击魔法可暴击。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-permission",
+          "kind": "effect",
+          "text": "树属性攻击魔法可以暴击"
+        },
+        {
+          "id": "attack-scope",
+          "kind": "condition",
+          "text": "仅限树属性攻击魔法，不包含同属性物理攻击或必杀"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "树属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "permission-earth",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "树属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "earth"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+        }
+      }
+    },
+    {
+      "id": "5db07a2caf842aae",
+      "name": "雷暴击",
+      "url": "https://altema.jp/lastcloudia/gino/144",
+      "text": "雷属性攻击魔法可暴击。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-permission",
+          "kind": "effect",
+          "text": "雷属性攻击魔法可以暴击"
+        },
+        {
+          "id": "attack-scope",
+          "kind": "condition",
+          "text": "仅限雷属性攻击魔法，不包含同属性物理攻击或必杀"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "雷属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "permission-thunder",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "雷属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "thunder"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+        }
+      }
+    },
+    {
+      "id": "0631262b7e479c3a",
+      "name": "光暴击",
+      "url": "https://altema.jp/lastcloudia/gino/145",
+      "text": "光属性攻击魔法可暴击。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-permission",
+          "kind": "effect",
+          "text": "光属性攻击魔法可以暴击"
+        },
+        {
+          "id": "attack-scope",
+          "kind": "condition",
+          "text": "仅限光属性攻击魔法，不包含同属性物理攻击或必杀"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "光属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "permission-light",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "光属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+        }
+      }
+    },
+    {
+      "id": "06dbf722869d70c0",
+      "name": "暗暴击",
+      "url": "https://altema.jp/lastcloudia/gino/146",
+      "text": "暗属性攻击魔法可暴击。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-permission",
+          "kind": "effect",
+          "text": "暗属性攻击魔法可以暴击"
+        },
+        {
+          "id": "attack-scope",
+          "kind": "condition",
+          "text": "仅限暗属性攻击魔法，不包含同属性物理攻击或必杀"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "暗属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "permission-dark",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "暗属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+        }
+      }
+    },
+    {
+      "id": "22f55aaac7d9b369",
+      "name": "马托克",
+      "url": "https://altema.jp/lastcloudia/gino/225",
+      "text": "对矿石类型敌人的暴击率+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "对矿石类型敌人的暴击率+10%"
+        },
+        {
+          "id": "enemy-type",
+          "kind": "condition",
+          "text": "目标敌人为矿石类型"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "对矿石类型敌人，暴击率+10个百分点。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-ore",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "对矿石类型敌人，暴击率+10个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "enemyRace": "ore"
+              },
+              "ratePoints": 10,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "保留目标矿石类型限制，不当作对所有敌人的通用暴击率；敌人类型条件仍待判断。"
+        }
+      }
+    },
+    {
+      "id": "cb768af6b608c5b6",
+      "name": "雷暴击提升",
+      "url": "https://altema.jp/lastcloudia/gino/252",
+      "text": "雷属性攻击暴击率+5%，暴击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "雷属性攻击暴击率+5%"
+        },
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "雷属性攻击暴击伤害+50%"
+        },
+        {
+          "id": "attack-element",
+          "kind": "condition",
+          "text": "本次为雷属性攻击"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "雷属性攻击暴击率+5个百分点。；雷属性攻击发生暴击时，暴击伤害+50%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-thunder",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "雷属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "damage-thunder",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "雷属性攻击发生暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+        }
+      }
+    },
+    {
+      "id": "2a62c41d8d3fb3d0",
+      "name": "炎暴击提升",
+      "url": "https://altema.jp/lastcloudia/gino/286",
+      "text": "火属性攻击暴击率+5%，暴击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "火属性攻击暴击率+5%"
+        },
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "火属性攻击暴击伤害+50%"
+        },
+        {
+          "id": "attack-element",
+          "kind": "condition",
+          "text": "本次为火属性攻击"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "火属性攻击暴击率+5个百分点。；火属性攻击发生暴击时，暴击伤害+50%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-fire",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "火属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "damage-fire",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "火属性攻击发生暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "fire"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+        }
+      }
+    },
+    {
+      "id": "ecc2b890bdcd8258",
+      "name": "光暴击提升",
+      "url": "https://altema.jp/lastcloudia/gino/292",
+      "text": "光属性攻击暴击率+5%，暴击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "光属性攻击暴击率+5%"
+        },
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "光属性攻击暴击伤害+50%"
+        },
+        {
+          "id": "attack-element",
+          "kind": "condition",
+          "text": "本次为光属性攻击"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "光属性攻击暴击率+5个百分点。；光属性攻击发生暴击时，暴击伤害+50%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-light",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "光属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "damage-light",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "光属性攻击发生暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+        }
+      }
+    },
+    {
+      "id": "f351f266a85d8731",
+      "name": "无属性暴击提升",
+      "url": "https://altema.jp/lastcloudia/gino/329",
+      "text": "无属性攻击暴击率+5%，暴击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "无属性攻击暴击率+5%"
+        },
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "无属性攻击暴击伤害+50%"
+        },
+        {
+          "id": "attack-element",
+          "kind": "condition",
+          "text": "本次为无属性攻击"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "无属性攻击暴击率+5个百分点。；无属性攻击发生暴击时，暴击伤害+50%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-none",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "无属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "damage-none",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "无属性攻击发生暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+        }
+      }
+    },
+    {
+      "id": "ebb2a2dba0e68b5f",
+      "name": "树暴击提升",
+      "url": "https://altema.jp/lastcloudia/gino/332",
+      "text": "树属性攻击暴击率+5%，暴击时伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "树属性攻击暴击率+5%"
+        },
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "树属性攻击暴击伤害+50%"
+        },
+        {
+          "id": "attack-element",
+          "kind": "condition",
+          "text": "本次为树属性攻击"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "树属性攻击暴击率+5个百分点。；树属性攻击发生暴击时，暴击伤害+50%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-earth",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "树属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "damage-earth",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "树属性攻击发生暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+        }
+      }
+    },
+    {
+      "id": "4a2d48239d8500dd",
+      "name": "暗暴击提升",
+      "url": "https://altema.jp/lastcloudia/gino/341",
+      "text": "暗属性攻击暴击率+5%，暴击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "暗属性攻击暴击率+5%"
+        },
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "暗属性攻击暴击伤害+50%"
+        },
+        {
+          "id": "attack-element",
+          "kind": "condition",
+          "text": "本次为暗属性攻击"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "暗属性攻击暴击率+5个百分点。；暗属性攻击发生暴击时，暴击伤害+50%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-dark",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "暗属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "damage-dark",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "暗属性攻击发生暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+        }
+      }
+    },
+    {
+      "id": "726408324afe28b6",
+      "name": "冰霜暴击提升",
+      "url": "https://altema.jp/lastcloudia/gino/377",
+      "text": "冰属性攻击暴击率+5%，暴击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "冰属性攻击暴击率+5%"
+        },
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "冰属性攻击暴击伤害+50%"
+        },
+        {
+          "id": "attack-element",
+          "kind": "condition",
+          "text": "本次为冰属性攻击"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "冰属性攻击暴击率+5个百分点。；冰属性攻击发生暴击时，暴击伤害+50%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-ice",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "冰属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "damage-ice",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "冰属性攻击发生暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+        }
+      }
+    },
+    {
+      "id": "3aa15cb512c24b16",
+      "name": "反十字",
+      "url": "https://altema.jp/lastcloudia/gino/268",
+      "text": "从背后进行物理攻击时，暴击率+5%，暴击伤害+50%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-rate",
+          "kind": "effect",
+          "text": "从背后进行物理攻击时，暴击率+5%"
+        },
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "从背后进行物理攻击时，暴击伤害+50%"
+        },
+        {
+          "id": "physical-from-behind",
+          "kind": "condition",
+          "text": "本次为从敌人背后进行的物理攻击"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "从背后进行物理攻击时，暴击率+5个百分点。；从背后进行物理攻击且发生暴击时，暴击伤害+50%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-behind-physical",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "从背后进行物理攻击时，暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "position": "behind"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "damage-behind-physical",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "从背后进行物理攻击且发生暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "position": "behind"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "背后与物理攻击限制保留，不扩展到正面、魔法或全部攻击；本轮只完成暴击率／暴伤效果。"
+        }
+      }
+    },
+    {
+      "id": "3177d5a582d25cba",
+      "name": "要害防御",
+      "url": "https://altema.jp/lastcloudia/gino/763",
+      "text": "你受到的暴击伤害-10%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "incoming-critical-damage",
+          "kind": "effect",
+          "text": "受到的暴击伤害-10%"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "受到的暴击伤害-10%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "incoming-critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "incoming-damage-down",
+              "partIds": [
+                "incoming-critical-damage"
+              ],
+              "summary": "受到的暴击伤害-10%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 10,
+              "requiresCriticalHit": true
+            }
+          ],
+          "calculationNote": "这是所受暴击伤害减少，不是自身暴伤提高，也不是降低敌人暴击率或将暴击转为普通伤害。"
+        }
+      }
+    },
+    {
+      "id": "4d81b9b6cd7cb7fe",
+      "name": "惩戒反击",
+      "url": "https://altema.jp/lastcloudia/gino/1263",
+      "text": "反击发生暴击时，暴击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "反击发生暴击时，暴击伤害+20%"
+        },
+        {
+          "id": "counter-only",
+          "kind": "condition",
+          "text": "仅限反击攻击"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "反击发生暴击时，暴击伤害+20%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-counter",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "反击发生暴击时，暴击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "counter"
+              },
+              "valuePercent": 20,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "只提高反击的暴伤，不提高反击概率或暴击率，不能并入所有物理攻击或普通攻击暴伤；反击范围仍待对应标签。"
+        }
+      }
+    },
+    {
+      "id": "a5ace74d23269296",
+      "name": "新年袭击",
+      "url": "https://altema.jp/lastcloudia/gino/1519",
+      "text": "物理攻击命中属性弱点时，暴击伤害+20%、暴击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "critical-damage",
+          "kind": "effect",
+          "text": "物理攻击命中属性弱点且暴击时，伤害+20%"
+        },
+        {
+          "id": "critical-cap",
+          "kind": "effect",
+          "text": "物理攻击命中属性弱点且暴击时，伤害上限+2,000"
+        },
+        {
+          "id": "physical-element-weakness",
+          "kind": "condition",
+          "text": "本次物理攻击命中敌人的属性弱点"
+        }
+      ],
+      "tagDetails": {
+        "暴击": {
+          "summary": "物理攻击命中属性弱点且暴击时，暴击伤害+20%。；物理攻击命中属性弱点且暴击时，暴击伤害上限+2,000。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-damage",
+              "critical-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical-weakness",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "物理攻击命中属性弱点且暴击时，暴击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "hitsElementWeakness": true
+              },
+              "valuePercent": 20,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "cap-physical-weakness",
+              "partIds": [
+                "critical-cap"
+              ],
+              "summary": "物理攻击命中属性弱点且暴击时，暴击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "hitsElementWeakness": true
+              },
+              "capPoints": 2000,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "属性弱点不是种族特攻；需物理攻击命中属性弱点并实际暴击。属性弱点条件仍待标签，不能当所有物理伤害或上限。"
         }
       }
     }
@@ -25287,6 +27557,294 @@
           ]
         }
       ]
+    },
+    {
+      "tag": "暴击",
+      "assignments": [
+        {
+          "skillId": "e4203cbe63a20722",
+          "partIds": [
+            "critical-rate"
+          ]
+        },
+        {
+          "skillId": "5881746a24e0069e",
+          "partIds": [
+            "critical-rate"
+          ]
+        },
+        {
+          "skillId": "f201c9d8e9ee87ed",
+          "partIds": [
+            "critical-rate"
+          ]
+        },
+        {
+          "skillId": "a9fc8f38be630b02",
+          "partIds": [
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:30",
+          "partIds": [
+            "critical-hit"
+          ]
+        },
+        {
+          "skillId": "934b1ed28e293547",
+          "partIds": [
+            "critical-conversion",
+            "received-trigger"
+          ]
+        },
+        {
+          "skillId": "12fb48061bb074e5",
+          "partIds": [
+            "critical-permission"
+          ]
+        },
+        {
+          "skillId": "2083b650aa52252c",
+          "partIds": [
+            "critical-permission"
+          ]
+        },
+        {
+          "skillId": "0b725106ff374bdf",
+          "partIds": [
+            "critical-permission"
+          ]
+        },
+        {
+          "skillId": "5db07a2caf842aae",
+          "partIds": [
+            "critical-permission"
+          ]
+        },
+        {
+          "skillId": "0631262b7e479c3a",
+          "partIds": [
+            "critical-permission"
+          ]
+        },
+        {
+          "skillId": "06dbf722869d70c0",
+          "partIds": [
+            "critical-permission"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:194",
+          "partIds": [
+            "opening-effect-1"
+          ]
+        },
+        {
+          "skillId": "4dad2c45a6235934",
+          "partIds": [
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "22f55aaac7d9b369",
+          "partIds": [
+            "critical-rate"
+          ]
+        },
+        {
+          "skillId": "ccfbbcc9f91d8332",
+          "partIds": [
+            "full-hp-effect"
+          ]
+        },
+        {
+          "skillId": "478822878a23edb4",
+          "partIds": [
+            "permanent-effect"
+          ]
+        },
+        {
+          "skillId": "cb768af6b608c5b6",
+          "partIds": [
+            "critical-rate",
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "3aa15cb512c24b16",
+          "partIds": [
+            "critical-rate",
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "ee6342cbdb0251e7",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "2aa7d6992469786a",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "2a62c41d8d3fb3d0",
+          "partIds": [
+            "critical-rate",
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "ecc2b890bdcd8258",
+          "partIds": [
+            "critical-rate",
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "f351f266a85d8731",
+          "partIds": [
+            "critical-rate",
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "ebb2a2dba0e68b5f",
+          "partIds": [
+            "critical-rate",
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "4a2d48239d8500dd",
+          "partIds": [
+            "critical-rate",
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:304",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "726408324afe28b6",
+          "partIds": [
+            "critical-rate",
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "81e5eed79e630a07",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "全部技能:all:329",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "15ef9e047319adc5",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "05dffc8daf9a5872",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "9d7ec20e8780822b",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "8f742ab683b2018e",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "bde3ce8d694af2ab",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "3177d5a582d25cba",
+          "partIds": [
+            "incoming-critical-damage"
+          ]
+        },
+        {
+          "skillId": "22db4d8dd8dbfd9c",
+          "partIds": [
+            "effect-1"
+          ]
+        },
+        {
+          "skillId": "0807ea77755d60fc",
+          "partIds": [
+            "opening-effect-1"
+          ]
+        },
+        {
+          "skillId": "448ba5ba48be6d12",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "4a53a2ac6b74cd04",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "4d81b9b6cd7cb7fe",
+          "partIds": [
+            "critical-damage"
+          ]
+        },
+        {
+          "skillId": "e3085e506db3fa44",
+          "partIds": [
+            "boss-critical-damage",
+            "critical-cap",
+            "critical-hit"
+          ]
+        },
+        {
+          "skillId": "a5ace74d23269296",
+          "partIds": [
+            "critical-damage",
+            "critical-cap"
+          ]
+        },
+        {
+          "skillId": "6bd2eb47018db33f",
+          "partIds": [
+            "effect-2"
+          ]
+        },
+        {
+          "skillId": "0d45e653455b29d1",
+          "partIds": [
+            "opening-effect-1",
+            "other-effect-1"
+          ]
+        }
+      ]
     }
   ],
   "views": {
@@ -25870,7 +28428,31 @@
         "a8ee2e010b6e5d6c",
         "898c96e867704168",
         "89a90b8df36a0475",
-        "387b6e052ad74bb1"
+        "387b6e052ad74bb1",
+        "e4203cbe63a20722",
+        "5881746a24e0069e",
+        "f201c9d8e9ee87ed",
+        "a9fc8f38be630b02",
+        "4dad2c45a6235934",
+        "全部技能:all:30",
+        "12fb48061bb074e5",
+        "2083b650aa52252c",
+        "0b725106ff374bdf",
+        "5db07a2caf842aae",
+        "0631262b7e479c3a",
+        "06dbf722869d70c0",
+        "22f55aaac7d9b369",
+        "cb768af6b608c5b6",
+        "2a62c41d8d3fb3d0",
+        "ecc2b890bdcd8258",
+        "f351f266a85d8731",
+        "ebb2a2dba0e68b5f",
+        "4a2d48239d8500dd",
+        "726408324afe28b6",
+        "3aa15cb512c24b16",
+        "3177d5a582d25cba",
+        "4d81b9b6cd7cb7fe",
+        "a5ace74d23269296"
       ]
     },
     "hp": {
@@ -28252,7 +30834,560 @@
         "7498b3dbd8ba7e5d"
       ],
       "scopeDescription": "友军死亡指自身以外的我方角色陷入战斗不能。倒下时触发的Buff、即时回复，以及有友军倒下期间的属性加成分别列组；激怒的攻击提高、防御降低和无法施法分别显示。同一技能跨组只计一次，已有标签和判断同步。"
+    },
+    "critical-rate-general": {
+      "label": "暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-general",
+      "displayOrder": [
+        "e4203cbe63a20722",
+        "5881746a24e0069e",
+        "f201c9d8e9ee87ed"
+      ]
+    },
+    "critical-damage-general": {
+      "label": "暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-general",
+      "displayOrder": [
+        "a9fc8f38be630b02",
+        "4dad2c45a6235934",
+        "6bd2eb47018db33f"
+      ]
+    },
+    "critical-permission-fire": {
+      "label": "火属性攻击魔法：允许暴击",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "permission-fire",
+      "displayOrder": [
+        "12fb48061bb074e5"
+      ]
+    },
+    "critical-permission-ice": {
+      "label": "冰属性攻击魔法：允许暴击",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "permission-ice",
+      "displayOrder": [
+        "2083b650aa52252c"
+      ]
+    },
+    "critical-permission-earth": {
+      "label": "树属性攻击魔法：允许暴击",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "permission-earth",
+      "displayOrder": [
+        "0b725106ff374bdf"
+      ]
+    },
+    "critical-permission-thunder": {
+      "label": "雷属性攻击魔法：允许暴击",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "permission-thunder",
+      "displayOrder": [
+        "5db07a2caf842aae"
+      ]
+    },
+    "critical-permission-light": {
+      "label": "光属性攻击魔法：允许暴击",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "permission-light",
+      "displayOrder": [
+        "0631262b7e479c3a"
+      ]
+    },
+    "critical-permission-dark": {
+      "label": "暗属性攻击魔法：允许暴击",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "permission-dark",
+      "displayOrder": [
+        "06dbf722869d70c0"
+      ]
+    },
+    "critical-rate-opening": {
+      "label": "开场Buff：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-opening",
+      "displayOrder": [
+        "全部技能:all:194",
+        "81e5eed79e630a07"
+      ]
+    },
+    "critical-rate-ore": {
+      "label": "对矿石类型：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-ore",
+      "displayOrder": [
+        "22f55aaac7d9b369"
+      ]
+    },
+    "critical-rate-full-hp": {
+      "label": "满HP：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-full-hp",
+      "displayOrder": [
+        "ccfbbcc9f91d8332"
+      ]
+    },
+    "critical-rate-permanent": {
+      "label": "永久Buff：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-permanent",
+      "displayOrder": [
+        "478822878a23edb4"
+      ]
+    },
+    "critical-rate-thunder": {
+      "label": "雷属性：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-thunder",
+      "displayOrder": [
+        "cb768af6b608c5b6"
+      ]
+    },
+    "critical-damage-thunder": {
+      "label": "雷属性：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-thunder",
+      "displayOrder": [
+        "cb768af6b608c5b6"
+      ]
+    },
+    "critical-rate-fire": {
+      "label": "火属性：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-fire",
+      "displayOrder": [
+        "2a62c41d8d3fb3d0"
+      ]
+    },
+    "critical-damage-fire": {
+      "label": "火属性：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-fire",
+      "displayOrder": [
+        "2a62c41d8d3fb3d0"
+      ]
+    },
+    "critical-rate-light": {
+      "label": "光属性：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-light",
+      "displayOrder": [
+        "ecc2b890bdcd8258"
+      ]
+    },
+    "critical-damage-light": {
+      "label": "光属性：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-light",
+      "displayOrder": [
+        "ecc2b890bdcd8258"
+      ]
+    },
+    "critical-rate-none": {
+      "label": "无属性：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-none",
+      "displayOrder": [
+        "f351f266a85d8731"
+      ]
+    },
+    "critical-damage-none": {
+      "label": "无属性：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-none",
+      "displayOrder": [
+        "f351f266a85d8731"
+      ]
+    },
+    "critical-rate-earth": {
+      "label": "树属性：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-earth",
+      "displayOrder": [
+        "ebb2a2dba0e68b5f"
+      ]
+    },
+    "critical-damage-earth": {
+      "label": "树属性：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-earth",
+      "displayOrder": [
+        "ebb2a2dba0e68b5f"
+      ]
+    },
+    "critical-rate-dark": {
+      "label": "暗属性：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-dark",
+      "displayOrder": [
+        "4a2d48239d8500dd"
+      ]
+    },
+    "critical-damage-dark": {
+      "label": "暗属性：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-dark",
+      "displayOrder": [
+        "4a2d48239d8500dd"
+      ]
+    },
+    "critical-rate-ice": {
+      "label": "冰属性：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-ice",
+      "displayOrder": [
+        "726408324afe28b6"
+      ]
+    },
+    "critical-damage-ice": {
+      "label": "冰属性：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-ice",
+      "displayOrder": [
+        "726408324afe28b6"
+      ]
+    },
+    "critical-rate-behind-physical": {
+      "label": "背后物理攻击：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-behind-physical",
+      "displayOrder": [
+        "3aa15cb512c24b16"
+      ]
+    },
+    "critical-damage-behind-physical": {
+      "label": "背后物理攻击：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-behind-physical",
+      "displayOrder": [
+        "3aa15cb512c24b16"
+      ]
+    },
+    "critical-rate-revival": {
+      "label": "复活Buff：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-revival",
+      "displayOrder": [
+        "ee6342cbdb0251e7"
+      ]
+    },
+    "critical-damage-claw": {
+      "label": "装备爪：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-claw",
+      "displayOrder": [
+        "2aa7d6992469786a"
+      ]
+    },
+    "critical-rate-single-spear": {
+      "label": "单武器·枪：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-single-spear",
+      "displayOrder": [
+        "全部技能:all:304"
+      ]
+    },
+    "critical-rate-single-hammer": {
+      "label": "单武器·锤：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-single-hammer",
+      "displayOrder": [
+        "全部技能:all:329"
+      ]
+    },
+    "critical-rate-single-sword": {
+      "label": "单武器·剑：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-single-sword",
+      "displayOrder": [
+        "15ef9e047319adc5"
+      ]
+    },
+    "critical-rate-single-axe": {
+      "label": "单武器·斧：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-single-axe",
+      "displayOrder": [
+        "05dffc8daf9a5872"
+      ]
+    },
+    "critical-rate-single-claw": {
+      "label": "单武器·爪：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-single-claw",
+      "displayOrder": [
+        "9d7ec20e8780822b"
+      ]
+    },
+    "critical-rate-single-machine": {
+      "label": "单武器·机械：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-single-machine",
+      "displayOrder": [
+        "bde3ce8d694af2ab"
+      ]
+    },
+    "critical-rate-single-bow": {
+      "label": "单武器·弓：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-single-bow",
+      "displayOrder": [
+        "22db4d8dd8dbfd9c"
+      ]
+    },
+    "critical-damage-claw-physical": {
+      "label": "装备爪·物理：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-claw-physical",
+      "displayOrder": [
+        "8f742ab683b2018e",
+        "4a53a2ac6b74cd04"
+      ]
+    },
+    "critical-rate-until-death": {
+      "label": "开场Buff·至战斗不能：暴击率增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "rate-until-death",
+      "displayOrder": [
+        "0807ea77755d60fc"
+      ]
+    },
+    "critical-damage-counter": {
+      "label": "反击：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-counter",
+      "displayOrder": [
+        "4d81b9b6cd7cb7fe"
+      ]
+    },
+    "critical-damage-boss": {
+      "label": "对Boss：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-boss",
+      "displayOrder": [
+        "e3085e506db3fa44"
+      ]
+    },
+    "critical-cap-boss": {
+      "label": "对Boss：暴击伤害上限增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "cap-boss",
+      "displayOrder": [
+        "e3085e506db3fa44"
+      ]
+    },
+    "critical-damage-physical-weakness": {
+      "label": "物理命中属性弱点：暴击伤害增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "damage-physical-weakness",
+      "displayOrder": [
+        "a5ace74d23269296"
+      ]
+    },
+    "critical-cap-physical-weakness": {
+      "label": "物理命中属性弱点：暴击上限增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "cap-physical-weakness",
+      "displayOrder": [
+        "a5ace74d23269296"
+      ]
+    },
+    "critical-cap-ultimate-dragon": {
+      "label": "龙类型·必杀：暴击上限增加",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "cap-ultimate-dragon",
+      "displayOrder": [
+        "0d45e653455b29d1"
+      ]
+    },
+    "critical-permission-ultimate-dragon": {
+      "label": "龙类型·必杀：允许暴击",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "permission-ultimate-dragon",
+      "displayOrder": [
+        "0d45e653455b29d1"
+      ]
+    },
+    "critical-incoming-damage-down": {
+      "label": "受到暴击：伤害减少",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "incoming-damage-down",
+      "displayOrder": [
+        "3177d5a582d25cba",
+        "448ba5ba48be6d12"
+      ]
+    },
+    "critical-incoming-to-normal": {
+      "label": "受到暴击：转为普通伤害",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "incoming-to-normal",
+      "displayOrder": [
+        "934b1ed28e293547"
+      ]
+    },
+    "critical-on-critical-hp": {
+      "label": "暴击触发：HP回复",
+      "parent": "critical",
+      "conditionTag": "暴击",
+      "effectGroup": "on-critical-hp",
+      "displayOrder": [
+        "全部技能:all:30"
+      ]
+    },
+    "critical": {
+      "label": "暴击",
+      "childKeys": [
+        "critical-rate-general",
+        "critical-damage-general",
+        "critical-permission-fire",
+        "critical-permission-ice",
+        "critical-permission-earth",
+        "critical-permission-thunder",
+        "critical-permission-light",
+        "critical-permission-dark",
+        "critical-rate-opening",
+        "critical-rate-ore",
+        "critical-rate-full-hp",
+        "critical-rate-permanent",
+        "critical-rate-thunder",
+        "critical-damage-thunder",
+        "critical-rate-fire",
+        "critical-damage-fire",
+        "critical-rate-light",
+        "critical-damage-light",
+        "critical-rate-none",
+        "critical-damage-none",
+        "critical-rate-earth",
+        "critical-damage-earth",
+        "critical-rate-dark",
+        "critical-damage-dark",
+        "critical-rate-ice",
+        "critical-damage-ice",
+        "critical-rate-behind-physical",
+        "critical-damage-behind-physical",
+        "critical-rate-revival",
+        "critical-damage-claw",
+        "critical-rate-single-spear",
+        "critical-rate-single-hammer",
+        "critical-rate-single-sword",
+        "critical-rate-single-axe",
+        "critical-rate-single-claw",
+        "critical-rate-single-machine",
+        "critical-rate-single-bow",
+        "critical-damage-claw-physical",
+        "critical-rate-until-death",
+        "critical-damage-counter",
+        "critical-damage-boss",
+        "critical-cap-boss",
+        "critical-damage-physical-weakness",
+        "critical-cap-physical-weakness",
+        "critical-cap-ultimate-dragon",
+        "critical-permission-ultimate-dragon",
+        "critical-incoming-damage-down",
+        "critical-incoming-to-normal",
+        "critical-on-critical-hp"
+      ],
+      "overviewLabel": "全部暴击相关效果（分组）",
+      "separateSections": true,
+      "passKind": "critical-effects-and-condition",
+      "displayOrder": [
+        "e4203cbe63a20722",
+        "5881746a24e0069e",
+        "f201c9d8e9ee87ed",
+        "a9fc8f38be630b02",
+        "全部技能:all:30",
+        "934b1ed28e293547",
+        "12fb48061bb074e5",
+        "2083b650aa52252c",
+        "0b725106ff374bdf",
+        "5db07a2caf842aae",
+        "0631262b7e479c3a",
+        "06dbf722869d70c0",
+        "全部技能:all:194",
+        "4dad2c45a6235934",
+        "22f55aaac7d9b369",
+        "ccfbbcc9f91d8332",
+        "478822878a23edb4",
+        "cb768af6b608c5b6",
+        "3aa15cb512c24b16",
+        "ee6342cbdb0251e7",
+        "2aa7d6992469786a",
+        "2a62c41d8d3fb3d0",
+        "ecc2b890bdcd8258",
+        "f351f266a85d8731",
+        "ebb2a2dba0e68b5f",
+        "4a2d48239d8500dd",
+        "全部技能:all:304",
+        "726408324afe28b6",
+        "81e5eed79e630a07",
+        "全部技能:all:329",
+        "15ef9e047319adc5",
+        "05dffc8daf9a5872",
+        "9d7ec20e8780822b",
+        "8f742ab683b2018e",
+        "bde3ce8d694af2ab",
+        "3177d5a582d25cba",
+        "22db4d8dd8dbfd9c",
+        "0807ea77755d60fc",
+        "448ba5ba48be6d12",
+        "4a53a2ac6b74cd04",
+        "4d81b9b6cd7cb7fe",
+        "e3085e506db3fa44",
+        "a5ace74d23269296",
+        "6bd2eb47018db33f",
+        "0d45e653455b29d1"
+      ],
+      "scopeDescription": "暴击率、暴击伤害、暴击上限、允许暴击、暴击触发回复、所受暴击减免分别列组。属性、Boss、物理、反击、武器、满HP和Buff限制分别保留；允许暴击不等于必定暴击。已有标签和判断同步，同一技能跨组只计一次。"
     }
   },
-  "activeView": "ally-death"
+  "activeView": "critical"
 }

@@ -1373,17 +1373,54 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "黄泉之理不提供自动复活能力；自身实际复活后才获得三项Buff。攻击力、魔力和暴击率分别列组；同类型Buff同时只计最高已生效一项。 本轮覆盖复活操作或复活条件；其他效果、次数及Buff机制仍各自待判断。"
+        },
+        "暴击": {
+          "summary": "自身复活后，暴击率+15个百分点，持续40秒。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-revival",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身复活后，暴击率+15个百分点，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 15,
+              "grantsCriticalEligibility": false,
+              "buffType": "critical-rate-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "self-revived"
+              }
+            }
+          ],
+          "calculationNote": "复活标签及攻击力、魔力效果沿用；本轮已补暴击率，原说明中“暴击率待接入”是早期记录，以当前标签为准。复活Buff机制仍待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
         "魔力",
-        "复活"
+        "复活",
+        "暴击"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "暴击率+15%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "复活Buff持续40秒，同类型属性Buff同时只计一项"
       ]
@@ -2095,15 +2132,53 @@ export const ATTACK_TAG_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "暴击": {
+          "summary": "战斗开始时，自身暴击率+15个百分点，持续40秒。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "rate-opening",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "战斗开始时，自身暴击率+15个百分点，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "criticalRole": "direct-effect",
+              "operation": "rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "ratePoints": 15,
+              "grantsCriticalEligibility": false,
+              "buffType": "critical-rate-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              }
+            }
+          ],
+          "calculationNote": "大勇敢的攻击力、暴击的暴击率、速度的移动速度分别处理。开场与攻击力标签保留；速度及Buff机制仍待判断。"
         }
       },
       "assignedTags": [
         "攻击力",
-        "战斗开始"
+        "战斗开始",
+        "暴击"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "暴击带来的暴击率提升",
         "速度带来的移动速度提升"
       ],
       "remainingConditions": []
@@ -5960,15 +6035,47 @@ export const ATTACK_TAG_CATALOG = {
             "basic:6bd2eb47018db33f:1"
           ],
           "relatedSkillIds": []
+        },
+        "暴击": {
+          "summary": "自身暴击伤害+15%。",
+          "relation": "critical-effect-or-condition",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "自身暴击伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "criticalRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified"
+              },
+              "valuePercent": 15,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "攻击力标签保留；受到伤害+10%是负面效果，仍单独待判断，不因暴伤完成而漏掉。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "暴击"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "受到伤害+10%",
-        "暴击伤害+15%"
+        "受到伤害+10%"
       ],
       "remainingConditions": []
     },

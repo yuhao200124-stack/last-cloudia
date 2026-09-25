@@ -55,28 +55,28 @@ test('typed Boss bonuses leave caps and party counts pending without injecting d
 test('Boss page is a deduplicated union of six categories, not an extra bonus tag',()=>{
  const boss=labelingView(catalog,'boss');
  assert.equal(boss.entries.length,13);assert.equal(new Set(boss.entries.map(e=>e.id)).size,13);
- assert.equal(boss.counts.ready,2);assert.equal(boss.counts.partial,11);
+ assert.equal(boss.counts.ready,3);assert.equal(boss.counts.partial,10);
  assert.equal(boss.tagKeys.reduce((sum,key)=>sum+catalog.views[key].counts.relatedUnique,0),17);
- assert.deepEqual(boss.entries.filter(e=>e.judgment==='ready').map(e=>e.name).sort(),['巨人杀手','巨型净化']);
+ assert.deepEqual(boss.entries.filter(e=>e.judgment==='ready').map(e=>e.name).sort(),['巨人杀手','巨型净化','锐利一击']);
  assert(boss.entries.every(e=>!e.assignedTags.includes('Boss增伤')));
  const rows=skillLabelRows(box.window.SKILL_DATA,boss);
- assert(rows.slice(0,2).every(r=>r.judgment==='ready'));assert(rows.slice(2).every(r=>r.judgment==='partial'));
- assert.equal(catalog.views.all.counts.relatedUnique,411);assert.equal(catalog.views.all.counts.ready,80);assert.equal(catalog.views.all.counts.partial,331);
+ assert(rows.slice(0,3).every(r=>r.judgment==='ready'));assert(rows.slice(3).every(r=>r.judgment==='partial'));
+ assert.equal(catalog.views.all.counts.relatedUnique,435);assert.equal(catalog.views.all.counts.ready,91);assert.equal(catalog.views.all.counts.partial,344);
  assert.equal(catalog.views.physical.counts.relatedUnique,78);assert.equal(catalog.views['magic-damage'].counts.relatedUnique,22);
 });
 
-test('Boss critical damage covers its target and actual critical hit but leaves the critical cap pending',()=>{
+test('Boss critical damage retains its scope while the critical pass completes its cap',()=>{
  const view=labelingView(catalog,'boss-critical-damage'),audit=JSON.parse(read('../docs/boss-critical-damage-tag-audit.json'));
  assert.equal(audit.rows.length,935);assert.equal(new Set(audit.rows.map(r=>r.id)).size,935);
  assert.equal(audit.rows.filter(r=>r.decision==='related').length,1);
  assert.deepEqual(view.entries.map(e=>e.name),['锐利一击']);
  const sharp=entry(1289),detail=sharp.tagDetails['Boss暴击伤害增加'];
- assert.deepEqual(sharp.assignedTags,['Boss暴击伤害增加']);
+ assert.deepEqual(sharp.assignedTags,['Boss暴击伤害增加','暴击']);
  assert.deepEqual(detail.scope,{boss:true,criticalOnly:true});
  assert.equal(detail.relation,'boss-critical-damage-increase');
  assert.match(detail.calculationNote,/不提高暴击率.*不赋予魔法暴击资格/);
- assert.equal(sharp.judgment,'partial');
- assert.deepEqual(sharp.remainingEffects,['对Boss的暴击伤害上限+2,000']);
+ assert.equal(sharp.judgment,'ready');
+ assert.deepEqual(sharp.remainingEffects,[]);
  assert.deepEqual(sharp.remainingConditions,[]);
  for(const n of [25,28,216,252,600,763,1519,1775,1884])assert.equal(audit.rows.find(r=>r.id===source(n).id).decision,'not-related');
 });

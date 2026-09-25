@@ -27,7 +27,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['revive','复活',null],['ally-death','友军死亡',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['revive','复活',null],['ally-death','友军死亡',null],['critical','暴击',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -102,6 +102,13 @@ for(const [key,view] of Object.entries(views)){
         }
         if(condition.mode==='mp-scaling' && (condition.metric!=='current-MP' || !['higher-MP-stronger','lower-MP-stronger'].includes(condition.direction) || condition.curveStatus!=='unconfirmed' || Object.hasOwn(condition,'thresholdPoints') || Object.hasOwn(condition,'thresholdPercent')))throw Error('MP scaling must not become a fixed threshold.');
       }
+    }else if(key==='critical'){
+      const coverage=detail.coverage;
+      if(view.passKind!=='critical-effects-and-condition' || !Array.isArray(coverage?.effectPartIds) || !Array.isArray(coverage?.conditionPartIds))throw Error('Missing critical coverage.');
+      const ids=[...coverage.effectPartIds,...coverage.conditionPartIds];
+      if(new Set(ids).size!==ids.length || ids.length!==assignment.partIds.length || ids.some(id=>!assignment.partIds.includes(id)))throw Error('Critical coverage must match reviewed fragments.');
+      if(coverage.effectPartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='effect') || coverage.conditionPartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='condition'))throw Error('Critical effects and conditions are mixed.');
+      if(coverage.conditionPartIds.length && (!['self-attack','enemy-attack'].includes(detail.condition?.subject) || !['critical-hit','critical-hit-received'].includes(detail.condition?.event)))throw Error('Actual critical events must identify the attacking side.');
     }else if(key==='revive'){
       const coverage=detail.coverage,c=detail.condition;
       if(view.passKind!=='revival-and-condition' || !Array.isArray(coverage?.revivalPartIds) || !Array.isArray(coverage?.conditionPartIds))throw Error('Missing revival coverage.');
@@ -158,6 +165,23 @@ for(const [key,view] of Object.entries(views)){
         if(binding.mpRole==='condition-benefit' && (!detail.condition || binding.isBuff))throw Error('Current MP conditions are not triggered Buffs.');
         if(binding.isBuff && (binding.operation!=='periodic-restore-current' || !(binding.durationSeconds>0) || !(binding.intervalSeconds>0) || binding.stacking!=='highest-active-buff-of-same-type-only'))throw Error('Invalid MP regeneration Buff.');
         if(!binding.isBuff && (Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'stacking')))throw Error('Non-Buff MP effects must not gain Buff duration or stacking.');
+      }
+      if(key==='critical'){
+        const c=detail.coverage;
+        if(binding.target!=='self' || typeof binding.isBuff!=='boolean' || !['outgoing','incoming'].includes(binding.scope?.direction) || !['unspecified','physical','attack-magic','ultimate','counter'].includes(binding.scope.attackType))throw Error('Critical scope or target missing.');
+        if(binding.criticalRole==='condition-benefit'){
+          if(binding.operation!=='restore-current-hp' || !c.conditionPartIds.length || binding.partIds.some(id=>assignment.partIds.includes(id)))throw Error('Critical trigger must not complete its HP recovery effect.');
+        }else if(binding.criticalRole!=='direct-effect' || binding.partIds.some(id=>!c.effectPartIds.includes(id)))throw Error('Unreviewed critical effect.');
+        if(binding.operation==='rate-up' && (!(binding.ratePoints>0) || binding.grantsCriticalEligibility!==false || Object.hasOwn(binding,'valuePercent')))throw Error('Critical rate points are distinct from critical permission and damage.');
+        if(['damage-up','cap-up'].includes(binding.operation) && (binding.requiresCriticalHit!==true || binding.grantsCriticalEligibility!==false))throw Error('Critical damage and caps require actual critical hits.');
+        if(binding.operation==='damage-up' && !(binding.valuePercent>0) || binding.operation==='cap-up' && !(binding.capPoints>0))throw Error('Missing critical bonus value.');
+        if(binding.operation==='enable-critical' && (binding.grantsCriticalEligibility!==true || binding.guaranteedCritical!==false || !['attack-magic','ultimate'].includes(binding.scope.attackType) || Object.hasOwn(binding,'ratePoints')))throw Error('Permission is neither rate nor a guaranteed critical hit.');
+        if(['incoming-damage-down','convert-to-normal'].includes(binding.operation) && binding.scope.direction!=='incoming')throw Error('Incoming critical defense must not increase outgoing critical damage.');
+        if(binding.operation==='convert-to-normal' && (binding.chancePercent!==50 || Object.hasOwn(binding,'valuePercent')))throw Error('Royal Armor probability must not become damage reduction.');
+        if(binding.isBuff){
+          const lifetimes=[binding.durationSeconds>0,binding.lifetime==='permanent',binding.endsOn==='incapacitated'].filter(Boolean).length;
+          if(binding.operation!=='rate-up' || binding.buffType!=='critical-rate-up' || lifetimes!==1 || binding.stacking!=='highest-active-buff-of-same-type-only')throw Error('Critical Buff lifetime and same-type stacking must be explicit.');
+        }else if(Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'lifetime') || Object.hasOwn(binding,'endsOn') || Object.hasOwn(binding,'stacking'))throw Error('Passive critical bonuses must not acquire Buff expiry.');
       }
       if(key==='ally-death'){
         if(binding.target!=='self' || typeof binding.isBuff!=='boolean' || binding.partIds.some(id=>assignment.partIds.includes(id)))throw Error('Ally death conditions must not cover their effect tags or change the recipient.');

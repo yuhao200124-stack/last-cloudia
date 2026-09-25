@@ -30,8 +30,8 @@ test('opening pass audits the full 935-skill library, including previously untag
  }
  assert.deepEqual(numbers('battle-start').filter(n=>!permanentNumbers.includes(n)),[102,103,104,105,164,201,203,207,208,210,214,234,243,256,305,324,353,358,381,390,402,431,460,471,473,508,512,524,560,592,620,627,639,649,692,696,699,746,830,831,851,859,867,886,906,916,984,992,994,1009,1028,1066,1074,1092,1103,1144,1205,1231,1241,1256,1365,1378,1425,1432,1459,1462,1482,1604,1605,1616,1629,1674,1693,1706,1747,1753,1776,1799,1801,1802,1812,1813,1873,1879,1884,1941,1954,1981,1987,1988,2016]);
  const newEntries=opening.entries.filter(e=>e.assignedTags.length===1);
- assert.equal(newEntries.length,67);assert(newEntries.every(e=>e.assignedTags[0]==='战斗开始'));
- assert.equal(catalog.views.all.counts.relatedUnique,411);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(newEntries.length,63);assert(newEntries.every(e=>e.assignedTags[0]==='战斗开始'));
+ assert.equal(catalog.views.all.counts.relatedUnique,435);assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('attack and magic opening clauses occupy different groups while compound skills share stable labels',()=>{
@@ -44,11 +44,11 @@ test('attack and magic opening clauses occupy different groups while compound sk
   assert.strictEqual(labelingView(catalog,'battle-start-attack-up').entries.find(e=>e.id===entry(n).id),labelingView(catalog,'battle-start-magic-up').entries.find(e=>e.id===entry(n).id));
   assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingEffects.every(t=>/减伤/.test(t)));
  }
- assert.equal(opening.counts.relatedUnique,117);assert.equal(opening.counts.ready,18);assert.equal(opening.counts.partial,99);
+ assert.equal(opening.counts.relatedUnique,117);assert.equal(opening.counts.ready,20);assert.equal(opening.counts.partial,97);
  const union=new Set(opening.childKeys.flatMap(k=>labelingView(catalog,k).entries.map(e=>e.id)));
  assert.deepEqual([...union].sort(),opening.entries.map(e=>e.id).sort());
  assert.equal(opening.childKeys.length,59);
- assert.equal(catalog.views.all.counts.ready,80);assert.equal(catalog.views.all.counts.partial,331);
+ assert.equal(catalog.views.all.counts.ready,91);assert.equal(catalog.views.all.counts.partial,344);
 });
 
 test('opening grouping follows its own clause, never passive stats, comparison operands, delayed damage or a maximum',()=>{
@@ -73,12 +73,12 @@ test('the condition pass completes known opening buffs but leaves equipment, par
  const before=structuredClone(registry);before.tagPasses=before.tagPasses.filter(p=>p.tag!=='战斗开始');
  const old=resolveSkillLabels(before);
  const promoted=opening.entries.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b);
- assert.deepEqual(promoted,[102,103,106,108,353,473,636,746,851,867,886,969,1088,1144,1205,1221,1605,1768]);
+ assert.deepEqual(promoted,[102,103,106,108,201,239,353,473,636,746,851,867,886,969,1088,1144,1205,1221,1605,1768]);
  for(const n of promoted){assert.equal(old.find(e=>e.id===entry(n).id).judgment,'partial');assert.deepEqual(entry(n).remainingEffects,[]);assert.deepEqual(entry(n).remainingConditions,[]);}
  for(const n of [305,524,696,1066,1231,1256,1365,1747,1799,1801,1802,1813,1884,1941,2016]){assert.equal(entry(n).judgment,'partial');assert(entry(n).remainingConditions.length,entry(n).name);}
- assert(entry(390).remainingEffects.some(t=>t.includes('暴击率')));
+ assert(!entry(390).remainingEffects.some(t=>t.includes('暴击率')));assert(entry(390).remainingEffects.some(t=>t.includes('速度')));
  assert(entry(402).remainingEffects.some(t=>t.includes('魔抗')));
- assert(entry(1884).remainingEffects.some(t=>t.includes('必杀可以暴击')));
+ assert.deepEqual(entry(1884).remainingEffects,[]);
  assert(entry(2016).remainingConditions.some(t=>t.includes('持续时间待确认')));
 });
 
@@ -104,9 +104,9 @@ function page(edits={}){
 
 test('opening overview separates effect tables, counts unique skills and preserves judgment sorting and search',()=>{
  const {get,click}=page();
- assert.match(get('#labelCoverage').textContent,/935.*117.*818/);assert.match(get('#judgmentSummary').textContent,/18.*99.*0/);
+ assert.match(get('#labelCoverage').textContent,/935.*117.*818/);assert.match(get('#judgmentSummary').textContent,/20.*97.*0/);
  assert.match(get('#labelResultCount').textContent,/117 \/ 117/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,17);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,18);
  assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,60);
  const sections=get('#labelTable').innerHTML.split('<section ').slice(1);
  assert.equal(sections.length,59);
@@ -155,10 +155,10 @@ test('permanent named statuses are the exact user-approved extension and retain 
    assert.match(b.summary,/永久获得.*无固定倒计时/);
   }
  }
- assert.equal(catalog.entries.filter(e=>e.tagDetails['战斗开始']?.activationMode==='permanent-status' && e.assignedTags.length===1).length,19);
- assert.deepEqual(permanent.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[106,108,636,969,1088,1221,1768]);
+ assert.equal(catalog.entries.filter(e=>e.tagDetails['战斗开始']?.activationMode==='permanent-status' && e.assignedTags.length===1).length,18);
+ assert.deepEqual(permanent.filter(e=>e.judgment==='ready').map(e=>Number(e.url.split('/').pop())).sort((a,b)=>a-b),[106,108,239,636,969,1088,1221,1768]);
  assert.equal(registry.tagPasses.filter(p=>p.tag==='战斗开始').length,1);
- assert.equal(registry.tagPasses.length,21);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(registry.tagPasses.length,22);assert.equal(catalog.numericEffectInjection,false);
 });
 
 test('permanent effect groups preserve stats, HP caps, speed, recovery and self-only elemental walls separately',()=>{
