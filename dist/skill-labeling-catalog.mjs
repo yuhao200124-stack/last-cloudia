@@ -2,7 +2,7 @@
 export const SKILL_LABELING_CATALOG = {
   "schemaVersion": 2,
   "numericEffectInjection": false,
-  "activeView": "fire",
+  "activeView": "ice",
   "entries": [
     {
       "id": "d1bed52d151e14d2",
@@ -5572,18 +5572,75 @@ export const SKILL_LABELING_CATALOG = {
             "basic:4032cdf421f18002:1"
           ],
           "relatedSkillIds": []
+        },
+        "暗属性": {
+          "summary": "装备暗属性武器时，暗属性伤害上限+2,000。；装备暗属性武器时，自身攻击力+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "equipped-weapon",
+            "weaponElement": "dark"
+          },
+          "bindings": [
+            {
+              "group": "weapon-element-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备暗属性武器时，暗属性伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "equipment": {
+                  "weaponElement": "dark"
+                }
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "weapon-element-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备暗属性武器时，自身攻击力+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponElement": "dark"
+                }
+              },
+              "stat": "STR",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "暗属性武器是装备条件；攻击力+10%不要求本次攻击为暗，暗属性上限则要求本次攻击为暗。沿用攻击力标签。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "暗属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "暗属性伤害上限+2,000"
-      ],
-      "remainingConditions": [
-        "装备暗属性武器时生效"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "a92f6001f2419fda",
@@ -5636,10 +5693,52 @@ export const SKILL_LABELING_CATALOG = {
             "basic:a92f6001f2419fda:1"
           ],
           "relatedSkillIds": []
+        },
+        "雷属性": {
+          "summary": "只装备一把剑，且目标敌人弱雷时，物理伤害上限再+3,000。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "condition": {
+            "subject": "target-enemy",
+            "weakElement": "thunder"
+          },
+          "bindings": [
+            {
+              "group": "enemy-weakness-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "只装备一把剑，且目标敌人弱雷时，物理伤害上限再+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "condition-benefit",
+              "operation": "conditional-extra-cap",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyWeakElement": "thunder",
+                "equipment": {
+                  "weaponType": "sword",
+                  "weaponCount": 1
+                }
+              },
+              "capPoints": 3000,
+              "requiresAttackElement": false
+            }
+          ],
+          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。只完成弱雷条件，单剑和物理上限仍待对应标签。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "雷属性"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -5647,8 +5746,7 @@ export const SKILL_LABELING_CATALOG = {
         "对弱雷属性敌人的伤害上限+3,000"
       ],
       "remainingConditions": [
-        "只装备一把剑时生效（单武器且武器为剑）",
-        "对弱雷属性敌人的额外上限条件"
+        "只装备一把剑时生效（单武器且武器为剑）"
       ]
     },
     {
@@ -11780,15 +11878,54 @@ export const SKILL_LABELING_CATALOG = {
             "basic:aa48351ee0991a93:1"
           ],
           "relatedSkillIds": []
+        },
+        "冰属性": {
+          "summary": "进行冰属性攻击时，该次伤害计算使用的自身法强+15%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "ice"
+          },
+          "bindings": [
+            {
+              "group": "attack-stat-reference",
+              "partIds": [
+                "magic"
+              ],
+              "summary": "进行冰属性攻击时，该次伤害计算使用的自身法强+15%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "condition-benefit",
+              "operation": "stat-reference-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "stat": "INT",
+              "valuePercent": 15,
+              "phase": "damage-calculation",
+              "referenceTarget": "self"
+            }
+          ],
+          "calculationNote": "已有魔力标签保留；这是当次法强参照修正，不是冰属性伤害直接+15%，也不是常驻面板或持续Buff。计算阶段仍保留待判断。"
         }
       },
       "assignedTags": [
-        "魔力"
+        "魔力",
+        "冰属性"
       ],
       "judgment": "partial",
       "remainingEffects": [],
       "remainingConditions": [
-        "进行冰属性攻击时生效",
         "只修正该次伤害计算所用魔力，不是常驻面板加成或持续Buff"
       ]
     },
@@ -16459,18 +16596,53 @@ export const SKILL_LABELING_CATALOG = {
           "calculationNote": "暗属性通用伤害+10%与不限属性的魔法伤害+15%是两个效果；本轮只覆盖后者。",
           "existingRuleIds": [],
           "relatedSkillIds": []
+        },
+        "暗属性": {
+          "summary": "暗属性攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "dark"
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "暗属性攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "另一项魔法攻击伤害+15%不限定属性，沿用已有魔法伤害标签；两项保留完整范围。"
         }
       },
       "assignedTags": [
-        "魔法伤害增加"
+        "魔法伤害增加",
+        "暗属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "暗属性攻击伤害+10%"
-      ],
-      "remainingConditions": [
-        "暗属性伤害+10%仅限暗属性攻击；魔法伤害+15%不限定暗属性"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "58197bb69bad678a",
@@ -18413,15 +18585,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "暗属性": {
+          "summary": "每Wave开始时，我方全体受到暗属性攻击伤害-20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到暗属性攻击伤害-20%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-dark-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。圣墙减暗伤，不提高暗耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "暗属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "我方全体受到暗属性攻击的伤害-20%，40秒；不提高属性耐性数值"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -18919,15 +19130,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "冰属性": {
+          "summary": "每Wave开始时，我方全体受到冰属性攻击伤害-20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到冰属性攻击伤害-20%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-ice-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。雷墙减冰伤，不提高冰耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "冰属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "我方全体受到冰属性攻击的伤害-20%，40秒；不提高属性耐性数值"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -18970,15 +19220,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "树属性": {
+          "summary": "每Wave开始时，我方全体受到树属性攻击伤害-20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到树属性攻击伤害-20%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-earth-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。炎墙减树伤，不提高树耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "树属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "我方全体受到树属性攻击的伤害-20%，40秒；不提高属性耐性数值"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -19134,15 +19423,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "雷属性": {
+          "summary": "每Wave开始时，我方全体受到雷属性攻击伤害-20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到雷属性攻击伤害-20%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-thunder-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。石墙减雷伤，不提高雷耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "雷属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "我方全体受到雷属性攻击的伤害-20%，40秒；不提高属性耐性数值"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -19337,15 +19665,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "光属性": {
+          "summary": "每Wave开始时，我方全体受到光属性攻击伤害-20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到光属性攻击伤害-20%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-light-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。暗影墙减光伤，不提高光耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "光属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "我方全体受到光属性攻击的伤害-20%，40秒；不提高属性耐性数值"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -19475,11 +19842,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "受冰属性攻击是开场Buff的结束条件，不是获得减伤的触发条件，也不是冰属性伤害减少5%。 本轮仅贴“受到攻击”条件标签；未完成的效果与其他机制仍单独待判断。"
+        },
+        "冰属性": {
+          "summary": "开场获得受到伤害-5%的Buff；受到敌人的冰属性攻击时取消。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "received-trigger"
+            ]
+          },
+          "condition": {
+            "subject": "enemy-attack",
+            "element": "ice",
+            "event": "attack-received",
+            "phase": "end-effect"
+          },
+          "bindings": [
+            {
+              "group": "received-end-buff",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场获得受到伤害-5%的Buff；受到敌人的冰属性攻击时取消。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "condition-benefit",
+              "operation": "end-buff",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "triggerElement": "ice"
+              },
+              "buffType": "oil-coating-damage-down",
+              "endsOn": "hit-by-enemy-ice-attack",
+              "activationMode": "effect-termination",
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "冰属性是取消Buff的条件，不是获得减伤的条件，也不是冰伤减免5%。通用减伤效果仍待标签。"
         }
       },
       "assignedTags": [
         "战斗开始",
-        "受到攻击"
+        "受到攻击",
+        "冰属性"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -19527,15 +19936,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "无属性": {
+          "summary": "每Wave开始时，我方全体受到无属性攻击伤害-20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到无属性攻击伤害-20%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-neutral-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。无属性墙减无伤，不提高无耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "无属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "我方全体受到无属性攻击的伤害-20%，40秒；不提高属性耐性数值"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -19955,15 +20403,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "光属性": {
+          "summary": "战斗开始时，自身光属性攻击伤害+20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，自身光属性攻击伤害+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 20,
+              "buffType": "light-damage-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签，光属性伤害Buff持续40秒；同类型Buff只计最高已生效一项，不当成永久或所有属性增伤。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "光属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "光属性攻击伤害+20%的Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20006,15 +20492,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "暗属性": {
+          "summary": "战斗开始时，自身暗属性攻击伤害+20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，自身暗属性攻击伤害+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 20,
+              "buffType": "dark-damage-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签，暗属性伤害Buff持续40秒；同类型Buff只计最高已生效一项，不当成永久或所有属性增伤。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "暗属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "暗属性攻击伤害+20%的Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20057,15 +20581,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "暗属性": {
+          "summary": "每Wave开始时，我方全体受到暗属性攻击伤害-35%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到暗属性攻击伤害-35%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 35,
+              "changesResistance": false,
+              "buffType": "received-dark-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。圣墙减暗伤，不提高暗耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "暗属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "我方全体受到暗属性攻击的伤害-35%，40秒；不提高属性耐性数值"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20198,15 +20761,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "光属性": {
+          "summary": "每Wave开始时，我方全体受到光属性攻击伤害-35%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到光属性攻击伤害-35%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 35,
+              "changesResistance": false,
+              "buffType": "received-light-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。暗影墙减光伤，不提高光耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "光属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "我方全体受到光属性攻击的伤害-35%，40秒；不提高属性耐性数值"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20318,15 +20920,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "冰属性": {
+          "summary": "每Wave开始时，自身冰属性耐性数值+20，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "resistance-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，自身冰属性耐性数值+20，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "element-resistance-up",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "resistancePoints": 20,
+              "changesResistance": true,
+              "buffType": "ice-resistance-up",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "提高的是耐性数值，不是受到对应属性伤害直接-20%；与属性墙分组、分计算阶段，同类型耐性Buff只取最高有效一项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "冰属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "冰属性耐性数值+20的Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20369,15 +21009,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "雷属性": {
+          "summary": "战斗开始时，自身雷属性攻击伤害+20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，自身雷属性攻击伤害+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 20,
+              "buffType": "thunder-damage-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签，雷属性伤害Buff持续40秒；同类型Buff只计最高已生效一项，不当成永久或所有属性增伤。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "雷属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "雷属性攻击伤害+20%的Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20420,15 +21098,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "冰属性": {
+          "summary": "战斗开始时，自身冰属性攻击伤害+20%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "战斗开始时，自身冰属性攻击伤害+20%，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 20,
+              "buffType": "ice-damage-up",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "stacking": "highest-active-buff-of-same-type-only",
+              "trigger": {
+                "event": "battle-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签，冰属性伤害Buff持续40秒；同类型Buff只计最高已生效一项，不当成永久或所有属性增伤。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "冰属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "冰属性攻击伤害+20%的Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20471,15 +21187,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "光属性": {
+          "summary": "每Wave开始时，自身光属性耐性数值+20，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "resistance-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，自身光属性耐性数值+20，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "element-resistance-up",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "resistancePoints": 20,
+              "changesResistance": true,
+              "buffType": "light-resistance-up",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "提高的是耐性数值，不是受到对应属性伤害直接-20%；与属性墙分组、分计算阶段，同类型耐性Buff只取最高有效一项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "光属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "光属性耐性数值+20的Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20542,16 +21296,103 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "其余条件和未贴标签的效果继续单独判断。"
+        },
+        "冰属性": {
+          "summary": "开场按我方人类系单位人数提高冰属性伤害，最多4名、最高+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-opening-party",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "开场按我方人类系单位人数提高冰属性伤害，最多4名、最高+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "party-scaling-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "trigger": {
+                "event": "battle-start"
+              },
+              "maxValuePercent": 20,
+              "countMetric": "allies-of-human-family",
+              "eligibleTypes": [
+                "soldier",
+                "knight",
+                "sniper",
+                "sorcerer"
+              ],
+              "maxCount": 4,
+              "tiersStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；沿用开场标签，队伍和档位条件待判断。"
+        },
+        "光属性": {
+          "summary": "开场按我方人类系单位人数提高光属性伤害，最多4名、最高+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-2"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-opening-party",
+              "partIds": [
+                "opening-effect-2"
+              ],
+              "summary": "开场按我方人类系单位人数提高光属性伤害，最多4名、最高+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "party-scaling-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "trigger": {
+                "event": "battle-start"
+              },
+              "maxValuePercent": 20,
+              "countMetric": "allies-of-human-family",
+              "eligibleTypes": [
+                "soldier",
+                "knight",
+                "sniper",
+                "sorcerer"
+              ],
+              "maxCount": 4,
+              "tiersStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "冰与光为独立效果；统计符合类型的单位，每名单位只计一次。各人数档位未确认，不能直接使用20%；沿用开场标签，队伍和档位条件待判断。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "冰属性",
+        "光属性"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "按我方人类系人数提高冰属性伤害，最多4名、最高+20%",
-        "按我方人类系人数提高光属性伤害，最多4名、最高+20%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "开场统计我方士兵、骑士、狙击手、魔法师类型的单位，最多4名",
         "各人数对应的具体增幅待确认，不能直接取最高20%"
@@ -20597,15 +21438,53 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "暗属性": {
+          "summary": "每Wave开始时，自身暗属性耐性数值+20，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "resistance-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，自身暗属性耐性数值+20，持续40秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "element-resistance-up",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "resistancePoints": 20,
+              "changesResistance": true,
+              "buffType": "dark-resistance-up",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              },
+              "stacking": "highest-active-buff-of-same-type-only"
+            }
+          ],
+          "calculationNote": "提高的是耐性数值，不是受到对应属性伤害直接-20%；与属性墙分组、分计算阶段，同类型耐性Buff只取最高有效一项。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "暗属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "暗属性耐性数值+20的Buff"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -20860,15 +21739,50 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "开场仅重置累计／计时，不自动取得最高加成。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "冰属性": {
+          "summary": "每Wave内冰属性伤害逐渐提高，90秒达到最高+20%；下一Wave重置。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "other-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-time",
+              "partIds": [
+                "other-effect-1"
+              ],
+              "summary": "每Wave内冰属性伤害逐渐提高，90秒达到最高+20%；下一Wave重置。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "time-scaling-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "maxValuePercent": 20,
+              "secondsToMaximum": 90,
+              "resetScope": "wave",
+              "curveStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "只记录已知最高值与达峰时间，不假定线性，也不把最高20%从开场就计入。时间条件与曲线仍待判断。 沿用已有时间增长片段；开场重置与时间曲线机制继续单独判断。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "冰属性"
       ],
       "judgment": "partial",
       "remainingEffects": [
-        "进入下一Wave重置冰属性增伤的经过时间；不是开场获得最高+20%",
-        "每个Wave内冰属性伤害随时间逐渐提高，90秒最高+20%"
+        "进入下一Wave重置冰属性增伤的经过时间；不是开场获得最高+20%"
       ],
       "remainingConditions": [
         "冰属性增伤随经过时间提高，90秒达到最高20%；此前的具体曲线待确认"
@@ -20976,15 +21890,54 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "上述开场效果持续40秒。同类型Buff同时只计已生效的最高一项。其余条件和未贴标签的效果继续单独判断。"
+        },
+        "雷属性": {
+          "summary": "每Wave开始时，我方全体受到雷属性攻击伤害-35%，持续40秒。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "opening-effect-1"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-opening",
+              "partIds": [
+                "opening-effect-1"
+              ],
+              "summary": "每Wave开始时，我方全体受到雷属性攻击伤害-35%，持续40秒。",
+              "target": "all-allies",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 35,
+              "changesResistance": false,
+              "buffType": "received-thunder-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "triggered-buff",
+              "durationSeconds": 40,
+              "trigger": {
+                "event": "wave-start"
+              }
+            }
+          ],
+          "calculationNote": "开场条件已有标签。石墙减雷伤，不提高雷耐性数值；同类型墙Buff同时只计最高已生效一项，20%与35%不能相加。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "雷属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "我方全体受到雷属性攻击的伤害-35%，40秒；不提高属性耐性数值"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -21434,15 +22387,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "雷属性": {
+          "summary": "永久获得石墙：仅自身受到雷属性攻击伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得石墙：仅自身受到雷属性攻击伤害-20%。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-thunder-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "雷属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "石墙：受到雷属性攻击的伤害-20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -21576,15 +22565,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "暗属性": {
+          "summary": "永久获得圣墙：仅自身受到暗属性攻击伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得圣墙：仅自身受到暗属性攻击伤害-20%。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-dark-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "暗属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "圣墙：受到暗属性攻击的伤害-20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -21629,15 +22654,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "光属性": {
+          "summary": "永久获得暗影墙：仅自身受到光属性攻击伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得暗影墙：仅自身受到光属性攻击伤害-20%。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-light-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "光属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "暗影墙：受到光属性攻击的伤害-20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -21735,15 +22796,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "树属性": {
+          "summary": "永久获得炎墙：仅自身受到树属性攻击伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得炎墙：仅自身受到树属性攻击伤害-20%。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-earth-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "树属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "炎墙：受到树属性攻击的伤害-20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -21788,15 +22885,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "冰属性": {
+          "summary": "永久获得雷墙：仅自身受到冰属性攻击伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得雷墙：仅自身受到冰属性攻击伤害-20%。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-ice-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "冰属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "雷墙：受到冰属性攻击的伤害-20%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -21841,15 +22974,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "暗属性": {
+          "summary": "永久获得圣墙：仅自身受到暗属性攻击伤害-35%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得圣墙：仅自身受到暗属性攻击伤害-35%。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 35,
+              "changesResistance": false,
+              "buffType": "received-dark-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "暗属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "圣墙2：受到暗属性攻击的伤害-35%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -21947,15 +23116,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "树属性": {
+          "summary": "永久获得炎墙：仅自身受到树属性攻击伤害-35%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得炎墙：仅自身受到树属性攻击伤害-35%。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 35,
+              "changesResistance": false,
+              "buffType": "received-earth-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "树属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "炎墙2：受到树属性攻击的伤害-35%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -22000,15 +23205,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "光属性": {
+          "summary": "永久获得暗影墙：仅自身受到光属性攻击伤害-35%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得暗影墙：仅自身受到光属性攻击伤害-35%。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 35,
+              "changesResistance": false,
+              "buffType": "received-light-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "光属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "暗影墙2：受到光属性攻击的伤害-35%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -22053,15 +23294,51 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "永久状态，无固定倒计时。与开场限时或其它来源的同类型Buff同时只计已生效的最高一项；更高的限时Buff结束后，仍有永久状态。墙系效果仅作用于自身，是受到对应属性伤害减少，不是提高属性耐性。"
+        },
+        "雷属性": {
+          "summary": "永久获得石墙：仅自身受到雷属性攻击伤害-35%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "permanent-effect"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-permanent",
+              "partIds": [
+                "permanent-effect"
+              ],
+              "summary": "永久获得石墙：仅自身受到雷属性攻击伤害-35%。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 35,
+              "changesResistance": false,
+              "buffType": "received-thunder-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "permanent-status",
+              "lifetime": "permanent"
+            }
+          ],
+          "calculationNote": "永久状态条件已有标签。只作用自身，不给全队；无固定倒计时，和限时同类型墙只计最高一项，减伤不等于耐性提高。"
         }
       },
       "assignedTags": [
-        "战斗开始"
+        "战斗开始",
+        "雷属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "石墙2：受到雷属性攻击的伤害-35%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -24909,19 +26186,92 @@ export const SKILL_LABELING_CATALOG = {
             }
           ],
           "calculationNote": "保留冰属性武器和冰属性必杀两个限定，不并入通用必杀增伤；冰属性特技与必杀是“或”关系，各自一条分支。不能默认固定+40%或自行取平均值。 本轮仅完成必杀相关条件；未处理的效果、时长、叠加和其他条件仍待逐类贴标签。"
+        },
+        "冰属性": {
+          "summary": "装备冰属性武器并发动冰属性特技时，该次伤害随机+10%～40%。；装备冰属性武器并发动冰属性必杀时，该次伤害随机+10%～40%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-skill-damage",
+              "ice-ultimate-damage"
+            ],
+            "conditionPartIds": [
+              "ice-weapon"
+            ]
+          },
+          "condition": {
+            "subject": "equipped-weapon",
+            "weaponElement": "ice"
+          },
+          "bindings": [
+            {
+              "group": "weapon-random-skill",
+              "partIds": [
+                "ice-skill-damage"
+              ],
+              "summary": "装备冰属性武器并发动冰属性特技时，该次伤害随机+10%～40%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "random-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "element": "ice",
+                "equipment": {
+                  "weaponElement": "ice"
+                }
+              },
+              "minValuePercent": 10,
+              "maxValuePercent": 40,
+              "distributionStatus": "unconfirmed",
+              "alternativeAttackTypes": [
+                "skill",
+                "ultimate"
+              ],
+              "branchOperator": "or"
+            },
+            {
+              "group": "weapon-random-ultimate",
+              "partIds": [
+                "ice-ultimate-damage"
+              ],
+              "summary": "装备冰属性武器并发动冰属性必杀时，该次伤害随机+10%～40%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "random-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice",
+                "equipment": {
+                  "weaponElement": "ice"
+                }
+              },
+              "minValuePercent": 10,
+              "maxValuePercent": 40,
+              "distributionStatus": "unconfirmed",
+              "alternativeAttackTypes": [
+                "skill",
+                "ultimate"
+              ],
+              "branchOperator": "or"
+            }
+          ],
+          "calculationNote": "武器与本次攻击都要求冰属性；特技、必杀是或关系。随机分布待确认，不能默认40%或擅自取平均值；特技发动条件仍待其标签。"
         }
       },
       "assignedTags": [
-        "必杀相关"
+        "必杀相关",
+        "冰属性"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "该次冰属性特技伤害随机+10%～40%",
-        "该次冰属性必杀伤害随机+10%～40%"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "发动冰属性特技时（与冰属性必杀是“或”关系，仍待对应标签）",
-        "装备冰属性武器时",
         "伤害加成在10%～40%间随机；分布待确认"
       ]
     },
@@ -25668,15 +27018,64 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 40
             }
           ]
+        },
+        "冰属性": {
+          "summary": "冰属性攻击魔法MP消耗+25%。；冰属性攻击魔法伤害+40%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-spell-cost",
+              "ice-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "magic-mp-cost",
+              "partIds": [
+                "ice-spell-cost"
+              ],
+              "summary": "冰属性攻击魔法MP消耗+25%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "adjust-spell-cost",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "costAdjustmentPercent": 25
+            },
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "ice-magic-damage"
+              ],
+              "summary": "冰属性攻击魔法伤害+40%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "valuePercent": 40
+            }
+          ],
+          "calculationNote": "沿用MP消耗标签；两项均只作用于冰属性攻击魔法，不能给所有魔法加伤或给特技增加MP消耗。"
         }
       },
       "assignedTags": [
-        "MP"
+        "MP",
+        "冰属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "冰属性攻击魔法伤害+40%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -26921,17 +28320,56 @@ export const SKILL_LABELING_CATALOG = {
               "guaranteedCritical": false
             }
           ],
-          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围由对应属性标签覆盖。"
+        },
+        "冰属性": {
+          "summary": "冰属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": [
+              "attack-scope"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "ice",
+            "attackType": "attack-magic"
+          },
+          "bindings": [
+            {
+              "group": "magic-critical-permission",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "冰属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "ice"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "沿用暴击标签，补齐冰属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "冰属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "仅限冰属性攻击魔法，不包含同属性物理攻击或必杀"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0b725106ff374bdf",
@@ -26983,17 +28421,56 @@ export const SKILL_LABELING_CATALOG = {
               "guaranteedCritical": false
             }
           ],
-          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围由对应属性标签覆盖。"
+        },
+        "树属性": {
+          "summary": "树属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": [
+              "attack-scope"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "earth",
+            "attackType": "attack-magic"
+          },
+          "bindings": [
+            {
+              "group": "magic-critical-permission",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "树属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "earth"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "沿用暴击标签，补齐树属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "树属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "仅限树属性攻击魔法，不包含同属性物理攻击或必杀"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "5db07a2caf842aae",
@@ -27045,17 +28522,56 @@ export const SKILL_LABELING_CATALOG = {
               "guaranteedCritical": false
             }
           ],
-          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围由对应属性标签覆盖。"
+        },
+        "雷属性": {
+          "summary": "雷属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": [
+              "attack-scope"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "thunder",
+            "attackType": "attack-magic"
+          },
+          "bindings": [
+            {
+              "group": "magic-critical-permission",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "雷属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "thunder"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "沿用暴击标签，补齐雷属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "雷属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "仅限雷属性攻击魔法，不包含同属性物理攻击或必杀"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "0631262b7e479c3a",
@@ -27107,17 +28623,56 @@ export const SKILL_LABELING_CATALOG = {
               "guaranteedCritical": false
             }
           ],
-          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围由对应属性标签覆盖。"
+        },
+        "光属性": {
+          "summary": "光属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": [
+              "attack-scope"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "light",
+            "attackType": "attack-magic"
+          },
+          "bindings": [
+            {
+              "group": "magic-critical-permission",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "光属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "light"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "沿用暴击标签，补齐光属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "光属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "仅限光属性攻击魔法，不包含同属性物理攻击或必杀"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "06dbf722869d70c0",
@@ -27169,17 +28724,56 @@ export const SKILL_LABELING_CATALOG = {
               "guaranteedCritical": false
             }
           ],
-          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围仍作为条件待对应标签处理。"
+          "calculationNote": "仅赋予对应属性攻击魔法的暴击资格；不增加暴击率、暴伤或上限。属性与攻击魔法范围由对应属性标签覆盖。"
+        },
+        "暗属性": {
+          "summary": "暗属性攻击魔法获得暴击资格，不是必定暴击。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-permission"
+            ],
+            "conditionPartIds": [
+              "attack-scope"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "dark",
+            "attackType": "attack-magic"
+          },
+          "bindings": [
+            {
+              "group": "magic-critical-permission",
+              "partIds": [
+                "critical-permission"
+              ],
+              "summary": "暗属性攻击魔法获得暴击资格，不是必定暴击。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "enable-critical",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "attack-magic",
+                "element": "dark"
+              },
+              "grantsCriticalEligibility": true,
+              "guaranteedCritical": false
+            }
+          ],
+          "calculationNote": "沿用暴击标签，补齐暗属性攻击魔法的限定范围；不增加暴击率、暴伤或上限，同一资格效果跨页只记一份。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "暗属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "仅限暗属性攻击魔法，不包含同属性物理攻击或必杀"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "22f55aaac7d9b369",
@@ -27318,17 +28912,75 @@ export const SKILL_LABELING_CATALOG = {
               "grantsCriticalEligibility": false
             }
           ],
-          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件由对应属性标签覆盖。"
+        },
+        "雷属性": {
+          "summary": "雷属性攻击暴击率+5个百分点。；雷属性攻击实际暴击时，暴击伤害+50%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": [
+              "attack-element"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "thunder"
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "雷属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "critical-damage",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "雷属性攻击实际暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击标签已覆盖两种效果，本轮补齐雷属性条件；暴击率和暴伤分别显示，不额外赋予魔法暴击资格，不重复计算同一效果。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "雷属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "本次为雷属性攻击"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "2a62c41d8d3fb3d0",
@@ -27550,17 +29202,75 @@ export const SKILL_LABELING_CATALOG = {
               "grantsCriticalEligibility": false
             }
           ],
-          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件由对应属性标签覆盖。"
+        },
+        "光属性": {
+          "summary": "光属性攻击暴击率+5个百分点。；光属性攻击实际暴击时，暴击伤害+50%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": [
+              "attack-element"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "light"
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "光属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "critical-damage",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "光属性攻击实际暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击标签已覆盖两种效果，本轮补齐光属性条件；暴击率和暴伤分别显示，不额外赋予魔法暴击资格，不重复计算同一效果。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "光属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "本次为光属性攻击"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "f351f266a85d8731",
@@ -27637,17 +29347,75 @@ export const SKILL_LABELING_CATALOG = {
               "grantsCriticalEligibility": false
             }
           ],
-          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件由对应属性标签覆盖。"
+        },
+        "无属性": {
+          "summary": "无属性攻击暴击率+5个百分点。；无属性攻击实际暴击时，暴击伤害+50%。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": [
+              "attack-element"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "none"
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "无属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "critical-damage",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "无属性攻击实际暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击标签已覆盖两种效果，本轮补齐无属性条件；暴击率和暴伤分别显示，不额外赋予魔法暴击资格，不重复计算同一效果。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "无属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "本次为无属性攻击"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "ebb2a2dba0e68b5f",
@@ -27724,17 +29492,75 @@ export const SKILL_LABELING_CATALOG = {
               "grantsCriticalEligibility": false
             }
           ],
-          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件由对应属性标签覆盖。"
+        },
+        "树属性": {
+          "summary": "树属性攻击暴击率+5个百分点。；树属性攻击实际暴击时，暴击伤害+50%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": [
+              "attack-element"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "earth"
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "树属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "critical-damage",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "树属性攻击实际暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击标签已覆盖两种效果，本轮补齐树属性条件；暴击率和暴伤分别显示，不额外赋予魔法暴击资格，不重复计算同一效果。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "树属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "本次为树属性攻击"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "4a2d48239d8500dd",
@@ -27811,17 +29637,75 @@ export const SKILL_LABELING_CATALOG = {
               "grantsCriticalEligibility": false
             }
           ],
-          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件由对应属性标签覆盖。"
+        },
+        "暗属性": {
+          "summary": "暗属性攻击暴击率+5个百分点。；暗属性攻击实际暴击时，暴击伤害+50%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": [
+              "attack-element"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "dark"
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "暗属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "critical-damage",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "暗属性攻击实际暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击标签已覆盖两种效果，本轮补齐暗属性条件；暴击率和暴伤分别显示，不额外赋予魔法暴击资格，不重复计算同一效果。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "暗属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "本次为暗属性攻击"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "726408324afe28b6",
@@ -27898,17 +29782,75 @@ export const SKILL_LABELING_CATALOG = {
               "grantsCriticalEligibility": false
             }
           ],
-          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件仍待标签。"
+          "calculationNote": "暴击率与暴伤分别列组，保留完整属性限定；不混入通用暴击率／暴伤，不额外赋予攻击魔法暴击资格。属性条件由对应属性标签覆盖。"
+        },
+        "冰属性": {
+          "summary": "冰属性攻击暴击率+5个百分点。；冰属性攻击实际暴击时，暴击伤害+50%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "critical-rate",
+              "critical-damage"
+            ],
+            "conditionPartIds": [
+              "attack-element"
+            ]
+          },
+          "condition": {
+            "subject": "self-attack",
+            "element": "ice"
+          },
+          "bindings": [
+            {
+              "group": "critical-rate",
+              "partIds": [
+                "critical-rate"
+              ],
+              "summary": "冰属性攻击暴击率+5个百分点。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-rate-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "ratePoints": 5,
+              "grantsCriticalEligibility": false
+            },
+            {
+              "group": "critical-damage",
+              "partIds": [
+                "critical-damage"
+              ],
+              "summary": "冰属性攻击实际暴击时，暴击伤害+50%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "critical-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 50,
+              "requiresCriticalHit": true,
+              "grantsCriticalEligibility": false
+            }
+          ],
+          "calculationNote": "暴击标签已覆盖两种效果，本轮补齐冰属性条件；暴击率和暴伤分别显示，不额外赋予魔法暴击资格，不重复计算同一效果。"
         }
       },
       "assignedTags": [
-        "暴击"
+        "暴击",
+        "冰属性"
       ],
-      "judgment": "partial",
+      "judgment": "ready",
       "remainingEffects": [],
-      "remainingConditions": [
-        "本次为冰属性攻击"
-      ]
+      "remainingConditions": []
     },
     {
       "id": "3aa15cb512c24b16",
@@ -28515,20 +30457,224 @@ export const SKILL_LABELING_CATALOG = {
               "activeByDefault": false
             }
           ],
-          "calculationNote": "本轮只完成随机冰墙的火伤减免分支，其余五种属性墙仍待各自标签。10秒是发动间隔，30秒是墙持续时间；未随机取得冰墙时不能默认减火伤。"
+          "calculationNote": "六种墙按实际减伤属性分别覆盖；10秒是发动间隔，30秒是墙持续时间。每次随机一种，未获得冰墙时不能默认减火伤；随机、间隔与Buff机制仍待判断。"
+        },
+        "冰属性": {
+          "summary": "每10秒随机施加1种墙；获得雷墙时，自身受到冰属性攻击伤害-20%，该墙持续30秒。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "wall-ice"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-random",
+              "partIds": [
+                "wall-ice"
+              ],
+              "summary": "每10秒随机施加1种墙；获得雷墙时，自身受到冰属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-ice-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "thunder-wall",
+              "activeByDefault": false
+            }
+          ],
+          "calculationNote": "每次随机一种墙，不是全部同时生效；10秒是发动间隔，30秒是墙持续时间。各属性分支分别判断，随机、间隔和Buff机制继续待判断。"
+        },
+        "树属性": {
+          "summary": "每10秒随机施加1种墙；获得炎墙时，自身受到树属性攻击伤害-20%，该墙持续30秒。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "wall-earth"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-random",
+              "partIds": [
+                "wall-earth"
+              ],
+              "summary": "每10秒随机施加1种墙；获得炎墙时，自身受到树属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-earth-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "flame-wall",
+              "activeByDefault": false
+            }
+          ],
+          "calculationNote": "每次随机一种墙，不是全部同时生效；10秒是发动间隔，30秒是墙持续时间。各属性分支分别判断，随机、间隔和Buff机制继续待判断。"
+        },
+        "雷属性": {
+          "summary": "每10秒随机施加1种墙；获得石墙时，自身受到雷属性攻击伤害-20%，该墙持续30秒。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "wall-thunder"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-random",
+              "partIds": [
+                "wall-thunder"
+              ],
+              "summary": "每10秒随机施加1种墙；获得石墙时，自身受到雷属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-thunder-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "stone-wall",
+              "activeByDefault": false
+            }
+          ],
+          "calculationNote": "每次随机一种墙，不是全部同时生效；10秒是发动间隔，30秒是墙持续时间。各属性分支分别判断，随机、间隔和Buff机制继续待判断。"
+        },
+        "光属性": {
+          "summary": "每10秒随机施加1种墙；获得暗影墙时，自身受到光属性攻击伤害-20%，该墙持续30秒。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "wall-light"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-random",
+              "partIds": [
+                "wall-light"
+              ],
+              "summary": "每10秒随机施加1种墙；获得暗影墙时，自身受到光属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-light-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "shadow-wall",
+              "activeByDefault": false
+            }
+          ],
+          "calculationNote": "每次随机一种墙，不是全部同时生效；10秒是发动间隔，30秒是墙持续时间。各属性分支分别判断，随机、间隔和Buff机制继续待判断。"
+        },
+        "暗属性": {
+          "summary": "每10秒随机施加1种墙；获得圣墙时，自身受到暗属性攻击伤害-20%，该墙持续30秒。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "wall-dark"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-random",
+              "partIds": [
+                "wall-dark"
+              ],
+              "summary": "每10秒随机施加1种墙；获得圣墙时，自身受到暗属性攻击伤害-20%，该墙持续30秒。",
+              "target": "self",
+              "isBuff": true,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 20,
+              "changesResistance": false,
+              "buffType": "received-dark-damage-down",
+              "stacking": "highest-active-buff-of-same-type-only",
+              "activationMode": "random-periodic-buff",
+              "durationSeconds": 30,
+              "intervalSeconds": 10,
+              "selection": "random-one-of-six-walls",
+              "requiredSelectedStatus": "holy-wall",
+              "activeByDefault": false
+            }
+          ],
+          "calculationNote": "每次随机一种墙，不是全部同时生效；10秒是发动间隔，30秒是墙持续时间。各属性分支分别判断，随机、间隔和Buff机制继续待判断。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "冰属性",
+        "树属性",
+        "雷属性",
+        "光属性",
+        "暗属性"
       ],
       "judgment": "partial",
-      "remainingEffects": [
-        "随机获得雷墙时，自身受到冰属性攻击伤害-20%，持续30秒",
-        "随机获得炎墙时，自身受到树属性攻击伤害-20%，持续30秒",
-        "随机获得石墙时，自身受到雷属性攻击伤害-20%，持续30秒",
-        "随机获得暗影墙时，自身受到光属性攻击伤害-20%，持续30秒",
-        "随机获得圣墙时，自身受到暗属性攻击伤害-20%，持续30秒"
-      ],
+      "remainingEffects": [],
       "remainingConditions": [
         "每10秒自动发动一次",
         "每次随机选择六属性墙中的一种，不是六种同时施加",
@@ -29087,18 +31233,113 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 10
             }
           ],
-          "calculationNote": "原技能同时作用于火、冰、树、雷，本轮只覆盖火属性片段；其余三种属性的效果继续待各自标签，不因本轮完成火分支就判整个技能完整。"
+          "calculationNote": "火、冰、树、雷按属性和攻击类型分别记录；各属性片段由对应标签覆盖，全部片段完成后自动判定完整，同一效果不重复计算。"
+        },
+        "冰属性": {
+          "summary": "冰属性魔法攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "ice-magic"
+              ],
+              "summary": "冰属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "ice"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "树属性": {
+          "summary": "树属性魔法攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "earth-magic"
+              ],
+              "summary": "树属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "earth"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "雷属性": {
+          "summary": "雷属性魔法攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "thunder-magic"
+              ],
+              "summary": "雷属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "thunder"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "冰属性",
+        "树属性",
+        "雷属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "冰属性魔法攻击伤害+10%",
-        "树属性魔法攻击伤害+10%",
-        "雷属性魔法攻击伤害+10%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -29199,21 +31440,167 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 10
             }
           ],
-          "calculationNote": "原技能同时作用于火、冰、树、雷，本轮只覆盖火属性片段；其余三种属性的效果继续待各自标签，不因本轮完成火分支就判整个技能完整。"
+          "calculationNote": "火、冰、树、雷按属性和攻击类型分别记录；各属性片段由对应标签覆盖，全部片段完成后自动判定完整，同一效果不重复计算。"
+        },
+        "冰属性": {
+          "summary": "冰属性物理攻击伤害+10%。；冰属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-physical",
+              "ice-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "ice-physical"
+              ],
+              "summary": "冰属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "ice-ultimate"
+              ],
+              "summary": "冰属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "树属性": {
+          "summary": "树属性物理攻击伤害+10%。；树属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-physical",
+              "earth-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "earth-physical"
+              ],
+              "summary": "树属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "earth"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "earth-ultimate"
+              ],
+              "summary": "树属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "earth"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "雷属性": {
+          "summary": "雷属性物理攻击伤害+10%。；雷属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-physical",
+              "thunder-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "thunder-physical"
+              ],
+              "summary": "雷属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "thunder"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "thunder-ultimate"
+              ],
+              "summary": "雷属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "thunder"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "冰属性",
+        "树属性",
+        "雷属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "冰属性物理攻击伤害+10%",
-        "冰属性必杀伤害+10%",
-        "树属性物理攻击伤害+10%",
-        "树属性必杀伤害+10%",
-        "雷属性物理攻击伤害+10%",
-        "雷属性必杀伤害+10%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -29314,21 +31701,167 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 30
             }
           ],
-          "calculationNote": "原技能同时作用于火、冰、树、雷，本轮只覆盖火属性片段；其余三种属性的效果继续待各自标签，不因本轮完成火分支就判整个技能完整。"
+          "calculationNote": "火、冰、树、雷按属性和攻击类型分别记录；各属性片段由对应标签覆盖，全部片段完成后自动判定完整，同一效果不重复计算。"
+        },
+        "冰属性": {
+          "summary": "冰属性物理攻击伤害+30%。；冰属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-physical",
+              "ice-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "ice-physical"
+              ],
+              "summary": "冰属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "ice-ultimate"
+              ],
+              "summary": "冰属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "树属性": {
+          "summary": "树属性物理攻击伤害+30%。；树属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-physical",
+              "earth-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "earth-physical"
+              ],
+              "summary": "树属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "earth-ultimate"
+              ],
+              "summary": "树属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "雷属性": {
+          "summary": "雷属性物理攻击伤害+30%。；雷属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-physical",
+              "thunder-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "thunder-physical"
+              ],
+              "summary": "雷属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "thunder-ultimate"
+              ],
+              "summary": "雷属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "冰属性",
+        "树属性",
+        "雷属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "冰属性物理攻击伤害+30%",
-        "冰属性必杀伤害+30%",
-        "树属性物理攻击伤害+30%",
-        "树属性必杀伤害+30%",
-        "雷属性物理攻击伤害+30%",
-        "雷属性必杀伤害+30%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -29391,18 +31924,113 @@ export const SKILL_LABELING_CATALOG = {
               "valuePercent": 30
             }
           ],
-          "calculationNote": "原技能同时作用于火、冰、树、雷，本轮只覆盖火属性片段；其余三种属性的效果继续待各自标签，不因本轮完成火分支就判整个技能完整。"
+          "calculationNote": "火、冰、树、雷按属性和攻击类型分别记录；各属性片段由对应标签覆盖，全部片段完成后自动判定完整，同一效果不重复计算。"
+        },
+        "冰属性": {
+          "summary": "冰属性魔法攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "ice-magic"
+              ],
+              "summary": "冰属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "树属性": {
+          "summary": "树属性魔法攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "earth-magic"
+              ],
+              "summary": "树属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
+        },
+        "雷属性": {
+          "summary": "雷属性魔法攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "thunder-magic"
+              ],
+              "summary": "雷属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "按火、冰、树、雷及攻击类型分别记录；同一技能各属性效果都完成后自动更新判断，同一效果不重复计算。"
         }
       },
       "assignedTags": [
-        "火属性"
+        "火属性",
+        "冰属性",
+        "树属性",
+        "雷属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "冰属性魔法攻击伤害+30%",
-        "树属性魔法攻击伤害+30%",
-        "雷属性魔法攻击伤害+30%"
-      ],
+      "judgment": "ready",
+      "remainingEffects": [],
       "remainingConditions": []
     },
     {
@@ -30108,6 +32736,8667 @@ export const SKILL_LABELING_CATALOG = {
       "remainingConditions": [
         "发动火属性特技时按与敌人的距离计算；具体距离阈值与增幅曲线待确认"
       ]
+    },
+    {
+      "id": "0d2d38cd539224ee",
+      "name": "冰攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/74",
+      "text": "冰属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-damage",
+          "kind": "effect",
+          "text": "冰属性攻击伤害+20%"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "ice-damage"
+              ],
+              "summary": "冰属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为冰，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "2d24508b309322f7",
+      "name": "冰攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/240",
+      "text": "冰属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-damage",
+          "kind": "effect",
+          "text": "冰属性攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "ice-damage"
+              ],
+              "summary": "冰属性攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为冰，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "351f8b7c824ec758",
+      "name": "冰攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/698",
+      "text": "冰属性伤害+30%，冰属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-damage",
+          "kind": "effect",
+          "text": "冰属性伤害+30%"
+        },
+        {
+          "id": "ice-cap",
+          "kind": "effect",
+          "text": "冰属性伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性伤害+30%。；冰属性伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-damage",
+              "ice-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "ice-damage"
+              ],
+              "summary": "冰属性伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-general",
+              "partIds": [
+                "ice-cap"
+              ],
+              "summary": "冰属性伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "完整词条没有另限攻击类型，冰属性伤害与冰属性上限分开。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "ccd9494e616a344d",
+      "name": "冰魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/128",
+      "text": "冰属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-magic-damage",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性魔法攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "ice-magic-damage"
+              ],
+              "summary": "冰属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "ice"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "完整词条是冰属性魔法攻击增伤，不计入所有魔法或冰属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b6b66290a2c0176e",
+      "name": "冰魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/135",
+      "text": "冰属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-magic-damage",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性魔法攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "ice-magic-damage"
+              ],
+              "summary": "冰属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "完整词条是冰属性魔法攻击增伤，不计入所有魔法或冰属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "2901b40ce3f38847",
+      "name": "冰魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/701",
+      "text": "冰属性魔法攻击伤害+30%，冰属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-magic-damage",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "ice-magic-cap",
+          "kind": "effect",
+          "text": "冰属性魔法攻击伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性魔法攻击伤害+30%。；冰属性魔法攻击伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-magic-damage",
+              "ice-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "ice-magic-damage"
+              ],
+              "summary": "冰属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-magic",
+              "partIds": [
+                "ice-magic-cap"
+              ],
+              "summary": "冰属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "ice"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "伤害与上限分开；两项均限定冰属性魔法攻击，不扩展为所有魔法。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:309",
+      "name": "冰盾2",
+      "url": "https://altema.jp/lastcloudia/gino/379",
+      "text": "受到敌人冰属性攻击的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-ice",
+          "kind": "effect",
+          "text": "受到冰属性攻击的伤害-20%"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "受到冰属性攻击的伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-ice"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-ice"
+              ],
+              "summary": "受到冰属性攻击的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 20,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "这是被动所受冰伤减免，不是限时雷墙Buff，也不是冰属性耐性数值+20。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "8c5e1c15b2b1d28d",
+      "name": "冰属性护罩",
+      "url": "https://altema.jp/lastcloudia/gino/1980",
+      "text": "受到敌人冰属性攻击的伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-ice",
+          "kind": "effect",
+          "text": "受到冰属性攻击的伤害-10%"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "受到冰属性攻击的伤害-10%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-ice"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-ice"
+              ],
+              "summary": "受到冰属性攻击的伤害-10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 10,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "这是被动所受冰伤减免，不是限时雷墙Buff，也不是冰属性耐性数值+10。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "afadc468674e5da8",
+      "name": "冰属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/527",
+      "text": "冰属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-physical-damage",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害+10%"
+        },
+        {
+          "id": "ice-ultimate-damage",
+          "kind": "effect",
+          "text": "冰属性必杀伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性物理攻击伤害+10%。；冰属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-physical-damage",
+              "ice-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "ice-physical-damage"
+              ],
+              "summary": "冰属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "ice-ultimate-damage"
+              ],
+              "summary": "冰属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为冰属性；不包含冰属性魔法，也不重复当作所有冰伤加成。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1f1e7d3449c0ce66",
+      "name": "冰属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/535",
+      "text": "冰属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-physical-damage",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害+30%"
+        },
+        {
+          "id": "ice-ultimate-damage",
+          "kind": "effect",
+          "text": "冰属性必杀伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性物理攻击伤害+30%。；冰属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-physical-damage",
+              "ice-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "ice-physical-damage"
+              ],
+              "summary": "冰属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "ice-ultimate-damage"
+              ],
+              "summary": "冰属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为冰属性；不包含冰属性魔法，也不重复当作所有冰伤加成。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "545567ba3bfb33f1",
+      "name": "冰属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/853",
+      "text": "冰属性物理攻击与必杀伤害+30%，冰属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-physical-damage",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害+30%"
+        },
+        {
+          "id": "ice-ultimate-damage",
+          "kind": "effect",
+          "text": "冰属性必杀伤害+30%"
+        },
+        {
+          "id": "ice-physical-cap",
+          "kind": "effect",
+          "text": "冰属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "ice-ultimate-cap",
+          "kind": "effect",
+          "text": "冰属性必杀伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性物理攻击伤害+30%。；冰属性必杀伤害+30%。；冰属性物理攻击伤害上限+2,000。；冰属性必杀伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-physical-damage",
+              "ice-ultimate-damage",
+              "ice-physical-cap",
+              "ice-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "ice-physical-damage"
+              ],
+              "summary": "冰属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "ice-ultimate-damage"
+              ],
+              "summary": "冰属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-physical",
+              "partIds": [
+                "ice-physical-cap"
+              ],
+              "summary": "冰属性物理攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice"
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "cap-ultimate",
+              "partIds": [
+                "ice-ultimate-cap"
+              ],
+              "summary": "冰属性必杀伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "四项效果按攻击类型和伤害／上限分开，魔法不适用。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "e2376f83dc028e0f",
+      "name": "冰之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/840",
+      "text": "对处于气绝或Break状态的敌人，冰属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，冰属性攻击伤害+20%"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "对气绝或Break敌人，冰属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "ice-damage"
+              ],
+              "summary": "对气绝或Break敌人，冰属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件冰伤。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于气绝或Break状态，满足任意一项"
+      ]
+    },
+    {
+      "id": "ac908d277528e5bc",
+      "name": "冰属性弱点突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1110",
+      "text": "使用冰属性攻击命中弱点属性时，伤害上限+2,000；仅装备1把武器时，提升量变为+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-weakness-cap",
+          "kind": "effect",
+          "text": "冰属性命中弱点时，上限+2000；仅装备1把武器时改为+4000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次冰属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "ice-weakness-cap"
+              ],
+              "summary": "冰属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次冰属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "7535b75bf589a4de",
+      "name": "冰属性弱点突破",
+      "url": "https://altema.jp/lastcloudia/gino/1408",
+      "text": "使用冰属性攻击命中弱点属性时，伤害上限+1,000；仅装备1把武器时，提升量变为+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-weakness-cap",
+          "kind": "effect",
+          "text": "冰属性命中弱点时，上限+1000；仅装备1把武器时改为+2000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次冰属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "ice-weakness-cap"
+              ],
+              "summary": "冰属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次冰属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "eb60bf2d887d8202",
+      "name": "冰霜冲锋",
+      "url": "https://altema.jp/lastcloudia/gino/1220",
+      "text": "连续Hit达到50以上时，冰属性物理攻击伤害上限+1,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-physical-cap",
+          "kind": "effect",
+          "text": "连续Hit至少50时，冰属性物理攻击伤害上限+1,500"
+        },
+        {
+          "id": "hit-count",
+          "kind": "condition",
+          "text": "连续Hit数≥50"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "连续Hit达到50以上时，冰属性物理攻击伤害上限+1,500。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-physical-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-hit-count",
+              "partIds": [
+                "ice-physical-cap"
+              ],
+              "summary": "连续Hit达到50以上时，冰属性物理攻击伤害上限+1,500。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice"
+              },
+              "capPoints": 1500,
+              "hitCount": {
+                "metric": "consecutive-hits",
+                "operator": "gte",
+                "value": 50
+              }
+            }
+          ],
+          "calculationNote": "达到50即满足数值条件，不是每50Hit叠加，也不是提高所有冰属性伤害上限；Hit条件仍待标签。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续Hit数≥50"
+      ]
+    },
+    {
+      "id": "3698611e7487f0aa",
+      "name": "冰之合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1409",
+      "text": "2名以上我方单位装备“冰之合奏”时，冰属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-damage",
+          "kind": "effect",
+          "text": "冰属性攻击伤害随装备冰之合奏人数提升：2人+10%、3人+20%、4人+30%"
+        },
+        {
+          "id": "party-skill-count",
+          "kind": "condition",
+          "text": "我方至少2名角色装备冰之合奏，按装备人数选择对应档位"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "至少2名我方角色装备冰之合奏：2人+10%、3人+20%、4人+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-party",
+              "partIds": [
+                "ice-damage"
+              ],
+              "summary": "至少2名我方角色装备冰之合奏：2人+10%、3人+20%、4人+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "tiered-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "3698611e7487f0aa",
+              "minimumCount": 2,
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 20
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 30
+                }
+              ]
+            }
+          ],
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "我方至少2名角色装备冰之合奏，按装备人数选择对应档位"
+      ]
+    },
+    {
+      "id": "7699c0abda6d47a0",
+      "name": "冰之强化",
+      "url": "https://altema.jp/lastcloudia/gino/842",
+      "text": "冰属性攻击伤害+10%，受到的魔法攻击伤害-15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-damage",
+          "kind": "effect",
+          "text": "冰属性攻击伤害+10%"
+        },
+        {
+          "id": "received-magic",
+          "kind": "effect",
+          "text": "受到的魔法攻击伤害-15%"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "ice-damage"
+              ],
+              "summary": "冰属性攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "另一条受到魔法伤害-15%不限冰属性，保留待对应标签。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "受到的魔法攻击伤害-15%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "72987eef01fbda4b",
+      "name": "冰属性驱动极限突破",
+      "url": "https://altema.jp/lastcloudia/gino/1774",
+      "text": "冰属性物理攻击与必杀伤害上限+1,500；仅装备1把武器或未装备武器时，提升量变为+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-physical-cap",
+          "kind": "effect",
+          "text": "冰属性物理上限+1,500；0或1把武器时改为+3,000"
+        },
+        {
+          "id": "ice-ultimate-cap",
+          "kind": "effect",
+          "text": "冰属性必杀上限+1,500；0或1把武器时改为+3,000"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "未装备武器或只装备1把武器时用较高档，两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性物理上限+1,500；0或1把武器时改为+3,000。；冰属性必杀上限+1,500；0或1把武器时改为+3,000。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-physical-cap",
+              "ice-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weapon-count-physical",
+              "partIds": [
+                "ice-physical-cap"
+              ],
+              "summary": "冰属性物理上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "ice"
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive"
+            },
+            {
+              "group": "cap-weapon-count-ultimate",
+              "partIds": [
+                "ice-ultimate-cap"
+              ],
+              "summary": "冰属性必杀上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "ice"
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本词条明确包含空手，不能套用弱点突破的仅1把武器条件；两档替换不相加。装备数量条件待判断。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "未装备武器或只装备1把武器时用较高档，两档互斥"
+      ]
+    },
+    {
+      "id": "6f69f24a14887fe1",
+      "name": "冰属性弱点增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1929",
+      "text": "使用冰属性攻击命中弱点属性时，伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-weakness-damage",
+          "kind": "effect",
+          "text": "冰属性命中属性弱点时伤害+10%"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次冰属性攻击命中敌人的属性弱点"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "冰属性攻击命中属性弱点时，伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-weakness-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-weakness",
+              "partIds": [
+                "ice-weakness-damage"
+              ],
+              "summary": "冰属性攻击命中属性弱点时，伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice",
+                "hitsElementWeakness": true
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "不改成所有属性弱点增伤或无条件属性增伤；属性弱点条件继续待其标签。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次冰属性攻击命中敌人的属性弱点"
+      ]
+    },
+    {
+      "id": "658df1f2c3e3e424",
+      "name": "发魔期",
+      "url": "https://altema.jp/lastcloudia/gino/1798",
+      "text": "每个Wave中，随着时间经过，冰属性伤害逐渐提升（30秒时达到最高+20%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "ice-time-damage",
+          "kind": "effect",
+          "text": "冰属性伤害随本Wave时间提高，30秒达到最高+20%"
+        },
+        {
+          "id": "wave-time-scaling",
+          "kind": "condition",
+          "text": "每Wave重新计时；30秒达最高值，具体增长曲线待确认"
+        }
+      ],
+      "tagDetails": {
+        "冰属性": {
+          "summary": "每Wave内冰属性伤害逐渐提高，30秒达到最高+20%；下一Wave重置。",
+          "relation": "element-effect-or-condition",
+          "element": "ice",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "ice-time-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-time",
+              "partIds": [
+                "ice-time-damage"
+              ],
+              "summary": "每Wave内冰属性伤害逐渐提高，30秒达到最高+20%；下一Wave重置。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "time-scaling-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "ice"
+              },
+              "maxValuePercent": 20,
+              "secondsToMaximum": 30,
+              "resetScope": "wave",
+              "curveStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "只记录已知最高值与达峰时间，不假定线性，也不把最高20%从开场就计入。时间条件与曲线仍待判断。"
+        }
+      },
+      "assignedTags": [
+        "冰属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每Wave重新计时；30秒达最高值，具体增长曲线待确认"
+      ]
+    },
+    {
+      "id": "0ab43d7f985855cb",
+      "name": "树攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/75",
+      "text": "树属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-damage",
+          "kind": "effect",
+          "text": "树属性攻击伤害+20%"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "earth-damage"
+              ],
+              "summary": "树属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为树，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b65bccc3a5431629",
+      "name": "树攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/277",
+      "text": "树属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-damage",
+          "kind": "effect",
+          "text": "树属性攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "earth-damage"
+              ],
+              "summary": "树属性攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为树，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "ba33274d257a0877",
+      "name": "树攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/681",
+      "text": "树属性伤害+30%，树属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-damage",
+          "kind": "effect",
+          "text": "树属性伤害+30%"
+        },
+        {
+          "id": "earth-cap",
+          "kind": "effect",
+          "text": "树属性伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性伤害+30%。；树属性伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-damage",
+              "earth-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "earth-damage"
+              ],
+              "summary": "树属性伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-general",
+              "partIds": [
+                "earth-cap"
+              ],
+              "summary": "树属性伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "完整词条没有另限攻击类型，树属性伤害与树属性上限分开。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "2201afc0db4a340e",
+      "name": "树魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/129",
+      "text": "树属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-magic-damage",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性魔法攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "earth-magic-damage"
+              ],
+              "summary": "树属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "earth"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "完整词条是树属性魔法攻击增伤，不计入所有魔法或树属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "c334b7ddf4d78b15",
+      "name": "树魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/136",
+      "text": "树属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-magic-damage",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性魔法攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "earth-magic-damage"
+              ],
+              "summary": "树属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "完整词条是树属性魔法攻击增伤，不计入所有魔法或树属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "0a92e3a07ca76013",
+      "name": "树魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/544",
+      "text": "树属性魔法攻击伤害+30%，树属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-magic-damage",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "earth-magic-cap",
+          "kind": "effect",
+          "text": "树属性魔法攻击伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性魔法攻击伤害+30%。；树属性魔法攻击伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-magic-damage",
+              "earth-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "earth-magic-damage"
+              ],
+              "summary": "树属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-magic",
+              "partIds": [
+                "earth-magic-cap"
+              ],
+              "summary": "树属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "earth"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "伤害与上限分开；两项均限定树属性魔法攻击，不扩展为所有魔法。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:295",
+      "name": "树属性护盾2",
+      "url": "https://altema.jp/lastcloudia/gino/349",
+      "text": "受到树属性攻击的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-earth",
+          "kind": "effect",
+          "text": "受到树属性攻击的伤害-20%"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "受到树属性攻击的伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-earth"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-earth"
+              ],
+              "summary": "受到树属性攻击的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 20,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "这是被动所受树伤减免，不是限时炎墙Buff，也不是树属性耐性数值+20。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "68d0f34cfdb9b61d",
+      "name": "树属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/563",
+      "text": "树属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-physical-damage",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害+10%"
+        },
+        {
+          "id": "earth-ultimate-damage",
+          "kind": "effect",
+          "text": "树属性必杀伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性物理攻击伤害+10%。；树属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-physical-damage",
+              "earth-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "earth-physical-damage"
+              ],
+              "summary": "树属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "earth"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "earth-ultimate-damage"
+              ],
+              "summary": "树属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "earth"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为树属性；不包含树属性魔法，也不重复当作所有树伤加成。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "db8d7f2fa2d9fc8c",
+      "name": "树属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/566",
+      "text": "树属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-physical-damage",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害+30%"
+        },
+        {
+          "id": "earth-ultimate-damage",
+          "kind": "effect",
+          "text": "树属性必杀伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性物理攻击伤害+30%。；树属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-physical-damage",
+              "earth-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "earth-physical-damage"
+              ],
+              "summary": "树属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "earth-ultimate-damage"
+              ],
+              "summary": "树属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为树属性；不包含树属性魔法，也不重复当作所有树伤加成。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b99c6446a5ae4735",
+      "name": "树属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/728",
+      "text": "树属性物理攻击与必杀伤害+30%，树属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-physical-damage",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害+30%"
+        },
+        {
+          "id": "earth-ultimate-damage",
+          "kind": "effect",
+          "text": "树属性必杀伤害+30%"
+        },
+        {
+          "id": "earth-physical-cap",
+          "kind": "effect",
+          "text": "树属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "earth-ultimate-cap",
+          "kind": "effect",
+          "text": "树属性必杀伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性物理攻击伤害+30%。；树属性必杀伤害+30%。；树属性物理攻击伤害上限+2,000。；树属性必杀伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-physical-damage",
+              "earth-ultimate-damage",
+              "earth-physical-cap",
+              "earth-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "earth-physical-damage"
+              ],
+              "summary": "树属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "earth-ultimate-damage"
+              ],
+              "summary": "树属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "earth"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-physical",
+              "partIds": [
+                "earth-physical-cap"
+              ],
+              "summary": "树属性物理攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "earth"
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "cap-ultimate",
+              "partIds": [
+                "earth-ultimate-cap"
+              ],
+              "summary": "树属性必杀伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "earth"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "四项效果按攻击类型和伤害／上限分开，魔法不适用。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "89b2bf665f5f6aad",
+      "name": "石之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1085",
+      "text": "对处于气绝或Break状态的敌人，树属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，树属性攻击伤害+20%"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "对气绝或Break敌人，树属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "earth-damage"
+              ],
+              "summary": "对气绝或Break敌人，树属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件树伤。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于气绝或Break状态，满足任意一项"
+      ]
+    },
+    {
+      "id": "2d36845d899106f0",
+      "name": "树属性弱点突破",
+      "url": "https://altema.jp/lastcloudia/gino/1079",
+      "text": "使用树属性攻击命中弱点属性时，伤害上限+1,000；仅装备1把武器时，提升量变为+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-weakness-cap",
+          "kind": "effect",
+          "text": "树属性命中弱点时，上限+1000；仅装备1把武器时改为+2000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次树属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "earth-weakness-cap"
+              ],
+              "summary": "树属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次树属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "44a3d9148279023c",
+      "name": "树属性弱点突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1829",
+      "text": "使用树属性攻击命中弱点属性时，伤害上限+2,000；仅装备1把武器时，提升量变为+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-weakness-cap",
+          "kind": "effect",
+          "text": "树属性命中弱点时，上限+2000；仅装备1把武器时改为+4000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次树属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "earth-weakness-cap"
+              ],
+              "summary": "树属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次树属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "4598f48797c2c478",
+      "name": "石之冲锋",
+      "url": "https://altema.jp/lastcloudia/gino/1367",
+      "text": "连续Hit达到50以上时，树属性物理攻击伤害上限+1,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-physical-cap",
+          "kind": "effect",
+          "text": "连续Hit至少50时，树属性物理攻击伤害上限+1,500"
+        },
+        {
+          "id": "hit-count",
+          "kind": "condition",
+          "text": "连续Hit数≥50"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "连续Hit达到50以上时，树属性物理攻击伤害上限+1,500。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-physical-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-hit-count",
+              "partIds": [
+                "earth-physical-cap"
+              ],
+              "summary": "连续Hit达到50以上时，树属性物理攻击伤害上限+1,500。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "earth"
+              },
+              "capPoints": 1500,
+              "hitCount": {
+                "metric": "consecutive-hits",
+                "operator": "gte",
+                "value": 50
+              }
+            }
+          ],
+          "calculationNote": "达到50即满足数值条件，不是每50Hit叠加，也不是提高所有树属性伤害上限；Hit条件仍待标签。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续Hit数≥50"
+      ]
+    },
+    {
+      "id": "b684f06fad6f204e",
+      "name": "石之合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1506",
+      "text": "2名以上我方单位装备“石之合奏”时，树属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-damage",
+          "kind": "effect",
+          "text": "树属性攻击伤害随装备石之合奏人数提升：2人+10%、3人+20%、4人+30%"
+        },
+        {
+          "id": "party-skill-count",
+          "kind": "condition",
+          "text": "我方至少2名角色装备石之合奏，按装备人数选择对应档位"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "至少2名我方角色装备石之合奏：2人+10%、3人+20%、4人+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-party",
+              "partIds": [
+                "earth-damage"
+              ],
+              "summary": "至少2名我方角色装备石之合奏：2人+10%、3人+20%、4人+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "tiered-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "b684f06fad6f204e",
+              "minimumCount": 2,
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 20
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 30
+                }
+              ]
+            }
+          ],
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "我方至少2名角色装备石之合奏，按装备人数选择对应档位"
+      ]
+    },
+    {
+      "id": "d1aa6e7dfcf2a189",
+      "name": "石之强化",
+      "url": "https://altema.jp/lastcloudia/gino/765",
+      "text": "树属性攻击伤害+10%，受到的物理攻击伤害-15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-damage",
+          "kind": "effect",
+          "text": "树属性攻击伤害+10%"
+        },
+        {
+          "id": "received-physical",
+          "kind": "effect",
+          "text": "受到物理攻击伤害-15%"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "earth-damage"
+              ],
+              "summary": "树属性攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "物理减伤是独立效果，不限树属性，继续待判断。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "受到物理攻击伤害-15%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "9687330d53763046",
+      "name": "树属性弱点增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1778",
+      "text": "使用树属性攻击命中弱点属性时，伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "earth-weakness-damage",
+          "kind": "effect",
+          "text": "树属性命中属性弱点时伤害+10%"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次树属性攻击命中敌人的属性弱点"
+        }
+      ],
+      "tagDetails": {
+        "树属性": {
+          "summary": "树属性攻击命中属性弱点时，伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "earth",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "earth-weakness-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-weakness",
+              "partIds": [
+                "earth-weakness-damage"
+              ],
+              "summary": "树属性攻击命中属性弱点时，伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "earth",
+                "hitsElementWeakness": true
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "不改成所有属性弱点增伤或无条件属性增伤；属性弱点条件继续待其标签。"
+        }
+      },
+      "assignedTags": [
+        "树属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次树属性攻击命中敌人的属性弱点"
+      ]
+    },
+    {
+      "id": "fc3dc40acdcff985",
+      "name": "雷攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/76",
+      "text": "雷属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-damage",
+          "kind": "effect",
+          "text": "雷属性攻击伤害+20%"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "thunder-damage"
+              ],
+              "summary": "雷属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为雷，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:323",
+      "name": "雷攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/399",
+      "text": "雷属性攻击伤害+30%",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-damage",
+          "kind": "effect",
+          "text": "雷属性攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "thunder-damage"
+              ],
+              "summary": "雷属性攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为雷，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "9e2b88d1d3d0923f",
+      "name": "雷攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/672",
+      "text": "雷属性伤害+30%，雷属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-damage",
+          "kind": "effect",
+          "text": "雷属性伤害+30%"
+        },
+        {
+          "id": "thunder-cap",
+          "kind": "effect",
+          "text": "雷属性伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性伤害+30%。；雷属性伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-damage",
+              "thunder-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "thunder-damage"
+              ],
+              "summary": "雷属性伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-general",
+              "partIds": [
+                "thunder-cap"
+              ],
+              "summary": "雷属性伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "完整词条没有另限攻击类型，雷属性伤害与雷属性上限分开。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "b9a13a0572f16699",
+      "name": "雷魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/130",
+      "text": "雷属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-magic-damage",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性魔法攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "thunder-magic-damage"
+              ],
+              "summary": "雷属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "thunder"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "完整词条是雷属性魔法攻击增伤，不计入所有魔法或雷属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "fc921ccf05929ad6",
+      "name": "雷魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/137",
+      "text": "雷属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-magic-damage",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性魔法攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "thunder-magic-damage"
+              ],
+              "summary": "雷属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "完整词条是雷属性魔法攻击增伤，不计入所有魔法或雷属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:302",
+      "name": "雷魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/363",
+      "text": "雷属性魔法攻击伤害+30%， 雷属性魔法攻击伤害上限+2000",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-magic-damage",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "thunder-magic-cap",
+          "kind": "effect",
+          "text": "雷属性魔法攻击伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性魔法攻击伤害+30%。；雷属性魔法攻击伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-magic-damage",
+              "thunder-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "thunder-magic-damage"
+              ],
+              "summary": "雷属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-magic",
+              "partIds": [
+                "thunder-magic-cap"
+              ],
+              "summary": "雷属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "thunder"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "伤害与上限分开；两项均限定雷属性魔法攻击，不扩展为所有魔法。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:321",
+      "name": "闪电护盾2",
+      "url": "https://altema.jp/lastcloudia/gino/397",
+      "text": "受到敌人雷属性攻击的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-thunder",
+          "kind": "effect",
+          "text": "受到雷属性攻击的伤害-20%"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "受到雷属性攻击的伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-thunder"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-thunder"
+              ],
+              "summary": "受到雷属性攻击的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 20,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "这是被动所受雷伤减免，不是限时石墙Buff，也不是雷属性耐性数值+20。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "93834794e1dc5477",
+      "name": "雷属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/673",
+      "text": "雷属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-physical-damage",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害+10%"
+        },
+        {
+          "id": "thunder-ultimate-damage",
+          "kind": "effect",
+          "text": "雷属性必杀伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性物理攻击伤害+10%。；雷属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-physical-damage",
+              "thunder-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "thunder-physical-damage"
+              ],
+              "summary": "雷属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "thunder"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "thunder-ultimate-damage"
+              ],
+              "summary": "雷属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "thunder"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为雷属性；不包含雷属性魔法，也不重复当作所有雷伤加成。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:317",
+      "name": "雷属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/391",
+      "text": "雷属性物理攻击和超级必杀技：伤害提升30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-physical-damage",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害+30%"
+        },
+        {
+          "id": "thunder-ultimate-damage",
+          "kind": "effect",
+          "text": "雷属性必杀伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性物理攻击伤害+30%。；雷属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-physical-damage",
+              "thunder-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "thunder-physical-damage"
+              ],
+              "summary": "雷属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "thunder-ultimate-damage"
+              ],
+              "summary": "雷属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为雷属性；不包含雷属性魔法，也不重复当作所有雷伤加成。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "48ac370b49e1ba46",
+      "name": "雷属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/723",
+      "text": "雷属性物理攻击与必杀伤害+30%，雷属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-physical-damage",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害+30%"
+        },
+        {
+          "id": "thunder-ultimate-damage",
+          "kind": "effect",
+          "text": "雷属性必杀伤害+30%"
+        },
+        {
+          "id": "thunder-physical-cap",
+          "kind": "effect",
+          "text": "雷属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "thunder-ultimate-cap",
+          "kind": "effect",
+          "text": "雷属性必杀伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性物理攻击伤害+30%。；雷属性必杀伤害+30%。；雷属性物理攻击伤害上限+2,000。；雷属性必杀伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-physical-damage",
+              "thunder-ultimate-damage",
+              "thunder-physical-cap",
+              "thunder-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "thunder-physical-damage"
+              ],
+              "summary": "雷属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "thunder-ultimate-damage"
+              ],
+              "summary": "雷属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "thunder"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-physical",
+              "partIds": [
+                "thunder-physical-cap"
+              ],
+              "summary": "雷属性物理攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "thunder"
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "cap-ultimate",
+              "partIds": [
+                "thunder-ultimate-cap"
+              ],
+              "summary": "雷属性必杀伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "thunder"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "四项效果按攻击类型和伤害／上限分开，魔法不适用。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "e8339f4048e9810d",
+      "name": "雷之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1280",
+      "text": "对处于气绝或Break状态的敌人，雷属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，雷属性攻击伤害+20%"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "对气绝或Break敌人，雷属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "thunder-damage"
+              ],
+              "summary": "对气绝或Break敌人，雷属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件雷伤。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于气绝或Break状态，满足任意一项"
+      ]
+    },
+    {
+      "id": "449963af5b8068b7",
+      "name": "雷之机遇2",
+      "url": "https://altema.jp/lastcloudia/gino/1675",
+      "text": "对处于气绝或Break状态的敌人，雷属性攻击伤害+20%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，雷属性攻击伤害+20%"
+        },
+        {
+          "id": "thunder-cap",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，雷属性攻击伤害上限+3,000"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "对气绝或Break敌人，雷属性攻击伤害+20%。；对气绝或Break敌人，雷属性攻击伤害上限+3,000。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-damage",
+              "thunder-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "thunder-damage"
+              ],
+              "summary": "对气绝或Break敌人，雷属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            },
+            {
+              "group": "cap-stun-break",
+              "partIds": [
+                "thunder-cap"
+              ],
+              "summary": "对气绝或Break敌人，雷属性攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "capPoints": 3000
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件雷伤。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于气绝或Break状态，满足任意一项"
+      ]
+    },
+    {
+      "id": "19e3a03542e896a2",
+      "name": "雷属性弱点突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1187",
+      "text": "使用雷属性攻击命中弱点属性时，伤害上限+2,000；仅装备1把武器时，提升量变为+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-weakness-cap",
+          "kind": "effect",
+          "text": "雷属性命中弱点时，上限+2000；仅装备1把武器时改为+4000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次雷属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "thunder-weakness-cap"
+              ],
+              "summary": "雷属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次雷属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "14f13262fec9119e",
+      "name": "雷属性弱点突破",
+      "url": "https://altema.jp/lastcloudia/gino/1326",
+      "text": "使用雷属性攻击命中弱点属性时，伤害上限+1,000；仅装备1把武器时，提升量变为+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-weakness-cap",
+          "kind": "effect",
+          "text": "雷属性命中弱点时，上限+1000；仅装备1把武器时改为+2000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次雷属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "thunder-weakness-cap"
+              ],
+              "summary": "雷属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次雷属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "ff2be2bc2e694db4",
+      "name": "雷霆冲锋",
+      "url": "https://altema.jp/lastcloudia/gino/1498",
+      "text": "连续Hit达到50以上时，雷属性物理攻击伤害上限+1,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-physical-cap",
+          "kind": "effect",
+          "text": "连续Hit至少50时，雷属性物理攻击伤害上限+1,500"
+        },
+        {
+          "id": "hit-count",
+          "kind": "condition",
+          "text": "连续Hit数≥50"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "连续Hit达到50以上时，雷属性物理攻击伤害上限+1,500。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-physical-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-hit-count",
+              "partIds": [
+                "thunder-physical-cap"
+              ],
+              "summary": "连续Hit达到50以上时，雷属性物理攻击伤害上限+1,500。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "thunder"
+              },
+              "capPoints": 1500,
+              "hitCount": {
+                "metric": "consecutive-hits",
+                "operator": "gte",
+                "value": 50
+              }
+            }
+          ],
+          "calculationNote": "达到50即满足数值条件，不是每50Hit叠加，也不是提高所有雷属性伤害上限；Hit条件仍待标签。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续Hit数≥50"
+      ]
+    },
+    {
+      "id": "cd5203b730b861ca",
+      "name": "雷霆合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1327",
+      "text": "2名以上我方单位装备“雷霆合奏”时，雷属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-damage",
+          "kind": "effect",
+          "text": "雷属性攻击伤害随装备雷霆合奏人数提升：2人+10%、3人+20%、4人+30%"
+        },
+        {
+          "id": "party-skill-count",
+          "kind": "condition",
+          "text": "我方至少2名角色装备雷霆合奏，按装备人数选择对应档位"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "至少2名我方角色装备雷霆合奏：2人+10%、3人+20%、4人+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-party",
+              "partIds": [
+                "thunder-damage"
+              ],
+              "summary": "至少2名我方角色装备雷霆合奏：2人+10%、3人+20%、4人+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "tiered-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "cd5203b730b861ca",
+              "minimumCount": 2,
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 20
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 30
+                }
+              ]
+            }
+          ],
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "我方至少2名角色装备雷霆合奏，按装备人数选择对应档位"
+      ]
+    },
+    {
+      "id": "4e8a749504d3799f",
+      "name": "雷霆强化",
+      "url": "https://altema.jp/lastcloudia/gino/721",
+      "text": "雷属性攻击伤害+10%，特技伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "thunder-damage",
+          "kind": "effect",
+          "text": "雷属性攻击伤害+10%"
+        },
+        {
+          "id": "skill-damage",
+          "kind": "effect",
+          "text": "特技伤害+15%，不限定雷属性"
+        }
+      ],
+      "tagDetails": {
+        "雷属性": {
+          "summary": "雷属性攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "thunder-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "thunder-damage"
+              ],
+              "summary": "雷属性攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "thunder"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "特技伤害+15%为独立不限属性词条，不改成雷属性特技增伤。"
+        }
+      },
+      "assignedTags": [
+        "雷属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "特技伤害+15%，不限定雷属性"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "9fc2a2451521c398",
+      "name": "光攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/77",
+      "text": "光属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害+20%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "光属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为光，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "454a237836d960b0",
+      "name": "光攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/296",
+      "text": "光属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "光属性攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为光，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "3c949dcbeeaee844",
+      "name": "光攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/660",
+      "text": "光属性伤害+30%，光属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-damage",
+          "kind": "effect",
+          "text": "光属性伤害+30%"
+        },
+        {
+          "id": "light-cap",
+          "kind": "effect",
+          "text": "光属性伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性伤害+30%。；光属性伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-damage",
+              "light-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "光属性伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-general",
+              "partIds": [
+                "light-cap"
+              ],
+              "summary": "光属性伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "完整词条没有另限攻击类型，光属性伤害与光属性上限分开。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "02ddf87727d6b287",
+      "name": "光魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/131",
+      "text": "光属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-magic-damage",
+          "kind": "effect",
+          "text": "光属性魔法攻击伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性魔法攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "light-magic-damage"
+              ],
+              "summary": "光属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "light"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "完整词条是光属性魔法攻击增伤，不计入所有魔法或光属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "dc3451f4b7d2a45b",
+      "name": "光魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/138",
+      "text": "光属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-magic-damage",
+          "kind": "effect",
+          "text": "光属性魔法攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性魔法攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "light-magic-damage"
+              ],
+              "summary": "光属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "light"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "完整词条是光属性魔法攻击增伤，不计入所有魔法或光属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "6e424e4ea062edd4",
+      "name": "光魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/415",
+      "text": "光属性魔法攻击伤害+30%，光属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-magic-damage",
+          "kind": "effect",
+          "text": "光属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "light-magic-cap",
+          "kind": "effect",
+          "text": "光属性魔法攻击伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性魔法攻击伤害+30%。；光属性魔法攻击伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic-damage",
+              "light-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "light-magic-damage"
+              ],
+              "summary": "光属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "light"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-magic",
+              "partIds": [
+                "light-magic-cap"
+              ],
+              "summary": "光属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "light"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "伤害与上限分开；两项均限定光属性魔法攻击，不扩展为所有魔法。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "a1d3d2d5b491b676",
+      "name": "光属性护罩2",
+      "url": "https://altema.jp/lastcloudia/gino/513",
+      "text": "受到敌人光属性攻击的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-light",
+          "kind": "effect",
+          "text": "受到光属性攻击的伤害-20%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "受到光属性攻击的伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-light"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-light"
+              ],
+              "summary": "受到光属性攻击的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 20,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "这是被动所受光伤减免，不是限时暗影墙Buff，也不是光属性耐性数值+20。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "3cc8a829b724bfe7",
+      "name": "光属性驱动",
+      "url": "https://altema.jp/lastcloudia/gino/755",
+      "text": "光属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-physical-damage",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害+10%"
+        },
+        {
+          "id": "light-ultimate-damage",
+          "kind": "effect",
+          "text": "光属性必杀伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性物理攻击伤害+10%。；光属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-physical-damage",
+              "light-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "light-physical-damage"
+              ],
+              "summary": "光属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "light"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "light-ultimate-damage"
+              ],
+              "summary": "光属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "light"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为光属性；不包含光属性魔法，也不重复当作所有光伤加成。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "109cb2b413148949",
+      "name": "光属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/509",
+      "text": "光属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-physical-damage",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害+30%"
+        },
+        {
+          "id": "light-ultimate-damage",
+          "kind": "effect",
+          "text": "光属性必杀伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性物理攻击伤害+30%。；光属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-physical-damage",
+              "light-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "light-physical-damage"
+              ],
+              "summary": "光属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "light"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "light-ultimate-damage"
+              ],
+              "summary": "光属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "light"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为光属性；不包含光属性魔法，也不重复当作所有光伤加成。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "523a8585fc9c836c",
+      "name": "光属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/625",
+      "text": "光属性物理攻击与必杀伤害+30%，光属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-physical-damage",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害+30%"
+        },
+        {
+          "id": "light-ultimate-damage",
+          "kind": "effect",
+          "text": "光属性必杀伤害+30%"
+        },
+        {
+          "id": "light-physical-cap",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "light-ultimate-cap",
+          "kind": "effect",
+          "text": "光属性必杀伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性物理攻击伤害+30%。；光属性必杀伤害+30%。；光属性物理攻击伤害上限+2,000。；光属性必杀伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-physical-damage",
+              "light-ultimate-damage",
+              "light-physical-cap",
+              "light-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "light-physical-damage"
+              ],
+              "summary": "光属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "light"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "light-ultimate-damage"
+              ],
+              "summary": "光属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "light"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-physical",
+              "partIds": [
+                "light-physical-cap"
+              ],
+              "summary": "光属性物理攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "light"
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "cap-ultimate",
+              "partIds": [
+                "light-ultimate-cap"
+              ],
+              "summary": "光属性必杀伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "light"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "四项效果按攻击类型和伤害／上限分开，魔法不适用。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "5aab3402039886d1",
+      "name": "光属性极阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1239",
+      "text": "光属性物理攻击与必杀伤害+30%，光属性物理攻击与必杀伤害上限+5,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-physical-damage",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害+30%"
+        },
+        {
+          "id": "light-ultimate-damage",
+          "kind": "effect",
+          "text": "光属性必杀伤害+30%"
+        },
+        {
+          "id": "light-physical-cap",
+          "kind": "effect",
+          "text": "光属性物理攻击伤害上限+5,000"
+        },
+        {
+          "id": "light-ultimate-cap",
+          "kind": "effect",
+          "text": "光属性必杀伤害上限+5,000"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性物理攻击伤害+30%。；光属性必杀伤害+30%。；光属性物理攻击伤害上限+5,000。；光属性必杀伤害上限+5,000。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-physical-damage",
+              "light-ultimate-damage",
+              "light-physical-cap",
+              "light-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "light-physical-damage"
+              ],
+              "summary": "光属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "light"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "light-ultimate-damage"
+              ],
+              "summary": "光属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "light"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-physical",
+              "partIds": [
+                "light-physical-cap"
+              ],
+              "summary": "光属性物理攻击伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "light"
+              },
+              "capPoints": 5000
+            },
+            {
+              "group": "cap-ultimate",
+              "partIds": [
+                "light-ultimate-cap"
+              ],
+              "summary": "光属性必杀伤害上限+5,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "light"
+              },
+              "capPoints": 5000
+            }
+          ],
+          "calculationNote": "四项效果按攻击类型和伤害／上限分开，魔法不适用。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "0b9f0f0b0c0162dc",
+      "name": "神圣机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1142",
+      "text": "对处于气绝或Break状态的敌人，光属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，光属性攻击伤害+20%"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "对气绝或Break敌人，光属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "对气绝或Break敌人，光属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件光伤。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于气绝或Break状态，满足任意一项"
+      ]
+    },
+    {
+      "id": "f2adf1f2ba4f5cb0",
+      "name": "神圣机遇2",
+      "url": "https://altema.jp/lastcloudia/gino/1665",
+      "text": "对处于气绝或Break状态的敌人，光属性攻击伤害+20%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，光属性攻击伤害+20%"
+        },
+        {
+          "id": "light-cap",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，光属性攻击伤害上限+3,000"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "对气绝或Break敌人，光属性攻击伤害+20%。；对气绝或Break敌人，光属性攻击伤害上限+3,000。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-damage",
+              "light-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "对气绝或Break敌人，光属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            },
+            {
+              "group": "cap-stun-break",
+              "partIds": [
+                "light-cap"
+              ],
+              "summary": "对气绝或Break敌人，光属性攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "capPoints": 3000
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件光伤。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于气绝或Break状态，满足任意一项"
+      ]
+    },
+    {
+      "id": "4b11acd40f6ed44f",
+      "name": "光属性弱点突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1001",
+      "text": "使用光属性攻击命中弱点属性时，伤害上限+2,000；仅装备1把武器时，提升量变为+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-weakness-cap",
+          "kind": "effect",
+          "text": "光属性命中弱点时，上限+2000；仅装备1把武器时改为+4000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次光属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "light-weakness-cap"
+              ],
+              "summary": "光属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次光属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "全部技能:all:791",
+      "name": "光属性弱点突破",
+      "url": "https://altema.jp/lastcloudia/gino/1556",
+      "text": "当使用光属性并利用弱点时，伤害上限增加 1000。 当只装备一把武器时，效果增加到 2000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-weakness-cap",
+          "kind": "effect",
+          "text": "光属性命中弱点时，上限+1000；仅装备1把武器时改为+2000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次光属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "light-weakness-cap"
+              ],
+              "summary": "光属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次光属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "16e16b5e64f54f5c",
+      "name": "光属性弱点突破3",
+      "url": "https://altema.jp/lastcloudia/gino/1857",
+      "text": "使用光属性攻击命中弱点属性时，伤害上限+3,000；仅装备1把武器时，提升量变为+6,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-weakness-cap",
+          "kind": "effect",
+          "text": "光属性命中弱点时，上限+3000；仅装备1把武器时改为+6000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次光属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性命中弱点时，上限+3,000；仅1把武器时改为+6,000。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "light-weakness-cap"
+              ],
+              "summary": "光属性命中弱点时，上限+3,000；仅1把武器时改为+6,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 6000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 3000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次光属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "d1183996ac70be89",
+      "name": "神圣冲锋",
+      "url": "https://altema.jp/lastcloudia/gino/1591",
+      "text": "连续Hit达到50以上时，光属性物理攻击伤害上限+1,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-physical-cap",
+          "kind": "effect",
+          "text": "连续Hit至少50时，光属性物理攻击伤害上限+1,500"
+        },
+        {
+          "id": "hit-count",
+          "kind": "condition",
+          "text": "连续Hit数≥50"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "连续Hit达到50以上时，光属性物理攻击伤害上限+1,500。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-physical-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-hit-count",
+              "partIds": [
+                "light-physical-cap"
+              ],
+              "summary": "连续Hit达到50以上时，光属性物理攻击伤害上限+1,500。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "light"
+              },
+              "capPoints": 1500,
+              "hitCount": {
+                "metric": "consecutive-hits",
+                "operator": "gte",
+                "value": 50
+              }
+            }
+          ],
+          "calculationNote": "达到50即满足数值条件，不是每50Hit叠加，也不是提高所有光属性伤害上限；Hit条件仍待标签。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续Hit数≥50"
+      ]
+    },
+    {
+      "id": "cae22c8f6e9a70ef",
+      "name": "神圣合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1000",
+      "text": "2名以上我方单位装备“神圣合奏”时，光属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害随装备神圣合奏人数提升：2人+10%、3人+20%、4人+30%"
+        },
+        {
+          "id": "party-skill-count",
+          "kind": "condition",
+          "text": "我方至少2名角色装备神圣合奏，按装备人数选择对应档位"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "至少2名我方角色装备神圣合奏：2人+10%、3人+20%、4人+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-party",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "至少2名我方角色装备神圣合奏：2人+10%、3人+20%、4人+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "tiered-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "cae22c8f6e9a70ef",
+              "minimumCount": 2,
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 20
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 30
+                }
+              ]
+            }
+          ],
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "我方至少2名角色装备神圣合奏，按装备人数选择对应档位"
+      ]
+    },
+    {
+      "id": "332d1d402c82343d",
+      "name": "无限驱动",
+      "url": "https://altema.jp/lastcloudia/gino/956",
+      "text": "光、暗属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-physical",
+          "kind": "effect",
+          "text": "光属性物理伤害+10%"
+        },
+        {
+          "id": "light-ultimate",
+          "kind": "effect",
+          "text": "光属性必杀伤害+10%"
+        },
+        {
+          "id": "dark-physical",
+          "kind": "effect",
+          "text": "暗属性物理伤害+10%"
+        },
+        {
+          "id": "dark-ultimate",
+          "kind": "effect",
+          "text": "暗属性必杀伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性物理伤害+10%。；光属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-physical",
+              "light-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "light-physical"
+              ],
+              "summary": "光属性物理伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "light"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "light-ultimate"
+              ],
+              "summary": "光属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "light"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        },
+        "暗属性": {
+          "summary": "暗属性物理伤害+10%。；暗属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-physical",
+              "dark-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "dark-physical"
+              ],
+              "summary": "暗属性物理伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "dark-ultimate"
+              ],
+              "summary": "暗属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        }
+      },
+      "assignedTags": [
+        "光属性",
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "41e5f848b9d300e9",
+      "name": "无限增幅",
+      "url": "https://altema.jp/lastcloudia/gino/957",
+      "text": "光、暗属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-magic",
+          "kind": "effect",
+          "text": "光属性魔法伤害+10%"
+        },
+        {
+          "id": "dark-magic",
+          "kind": "effect",
+          "text": "暗属性魔法伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性魔法伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "light-magic"
+              ],
+              "summary": "光属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "light"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        },
+        "暗属性": {
+          "summary": "暗属性魔法伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "dark-magic"
+              ],
+              "summary": "暗属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "dark"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        }
+      },
+      "assignedTags": [
+        "光属性",
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "348f27fb6f68e198",
+      "name": "无限高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1528",
+      "text": "光、暗属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-magic",
+          "kind": "effect",
+          "text": "光属性魔法伤害+30%"
+        },
+        {
+          "id": "dark-magic",
+          "kind": "effect",
+          "text": "暗属性魔法伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性魔法伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "light-magic"
+              ],
+              "summary": "光属性魔法伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "light"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        },
+        "暗属性": {
+          "summary": "暗属性魔法伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "dark-magic"
+              ],
+              "summary": "暗属性魔法伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        }
+      },
+      "assignedTags": [
+        "光属性",
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "648c1a3414c1a27d",
+      "name": "无限高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1529",
+      "text": "光、暗属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-physical",
+          "kind": "effect",
+          "text": "光属性物理伤害+30%"
+        },
+        {
+          "id": "light-ultimate",
+          "kind": "effect",
+          "text": "光属性必杀伤害+30%"
+        },
+        {
+          "id": "dark-physical",
+          "kind": "effect",
+          "text": "暗属性物理伤害+30%"
+        },
+        {
+          "id": "dark-ultimate",
+          "kind": "effect",
+          "text": "暗属性必杀伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性物理伤害+30%。；光属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-physical",
+              "light-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "light-physical"
+              ],
+              "summary": "光属性物理伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "light"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "light-ultimate"
+              ],
+              "summary": "光属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "light"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        },
+        "暗属性": {
+          "summary": "暗属性物理伤害+30%。；暗属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-physical",
+              "dark-ultimate"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "dark-physical"
+              ],
+              "summary": "暗属性物理伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "dark-ultimate"
+              ],
+              "summary": "暗属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "光与暗分别记录，物理、魔法、必杀分开；不是全属性效果。"
+        }
+      },
+      "assignedTags": [
+        "光属性",
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "085a66c6930d7fa6",
+      "name": "神圣增益",
+      "url": "https://altema.jp/lastcloudia/gino/1961",
+      "text": "每个Wave中，随着时间经过，光属性伤害逐渐提升（90秒时达到最高+20%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-time-damage",
+          "kind": "effect",
+          "text": "光属性伤害随本Wave时间提高，90秒达到最高+20%"
+        },
+        {
+          "id": "wave-time-scaling",
+          "kind": "condition",
+          "text": "每Wave重新计时；90秒达最高值，具体增长曲线待确认"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "每Wave内光属性伤害逐渐提高，90秒达到最高+20%；下一Wave重置。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-time-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-time",
+              "partIds": [
+                "light-time-damage"
+              ],
+              "summary": "每Wave内光属性伤害逐渐提高，90秒达到最高+20%；下一Wave重置。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "time-scaling-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "maxValuePercent": 20,
+              "secondsToMaximum": 90,
+              "resetScope": "wave",
+              "curveStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "只记录已知最高值与达峰时间，不假定线性，也不把最高20%从开场就计入。时间条件与曲线仍待判断。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "每Wave重新计时；90秒达最高值，具体增长曲线待确认"
+      ]
+    },
+    {
+      "id": "b63054ad34e97c0d",
+      "name": "威斯普之刻",
+      "url": "https://altema.jp/lastcloudia/gino/227",
+      "text": "白天（现实时间6:00～17:59），光属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-time-magic",
+          "kind": "effect",
+          "text": "满足现实时间时光属性魔法伤害+10%"
+        },
+        {
+          "id": "real-time",
+          "kind": "condition",
+          "text": "现实白天6:00～17:59"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "现实白天6:00～17:59，光属性魔法伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-time-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-real-time",
+              "partIds": [
+                "light-time-magic"
+              ],
+              "summary": "现实白天6:00～17:59，光属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "light"
+              },
+              "valuePercent": 10,
+              "realTimeWindow": {
+                "start": "06:00",
+                "endExclusive": "18:00",
+                "crossesMidnight": false
+              }
+            }
+          ],
+          "calculationNote": "现实时间条件加成，不是开场或限时Buff；现实时间标签仍待处理。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "现实白天6:00～17:59"
+      ]
+    },
+    {
+      "id": "e0f6942b8d0b10f7",
+      "name": "光降圣夜",
+      "url": "https://altema.jp/lastcloudia/gino/242",
+      "text": "现实时间为夜晚时，光属性魔法伤害+10%。",
+      "notes": "判定使用游戏所读的本地时间，夜间范围为18:00至次日5:59。",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-time-magic",
+          "kind": "effect",
+          "text": "满足现实时间时光属性魔法伤害+10%"
+        },
+        {
+          "id": "real-time",
+          "kind": "condition",
+          "text": "现实夜间18:00～次日5:59"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "现实夜间18:00～次日5:59，光属性魔法伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-time-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-real-time",
+              "partIds": [
+                "light-time-magic"
+              ],
+              "summary": "现实夜间18:00～次日5:59，光属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "light"
+              },
+              "valuePercent": 10,
+              "realTimeWindow": {
+                "start": "18:00",
+                "endExclusive": "06:00",
+                "crossesMidnight": true
+              }
+            }
+          ],
+          "calculationNote": "现实时间条件加成，不是开场或限时Buff；现实时间标签仍待处理。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "现实夜间18:00～次日5:59"
+      ]
+    },
+    {
+      "id": "9802f136c37301f3",
+      "name": "照亮黑暗之光",
+      "url": "https://altema.jp/lastcloudia/gino/315",
+      "text": "光属性攻击伤害+10%，受到的暗属性攻击伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害+10%"
+        },
+        {
+          "id": "received-dark",
+          "kind": "effect",
+          "text": "受到暗属性攻击伤害-10%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "光属性攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "光增伤与暗减伤分别覆盖，不能混成同属性的一组效果。"
+        },
+        "暗属性": {
+          "summary": "受到暗属性攻击的伤害-10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-dark"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-dark"
+              ],
+              "summary": "受到暗属性攻击的伤害-10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 10,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "与光属性攻击增伤分别覆盖；被动减伤不是圣墙Buff或暗耐性数值。"
+        }
+      },
+      "assignedTags": [
+        "光属性",
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "182731824b8599ca",
+      "name": "神圣强化",
+      "url": "https://altema.jp/lastcloudia/gino/711",
+      "text": "光属性攻击伤害+20%，治疗魔法威力+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-damage",
+          "kind": "effect",
+          "text": "光属性攻击伤害+20%"
+        },
+        {
+          "id": "healing-magic",
+          "kind": "effect",
+          "text": "治疗魔法威力+30%"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "光属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "light-damage"
+              ],
+              "summary": "光属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "治疗魔法威力是独立效果，不是光属性魔法增伤，继续待判断。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "治疗魔法威力+30%"
+      ],
+      "remainingConditions": []
+    },
+    {
+      "id": "9df5299c661312ec",
+      "name": "暗夜圣光",
+      "url": "https://altema.jp/lastcloudia/gino/1179",
+      "text": "对恐怖系（魔法生物、不死生物、精灵）敌人的光属性攻击伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-horror-damage",
+          "kind": "effect",
+          "text": "对恐怖系敌人的光属性攻击伤害+15%"
+        },
+        {
+          "id": "horror-target",
+          "kind": "condition",
+          "text": "目标为恐怖系：魔法生物、不死生物、精灵"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "对恐怖系（魔法生物、不死生物、精灵）敌人，光属性攻击伤害+15%。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-horror-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-horror",
+              "partIds": [
+                "light-horror-damage"
+              ],
+              "summary": "对恐怖系（魔法生物、不死生物、精灵）敌人，光属性攻击伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light",
+                "enemyFamily": "horror",
+                "enemyTypesAnyOf": [
+                  "magical-creature",
+                  "undead",
+                  "spirit"
+                ]
+              },
+              "valuePercent": 15
+            }
+          ],
+          "calculationNote": "保留目标类型限定；不是无条件光增伤，也不等于暴击或属性弱点。种族条件继续待判断。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标为恐怖系：魔法生物、不死生物、精灵"
+      ]
+    },
+    {
+      "id": "ca8779066b942675",
+      "name": "神秘之力【轮光】",
+      "url": "https://altema.jp/lastcloudia/gino/2000",
+      "text": "自身为神类型时，使我方装备「信仰」的角色获得：光属性伤害+10%。同名「神秘之力」效果不会叠加。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "light-aura-damage",
+          "kind": "effect",
+          "text": "使我方装备信仰的角色获得光属性伤害+10%"
+        },
+        {
+          "id": "self-god",
+          "kind": "condition",
+          "text": "技能持有者自身为神类型"
+        },
+        {
+          "id": "ally-faith",
+          "kind": "condition",
+          "text": "受益角色装备信仰"
+        },
+        {
+          "id": "same-name-limit",
+          "kind": "condition",
+          "text": "同名神秘之力技能不叠加"
+        }
+      ],
+      "tagDetails": {
+        "光属性": {
+          "summary": "自身为神类型时，使我方装备「信仰」的角色获得光属性伤害+10%；同名不叠加。",
+          "relation": "element-effect-or-condition",
+          "element": "light",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "light-aura-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-allies-faith",
+              "partIds": [
+                "light-aura-damage"
+              ],
+              "summary": "自身为神类型时，使我方装备「信仰」的角色获得光属性伤害+10%；同名不叠加。",
+              "target": "allies-with-faith",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "light"
+              },
+              "valuePercent": 10,
+              "providerCondition": {
+                "type": "god"
+              },
+              "recipientCondition": {
+                "skillName": "信仰"
+              },
+              "sameNameStacking": "one-instance-only"
+            }
+          ],
+          "calculationNote": "持有者与受益者分开；不能直接给全队或默认给自身。类型、信仰装备和同名不叠加机制仍待标签。"
+        }
+      },
+      "assignedTags": [
+        "光属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "技能持有者自身为神类型",
+        "受益角色装备信仰",
+        "同名神秘之力技能不叠加"
+      ]
+    },
+    {
+      "id": "30c471c824951c9c",
+      "name": "暗攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/78",
+      "text": "暗属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-damage",
+          "kind": "effect",
+          "text": "暗属性攻击伤害+20%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "dark-damage"
+              ],
+              "summary": "暗属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为暗，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "04b522e79ad2a5d2",
+      "name": "暗攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/323",
+      "text": "暗属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-damage",
+          "kind": "effect",
+          "text": "暗属性攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "dark-damage"
+              ],
+              "summary": "暗属性攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为暗，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "12730aa5921baa23",
+      "name": "暗攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/559",
+      "text": "暗属性伤害+30%，暗属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-damage",
+          "kind": "effect",
+          "text": "暗属性伤害+30%"
+        },
+        {
+          "id": "dark-cap",
+          "kind": "effect",
+          "text": "暗属性伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性伤害+30%。；暗属性伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-damage",
+              "dark-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "dark-damage"
+              ],
+              "summary": "暗属性伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-general",
+              "partIds": [
+                "dark-cap"
+              ],
+              "summary": "暗属性伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "完整词条没有另限攻击类型，暗属性伤害与暗属性上限分开。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "1a1043cd31293850",
+      "name": "暗魔法增幅",
+      "url": "https://altema.jp/lastcloudia/gino/132",
+      "text": "暗属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-magic-damage",
+          "kind": "effect",
+          "text": "暗属性魔法攻击伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性魔法攻击伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "dark-magic-damage"
+              ],
+              "summary": "暗属性魔法攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "dark"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "完整词条是暗属性魔法攻击增伤，不计入所有魔法或暗属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "0c21dbbed7678df5",
+      "name": "暗魔法高阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/139",
+      "text": "暗属性魔法攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-magic-damage",
+          "kind": "effect",
+          "text": "暗属性魔法攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性魔法攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "dark-magic-damage"
+              ],
+              "summary": "暗属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "完整词条是暗属性魔法攻击增伤，不计入所有魔法或暗属性物理／必杀。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "eb948e43fefb658b",
+      "name": "暗魔法超阶增幅",
+      "url": "https://altema.jp/lastcloudia/gino/416",
+      "text": "暗属性魔法攻击伤害+30%，暗属性魔法攻击伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-magic-damage",
+          "kind": "effect",
+          "text": "暗属性魔法攻击伤害+30%"
+        },
+        {
+          "id": "dark-magic-cap",
+          "kind": "effect",
+          "text": "暗属性魔法攻击伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性魔法攻击伤害+30%。；暗属性魔法攻击伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic-damage",
+              "dark-magic-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "dark-magic-damage"
+              ],
+              "summary": "暗属性魔法攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-magic",
+              "partIds": [
+                "dark-magic-cap"
+              ],
+              "summary": "暗属性魔法攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "dark"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "伤害与上限分开；两项均限定暗属性魔法攻击，不扩展为所有魔法。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:288",
+      "name": "暗属性护盾2",
+      "url": "https://altema.jp/lastcloudia/gino/335",
+      "text": "受到敌人暗属性攻击的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-dark",
+          "kind": "effect",
+          "text": "受到暗属性攻击的伤害-20%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "受到暗属性攻击的伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-dark"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-dark"
+              ],
+              "summary": "受到暗属性攻击的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 20,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "这是被动所受暗伤减免，不是限时圣墙Buff，也不是暗属性耐性数值+20。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "176f3ffc986701cc",
+      "name": "暗属性护罩",
+      "url": "https://altema.jp/lastcloudia/gino/1908",
+      "text": "受到敌人暗属性攻击的伤害-10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-dark",
+          "kind": "effect",
+          "text": "受到暗属性攻击的伤害-10%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "受到暗属性攻击的伤害-10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-dark"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-dark"
+              ],
+              "summary": "受到暗属性攻击的伤害-10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "valuePercent": 10,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "这是被动所受暗伤减免，不是限时圣墙Buff，也不是暗属性耐性数值+10。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "5b5e2095fcd10064",
+      "name": "暗黑驱动",
+      "url": "https://altema.jp/lastcloudia/gino/403",
+      "text": "暗属性物理攻击与必杀伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-physical-damage",
+          "kind": "effect",
+          "text": "暗属性物理攻击伤害+10%"
+        },
+        {
+          "id": "dark-ultimate-damage",
+          "kind": "effect",
+          "text": "暗属性必杀伤害+10%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性物理攻击伤害+10%。；暗属性必杀伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-physical-damage",
+              "dark-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "dark-physical-damage"
+              ],
+              "summary": "暗属性物理攻击伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark"
+              },
+              "valuePercent": 10
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "dark-ultimate-damage"
+              ],
+              "summary": "暗属性必杀伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark"
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为暗属性；不包含暗属性魔法，也不重复当作所有暗伤加成。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "ba02b8e71faa334b",
+      "name": "暗属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/457",
+      "text": "暗属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-physical-damage",
+          "kind": "effect",
+          "text": "暗属性物理攻击伤害+30%"
+        },
+        {
+          "id": "dark-ultimate-damage",
+          "kind": "effect",
+          "text": "暗属性必杀伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性物理攻击伤害+30%。；暗属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-physical-damage",
+              "dark-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "dark-physical-damage"
+              ],
+              "summary": "暗属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "dark-ultimate-damage"
+              ],
+              "summary": "暗属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为暗属性；不包含暗属性魔法，也不重复当作所有暗伤加成。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "7aecbb8f146842de",
+      "name": "暗属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/752",
+      "text": "暗属性物理攻击与必杀伤害+30%，暗属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-physical-damage",
+          "kind": "effect",
+          "text": "暗属性物理攻击伤害+30%"
+        },
+        {
+          "id": "dark-ultimate-damage",
+          "kind": "effect",
+          "text": "暗属性必杀伤害+30%"
+        },
+        {
+          "id": "dark-physical-cap",
+          "kind": "effect",
+          "text": "暗属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "dark-ultimate-cap",
+          "kind": "effect",
+          "text": "暗属性必杀伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性物理攻击伤害+30%。；暗属性必杀伤害+30%。；暗属性物理攻击伤害上限+2,000。；暗属性必杀伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-physical-damage",
+              "dark-ultimate-damage",
+              "dark-physical-cap",
+              "dark-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "dark-physical-damage"
+              ],
+              "summary": "暗属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "dark-ultimate-damage"
+              ],
+              "summary": "暗属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-physical",
+              "partIds": [
+                "dark-physical-cap"
+              ],
+              "summary": "暗属性物理攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark"
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "cap-ultimate",
+              "partIds": [
+                "dark-ultimate-cap"
+              ],
+              "summary": "暗属性必杀伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "四项效果按攻击类型和伤害／上限分开，魔法不适用。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "9ec3cb9696053d8b",
+      "name": "暗之机遇",
+      "url": "https://altema.jp/lastcloudia/gino/1065",
+      "text": "对处于气绝或Break状态的敌人，暗属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，暗属性攻击伤害+20%"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "对气绝或Break敌人，暗属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "dark-damage"
+              ],
+              "summary": "对气绝或Break敌人，暗属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件暗伤。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于气绝或Break状态，满足任意一项"
+      ]
+    },
+    {
+      "id": "6ad84bb93596f650",
+      "name": "暗之机遇2",
+      "url": "https://altema.jp/lastcloudia/gino/1728",
+      "text": "对处于气绝或Break状态的敌人，暗属性攻击伤害+20%，伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-damage",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，暗属性攻击伤害+20%"
+        },
+        {
+          "id": "dark-cap",
+          "kind": "effect",
+          "text": "对气绝或Break敌人，暗属性攻击伤害上限+3,000"
+        },
+        {
+          "id": "enemy-state",
+          "kind": "condition",
+          "text": "目标敌人处于气绝或Break状态，满足任意一项"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "对气绝或Break敌人，暗属性攻击伤害+20%。；对气绝或Break敌人，暗属性攻击伤害上限+3,000。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-damage",
+              "dark-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-stun-break",
+              "partIds": [
+                "dark-damage"
+              ],
+              "summary": "对气绝或Break敌人，暗属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "valuePercent": 20
+            },
+            {
+              "group": "cap-stun-break",
+              "partIds": [
+                "dark-cap"
+              ],
+              "summary": "对气绝或Break敌人，暗属性攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "enemyStateAnyOf": [
+                  "stunned",
+                  "break"
+                ]
+              },
+              "capPoints": 3000
+            }
+          ],
+          "calculationNote": "气绝与Break是任意一项满足，不要求同时满足；敌人状态条件仍待标签，不计为无条件暗伤。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "目标敌人处于气绝或Break状态，满足任意一项"
+      ]
+    },
+    {
+      "id": "448a81c14ac59549",
+      "name": "暗属性弱点突破2",
+      "url": "https://altema.jp/lastcloudia/gino/1020",
+      "text": "使用暗属性攻击命中弱点属性时，伤害上限+2,000；仅装备1把武器时，提升量变为+4,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-weakness-cap",
+          "kind": "effect",
+          "text": "暗属性命中弱点时，上限+2000；仅装备1把武器时改为+4000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次暗属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "dark-weakness-cap"
+              ],
+              "summary": "暗属性命中弱点时，上限+2,000；仅1把武器时改为+4,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 4000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 2000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次暗属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "0909ef13d95c0497",
+      "name": "暗属性弱点突破",
+      "url": "https://altema.jp/lastcloudia/gino/1424",
+      "text": "使用暗属性攻击命中弱点属性时，伤害上限+1,000；仅装备1把武器时，提升量变为+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-weakness-cap",
+          "kind": "effect",
+          "text": "暗属性命中弱点时，上限+1000；仅装备1把武器时改为+2000"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次暗属性攻击命中敌人的属性弱点"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-weakness-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weakness",
+              "partIds": [
+                "dark-weakness-cap"
+              ],
+              "summary": "暗属性命中弱点时，上限+1,000；仅1把武器时改为+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "hitsElementWeakness": true
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCount": 1
+                  },
+                  "capPoints": 2000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1000
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "单武器是把原提升量替换成较高一档，不是两档相加；0把武器不满足1把武器条件。属性弱点与武器数量仍待各自标签，不直接填最高上限。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次暗属性攻击命中敌人的属性弱点",
+        "仅装备1把武器时使用较高上限，否则使用基础上限；两档互斥"
+      ]
+    },
+    {
+      "id": "254ff4e20e2b8d20",
+      "name": "暗影冲锋",
+      "url": "https://altema.jp/lastcloudia/gino/1536",
+      "text": "连续Hit达到50以上时，暗属性物理攻击伤害上限+1,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-physical-cap",
+          "kind": "effect",
+          "text": "连续Hit至少50时，暗属性物理攻击伤害上限+1,500"
+        },
+        {
+          "id": "hit-count",
+          "kind": "condition",
+          "text": "连续Hit数≥50"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "连续Hit达到50以上时，暗属性物理攻击伤害上限+1,500。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-physical-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-hit-count",
+              "partIds": [
+                "dark-physical-cap"
+              ],
+              "summary": "连续Hit达到50以上时，暗属性物理攻击伤害上限+1,500。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark"
+              },
+              "capPoints": 1500,
+              "hitCount": {
+                "metric": "consecutive-hits",
+                "operator": "gte",
+                "value": 50
+              }
+            }
+          ],
+          "calculationNote": "达到50即满足数值条件，不是每50Hit叠加，也不是提高所有暗属性伤害上限；Hit条件仍待标签。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续Hit数≥50"
+      ]
+    },
+    {
+      "id": "2956cbc5fa6221fd",
+      "name": "暗影冲锋2",
+      "url": "https://altema.jp/lastcloudia/gino/1880",
+      "text": "连续Hit达到50以上时，暗属性物理攻击伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-physical-cap",
+          "kind": "effect",
+          "text": "连续Hit至少50时，暗属性物理攻击伤害上限+3,000"
+        },
+        {
+          "id": "hit-count",
+          "kind": "condition",
+          "text": "连续Hit数≥50"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "连续Hit达到50以上时，暗属性物理攻击伤害上限+3,000。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-physical-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-hit-count",
+              "partIds": [
+                "dark-physical-cap"
+              ],
+              "summary": "连续Hit达到50以上时，暗属性物理攻击伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark"
+              },
+              "capPoints": 3000,
+              "hitCount": {
+                "metric": "consecutive-hits",
+                "operator": "gte",
+                "value": 50
+              }
+            }
+          ],
+          "calculationNote": "达到50即满足数值条件，不是每50Hit叠加，也不是提高所有暗属性伤害上限；Hit条件仍待标签。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续Hit数≥50"
+      ]
+    },
+    {
+      "id": "106e0b26cc206aed",
+      "name": "暗影合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1154",
+      "text": "2名以上我方单位装备“暗影合奏”时，暗属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-damage",
+          "kind": "effect",
+          "text": "暗属性攻击伤害随装备暗影合奏人数提升：2人+10%、3人+20%、4人+30%"
+        },
+        {
+          "id": "party-skill-count",
+          "kind": "condition",
+          "text": "我方至少2名角色装备暗影合奏，按装备人数选择对应档位"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "至少2名我方角色装备暗影合奏：2人+10%、3人+20%、4人+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-party",
+              "partIds": [
+                "dark-damage"
+              ],
+              "summary": "至少2名我方角色装备暗影合奏：2人+10%、3人+20%、4人+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "tiered-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "106e0b26cc206aed",
+              "minimumCount": 2,
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 20
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 30
+                }
+              ]
+            }
+          ],
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "我方至少2名角色装备暗影合奏，按装备人数选择对应档位"
+      ]
+    },
+    {
+      "id": "492069f33fad559b",
+      "name": "暗属性驱动极限突破",
+      "url": "https://altema.jp/lastcloudia/gino/1603",
+      "text": "暗属性物理攻击与必杀伤害上限+1,500；仅装备1把武器或未装备武器时，提升量变为+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-physical-cap",
+          "kind": "effect",
+          "text": "暗属性物理上限+1,500；0或1把武器时改为+3,000"
+        },
+        {
+          "id": "dark-ultimate-cap",
+          "kind": "effect",
+          "text": "暗属性必杀上限+1,500；0或1把武器时改为+3,000"
+        },
+        {
+          "id": "weapon-count-branch",
+          "kind": "condition",
+          "text": "未装备武器或只装备1把武器时用较高档，两档互斥"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性物理上限+1,500；0或1把武器时改为+3,000。；暗属性必杀上限+1,500；0或1把武器时改为+3,000。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-physical-cap",
+              "dark-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-weapon-count-physical",
+              "partIds": [
+                "dark-physical-cap"
+              ],
+              "summary": "暗属性物理上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "dark"
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive"
+            },
+            {
+              "group": "cap-weapon-count-ultimate",
+              "partIds": [
+                "dark-ultimate-cap"
+              ],
+              "summary": "暗属性必杀上限+1,500；0或1把武器时改为+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "conditional-cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark"
+              },
+              "capCases": [
+                {
+                  "when": {
+                    "weaponCountIn": [
+                      0,
+                      1
+                    ]
+                  },
+                  "capPoints": 3000
+                },
+                {
+                  "otherwise": true,
+                  "capPoints": 1500
+                }
+              ],
+              "branches": "mutually-exclusive"
+            }
+          ],
+          "calculationNote": "本词条明确包含空手，不能套用弱点突破的仅1把武器条件；两档替换不相加。装备数量条件待判断。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "未装备武器或只装备1把武器时用较高档，两档互斥"
+      ]
+    },
+    {
+      "id": "fb6d9a18f0c64a74",
+      "name": "暗属性弱点增幅",
+      "url": "https://altema.jp/lastcloudia/gino/1970",
+      "text": "使用暗属性攻击命中弱点属性时，伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-weakness-damage",
+          "kind": "effect",
+          "text": "暗属性命中属性弱点时伤害+10%"
+        },
+        {
+          "id": "hits-weakness",
+          "kind": "condition",
+          "text": "本次暗属性攻击命中敌人的属性弱点"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性攻击命中属性弱点时，伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-weakness-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-weakness",
+              "partIds": [
+                "dark-weakness-damage"
+              ],
+              "summary": "暗属性攻击命中属性弱点时，伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "hitsElementWeakness": true
+              },
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "不改成所有属性弱点增伤或无条件属性增伤；属性弱点条件继续待其标签。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "本次暗属性攻击命中敌人的属性弱点"
+      ]
+    },
+    {
+      "id": "713403dd798c7836",
+      "name": "阴影之刻",
+      "url": "https://altema.jp/lastcloudia/gino/228",
+      "text": "夜间（现实时间18:00～5:59），暗属性魔法攻击伤害+10%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-time-magic",
+          "kind": "effect",
+          "text": "现实夜间暗属性魔法伤害+10%"
+        },
+        {
+          "id": "real-time",
+          "kind": "condition",
+          "text": "现实夜间18:00～次日5:59"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "现实夜间18:00～次日5:59，暗属性魔法伤害+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-time-magic"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-real-time",
+              "partIds": [
+                "dark-time-magic"
+              ],
+              "summary": "现实夜间18:00～次日5:59，暗属性魔法伤害+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "dark"
+              },
+              "valuePercent": 10,
+              "realTimeWindow": {
+                "start": "18:00",
+                "endExclusive": "06:00",
+                "crossesMidnight": true
+              }
+            }
+          ],
+          "calculationNote": "现实时间条件属性加成，不是Buff；现实时间标签仍待处理。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "现实夜间18:00～次日5:59"
+      ]
+    },
+    {
+      "id": "88325a3c478ed329",
+      "name": "泽布尔·法尔 左脸",
+      "url": "https://altema.jp/lastcloudia/gino/1581",
+      "text": "暗属性魔法伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-magic-damage",
+          "kind": "effect",
+          "text": "暗属性魔法伤害+15%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性魔法伤害+15%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-magic-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-magic",
+              "partIds": [
+                "dark-magic-damage"
+              ],
+              "summary": "暗属性魔法伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "magic",
+                "element": "dark"
+              },
+              "valuePercent": 15
+            }
+          ],
+          "calculationNote": "仅此技能的暗属性魔法效果，不需要三种脸同时装备。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "efdc0583f2618634",
+      "name": "泽布尔·法尔 右脸",
+      "url": "https://altema.jp/lastcloudia/gino/1582",
+      "text": "暗属性特技伤害+15%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-skill-damage",
+          "kind": "effect",
+          "text": "暗属性特技伤害+15%"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性特技伤害+15%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-skill-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-skill",
+              "partIds": [
+                "dark-skill-damage"
+              ],
+              "summary": "暗属性特技伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "skill",
+                "element": "dark"
+              },
+              "valuePercent": 15
+            }
+          ],
+          "calculationNote": "只作用暗属性特技，不扩大为所有物理伤害；不需要三种脸同时装备。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "2819da7f379bf6f3",
+      "name": "泽布尔·法尔 正面脸",
+      "url": "https://altema.jp/lastcloudia/gino/1583",
+      "text": "暗属性必杀伤害+15%。同时装备3种“泽布尔·法尔”技能时，暗属性伤害上限+3,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "dark-ultimate-damage",
+          "kind": "effect",
+          "text": "暗属性必杀伤害+15%"
+        },
+        {
+          "id": "dark-three-faces-cap",
+          "kind": "effect",
+          "text": "同时装备三种泽布尔·法尔技能时暗属性伤害上限+3,000"
+        },
+        {
+          "id": "three-faces",
+          "kind": "condition",
+          "text": "同时装备左脸、右脸、正面脸三种泽布尔·法尔技能"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "暗属性必杀伤害+15%。；同时装备三种泽布尔·法尔技能时，暗属性伤害上限+3,000。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-ultimate-damage",
+              "dark-three-faces-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "dark-ultimate-damage"
+              ],
+              "summary": "暗属性必杀伤害+15%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "dark"
+              },
+              "valuePercent": 15
+            },
+            {
+              "group": "cap-three-skills",
+              "partIds": [
+                "dark-three-faces-cap"
+              ],
+              "summary": "同时装备三种泽布尔·法尔技能时，暗属性伤害上限+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark"
+              },
+              "capPoints": 3000,
+              "requiredSkillIds": [
+                "88325a3c478ed329",
+                "efdc0583f2618634",
+                "2819da7f379bf6f3"
+              ]
+            }
+          ],
+          "calculationNote": "三种技能条件只绑定上限，前一句必杀增伤独立生效；上限不限必杀类型。三技能条件仍待标签。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "同时装备左脸、右脸、正面脸三种泽布尔·法尔技能"
+      ]
+    },
+    {
+      "id": "d4e534dddd1aed24",
+      "name": "女神琉小姐",
+      "url": "https://altema.jp/lastcloudia/gino/325",
+      "text": "被敌人锁定的优先度+1；定期对靠近自身的敌人造成暗属性伤害。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "aggro",
+          "kind": "effect",
+          "text": "被敌人锁定的优先度+1"
+        },
+        {
+          "id": "dark-periodic-hit",
+          "kind": "effect",
+          "text": "定期对靠近自身的敌人造成暗属性伤害"
+        },
+        {
+          "id": "proximity",
+          "kind": "condition",
+          "text": "敌人靠近自身"
+        },
+        {
+          "id": "periodic-unknown",
+          "kind": "condition",
+          "text": "发动间隔、范围、倍率和攻击类型待确认"
+        }
+      ],
+      "tagDetails": {
+        "暗属性": {
+          "summary": "定期对靠近自身的敌人造成暗属性伤害；具体间隔、范围、倍率和攻击类型待确认。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "dark-periodic-hit"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "periodic-hit",
+              "partIds": [
+                "dark-periodic-hit"
+              ],
+              "summary": "定期对靠近自身的敌人造成暗属性伤害；具体间隔、范围、倍率和攻击类型待确认。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "deal-periodic-damage",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unconfirmed",
+                "element": "dark",
+                "targetRange": "near-self"
+              },
+              "amountStatus": "unconfirmed",
+              "intervalStatus": "unconfirmed"
+            }
+          ],
+          "calculationNote": "这是新增一次暗属性伤害，不是现有暗伤增加；锁定优先度、距离与周期参数继续待判断，不注入伤害数值。"
+        }
+      },
+      "assignedTags": [
+        "暗属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [
+        "被敌人锁定的优先度+1"
+      ],
+      "remainingConditions": [
+        "敌人靠近自身",
+        "发动间隔、范围、倍率和攻击类型待确认"
+      ]
+    },
+    {
+      "id": "f52898e0e4d6fcb3",
+      "name": "无属性攻击提升",
+      "url": "https://altema.jp/lastcloudia/gino/229",
+      "text": "无属性攻击伤害+20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "neutral-damage",
+          "kind": "effect",
+          "text": "无属性攻击伤害+20%"
+        }
+      ],
+      "tagDetails": {
+        "无属性": {
+          "summary": "无属性攻击伤害+20%。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "neutral-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "neutral-damage"
+              ],
+              "summary": "无属性攻击伤害+20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "valuePercent": 20
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为无，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "无属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "602202c6b41251cb",
+      "name": "无属性攻击提升2",
+      "url": "https://altema.jp/lastcloudia/gino/386",
+      "text": "无属性攻击伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "neutral-damage",
+          "kind": "effect",
+          "text": "无属性攻击伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "无属性": {
+          "summary": "无属性攻击伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "neutral-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "neutral-damage"
+              ],
+              "summary": "无属性攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "限定本次攻击属性为无，不扩展为通用伤害；原文未限制物理、魔法或必杀，不擅自缩为其中一种。"
+        }
+      },
+      "assignedTags": [
+        "无属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "ec6ac4c14fd61cfc",
+      "name": "无属性攻击提升3",
+      "url": "https://altema.jp/lastcloudia/gino/745",
+      "text": "无属性伤害+30%，无属性伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "neutral-damage",
+          "kind": "effect",
+          "text": "无属性伤害+30%"
+        },
+        {
+          "id": "neutral-cap",
+          "kind": "effect",
+          "text": "无属性伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "无属性": {
+          "summary": "无属性伤害+30%。；无属性伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "neutral-damage",
+              "neutral-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-general",
+              "partIds": [
+                "neutral-damage"
+              ],
+              "summary": "无属性伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-general",
+              "partIds": [
+                "neutral-cap"
+              ],
+              "summary": "无属性伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "完整词条没有另限攻击类型，无属性伤害与无属性上限分开。"
+        }
+      },
+      "assignedTags": [
+        "无属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "全部技能:all:270",
+      "name": "无属性护盾2",
+      "url": "https://altema.jp/lastcloudia/gino/294",
+      "text": "受到无属性攻击的伤害-20%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "received-neutral",
+          "kind": "effect",
+          "text": "受到无属性攻击的伤害-20%"
+        }
+      ],
+      "tagDetails": {
+        "无属性": {
+          "summary": "受到无属性攻击的伤害-20%。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "received-neutral"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "received-passive",
+              "partIds": [
+                "received-neutral"
+              ],
+              "summary": "受到无属性攻击的伤害-20%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "incoming-damage-down",
+              "scope": {
+                "direction": "incoming",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "valuePercent": 20,
+              "changesResistance": false
+            }
+          ],
+          "calculationNote": "这是被动所受无伤减免，不是限时无属性墙Buff，也不是无属性耐性数值+20。"
+        }
+      },
+      "assignedTags": [
+        "无属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "9dabf82a19744e2a",
+      "name": "无属性高阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1726",
+      "text": "无属性物理攻击与必杀伤害+30%。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "neutral-physical-damage",
+          "kind": "effect",
+          "text": "无属性物理攻击伤害+30%"
+        },
+        {
+          "id": "neutral-ultimate-damage",
+          "kind": "effect",
+          "text": "无属性必杀伤害+30%"
+        }
+      ],
+      "tagDetails": {
+        "无属性": {
+          "summary": "无属性物理攻击伤害+30%。；无属性必杀伤害+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "neutral-physical-damage",
+              "neutral-ultimate-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "neutral-physical-damage"
+              ],
+              "summary": "无属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "none"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "neutral-ultimate-damage"
+              ],
+              "summary": "无属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "none"
+              },
+              "valuePercent": 30
+            }
+          ],
+          "calculationNote": "物理与必杀分别列组，均需本次攻击为无属性；不包含无属性魔法，也不重复当作所有无伤加成。"
+        }
+      },
+      "assignedTags": [
+        "无属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "86363c375f9ea78e",
+      "name": "无属性超阶驱动",
+      "url": "https://altema.jp/lastcloudia/gino/1837",
+      "text": "无属性物理攻击与必杀伤害+30%，无属性物理攻击与必杀伤害上限+2,000。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "neutral-physical-damage",
+          "kind": "effect",
+          "text": "无属性物理攻击伤害+30%"
+        },
+        {
+          "id": "neutral-ultimate-damage",
+          "kind": "effect",
+          "text": "无属性必杀伤害+30%"
+        },
+        {
+          "id": "neutral-physical-cap",
+          "kind": "effect",
+          "text": "无属性物理攻击伤害上限+2,000"
+        },
+        {
+          "id": "neutral-ultimate-cap",
+          "kind": "effect",
+          "text": "无属性必杀伤害上限+2,000"
+        }
+      ],
+      "tagDetails": {
+        "无属性": {
+          "summary": "无属性物理攻击伤害+30%。；无属性必杀伤害+30%。；无属性物理攻击伤害上限+2,000。；无属性必杀伤害上限+2,000。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "neutral-physical-damage",
+              "neutral-ultimate-damage",
+              "neutral-physical-cap",
+              "neutral-ultimate-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-physical",
+              "partIds": [
+                "neutral-physical-damage"
+              ],
+              "summary": "无属性物理攻击伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "none"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "damage-ultimate",
+              "partIds": [
+                "neutral-ultimate-damage"
+              ],
+              "summary": "无属性必杀伤害+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "none"
+              },
+              "valuePercent": 30
+            },
+            {
+              "group": "cap-physical",
+              "partIds": [
+                "neutral-physical-cap"
+              ],
+              "summary": "无属性物理攻击伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "none"
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "cap-ultimate",
+              "partIds": [
+                "neutral-ultimate-cap"
+              ],
+              "summary": "无属性必杀伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "ultimate",
+                "element": "none"
+              },
+              "capPoints": 2000
+            }
+          ],
+          "calculationNote": "四项效果按攻击类型和伤害／上限分开，魔法不适用。"
+        }
+      },
+      "assignedTags": [
+        "无属性"
+      ],
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
+    },
+    {
+      "id": "340e241067686512",
+      "name": "无属性冲锋",
+      "url": "https://altema.jp/lastcloudia/gino/1514",
+      "text": "连续Hit达到50以上时，无属性物理攻击伤害上限+1,500。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "neutral-physical-cap",
+          "kind": "effect",
+          "text": "连续Hit至少50时，无属性物理攻击伤害上限+1,500"
+        },
+        {
+          "id": "hit-count",
+          "kind": "condition",
+          "text": "连续Hit数≥50"
+        }
+      ],
+      "tagDetails": {
+        "无属性": {
+          "summary": "连续Hit达到50以上时，无属性物理攻击伤害上限+1,500。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "neutral-physical-cap"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "cap-hit-count",
+              "partIds": [
+                "neutral-physical-cap"
+              ],
+              "summary": "连续Hit达到50以上时，无属性物理攻击伤害上限+1,500。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "element": "none"
+              },
+              "capPoints": 1500,
+              "hitCount": {
+                "metric": "consecutive-hits",
+                "operator": "gte",
+                "value": 50
+              }
+            }
+          ],
+          "calculationNote": "达到50即满足数值条件，不是每50Hit叠加，也不是提高所有无属性伤害上限；Hit条件仍待标签。"
+        }
+      },
+      "assignedTags": [
+        "无属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "连续Hit数≥50"
+      ]
+    },
+    {
+      "id": "f26238efd3af2674",
+      "name": "无属性合奏",
+      "url": "https://altema.jp/lastcloudia/gino/1910",
+      "text": "2名以上我方单位装备“无属性合奏”时，无属性攻击伤害提升（2名：+10%，3名：+20%，4名：+30%）。",
+      "notes": "",
+      "relatedSkillIds": [],
+      "parts": [
+        {
+          "id": "neutral-damage",
+          "kind": "effect",
+          "text": "无属性攻击伤害随装备无属性合奏人数提升：2人+10%、3人+20%、4人+30%"
+        },
+        {
+          "id": "party-skill-count",
+          "kind": "condition",
+          "text": "我方至少2名角色装备无属性合奏，按装备人数选择对应档位"
+        }
+      ],
+      "tagDetails": {
+        "无属性": {
+          "summary": "至少2名我方角色装备无属性合奏：2人+10%、3人+20%、4人+30%。",
+          "relation": "element-effect-or-condition",
+          "element": "none",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "neutral-damage"
+            ],
+            "conditionPartIds": []
+          },
+          "bindings": [
+            {
+              "group": "damage-party",
+              "partIds": [
+                "neutral-damage"
+              ],
+              "summary": "至少2名我方角色装备无属性合奏：2人+10%、3人+20%、4人+30%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "tiered-damage-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "none"
+              },
+              "countMetric": "allies-with-same-skill",
+              "requiredSkillId": "f26238efd3af2674",
+              "minimumCount": 2,
+              "tiers": [
+                {
+                  "count": 2,
+                  "valuePercent": 10
+                },
+                {
+                  "count": 3,
+                  "valuePercent": 20
+                },
+                {
+                  "count": 4,
+                  "valuePercent": 30
+                }
+              ]
+            }
+          ],
+          "calculationNote": "统计装备同名技能的角色人数，不是只看队伍人数，也不把几档相加；多人条件仍待标签，不默认最高30%。"
+        }
+      },
+      "assignedTags": [
+        "无属性"
+      ],
+      "judgment": "partial",
+      "remainingEffects": [],
+      "remainingConditions": [
+        "我方至少2名角色装备无属性合奏，按装备人数选择对应档位"
+      ]
     }
   ],
   "views": {
@@ -30206,8 +41495,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 87,
         "notRelatedUnique": 848,
-        "ready": 26,
-        "partial": 61,
+        "ready": 27,
+        "partial": 60,
         "unknown": 0,
         "previousBasicAttackUnique": 78,
         "additionalRelatedUnique": 9
@@ -30476,8 +41765,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 32,
         "notRelatedUnique": 903,
-        "ready": 12,
-        "partial": 20,
+        "ready": 13,
+        "partial": 19,
         "unknown": 0,
         "previousBasicMpUnique": 8,
         "additionalRelatedUnique": 24
@@ -30604,8 +41893,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 22,
         "notRelatedUnique": 913,
-        "ready": 1,
-        "partial": 21,
+        "ready": 2,
+        "partial": 20,
         "unknown": 0
       }
     },
@@ -30919,8 +42208,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 117,
         "notRelatedUnique": 818,
-        "ready": 24,
-        "partial": 93,
+        "ready": 49,
+        "partial": 68,
         "unknown": 0
       }
     },
@@ -31302,8 +42591,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 45,
         "notRelatedUnique": 890,
-        "ready": 13,
-        "partial": 32,
+        "ready": 24,
+        "partial": 21,
         "unknown": 0
       }
     },
@@ -31379,8 +42668,449 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 32,
         "notRelatedUnique": 903,
-        "ready": 16,
-        "partial": 16,
+        "ready": 20,
+        "partial": 12,
+        "unknown": 0
+      }
+    },
+    "ice": {
+      "label": "冰属性",
+      "childKeys": [
+        "ice-damage-general",
+        "ice-cap-general",
+        "ice-damage-physical",
+        "ice-cap-physical",
+        "ice-damage-magic",
+        "ice-cap-magic",
+        "ice-damage-ultimate",
+        "ice-cap-ultimate",
+        "ice-critical-rate",
+        "ice-critical-damage",
+        "ice-magic-critical-permission",
+        "ice-damage-opening",
+        "ice-damage-stun-break",
+        "ice-cap-weakness",
+        "ice-damage-party",
+        "ice-cap-hit-count",
+        "ice-received-passive",
+        "ice-received-opening",
+        "ice-received-permanent",
+        "ice-received-random",
+        "ice-resistance-opening",
+        "ice-magic-mp-cost",
+        "ice-received-end-buff",
+        "ice-attack-stat-reference",
+        "ice-weapon-random-skill",
+        "ice-weapon-random-ultimate",
+        "ice-cap-weapon-count-physical",
+        "ice-cap-weapon-count-ultimate",
+        "ice-damage-weakness",
+        "ice-damage-opening-party",
+        "ice-damage-time"
+      ],
+      "overviewLabel": "全部冰属性相关效果（分组）",
+      "separateSections": true,
+      "passKind": "element-effects-and-condition",
+      "displayOrder": [
+        "0d2d38cd539224ee",
+        "ccd9494e616a344d",
+        "b6b66290a2c0176e",
+        "2083b650aa52252c",
+        "2d24508b309322f7",
+        "92bf2e44cf665bdf",
+        "726408324afe28b6",
+        "全部技能:all:309",
+        "1a004726593e801a",
+        "全部技能:all:356",
+        "afadc468674e5da8",
+        "1f1e7d3449c0ce66",
+        "71d9f5a3ea0a9660",
+        "72fb68a7b16692e8",
+        "351f8b7c824ec758",
+        "2901b40ce3f38847",
+        "e2376f83dc028e0f",
+        "7699c0abda6d47a0",
+        "545567ba3bfb33f1",
+        "9ec9d27fcaa3d0a4",
+        "ac908d277528e5bc",
+        "eb60bf2d887d8202",
+        "全部技能:all:675",
+        "7535b75bf589a4de",
+        "3698611e7487f0aa",
+        "fc654365c794bc7f",
+        "83bcff2a02ab7801",
+        "789bffd5f1b5782a",
+        "4139a26172e19019",
+        "aa48351ee0991a93",
+        "ed00d6c7e726b8ce",
+        "72987eef01fbda4b",
+        "b50f1be94e5ec002",
+        "658df1f2c3e3e424",
+        "6f69f24a14887fe1",
+        "8c5e1c15b2b1d28d",
+        "全部技能:all:924"
+      ],
+      "scopeDescription": "冰属性按完整词条分组：攻击类型、伤害、上限、暴击、所受伤害和耐性分开；装备属性、敌人弱点及触发／结束条件分别保留。已有标签同步补齐；所有效果和条件都完成才判完整，同一技能跨组只计一次。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 37,
+        "notRelatedUnique": 898,
+        "ready": 22,
+        "partial": 15,
+        "unknown": 0
+      }
+    },
+    "earth": {
+      "label": "树属性",
+      "childKeys": [
+        "earth-damage-general",
+        "earth-cap-general",
+        "earth-damage-physical",
+        "earth-cap-physical",
+        "earth-damage-magic",
+        "earth-cap-magic",
+        "earth-damage-ultimate",
+        "earth-cap-ultimate",
+        "earth-critical-rate",
+        "earth-critical-damage",
+        "earth-magic-critical-permission",
+        "earth-damage-stun-break",
+        "earth-cap-weakness",
+        "earth-damage-party",
+        "earth-cap-hit-count",
+        "earth-received-passive",
+        "earth-received-opening",
+        "earth-received-permanent",
+        "earth-received-random",
+        "earth-damage-weakness"
+      ],
+      "overviewLabel": "全部树属性相关效果（分组）",
+      "separateSections": true,
+      "passKind": "element-effects-and-condition",
+      "displayOrder": [
+        "0ab43d7f985855cb",
+        "2201afc0db4a340e",
+        "c334b7ddf4d78b15",
+        "0b725106ff374bdf",
+        "92bf2e44cf665bdf",
+        "b65bccc3a5431629",
+        "ebb2a2dba0e68b5f",
+        "全部技能:all:295",
+        "全部技能:all:369",
+        "0a92e3a07ca76013",
+        "68d0f34cfdb9b61d",
+        "db8d7f2fa2d9fc8c",
+        "71d9f5a3ea0a9660",
+        "72fb68a7b16692e8",
+        "ba33274d257a0877",
+        "b99c6446a5ae4735",
+        "d1aa6e7dfcf2a189",
+        "2d36845d899106f0",
+        "89b2bf665f5f6aad",
+        "0b5a9905580d734c",
+        "4598f48797c2c478",
+        "a9028de3be35cf4b",
+        "b684f06fad6f204e",
+        "fc654365c794bc7f",
+        "789bffd5f1b5782a",
+        "9687330d53763046",
+        "44a3d9148279023c"
+      ],
+      "scopeDescription": "树属性按完整词条分组：攻击类型、伤害、上限、暴击、所受伤害和耐性分开；装备属性、敌人弱点及触发／结束条件分别保留。已有标签同步补齐；所有效果和条件都完成才判完整，同一技能跨组只计一次。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 27,
+        "notRelatedUnique": 908,
+        "ready": 19,
+        "partial": 8,
+        "unknown": 0
+      }
+    },
+    "thunder": {
+      "label": "雷属性",
+      "childKeys": [
+        "thunder-damage-general",
+        "thunder-cap-general",
+        "thunder-damage-physical",
+        "thunder-cap-physical",
+        "thunder-damage-magic",
+        "thunder-cap-magic",
+        "thunder-damage-ultimate",
+        "thunder-cap-ultimate",
+        "thunder-critical-rate",
+        "thunder-critical-damage",
+        "thunder-magic-critical-permission",
+        "thunder-damage-opening",
+        "thunder-damage-stun-break",
+        "thunder-cap-stun-break",
+        "thunder-cap-weakness",
+        "thunder-damage-party",
+        "thunder-cap-hit-count",
+        "thunder-received-passive",
+        "thunder-received-opening",
+        "thunder-received-permanent",
+        "thunder-received-random",
+        "thunder-enemy-weakness-cap"
+      ],
+      "overviewLabel": "全部雷属性相关效果（分组）",
+      "separateSections": true,
+      "passKind": "element-effects-and-condition",
+      "displayOrder": [
+        "fc3dc40acdcff985",
+        "b9a13a0572f16699",
+        "fc921ccf05929ad6",
+        "5db07a2caf842aae",
+        "92bf2e44cf665bdf",
+        "cb768af6b608c5b6",
+        "全部技能:all:302",
+        "全部技能:all:317",
+        "全部技能:all:321",
+        "全部技能:all:323",
+        "全部技能:all:429",
+        "71d9f5a3ea0a9660",
+        "72fb68a7b16692e8",
+        "9e2b88d1d3d0923f",
+        "93834794e1dc5477",
+        "74246bc6c04abdc3",
+        "4e8a749504d3799f",
+        "48ac370b49e1ba46",
+        "19e3a03542e896a2",
+        "e8339f4048e9810d",
+        "14f13262fec9119e",
+        "cd5203b730b861ca",
+        "ff2be2bc2e694db4",
+        "fc654365c794bc7f",
+        "789bffd5f1b5782a",
+        "51a7c25fc592d19b",
+        "449963af5b8068b7",
+        "a92f6001f2419fda",
+        "6c011f9fec60b9b2",
+        "全部技能:all:927"
+      ],
+      "scopeDescription": "雷属性按完整词条分组：攻击类型、伤害、上限、暴击、所受伤害和耐性分开；装备属性、敌人弱点及触发／结束条件分别保留。已有标签同步补齐；所有效果和条件都完成才判完整，同一技能跨组只计一次。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 30,
+        "notRelatedUnique": 905,
+        "ready": 21,
+        "partial": 9,
+        "unknown": 0
+      }
+    },
+    "light": {
+      "label": "光属性",
+      "childKeys": [
+        "light-damage-general",
+        "light-cap-general",
+        "light-damage-physical",
+        "light-cap-physical",
+        "light-damage-magic",
+        "light-cap-magic",
+        "light-damage-ultimate",
+        "light-cap-ultimate",
+        "light-critical-rate",
+        "light-critical-damage",
+        "light-magic-critical-permission",
+        "light-damage-opening",
+        "light-damage-stun-break",
+        "light-cap-stun-break",
+        "light-cap-weakness",
+        "light-damage-party",
+        "light-cap-hit-count",
+        "light-received-passive",
+        "light-received-opening",
+        "light-received-permanent",
+        "light-received-random",
+        "light-resistance-opening",
+        "light-damage-opening-party",
+        "light-damage-time",
+        "light-damage-real-time",
+        "light-damage-horror",
+        "light-damage-allies-faith"
+      ],
+      "overviewLabel": "全部光属性相关效果（分组）",
+      "separateSections": true,
+      "passKind": "element-effects-and-condition",
+      "displayOrder": [
+        "9fc2a2451521c398",
+        "02ddf87727d6b287",
+        "dc3451f4b7d2a45b",
+        "0631262b7e479c3a",
+        "b63054ad34e97c0d",
+        "e0f6942b8d0b10f7",
+        "92bf2e44cf665bdf",
+        "ecc2b890bdcd8258",
+        "454a237836d960b0",
+        "9802f136c37301f3",
+        "6e424e4ea062edd4",
+        "109cb2b413148949",
+        "a1d3d2d5b491b676",
+        "523a8585fc9c836c",
+        "3c949dcbeeaee844",
+        "182731824b8599ca",
+        "3cc8a829b724bfe7",
+        "全部技能:all:511",
+        "addbcf95d86cc87f",
+        "332d1d402c82343d",
+        "41e5f848b9d300e9",
+        "cae22c8f6e9a70ef",
+        "4b11acd40f6ed44f",
+        "0b9f0f0b0c0162dc",
+        "9df5299c661312ec",
+        "5aab3402039886d1",
+        "2945983140d158af",
+        "e4676d68a23621cf",
+        "全部技能:all:761",
+        "348f27fb6f68e198",
+        "648c1a3414c1a27d",
+        "全部技能:all:791",
+        "d1183996ac70be89",
+        "f2adf1f2ba4f5cb0",
+        "7168ea516478d79a",
+        "b50f1be94e5ec002",
+        "16e16b5e64f54f5c",
+        "085a66c6930d7fa6",
+        "ca8779066b942675"
+      ],
+      "scopeDescription": "光属性按完整词条分组：攻击类型、伤害、上限、暴击、所受伤害和耐性分开；装备属性、敌人弱点及触发／结束条件分别保留。已有标签同步补齐；所有效果和条件都完成才判完整，同一技能跨组只计一次。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 39,
+        "notRelatedUnique": 896,
+        "ready": 24,
+        "partial": 15,
+        "unknown": 0
+      }
+    },
+    "dark": {
+      "label": "暗属性",
+      "childKeys": [
+        "dark-damage-general",
+        "dark-cap-general",
+        "dark-damage-physical",
+        "dark-cap-physical",
+        "dark-damage-magic",
+        "dark-cap-magic",
+        "dark-damage-ultimate",
+        "dark-cap-ultimate",
+        "dark-critical-rate",
+        "dark-critical-damage",
+        "dark-magic-critical-permission",
+        "dark-damage-opening",
+        "dark-damage-stun-break",
+        "dark-cap-stun-break",
+        "dark-cap-weakness",
+        "dark-damage-party",
+        "dark-cap-hit-count",
+        "dark-received-passive",
+        "dark-received-opening",
+        "dark-received-permanent",
+        "dark-received-random",
+        "dark-resistance-opening",
+        "dark-cap-weapon-count-physical",
+        "dark-cap-weapon-count-ultimate",
+        "dark-damage-weakness",
+        "dark-damage-real-time",
+        "dark-damage-skill",
+        "dark-cap-three-skills",
+        "dark-weapon-element-cap",
+        "dark-weapon-element-attack",
+        "dark-periodic-hit"
+      ],
+      "overviewLabel": "全部暗属性相关效果（分组）",
+      "separateSections": true,
+      "passKind": "element-effects-and-condition",
+      "displayOrder": [
+        "30c471c824951c9c",
+        "1a1043cd31293850",
+        "0c21dbbed7678df5",
+        "06dbf722869d70c0",
+        "713403dd798c7836",
+        "全部技能:all:225",
+        "92bf2e44cf665bdf",
+        "9802f136c37301f3",
+        "04b522e79ad2a5d2",
+        "d4e534dddd1aed24",
+        "全部技能:all:288",
+        "4a2d48239d8500dd",
+        "5b5e2095fcd10064",
+        "eb948e43fefb658b",
+        "ba02b8e71faa334b",
+        "12730aa5921baa23",
+        "7aa3dea4055222df",
+        "7aecbb8f146842de",
+        "332d1d402c82343d",
+        "41e5f848b9d300e9",
+        "448a81c14ac59549",
+        "9ec3cb9696053d8b",
+        "106e0b26cc206aed",
+        "e0f570e2539649eb",
+        "0909ef13d95c0497",
+        "c499d85d6a7c0156",
+        "全部技能:all:740",
+        "82bfa575b36bca5b",
+        "348f27fb6f68e198",
+        "648c1a3414c1a27d",
+        "254ff4e20e2b8d20",
+        "88325a3c478ed329",
+        "efdc0583f2618634",
+        "2819da7f379bf6f3",
+        "492069f33fad559b",
+        "4032cdf421f18002",
+        "6ad84bb93596f650",
+        "3a34d4d6da6da693",
+        "2956cbc5fa6221fd",
+        "176f3ffc986701cc",
+        "fb6d9a18f0c64a74"
+      ],
+      "scopeDescription": "暗属性按完整词条分组：攻击类型、伤害、上限、暴击、所受伤害和耐性分开；装备属性、敌人弱点及触发／结束条件分别保留。已有标签同步补齐；所有效果和条件都完成才判完整，同一技能跨组只计一次。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 41,
+        "notRelatedUnique": 894,
+        "ready": 28,
+        "partial": 13,
+        "unknown": 0
+      }
+    },
+    "neutral": {
+      "label": "无属性",
+      "childKeys": [
+        "neutral-damage-general",
+        "neutral-cap-general",
+        "neutral-damage-physical",
+        "neutral-cap-physical",
+        "neutral-damage-ultimate",
+        "neutral-cap-ultimate",
+        "neutral-critical-rate",
+        "neutral-critical-damage",
+        "neutral-damage-party",
+        "neutral-cap-hit-count",
+        "neutral-received-passive",
+        "neutral-received-opening"
+      ],
+      "overviewLabel": "全部无属性相关效果（分组）",
+      "separateSections": true,
+      "passKind": "element-effects-and-condition",
+      "displayOrder": [
+        "f52898e0e4d6fcb3",
+        "全部技能:all:270",
+        "f351f266a85d8731",
+        "602202c6b41251cb",
+        "ec6ac4c14fd61cfc",
+        "全部技能:all:545",
+        "340e241067686512",
+        "9dabf82a19744e2a",
+        "86363c375f9ea78e",
+        "f26238efd3af2674"
+      ],
+      "scopeDescription": "无属性按完整词条分组：攻击类型、伤害、上限、暴击、所受伤害和耐性分开；装备属性、敌人弱点及触发／结束条件分别保留。已有标签同步补齐；所有效果和条件都完成才判完整，同一技能跨组只计一次。",
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 10,
+        "notRelatedUnique": 925,
+        "ready": 8,
+        "partial": 2,
         "unknown": 0
       }
     },
@@ -31712,8 +43442,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 1,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -31729,8 +43459,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -31747,8 +43477,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 1,
+        "partial": 1,
         "unknown": 0
       }
     },
@@ -31764,8 +43494,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -31901,8 +43631,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 2,
         "notRelatedUnique": 933,
-        "ready": 0,
-        "partial": 2,
+        "ready": 2,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -31920,8 +43650,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 3,
         "notRelatedUnique": 932,
-        "ready": 0,
-        "partial": 3,
+        "ready": 3,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -31940,8 +43670,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 0,
-        "partial": 4,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -31960,8 +43690,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 0,
-        "partial": 4,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -31980,8 +43710,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 4,
         "notRelatedUnique": 931,
-        "ready": 0,
-        "partial": 4,
+        "ready": 4,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -31997,8 +43727,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -32014,8 +43744,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -32031,8 +43761,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -32048,8 +43778,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -33745,8 +45475,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34017,8 +45747,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34413,8 +46143,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34430,8 +46160,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34447,8 +46177,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34464,8 +46194,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34481,8 +46211,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34567,8 +46297,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34584,8 +46314,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34635,8 +46365,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34652,8 +46382,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34669,8 +46399,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34686,8 +46416,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34703,8 +46433,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34720,8 +46450,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34737,8 +46467,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34754,8 +46484,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34771,8 +46501,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -34788,8 +46518,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 1,
         "notRelatedUnique": 934,
-        "ready": 0,
-        "partial": 1,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -35239,8 +46969,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 3,
-        "partial": 2,
+        "ready": 5,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -35277,8 +47007,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 3,
-        "partial": 2,
+        "ready": 5,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -35315,8 +47045,8 @@ export const SKILL_LABELING_CATALOG = {
         "reviewedUnique": 935,
         "relatedUnique": 5,
         "notRelatedUnique": 930,
-        "ready": 3,
-        "partial": 2,
+        "ready": 5,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -35645,6 +47375,2546 @@ export const SKILL_LABELING_CATALOG = {
         "notRelatedUnique": 934,
         "ready": 0,
         "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-damage-general": {
+      "label": "冰属性：伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-general",
+      "displayOrder": [
+        "0d2d38cd539224ee",
+        "2d24508b309322f7",
+        "351f8b7c824ec758",
+        "7699c0abda6d47a0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 3,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-cap-general": {
+      "label": "冰属性：伤害上限增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "cap-general",
+      "displayOrder": [
+        "351f8b7c824ec758"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-damage-physical": {
+      "label": "冰属性物理：伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-physical",
+      "displayOrder": [
+        "afadc468674e5da8",
+        "1f1e7d3449c0ce66",
+        "72fb68a7b16692e8",
+        "545567ba3bfb33f1",
+        "fc654365c794bc7f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-cap-physical": {
+      "label": "冰属性物理：伤害上限增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "cap-physical",
+      "displayOrder": [
+        "545567ba3bfb33f1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-damage-magic": {
+      "label": "冰属性魔法：伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-magic",
+      "displayOrder": [
+        "ccd9494e616a344d",
+        "b6b66290a2c0176e",
+        "1a004726593e801a",
+        "71d9f5a3ea0a9660",
+        "2901b40ce3f38847",
+        "789bffd5f1b5782a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 6,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-cap-magic": {
+      "label": "冰属性魔法：伤害上限增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "cap-magic",
+      "displayOrder": [
+        "2901b40ce3f38847"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-damage-ultimate": {
+      "label": "冰属性必杀：伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-ultimate",
+      "displayOrder": [
+        "afadc468674e5da8",
+        "1f1e7d3449c0ce66",
+        "72fb68a7b16692e8",
+        "545567ba3bfb33f1",
+        "fc654365c794bc7f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-cap-ultimate": {
+      "label": "冰属性必杀：伤害上限增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "cap-ultimate",
+      "displayOrder": [
+        "545567ba3bfb33f1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-critical-rate": {
+      "label": "冰属性：暴击率增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "726408324afe28b6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-critical-damage": {
+      "label": "冰属性：暴击伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "critical-damage",
+      "displayOrder": [
+        "726408324afe28b6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-magic-critical-permission": {
+      "label": "冰属性攻击魔法：允许暴击",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "magic-critical-permission",
+      "displayOrder": [
+        "2083b650aa52252c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-damage-opening": {
+      "label": "开场Buff：冰属性伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-opening",
+      "displayOrder": [
+        "4139a26172e19019"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-damage-stun-break": {
+      "label": "敌人气绝／Break：冰属性伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-stun-break",
+      "displayOrder": [
+        "e2376f83dc028e0f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-cap-weakness": {
+      "label": "命中属性弱点：冰属性上限增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "cap-weakness",
+      "displayOrder": [
+        "ac908d277528e5bc",
+        "7535b75bf589a4de"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "ice-damage-party": {
+      "label": "多人装备：冰属性伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-party",
+      "displayOrder": [
+        "3698611e7487f0aa"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-cap-hit-count": {
+      "label": "连续Hit≥50：冰属性物理上限增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "cap-hit-count",
+      "displayOrder": [
+        "eb60bf2d887d8202"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-received-passive": {
+      "label": "常驻加成：受到冰属性伤害减少",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "received-passive",
+      "displayOrder": [
+        "全部技能:all:309",
+        "8c5e1c15b2b1d28d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-received-opening": {
+      "label": "开场Buff：受到冰属性伤害减少",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "received-opening",
+      "displayOrder": [
+        "全部技能:all:356"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-received-permanent": {
+      "label": "永久Buff：受到冰属性伤害减少",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "received-permanent",
+      "displayOrder": [
+        "全部技能:all:675"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-received-random": {
+      "label": "随机墙Buff：受到冰属性伤害减少",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "received-random",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-resistance-opening": {
+      "label": "开场Buff：冰属性耐性增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "resistance-opening",
+      "displayOrder": [
+        "83bcff2a02ab7801"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-magic-mp-cost": {
+      "label": "冰属性攻击魔法：MP消耗增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "magic-mp-cost",
+      "displayOrder": [
+        "1a004726593e801a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "ice-received-end-buff": {
+      "label": "受到冰属性攻击：结束减伤Buff",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "received-end-buff",
+      "displayOrder": [
+        "9ec9d27fcaa3d0a4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-attack-stat-reference": {
+      "label": "冰属性攻击：当次法强参照增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "attack-stat-reference",
+      "displayOrder": [
+        "aa48351ee0991a93"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-weapon-random-skill": {
+      "label": "冰属性武器条件：冰属性特技随机增伤",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "weapon-random-skill",
+      "displayOrder": [
+        "ed00d6c7e726b8ce"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-weapon-random-ultimate": {
+      "label": "冰属性武器条件：冰属性必杀随机增伤",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "weapon-random-ultimate",
+      "displayOrder": [
+        "ed00d6c7e726b8ce"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-cap-weapon-count-physical": {
+      "label": "0或1把武器：冰属性物理上限",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "cap-weapon-count-physical",
+      "displayOrder": [
+        "72987eef01fbda4b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-cap-weapon-count-ultimate": {
+      "label": "0或1把武器：冰属性必杀上限",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "cap-weapon-count-ultimate",
+      "displayOrder": [
+        "72987eef01fbda4b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-damage-weakness": {
+      "label": "命中属性弱点：冰属性伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-weakness",
+      "displayOrder": [
+        "6f69f24a14887fe1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-damage-opening-party": {
+      "label": "开场队伍人数：冰属性伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-opening-party",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "ice-damage-time": {
+      "label": "Wave经过时间：冰属性伤害增加",
+      "parent": "ice",
+      "conditionTag": "冰属性",
+      "effectGroup": "damage-time",
+      "displayOrder": [
+        "658df1f2c3e3e424",
+        "全部技能:all:924"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "earth-damage-general": {
+      "label": "树属性：伤害增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "damage-general",
+      "displayOrder": [
+        "0ab43d7f985855cb",
+        "b65bccc3a5431629",
+        "ba33274d257a0877",
+        "d1aa6e7dfcf2a189"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 3,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "earth-cap-general": {
+      "label": "树属性：伤害上限增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "cap-general",
+      "displayOrder": [
+        "ba33274d257a0877"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-damage-physical": {
+      "label": "树属性物理：伤害增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "damage-physical",
+      "displayOrder": [
+        "68d0f34cfdb9b61d",
+        "db8d7f2fa2d9fc8c",
+        "72fb68a7b16692e8",
+        "b99c6446a5ae4735",
+        "fc654365c794bc7f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-cap-physical": {
+      "label": "树属性物理：伤害上限增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "cap-physical",
+      "displayOrder": [
+        "b99c6446a5ae4735"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-damage-magic": {
+      "label": "树属性魔法：伤害增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "damage-magic",
+      "displayOrder": [
+        "2201afc0db4a340e",
+        "c334b7ddf4d78b15",
+        "0a92e3a07ca76013",
+        "71d9f5a3ea0a9660",
+        "789bffd5f1b5782a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-cap-magic": {
+      "label": "树属性魔法：伤害上限增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "cap-magic",
+      "displayOrder": [
+        "0a92e3a07ca76013"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-damage-ultimate": {
+      "label": "树属性必杀：伤害增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "damage-ultimate",
+      "displayOrder": [
+        "68d0f34cfdb9b61d",
+        "db8d7f2fa2d9fc8c",
+        "72fb68a7b16692e8",
+        "b99c6446a5ae4735",
+        "fc654365c794bc7f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-cap-ultimate": {
+      "label": "树属性必杀：伤害上限增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "cap-ultimate",
+      "displayOrder": [
+        "b99c6446a5ae4735"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-critical-rate": {
+      "label": "树属性：暴击率增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "ebb2a2dba0e68b5f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-critical-damage": {
+      "label": "树属性：暴击伤害增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "critical-damage",
+      "displayOrder": [
+        "ebb2a2dba0e68b5f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-magic-critical-permission": {
+      "label": "树属性攻击魔法：允许暴击",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "magic-critical-permission",
+      "displayOrder": [
+        "0b725106ff374bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-damage-stun-break": {
+      "label": "敌人气绝／Break：树属性伤害增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "damage-stun-break",
+      "displayOrder": [
+        "89b2bf665f5f6aad"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "earth-cap-weakness": {
+      "label": "命中属性弱点：树属性上限增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "cap-weakness",
+      "displayOrder": [
+        "2d36845d899106f0",
+        "44a3d9148279023c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "earth-damage-party": {
+      "label": "多人装备：树属性伤害增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "damage-party",
+      "displayOrder": [
+        "b684f06fad6f204e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "earth-cap-hit-count": {
+      "label": "连续Hit≥50：树属性物理上限增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "cap-hit-count",
+      "displayOrder": [
+        "4598f48797c2c478"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "earth-received-passive": {
+      "label": "常驻加成：受到树属性伤害减少",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "received-passive",
+      "displayOrder": [
+        "全部技能:all:295"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-received-opening": {
+      "label": "开场Buff：受到树属性伤害减少",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "received-opening",
+      "displayOrder": [
+        "全部技能:all:369"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-received-permanent": {
+      "label": "永久Buff：受到树属性伤害减少",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "received-permanent",
+      "displayOrder": [
+        "0b5a9905580d734c",
+        "a9028de3be35cf4b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "earth-received-random": {
+      "label": "随机墙Buff：受到树属性伤害减少",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "received-random",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "earth-damage-weakness": {
+      "label": "命中属性弱点：树属性伤害增加",
+      "parent": "earth",
+      "conditionTag": "树属性",
+      "effectGroup": "damage-weakness",
+      "displayOrder": [
+        "9687330d53763046"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "thunder-damage-general": {
+      "label": "雷属性：伤害增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "damage-general",
+      "displayOrder": [
+        "fc3dc40acdcff985",
+        "全部技能:all:323",
+        "9e2b88d1d3d0923f",
+        "4e8a749504d3799f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 3,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "thunder-cap-general": {
+      "label": "雷属性：伤害上限增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "cap-general",
+      "displayOrder": [
+        "9e2b88d1d3d0923f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-damage-physical": {
+      "label": "雷属性物理：伤害增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "damage-physical",
+      "displayOrder": [
+        "全部技能:all:317",
+        "72fb68a7b16692e8",
+        "93834794e1dc5477",
+        "48ac370b49e1ba46",
+        "fc654365c794bc7f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-cap-physical": {
+      "label": "雷属性物理：伤害上限增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "cap-physical",
+      "displayOrder": [
+        "48ac370b49e1ba46"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-damage-magic": {
+      "label": "雷属性魔法：伤害增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "damage-magic",
+      "displayOrder": [
+        "b9a13a0572f16699",
+        "fc921ccf05929ad6",
+        "全部技能:all:302",
+        "71d9f5a3ea0a9660",
+        "789bffd5f1b5782a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-cap-magic": {
+      "label": "雷属性魔法：伤害上限增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "cap-magic",
+      "displayOrder": [
+        "全部技能:all:302"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-damage-ultimate": {
+      "label": "雷属性必杀：伤害增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "damage-ultimate",
+      "displayOrder": [
+        "全部技能:all:317",
+        "72fb68a7b16692e8",
+        "93834794e1dc5477",
+        "48ac370b49e1ba46",
+        "fc654365c794bc7f"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-cap-ultimate": {
+      "label": "雷属性必杀：伤害上限增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "cap-ultimate",
+      "displayOrder": [
+        "48ac370b49e1ba46"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-critical-rate": {
+      "label": "雷属性：暴击率增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "cb768af6b608c5b6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-critical-damage": {
+      "label": "雷属性：暴击伤害增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "critical-damage",
+      "displayOrder": [
+        "cb768af6b608c5b6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-magic-critical-permission": {
+      "label": "雷属性攻击魔法：允许暴击",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "magic-critical-permission",
+      "displayOrder": [
+        "5db07a2caf842aae"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-damage-opening": {
+      "label": "开场Buff：雷属性伤害增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "damage-opening",
+      "displayOrder": [
+        "51a7c25fc592d19b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-damage-stun-break": {
+      "label": "敌人气绝／Break：雷属性伤害增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "damage-stun-break",
+      "displayOrder": [
+        "e8339f4048e9810d",
+        "449963af5b8068b7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "thunder-cap-stun-break": {
+      "label": "敌人气绝／Break：雷属性上限增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "cap-stun-break",
+      "displayOrder": [
+        "449963af5b8068b7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "thunder-cap-weakness": {
+      "label": "命中属性弱点：雷属性上限增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "cap-weakness",
+      "displayOrder": [
+        "19e3a03542e896a2",
+        "14f13262fec9119e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "thunder-damage-party": {
+      "label": "多人装备：雷属性伤害增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "damage-party",
+      "displayOrder": [
+        "cd5203b730b861ca"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "thunder-cap-hit-count": {
+      "label": "连续Hit≥50：雷属性物理上限增加",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "cap-hit-count",
+      "displayOrder": [
+        "ff2be2bc2e694db4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "thunder-received-passive": {
+      "label": "常驻加成：受到雷属性伤害减少",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "received-passive",
+      "displayOrder": [
+        "全部技能:all:321"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-received-opening": {
+      "label": "开场Buff：受到雷属性伤害减少",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "received-opening",
+      "displayOrder": [
+        "全部技能:all:429",
+        "全部技能:all:927"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-received-permanent": {
+      "label": "永久Buff：受到雷属性伤害减少",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "received-permanent",
+      "displayOrder": [
+        "74246bc6c04abdc3",
+        "6c011f9fec60b9b2"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "thunder-received-random": {
+      "label": "随机墙Buff：受到雷属性伤害减少",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "received-random",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "thunder-enemy-weakness-cap": {
+      "label": "敌人弱雷条件：物理伤害额外上限",
+      "parent": "thunder",
+      "conditionTag": "雷属性",
+      "effectGroup": "enemy-weakness-cap",
+      "displayOrder": [
+        "a92f6001f2419fda"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "light-damage-general": {
+      "label": "光属性：伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-general",
+      "displayOrder": [
+        "9fc2a2451521c398",
+        "454a237836d960b0",
+        "9802f136c37301f3",
+        "3c949dcbeeaee844",
+        "182731824b8599ca"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 4,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "light-cap-general": {
+      "label": "光属性：伤害上限增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "cap-general",
+      "displayOrder": [
+        "3c949dcbeeaee844"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-damage-physical": {
+      "label": "光属性物理：伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-physical",
+      "displayOrder": [
+        "109cb2b413148949",
+        "523a8585fc9c836c",
+        "3cc8a829b724bfe7",
+        "332d1d402c82343d",
+        "5aab3402039886d1",
+        "648c1a3414c1a27d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 6,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-cap-physical": {
+      "label": "光属性物理：伤害上限增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "cap-physical",
+      "displayOrder": [
+        "523a8585fc9c836c",
+        "5aab3402039886d1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-damage-magic": {
+      "label": "光属性魔法：伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-magic",
+      "displayOrder": [
+        "02ddf87727d6b287",
+        "dc3451f4b7d2a45b",
+        "6e424e4ea062edd4",
+        "41e5f848b9d300e9",
+        "348f27fb6f68e198"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-cap-magic": {
+      "label": "光属性魔法：伤害上限增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "cap-magic",
+      "displayOrder": [
+        "6e424e4ea062edd4"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-damage-ultimate": {
+      "label": "光属性必杀：伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-ultimate",
+      "displayOrder": [
+        "109cb2b413148949",
+        "523a8585fc9c836c",
+        "3cc8a829b724bfe7",
+        "332d1d402c82343d",
+        "5aab3402039886d1",
+        "648c1a3414c1a27d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 6,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-cap-ultimate": {
+      "label": "光属性必杀：伤害上限增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "cap-ultimate",
+      "displayOrder": [
+        "523a8585fc9c836c",
+        "5aab3402039886d1"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-critical-rate": {
+      "label": "光属性：暴击率增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "ecc2b890bdcd8258"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-critical-damage": {
+      "label": "光属性：暴击伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "critical-damage",
+      "displayOrder": [
+        "ecc2b890bdcd8258"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-magic-critical-permission": {
+      "label": "光属性攻击魔法：允许暴击",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "magic-critical-permission",
+      "displayOrder": [
+        "0631262b7e479c3a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-damage-opening": {
+      "label": "开场Buff：光属性伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-opening",
+      "displayOrder": [
+        "2945983140d158af"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-damage-stun-break": {
+      "label": "敌人气绝／Break：光属性伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-stun-break",
+      "displayOrder": [
+        "0b9f0f0b0c0162dc",
+        "f2adf1f2ba4f5cb0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "light-cap-stun-break": {
+      "label": "敌人气绝／Break：光属性上限增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "cap-stun-break",
+      "displayOrder": [
+        "f2adf1f2ba4f5cb0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "light-cap-weakness": {
+      "label": "命中属性弱点：光属性上限增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "cap-weakness",
+      "displayOrder": [
+        "4b11acd40f6ed44f",
+        "全部技能:all:791",
+        "16e16b5e64f54f5c"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 0,
+        "partial": 3,
+        "unknown": 0
+      }
+    },
+    "light-damage-party": {
+      "label": "多人装备：光属性伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-party",
+      "displayOrder": [
+        "cae22c8f6e9a70ef"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "light-cap-hit-count": {
+      "label": "连续Hit≥50：光属性物理上限增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "cap-hit-count",
+      "displayOrder": [
+        "d1183996ac70be89"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "light-received-passive": {
+      "label": "常驻加成：受到光属性伤害减少",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "received-passive",
+      "displayOrder": [
+        "a1d3d2d5b491b676"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-received-opening": {
+      "label": "开场Buff：受到光属性伤害减少",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "received-opening",
+      "displayOrder": [
+        "全部技能:all:511",
+        "全部技能:all:761"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-received-permanent": {
+      "label": "永久Buff：受到光属性伤害减少",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "received-permanent",
+      "displayOrder": [
+        "addbcf95d86cc87f",
+        "e4676d68a23621cf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-received-random": {
+      "label": "随机墙Buff：受到光属性伤害减少",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "received-random",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "light-resistance-opening": {
+      "label": "开场Buff：光属性耐性增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "resistance-opening",
+      "displayOrder": [
+        "7168ea516478d79a"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "light-damage-opening-party": {
+      "label": "开场队伍人数：光属性伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-opening-party",
+      "displayOrder": [
+        "b50f1be94e5ec002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "light-damage-time": {
+      "label": "Wave经过时间：光属性伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-time",
+      "displayOrder": [
+        "085a66c6930d7fa6"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "light-damage-real-time": {
+      "label": "现实时间：光属性魔法伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-real-time",
+      "displayOrder": [
+        "b63054ad34e97c0d",
+        "e0f6942b8d0b10f7"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "light-damage-horror": {
+      "label": "恐怖系敌人：光属性伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-horror",
+      "displayOrder": [
+        "9df5299c661312ec"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "light-damage-allies-faith": {
+      "label": "我方信仰技能：光属性伤害增加",
+      "parent": "light",
+      "conditionTag": "光属性",
+      "effectGroup": "damage-allies-faith",
+      "displayOrder": [
+        "ca8779066b942675"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-damage-general": {
+      "label": "暗属性：伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-general",
+      "displayOrder": [
+        "30c471c824951c9c",
+        "04b522e79ad2a5d2",
+        "12730aa5921baa23",
+        "82bfa575b36bca5b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 4,
+        "notRelatedUnique": 931,
+        "ready": 4,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-cap-general": {
+      "label": "暗属性：伤害上限增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-general",
+      "displayOrder": [
+        "12730aa5921baa23"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-damage-physical": {
+      "label": "暗属性物理：伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-physical",
+      "displayOrder": [
+        "5b5e2095fcd10064",
+        "ba02b8e71faa334b",
+        "7aecbb8f146842de",
+        "332d1d402c82343d",
+        "648c1a3414c1a27d"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 5,
+        "notRelatedUnique": 930,
+        "ready": 5,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-cap-physical": {
+      "label": "暗属性物理：伤害上限增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-physical",
+      "displayOrder": [
+        "7aecbb8f146842de"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-damage-magic": {
+      "label": "暗属性魔法：伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-magic",
+      "displayOrder": [
+        "1a1043cd31293850",
+        "0c21dbbed7678df5",
+        "eb948e43fefb658b",
+        "41e5f848b9d300e9",
+        "348f27fb6f68e198",
+        "88325a3c478ed329"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 6,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-cap-magic": {
+      "label": "暗属性魔法：伤害上限增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-magic",
+      "displayOrder": [
+        "eb948e43fefb658b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-damage-ultimate": {
+      "label": "暗属性必杀：伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-ultimate",
+      "displayOrder": [
+        "5b5e2095fcd10064",
+        "ba02b8e71faa334b",
+        "7aecbb8f146842de",
+        "332d1d402c82343d",
+        "648c1a3414c1a27d",
+        "2819da7f379bf6f3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 6,
+        "notRelatedUnique": 929,
+        "ready": 5,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-cap-ultimate": {
+      "label": "暗属性必杀：伤害上限增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-ultimate",
+      "displayOrder": [
+        "7aecbb8f146842de"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-critical-rate": {
+      "label": "暗属性：暴击率增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "4a2d48239d8500dd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-critical-damage": {
+      "label": "暗属性：暴击伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "critical-damage",
+      "displayOrder": [
+        "4a2d48239d8500dd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-magic-critical-permission": {
+      "label": "暗属性攻击魔法：允许暴击",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "magic-critical-permission",
+      "displayOrder": [
+        "06dbf722869d70c0"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-damage-opening": {
+      "label": "开场Buff：暗属性伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-opening",
+      "displayOrder": [
+        "c499d85d6a7c0156"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-damage-stun-break": {
+      "label": "敌人气绝／Break：暗属性伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-stun-break",
+      "displayOrder": [
+        "9ec3cb9696053d8b",
+        "6ad84bb93596f650"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "dark-cap-stun-break": {
+      "label": "敌人气绝／Break：暗属性上限增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-stun-break",
+      "displayOrder": [
+        "6ad84bb93596f650"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-cap-weakness": {
+      "label": "命中属性弱点：暗属性上限增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-weakness",
+      "displayOrder": [
+        "448a81c14ac59549",
+        "0909ef13d95c0497"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "dark-damage-party": {
+      "label": "多人装备：暗属性伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-party",
+      "displayOrder": [
+        "106e0b26cc206aed"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-cap-hit-count": {
+      "label": "连续Hit≥50：暗属性物理上限增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-hit-count",
+      "displayOrder": [
+        "254ff4e20e2b8d20",
+        "2956cbc5fa6221fd"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 0,
+        "partial": 2,
+        "unknown": 0
+      }
+    },
+    "dark-received-passive": {
+      "label": "常驻加成：受到暗属性伤害减少",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "received-passive",
+      "displayOrder": [
+        "9802f136c37301f3",
+        "全部技能:all:288",
+        "176f3ffc986701cc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-received-opening": {
+      "label": "开场Buff：受到暗属性伤害减少",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "received-opening",
+      "displayOrder": [
+        "全部技能:all:225",
+        "全部技能:all:740"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-received-permanent": {
+      "label": "永久Buff：受到暗属性伤害减少",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "received-permanent",
+      "displayOrder": [
+        "7aa3dea4055222df",
+        "e0f570e2539649eb"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-received-random": {
+      "label": "随机墙Buff：受到暗属性伤害减少",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "received-random",
+      "displayOrder": [
+        "92bf2e44cf665bdf"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-resistance-opening": {
+      "label": "开场Buff：暗属性耐性增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "resistance-opening",
+      "displayOrder": [
+        "3a34d4d6da6da693"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-cap-weapon-count-physical": {
+      "label": "0或1把武器：暗属性物理上限",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-weapon-count-physical",
+      "displayOrder": [
+        "492069f33fad559b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-cap-weapon-count-ultimate": {
+      "label": "0或1把武器：暗属性必杀上限",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-weapon-count-ultimate",
+      "displayOrder": [
+        "492069f33fad559b"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-damage-weakness": {
+      "label": "命中属性弱点：暗属性伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-weakness",
+      "displayOrder": [
+        "fb6d9a18f0c64a74"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-damage-real-time": {
+      "label": "现实时间：暗属性魔法伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-real-time",
+      "displayOrder": [
+        "713403dd798c7836"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-damage-skill": {
+      "label": "暗属性特技：伤害增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "damage-skill",
+      "displayOrder": [
+        "efdc0583f2618634"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-cap-three-skills": {
+      "label": "同时装备三种技能：暗属性上限增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "cap-three-skills",
+      "displayOrder": [
+        "2819da7f379bf6f3"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "dark-weapon-element-cap": {
+      "label": "暗属性武器条件：暗属性上限增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "weapon-element-cap",
+      "displayOrder": [
+        "4032cdf421f18002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-weapon-element-attack": {
+      "label": "暗属性武器条件：攻击力增加",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "weapon-element-attack",
+      "displayOrder": [
+        "4032cdf421f18002"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "dark-periodic-hit": {
+      "label": "定期造成暗属性伤害",
+      "parent": "dark",
+      "conditionTag": "暗属性",
+      "effectGroup": "periodic-hit",
+      "displayOrder": [
+        "d4e534dddd1aed24"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "neutral-damage-general": {
+      "label": "无属性：伤害增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "damage-general",
+      "displayOrder": [
+        "f52898e0e4d6fcb3",
+        "602202c6b41251cb",
+        "ec6ac4c14fd61cfc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 3,
+        "notRelatedUnique": 932,
+        "ready": 3,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "neutral-cap-general": {
+      "label": "无属性：伤害上限增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "cap-general",
+      "displayOrder": [
+        "ec6ac4c14fd61cfc"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "neutral-damage-physical": {
+      "label": "无属性物理：伤害增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "damage-physical",
+      "displayOrder": [
+        "9dabf82a19744e2a",
+        "86363c375f9ea78e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "neutral-cap-physical": {
+      "label": "无属性物理：伤害上限增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "cap-physical",
+      "displayOrder": [
+        "86363c375f9ea78e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "neutral-damage-ultimate": {
+      "label": "无属性必杀：伤害增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "damage-ultimate",
+      "displayOrder": [
+        "9dabf82a19744e2a",
+        "86363c375f9ea78e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 2,
+        "notRelatedUnique": 933,
+        "ready": 2,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "neutral-cap-ultimate": {
+      "label": "无属性必杀：伤害上限增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "cap-ultimate",
+      "displayOrder": [
+        "86363c375f9ea78e"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "neutral-critical-rate": {
+      "label": "无属性：暴击率增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "critical-rate",
+      "displayOrder": [
+        "f351f266a85d8731"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "neutral-critical-damage": {
+      "label": "无属性：暴击伤害增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "critical-damage",
+      "displayOrder": [
+        "f351f266a85d8731"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "neutral-damage-party": {
+      "label": "多人装备：无属性伤害增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "damage-party",
+      "displayOrder": [
+        "f26238efd3af2674"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "neutral-cap-hit-count": {
+      "label": "连续Hit≥50：无属性物理上限增加",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "cap-hit-count",
+      "displayOrder": [
+        "340e241067686512"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 0,
+        "partial": 1,
+        "unknown": 0
+      }
+    },
+    "neutral-received-passive": {
+      "label": "常驻加成：受到无属性伤害减少",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "received-passive",
+      "displayOrder": [
+        "全部技能:all:270"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
+        "unknown": 0
+      }
+    },
+    "neutral-received-opening": {
+      "label": "开场Buff：受到无属性伤害减少",
+      "parent": "neutral",
+      "conditionTag": "无属性",
+      "effectGroup": "received-opening",
+      "displayOrder": [
+        "全部技能:all:545"
+      ],
+      "counts": {
+        "reviewedUnique": 935,
+        "relatedUnique": 1,
+        "notRelatedUnique": 934,
+        "ready": 1,
+        "partial": 0,
         "unknown": 0
       }
     },
@@ -36109,14 +50379,130 @@ export const SKILL_LABELING_CATALOG = {
         "3159ed767f08fdf1",
         "898133b240997611",
         "25f4aebf13e4d5a1",
-        "9e9ea3affb033550"
+        "9e9ea3affb033550",
+        "0d2d38cd539224ee",
+        "2d24508b309322f7",
+        "351f8b7c824ec758",
+        "ccd9494e616a344d",
+        "b6b66290a2c0176e",
+        "2901b40ce3f38847",
+        "全部技能:all:309",
+        "8c5e1c15b2b1d28d",
+        "afadc468674e5da8",
+        "1f1e7d3449c0ce66",
+        "545567ba3bfb33f1",
+        "e2376f83dc028e0f",
+        "ac908d277528e5bc",
+        "7535b75bf589a4de",
+        "eb60bf2d887d8202",
+        "3698611e7487f0aa",
+        "7699c0abda6d47a0",
+        "72987eef01fbda4b",
+        "6f69f24a14887fe1",
+        "658df1f2c3e3e424",
+        "0ab43d7f985855cb",
+        "b65bccc3a5431629",
+        "ba33274d257a0877",
+        "2201afc0db4a340e",
+        "c334b7ddf4d78b15",
+        "0a92e3a07ca76013",
+        "全部技能:all:295",
+        "68d0f34cfdb9b61d",
+        "db8d7f2fa2d9fc8c",
+        "b99c6446a5ae4735",
+        "89b2bf665f5f6aad",
+        "2d36845d899106f0",
+        "44a3d9148279023c",
+        "4598f48797c2c478",
+        "b684f06fad6f204e",
+        "d1aa6e7dfcf2a189",
+        "9687330d53763046",
+        "fc3dc40acdcff985",
+        "全部技能:all:323",
+        "9e2b88d1d3d0923f",
+        "b9a13a0572f16699",
+        "fc921ccf05929ad6",
+        "全部技能:all:302",
+        "全部技能:all:321",
+        "93834794e1dc5477",
+        "全部技能:all:317",
+        "48ac370b49e1ba46",
+        "e8339f4048e9810d",
+        "449963af5b8068b7",
+        "19e3a03542e896a2",
+        "14f13262fec9119e",
+        "ff2be2bc2e694db4",
+        "cd5203b730b861ca",
+        "4e8a749504d3799f",
+        "9fc2a2451521c398",
+        "454a237836d960b0",
+        "3c949dcbeeaee844",
+        "02ddf87727d6b287",
+        "dc3451f4b7d2a45b",
+        "6e424e4ea062edd4",
+        "a1d3d2d5b491b676",
+        "3cc8a829b724bfe7",
+        "109cb2b413148949",
+        "523a8585fc9c836c",
+        "5aab3402039886d1",
+        "0b9f0f0b0c0162dc",
+        "f2adf1f2ba4f5cb0",
+        "4b11acd40f6ed44f",
+        "全部技能:all:791",
+        "16e16b5e64f54f5c",
+        "d1183996ac70be89",
+        "cae22c8f6e9a70ef",
+        "332d1d402c82343d",
+        "41e5f848b9d300e9",
+        "348f27fb6f68e198",
+        "648c1a3414c1a27d",
+        "085a66c6930d7fa6",
+        "b63054ad34e97c0d",
+        "e0f6942b8d0b10f7",
+        "9802f136c37301f3",
+        "182731824b8599ca",
+        "9df5299c661312ec",
+        "ca8779066b942675",
+        "30c471c824951c9c",
+        "04b522e79ad2a5d2",
+        "12730aa5921baa23",
+        "1a1043cd31293850",
+        "0c21dbbed7678df5",
+        "eb948e43fefb658b",
+        "全部技能:all:288",
+        "176f3ffc986701cc",
+        "5b5e2095fcd10064",
+        "ba02b8e71faa334b",
+        "7aecbb8f146842de",
+        "9ec3cb9696053d8b",
+        "6ad84bb93596f650",
+        "448a81c14ac59549",
+        "0909ef13d95c0497",
+        "254ff4e20e2b8d20",
+        "2956cbc5fa6221fd",
+        "106e0b26cc206aed",
+        "492069f33fad559b",
+        "fb6d9a18f0c64a74",
+        "713403dd798c7836",
+        "88325a3c478ed329",
+        "efdc0583f2618634",
+        "2819da7f379bf6f3",
+        "d4e534dddd1aed24",
+        "f52898e0e4d6fcb3",
+        "602202c6b41251cb",
+        "ec6ac4c14fd61cfc",
+        "全部技能:all:270",
+        "9dabf82a19744e2a",
+        "86363c375f9ea78e",
+        "340e241067686512",
+        "f26238efd3af2674"
       ],
       "counts": {
         "reviewedUnique": 935,
-        "relatedUnique": 459,
-        "notRelatedUnique": 476,
-        "ready": 107,
-        "partial": 352,
+        "relatedUnique": 575,
+        "notRelatedUnique": 360,
+        "ready": 216,
+        "partial": 359,
         "unknown": 0
       }
     }

@@ -6,8 +6,8 @@
     <meta name="description" content="按完整效果词条逐类贴标签，核对已有分类与未完成条件。" />
     <title>技能列表打标签用的｜最后的克劳迪娅</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260925-fire" />
-    <link rel="stylesheet" href="./skill-labeling.css?v=20260925-fire" />
+    <link rel="stylesheet" href="./styles.css?v=20260925-elements" />
+    <link rel="stylesheet" href="./skill-labeling.css?v=20260925-elements" />
   </head>
   <body>
     <header class="site-header">
@@ -22,18 +22,18 @@
     <main>
       <section class="workspace labeling-workspace" aria-label="技能标签核对列表">
         <nav class="sheet-tabs label-tabs" id="labelTabs" role="tablist" aria-label="技能标签分类" aria-orientation="horizontal"></nav>
-        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-fire">
-        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">火属性</h2></div></div>
-        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="火属性子分类" aria-orientation="horizontal" hidden></nav>
+        <div id="labelPanel" role="tabpanel" aria-labelledby="label-subtab-ice">
+        <div class="sheet-heading"><div><span class="sheet-kicker">技能标签核对</span><h2 id="activeTagTitle">冰属性</h2></div></div>
+        <nav id="labelSubTabs" class="sheet-tabs label-tabs label-subtabs" role="tablist" aria-label="冰属性子分类" aria-orientation="horizontal" hidden></nav>
         <div class="labeling-overview">
           <p id="labelCoverage">正在读取全库核对结果…</p>
           <p id="judgmentSummary" aria-live="polite"></p>
           <p id="cumulativeCoverage"></p>
           <p>按完整效果词条分类：属性、Boss、种族、空中、弱点等限定增伤不拆成宽泛增伤标签。装备、队伍、自身状态、时间等启用条件继续独立判断；并列效果各自贴标签。</p>
-          <p id="conditionScope">火属性伤害按物理、魔法、必杀、特技及未限定类型分开；伤害、上限、暴击与受到火伤减免分别列组。火属性武器条件不等于火属性攻击。多属性技能本轮只完成火属性部分，其他效果与条件继续待判断；同一技能跨组只计一次。</p>
+          <p id="conditionScope">冰属性按完整词条分组：攻击类型、伤害、上限、暴击、所受伤害和耐性分开；装备属性、敌人弱点及触发／结束条件分别保留。已有标签同步补齐；所有效果和条件都完成才判完整，同一技能跨组只计一次。</p>
         </div>
         <div class="toolbar">
-          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索火属性相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
+          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="labelSearch" type="search" autocomplete="off" placeholder="搜索技能名称、效果或待判断内容" aria-label="搜索冰属性相关技能" /><button id="clearLabelSearch" type="button" hidden>清空</button></label>
           <div id="labelResultCount" class="result-summary" aria-live="polite"></div>
         </div>
         <div id="labelTable" class="table-area"></div>
@@ -43,6 +43,6 @@
       </section>
     </main>
     <script src="./data.js?v=20260924-table-review"></script>
-    <script type="module" src="./skill-labeling.mjs?v=20260925-fire"></script>
+    <script type="module" src="./skill-labeling.mjs?v=20260925-elements"></script>
   </body>
 </html>

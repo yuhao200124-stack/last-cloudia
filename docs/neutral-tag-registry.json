@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "label": "无属性",
+  "scope": "current-library-all-unique-skills",
+  "numericEffectInjection": false,
+  "sharedRegistry": "docs/skill-labeling-registry.json",
+  "skillIds": [
+    "f52898e0e4d6fcb3",
+    "全部技能:all:270",
+    "f351f266a85d8731",
+    "602202c6b41251cb",
+    "ec6ac4c14fd61cfc",
+    "全部技能:all:545",
+    "340e241067686512",
+    "9dabf82a19744e2a",
+    "86363c375f9ea78e",
+    "f26238efd3af2674"
+  ]
+}

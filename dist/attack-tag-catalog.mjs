@@ -5663,18 +5663,75 @@ export const ATTACK_TAG_CATALOG = {
             "basic:4032cdf421f18002:1"
           ],
           "relatedSkillIds": []
+        },
+        "暗属性": {
+          "summary": "装备暗属性武器时，暗属性伤害上限+2,000。；装备暗属性武器时，自身攻击力+10%。",
+          "relation": "element-effect-or-condition",
+          "element": "dark",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [
+              "effect-1"
+            ],
+            "conditionPartIds": [
+              "condition-1"
+            ]
+          },
+          "condition": {
+            "subject": "equipped-weapon",
+            "weaponElement": "dark"
+          },
+          "bindings": [
+            {
+              "group": "weapon-element-cap",
+              "partIds": [
+                "effect-1"
+              ],
+              "summary": "装备暗属性武器时，暗属性伤害上限+2,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "direct-effect",
+              "operation": "cap-up",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "unspecified",
+                "element": "dark",
+                "equipment": {
+                  "weaponElement": "dark"
+                }
+              },
+              "capPoints": 2000
+            },
+            {
+              "group": "weapon-element-attack",
+              "partIds": [
+                "attack"
+              ],
+              "summary": "装备暗属性武器时，自身攻击力+10%。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "condition-benefit",
+              "operation": "stat-up",
+              "scope": {
+                "direction": "self",
+                "equipment": {
+                  "weaponElement": "dark"
+                }
+              },
+              "stat": "STR",
+              "valuePercent": 10
+            }
+          ],
+          "calculationNote": "暗属性武器是装备条件；攻击力+10%不要求本次攻击为暗，暗属性上限则要求本次攻击为暗。沿用攻击力标签。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "暗属性"
       ],
-      "judgment": "partial",
-      "remainingEffects": [
-        "暗属性伤害上限+2,000"
-      ],
-      "remainingConditions": [
-        "装备暗属性武器时生效"
-      ]
+      "judgment": "ready",
+      "remainingEffects": [],
+      "remainingConditions": []
     },
     {
       "id": "a92f6001f2419fda",
@@ -5727,10 +5784,52 @@ export const ATTACK_TAG_CATALOG = {
             "basic:a92f6001f2419fda:1"
           ],
           "relatedSkillIds": []
+        },
+        "雷属性": {
+          "summary": "只装备一把剑，且目标敌人弱雷时，物理伤害上限再+3,000。",
+          "relation": "element-effect-or-condition",
+          "element": "thunder",
+          "target": "bound-effects",
+          "coverage": {
+            "effectPartIds": [],
+            "conditionPartIds": [
+              "condition-2"
+            ]
+          },
+          "condition": {
+            "subject": "target-enemy",
+            "weakElement": "thunder"
+          },
+          "bindings": [
+            {
+              "group": "enemy-weakness-cap",
+              "partIds": [
+                "effect-2"
+              ],
+              "summary": "只装备一把剑，且目标敌人弱雷时，物理伤害上限再+3,000。",
+              "target": "self",
+              "isBuff": false,
+              "elementRole": "condition-benefit",
+              "operation": "conditional-extra-cap",
+              "scope": {
+                "direction": "outgoing",
+                "attackType": "physical",
+                "enemyWeakElement": "thunder",
+                "equipment": {
+                  "weaponType": "sword",
+                  "weaponCount": 1
+                }
+              },
+              "capPoints": 3000,
+              "requiresAttackElement": false
+            }
+          ],
+          "calculationNote": "这里判断敌人弱雷，不要求本次攻击为雷；额外3,000与原物理上限3,000是两项。只完成弱雷条件，单剑和物理上限仍待对应标签。"
         }
       },
       "assignedTags": [
-        "攻击力"
+        "攻击力",
+        "雷属性"
       ],
       "judgment": "partial",
       "remainingEffects": [
@@ -5738,8 +5837,7 @@ export const ATTACK_TAG_CATALOG = {
         "对弱雷属性敌人的伤害上限+3,000"
       ],
       "remainingConditions": [
-        "只装备一把剑时生效（单武器且武器为剑）",
-        "对弱雷属性敌人的额外上限条件"
+        "只装备一把剑时生效（单武器且武器为剑）"
       ]
     },
     {
@@ -6910,8 +7008,8 @@ export const ATTACK_TAG_CATALOG = {
     "reviewedUnique": 935,
     "relatedUnique": 87,
     "notRelatedUnique": 848,
-    "ready": 26,
-    "partial": 61,
+    "ready": 27,
+    "partial": 60,
     "unknown": 0,
     "previousBasicAttackUnique": 78,
     "additionalRelatedUnique": 9

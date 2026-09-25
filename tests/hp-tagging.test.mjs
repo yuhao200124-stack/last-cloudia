@@ -41,7 +41,7 @@ test('HP merges earlier attribute tags, completes six compounds, and leaves othe
  assert.equal(entry(402).judgment,'partial');assert.deepEqual(entry(402).remainingConditions,[]);
  assert.deepEqual(entry(402).remainingEffects,['梅蒂斯：魔抗+20%','加速：SCT恢复速度+25%']);
  for(const n of [387,796])for(const key of ['attack',...(n===796?['defense']:[])])assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
- const allView=labelingView(catalog,'all');assert.equal(allView.entries.length,459);assert.equal(allView.counts.ready,107);assert.equal(allView.counts.partial,352);
+ const allView=labelingView(catalog,'all');assert.equal(allView.entries.length,575);assert.equal(allView.counts.ready,216);assert.equal(allView.counts.partial,359);
  for(const key of ['all','attack','defense','hp','magic','mp','physical']){
   const rows=skillLabelRows(data,labelingView(catalog,key));const rank={ready:0,partial:1,unknown:2};
   assert(rows.every((r,i)=>!i||rank[rows[i-1].judgment]<=rank[r.judgment]));

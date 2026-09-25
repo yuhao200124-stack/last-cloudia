@@ -14,7 +14,7 @@ test('full HP audits the whole library and separates six actual effects from ful
  for(const [n,group] of mapping){const groupView=labelingView(catalog,'full-hp-'+group);assert.deepEqual(groupView.entries.map(e=>e.id),[source(n).id]);assert.equal(groupView.parent,'full-hp');}
  for(const n of [218,249,456,914,1163,1909,353,402,666,867,1221,1768,113,1264,267,788,1164,1390,1779])assert(!view.entries.some(e=>e.id===source(n).id),source(n).name);
  assert.equal(view.childKeys.length,6);assert.equal(view.childKeys.reduce((sum,k)=>sum+catalog.views[k].counts.relatedUnique,0),6);
- assert.equal(catalog.entries.length,459);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,459);
+ assert.equal(catalog.entries.length,575);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,575);
 });
 
 test('full HP is equality with current maximum HP, not a persistent Buff, and completes only covered effects',()=>{
@@ -27,7 +27,7 @@ test('full HP is equality with current maximum HP, not a persistent Buff, and co
  for(const n of [121,843,1448]){assert.deepEqual(entry(n).assignedTags,['满HP']);assert.equal(entry(n).judgment,'partial');assert.equal(entry(n).remainingEffects.length,1);}
  assert.match(entry(121).remainingEffects[0],/具体提升量待确认/);assert.deepEqual(entry(237).remainingEffects,[]);assert.deepEqual(entry(237).assignedTags,['满HP','暴击']);assert.match(entry(1448).remainingEffects[0],/上限\+1,500/);
  const pass=registry.tagPasses.find(p=>p.tag==='满HP');for(const a of pass.assignments){const e=catalog.entries.find(e=>e.id===a.skillId);assert(a.partIds.every(id=>e.parts.find(p=>p.id===id).kind==='condition'));}
- assert.equal(catalog.views.all.counts.ready,107);assert.equal(catalog.views.all.counts.partial,352);assert.equal(catalog.numericEffectInjection,false);
+ assert.equal(catalog.views.all.counts.ready,216);assert.equal(catalog.views.all.counts.partial,359);assert.equal(catalog.numericEffectInjection,false);
 });
 
 function page(edits={}){
@@ -40,7 +40,7 @@ function page(edits={}){
 test('full HP opens as grouped tables with synchronized status, search, preserved prior tabs and stale edit handling',()=>{
  const {get,click}=page();
  assert.match(get('#labelCoverage').textContent,/935.*6.*929/);assert.match(get('#judgmentSummary').textContent,/3.*3.*0/);assert.match(get('#labelResultCount').textContent,/6 \/ 6/);
- assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,19);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,7);
+ assert.equal((get('#labelTabs').innerHTML.match(/role="tab"/g)||[]).length,25);assert.equal((get('#labelSubTabs').innerHTML.match(/role="tab"/g)||[]).length,7);
  assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,6);
  for(const [n,g] of mapping){const section=get('#labelTable').innerHTML.split('<section ').find(s=>s.includes(`id="section-full-hp-${g}"`));assert(section.includes(source(n).name));assert.equal((section.match(/data-skill-id=/g)||[]).length,1);}
  const search=get('#labelSearch');search.value='云耀';search.listeners.input();assert.match(get('#labelResultCount').textContent,/1 \/ 6/);assert.equal((get('#labelTable').innerHTML.match(/<section /g)||[]).length,1);

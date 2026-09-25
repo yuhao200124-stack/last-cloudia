@@ -37,12 +37,12 @@ test('magic damage preserves target, timing, Buff, reference and special attack 
  assert(entry(1233).remainingEffects.includes('类型追加“龙”'));assert.deepEqual(entry(1233).remainingConditions,[]);
  assert.equal(entry(1479).tagDetails['魔法伤害增加'].summary,'魔法攻击伤害+15%');
  assert(!entry(1479).assignedTags.includes('伤害增加'));
- assert.deepEqual(entry(1479).remainingEffects,['暗属性攻击伤害+10%']);assert(entry(1479).remainingConditions.length);
+ assert.deepEqual(entry(1479).remainingEffects,[]);assert.equal(entry(1479).remainingConditions.length,0);
 });
 
 test('magic damage accumulates across old views and only finishes after remaining effect and condition passes',()=>{
- assert.equal(magicDamage.counts.ready,1);assert.equal(magicDamage.counts.partial,21);assert.equal(magicDamage.counts.unknown,0);
- assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,13);
+ assert.equal(magicDamage.counts.ready,2);assert.equal(magicDamage.counts.partial,20);assert.equal(magicDamage.counts.unknown,0);
+ assert.equal(magicDamage.entries.filter(e=>e.assignedTags.length>1).length,14);
  for(const [n,key] of [[593,'attack'],[1066,'physical'],[241,'physical'],[658,'physical'],[754,'physical'],[1060,'physical'],[1507,'physical']])
   assert.deepEqual(labelingView(catalog,key).entries.find(e=>e.id===source(n).id),entry(n));
  const science=catalog.entries.find(e=>e.id===source(305).id);
@@ -59,8 +59,8 @@ test('magic damage accumulates across old views and only finishes after remainin
  future.tagPasses.push({tag:'装备法杖',assignments:[{skillId:source(241).id,partIds:['condition-1']}]});
  const updated=resolveSkillLabels(future).find(e=>e.id===source(241).id);
  assert.equal(updated.judgment,'ready');assert.equal(entry(241).judgment,'partial');
- assert.equal(catalog.entries.length,459);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,459);
- assert.equal(catalog.views.all.counts.ready,107);assert.equal(catalog.views.all.counts.partial,352);
+ assert.equal(catalog.entries.length,575);assert.equal(new Set(catalog.entries.map(e=>e.id)).size,575);
+ assert.equal(catalog.views.all.counts.ready,216);assert.equal(catalog.views.all.counts.partial,359);
  const sorted=skillLabelRows(box.window.SKILL_DATA,labelingView(catalog,'all'));
- assert(sorted.slice(0,107).every(r=>r.judgment==='ready'));assert(sorted.slice(107).every(r=>r.judgment==='partial'));
+ assert(sorted.slice(0,216).every(r=>r.judgment==='ready'));assert(sorted.slice(216).every(r=>r.judgment==='partial'));
 });

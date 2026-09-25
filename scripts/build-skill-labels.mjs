@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {additionalElements, validateElementCoverage, validateElementBinding} from './validate-element-labels.mjs';
 import vm from 'node:vm';
 import {createHash} from 'node:crypto';
 import {canonicalSkillRows, resolveSkillLabels} from '../dist/skill-labeling-model.mjs';
@@ -27,7 +28,7 @@ const checkOrder = (view,entries) => {
   if(new Set(view.displayOrder).size!==view.displayOrder.length || view.displayOrder.length!==ids.size || view.displayOrder.some(id=>!ids.has(id))) throw Error('View order membership drift.');
 };
 const views={};
-for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['revive','复活',null],['ally-death','友军死亡',null],['critical','暴击',null],['fire','火属性',null]]){
+for(const [key,label,previousKey,basicTarget=label] of [['attack','攻击力','previousBasicAttackUnique'],['defense','防御力','previousBasicDefenseUnique'],['hp','生命力','previousBasicHpUnique','HP'],['magic','魔力','previousBasicMagicUnique','法强'],['mp','MP','previousBasicMpUnique'],['physical','物理伤害增加',null],['magic-damage','魔法伤害增加',null],['damage','伤害增加',null],['boss-damage','Boss伤害增加',null],['boss-magic-damage','Boss魔法伤害增加',null],['boss-physical-damage','Boss物理伤害增加',null],['boss-skill-damage','Boss特技伤害增加',null],['boss-ultimate-damage','Boss必杀伤害增加',null],['boss-critical-damage','Boss暴击伤害增加',null],['battle-start','战斗开始',null],['low-hp','濒死',null],['full-hp','满HP',null],['received-attack','受到攻击',null],['ultimate','必杀相关',null],['revive','复活',null],['ally-death','友军死亡',null],['critical','暴击',null],['fire','火属性',null],['ice','冰属性',null],['earth','树属性',null],['thunder','雷属性',null],['light','光属性',null],['dark','暗属性',null],['neutral','无属性',null]]){
   const registry=read(`docs/${key}-tag-registry.json`),audit=read(`docs/${key}-tag-audit.json`);
   if(registry.label!==label || audit.label!==label || registry.numericEffectInjection!==false)throw Error('Tag pass metadata mismatch.');
   const entries=resolved.filter(entry=>entry.assignedTags.includes(label)), byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -109,6 +110,8 @@ for(const [key,view] of Object.entries(views)){
       if(new Set(ids).size!==ids.length || ids.length!==assignment.partIds.length || ids.some(id=>!assignment.partIds.includes(id)))throw Error('Fire coverage must match reviewed fragments.');
       if(coverage.effectPartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='effect') || coverage.conditionPartIds.some(id=>entry.parts.find(p=>p.id===id)?.kind!=='condition'))throw Error('Fire effect and condition fragments are mixed.');
       if(coverage.conditionPartIds.length && !(detail.condition?.subject==='self-attack' && detail.condition.element==='fire' || detail.condition?.subject==='equipped-sword' && detail.condition.weaponElement==='fire'))throw Error('Fire conditions must distinguish the attack element from the weapon element.');
+    }else if(additionalElements.includes(key)){
+      validateElementCoverage(key,view,detail,assignment,entry);
     }else if(key==='critical'){
       const coverage=detail.coverage;
       if(view.passKind!=='critical-effects-and-condition' || !Array.isArray(coverage?.effectPartIds) || !Array.isArray(coverage?.conditionPartIds))throw Error('Missing critical coverage.');
@@ -189,6 +192,7 @@ for(const [key,view] of Object.entries(views)){
           if(binding.activationMode==='random-periodic-buff' && (binding.selection!=='random-one-of-six-walls' || binding.requiredSelectedStatus!=='ice-wall' || binding.intervalSeconds!==10 || binding.durationSeconds!==30 || binding.activeByDefault!==false))throw Error('Random Ice Wall must not be active unconditionally.');
         }else if(Object.hasOwn(binding,'durationSeconds') || Object.hasOwn(binding,'lifetime') || Object.hasOwn(binding,'stacking'))throw Error('Passive fire effects and equipment conditions are not timed Buffs.');
       }
+      if(additionalElements.includes(key))validateElementBinding(key,detail,assignment,binding);
       if(key==='critical'){
         const c=detail.coverage;
         if(binding.target!=='self' || typeof binding.isBuff!=='boolean' || !['outgoing','incoming'].includes(binding.scope?.direction) || !['unspecified','physical','attack-magic','ultimate','counter'].includes(binding.scope.attackType))throw Error('Critical scope or target missing.');
