@@ -47,14 +47,15 @@
   const loadoutPlansStorageKey = 'lc-sheet-table:loadout-plans-v1';
   const loadoutDraftTransferKey = 'lc-sheet-table:loadout-draft-v1';
   const characterLoadouts = {
+    "182": {"name": "魔神梅莉", "page": "./character-182.html?v=20260926-mayly", "skillIds": ["e73807e621f213b2", "全部技能:all:30", "0bcbd8a4dc9889d5", "bf042a386e6e2017", "e012b3fe60fe4932", "5ac756efac795660", "9146eb2670c69122", "2c33c46964323f76", "ccfbbcc9f91d8332", "478822878a23edb4", "全部技能:all:284", "1545ff2f2bc10672", "c14ec33793319bba", "bafb60af9aea2655", "fc3ee7900740acc8"]},
     '259': {
       name: '艾莉丝·格雷拉特',
-      page: './character-259.html?v=20260926-character-template',
+      page: './character-259.html?v=20260926-mayly',
       skillIds: [],
     },
     '245': {
       name: '龙王阿尔克',
-      page: './character-245.html?v=20260926-character-template',
+      page: './character-245.html?v=20260926-mayly',
       skillIds: [
         'e73807e621f213b2', 'f201c9d8e9ee87ed', '全部技能:all:30', '9146eb2670c69122',
         '478822878a23edb4', '97d948f5e3717d10', 'ea3727ee373b623b', '2a62c41d8d3fb3d0',
@@ -63,7 +64,7 @@
     },
     '260': {
       name: '洛琪希',
-      page: './character-260.html?v=20260926-character-template',
+      page: './character-260.html?v=20260926-mayly',
       skillIds: [
         '3ab5e4ec857b4879', 'f201c9d8e9ee87ed', '全部技能:all:30', '9146eb2670c69122',
         'cc874bcc3159e258', 'ccfbbcc9f91d8332', '2901b40ce3f38847', '351f8b7c824ec758',
@@ -594,7 +595,7 @@
   function setCalculatorOpen(open) {
     if (!embeddedLoadout && open) {
       saveCalculatorState();
-      const url = new URL('./damage-calculator.html?v=20260926-character-template', location.href);
+      const url = new URL('./damage-calculator.html?v=20260926-mayly', location.href);
       url.searchParams.set('unified', '1');
       if (calculatorState.characterId) url.searchParams.set('character', calculatorState.characterId);
       location.assign(url.href);

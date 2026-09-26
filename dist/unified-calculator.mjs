@@ -1,10 +1,10 @@
-import {prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds,reportLoadoutSnapshot,toggleExclusiveWeapon} from './loadout-preview.mjs?v=20260926-character-template';
+import {buildLoadoutReport,prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds,reportLoadoutSnapshot,toggleExclusiveWeapon} from './loadout-preview.mjs?v=20260926-mayly';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
-import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-character-template';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260926-character-template';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-character-template';
-import {buildDamageImport} from './damage-import.mjs?v=20260926-skill-coverage';
-import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260926-character-template';
+import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-mayly';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260926-mayly';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-mayly';
+import {buildDamageImport} from './damage-import.mjs?v=20260926-mayly';
+import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260926-mayly';
 import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-character-template';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -87,6 +87,12 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
    rates=next;try{localStorage.setItem('lc-recommendation-sc-rates:v1',JSON.stringify(rates));}catch{}onChange();
   }
  });
+ function derivedAttackElement(){
+  const context=getContext();
+  if(!context.baseReport?.context.nativeElementAttacks?.includes(context.selection.attack))return null;
+  const report=buildLoadoutReport(context.baseReport,ensureLoadout(),context.selection,saved(LEARNING_STORAGE_KEY,{}));
+  return ({none:'无',fire:'火',ice:'冰',earth:'树',thunder:'雷',light:'光',dark:'暗'})[report.context.element]||null;
+ }
  function prepare(input){
   const context=getContext();
   if(!snapshot)throw new Error('正在载入配装；请在配装区选择角色。');
@@ -112,5 +118,5 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
   $('unifiedUnresolvedList').innerHTML=items.map(x=>`<li><b>${esc(x.name)}</b><p>${esc(x.reason)}</p>${x.text?`<details><summary>技能原文</summary><p>${esc(x.text)}</p></details>`:''}</li>`).join('');
  }
  function error(message){if(active)send('lc-loadout-recommendations',{payload:{error:message,rates,contextKey:'incomplete'}});}
- return {get active(){return active;},get hasLoadout(){return !!snapshot;},get snapshot(){return snapshot;},ensureLoadout,loadSelection,open,prepare,error,refreshSources:initialize,setExclusiveWeapon};
+ return {get active(){return active;},get hasLoadout(){return !!snapshot;},get snapshot(){return snapshot;},ensureLoadout,loadSelection,open,prepare,derivedAttackElement,error,refreshSources:initialize,setExclusiveWeapon};
 }

@@ -154,7 +154,7 @@
     ["damage_reduction","受到伤害减少",50,"%","守护的力量","exclusive","至少2名队友且全员存活"],
     ["sct_speed","SCT回复速度",50,"%","沉睡的狮子","exclusive","濒死触发后"]
   ].map(([key,label,value,unit,source,group,condition])=>({key,label,value,unit,source,group,condition}));
-  const bonuses = document.body.dataset.characterId === "259" ? erisBonuses : document.body.dataset.characterId === "245" ? arkuBonuses : roxyBonuses;
+  const bonuses = document.body.dataset.characterId === "259" ? erisBonuses : document.body.dataset.characterId === "245" ? arkuBonuses : document.body.dataset.characterId === "260" ? roxyBonuses : [];
 
   const panel = document.getElementById("bonusCalculator");
   const overlay = document.getElementById("bonusCalculatorOverlay");
@@ -789,7 +789,8 @@
     ]
     }
   };
-  const damageCapCharacter = damageCapProfiles[currentSavedBuildCharacterId] || {
+  const pageCapProfile = (() => { try { return JSON.parse(document.getElementById("characterCapProfile")?.textContent || "null"); } catch { return null; } })();
+  const damageCapCharacter = damageCapProfiles[currentSavedBuildCharacterId] || pageCapProfile || {
     id: currentSavedBuildCharacterId,
     attackPickerLabel: "选择攻击方式",
     attacks: [],

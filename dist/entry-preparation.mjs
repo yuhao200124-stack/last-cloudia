@@ -1,16 +1,16 @@
-import {characterMoveDefaults} from './character-template.mjs?v=20260926-character-template';
+import {characterMoveDefaults} from './character-template.mjs?v=20260926-mayly';
 import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260926-skill-coverage';
 import {effectCombatModes} from './combat-modes.mjs?v=20260926-skill-coverage';
-import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-character-template';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-character-template';
+import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-mayly';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-mayly';
 import {upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-skill-coverage';
 import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-fullpage';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
 const elementIds={无:'none',火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark'};
-const recognizedTypes=new Set(['stat','statBuff','equipmentStat','damage','cap','critRate','critPermission','killer','killerPower','defenseReference','hit','statReference']);
+const recognizedTypes=new Set(['attackElement','stat','statBuff','equipmentStat','damage','cap','critRate','critPermission','killer','killerPower','defenseReference','hit','statReference']);
 const num=x=>typeof x==='number'&&Number.isFinite(x)?x:null;
 const clean=x=>String(x??'').trim();
 export function readCharacterProfile(doc) {
@@ -36,7 +36,7 @@ export function readCharacterProfile(doc) {
  const moves=[{id:'normal',name:'普通攻击',kind:'normal',element:null,hits:null,coefficient:null,skillPercent:null,statReference:null,purpose:'attack',source:'通用入口，参数待确认',...characterMoveDefaults(characterId,'normal')}];
  [...doc.querySelectorAll('#specials tbody tr')].forEach((el,i)=>{if(i<4)moves.push(move(el,['s1','s2','s3','ultimate'][i],['s1','s2','s3','ultimate'][i]));});
  const magic=[...doc.querySelectorAll('#magic tbody tr')].map((el,i)=>move(el,'magic',`magic-${i+1}`));
- const equipment=[...doc.querySelectorAll('#equipment .equipment-card')].map(el=>({name:clean(el.querySelector('h4')?.textContent),type:clean(el.querySelector('dd')?.textContent).split(/[｜|]/)[0].replace(/^服装$/,'衣服')}));
+ const equipment=[...doc.querySelectorAll('#equipment .equipment-card')].map(el=>({name:clean(el.querySelector('h4')?.textContent),type:clean(el.querySelector('dd')?.textContent).split(/[｜|]/)[0].replace(/^服装$/,'衣服'),element:elementIds[clean(el.querySelector('dd')?.textContent).split(/[｜|]/)[1]?.replace('属性','')]||null}));
  return {schemaVersion:1,characterId:String(doc.body.dataset.characterId),name:clean(doc.querySelector('.hero h2')?.textContent),
   statsBasis:'max-growth-character-page',baseStats,moves,magic,equipment};
 }
@@ -57,7 +57,7 @@ export function retargetReport(report,selection) {
  if(typeof selection.break==='boolean')context.break=selection.break;
  if(typeof selection.boss==='boolean')context.boss=selection.boss;
   if(typeof selection.fullHp==='boolean')context.fullHp=selection.fullHp;
-  for(const field of ['back','air','ailment','ground','weakness','stunned','nearestEnemy','partyAllAlive','enemyAttacking','selfAilment'])if(typeof selection[field]==='boolean')context[field]=selection[field];
+  for(const field of ['back','air','ailment','ground','weakness','stunned','nearestEnemy','partyAllAlive','enemyAttacking','selfAilment','bleeding','enemyLightWeak','enemyDarkWeak'])if(typeof selection[field]==='boolean')context[field]=selection[field];
   if(Object.hasOwn(selection,'enemyRaces'))context.enemyRaces=selection.enemyRaces;
   for(const field of ['lowHp',...STAT_CONDITION_FIELDS])if(typeof selection[field]==='boolean')context[field]=selection[field];
   if(selection.fullHp===true&&selection.lowHp!==true)context.lowHp=false;

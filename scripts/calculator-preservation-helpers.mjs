@@ -13,10 +13,16 @@ const skillCoverage=JSON.parse(fs.readFileSync(new URL('../docs/skill-coverage-p
 const calculatorHeadings=JSON.parse(fs.readFileSync(new URL('../docs/calculator-heading-preservation-2026-09-26.json',import.meta.url)));
 const scenarioSummary=JSON.parse(fs.readFileSync(new URL('../docs/scenario-summary-preservation-2026-09-26.json',import.meta.url)));
 const characterTemplate=JSON.parse(fs.readFileSync(new URL('../docs/character-template-preservation-2026-09-26.json',import.meta.url)));
+const mayly=JSON.parse(fs.readFileSync(new URL('../docs/mayly-preservation-2026-09-26.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const character=mayly.files[path];
+ if(character){
+  if(hash(text)!==character.afterHash||hash(character.beforeText)!==character.beforeHash)throw Error(`Mayly preservation drift: ${path}`);
+  text=character.beforeText;
+ }
  const shared=characterTemplate.files[path];
  if(shared){
   if(hash(text)!==shared.afterHash||hash(shared.beforeText)!==shared.beforeHash)throw Error(`Character template preservation drift: ${path}`);

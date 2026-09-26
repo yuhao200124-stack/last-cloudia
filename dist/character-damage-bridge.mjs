@@ -1,7 +1,7 @@
-import {characterReportFromDocument} from './character-report-loader.mjs?v=20260926-character-template';
-import {reportStorageKey} from './damage-import.mjs?v=20260926-skill-coverage';
-import {readCharacterProfile} from './entry-preparation.mjs?v=20260926-character-template';
-import {unifiedPageUrl} from './calculator-navigation.mjs?v=20260926-character-template';
+import {characterReportFromDocument} from './character-report-loader.mjs?v=20260926-mayly';
+import {reportStorageKey} from './damage-import.mjs?v=20260926-mayly';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260926-mayly';
+import {unifiedPageUrl} from './calculator-navigation.mjs?v=20260926-mayly';
 const panel=document.getElementById('damageSimulator');
 const frame=document.getElementById('damageCalculatorFrame');
 const open=document.getElementById('damageSimulatorOpen');

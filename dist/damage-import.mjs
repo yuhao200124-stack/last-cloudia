@@ -51,7 +51,7 @@ export function buildDamageImport(report) {
       else if(e.type==='defenseReference') { defense.push(entry);imported.reference.push(entry); }
       else if(e.type==='hit') {hit.push(entry);imported.reference.push(entry);}
       else if(e.type==='statReference') {refs.push(entry);imported.reference.push(entry);}
-      else if(['stat','statBuff','equipmentStat'].includes(e.type)) imported.reference.push(entry);
+      else if(['stat','statBuff','equipmentStat','attackElement'].includes(e.type)) imported.reference.push(entry);
     }
     if(row.rule.verification==='untested') imported.warnings.push(`${row.sourceName}：${row.rule.note||'特殊结算尚未实测，结果仅供试算。'}`);
   }

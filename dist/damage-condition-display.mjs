@@ -1,6 +1,6 @@
 import {CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs';
 
-export const GENERAL_CONDITIONS={nearestEnemy:['nearestEnemy'],partyAllAlive:['partyAllAlive'],enemyAttacking:['enemyAttacking'],selfAilment:['selfAilment'],fullHp:['fullHp'],lowHp:['lowHp'],air:['air'],back:['back'],ailment:['ailment'],ground:['ground'],openingBuffActive:['openingBuffActive'],conditionBuffActive:['conditionBuffActive',...CONDITION_BUFF_FIELDS]};
+export const GENERAL_CONDITIONS={bleeding:['bleeding'],enemyLightWeak:['enemyLightWeak'],enemyDarkWeak:['enemyDarkWeak'],nearestEnemy:['nearestEnemy'],partyAllAlive:['partyAllAlive'],enemyAttacking:['enemyAttacking'],selfAilment:['selfAilment'],fullHp:['fullHp'],lowHp:['lowHp'],air:['air'],back:['back'],ailment:['ailment'],ground:['ground'],openingBuffActive:['openingBuffActive'],conditionBuffActive:['conditionBuffActive',...CONDITION_BUFF_FIELDS]};
 
 export function weakElementFromBoss(element,resistance,correction=0){
  if(!element||element==='无'||resistance===''||resistance==null)return false;

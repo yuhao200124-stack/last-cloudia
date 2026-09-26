@@ -2,12 +2,12 @@ import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-fullp
 import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-condition-tags';
 import {commonSkillRules,upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-skill-coverage';
 /** Reusable, description-matched rule templates. No imported content is executable. */
-import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260926-character-template';
+import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260926-mayly';
 
 export const LEARNING_STORAGE_KEY = 'lc-effect-rules:learned:v1';
 
 const LIMITS = Object.freeze({ text: 8192, templates: 1000, rules: 100, conditions: 30, effects: 40, bytes: 2_000_000 });
-const TYPES = new Set(['stat', 'statBuff', 'damage', 'cap', 'critRate', 'critPermission', 'hit', 'statReference', 'equipmentStat', 'defense', 'recovery', 'utility', 'castSpeed', 'defenseReference', 'killer', 'killerPower']);
+const TYPES = new Set(['attackElement','stat', 'statBuff', 'damage', 'cap', 'critRate', 'critPermission', 'hit', 'statReference', 'equipmentStat', 'defense', 'recovery', 'utility', 'castSpeed', 'defenseReference', 'killer', 'killerPower']);
 const FIELDS = new Set(Object.keys(CONDITION_FIELDS));
 const OPS = new Set(['eq', 'in', 'notIn', 'gte', 'lte', 'lt', 'intersects','disjoint']);
 const DANGEROUS_KEYS = new Set(['__proto__', 'prototype', 'constructor']);

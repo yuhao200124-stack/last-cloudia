@@ -1,11 +1,11 @@
 import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
-import {characterDefinition,characterContext,collectCharacterSources} from './character-template.mjs?v=20260926-character-template';
-import {readCharacterProfile} from './entry-preparation.mjs?v=20260926-character-template';
-import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260926-character-template';
-import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260926-character-template';
+import {characterDefinition,characterContext,collectCharacterSources} from './character-template.mjs?v=20260926-mayly';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260926-mayly';
+import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260926-mayly';
+import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260926-mayly';
 import { summarizeEffects } from './effect-totals.mjs';
 import { ACCOUNT_BLESSING_CATALOG, ACCOUNT_BLESSING_META } from './account-blessings.mjs?v=20260924-fullpage';
-import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260926-character-template';
+import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260926-mayly';
 
 mountAccountBlessings();
 
@@ -24,7 +24,7 @@ function mount() {
   const read = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
   const groups = { traits: '个性', exclusive: '专属技能', common: '通用技能', transcend: '超越', equipment: '装备', specials:'招式效果', blessings: '账户加护' };
   const statuses = { active: '生效', inactive: '未生效', pending: '待确认', disabled: '未启用' };
-  const types = { stat: '面板属性', statBuff: '属性状态增益', equipmentStat: '装备属性', damage: '伤害增加', cap: '伤害上限', killer: '特攻触发', killerPower:'特攻威力修正', hit: '命中与分段', statReference: '攻击与防御参照', defenseReference: '防御参照修正', critRate: '暴击率', critPermission: '暴击资格', defense: '防御与减伤', recovery: '回复', castSpeed: '咏唱速度', utility: '其他效果' };
+  const types = { attackElement:'招式属性转换', stat: '面板属性', statBuff: '属性状态增益', equipmentStat: '装备属性', damage: '伤害增加', cap: '伤害上限', killer: '特攻触发', killerPower:'特攻威力修正', hit: '命中与分段', statReference: '攻击与防御参照', defenseReference: '防御参照修正', critRate: '暴击率', critPermission: '暴击资格', defense: '防御与减伤', recovery: '回复', castSpeed: '咏唱速度', utility: '其他效果' };
   const attackNames = Object.fromEntries(ATTACKS.map(a=>[a.id,profile.moves.find(m=>m.id===a.id)?.name||a.label]));
   const elements = [[null, '待确认'], ['none', '无'], ['fire', '火'], ['ice', '冰'], ['earth', '树'], ['thunder', '雷'], ['light', '光'], ['dark', '暗']];
   const saved = read(stateKey, {});
@@ -147,10 +147,15 @@ function mount() {
     if (characterId === '260') { c.killerBuff = true; c.bossWaveBuff = true; }
     if (c.attack === 'magic') c.damageType = 'magical';
     c.equipmentIds = Array.isArray(c.equipmentIds) ? c.equipmentIds : [];
+    const overflow=c.equipmentIds.filter(id=>gear[id]&&!gear[id].armor).slice(c.weaponCount);
+    c.equipmentIds=c.equipmentIds.filter(id=>!overflow.includes(id));
+    for(const id of overflow)if(!c.equipmentIds.some(other=>gear[other]?.field===gear[id].field))c[gear[id].field]=false;
     for(const [id,g] of Object.entries(gear)){
       if(g.armor&&c.weaponCount===2||!g.armor&&c.weaponCount===0){c.equipmentIds=c.equipmentIds.filter(x=>x!==id);c[g.field]=false;if(g.iceStaff)c.iceStaff=false;}
       if(c.equipmentIds.includes(id)){c[g.field]=true;if(g.iceStaff)c.iceStaff=true;if(g.armor)for(const f of ['robe','clothes','armor'])if(f!==g.field)c[f]=false;}
     }
+    const knownWeapons=c.equipmentIds.flatMap(id=>gear[id]?.element?[{type:gear[id].field,element:gear[id].element}]:[]);
+    if(Object.values(gear).some(g=>g.element))c.weaponDetails=knownWeapons;
     if (c.iceStaff) c.staff = true;
     const weaponFields=['staff','sword','axe','spear','hammer','bow','machine','claw'];
     const selected=weaponFields.filter(k=>c[k]);
@@ -164,6 +169,7 @@ function mount() {
     state.disabledSources.forEach(id => { overrides[`source:${id}`] = { disabled: true }; });
     state.disabledRules.forEach(id => { overrides[id] = { disabled: true }; });
     result = evaluateCatalog(catalog, state.context, overrides);
+    if(result.context.nativeElementAttacks?.includes(result.context.attack))state.context.element=result.context.element;
     // Keep an eligible conditional defense effect discoverable without counting
     // it as triggered. All other conditions, reviews and disabled flags still apply.
     const availableRows = [];
@@ -414,7 +420,7 @@ function mount() {
       state.context.equipmentIds = state.context.equipmentIds.filter(x => x !== id);
       if (el.checked) {
         state.context.equipmentIds.push(id);
-        if (!gear[id]?.armor && !state.context.weaponCount) state.context.weaponCount = 1;
+        if (!gear[id]?.armor) state.context.weaponCount = Math.max(state.context.weaponCount||0,state.context.equipmentIds.filter(id=>gear[id]&&!gear[id].armor).length,1);
       } else {
         if(gear[id])state.context[gear[id].field]=false;
         if(gear[id]?.iceStaff)state.context.iceStaff=false;

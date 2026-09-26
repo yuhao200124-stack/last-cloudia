@@ -22,6 +22,7 @@ export const DEFAULT_CONTEXT = {
   enemyRaces:null, back:null, air:null, ailment:null, ground:null, stunned:false,
 };
 export const CONDITION_FIELDS = {
+  bleeding:{label:'目标出血',options:yesNo},enemyLightWeak:{label:'目标弱光',options:yesNo},enemyDarkWeak:{label:'目标弱暗',options:yesNo},
   nearestEnemy:{label:'攻击最近的敌人',options:yesNo},
   partyAllAlive:{label:'我方至少2人且全员存活',options:yesNo},
   enemyAttacking:{label:'敌人正在进行攻击动作',options:yesNo},
@@ -111,7 +112,7 @@ export function normalizeContext(input = {}) {
   ctx.bodyArmor = ctx.robe === true || ctx.clothes === true || ctx.armor === true;
   const weapons=Array.isArray(input.weaponDetails)?input.weaponDetails.filter(w=>weaponTypes.some(([t])=>t===w?.type)&&weaponElements.some(([e])=>e===w?.element)):null;
   const complete=weapons&&weapons.length===ctx.weaponCount;
-  ctx.weaponSignatures=ctx.weaponCount===0?[]:complete?weapons.map(w=>`${w.type}:${w.element}`):input.iceStaff===true?['staff:ice']:null;
+  ctx.weaponSignatures=ctx.weaponCount===0?[]:weapons?.length?weapons.map(w=>`${w.type}:${w.element}`):input.iceStaff===true?['staff:ice']:null;
   // A known matching weapon proves existence; incomplete equipment cannot
   // prove a negative. Keep the completeness bit for intersects below.
   ctx.weaponSignaturesComplete=ctx.weaponCount===0||!!complete;
@@ -211,6 +212,13 @@ export function evaluateCatalog(catalog, input = {}, overrides = {}) {
   // The mastery augments its equipped base skill; removing the latter must
   // also remove this dependent bonus, including in a loadout preview.
   context.erisBladeEquipped=sources.some(s=>s.name==='一天真刃·二之型'&&!overrides[`source:${s.id}`]?.disabled&&s.rules.some(r=>r.review==='ready'&&!r.disabled&&!overrides[r.id]?.disabled));
+  // Resolve an equipped move-property override before element-scoped bonuses.
+  // Each evaluation starts from the native element, so removing the source restores it.
+  if(context.nativeElementAttacks?.includes(context.attack)&&weaponElements.some(([e])=>e===context.nativeAttackElement))context.element=context.nativeAttackElement;
+  const elementRows=sources.flatMap(source=>source.rules.filter(r=>r.effects?.some(e=>e.type==='attackElement')).map(rule=>makeRow(source,rule,context,overrides)));
+  const elementValues=[...new Set(elementRows.filter(row=>row.status==='active').flatMap(row=>row.rule.effects.filter(e=>e.type==='attackElement'&&weaponElements.some(([id])=>id===e.value)).map(e=>e.value)))];
+  if(elementValues.length===1)context.element=elementValues[0];
+  else if(elementValues.length>1)context.element=null;
   const initialRows = sources.flatMap((source) => (source.rules ?? []).map((rule) => makeRow(source, rule, context, overrides)));
   const killerRows = initialRows.filter((row) => row.rule.effects?.some((effect) => effect.type === 'killer'));
   const killer = context.killer === true || killerRows.some((row) => row.status === 'active') ? true
@@ -243,6 +251,7 @@ export function formatEffect(effect) {
   if (type === 'defenseReference') return `${target}按${value}${unit}计算（仅本次结算）`;
   if (type === 'killer') return `对${target || 'Boss'}触发特攻（只判定一次）`;
   if (type === 'critPermission') return `${target}可触发暴击`;
+  if (type === 'attackElement') return `招式属性改为${weaponElements.find(([id])=>id===value)?.[1]||value}属性`;
   if (type === 'utility') return `${target}${effect.detail?`（${effect.detail}）`:''}`;
   const number = typeof value === 'number' ? `${value >= 0 ? '+' : ''}${value.toLocaleString('en-US')}${unit}` : `${value ?? '待确认'}${unit}`;
   return `${target}${number}${effect.detail ? `（${effect.detail}）` : ''}`;

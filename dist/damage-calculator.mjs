@@ -1,20 +1,20 @@
-import {extraCommonSkills} from './loadout-preview.mjs?v=20260926-character-template';
+import {extraCommonSkills} from './loadout-preview.mjs?v=20260926-mayly';
 import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
-import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-skill-coverage';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260926-character-template';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-character-template';
+import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-mayly';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260926-mayly';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-mayly';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
-import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-character-template';
+import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-mayly';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
-import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-character-template';
-import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-character-template';
-import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-character-template';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-character-template';
+import {magicResistance,magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-mayly';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-mayly';
+import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-mayly';
+import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-mayly';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-mayly';
 import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-character-template';
-import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260926-character-template';
+import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260926-mayly';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -39,7 +39,7 @@ let magicOptions=[],magicSelection={};
 let defenseRatioTouched=false;
 let unified=null;
 let lastWeaknessKey='',weaknessManual=false,automaticWeaknessEvent=false;
-const GENERAL_NAMES={nearestEnemy:'攻击最近的敌人',partyAllAlive:'我方至少2人且全员存活',enemyAttacking:'敌人正在进行攻击动作',selfAilment:'自身处于异常状态',fullHp:'满血',lowHp:'濒死',air:'目标浮空',back:'背后攻击',ailment:'目标异常',ground:'自身在地面',openingBuffActive:'开局BUFF',conditionBuffActive:'条件BUFF'};
+const GENERAL_NAMES={bleeding:'目标出血',enemyLightWeak:'目标弱光',enemyDarkWeak:'目标弱暗',nearestEnemy:'攻击最近的敌人',partyAllAlive:'我方至少2人且全员存活',enemyAttacking:'敌人正在进行攻击动作',selfAilment:'自身处于异常状态',fullHp:'满血',lowHp:'濒死',air:'目标浮空',back:'背后攻击',ailment:'目标异常',ground:'自身在地面',openingBuffActive:'开局BUFF',conditionBuffActive:'条件BUFF'};
 function showConditionSources(report){
  const selected=Object.keys(GENERAL_CONDITIONS).filter(id=>$(id)?.checked);
  const target=$('generalConditionSources');target.hidden=!selected.length;
@@ -90,12 +90,13 @@ $('conditionBuffActive').addEventListener('change',()=>{for(const id of CONDITIO
 $('magicBuffOptions').addEventListener('change',e=>{
   if(e.target.dataset.magicBuff){
     const chosen=magicOptions.find(b=>b.id===e.target.dataset.magicBuff);
-    if(chosen&&e.target.checked&&chosen.runtime.stackPolicy==='exclusive')for(const other of magicOptions)if(other.stat===chosen.stat&&other.runtime.stackGroup===chosen.runtime.stackGroup)magicSelection[other.id]=false;
+    if(chosen&&e.target.checked&&chosen.runtime?.stackPolicy==='exclusive')for(const other of magicOptions)if(other.stat===chosen.stat&&other.runtime?.stackGroup===chosen.runtime.stackGroup)magicSelection[other.id]=false;
+    if(chosen?.exclusiveGroup&&e.target.checked)for(const other of magicOptions)if(other.exclusiveGroup===chosen.exclusiveGroup)magicSelection[other.id]=false;
     magicSelection[e.target.dataset.magicBuff]=e.target.checked;
     renderMagicBuffs(latestReport?.profile);
   }
   try{localStorage.setItem(`lc-magic-buffs:${characterId}`,JSON.stringify(magicSelection));}catch{}
-  if(activeMagicBuffs().some(b=>b.stat===attackStat()?.key)){$('attackBasis').value='auto';attackBasisTouched=false;}
+  if(activeMagicBuffs().some(b=>b.stat&&b.stat===attackStat()?.key)){$('attackBasis').value='auto';attackBasisTouched=false;}
   clearSettlementCapture('魔法增益已改变，请采用对应状态下的结算样本。');update();
 });
 document.body.classList.toggle('is-embedded',embedded);
@@ -362,7 +363,16 @@ function referenceMode() {return workflow?.selection().statReference||imported?.
 function syncBossReference() {
   const mode=referenceMode(),keys=Object.keys(BOSS_ELEMENTS),index=Object.values(BOSS_ELEMENTS).indexOf($('element').value);
   if(mode!=='mixed')$('defense').value=$(mode==='int'?'bossMind':'bossDefense').value;
-  $('resistance').value=$('element').value==='无'?0:index<0?'':document.querySelector(`[data-boss-resistance="${keys[index]}"]`).value;
+  const raw=index<0?'':document.querySelector(`[data-boss-resistance="${keys[index]}"]`).value;
+  $('resistance').value=$('element').value==='无'?0:magicResistance($('element').value,raw,activeMagicBuffs());
+  const derived={};
+  for(const [field,element] of [['enemyLightWeak','光'],['enemyDarkWeak','暗']]){
+   const control=$(field);if(!control)continue;
+   const key=keys[Object.values(BOSS_ELEMENTS).indexOf(element)],value=document.querySelector(`[data-boss-resistance="${key}"]`)?.value;
+   control.disabled=value!==''&&value!=null;
+   if(control.disabled){control.checked=magicResistance(element,value,activeMagicBuffs())<0;derived[field]=control.checked;}
+  }
+  workflow?.setDerivedConditions(derived);
 }
 function labels() {
   syncAttackBasis();
@@ -394,6 +404,8 @@ function applyBoss() {
   labels();
 }
 function update() {
+  const derivedElement=unified?.derivedAttackElement();
+  if(derivedElement){$('element').value=derivedElement;workflow?.setDerivedAttackElement(derivedElement);}
   saveBonuses();renderCommonSkills();
   if(Object.values(arkValues()).some(v=>Number(v)!==0))unified?.ensureLoadout();
   if(captureApplication&&captureApplication.key!==captureKey())clearSettlementCapture('面板、招式或战斗条件已改变，请重新采用相应的结算样本。');
@@ -422,7 +434,7 @@ function update() {
       if(characterId&&(!imported||!workflow?.isConfirmed()))throw new Error(reviewBlocker);
       if(imported&&!criticalDisabled()&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
       if(imported?.blockers.length)throw new Error(imported.blockers.join('；'));
-      if(activeMagicBuffs().some(b=>b.stat===attackStat()?.key)&&$('attackBasis').value==='panel')throw new Error('已勾选属性增益，请使用自动属性分层。');
+      if(activeMagicBuffs().some(b=>b.stat&&b.stat===attackStat()?.key)&&$('attackBasis').value==='panel')throw new Error('已勾选属性增益，请使用自动属性分层。');
       if($('attackBasis').value==='auto'&&!autoLayer?.ok)throw new Error(autoLayer?.reason||'请先核对属性层来源。');
       if(invalid) throw new Error(`请检查「${invalid.closest('label')?.textContent.trim()||'数值'}」的输入范围，必填数值不能留空。`);
     }
@@ -594,7 +606,7 @@ function applyImport(report,review) {
   // change. Auto mode recomputes the selected state from the reader anchor.
   if(layerSourceKey&&sourceKey!==layerSourceKey&&$('attackBasis').value==='layers'){$('attackBase').value='';$('runtimeStatPercent').value='';}
   panelLayers=review.panelLayers;layerSourceKey=sourceKey;
-  if(!attackBasisTouched)$('attackBasis').value=(attackStat()?.runtimeCandidates?.length||attackStat()?.buffs?.length||activeMagicBuffs().some(b=>b.stat===attackStat()?.key))?'auto':'panel';
+  if(!attackBasisTouched)$('attackBasis').value=(attackStat()?.runtimeCandidates?.length||attackStat()?.buffs?.length||activeMagicBuffs().some(b=>b.stat&&b.stat===attackStat()?.key))?'auto':'panel';
   $('critBasis').querySelector('[value="reader"]').disabled=observedCritical(readUnit).value==null;
   if(observedCritical(readUnit).value==null)$('critBasis').value='website';
   reviewBlocker='';

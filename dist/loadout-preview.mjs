@@ -1,13 +1,13 @@
-import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-character-template';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-character-template';
-import {buildDamageImport} from './damage-import.mjs?v=20260926-skill-coverage';
+import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-mayly';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-mayly';
+import {buildDamageImport} from './damage-import.mjs?v=20260926-mayly';
 import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260926-skill-coverage';
 import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
 import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-condition-tags';
-import {magicBuffCap} from './magic-buffs.mjs?v=20260924-condition-tags';
+import {magicBuffCap} from './magic-buffs.mjs?v=20260926-mayly';
 import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-condition-tags';
 import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-skill-coverage';
-import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-character-template';
+import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-mayly';
 import {EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
 
 const eq=(field,value)=>({field,op:'eq',value});
@@ -156,6 +156,11 @@ export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
   }}
  }
  if(JSON.stringify(context.equipmentIds)!==JSON.stringify(baseReport.context.equipmentIds||[]))delete context.weaponDetails;
+ const knownWeapons=gear.filter(s=>context.equipmentIds.includes(s.sourceId)).flatMap(s=>{
+  const item=baseReport.profile.equipment?.find(e=>e.name===s.name),type=equipmentFields[item?.type];
+  return item?.element&&type&&!['robe','clothes','armor'].includes(type)?[{type,element:item.element}]:[];
+ });
+ if(knownWeapons.length)context.weaponDetails=knownWeapons;
  if(loadoutSources(baseReport).some(s=>s.group==='blessings'&&represented.has(s.sourceId)&&selected.has(s.sourceId)))context.accountBlessings=true;
  const extra=snapshot.items.filter(s=>!s.sourceIds?.length||s.edited).map(s=>({id:`loadout:${s.id}`,catalogId:s.catalogId,edited:s.edited,name:s.name,text:s.text,group:'common'}));
  const editedIds=new Set(snapshot.items.filter(s=>s.edited).flatMap(s=>s.sourceIds||[]));
@@ -220,7 +225,7 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
   return [original&&JSON.stringify(original)===JSON.stringify(current)?e:current];
  });
  const newEffects=imported.effects.filter(e=>!matched.has(e.importId)&&!(baselineImport?.effects.some(b=>b.importId===e.importId&&JSON.stringify(b)===JSON.stringify(e))));
- const next={...structuredClone(input),effects:baselineImport?[...draftEffects,...newEffects]:[...imported.effects,...input.effects.filter(e=>!e.importId).flatMap(manualEffect)],cap:baseCap+imported.capAdded+magicBuffCap(selectedBuffs,imported.skillType,imported.reference),criticalCapAdded:imported.criticalCapAdded,
+ const next={...structuredClone(input),...(report.context.nativeElementAttacks?.includes(report.context.attack)?{element:imported.element}:{}),effects:baselineImport?[...draftEffects,...newEffects]:[...imported.effects,...input.effects.filter(e=>!e.importId).flatMap(manualEffect)],cap:baseCap+imported.capAdded+magicBuffCap(selectedBuffs,imported.skillType,imported.reference),criticalCapAdded:imported.criticalCapAdded,
   defenseRatio:Number.isFinite(manualDefenseRatio)?manualDefenseRatio:imported.defenseRatio,
   killerCorrection:imported.killerCorrection,specialAttack:selection.specialAttack===true,critRate:selection.criticalEnabled?Math.min(100,Math.max(0,(criticalAnchor?criticalAnchor.rate-criticalAnchor.contribution:baseCritRate)+imported.critAdded)):0};
  let projectStatPercent;
