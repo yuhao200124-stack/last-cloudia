@@ -47,7 +47,7 @@ export function buildDamageImport(report) {
         imported.reference.push(entry);
       }
       else if(e.type==='critPermission') { if(e.value===true)imported.magicCanCrit=true; imported.reference.push(entry); }
-      else if(e.type==='killer') { if(e.target==='Boss' && e.value===true) imported.bossKiller=true; else imported.blockers.push(`${row.sourceName}：特攻目标尚未映射。`); imported.reference.push(entry); }
+      else if(e.type==='killer') { if(['Boss','本次目标'].includes(e.target) && e.value===true) imported.bossKiller=true; else imported.blockers.push(`${row.sourceName}：特攻目标尚未映射。`); imported.reference.push(entry); }
       else if(e.type==='defenseReference') { defense.push(entry);imported.reference.push(entry); }
       else if(e.type==='hit') {hit.push(entry);imported.reference.push(entry);}
       else if(e.type==='statReference') {refs.push(entry);imported.reference.push(entry);}

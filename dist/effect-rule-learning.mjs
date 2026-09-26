@@ -1,14 +1,15 @@
 import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-condition-tags';
+import {commonSkillRules} from './common-skill-rules.mjs?v=20260926-common-skills';
 /** Reusable, description-matched rule templates. No imported content is executable. */
-import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260924-condition-tags';
+import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260926-common-skills';
 
 export const LEARNING_STORAGE_KEY = 'lc-effect-rules:learned:v1';
 
 const LIMITS = Object.freeze({ text: 8192, templates: 1000, rules: 100, conditions: 30, effects: 40, bytes: 2_000_000 });
 const TYPES = new Set(['stat', 'statBuff', 'damage', 'cap', 'critRate', 'critPermission', 'hit', 'statReference', 'equipmentStat', 'defense', 'recovery', 'utility', 'castSpeed', 'defenseReference', 'killer', 'killerPower']);
 const FIELDS = new Set(Object.keys(CONDITION_FIELDS));
-const OPS = new Set(['eq', 'in', 'notIn', 'gte']);
+const OPS = new Set(['eq', 'in', 'notIn', 'gte', 'intersects']);
 const DANGEROUS_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 const record = value => value !== null && typeof value === 'object' && !Array.isArray(value) && (Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null);
@@ -55,7 +56,7 @@ function validateRule(rule, path, errors, sourceText) {
       unknownKeys(condition, ['field', 'op', 'value'], p, errors);
       if (!FIELDS.has(condition.field)) errors.push(`${p}：未知条件字段`);
       if (!OPS.has(condition.op)) errors.push(`${p}：未知比较方式`);
-      if (condition.op === 'in' || condition.op === 'notIn') {
+      if (['in','notIn','intersects'].includes(condition.op)) {
         if (!Array.isArray(condition.value) || condition.value.length < 1 || condition.value.length > 30 || !condition.value.every(scalar)) errors.push(`${p}：集合值无效`);
       } else if (condition.op === 'gte') {
         if (!finite(condition.value)) errors.push(`${p}：阈值必须是有限数值`);
@@ -64,6 +65,7 @@ function validateRule(rule, path, errors, sourceText) {
       const values = Array.isArray(condition.value) ? condition.value : [condition.value];
       if (permitted && values.some(value => !permitted.includes(value))) errors.push(`${p}：条件值不在当前支持范围内`);
       if (condition.op === 'gte' && !['weaponCount', 'chainStacks'].includes(condition.field)) errors.push(`${p}：只有数值条件支持阈值比较`);
+      if(condition.op==='intersects'&&!CONDITION_FIELDS[condition.field]?.multiple)errors.push(`${p}：只有多值条件支持交集比较`);
     });
   }
   if (!Array.isArray(rule.effects) || rule.effects.length > LIMITS.effects) {
@@ -210,7 +212,7 @@ export function buildCatalog(sources, seedCatalog = [], learnedTemplates = {}) {
     }
     const seed = seedIndex.get(key);
     if (seed) return { ...source, rules: rebaseRules(seed.rules, source), learned: false, seeded: true, unknown: false };
-    const registered = basicStatRules(source);
+    const registered = commonSkillRules(source) || basicStatRules(source);
     if (registered) return { ...source, rules: registered, learned: false, seeded: false, unknown: false, registered: true };
     const parsed = hpStatRule(source) || simpleStatRule(source);
     if (parsed) return { ...source, rules: [parsed], learned: false, seeded: false, unknown: false, parsed: true };

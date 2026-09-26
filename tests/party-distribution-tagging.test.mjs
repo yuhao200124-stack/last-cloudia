@@ -1,3 +1,4 @@
+import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
 import {registryBeforeClassificationSupplements} from '../scripts/classification-supplement-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -28,7 +29,7 @@ test('all 935 records and 91 earlier passes can be restored exactly and protecte
  for(const p of manifest.baselinePasses)assert.equal(hash(before.tagPasses.find(x=>x.tag===p.tag)),p.hash,p.tag);
  for(const p of manifest.baselineViews){const change=manifest.changedViews[p.key];if(change)assert.deepEqual(partyBase.views[p.key]??null,change.after);assert.equal(hash(change?change.before:partyBase.views[p.key]),p.hash,p.key);}
  assert.equal(hash(Object.fromEntries(Object.entries(registry).filter(([k])=>!['entries','tagPasses','views'].includes(k)))),manifest.baselineFieldsHash);
- for(const[p,h]of Object.entries(manifest.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h,p);
+ for(const[p,h]of Object.entries(manifest.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,read(p))).digest('hex'),h,p);
  const old=resolveSkillLabels(before);assert.equal(old.filter(e=>e.judgment==='ready').length,749);
  assert(old.filter(e=>e.judgment==='ready').every(e=>catalog.entries.find(x=>x.id===e.id).judgment==='ready'));
  const promoted=old.filter(e=>e.judgment==='partial'&&partyBaseRows.find(x=>x.id===e.id).judgment==='ready').map(e=>e.id).sort();

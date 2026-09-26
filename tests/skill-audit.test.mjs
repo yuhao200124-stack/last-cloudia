@@ -71,7 +71,7 @@ test('translated names preserve the original character binding identity',()=>{
  const snapshot=page.window.LC_LOADOUT_CALCULATOR.snapshot();assert.equal(snapshot.items.length,1);assert.equal(snapshot.items[0].id,selected);assert.equal(snapshot.items[0].sourceIds[0],'test-recast');assert.equal(snapshot.totalSc,0);
 });
 
-test('condition tags display and search; edited effects drop stale tags from loadout snapshots',()=>{
+test('internal tags remain searchable for saved workflows but never render; edited descriptions invalidate metadata',()=>{
  const monkey=skill(304),life=skill(267),alliance=skill(284);
  const state={skillIds:[monkey.id,life.id,alliance.id],characterId:'',activeBreaks:[]};
  const page=boot({'lc-sheet-table:sc-calculator-v1':state});
@@ -85,34 +85,27 @@ test('condition tags display and search; edited effects drop stale tags from loa
  assert(!edited.search('光头猴').includes('条件标签'));
 });
 
-test('judgment column replaces SC and sources while retaining complete and partial effect coverage',()=>{
+test('ordinary skill list has no tag or judgment UI and preserves descriptions and saves',()=>{
  const complete=skill(8),partial=skill(339),opening=skill(390);
  const unknown=primary.find(r=>!r.basicStats&&!r.skillTags);
  const page=boot(),html=page.elements.get('#tableArea').innerHTML;
  const rowHtml=(markup,row)=>[...markup.matchAll(/<tr data-skill-id="[^"]+"[\s\S]*?<\/tr>/g)].find(m=>m[0].includes(`data-skill-id="${row.id}"`))?.[0];
- for(const [row,state,label] of [[complete,'ready','已完整判断'],[partial,'partial','判断部分'],[opening,'partial','判断部分'],[unknown,'unknown','没办法判断']]){
+ for(const row of [complete,partial,opening,unknown]){
   const markup=rowHtml(html,row);
-  assert(markup.includes(`data-judgment="${state}"`));
-  assert(markup.includes(`class="judgment-label judgment-${state}">${label}</span>`));
-  assert(!/<tr[^>]*class="judgment-/.test(markup));
-  const judgment=markup.match(/<td class="judgment-cell">([\s\S]*?)<\/td>/)[0];
-  assert(!judgment.includes('data-edit-field'));
-  assert(!markup.replace(judgment,'').includes(`judgment-${state}`));
+  assert(markup);
+  assert(!/judgment|skill-tags|skill-stat-metadata|skill-condition-tags/.test(markup));
+  assert.match(markup,/data-edit-field="effect"/);
  }
- assert.match(rowHtml(html,complete),/已判断标签：MP/);
- const partialTags=rowHtml(html,partial).match(/<td class="skill-tags-cell">([\s\S]*?)<\/td>/)[1];
- assert.match(partialTags,/已判断标签：攻击力/);
- assert(!partialTags.includes('已判断标签：类型追加'));
- assert.match(partialTags,/其余效果尚未全部贴标签/);
  for(const sheet of data.sheetOrder){
   const markup=boot({},sheet).elements.get('#tableArea').innerHTML;
+  assert(!/judgment|skill-tags-cell|skill-stat-metadata|skill-condition-tags|data-edit-field="(?:type|tags|skillTags|basicStats)"/.test(markup));
   assert(!/data-edit-field="(?:sc|sources)"|source-list|<th[^>]*>SC<\/th>|<th>获得方式<\/th>/.test(markup));
   for(const match of markup.matchAll(/<td[^>]*data-edit-field="effect"[^>]*>([\s\S]*?)<\/td>/g))assert(!/skill-stat-metadata|skill-condition-tags|judgment-label/.test(match[1]));
  }
  const edits={[`skill:${complete.id}`]:{effect:'自定义效果',sc:'19',sources:'用户保存的来源'}};
  const edited=boot({'lc-sheet-table:cell-edits-v1':edits,'lc-sheet-table:sc-calculator-v1':{skillIds:[complete.id],characterId:'',activeBreaks:[]}});
  const editedRow=rowHtml(edited.elements.get('#tableArea').innerHTML,complete);
- assert.match(editedRow,/data-judgment="unknown"/);
+ assert.match(editedRow,/自定义效果/);
  assert(!editedRow.includes('skill-stat-metadata'));
  assert(!editedRow.includes('用户保存的来源'));
  assert.equal(edited.window.LC_LOADOUT_CALCULATOR.snapshot().items[0].sc,19);

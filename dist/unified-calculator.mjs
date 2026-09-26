@@ -1,9 +1,9 @@
-import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260924-condition-tags';
+import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260926-common-skills';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
-import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260924-condition-tags';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260924-condition-tags';
-import {retargetReport} from './entry-preparation.mjs?v=20260924-condition-tags';
-import {buildDamageImport} from './damage-import.mjs?v=20260924-condition-tags';
+import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-common-skills';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-common-skills';
+import {buildDamageImport} from './damage-import.mjs?v=20260926-common-skills';
 import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

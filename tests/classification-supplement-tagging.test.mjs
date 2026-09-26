@@ -1,3 +1,4 @@
+import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -27,7 +28,7 @@ test('all previous sources, passes, views and protected calculation files remain
  for(const p of manifest.baselineEntries)assert.equal(hash(before.entries.find(e=>e.id===p.id)),p.hash,p.id);
  for(const p of manifest.baselinePasses)assert.equal(hash(before.tagPasses.find(e=>e.tag===p.tag)),p.hash,p.tag);
  for(const p of manifest.baselineViews)assert.equal(hash(before.views[p.key]),p.hash,p.key);
- for(const[p,h]of Object.entries(manifest.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h,p);
+ for(const[p,h]of Object.entries(manifest.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,read(p))).digest('hex'),h,p);
  const previous=resolveSkillLabels(before);assert.equal(previous.filter(e=>e.judgment==='ready').length,757);
  for(const e of previous.filter(e=>e.judgment==='ready'))assert.equal(catalog.entries.find(x=>x.id===e.id).judgment,'ready');
  assert.deepEqual(nums(previous.filter(e=>e.judgment==='partial'&&catalog.entries.find(x=>x.id===e.id).judgment==='ready')),[176,183,293,431,524,599,618,641,775,823,828,938,984,1059,1066,1074,1176,1228,1272,1365,1515,1573,1583,1690,1694,1746,1775,1813,1940,1941]);

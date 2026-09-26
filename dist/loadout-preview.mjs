@@ -1,11 +1,12 @@
-import {buildCatalog} from './effect-rule-learning.mjs?v=20260924-condition-tags';
-import {retargetReport} from './entry-preparation.mjs?v=20260924-condition-tags';
-import {buildDamageImport} from './damage-import.mjs?v=20260924-condition-tags';
+import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-common-skills';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-common-skills';
+import {buildDamageImport} from './damage-import.mjs?v=20260926-common-skills';
 import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-condition-tags';
 import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
 import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-condition-tags';
 import {magicBuffCap} from './magic-buffs.mjs?v=20260924-condition-tags';
 import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-condition-tags';
+import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-common-skills';
 
 const eq=(field,value)=>({field,op:'eq',value});
 const elements={火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark',无:'none'};
@@ -53,11 +54,11 @@ export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
  // their source IDs, including exclusions and confirmed reader replacements.
  const native=new Map();
  for(const row of baseReport.rows||[])if(['common','exclusive','transcend'].includes(row.group)){
-  const id=basicStatNameIdentity(row.sourceName);if(id){const set=native.get(id)||new Set();set.add(row.sourceId);native.set(id,set);}
+  const id=commonSkillIdentity({name:row.sourceName,text:row.sourceText})||basicStatNameIdentity(row.sourceName);if(id){const set=native.get(id)||new Set();set.add(row.sourceId);native.set(id,set);}
  }
  const items=new Map();
  for(const original of snapshot.items){
-  const catalogId=basicStatIdentity(original)||basicStatNameIdentity(original.name);
+  const catalogId=commonSkillIdentity(original)||basicStatIdentity(original)||basicStatNameIdentity(original.name);
   const sourceIds=original.sourceIds?.length?original.sourceIds:!original.edited&&catalogId&&native.has(catalogId)?[...native.get(catalogId)]:[];
   const item={...original,catalogId,sourceIds},key=catalogId||original.id;
   if(!items.has(key)||sourceIds.length&&!items.get(key).sourceIds.length)items.set(key,item);
@@ -74,6 +75,9 @@ export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
 }
 
 export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseCap=9999,baseCritRate=0,templates={},selectedBuffs=[],runtimeAnchor=[],criticalAnchor=null,manualDefenseRatio=null}){
+ const raceIds={'战士':'soldier','狙击手':'sniper','骑士':'knight','魔法师':'sorcerer','兽':'beast','植物':'plant','昆虫':'insect','鸟':'bird','魔法生物':'creature','不死生物':'undead','石':'stone','机械':'machine','精灵':'spirit','龙':'dragon','神':'god','鱼':'fish'};
+ selection={...selection,back:input.back,air:input.air,ailment:input.ailment,stunned:input.stunned===true,weakness:input.element!=='无'&&input.resistance+input.resistCorrection<0,
+  enemyRaces:input.races?.length?input.races.map(r=>raceIds[r]||r):null};
  const report=buildLoadoutReport(baseReport,snapshot,selection,templates),unresolved=[];
  for(const row of report.rows)if(row.status==='pending')unresolved.push({name:row.sourceName,text:row.sourceText,reason:row.reasons.join('；')||'尚未识别'});
  // Keep known effects calculable while exposing unmapped operations explicitly.

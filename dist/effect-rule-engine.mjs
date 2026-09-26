@@ -17,8 +17,12 @@ export const DEFAULT_CONTEXT = {
   lowHp: null, firstLowHp: null, mpEnough: null, killer: false, killerOverride:null, break:false, equipmentIds: [],
   sword: false, axe: false, spear: false, hammer: false, bow: false, machine: false, claw: false,
   clothes: false, armor: false, incomingElement: null, incomingAttackKind: null,
+  enemyRaces:null, back:null, air:null, ailment:null, stunned:false,
 };
 export const CONDITION_FIELDS = {
+  enemyRaces: {label:'目标种族',multiple:true,options:options([['soldier','战士'],['sniper','狙击手'],['knight','骑士'],['sorcerer','魔法师'],['beast','兽'],['plant','植物'],['insect','昆虫'],['bird','鸟'],['creature','魔法生物'],['undead','不死生物'],['stone','石'],['machine','机械'],['spirit','精灵'],['dragon','龙'],['god','神'],['fish','鱼']])},
+  back:{label:'从背后攻击',options:yesNo},air:{label:'目标浮空',options:yesNo},ailment:{label:'目标处于异常状态',options:yesNo},
+  breakOrStunned:{label:'目标气绝或Break',options:yesNo},
   attack: { label: '攻击方式', options: ATTACKS.map(({ id, label }) => ({ value: id, label })) },
   attackKind: { label: '攻击类别', options: options([['normal', '普通攻击'], ['skill', '特技'], ['magic', '魔法'], ['ultimate', '超必杀']]) },
   damageType: { label: '伤害类型', options: options([[null, '待确认'], ['physical', '物理'], ['magical', '魔法'], ['mixed', '混合']]) },
@@ -35,7 +39,7 @@ export const CONDITION_FIELDS = {
   incomingElement: { label: '受到攻击的属性', options: options([[null, '待选择'], ['none', '无'], ['fire', '火'], ['ice', '冰'], ['earth', '树'], ['thunder', '雷'], ['light', '光'], ['dark', '暗']]) },
   incomingAttackKind: { label: '受到攻击的类别', options: options([[null, '待选择'], ['physical', '物理'], ['magic', '魔法'], ['ultimate', '超必杀']]) },
   magicFamily: { label: '魔法类型', options: options([[null, '待确认'], ['normal', '普通魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊魔法']]) },
-  boss: { label: '目标是 Boss', options: options([[true, '是（当前固定）']]) },
+  boss: { label: '目标是 Boss', options: options([[true, '是（当前固定）'],[false,'否（非Boss专用条件）']]) },
   fullHp: { label: '自身满生命', options: yesNo }, critical: { label: '本次暴击', options: yesNo },
   weakness: { label: '命中弱点属性', options: yesNo }, resonance: { label: '我方正在发动不可叠加魔法', options: yesNo },
   chainStacks: { label: '法术联结状态', options: options([[0, '不叠加 +0%'], [1, '第1次 +4%'], [2, '第2次 +8%'], [3, '第3次 +12%'], [4, '第4次 +16%'], [5, '第5次及以后 +20%']]) },
@@ -67,6 +71,9 @@ export function normalizeContext(input = {}) {
   else if(ctx.fullHp===true)ctx.lowHp=false;
   else if(ctx.lowHp===true)ctx.fullHp=false;
   for(const field of STAT_CONDITION_FIELDS)if(typeof ctx[field]!=='boolean')ctx[field]=null;
+  for(const field of ['back','air','ailment'])if(typeof ctx[field]!=='boolean')ctx[field]=null;
+  ctx.breakOrStunned=ctx.break===true||ctx.stunned===true?true:ctx.break===false&&ctx.stunned===false?false:null;
+  ctx.enemyRaces=Array.isArray(input.enemyRaces)&&input.enemyRaces.every(r=>CONDITION_FIELDS.enemyRaces.options.some(o=>o.value===r))?[...new Set(input.enemyRaces)]:null;
   if (ctx.iceStaff === true) ctx.staff = true;
   if (ctx.weaponCount === 0) { ctx.staff = false; ctx.iceStaff = false; }
   for (const key of ['sword', 'axe', 'spear', 'hammer', 'bow', 'machine', 'claw']) {
@@ -91,12 +98,16 @@ export function describeCondition(condition) {
   const label = CONDITION_FIELDS[condition.field]?.label ?? condition.field ?? '未知条件';
   const values = Array.isArray(condition.value) ? condition.value : [condition.value];
   const rendered = values.map((v) => valueLabel(condition.field, v)).join('／');
-  return `${label}${({ eq: '：', in: '：', notIn: '排除：', gte: '至少：' })[condition.op] ?? '（待确认）：'}${rendered}`;
+  return `${label}${({ eq: '：', in: '：', notIn: '排除：', gte: '至少：', intersects:'包含任一种：' })[condition.op] ?? '（待确认）：'}${rendered}`;
 }
 function conditionMatch(condition, ctx) {
   if (!condition || !CONDITION_FIELDS[condition.field]) return null;
   const actual = ctx[condition.field];
   if (actual === null || actual === undefined) return null;
+  if(condition.op==='intersects'){
+    if(!CONDITION_FIELDS[condition.field].multiple||!Array.isArray(actual)||!Array.isArray(condition.value)||!condition.value.length||condition.value.some(v=>!CONDITION_FIELDS[condition.field].options.some(o=>o.value===v)))return null;
+    return condition.value.some(v=>actual.includes(v));
+  }
   // A mixed attack can contain physical and magical portions. Until those
   // portions are described separately, neither scope can safely be rejected
   // or applied to the complete attack. An explicitly mixed scope is known.

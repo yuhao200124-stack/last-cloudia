@@ -2,8 +2,9 @@ import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260924-cond
 import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260924-condition-tags';
 import {effectCombatModes} from './combat-modes.mjs?v=20260924-condition-tags';
-import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260924-condition-tags';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260924-condition-tags';
+import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-common-skills';
+import {upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-common-skills';
 import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-fullpage';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
@@ -52,13 +53,16 @@ export function retargetReport(report,selection) {
  if(typeof selection.specialAttack==='boolean')context.killerOverride=selection.specialAttack;
  if(typeof selection.break==='boolean')context.break=selection.break;
   if(typeof selection.fullHp==='boolean')context.fullHp=selection.fullHp;
+  for(const field of ['back','air','ailment','weakness','stunned'])if(typeof selection[field]==='boolean')context[field]=selection[field];
+  if(Object.hasOwn(selection,'enemyRaces'))context.enemyRaces=selection.enemyRaces;
   for(const field of ['lowHp',...STAT_CONDITION_FIELDS])if(typeof selection[field]==='boolean')context[field]=selection[field];
   if(selection.fullHp===true&&selection.lowHp!==true)context.lowHp=false;
   if(selection.lowHp===true&&selection.fullHp!==true)context.fullHp=false;
  if(typeof selection.criticalEnabled==='boolean'){context.criticalEnabled=selection.criticalEnabled;context.critical=selection.criticalEnabled;}
  // Damage-page dual wield is a manual hit-calculation option. Equipment and
  // single/dual-weapon skill conditions come only from the basic calculator.
- const evaluated=evaluateCatalog([...grouped.values()],context,overrides);
+ const sources=[...grouped.values()].map(s=>s.rules.some(r=>overrides[r.id]?.disabled)?s:upgradeCommonSource(s));
+ const evaluated=evaluateCatalog(sources,context,overrides);
  return applyCriticalOption({...report,...evaluated});
 }
 export function websiteCandidates(report) {

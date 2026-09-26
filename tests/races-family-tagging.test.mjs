@@ -1,3 +1,4 @@
+import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
 import {entryBeforeClassificationSupplements} from '../scripts/classification-supplement-preservation-helpers.mjs';
 import {passBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import {createHash} from 'node:crypto';
@@ -26,7 +27,7 @@ test('race passes preserve all 776 previous records and 46 passes, refining only
  for(const p of preserved.tagPasses)assert.equal(hash(passBeforeRemaining(r.tagPasses.find(t=>t.tag===p.tag))),p.hash,p.tag);
  for(const p of preserved.entries){const e=r.entries.find(e=>e.id===p.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeRaces(e)]),p.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(entryBeforeClassificationSupplements(e).tagDetails).filter(([t,d])=>!['Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),p.bindingsHash,e.name);}
  for(const s of preserved.conditionSplits){const e=r.entries.find(e=>e.id===s.skillId);assert.deepEqual(e.parts.filter(p=>s.replacementParts.some(x=>x.id===p.id)),s.replacementParts);for(const pass of r.tagPasses.filter(p=>!['装备自身数值强化','地面状态','自身倒下／战斗不能'].includes(p.tag)).map(passBeforeRemaining).filter(t=>!['Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(t.tag)))assert(!pass.assignments.some(a=>a.skillId===e.id&&a.partIds.includes(s.originalPart.id)));}
- for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeBoss(p,read('../'+p))).digest('hex'),h);
+ for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeBoss(p,textBeforeCommonCalculator(p,read('../'+p)))).digest('hex'),h);
  for(const[n,key]of [[42,'physical'],[665,'magic-damage'],[772,'ultimate'],[1191,'technique'],[1884,'critical'],[1179,'light']]){assert.strictEqual(labelingView(catalog,key).entries.find(e=>e.id===entry(n).id),entry(n));assert.equal(entry(n).judgment,'ready');}
 });
 

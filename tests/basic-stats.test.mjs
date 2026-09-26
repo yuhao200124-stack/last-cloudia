@@ -83,7 +83,7 @@ test('unresolved curves remain visible; editing text invalidates official rules'
  }
  const renamed={...item('攻击提升极'),name:'我的名字'};assert(basicStatRules(renamed));
  assert.equal(basicStatRules({...renamed,text:'攻击力+99%',edited:true}),null);
- const compound=report(['石之世界']);assert(compound.rows.some(r=>r.status==='active'&&r.rule.effects.some(e=>e.target==='防御力')));assert(compound.rows.some(r=>r.status==='pending'));
+ const compound=report(['石之世界']);assert(compound.rows.some(r=>r.status==='active'&&r.rule.effects.some(e=>e.target==='防御力')));assert(!compound.rows.some(r=>r.sourceName==='石之世界'&&r.rule.effects.some(e=>e.type==='damage')),'race addition and penetration immunity are not outgoing damage');
 });
 
 test('opening and permanent buffs share one runtime group and expiry falls back to permanent',()=>{

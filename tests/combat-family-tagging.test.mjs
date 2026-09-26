@@ -1,3 +1,4 @@
+import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
 import {passBeforeRemaining,registryBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -26,7 +27,7 @@ test('all 902 previous sources, fragments, 71 passes, numeric bindings and calcu
  assert.equal(preserved.entries.length,902);assert.equal(preserved.tagPassHashes.length,71);assert.equal(preserved.addedParts.length,16);assert.equal(preserved.noteUpdates.length,3);
  for(const old of preserved.entries){const e=registry.entries.find(e=>e.id===old.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeCombat(e)]),old.sourceAndPartsHash,e.name);assert.equal(hash(tagDetailsBeforeCombat(e)),old.tagDetailsHash,e.name);}
  for(const p of preserved.tagPassHashes)assert.equal(hash(passBeforeRemaining(registry.tagPasses.find(x=>x.tag===p.tag))),p.hash,p.tag);
- for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h,p);
+ for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,read(p))).digest('hex'),h,p);
  assert.deepEqual(registry.views.all.displayOrder.slice(0,902),preserved.previousDisplayOrder);assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,935);assert.equal(registry.tagPasses.length,93);assert.equal(catalog.views.all.counts.ready,787);assert.equal(catalog.views.all.counts.partial,148);
  const before=resolveSkillLabels(registryBeforeCombat(registry));assert.equal(before.filter(e=>e.judgment==='ready').length,622);for(const e of before.filter(e=>e.judgment==='ready'))assert.equal(catalog.entries.find(x=>x.id===e.id).judgment,'ready');
  assert.deepEqual(nums(before.filter(e=>e.judgment==='partial'&&resolveSkillLabels(registryBeforeRemaining(registry)).find(x=>x.id===e.id).judgment==='ready')),[199,212,682,730,780,966,1036,1153,1263,1446,1497,1743]);

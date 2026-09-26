@@ -1,3 +1,4 @@
+import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
 import {passBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import {tagDetailsBeforeBreak} from './break-preservation-helpers.mjs';
 import {partsBeforeAbnormal} from '../scripts/validate-abnormal-labels.mjs';
@@ -19,7 +20,7 @@ test('every old source, fragment, binding, tag pass, order and calculator file r
  assert.equal(preserved.entries.length,852);assert.equal(preserved.tagPassHashes.length,66);
  for(const old of preserved.entries){const e=r.entries.find(e=>e.id===old.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeAbnormal(e).filter(p=>p.id!=='mnd-healing-reference')]),old.sourceAndPartsHash,e.name);const d=Object.fromEntries(Object.entries(tagDetailsBeforeBreak(e)).filter(([t])=>!newTags.includes(t)));for(const fix of preserved.noteUpdates.filter(f=>f.skillId===e.id)){assert.equal(d[fix.tag].calculationNote,fix.after);d[fix.tag].calculationNote=fix.before;}assert.equal(hash(d),old.tagDetailsHash,e.name);}
  for(const p of preserved.tagPassHashes)assert.equal(hash(passBeforeRemaining(r.tagPasses.find(x=>x.tag===p.tag))),p.hash,p.tag);
- for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h,p);
+ for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,read(p))).digest('hex'),h,p);
  assert.deepEqual(catalog.views.all.displayOrder.slice(0,87),catalog.views.attack.displayOrder);assert.equal(catalog.numericEffectInjection,false);
  const before=structuredClone(r);before.tagPasses=before.tagPasses.filter(p=>!newTags.includes(p.tag)).map(passBeforeRemaining);for(const e of before.entries)e.parts=partsBeforeAbnormal(e).filter(p=>p.id!=='mnd-healing-reference');const old=resolveSkillLabels(before);const currentBeforeAbnormal=resolveSkillLabels({...r,tagPasses:r.tagPasses.filter(p=>!['异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能'].includes(p.tag)).map(passBeforeRemaining),entries:r.entries.map(e=>({...e,parts:partsBeforeAbnormal(e)}))});
  const promotions=old.filter(e=>e.judgment==='partial'&&currentBeforeAbnormal.find(c=>c.id===e.id).judgment==='ready');assert.equal(promotions.length,26);for(const e of old.filter(e=>e.judgment==='ready'))assert.equal(entry(+e.url.split('/').pop()).judgment,'ready');

@@ -227,14 +227,11 @@ main { padding: 18px clamp(10px, 2vw, 28px) 42px; }
 }
 
 .excel-table col.type { width: 10%; }
-.excel-table col.name { width: 12%; }
-.excel-table col.judgment { width: 12%; }
-.excel-table col.effect { width: 35%; }
-.excel-table col.tags { width: 19%; }
+.excel-table col.name { width: 18%; }
+.excel-table col.effect { width: 60%; }
 .excel-table col.rating { width: 7%; }
 .excel-table col.action { width: 5%; }
-.excel-table.all-skills col.effect { width: 40%; }
-.excel-table.all-skills col.tags { width: 24%; }
+.excel-table.all-skills col.effect { width: 70%; }
 
 .excel-table th,
 .excel-table td {

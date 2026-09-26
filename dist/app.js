@@ -214,27 +214,6 @@
     return highlight(rowValue(row, 'effect')) + (notes ? `<div class="skill-effect-notes"><span>补充说明</span>${highlight(notes)}</div>` : '');
   }
 
-  function skillJudgment(row) {
-    if (rowValue(row, 'effect') !== String(row.effect || '')) return 'unknown';
-    const basic = row.basicStats;
-    if (basic) return basic.status === 'ready' && basic.remaining === false ? 'ready' : 'partial';
-    return skillTagLabels(row).length ? 'partial' : 'unknown';
-  }
-
-  function judgmentCell(row) {
-    const state = skillJudgment(row);
-    const label = {ready:'已完整判断',partial:'判断部分',unknown:'没办法判断'}[state];
-    return `<td class="judgment-cell">${cell(`<span class="judgment-label judgment-${state}">${label}</span>`, 'cell-center')}</td>`;
-  }
-
-  function tagContent(row) {
-    const basic=row.basicStats,original=rowValue(row,'effect')===String(row.effect||'');
-    if (!original) return '<p class="skill-tag-note">效果已修改，原标签需重新判断。</p>';
-    const annotation=basic?`<div class="skill-stat-metadata"><b>已判断标签：${basic.targets.map(escapeHtml).join('、')}</b><span>${escapeHtml(basic.summary)}</span><small>${escapeHtml(basic.note)}</small>${basic.remaining?'<small>其余效果尚未全部贴标签。</small>':''}</div>`:'';
-    const tags=skillTagLabels(row);
-    return annotation + (tags.length ? `<div class="skill-condition-tags"><b>条件标签</b>${tags.map(label=>`<span>${escapeHtml(label)}</span>`).join('')}</div>` : '') || '<p class="skill-tag-note">暂未确认可分配的标签。</p>';
-  }
-
   function editedSources(row) {
     return rowValue(row, 'sources').split('\n').map(item => item.trim()).filter(Boolean);
   }
@@ -615,7 +594,7 @@
   function splitTable(rows, label) {
     const groups = groupRows(rows);
     const body = groups.map(group => group.separator
-      ? '<tr class="separator-row" aria-hidden="true"><td colspan="7"></td></tr>'
+      ? '<tr class="separator-row" aria-hidden="true"><td colspan="5"></td></tr>'
       : group.rows.map((row, index) => {
         const key = rowKey(row);
         const typeKey = `type:${activeSheet}:${label}:${group.type}`;
@@ -623,21 +602,19 @@
         const name = rowValue(row, 'name');
         const effect = rowValue(row, 'effect');
         const markValue = rowValue(row, 'mark');
-        return `<tr data-skill-id="${escapeHtml(row.id)}" data-judgment="${skillJudgment(row)}">
-          ${index === 0 ? `<td class="type-cell editable-cell" rowspan="${group.rows.length}" data-edit-key="${escapeHtml(typeKey)}" data-edit-field="type" data-edit-value="${escapeHtml(typeValue)}" title="双击编辑">${cell(highlight(typeValue), 'cell-center')}</td>` : ''}
+        return `<tr data-skill-id="${escapeHtml(row.id)}">
+          ${index === 0 ? `<td class="type-cell" rowspan="${group.rows.length}">${cell(highlight(typeValue), 'cell-center')}</td>` : ''}
           ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
-          ${judgmentCell(row)}
           ${editableTd(key, 'effect', effect, cell(effectContent(row)), '')}
-          <td class="skill-tags-cell">${cell(tagContent(row))}</td>
           ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
           <td class="action-cell">${addButton(row)}</td>
         </tr>`;
       }).join('')).join('');
     return `<div class="table-scroll"><table class="excel-table" aria-label="${escapeHtml(label)}">
-      <colgroup><col class="type"><col class="name"><col class="judgment"><col class="effect"><col class="tags"><col class="rating"><col class="action"></colgroup>
+      <colgroup><col class="type"><col class="name"><col class="effect"><col class="rating"><col class="action"></colgroup>
       <thead>
-        <tr class="book-title"><th colspan="7">一、被动技能</th></tr>
-        <tr class="column-title"><th>技能类型</th><th>技能名称</th><th>判断</th><th>技能效果／说明</th><th>标签／判断说明</th><th>评价</th><th>添加</th></tr>
+        <tr class="book-title"><th colspan="5">一、被动技能</th></tr>
+        <tr class="column-title"><th>技能类型</th><th>技能名称</th><th>技能效果／说明</th><th>评价</th><th>添加</th></tr>
       </thead>
       <tbody>${body}</tbody>
     </table></div>`;
@@ -649,20 +626,18 @@
       const name = rowValue(row, 'name');
       const effect = rowValue(row, 'effect');
       const markValue = rowValue(row, 'mark');
-      return `<tr data-skill-id="${escapeHtml(row.id)}" data-judgment="${skillJudgment(row)}">
+      return `<tr data-skill-id="${escapeHtml(row.id)}">
         ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
-        ${judgmentCell(row)}
         ${editableTd(key, 'effect', effect, cell(effectContent(row)), '')}
-        <td class="skill-tags-cell">${cell(tagContent(row))}</td>
         ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
         <td class="action-cell">${addButton(row)}</td>
       </tr>`;
     }).join('');
     return `<div class="table-scroll"><table class="excel-table all-skills" aria-label="${escapeHtml(label)}">
-      <colgroup><col class="name"><col class="judgment"><col class="effect"><col class="tags"><col class="rating"><col class="action"></colgroup>
+      <colgroup><col class="name"><col class="effect"><col class="rating"><col class="action"></colgroup>
       <thead>
-        <tr class="book-title"><th colspan="6">${activeSheet==='基础属性'?escapeHtml(label):'一、被动技能'}</th></tr>
-        <tr class="column-title"><th>技能名称</th><th>判断</th><th>技能效果／说明</th><th>标签／判断说明</th><th>评价</th><th>添加</th></tr>
+        <tr class="book-title"><th colspan="4">${activeSheet==='基础属性'?escapeHtml(label):'一、被动技能'}</th></tr>
+        <tr class="column-title"><th>技能名称</th><th>技能效果／说明</th><th>评价</th><th>添加</th></tr>
       </thead>
       <tbody>${body}</tbody>
     </table></div>`;
@@ -742,6 +717,7 @@
   backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
   function saveCellEdit(key, field, value) {
+    if (!['name','effect','mark','sc','sources'].includes(field)) return;
     edits[key] = { ...(edits[key] || {}), [field]: value };
     localStorage.setItem(editStorageKey, JSON.stringify(edits));
   }
@@ -749,7 +725,7 @@
   function startCellEdit(target) {
     if (!target || target.querySelector('.cell-editor')) return;
     const { editKey: key, editField: field, editValue: value = '' } = target.dataset;
-    if (!key || !field) return;
+    if (!key || !['name','effect','mark','sc','sources'].includes(field)) return;
     const multiline = field === 'effect' || field === 'sources';
     const editor = document.createElement(multiline ? 'textarea' : 'input');
     editor.className = 'cell-editor';

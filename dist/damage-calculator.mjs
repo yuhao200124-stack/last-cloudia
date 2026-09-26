@@ -1,15 +1,15 @@
 import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260924-fullpage';
-import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260924-condition-tags';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260924-condition-tags';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260924-condition-tags';
+import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-common-skills';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-common-skills';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
-import {observedCritical} from './reader-bonus-decoder.mjs?v=20260924-condition-tags';
+import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-condition-tags';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260924-condition-tags';
-import {loadCharacterReport} from './character-report-loader.mjs?v=20260924-condition-tags';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-common-skills';
+import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
 import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
@@ -224,7 +224,7 @@ function read() {
   for(const k of booleanKeys) if($(k))s[k]=$(k).checked;
   for(const k of ['type','skillType','element','hitScaleStage','attackBasis']) s[k]=$(k).value;
   if(s.attackBasis==='auto')s.attackBasis='layers';
-  s.races=bossRaces;s.killerRaces=[];s.specialAttack=$('specialAttack').checked;s.killerCorrection=imported?.killerCorrection??0;
+  s.races=bossRaces;s.stunned=$('stunned').checked;s.killerRaces=[];s.specialAttack=$('specialAttack').checked;s.killerCorrection=imported?.killerCorrection??0;
   if(criticalDisabled())s.critRate=0;
   s.criticalCapAdded=imported?.criticalCapAdded??0;
   s.effects=readEffects().map(e=>!$('criticalEnabled').checked&&(e.kind==='critical'||e.criticalOnly)?{...e,enabled:false}:e);return s;
@@ -258,11 +258,16 @@ function labels() {
   $('conditionStatus').textContent=($('dualWield').checked?'双刀按下方命中与单段倍率计算；':'')+'满血与濒死互斥；开场Buff仅在40秒内勾选。觉醒类勾选表示已经触发且仍有效，回血后可继续保持；永久Buff随已选技能生效。';
   hitSourceNote();
 }
+$('bossRaceChoices').innerHTML=RACES.map((race,i)=>`<label><input id="bossRace${i}" data-boss-race="${esc(race)}" type="checkbox">${esc(race)}</label>`).join('');
+function syncBossRaces(){
+  document.querySelectorAll('[data-boss-race]').forEach(el=>el.checked=bossRaces.includes(el.dataset.bossRace));
+  $('bossIdentity').textContent=`种族：${bossRaces.length?bossRaces.join('、'):'未确认（种族限定加成不自动计入）'}`;
+}
 function applyBoss() {
   const p=bosses[$('bossPreset').value];
   $('bossDefense').value=p?.def??'';$('bossMind').value=p?.mnd??'';
   document.querySelectorAll('[data-boss-resistance]').forEach((el,i)=>el.value=p?.res?.[i]??'');
-  bossRaces=p?.races||[];$('bossIdentity').textContent=`种族：${p?.raceLabel||'未读取'}`;
+  bossRaces=p?.races||[];syncBossRaces();
   $('boss').checked=true;labels();
 }
 function update() {
@@ -349,6 +354,7 @@ function reset(clearSaved=true) {
   for(const k of numericKeys) if($(k))$(k).value=s[k];
   $('settledAttack').value='';$('attackBase').value='';
   for(const k of booleanKeys) if($(k))$(k).checked=s[k];
+  $('stunned').checked=false;
   for(const k of ['type','skillType','element']) $(k).value=s[k];
   $('preset').value='eris';$('bossPreset').value='bird';
   document.querySelectorAll('.choices input').forEach(e=>e.checked=false);
@@ -403,6 +409,7 @@ $('calculator').addEventListener('change',event=>{
     if($('dualWield').checked){$('hitScaleStage').value='';$('hitDetails').open=true;}
   }
   if(id==='bossPreset')applyBoss();
+  if(event.target.dataset.bossRace){bossRaces=[...document.querySelectorAll('[data-boss-race]:checked')].map(el=>el.dataset.bossRace);syncBossRaces();}
   update();
 });
 $('debuff').addEventListener('click',()=>{const p=bosses[$('bossPreset').value];if(p)$('bossDefense').value=p.debuff;update();});
@@ -494,7 +501,7 @@ if(transferred?.workflow?.report){latestReport=transferred.workflow.report;rende
 else if(characterId){loadReport();if(embedded)window.parent.postMessage({type:'lc-damage-ready'},location.origin);}
 if(transferred?.calculator){
  ({effects,nextId,imported,readUnit,manualCriticalBase,retainedImportDraft,formulaCapture,captureOptions,captureApplication,panelLayers,layerSourceKey,attackBasisTouched,autoLayer,magicSelection,defenseRatioTouched,bossRaces,reviewBlocker,lastHitKey}=transferred.calculator);
- renderMagicBuffs(latestReport?.profile);renderEffects();renderCaptureOptions();restoreControls($('calculator'),transferred.controls);
+ renderMagicBuffs(latestReport?.profile);renderEffects();renderCaptureOptions();restoreControls($('calculator'),transferred.controls);syncBossRaces();
  $('applyFormulaCapture').disabled=!selectedCapture();$('formulaCaptureNote').textContent=transferred.captureNote||'';labels();update();
  const restoredUrl=new URL(location.href);restoredUrl.searchParams.delete('session');history.replaceState(null,'',restoredUrl.href);
  removeCalculatorSession(params.get('session')).catch(()=>{});

@@ -1,3 +1,4 @@
+import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -22,7 +23,7 @@ test('all previous sources, fragments, assignments and protected files survive t
  assert.equal(manifest.entries.length,920);assert.equal(manifest.tagPassHashes.length,77);assert.equal(manifest.addedParts.length,44);assert.deepEqual(manifest.changedPasses.map(p=>p.tag),['异常','Break']);
  for(const old of manifest.entries){const e=registry.entries.find(e=>e.id===old.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeRemaining(e)]),old.sourceAndPartsHash,e.name);assert.equal(hash(tagDetailsBeforeRemaining(e)),old.tagDetailsHash,e.name);}
  for(const old of manifest.tagPassHashes)assert.equal(hash(passBeforeRemaining(registry.tagPasses.find(p=>p.tag===old.tag))),old.hash,old.tag);
- for(const[p,h]of Object.entries(manifest.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h,p);
+ for(const[p,h]of Object.entries(manifest.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,read(p))).digest('hex'),h,p);
  assert.deepEqual(registry.views.all.displayOrder.slice(0,920),manifest.previousDisplayOrder);assert.equal(catalog.numericEffectInjection,false);assert.equal(catalog.entries.length,935);assert.equal(registry.tagPasses.length,93);assert.deepEqual(catalog.views.all.counts,{reviewedUnique:935,relatedUnique:935,notRelatedUnique:0,ready:787,partial:148,unknown:0});
  const before=resolveSkillLabels(registryBeforeRemaining(registry));assert.equal(before.filter(e=>e.judgment==='ready').length,644);for(const e of before.filter(e=>e.judgment==='ready'))assert.equal(catalog.entries.find(x=>x.id===e.id).judgment,'ready');
  assert.equal(before.filter(e=>e.judgment==='partial'&&catalog.entries.find(x=>x.id===e.id).judgment==='ready').length,131);assert(catalog.entries.filter(e=>e.judgment==='ready').every(e=>e.parts.every(p=>!/待确认|未知|尚待/.test(p.text))));

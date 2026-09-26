@@ -1,3 +1,4 @@
+import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
 import {entryBeforeClassificationSupplements} from '../scripts/classification-supplement-preservation-helpers.mjs';
 import {passBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import {partsBeforeAbnormal} from '../scripts/validate-abnormal-labels.mjs';
@@ -21,7 +22,7 @@ test('armor expansion retains every previous record, source, fragment, binding, 
  assert.equal(preserved.entries.length,843);assert.equal(preserved.tagPassHashes.length,63);assert.equal(r.tagPasses.length,93);
  for(const old of preserved.entries){const e=r.entries.find(e=>e.id===old.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeAbnormal(e).filter(p=>p.id!=='mnd-healing-reference')]),old.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(entryBeforeClassificationSupplements(e).tagDetails).filter(([t,d])=>!['铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能'].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),old.bindingsHash,e.name);}
  for(const p of preserved.tagPassHashes)assert.equal(hash(passBeforeRemaining(r.tagPasses.find(x=>x.tag===p.tag))),p.hash,p.tag);
- for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(read(p)).digest('hex'),h,p);
+ for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,read(p))).digest('hex'),h,p);
 });
 
 test('armor equip permissions do not equip items or fulfill wearer conditions; armor passes cover conditions only',()=>{

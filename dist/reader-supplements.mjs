@@ -1,5 +1,5 @@
-import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260924-condition-tags';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260924-condition-tags';
+import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-common-skills';
 import {requiresCritical} from './critical-options.mjs?v=20260924-condition-tags';
 
 // A supplement is a reader source, never a fabricated website/account value.

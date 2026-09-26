@@ -1,10 +1,10 @@
 import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
-import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs?v=20260924-condition-tags';
-import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260924-condition-tags';
-import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260924-condition-tags';
+import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs?v=20260926-common-skills';
+import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260926-common-skills';
+import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260926-common-skills';
 import { summarizeEffects } from './effect-totals.mjs';
 import { ACCOUNT_BLESSING_CATALOG, ACCOUNT_BLESSING_META } from './account-blessings.mjs?v=20260924-fullpage';
-import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260924-condition-tags';
+import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260926-common-skills';
 
 mountAccountBlessings();
 
@@ -490,12 +490,13 @@ function mount() {
   function renderCondition(c, ri, ci) {
     const field = CONDITION_FIELDS[c.field];
     const opts = (field?.options || []).filter(o => o.value !== null);
-    const multi = c.op === 'in' || c.op === 'notIn';
+    const multi = ['in','notIn','intersects'].includes(c.op);
     const values = multi ? (Array.isArray(c.value) ? c.value : [c.value]) : [c.value];
     const input = opts.length && c.op !== 'gte'
       ? `<select data-cond-value="${ri}:${ci}"${multi ? ' multiple size="3"' : ''} aria-label="条件值">${opts.map(o => `<option value="${esc(JSON.stringify(o.value))}"${values.some(v => JSON.stringify(v) === JSON.stringify(o.value)) ? ' selected' : ''}>${esc(o.label)}</option>`).join('')}</select>`
       : `<input data-cond-number="${ri}:${ci}" type="number" value="${esc(Number(c.value) || 0)}" aria-label="条件数值">`;
     const ops = [['eq', '等于'], ['in', '符合任一种'], ['notIn', '排除这些']];
+    if(field?.multiple)ops.push(['intersects','包含任一种']);
     if (['weaponCount', 'chainStacks'].includes(c.field)) ops.push(['gte', '至少']);
     return `<div class="br-edit-condition"><select data-cond-field="${ri}:${ci}" aria-label="条件项目">${Object.entries(CONDITION_FIELDS).map(([k, f]) => editorOption(k, f.label, c.field)).join('')}</select><select data-cond-op="${ri}:${ci}" aria-label="条件关系">${ops.map(([k,l]) => editorOption(k,l,c.op)).join('')}</select>${input}<button type="button" class="br-button" data-remove-cond="${ri}:${ci}" aria-label="删除条件">删除</button></div>`;
   }
@@ -543,7 +544,7 @@ function mount() {
         if (c.op === 'gte' && !['weaponCount', 'chainStacks'].includes(c.field)) c.op = 'eq';
       }
       else c.op = el.value;
-      if (c.op === 'in' || c.op === 'notIn') c.value = Array.isArray(c.value) ? c.value : [c.value];
+      if (['in','notIn','intersects'].includes(c.op)) c.value = Array.isArray(c.value) ? c.value : [c.value];
       else if (Array.isArray(c.value)) c.value = c.value[0] ?? null;
       renderEditor();
     }
