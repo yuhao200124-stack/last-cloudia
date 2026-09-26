@@ -131,13 +131,27 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   // together with a group selection, so toggling a mode can add its sources.
   const modeReports=[false,true].map(lowHp=>retargetReport({...report,context:{...report.context,accountBlessings:state.accountBlessings}},{...state.selection,criticalEnabled:true,specialAttack:true,fullHp:!lowHp,lowHp,...STAT_CONDITION_ACTIVE,realSunday:false,break:true}));
   const modePairs=modeReports.map(r=>{const bonuses=selectReaderCriticalBonuses(evaluateReaderBonuses(unit?.bonuses||[],r.context),r);return {bonuses,compared:compareCandidates(websiteCandidates(r),bonuses,state.mappings,r.context)};});
-  const modesBonuses=[...new Map(modePairs.flatMap(p=>p.bonuses).map(b=>[b.id,b])).values()];
-  const modesCompared=[...new Map(modePairs.flatMap(p=>p.compared).map(r=>[r.id,r])).values()];
-  potentialModeGroups=buildBonusComparison(modesCompared,modesBonuses,modeReports[0].context,{removed:state.removedEffects,decisions:state.decisions});
+  // Compare each scenario before merging. Mixing the off-state reader flags
+  // into an on-state group used to discard approved full-HP sources.
+  const modeGroups=new Map(),readerOrder=new Map();
+  for(const pair of modePairs)for(const b of pair.bonuses)if(!readerOrder.has(b.id))readerOrder.set(b.id,readerOrder.size);
+  modePairs.forEach((pair,i)=>{
+   for(const group of buildBonusComparison(pair.compared,pair.bonuses,modeReports[i].context,{removed:state.removedEffects,decisions:state.decisions})){
+    const prior=modeGroups.get(group.id);
+    if(!prior){modeGroups.set(group.id,group);continue;}
+    for(const field of ['web','reader','removed'])prior[field]=[...new Map([...prior[field],...group[field]].map(row=>[row.id,row])).values()];
+   }
+  });
+  potentialModeGroups=[...modeGroups.values()].map(g=>({...g,reader:g.reader.sort((a,b)=>readerOrder.get(a.id)-readerOrder.get(b.id))}));
   modeCatalog=modeGroupCatalog(potentialModeGroups);
   // One-time upgrade for previously saved choices in this exact report/unit.
   for(const [id,approved] of Object.entries(groupReaderChoices))if(!Object.hasOwn(approved,'modeWeb')){
    Object.assign(approved,upgradeReaderGroupChoice(approved,modeCatalog[id]));
+  }
+  for(const [id,approved] of Object.entries(groupReaderChoices))if(approved.readerModesRevision!==2){
+   // Same report fingerprint: recover its omitted mode records, while keeping
+   // the previously approved website values so edits still require review.
+   Object.assign(approved,upgradeReaderGroupChoice(approved,{...modeCatalog[id],web:approved.modeWeb}),{readerModesRevision:2});
   }
   supplements=readerSupplementCandidates(readerBonuses,compared,candidate.context);
   for(const row of compared)if(state.decisions[decisionKey(row)]?.choice==='reader'&&!row.compatible)state.decisions[decisionKey(row)]={choice:'pending'};
@@ -166,7 +180,10 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function currentPanelReport(source=candidate||report) {
   const rows=source?.rows||[],selected=decisions(),excludedEquipmentStats=[];
-  const sourceRows=source===candidate?compared:compareCandidates(websiteCandidates(source),readerBonuses,state.mappings,source.context);
+  // Candidate observations need the reader evaluated in that candidate's
+  // conditions. The current checkbox's exclusion is not a deleted source.
+  const sourceBonuses=source===candidate?readerBonuses:selectReaderCriticalBonuses(evaluateReaderBonuses(unit?.bonuses||[],source.context),source);
+  const sourceRows=source===candidate?compared:compareCandidates(websiteCandidates(source),sourceBonuses,state.mappings,source.context);
   for(const row of compared)if(selected[decisionKey(row)]?.choice==='exclude'&&row.effect.type==='equipmentStat'&&row.effect.unit==='')excludedEquipmentStats.push({sourceId:row.sourceId,sourceName:row.sourceName,target:row.effect.target});
   return {...source,excludedEquipmentStats,rows:rows.map(r=>{
    const effects=[],effectIndices=[];

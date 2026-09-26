@@ -2,15 +2,15 @@ import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fiel
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
 import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-common-skills';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-switch-controls';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-condition-observation';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
 import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-hp-panel';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-condition-observation';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
-import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss,keepsObservedPanel} from './damage-condition-display.mjs?v=20260926-condition-sources';
+import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-condition-observation';
 import {retargetReport} from './entry-preparation.mjs?v=20260926-switch-controls';
 import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id);
@@ -33,7 +33,6 @@ let magicOptions=[],magicSelection={};
 let defenseRatioTouched=false;
 let unified=null;
 let lastWeaknessKey='',weaknessManual=false,automaticWeaknessEvent=false;
-let lastAppliedSelection=null;
 const GENERAL_NAMES={fullHp:'满血',lowHp:'濒死',air:'目标浮空',back:'背后攻击',ailment:'目标异常',ground:'自身在地面',openingBuffActive:'开局BUFF',conditionBuffActive:'条件BUFF'};
 function showConditionSources(report){
  const selected=Object.keys(GENERAL_CONDITIONS).filter(id=>$(id).checked);
@@ -167,9 +166,6 @@ function attackFormula(s,c) {
 function syncAttackBasis() {
  let mode=$('attackBasis').value;
  const stat=attackStat();
-  // HP switches control conditional damage rules; the observed battle panel
-  // remains the supplied attribute input until the reader/panel is changed.
-  const observedStat=stat?{...stat,runtimeConditions:{...stat.runtimeConditions,fullHp:null,lowHp:null}}:stat;
   // Never let a previously selected panel mode multiply an already buffed INT
   // again. Missing layer evidence stays unresolved instead of falling back.
   if(needsAttributeLayers(mode,stat,$('attack').valueAsNumber)){mode='auto';$('attackBasis').value=mode;}
@@ -178,7 +174,7 @@ function syncAttackBasis() {
   $('settledAttack').disabled=mode!=='settlement';$('settledAttack').required=mode==='settlement';
   $('attack').required=mode==='panel';
   for(const id of ['skillAdd','skillPercent','skillPostAdd','attackRatio'])$(id).disabled=mode==='settlement';
-  autoLayer=mode==='auto'?(magicBuffLayer(observedStat,$('attack').valueAsNumber,activeMagicBuffs())||projectAttackLayers(observedStat,$('attack').valueAsNumber)):null;
+  autoLayer=mode==='auto'?(magicBuffLayer(stat,$('attack').valueAsNumber,activeMagicBuffs())||projectAttackLayers(stat,$('attack').valueAsNumber)):null;
   if(mode==='auto'){
     $('attackBase').value=autoLayer.ok?autoLayer.base:'';$('runtimeStatPercent').value=autoLayer.ok?autoLayer.percent:'';
     $('attackBasisNote').textContent=!autoLayer.ok?autoLayer.reason:autoLayer.projected?
@@ -384,7 +380,7 @@ function update() {
 }
 function reset(clearSaved=true) {
   defenseRatioTouched=false;
-  lastAppliedSelection=null;lastWeaknessKey='';weaknessManual=false;
+  lastWeaknessKey='';weaknessManual=false;
   captureApplication=null;panelLayers=null;layerSourceKey='';attackBasisTouched=false;$('attackBasis').value='panel';
   if(clearSaved){magicSelection={};try{localStorage.removeItem(`lc-magic-buffs:${characterId}`);}catch{}renderMagicBuffs(latestReport?.profile);}
   retainedImportDraft=null;
@@ -468,11 +464,12 @@ function applyImport(report,review) {
   }),...current.filter(e=>!e.importId)];
   retainedImportDraft=null;
   imported=next;
-  const hpOnly=keepsObservedPanel(lastAppliedSelection,review.selection);
-  const sourceKey=JSON.stringify([review.unitId,review.battleId,review.selection.statReference,review.panelLayers]);
-  if(!hpOnly&&layerSourceKey&&sourceKey!==layerSourceKey&&$('attackBasis').value==='layers'){$('attackBase').value='';$('runtimeStatPercent').value='';}
-  if(!hpOnly||!panelLayers){panelLayers=review.panelLayers;layerSourceKey=sourceKey;}
-  lastAppliedSelection=review.selection;
+  const reviewedStat=review.panelLayers[review.selection.statReference==='int'?'intelligence':'attack'];
+  const sourceKey=JSON.stringify([review.unitId,review.battleId,review.selection.statReference,reviewedStat?.beforeBuff,reviewedStat?.crossAdd]);
+  // Explicitly entered layer values remain user inputs when only conditions
+  // change. Auto mode recomputes the selected state from the reader anchor.
+  if(layerSourceKey&&sourceKey!==layerSourceKey&&$('attackBasis').value==='layers'){$('attackBase').value='';$('runtimeStatPercent').value='';}
+  panelLayers=review.panelLayers;layerSourceKey=sourceKey;
   if(!attackBasisTouched)$('attackBasis').value=(attackStat()?.runtimeCandidates?.length||attackStat()?.buffs?.length||activeMagicBuffs().some(b=>b.stat===attackStat()?.key))?'auto':'panel';
   $('critBasis').querySelector('[value="reader"]').disabled=observedCritical(readUnit).value==null;
   if(observedCritical(readUnit).value==null)$('critBasis').value='website';
@@ -481,7 +478,7 @@ function applyImport(report,review) {
     if(id==='defenseRatio'&&defenseRatioTouched)continue;
     if(typeof value==='boolean')$(id).checked=value;else $(id).value=value??'';
   }
-  if(!hpOnly)$('attack').value=next.statReference==='int'?review.panels.intelligence:next.statReference==='str'?review.panels.attack:'';
+  $('attack').value=next.statReference==='int'?review.panels.intelligence:next.statReference==='str'?review.panels.attack:'';
   if(next.statReference==='mixed')$('defense').value='';else syncBossReference();
   $('defenseRatio').disabled=false;
   for(const id of ['hitMultiplier','hitDamageRatio'])$(id).disabled=false;
@@ -519,7 +516,7 @@ document.addEventListener('keydown',e=>{if(embedded&&e.key==='Escape')window.par
 if(characterId)workflow=initEntryWorkflow({
   characterId,
   onInvalidate(message){
-    panelLayers=null;lastAppliedSelection=null;
+    panelLayers=null;
     clearSettlementCapture('核对条件已改变，请重新选择本次结算值。');
     reviewBlocker=message;
     if(imported)retainedImportDraft={base:imported.effects,rows:readEffects().filter(e=>e.importId)};

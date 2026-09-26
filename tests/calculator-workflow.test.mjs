@@ -9,6 +9,8 @@ import {ACCOUNT_BLESSING_CATALOG} from '../dist/account-blessings.mjs';
 import {buildDamageImport} from '../dist/damage-import.mjs';
 import {resolveAttackLayers,projectAttackLayers} from '../dist/attack-layers.mjs';
 import {defaultInput,calculate} from '../dist/damage-engine.mjs';
+import {buildCatalog} from '../dist/effect-rule-learning.mjs';
+import {BASIC_STAT_CATALOG} from '../dist/basic-stat-catalog.mjs';
 // Event adapter for workflow integration, not a browser/rendering test.
 function controls() {
  const html=readFileSync(new URL('../dist/damage-calculator.html',import.meta.url),'utf8');
@@ -19,6 +21,65 @@ function controls() {
  globalThis.localStorage={getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)};
  return {get:id=>elements.get(id),saves,data};
 }
+test('reader-matched Moonlight preserves the 12133 observation and computes every HP/opening combination',async()=>{
+ const ui=controls();
+ ui.data.set('lc-entry-review:260:v1',JSON.stringify({selection:{attack:'heavy_magic',preset:'magic-2',type:'magical',element:'冰',statReference:'int',fullHp:true,openingBuffActive:false,dualWield:true,specialAttack:true,criticalEnabled:true}}));
+ const base={hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619};
+ const profile={characterId:'260',name:'洛琪希',baseStats:base,equipment:[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],moves:[],magic:[{id:'magic-2',kind:'magic',name:'泽诺克莱昂',element:'冰',statReference:'int',purpose:'attack'}]};
+ const seeds=[...CATALOG,...ACCOUNT_BLESSING_CATALOG];
+ const catalog=buildCatalog(seeds.map(({id,name,text,group})=>({id,name,text,group})),seeds);
+ const context={attack:'magic',damageType:'magical',element:'ice',weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],fullHp:true,accountBlessings:true};
+ const report={kind:'last-cloudia-effect-report',characterId:'260',profile,...evaluateCatalog(catalog,context)};
+ const fixture=JSON.parse(readFileSync(new URL('./fixtures/roxy-reader-bonuses.json',import.meta.url)));
+ let last;const w=initEntryWorkflow({characterId:'260',onConfirm:(r,review)=>{last={r,review};},onInvalidate(){},onSelection(){}});
+ w.receive(report);
+ await w.importFile({name:'reader.json',size:100,text:async()=>JSON.stringify({kind:'last-cloudia-battle-entry',schemaVersion:1,units:[{unitId:502220,stats:{...base,intelligence:12133},bonuses:fixture.bonuses}]})});
+ for(const choice of ['entryUseWeb','entryUseReader']){
+  ui.get(choice).fire('click');
+  for(const [fullHp,opening] of [[true,false],[false,false],[true,true],[false,true],[true,false]]){
+   for(const [id,value] of [['fullHp',fullHp],['openingBuffActive',opening]]){ui.get(id).checked=value;ui.get(id).fire('change');}
+   assert(w.isConfirmed(),ui.get('entryStatus').textContent);
+   assert.equal(last.review.panels.intelligence,12133,'checkboxes must not rewrite the reader observation');
+   const layer=projectAttackLayers(last.review.panelLayers.intelligence,12133);
+   assert(layer.ok,layer.reason);assert.equal(layer.base,6741);assert.equal(layer.percent,fullHp?80:50);
+   const result=calculate({...defaultInput(),attackBasis:'layers',attackBase:layer.base,runtimeStatPercent:layer.percent,attack:layer.panel,type:'magical',skillType:'magic',element:'冰',coefficient:.52,skillPercent:67,cap:2e9});
+   assert.equal(result.context.attack,fullHp?16650:14627);assert(result.normal.mean>0);
+  }
+ }
+ // A saved v148 group omitted some HP reader approvals. Repair the same
+ // report's mode records without accepting changed website numeric rules.
+ const session=w.exportSession();
+ for(const approved of Object.values(session.groupReaderChoices)){delete approved.readerModesRevision;approved.modeReader=[];}
+ const nextUI=controls();let restored;
+ const next=initEntryWorkflow({characterId:'260',onConfirm:(r,review)=>{restored=review;},onInvalidate(){},onSelection(){}});
+ assert(next.restoreSession(session));
+ for(const fullHp of [false,true]){
+  nextUI.get('fullHp').checked=fullHp;nextUI.get('fullHp').fire('change');
+  assert(next.isConfirmed(),nextUI.get('entryStatus').textContent);
+  assert.equal(projectAttackLayers(restored.panelLayers.intelligence,12133).percent,fullHp?80:50);
+ }
+});
+
+test('full HP, opening and conditional buffs compute all eight combinations from one reader observation',async()=>{
+ const ui=controls(),base={hp:1000,mp:1000,attack:1000,defense:1000,intelligence:1000,mind:1000};
+ ui.data.set('lc-entry-review:generic:v1',JSON.stringify({selection:{attack:'magic',preset:'m',type:'magical',element:'冰',statReference:'int',fullHp:true,openingBuffActive:true,magicAwakeningBuffActive:true}}));
+ const sources=[CATALOG.find(s=>s.id==='moonlight-ii'),...Object.values(BASIC_STAT_CATALOG).filter(s=>['快速大增魔','魔导觉醒'].includes(s.name)).map(s=>({...s,group:'common'}))];
+ const profile={characterId:'generic',baseStats:base,equipment:[],moves:[],magic:[{id:'m',name:'测试魔法',kind:'magic',purpose:'attack',element:'冰',statReference:'int'}]};
+ const bonuses=sources.flatMap(s=>s.rules.flatMap(r=>r.effects.filter(e=>e.type==='statBuff').map((e,i)=>({id:`${r.id}:${i}`,sourceName:s.name,effectType:e.type,target:e.target,value:e.value,unit:e.unit,conditions:r.conditions,state:'candidate'}))));
+ let last;const w=initEntryWorkflow({characterId:'generic',onConfirm:(r,review)=>{last=review;},onInvalidate(){},onSelection(){}});
+ w.receive({kind:'last-cloudia-effect-report',characterId:'generic',profile,...evaluateCatalog(sources,{weaponCount:0,fullHp:true,openingBuffActive:true,magicAwakeningBuffActive:true})});
+ await w.importFile({name:'conditions.json',size:100,text:async()=>JSON.stringify({kind:'last-cloudia-battle-entry',schemaVersion:1,units:[{unitId:1,stats:{...base,intelligence:1854},bonuses}]})});
+ const damage=new Map();
+ for(const fullHp of [true,false])for(const opening of [true,false])for(const conditional of [true,false]){
+  for(const [id,value] of [['fullHp',fullHp],['openingBuffActive',opening],['conditionBuffActive',conditional]]){ui.get(id).checked=value;ui.get(id).fire('change');}
+  assert(w.isConfirmed(),ui.get('entryStatus').textContent);
+  const layer=projectAttackLayers(last.panelLayers.intelligence,1854),percent=(fullHp?30:0)+(conditional?50:opening?35:0);
+  assert(layer.ok,layer.reason);assert.equal(layer.percent,percent);assert.equal(last.panels.intelligence,1854);
+  const result=calculate({...defaultInput(),attackBasis:'layers',attackBase:layer.base,runtimeStatPercent:layer.percent,attack:layer.panel,type:'magical',skillType:'magic',element:'冰',cap:2e9});
+  assert(result.normal.mean>0);damage.set(`${fullHp}/${opening}/${conditional}`,result.normal.mean);
+ }
+ for(const opening of [true,false])for(const conditional of [true,false])assert(damage.get(`true/${opening}/${conditional}`)>damage.get(`false/${opening}/${conditional}`));
+});
 test('full-page handoff restores imported reader data, reviewed panels, exclusions and in-progress skill parameters',async()=>{
  const ui=controls(),base={hp:100,mp:100,attack:100,defense:100,intelligence:100,mind:100};
  ui.data.set('lc-entry-review:260:v1',JSON.stringify({selection:{attack:'magic',preset:'m',type:'magical',statReference:'int',element:'冰',criticalEnabled:false,specialAttack:false,fullHp:false}}));
@@ -97,8 +158,6 @@ test('review UI events preserve manual panel, save from both sections, keep remi
  let stat=last.review.panelLayers.intelligence;
  assert.equal(stat.value,10111);assert.equal(projectAttackLayers(stat,12133).panel,10111);
  assert.equal(projectAttackLayers(stat,12133).percent,50);
- const observedStat={...stat,runtimeConditions:{...stat.runtimeConditions,fullHp:null,lowHp:null}};
- assert.equal(projectAttackLayers(observedStat,12133).panel,12133,'the full-HP damage switch leaves the adopted panel in place');
  const offLayer=projectAttackLayers(stat,12133),offImport=buildDamageImport(last.r);
  const offDamage=calculate({...defaultInput(),attackBasis:'layers',attackBase:offLayer.base,runtimeStatPercent:offLayer.percent,attack:offLayer.panel,type:'magical',skillType:'magic',element:'冰',effects:offImport.effects});
  assert(offDamage.normal.mean>0,'switching full HP off must still produce damage');

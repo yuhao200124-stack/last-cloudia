@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {evaluateCatalog} from '../dist/effect-rule-engine.mjs';
 import {CATALOG} from '../dist/roxy-rules.mjs';
-import {activeConditionSources,keepsObservedPanel,weakElementFromBoss} from '../dist/damage-condition-display.mjs';
+import {activeConditionSources,weakElementFromBoss} from '../dist/damage-condition-display.mjs';
 
 test('Boss resistance and current attack element set the default weak-element flag',()=>{
  assert.equal(weakElementFromBoss('冰',-25),true);
@@ -22,11 +22,4 @@ test('active general conditions list the selected skill and its original effect'
  const off=evaluateCatalog(sources,{attack:'magic',damageType:'magical',element:'ice',fullHp:false,awakeningBuffActive:true});
  assert.deepEqual(activeConditionSources(off,'fullHp'),[]);
  assert.equal(activeConditionSources(off,'conditionBuffActive')[0].name,'觉醒');
-});
-
-test('HP and weak-element switches preserve the adopted observed panel',()=>{
- const adopted={attack:'magic',preset:'ice',element:'冰',statReference:'int',fullHp:true,weakness:false};
- assert.equal(keepsObservedPanel(adopted,{...adopted,fullHp:false,weakness:true}),true);
- assert.equal(keepsObservedPanel(adopted,{...adopted,preset:'fire'}),false);
- assert.equal(keepsObservedPanel(adopted,{...adopted,element:'火'}),false);
 });

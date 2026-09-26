@@ -1,4 +1,4 @@
-import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260926-hp-panel';
+import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260926-condition-observation';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
 import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-common-skills';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';

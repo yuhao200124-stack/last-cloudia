@@ -20,8 +20,3 @@ export function activeConditionSources(report,control){
  }
  return [...unique.values()];
 }
-
-export function keepsObservedPanel(previous,next){
- return !!previous&&!!next&&Object.keys({...previous,...next}).every(key=>
-  ['fullHp','lowHp','weakness'].includes(key)||JSON.stringify(previous[key])===JSON.stringify(next[key]));
-}

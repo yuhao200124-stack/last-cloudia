@@ -93,10 +93,9 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
  if(imported.blockers.length)throw new Error(imported.blockers.join('；'));
  const base=baseReport.profile.baseStats,equipment=baseReport.profile.equipment;
  function panelFor(source){return calculateWebsitePanel(base,source,{equipment});}
- // The HP switch gates this attack's damage rules; attribute inputs retain
- // their original observed HP state until a new panel is explicitly adopted.
- const panelSelection={...selection,fullHp:baseReport.context.fullHp===true,lowHp:baseReport.context.lowHp===true};
- const panelReport=buildLoadoutReport(baseReport,snapshot,panelSelection,templates);
+ // Attributes and damage use the same current scenario. A saved reader HP
+ // state must not pin Moonlight or near-death stat bonuses in the preview.
+ const panelReport=report;
  const panel=panelFor(panelReport),key=selection.statReference==='int'?'intelligence':selection.statReference==='str'?'attack':null;
  for(const p of Object.values(panel.stats))for(const reason of p.issues)unresolved.push({name:p.label,text:'',reason});
  const buffsFor=stat=>{

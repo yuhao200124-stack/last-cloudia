@@ -23,11 +23,14 @@ test('live loadout recomputes real stat layers without doubling blessings or sel
  assert.equal(removed.input.cap,p.input.cap-2000);assert(!removed.imported.effects.some(e=>e.name.startsWith('冰属性攻击提升III')));
  assert.equal(preview().input.cap,p.input.cap);
 });
-test('guidance replaces EX 50 with 65 while the full-HP damage switch preserves the observed stat panel',()=>{
+test('guidance replaces EX 50 with 65 while Moonlight independently adds and removes 30',()=>{
  const guidance=SUPPORT_BUFFS.find(b=>b.statPercent===65);assert(guidance);
  const p=preview({selectedBuffs:[guidance]});assert.equal(p.input.runtimeStatPercent,65);assert.equal(p.input.cap,preview().input.cap+30000);
- const hp=preview({selectedBuffs:[guidance],selection:{...selection,fullHp:true}});assert.equal(hp.input.runtimeStatPercent,65);
- assert.equal(preview({selection:{...selection,fullHp:true}}).input.runtimeStatPercent,50);
+ const hp=preview({selectedBuffs:[guidance],selection:{...selection,fullHp:true}});assert.equal(hp.input.runtimeStatPercent,95);
+ const moon=preview({selection:{...selection,fullHp:true}});assert.equal(moon.input.runtimeStatPercent,80);
+ assert.equal(calculate(moon.input).context.attack,16650);
+ assert(calculate(moon.input).normal.uncappedMax>calculate(preview().input).normal.uncappedMax);
+ assert.equal(preview({selection:{...selection,fullHp:false}}).input.runtimeStatPercent,50);
 });
 test('unknown effects remain visible and recognized selected damage still computes',()=>{
  const items=[...snapshot.items,{id:'known',name:'测试冰伤',text:'冰属性伤害+10%。'},{id:'unknown',name:'未知机制',text:'冰属性伤害+70%；触发某种未知机制。'},{id:'cap-percent',name:'比例上限',text:'伤害上限+10%。'}];
