@@ -1,5 +1,5 @@
-import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-skill-coverage';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-skill-coverage';
+import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-character-template';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-character-template';
 import {buildDamageImport} from './damage-import.mjs?v=20260926-skill-coverage';
 import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260926-skill-coverage';
 import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
@@ -7,7 +7,7 @@ import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-conditio
 import {magicBuffCap} from './magic-buffs.mjs?v=20260924-condition-tags';
 import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-condition-tags';
 import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-skill-coverage';
-import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
+import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-character-template';
 import {EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
 
 const eq=(field,value)=>({field,op:'eq',value});
@@ -143,10 +143,17 @@ export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
   }
  }
  context.equipmentIds=(context.equipmentIds||[]).filter(id=>!removed.some(s=>s.sourceId===id));
+ const knownWeaponCount=gear.filter(s=>context.equipmentIds.includes(s.sourceId)&&exclusiveWeaponSourceIds([s]).length).length;
+ // Choosing the concrete weapon fills an already selected weapon slot first.
+ // It must not turn a one-weapon character into a two-weapon build by accident.
+ let emptyWeaponSlots=Number.isFinite(context.weaponCount)?Math.max(0,context.weaponCount-knownWeaponCount):0;
  for(const item of gear.filter(s=>represented.has(s.sourceId)&&selected.has(s.sourceId)&&!equippedIds.has(s.sourceId))){
   context.equipmentIds.push(item.sourceId);
   const type=baseReport.profile.equipment?.find(e=>e.name===item.name)?.type,field=equipmentFields[type];
-  if(field){context[field]=true;if(!['robe','clothes','armor'].includes(field)&&Number.isFinite(context.weaponCount))context.weaponCount++;}
+  if(field){context[field]=true;if(!['robe','clothes','armor'].includes(field)){
+   if(emptyWeaponSlots>0)emptyWeaponSlots--;
+   else context.weaponCount=(Number.isFinite(context.weaponCount)?context.weaponCount:knownWeaponCount)+1;
+  }}
  }
  if(JSON.stringify(context.equipmentIds)!==JSON.stringify(baseReport.context.equipmentIds||[]))delete context.weaponDetails;
  if(loadoutSources(baseReport).some(s=>s.group==='blessings'&&represented.has(s.sourceId)&&selected.has(s.sourceId)))context.accountBlessings=true;

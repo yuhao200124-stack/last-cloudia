@@ -7,7 +7,7 @@ export function scenarioBonuses(report,{group='all',disabledCommonIds=[]}={}){
  const metrics=new Map(),seen=new Set(),disabled=new Set(disabledCommonIds);
  if(!report?.rows)return [];
  for(const row of report.rows){
-  if(row.status!=='active'||group==='common'&&!row.sourceId.startsWith('loadout:')||group==='native'&&(row.sourceId.startsWith('loadout:')||!['traits','equipment','exclusive','common','transcend','blessings'].includes(row.group)))continue;
+  if(row.status!=='active'||group==='common'&&!row.sourceId.startsWith('loadout:')||group==='native'&&(row.sourceId.startsWith('loadout:')||!['traits','equipment','exclusive','common','transcend','specials','blessings'].includes(row.group)))continue;
   if(row.sourceId.startsWith('loadout:')&&disabled.has(row.sourceId.slice(8)))continue;
   for(const [index,effect] of row.rule.effects.entries()){
    if(!['damage','cap'].includes(effect.type)||!Number.isFinite(effect.value)||blockedCombatModes(effect,row.rule.conditions,report.context,row.rule.effects).length)continue;

@@ -22,6 +22,10 @@ export const DEFAULT_CONTEXT = {
   enemyRaces:null, back:null, air:null, ailment:null, ground:null, stunned:false,
 };
 export const CONDITION_FIELDS = {
+  nearestEnemy:{label:'攻击最近的敌人',options:yesNo},
+  partyAllAlive:{label:'我方至少2人且全员存活',options:yesNo},
+  enemyAttacking:{label:'敌人正在进行攻击动作',options:yesNo},
+  erisBladeEquipped:{label:'已装备一天真刃·二之型',options:yesNo},
   comboHits:{label:'当前连续Hit数',numeric:true,options:[]},
   selfHpPercent:{label:'自身当前HP百分比',numeric:true,options:[]},
   enemyHpPercent:{label:'敌人当前HP百分比',numeric:true,options:[]},
@@ -204,6 +208,9 @@ function makeRow(source, original, ctx, overrides) {
 export function evaluateCatalog(catalog, input = {}, overrides = {}) {
   const context = normalizeContext(input);
   const sources = Array.isArray(catalog) ? catalog.map(s=>({...s,rules:(s.rules||[]).map(rule=>upgradeStatRule(rule,s.text))})) : [];
+  // The mastery augments its equipped base skill; removing the latter must
+  // also remove this dependent bonus, including in a loadout preview.
+  context.erisBladeEquipped=sources.some(s=>s.name==='一天真刃·二之型'&&!overrides[`source:${s.id}`]?.disabled&&s.rules.some(r=>r.review==='ready'&&!r.disabled&&!overrides[r.id]?.disabled));
   const initialRows = sources.flatMap((source) => (source.rules ?? []).map((rule) => makeRow(source, rule, context, overrides)));
   const killerRows = initialRows.filter((row) => row.rule.effects?.some((effect) => effect.type === 'killer'));
   const killer = context.killer === true || killerRows.some((row) => row.status === 'active') ? true

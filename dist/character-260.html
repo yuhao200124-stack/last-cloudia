@@ -17,8 +17,8 @@
         <p>第二部分 · 角色能力整理</p>
       </div>
       <nav class="header-actions" aria-label="页面导航">
-        <a class="header-nav-link" href="./index.html?v=20260926-scenario-summary">返回技能页面</a>
-        <a class="header-nav-link" href="./characters.html?v=20260926-skill-coverage">返回角色列表</a>
+        <a class="header-nav-link" href="./index.html?v=20260926-character-template">返回技能页面</a>
+        <a class="header-nav-link" href="./characters.html?v=20260926-character-template">返回角色列表</a>
       </nav>
     </header>
 
@@ -262,17 +262,8 @@
       <div class="saved-build-total"><span>合计</span><button id="savedBuildRestore" type="button" disabled>还原</button><strong id="savedBuildTotal">0 SC</strong></div>
     </aside>
 
-    <div id="damageSimulatorBackdrop" class="damage-simulator-backdrop" hidden></div>
-    <aside id="damageSimulator" class="damage-simulator damage-calculator-shell" hidden aria-label="伤害计算器">
-      <header class="damage-simulator-header">
-        <div><small>洛琪希 · 基础加成导入</small><strong>伤害计算器</strong></div>
-        <button id="damageSimulatorClose" type="button" aria-label="关闭伤害计算器">×</button>
-      </header>
-      <iframe id="damageCalculatorFrame" title="伤害计算器" class="damage-calculator-frame"></iframe>
-    </aside>
-    <script src="./data.js?v=20260924-table-review"></script>
+<script src="./data.js?v=20260924-table-review"></script>
     <script src="./character-calculator.js?v=20260924-fullpage"></script>
-    <script type="module" src="./base-rule-calculator.mjs?v=20260926-skill-coverage"></script>
-    <script type="module" src="./character-damage-bridge.mjs?v=20260926-skill-coverage"></script>
+  <script type="module" src="./character-page.mjs?v=20260926-character-template"></script>
   </body>
 </html>

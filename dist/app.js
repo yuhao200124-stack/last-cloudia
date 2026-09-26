@@ -49,12 +49,12 @@
   const characterLoadouts = {
     '259': {
       name: '艾莉丝·格雷拉特',
-      page: './character-259.html',
+      page: './character-259.html?v=20260926-character-template',
       skillIds: [],
     },
     '245': {
       name: '龙王阿尔克',
-      page: './character-245.html',
+      page: './character-245.html?v=20260926-character-template',
       skillIds: [
         'e73807e621f213b2', 'f201c9d8e9ee87ed', '全部技能:all:30', '9146eb2670c69122',
         '478822878a23edb4', '97d948f5e3717d10', 'ea3727ee373b623b', '2a62c41d8d3fb3d0',
@@ -63,7 +63,7 @@
     },
     '260': {
       name: '洛琪希',
-      page: './character-260.html',
+      page: './character-260.html?v=20260926-character-template',
       skillIds: [
         '3ab5e4ec857b4879', 'f201c9d8e9ee87ed', '全部技能:all:30', '9146eb2670c69122',
         'cc874bcc3159e258', 'ccfbbcc9f91d8332', '2901b40ce3f38847', '351f8b7c824ec758',
@@ -123,7 +123,7 @@
   const embeddedLoadout = new URLSearchParams(location.search).get('embeddedLoadout') === '1' && window.parent !== window;
   const unifiedCatalogKey = 'lc-sheet-table:unified-character-skills-v1';
   let unifiedCatalog = {}, sourceBindings = {};
-  const sourceGroupNames = {traits:'个性',equipment:'专武／装备',exclusive:'专属技能',common:'自带通用技能',transcend:'超越',blessings:'账户加护',readerGroup:'读取器加成',readerSupplement:'读取器补充',manual:'手动加成'};
+  const sourceGroupNames = {traits:'个性',equipment:'专武／装备',exclusive:'专属技能',common:'自带通用技能',transcend:'超越',specials:'招式效果',blessings:'账户加护',readerGroup:'读取器加成',readerSupplement:'读取器补充',manual:'手动加成'};
   try { unifiedCatalog = JSON.parse(localStorage.getItem(unifiedCatalogKey) || '{}'); } catch {}
   const sourceNameKey = name => String(name || '').replace(/[\s·・]/g, '').replace(/III$|Ⅲ$/g,'3').replace(/II$|Ⅱ$/g,'2').replace(/IV$|Ⅳ$/g,'4').replace(/V$|Ⅴ$/g,'5').replace(/I$|Ⅰ$/g,'1')
     .replace('MP提升','法力提升').replace('特攻界限突破','特攻极限突破').replace('冰系超级增幅','冰魔法超阶增幅')
@@ -594,7 +594,7 @@
   function setCalculatorOpen(open) {
     if (!embeddedLoadout && open) {
       saveCalculatorState();
-      const url = new URL('./damage-calculator.html', location.href);
+      const url = new URL('./damage-calculator.html?v=20260926-character-template', location.href);
       url.searchParams.set('unified', '1');
       if (calculatorState.characterId) url.searchParams.set('character', calculatorState.characterId);
       location.assign(url.href);

@@ -12,10 +12,16 @@ const confirmationGroups=JSON.parse(fs.readFileSync(new URL('../docs/confirmatio
 const skillCoverage=JSON.parse(fs.readFileSync(new URL('../docs/skill-coverage-preservation-2026-09-26.json',import.meta.url)));
 const calculatorHeadings=JSON.parse(fs.readFileSync(new URL('../docs/calculator-heading-preservation-2026-09-26.json',import.meta.url)));
 const scenarioSummary=JSON.parse(fs.readFileSync(new URL('../docs/scenario-summary-preservation-2026-09-26.json',import.meta.url)));
+const characterTemplate=JSON.parse(fs.readFileSync(new URL('../docs/character-template-preservation-2026-09-26.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const shared=characterTemplate.files[path];
+ if(shared){
+  if(hash(text)!==shared.afterHash||hash(shared.beforeText)!==shared.beforeHash)throw Error(`Character template preservation drift: ${path}`);
+  text=shared.beforeText;
+ }
  const scenario=scenarioSummary.files[path];
  if(scenario){
   if(hash(text)!==scenario.afterHash||hash(scenario.beforeText)!==scenario.beforeHash)throw Error(`Scenario summary preservation drift: ${path}`);

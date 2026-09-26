@@ -1,11 +1,11 @@
-import {prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds,reportLoadoutSnapshot,toggleExclusiveWeapon} from './loadout-preview.mjs?v=20260926-skill-coverage';
+import {prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds,reportLoadoutSnapshot,toggleExclusiveWeapon} from './loadout-preview.mjs?v=20260926-character-template';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
-import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-skill-coverage';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-skill-coverage';
+import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-character-template';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260926-character-template';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-character-template';
 import {buildDamageImport} from './damage-import.mjs?v=20260926-skill-coverage';
-import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260926-scenario-summary';
-import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-scenario-summary';
+import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260926-character-template';
+import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-character-template';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const saved=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};

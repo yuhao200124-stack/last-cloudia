@@ -1,10 +1,11 @@
 import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
-import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs?v=20260926-skill-coverage';
-import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260926-skill-coverage';
-import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260926-skill-coverage';
+import {characterDefinition,characterContext,collectCharacterSources} from './character-template.mjs?v=20260926-character-template';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260926-character-template';
+import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260926-character-template';
+import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260926-character-template';
 import { summarizeEffects } from './effect-totals.mjs';
 import { ACCOUNT_BLESSING_CATALOG, ACCOUNT_BLESSING_META } from './account-blessings.mjs?v=20260924-fullpage';
-import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260926-skill-coverage';
+import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260926-character-template';
 
 mountAccountBlessings();
 
@@ -13,20 +14,22 @@ if (panel) mount();
 
 function mount() {
   const characterId = document.body.dataset.characterId;
+  const definition=characterDefinition(characterId), profile=readCharacterProfile(document);
+  const gear=definition.gear;
   const characterName = document.querySelector('.hero h2')?.textContent.trim() || '当前角色';
   const stateKey = `lc-effect-rules:character:${characterId}:v1`;
   const root = document.getElementById('bonusSummary');
   const esc = (x = '') => String(x ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
   const clone = x => JSON.parse(JSON.stringify(x));
   const read = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
-  const groups = { traits: '个性', exclusive: '专属技能', common: '通用技能', transcend: '超越', equipment: '装备', blessings: '账户加护' };
+  const groups = { traits: '个性', exclusive: '专属技能', common: '通用技能', transcend: '超越', equipment: '装备', specials:'招式效果', blessings: '账户加护' };
   const statuses = { active: '生效', inactive: '未生效', pending: '待确认', disabled: '未启用' };
   const types = { stat: '面板属性', statBuff: '属性状态增益', equipmentStat: '装备属性', damage: '伤害增加', cap: '伤害上限', killer: '特攻触发', killerPower:'特攻威力修正', hit: '命中与分段', statReference: '攻击与防御参照', defenseReference: '防御参照修正', critRate: '暴击率', critPermission: '暴击资格', defense: '防御与减伤', recovery: '回复', castSpeed: '咏唱速度', utility: '其他效果' };
-  const attackNames = { normal: '普通攻击', s1: '特技1 · 水球', s2: '特技2 · 冰柱破碎', s3: '特技3 · 暴风雪', magic: '魔法', ultimate: '超必杀 · 积雨云' };
+  const attackNames = Object.fromEntries(ATTACKS.map(a=>[a.id,profile.moves.find(m=>m.id===a.id)?.name||a.label]));
   const elements = [[null, '待确认'], ['none', '无'], ['fire', '火'], ['ice', '冰'], ['earth', '树'], ['thunder', '雷'], ['light', '光'], ['dark', '暗']];
   const saved = read(stateKey, {});
   const state = {
-    context: { ...DEFAULT_CONTEXT, accountBlessings: false, ...(characterId === '260' ? {} : { element: null, magicFamily: null, killerBuff: false, bossWaveBuff: false }), ...(saved.context || {}) },
+    context: { ...characterContext(characterId), ...(saved.context || {}) },
     disabledSources: Array.isArray(saved.disabledSources) ? saved.disabledSources : [],
     disabledRules: Array.isArray(saved.disabledRules) ? saved.disabledRules : [],
     drafts: saved.drafts && typeof saved.drafts === 'object' ? saved.drafts : {},
@@ -55,27 +58,7 @@ function mount() {
   root.classList.add('br-app');
   panel.querySelector('.calculator-tools').hidden = true;
 
-  function collectSources() {
-    const list = [];
-    const add = (name, text, group, el) => {
-      const seed = characterId === '260' && ROXY_CATALOG.find(x => x.group === group && x.name === name);
-      list.push({ id: seed?.id || `${characterId}-${group}-${list.length + 1}`, name, text, group, originalElement: el });
-    };
-    document.querySelectorAll('#traits .trait').forEach(el => add(el.querySelector('h4').textContent.trim(), el.querySelector('p').textContent.trim(), 'traits', el));
-    for (const section of ['exclusive-skills', 'common-skills']) {
-      document.querySelectorAll(`#${section} tbody tr`).forEach(el => {
-        const name = el.querySelector('.skill-name');
-        const group = name.classList.contains('transcend') ? 'transcend' : section === 'exclusive-skills' ? 'exclusive' : 'common';
-        add(name.textContent.trim(), el.querySelector('td:last-child').textContent.trim(), group, el);
-      });
-    }
-    document.querySelectorAll('#equipment .equipment-card').forEach(el => {
-      const dds = [...el.querySelectorAll('dd')];
-      add(el.querySelector('h4').textContent.trim(), `最高属性：${dds[1].textContent.trim()}；最高效果：${dds[2].textContent.trim()}`, 'equipment', el);
-    });
-    list.push(...ACCOUNT_BLESSING_CATALOG.map(s => ({ ...s, originalElement: document.getElementById(s.id) })));
-    return list;
-  }
+  function collectSources() { return collectCharacterSources(document,{withElements:true}); }
 
   function auditSourceKey(source) {
     return JSON.stringify([source.group, source.name, sourceKey(source)]);
@@ -143,7 +126,7 @@ function mount() {
     } catch { storageWarning = '浏览器未能保存修改，请导出规则备份。'; }
   }
   function rebuildCatalog() {
-    catalog = buildCatalog(sources.map(({ originalElement, ...s }) => s), [...ROXY_CATALOG, ...ACCOUNT_BLESSING_CATALOG], templates);
+    catalog = buildCatalog(sources.map(({ originalElement, ...s }) => s), [...definition.catalog, ...ACCOUNT_BLESSING_CATALOG], templates);
     catalog = catalog.map(s => {
       const local = state.drafts[sourceKey(s)];
       if (!local) return s;
@@ -164,10 +147,10 @@ function mount() {
     if (characterId === '260') { c.killerBuff = true; c.bossWaveBuff = true; }
     if (c.attack === 'magic') c.damageType = 'magical';
     c.equipmentIds = Array.isArray(c.equipmentIds) ? c.equipmentIds : [];
-    if (c.weaponCount === 2) { c.equipmentIds = c.equipmentIds.filter(id => id !== 'roxy-robe'); c.robe = false; }
-    if (c.weaponCount === 0) { c.equipmentIds = c.equipmentIds.filter(id => id !== 'roxy-staff'); c.staff = false; c.iceStaff = false; }
-    if (c.equipmentIds.includes('roxy-staff')) { c.staff = true; c.iceStaff = true; }
-    if (c.equipmentIds.includes('roxy-robe')) { c.robe = true; c.clothes = false; c.armor = false; }
+    for(const [id,g] of Object.entries(gear)){
+      if(g.armor&&c.weaponCount===2||!g.armor&&c.weaponCount===0){c.equipmentIds=c.equipmentIds.filter(x=>x!==id);c[g.field]=false;if(g.iceStaff)c.iceStaff=false;}
+      if(c.equipmentIds.includes(id)){c[g.field]=true;if(g.iceStaff)c.iceStaff=true;if(g.armor)for(const f of ['robe','clothes','armor'])if(f!==g.field)c[f]=false;}
+    }
     if (c.iceStaff) c.staff = true;
     const weaponFields=['staff','sword','axe','spear','hammer','bow','machine','claw'];
     const selected=weaponFields.filter(k=>c[k]);
@@ -209,23 +192,23 @@ function mount() {
       <div id="brPageNav" class="br-page-nav"></div>
       <div id="brConditionsPanel">
         <div class="br-context">
-          ${select('attack', '攻击方式', ATTACKS.map(a => [a.id, characterId === '260' ? attackNames[a.id] : a.label]))}
+          ${select('attack', '攻击方式', ATTACKS.map(a => [a.id, attackNames[a.id]]))}
           ${select('damageType', '伤害类型', [[null, '待确认'], ['physical', '物理'], ['magical', '魔法'], ['mixed', '混合 · 待确认']], c.attack === 'magic')}
           ${select('element', '攻击属性', elements)}
           ${select('weaponCount', '实际武器数量', [[1, '1件武器'], [2, '2件武器'], [0, '未装备武器']])}
         </div>
         <fieldset class="br-equipment"><legend>装备条件</legend>
-          ${checkbox('staff', '装备法杖', c.equipmentIds.includes('roxy-staff') || c.weaponCount === 0)}
-          ${checkbox('iceStaff', '装备冰属性法杖', c.equipmentIds.includes('roxy-staff') || c.weaponCount === 0)}
-          ${checkbox('robe', '装备长袍', c.equipmentIds.includes('roxy-robe') || c.weaponCount === 2)}
-          ${catalog.filter(s => s.group === 'equipment').map(s => `<label class="br-check"><input type="checkbox" data-equipment="${esc(s.id)}"${c.equipmentIds.includes(s.id) ? ' checked' : ''}${s.id === 'roxy-robe' && c.weaponCount === 2 ? ' disabled' : ''}>${esc(s.name)}（最高强化）</label>`).join('')}
+          ${Object.entries(gear).map(([id,g])=>checkbox(g.field,`装备${CONDITION_FIELDS[g.field].label.replace('装备','')}`,c.equipmentIds.includes(id)||(g.armor?c.weaponCount===2:c.weaponCount===0))).join('')}
+          ${characterId==='260'?checkbox('iceStaff','装备冰属性法杖',c.equipmentIds.includes('roxy-staff')||c.weaponCount===0):''}
+          ${catalog.filter(s => s.group === 'equipment').map(s => `<label class="br-check"><input type="checkbox" data-equipment="${esc(s.id)}"${c.equipmentIds.includes(s.id) ? ' checked' : ''}${gear[s.id]?.armor && c.weaponCount === 2 ? ' disabled' : ''}>${esc(s.name)}（最高强化）</label>`).join('')}
         </fieldset>
         <details class="br-equipment"><summary>其他装备与受击条件（加护）</summary>
-          <div class="br-context">${[['sword','剑'],['axe','斧'],['spear','枪'],['hammer','槌'],['bow','弓'],['machine','机械'],['claw','爪'],['clothes','衣服'],['armor','铠甲']].map(([f,l])=>checkbox(f,`装备${l}`, ['clothes','armor'].includes(f)?c.weaponCount===2:c.weaponCount===0)).join('')}</div>
+          <div class="br-context">${[['staff','法杖'],['sword','剑'],['axe','斧'],['spear','枪'],['hammer','槌'],['bow','弓'],['machine','机械'],['claw','爪'],['robe','长袍'],['clothes','衣服'],['armor','铠甲']].filter(([f])=>!Object.values(gear).some(g=>g.field===f)).map(([f,l])=>checkbox(f,`装备${l}`, ['robe','clothes','armor'].includes(f)?c.weaponCount===2:c.weaponCount===0)).join('')}</div>
           <div class="br-context">${select('incomingElement','受到攻击的属性',CONDITION_FIELDS.incomingElement.options.map(o=>[o.value,o.label]))}${select('incomingAttackKind','受到攻击的类别',CONDITION_FIELDS.incomingAttackKind.options.map(o=>[o.value,o.label]))}</div>
         </details>
         <fieldset class="br-equipment"><legend>加成条件</legend>
           ${checkbox('accountBlessings', '计入账户加护')}
+          ${definition.conditions.map(([field,label])=>checkbox(field,label)).join('')}
           ${checkbox('fullHp', 'HP全满')}${checkbox('weakness', '命中弱点')}
           ${checkbox('resonance', '重魔法（我方正在发动不可叠加魔法）')}${checkbox('lowHp', '濒死')}
           ${Object.entries(STAT_CONDITIONS).filter(([,condition])=>!condition.deferred).map(([field,{label}])=>checkbox(field,label)).join('')}
@@ -389,7 +372,7 @@ function mount() {
     if (scroll) el.scrollIntoView({ block: 'nearest' });
   }
   function makeReport() {
-    return { schemaVersion: 1, mechanicsRevision: result.mechanicsRevision, kind: 'last-cloudia-effect-report', characterId, characterName, accountBlessings: ACCOUNT_BLESSING_META, createdAt: new Date().toISOString(), scope: '当前条件下的加成合计，非最终伤害', totals: clone(metrics), context: result.context, killer: result.killer, warnings: result.warnings,
+    return { schemaVersion: 1, characterTemplateRevision:1, mechanicsRevision: result.mechanicsRevision, kind: 'last-cloudia-effect-report', characterId, characterName, accountBlessings: ACCOUNT_BLESSING_META, createdAt: new Date().toISOString(), scope: '当前条件下的加成合计，非最终伤害', totals: clone(metrics), context: result.context, killer: result.killer, warnings: result.warnings,
       rows: result.rows.map(r => ({ sourceId: r.sourceId, sourceName: r.sourceName, group: r.group, sourceText: r.sourceText, status: r.status, reasons: r.reasons, rule: clone(r.rule) })) };
   }
   function download(name, value) {
@@ -405,17 +388,18 @@ function mount() {
       const value = el.type === 'checkbox' ? el.checked : JSON.parse(el.value);
       if (field === 'attack') {
         state.attackSettings[state.context.attack] = { damageType: state.context.damageType, element: state.context.element };
-        Object.assign(state.context, state.attackSettings[value] || { damageType: value === 'magic' ? 'magical' : null, element: value === 'normal' ? null : characterId === '260' ? 'ice' : null });
+        Object.assign(state.context, state.attackSettings[value] || { damageType: value === 'magic' ? 'magical' : definition.moveDefaults?.damageType||null, element: value === 'normal' ? definition.context.element??null : definition.context.element??(characterId==='260'?'ice':null) });
       }
       state.context[field] = value;
       const weaponFields=['staff','sword','axe','spear','hammer','bow','machine','claw'];
       if(weaponFields.includes(field)&&value&&state.context.weaponCount===1){
         for(const key of weaponFields)if(key!==field)state.context[key]=false;
-        if(field!=='staff'){state.context.iceStaff=false;state.context.equipmentIds=state.context.equipmentIds.filter(id=>id!=='roxy-staff');}
+        if(field!=='staff')state.context.iceStaff=false;
+        state.context.equipmentIds=state.context.equipmentIds.filter(id=>!gear[id]||gear[id].armor||gear[id].field===field);
       }
       if(['robe','clothes','armor'].includes(field)&&value){
         for(const key of ['robe','clothes','armor'])if(key!==field)state.context[key]=false;
-        if(field!=='robe')state.context.equipmentIds=state.context.equipmentIds.filter(id=>id!=='roxy-robe');
+        state.context.equipmentIds=state.context.equipmentIds.filter(id=>!gear[id]?.armor||gear[id].field===field);
       }
       if (field === 'fullHp' && value) state.context.lowHp = false;
       if (field === 'lowHp' && value) state.context.fullHp = false;
@@ -430,10 +414,10 @@ function mount() {
       state.context.equipmentIds = state.context.equipmentIds.filter(x => x !== id);
       if (el.checked) {
         state.context.equipmentIds.push(id);
-        if (id === 'roxy-staff' && !state.context.weaponCount) state.context.weaponCount = 1;
+        if (!gear[id]?.armor && !state.context.weaponCount) state.context.weaponCount = 1;
       } else {
-        if (id === 'roxy-staff') { state.context.staff = false; state.context.iceStaff = false; }
-        if (id === 'roxy-robe') state.context.robe = false;
+        if(gear[id])state.context[gear[id].field]=false;
+        if(gear[id]?.iceStaff)state.context.iceStaff=false;
       }
       prepareContext(); persist(); renderShell();
     } else if (el.dataset.sourceEnabled) {
@@ -555,7 +539,7 @@ function mount() {
     if ('editorClose' in d) { editor.close(); return; }
     if ('saveSource' in d) { saveSource(); return; }
     if ('resetSource' in d) {
-      const original = buildCatalog([sources.find(s => s.id === editorSource.id)], [...ROXY_CATALOG, ...ACCOUNT_BLESSING_CATALOG], {})[0];
+      const original = buildCatalog([sources.find(s => s.id === editorSource.id)], [...definition.catalog, ...ACCOUNT_BLESSING_CATALOG], {})[0];
       draftRules = clone(original.rules); renderEditor(); return;
     }
     if ('addRule' in d) draftRules.push({ id: `${editorSource.id}-custom-${Date.now()}`, part: '新的独立效果', text: '', conditions: [], effects: [], review: 'pending', verification: 'description' });

@@ -2,7 +2,7 @@ import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-fullp
 import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-condition-tags';
 import {commonSkillRules,upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-skill-coverage';
 /** Reusable, description-matched rule templates. No imported content is executable. */
-import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260926-skill-coverage';
+import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260926-character-template';
 
 export const LEARNING_STORAGE_KEY = 'lc-effect-rules:learned:v1';
 

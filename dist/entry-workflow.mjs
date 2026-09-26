@@ -1,16 +1,17 @@
+import {characterDefinition} from './character-template.mjs?v=20260926-character-template';
 import {STAT_CONDITION_FIELDS,STAT_CONDITION_ACTIVE,pickStatConditions,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260926-skill-coverage';
 import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-fullpage';
-import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260926-skill-coverage';
+import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260926-character-template';
 import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullpage';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260926-skill-coverage';
-import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
-import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs?v=20260926-skill-coverage';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260926-character-template';
+import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-character-template';
+import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs?v=20260926-character-template';
 import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260926-skill-coverage';
 import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-fullpage';
-import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-skill-coverage';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260926-skill-coverage';
-import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260926-skill-coverage';
+import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-character-template';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260926-character-template';
+import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260926-character-template';
 import {MODE_LABELS} from './combat-modes.mjs?v=20260926-skill-coverage';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
@@ -20,6 +21,12 @@ const meaningful=report=>JSON.stringify({...report,createdAt:''});
 const panelTypes=new Set(['stat','statBuff','equipmentStat']);
 const summaryTypes=new Set(['damage','cap','critRate','killerPower']);
 export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelection,onRead=()=>{},onDraftSaved=()=>{}}) {
+ const characterConditions=characterDefinition(characterId).conditions;
+ const conditionHost=document.getElementById('characterScenarioConditions');
+ if(conditionHost){
+  conditionHost.innerHTML=characterConditions.map(([field,label])=>`<label><input id="${field}" type="checkbox">${esc(label)}</label>`).join('');
+  conditionHost.hidden=!characterConditions.length;
+ }
  const storageKey=`lc-entry-review:${characterId}:v1`;
  let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey))||{};}catch{}
  let state={parameterSchema:2,accountBlessings:true,base:{},selection:saved.selection||{},parameters:saved.parameterSchema===2?saved.parameters||{}:{},hitParameters:saved.hitParameters||{},decisions:saved.decisions||{},statDecisions:saved.statDecisions||{},mappings:saved.mappings||{},removedEffects:saved.removedEffects||{}};
@@ -118,7 +125,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   state.selection.element=move?.element||'';
   state.selection.statReference=move?.statReference||'';
   if(['magic','heavy_magic'].includes(state.selection.attack))state.selection.type='magical';
-  else state.selection.type='';
+  else state.selection.type=move?.damageType||'';
   for(const key of ['element','statReference','type'])$(key).value=state.selection[key];
   setParameters();
  }
@@ -304,7 +311,10 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   $('attackChoice').innerHTML=ATTACK_CHOICES.map(([v,l])=>option(v,l,state.selection.attack)).join('');
   if(!$('element').querySelector('option[value=""]'))$('element').insertAdjacentHTML('afterbegin','<option value="">待确认</option>');
   if(!$('type').querySelector('option[value=""]'))$('type').insertAdjacentHTML('afterbegin','<option value="">待确认</option>');
+  for(const [field] of characterConditions){if(typeof state.selection[field]!=='boolean')state.selection[field]=report.context[field]===true;if($(field))$(field).checked=state.selection[field];}
   renderProfile();renderPresets();
+  const defaults=selectedMove();
+  if(defaults?.damageType){for(const key of ['element','statReference'])if(!state.selection[key])state.selection[key]=defaults[key]||'';if(!state.selection.type)state.selection.type=defaults.damageType;}
   for(const key of ['element','statReference','type']){$(key).value=state.selection[key]||'';$(key).disabled=false;}
   setParameters();$('skillDetails').open=true;$('hitDetails').open=true;
  }
@@ -342,6 +352,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   for(const field of CONDITION_BUFF_FIELDS){state.selection[field]=$('conditionBuffActive').checked;$(field).checked=state.selection[field];}
   updateCandidate();
  });
+ for(const [field] of characterConditions)$(field)?.addEventListener('change',()=>{state.selection[field]=$(field).checked;updateCandidate();});
  for(const id of ['specialAttack','break','boss','weakness','fullHp','lowHp','openingBuffActive','criticalEnabled'])$(id).addEventListener('change',()=>{
   state.selection[id]=$(id).checked;
   if(['fullHp','lowHp'].includes(id)&&state.selection[id]){const other=id==='fullHp'?'lowHp':'fullHp';state.selection[other]=false;$(other).checked=false;}
@@ -489,6 +500,6 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  return {receive,selection,panelsPreview,planningBase,exportSession,restoreSession,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
   state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};groupReaderChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
-  if(initialized){state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),specialAttack:report.context.killer===true,break:false,boss:report.context.boss!==false,weakness:false,realSunday:false};for(const id of ['dualWield','specialAttack','break','boss','weakness','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id];$('conditionBuffActive').checked=CONDITION_BUFF_FIELDS.some(field=>state.selection[field]);renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
+  if(initialized){for(const [field] of characterConditions){state.selection[field]=report.context[field]===true;if($(field))$(field).checked=state.selection[field];}state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),specialAttack:report.context.killer===true,break:false,boss:report.context.boss!==false,weakness:false,realSunday:false};for(const id of ['dualWield','specialAttack','break','boss','weakness','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id];$('conditionBuffActive').checked=CONDITION_BUFF_FIELDS.some(field=>state.selection[field]);renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
  }};
 }

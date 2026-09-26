@@ -1,9 +1,10 @@
+import {characterMoveDefaults} from './character-template.mjs?v=20260926-character-template';
 import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260926-skill-coverage';
 import {effectCombatModes} from './combat-modes.mjs?v=20260926-skill-coverage';
-import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-skill-coverage';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
+import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-character-template';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-character-template';
 import {upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-skill-coverage';
 import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-fullpage';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
@@ -13,6 +14,7 @@ const recognizedTypes=new Set(['stat','statBuff','equipmentStat','damage','cap',
 const num=x=>typeof x==='number'&&Number.isFinite(x)?x:null;
 const clean=x=>String(x??'').trim();
 export function readCharacterProfile(doc) {
+ const characterId=String(doc.body.dataset.characterId);
  const baseStats=Object.fromEntries(Object.keys(SIX_STATS).map(k=>[k,null]));
  const aliases={HP:'hp',生命:'hp',MP:'mp',魔力值:'mp',攻击力:'attack',防御力:'defense',法强:'intelligence',魔力:'intelligence',魔抗:'mind'};
  for(const box of doc.querySelectorAll('#max-stats .stat-box')) {
@@ -27,14 +29,14 @@ export function readCharacterProfile(doc) {
   const hit=text.match(/(?:命中数|Hit数|基础段数)\s*[：:=]\s*(\d+)/i);
   // A damage-up percentage, an extra cap or Hit x2 is never a base coefficient.
   const coef=text.match(/(?:每段基础系数|基础伤害倍率)\s*[：:=]\s*[×x]?\s*(\d+(?:\.\d+)?)/i);
-  return {id,name,kind,description:text,element:new Set(es).size===1?es[0]:null,hits:hit?Number(hit[1]):null,
-   coefficient:coef?Number(coef[1]):null,skillPercent:null,statReference:kind==='magic'?'int':null,
+  return {id,name,kind,description:text,damageType:characterMoveDefaults(characterId,kind).damageType||null,element:new Set(es).size===1?es[0]:characterMoveDefaults(characterId,kind).element||null,hits:hit?Number(hit[1]):null,
+   coefficient:coef?Number(coef[1]):null,skillPercent:null,statReference:kind==='magic'?'int':characterMoveDefaults(characterId,kind).statReference||null,
    purpose:attackText?'attack':/我方|降低.*敌|降低全体/.test(text)?'support':'unknown',source:'角色页面'};
  }
- const moves=[{id:'normal',name:'普通攻击',kind:'normal',element:null,hits:null,coefficient:null,skillPercent:null,statReference:null,purpose:'attack',source:'通用入口，参数待确认'}];
+ const moves=[{id:'normal',name:'普通攻击',kind:'normal',element:null,hits:null,coefficient:null,skillPercent:null,statReference:null,purpose:'attack',source:'通用入口，参数待确认',...characterMoveDefaults(characterId,'normal')}];
  [...doc.querySelectorAll('#specials tbody tr')].forEach((el,i)=>{if(i<4)moves.push(move(el,['s1','s2','s3','ultimate'][i],['s1','s2','s3','ultimate'][i]));});
  const magic=[...doc.querySelectorAll('#magic tbody tr')].map((el,i)=>move(el,'magic',`magic-${i+1}`));
- const equipment=[...doc.querySelectorAll('#equipment .equipment-card')].map(el=>({name:clean(el.querySelector('h4')?.textContent),type:clean(el.querySelector('dd')?.textContent).split(/[｜|]/)[0]}));
+ const equipment=[...doc.querySelectorAll('#equipment .equipment-card')].map(el=>({name:clean(el.querySelector('h4')?.textContent),type:clean(el.querySelector('dd')?.textContent).split(/[｜|]/)[0].replace(/^服装$/,'衣服')}));
  return {schemaVersion:1,characterId:String(doc.body.dataset.characterId),name:clean(doc.querySelector('.hero h2')?.textContent),
   statsBasis:'max-growth-character-page',baseStats,moves,magic,equipment};
 }
@@ -55,7 +57,7 @@ export function retargetReport(report,selection) {
  if(typeof selection.break==='boolean')context.break=selection.break;
  if(typeof selection.boss==='boolean')context.boss=selection.boss;
   if(typeof selection.fullHp==='boolean')context.fullHp=selection.fullHp;
-  for(const field of ['back','air','ailment','ground','weakness','stunned'])if(typeof selection[field]==='boolean')context[field]=selection[field];
+  for(const field of ['back','air','ailment','ground','weakness','stunned','nearestEnemy','partyAllAlive','enemyAttacking','selfAilment'])if(typeof selection[field]==='boolean')context[field]=selection[field];
   if(Object.hasOwn(selection,'enemyRaces'))context.enemyRaces=selection.enemyRaces;
   for(const field of ['lowHp',...STAT_CONDITION_FIELDS])if(typeof selection[field]==='boolean')context[field]=selection[field];
   if(selection.fullHp===true&&selection.lowHp!==true)context.lowHp=false;

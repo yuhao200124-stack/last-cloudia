@@ -1,6 +1,7 @@
+import {characterReportFromDocument} from './character-report-loader.mjs?v=20260926-character-template';
 import {reportStorageKey} from './damage-import.mjs?v=20260926-skill-coverage';
-import {readCharacterProfile} from './entry-preparation.mjs?v=20260926-skill-coverage';
-import {unifiedPageUrl} from './calculator-navigation.mjs?v=20260926-skill-coverage';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260926-character-template';
+import {unifiedPageUrl} from './calculator-navigation.mjs?v=20260926-character-template';
 const panel=document.getElementById('damageSimulator');
 const frame=document.getElementById('damageCalculatorFrame');
 const open=document.getElementById('damageSimulatorOpen');
@@ -10,7 +11,7 @@ const characterId=document.body.dataset.characterId;
 let ready=false;
 let lastStored='';
 function publish() {
-  const base=window.LC_EFFECT_CALCULATOR?.getReport();
+  const base=window.LC_EFFECT_CALCULATOR?.getReport()||characterReportFromDocument(document);
   const report=base?{...base,profile:readCharacterProfile(document)}:null;
   if(!report || String(report.characterId)!==characterId) return;
   const fingerprint=JSON.stringify({...report,createdAt:''});
@@ -21,7 +22,7 @@ function publish() {
 }
 function show() {
   publish();panel.hidden=false;backdrop.hidden=false;open.setAttribute('aria-expanded','true');
-  if(!frame.getAttribute('src'))frame.src=`./damage-calculator.html?character=${encodeURIComponent(characterId)}&embedded=1&v=20260924-table-layout`;
+  if(!frame.getAttribute('src'))frame.src=`./damage-calculator.html?character=${encodeURIComponent(characterId)}&embedded=1&v=20260926-character-template`;
   close.focus();
 }
 function hide() {panel.hidden=true;backdrop.hidden=true;open.setAttribute('aria-expanded','false');open.focus();}

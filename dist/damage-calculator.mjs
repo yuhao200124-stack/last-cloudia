@@ -1,20 +1,20 @@
-import {extraCommonSkills} from './loadout-preview.mjs?v=20260926-skill-coverage';
+import {extraCommonSkills} from './loadout-preview.mjs?v=20260926-character-template';
 import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
 import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-skill-coverage';
-import {formatEffect} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-skill-coverage';
+import {formatEffect} from './effect-rule-engine.mjs?v=20260926-character-template';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-character-template';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
-import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-skill-coverage';
+import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-character-template';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-scenario-summary';
-import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-skill-coverage';
-import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-condition-observation';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-skill-coverage';
-import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-scenario-summary';
-import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260926-skill-coverage';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-character-template';
+import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-character-template';
+import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-character-template';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-character-template';
+import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-character-template';
+import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260926-character-template';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -39,9 +39,9 @@ let magicOptions=[],magicSelection={};
 let defenseRatioTouched=false;
 let unified=null;
 let lastWeaknessKey='',weaknessManual=false,automaticWeaknessEvent=false;
-const GENERAL_NAMES={fullHp:'满血',lowHp:'濒死',air:'目标浮空',back:'背后攻击',ailment:'目标异常',ground:'自身在地面',openingBuffActive:'开局BUFF',conditionBuffActive:'条件BUFF'};
+const GENERAL_NAMES={nearestEnemy:'攻击最近的敌人',partyAllAlive:'我方至少2人且全员存活',enemyAttacking:'敌人正在进行攻击动作',selfAilment:'自身处于异常状态',fullHp:'满血',lowHp:'濒死',air:'目标浮空',back:'背后攻击',ailment:'目标异常',ground:'自身在地面',openingBuffActive:'开局BUFF',conditionBuffActive:'条件BUFF'};
 function showConditionSources(report){
- const selected=Object.keys(GENERAL_CONDITIONS).filter(id=>$(id).checked);
+ const selected=Object.keys(GENERAL_CONDITIONS).filter(id=>$(id)?.checked);
  const target=$('generalConditionSources');target.hidden=!selected.length;
  target.innerHTML=selected.map(id=>{
   const sources=activeConditionSources(report,id);
@@ -220,7 +220,7 @@ function renderNativeOverview(report){
  const base=workflow?.planningBase()||latestReport||report;
  const selected=unified?.snapshot?new Set(unified.snapshot.items.flatMap(item=>item.sourceIds||[])):null;
  for(const row of [...(base?.rows||[]),...(base?.loadoutInventory||[])]){
-  if(!['traits','equipment','exclusive','common','transcend'].includes(row.group)||row.status==='disabled')continue;
+  if(!['traits','equipment','exclusive','common','transcend','specials'].includes(row.group)||row.status==='disabled')continue;
   if(selected&&!selected.has(row.sourceId))continue;
   if(!sources.has(row.sourceId))sources.set(row.sourceId,{name:row.sourceName,text:row.sourceText||row.rule?.text||''});
  }
@@ -629,7 +629,7 @@ function receiveReport(report,force=false) {
 }
 function loadReport(force=false) {
   if(!characterId)return;
-  try {const report=JSON.parse(localStorage.getItem(reportStorageKey(characterId)));if(report)receiveReport(report,force);}catch(e){$('entryReviewSummary').textContent=`无法读取基础加成：${e.message}`;}
+  try {const report=JSON.parse(localStorage.getItem(reportStorageKey(characterId)));if(report&&(characterId!=='259'||report.characterTemplateRevision===1||report.reviewedByUser))receiveReport(report,force);}catch(e){$('entryReviewSummary').textContent=`无法读取基础加成：${e.message}`;}
   if(embedded)window.parent.postMessage({type:'lc-damage-request'},location.origin);
 }
 window.addEventListener('message',e=>{if(embedded&&e.origin===location.origin&&e.source===window.parent&&e.data?.type==='lc-damage-report')receiveReport(e.data.report);});
