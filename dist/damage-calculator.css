@@ -88,3 +88,11 @@ body.is-embedded main { padding-top:14px; }
 .common-skill .help{font-size:.875rem;margin-top:7px}
 .common-skill.is-inactive{opacity:.65}
 @media(max-width:900px){.confirmed-effects-view #calculationPage{grid-template-columns:1fr}.confirmed-effects-view #unifiedResults{position:static;max-height:none;overflow:visible;grid-column:1!important;grid-row:2!important}.ark-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Match the character page's dark chapter headings. */
+.reference-section-heading,.reference-section-title{min-height:52px;align-items:center;padding:11px 14px;color:#fff;background:#303c4b;border-left:5px solid #62a2d0}
+.reference-section-heading{flex-wrap:wrap}
+.reference-section-heading h2,.reference-section-heading h3,.special-reminders h3.reference-section-title,.bonus-section h3.reference-section-title{color:#fff;font-size:1.12rem;line-height:1.35}
+.reference-section-heading h2{display:flex;align-items:center;gap:10px}
+.reference-section-heading h2 span{padding:0;color:#b9dcff;font-size:.78rem;letter-spacing:.08em}
+.special-reminders h3.reference-section-title,.bonus-section h3.reference-section-title{display:flex;margin:0 0 16px}
