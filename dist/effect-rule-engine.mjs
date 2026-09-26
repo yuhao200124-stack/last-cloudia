@@ -39,7 +39,7 @@ export const CONDITION_FIELDS = {
   incomingElement: { label: '受到攻击的属性', options: options([[null, '待选择'], ['none', '无'], ['fire', '火'], ['ice', '冰'], ['earth', '树'], ['thunder', '雷'], ['light', '光'], ['dark', '暗']]) },
   incomingAttackKind: { label: '受到攻击的类别', options: options([[null, '待选择'], ['physical', '物理'], ['magic', '魔法'], ['ultimate', '超必杀']]) },
   magicFamily: { label: '魔法类型', options: options([[null, '待确认'], ['normal', '普通魔法'], ['science', '科学'], ['sword', '圣剑'], ['other', '其他特殊魔法']]) },
-  boss: { label: '目标是 Boss', options: options([[true, '是（当前固定）'],[false,'否（非Boss专用条件）']]) },
+  boss: { label: '目标是 Boss', options: yesNo },
   fullHp: { label: '自身满生命', options: yesNo }, critical: { label: '本次暴击', options: yesNo },
   weakness: { label: '命中弱点属性', options: yesNo }, resonance: { label: '我方正在发动不可叠加魔法', options: yesNo },
   chainStacks: { label: '法术联结状态', options: options([[0, '不叠加 +0%'], [1, '第1次 +4%'], [2, '第2次 +8%'], [3, '第3次 +12%'], [4, '第4次 +16%'], [5, '第5次及以后 +20%']]) },
@@ -86,7 +86,7 @@ export function normalizeContext(input = {}) {
   if (ctx.weaponCount === 2) ctx.robe = false;
   ctx.bodyArmor = ctx.robe === true || ctx.clothes === true || ctx.armor === true;
   ctx.chainStacks = Number.isFinite(ctx.chainStacks) ? Math.max(0, Math.min(5, Math.floor(ctx.chainStacks))) : null;
-  ctx.boss = true;
+  ctx.boss = input.boss!==false;
   return ctx;
 }
 

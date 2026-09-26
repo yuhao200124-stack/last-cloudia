@@ -1,8 +1,8 @@
-import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260926-common-skills';
+import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260926-switch-controls';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
 import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-common-skills';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-common-skills';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-switch-controls';
 import {buildDamageImport} from './damage-import.mjs?v=20260926-common-skills';
 import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
@@ -72,7 +72,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
   $('unifiedBonuses').innerHTML=[...groups.values()].map(effect=>`<span>${esc(formatEffect(effect))}</span>`).join('');
   $('unifiedStatus').textContent=`${snapshot.items.length} 个所选技能 · ${snapshot.totalSc} SC · 按已识别规则实时预览${criticalAnchor?'；暴击率沿用核对基准，再按所选技能增减':''}`;
   showUnresolved(preview.unresolved);
-  const recommendations=recommendDamage({input:preview.input,criticalEnabled:context.selection.criticalEnabled,magicCanCrit:preview.imported.magicCanCrit,statReference:context.selection.statReference,projectStatPercent:preview.projectStatPercent,rates});
+  const recommendations=recommendDamage({input:preview.input,criticalEnabled:context.selection.criticalEnabled,magicCanCrit:context.selection.criticalEnabled||preview.imported.magicCanCrit,statReference:context.selection.statReference,projectStatPercent:preview.projectStatPercent,rates});
   send('lc-loadout-recommendations',{payload:{...recommendations,rates,contextKey:JSON.stringify([snapshot,context.selection,preview.input,rates])}});
   return preview;
  }

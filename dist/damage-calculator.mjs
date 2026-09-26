@@ -1,14 +1,14 @@
-import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
-import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260924-fullpage';
+import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-switch-controls';
+import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
 import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-common-skills';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-common-skills';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-switch-controls';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
 import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-common-skills';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-switch-controls';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
 import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id);
@@ -42,7 +42,7 @@ async function openFullPage(){
 }
 try {magicSelection=JSON.parse(localStorage.getItem(`lc-magic-buffs:${characterId}`))||{};}catch{}
 const activeMagicBuffs=()=>selectedMagicBuffs(magicOptions,magicSelection);
-const criticalDisabled=()=>!$('criticalEnabled').checked||imported?.skillType==='magic'&&!imported.magicCanCrit;
+const criticalDisabled=()=>!$('criticalEnabled').checked;
 const attackStat=()=>panelLayers?.[referenceMode()==='int'?'intelligence':referenceMode()==='str'?'attack':''];
 function renderMagicBuffs(profile) {
   magicOptions=magicBuffOptions(profile);
@@ -54,6 +54,7 @@ function renderMagicBuffs(profile) {
   }).join('');
 }
 for(const id of ['fullHp','lowHp'])$(id).addEventListener('change',()=>{if($(id).checked)$(id==='fullHp'?'lowHp':'fullHp').checked=false;});
+$('conditionBuffActive').addEventListener('change',()=>{for(const id of CONDITION_BUFF_FIELDS)$(id).checked=$('conditionBuffActive').checked;});
 $('magicBuffOptions').addEventListener('change',e=>{
   if(e.target.dataset.magicBuff){
     const chosen=magicOptions.find(b=>b.id===e.target.dataset.magicBuff);
@@ -92,9 +93,9 @@ function syncHitControls(force=false){
   if(!force&&key===lastHitKey)return;lastHitKey=key;
   for(const id of ['hitMultiplier','hitDamageRatio']){
     $(id).disabled=!s.dualWield;
-    $(id).value=!s.dualWield?1:s[id]!=null&&s[id]!==''?s[id]:imported?.hitSources.length?imported[id]:'';
+    $(id).value=!s.dualWield?1:s[id]!=null&&s[id]!==''?s[id]:imported?.hitSources.length?imported[id]:id==='hitMultiplier'?2:0.6;
   }
-  $('hitScaleStage').value=s.dualWield?s.hitScaleStage||imported?.hitScaleStage||'':'';
+  $('hitScaleStage').value=s.dualWield?s.hitScaleStage||imported?.hitScaleStage||(imported?.hitSources.length?'':'core'):'';
   if(s.dualWield||Number($('hitDamageRatio').value)!==1)$('hitDetails').open=true;
 }
 function hitSourceNote(){
@@ -103,7 +104,7 @@ function hitSourceNote(){
   $('hitSourceNote').textContent=!s?.dualWield?'本次未启用双刀／魔法双段，命中 ×1、单段 ×1；此项不改变配装。':
     manual?`手动填写：${values}。重新应用核对结果会保留你的数值；清空某个倍率可恢复自动值。`:
     imported?.hitSources.length?`来源：${{reader:'读取器技能配置',manual:'手动核对',website:'网站技能效果'}[imported.hitSourceKind]} · ${imported.hitSources.join('、')}；${values}。已自动填写，只执行这一份分段修正，未代表本次实际命中观测。`:
-    '已启用双刀／魔法双段。已识别的角色分段规则会自动填写；未识别的倍率请在下方手动填写。';
+    '已手动启用双刀：暂按命中×2、单段×0.6在核心系数中试算；请在双刀信息核对实际倍率。';
   $('hitScaleControl').hidden=$('hitDamageRatio').value!==''&&$('hitDamageRatio').valueAsNumber===1;
 }
 function receiveEntryData({battle,unit,panelOnly=false}) {
@@ -225,10 +226,9 @@ function read() {
   const s=defaultInput();
   for(const k of numericKeys) if($(k))s[k]=$(k).valueAsNumber;
   for(const k of booleanKeys) if($(k))s[k]=$(k).checked;
-  if(characterId&&!imported?.hitSources.length){s.hitMultiplier=1;s.hitDamageRatio=1;}
   for(const k of ['type','skillType','element','hitScaleStage','attackBasis']) s[k]=$(k).value;
   if(s.attackBasis==='auto')s.attackBasis='layers';
-  s.races=bossRaces;s.stunned=$('stunned').checked;s.killerRaces=[];s.specialAttack=$('specialAttack').checked&&(!characterId||imported?.reference.some(row=>row.effect.type==='killer'&&row.effect.value===true)===true);s.killerCorrection=imported?.killerCorrection??0;
+  s.races=bossRaces;s.stunned=$('stunned').checked;s.killerRaces=[];s.specialAttack=$('specialAttack').checked;s.killerCorrection=imported?.killerCorrection??0;
   if(criticalDisabled())s.critRate=0;
   s.criticalCapAdded=imported?.criticalCapAdded??0;
   s.effects=readEffects().map(e=>!$('criticalEnabled').checked&&(e.kind==='critical'||e.criticalOnly)?{...e,enabled:false}:e);return s;
@@ -259,8 +259,6 @@ function labels() {
   $('bossReference').textContent=`本次参照：${mode==='mixed'?'手填混合防御值':magic?'魔抗 MND':'防御力 DEF'}；${neutral?'无属性不使用六属性抗性':`使用${$('element').value||'所选'}抗性`}。`;
   const p=bosses[$('bossPreset').value];$('debuff').hidden=!p?.debuff||magic||mode==='mixed';
   if(p?.debuff)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
-  const resistance=$('resistance').valueAsNumber,correction=$('resistCorrection').valueAsNumber;
-  $('weaknessStatus').textContent=`弱点：${$('element').value==='无'?'无属性':Number.isFinite(resistance)&&Number.isFinite(correction)?resistance+correction<0?'已命中':'未命中':'目标抗性待确认'}`;
   hitSourceNote();
 }
 $('bossRaceChoices').innerHTML=RACES.map((race,i)=>`<label><input id="bossRace${i}" data-boss-race="${esc(race)}" type="checkbox">${esc(race)}</label>`).join('');
@@ -273,7 +271,7 @@ function applyBoss() {
   $('bossDefense').value=p?.def??'';$('bossMind').value=p?.mnd??'';
   document.querySelectorAll('[data-boss-resistance]').forEach((el,i)=>el.value=p?.res?.[i]??'');
   bossRaces=p?.races||[];syncBossRaces();
-  $('boss').checked=true;labels();
+  labels();
 }
 function update() {
   if(captureApplication&&captureApplication.key!==captureKey())clearSettlementCapture('面板、招式或战斗条件已改变，请重新采用相应的结算样本。');
@@ -359,7 +357,7 @@ function reset(clearSaved=true) {
   for(const k of numericKeys) if($(k))$(k).value=s[k];
   $('settledAttack').value='';$('attackBase').value='';
   for(const k of booleanKeys) if($(k))$(k).checked=s[k];
-  $('stunned').checked=false;$('ground').checked=false;
+  $('stunned').checked=false;$('ground').checked=false;$('conditionBuffActive').checked=false;
   for(const k of ['type','skillType','element']) $(k).value=s[k];
   $('preset').value='eris';$('bossPreset').value='bird';
   document.querySelectorAll('.choices input').forEach(e=>e.checked=false);
@@ -410,8 +408,8 @@ $('calculator').addEventListener('change',event=>{
   }
   if(!characterId&&['coefficient','skillPercent','skillAdd','skillPostAdd','type','skillType','element'].includes(id)){$('preset').value='custom';$('skillDetails').open=true;}
   if(!characterId&&['dualWield','type'].includes(id)&&$('type').value==='physical') {
-    for(const key of ['hitMultiplier','hitDamageRatio'])$(key).value=$('dualWield').checked?'':1;
-    if($('dualWield').checked){$('hitScaleStage').value='';$('hitDetails').open=true;}
+    for(const key of ['hitMultiplier','hitDamageRatio'])$(key).value=$('dualWield').checked?(key==='hitMultiplier'?2:0.6):1;
+    if($('dualWield').checked){$('hitScaleStage').value='core';$('hitDetails').open=true;}
   }
   if(id==='bossPreset')applyBoss();
   if(event.target.dataset.bossRace){bossRaces=[...document.querySelectorAll('[data-boss-race]:checked')].map(el=>el.dataset.bossRace);syncBossRaces();}
@@ -448,15 +446,14 @@ function applyImport(report,review) {
   }
   $('attack').value=next.statReference==='int'?review.panels.intelligence:next.statReference==='str'?review.panels.attack:'';
   if(next.statReference==='mixed')$('defense').value='';else syncBossReference();
-  $('boss').checked=true;
-  $('boss').disabled=true;$('defenseRatio').disabled=false;
+  $('defenseRatio').disabled=false;
   for(const id of ['hitMultiplier','hitDamageRatio'])$(id).disabled=false;
   syncHitControls(true);
   $('critRate').readOnly=true;$('cap').readOnly=true;
   $('importStatControls').hidden=false;$('importCapControls').hidden=false;
   $('skillDetails').open=true;
   $('entryReviewSummary').textContent=`${next.characterName} · ${next.attackName} · ${next.element||'属性待确认'} · 已确认 ${next.effects.length} 条伤害加成`;
-  $('critImportNote').textContent=`已确认 +${next.critAdded}% 暴击率${next.skillType==='magic'&&!next.magicCanCrit?'；当前魔法没有已确认的暴击资格，按0%计算。':'；最终值为左侧输入与确认加成之和，上限100%。'}`;
+  $('critImportNote').textContent=`已确认 +${next.critAdded}% 暴击率；暴击开关由你控制，最终暴击率以上方结果为准。`;
   $('capImportNote').textContent=`已确认固定上限 +${fmt(next.capAdded)}；最终值为左侧输入与确认加成之和。`;
   $('importReferences').innerHTML=`<ul>${next.reference.map(e=>`<li><b>${esc(e.source)}</b>：${esc(formatEffect(e.effect))}${['stat','statBuff','equipmentStat'].includes(e.effect.type)?'（面板核对，不重复乘算）':''}</li>`).join('')}</ul>`;
   const noLongerActive=report.rows.filter(r=>r.status!=='active').map(r=>`${r.sourceName}：确认后的前置条件不成立，相关效果未计入。`);
@@ -513,7 +510,7 @@ if(transferred?.calculator){
 }
 unified=mountUnifiedCalculator({
  beforeOpen:()=>{if(!embedded)return true;openFullPage();return false;},
- getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,lowHp:$('lowHp').checked,...Object.fromEntries(STAT_CONDITION_FIELDS.map(f=>[f,$(f).checked])),break:$('break').checked,dualWield:$('dualWield').checked},
+ getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,lowHp:$('lowHp').checked,...Object.fromEntries(STAT_CONDITION_FIELDS.map(f=>[f,$(f).checked])),break:$('break').checked,boss:$('boss').checked,weakness:$('weakness').checked,dualWield:$('dualWield').checked},
   baseCap:$('baseCap').valueAsNumber,baseCritRate:$('critBasis').value==='reader'?Number(manualCriticalBase)||0:$('baseCritRate').valueAsNumber||0,
   selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],manualDefenseRatio:defenseRatioTouched?$('defenseRatio').valueAsNumber:null,
   criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),

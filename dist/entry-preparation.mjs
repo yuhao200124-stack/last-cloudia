@@ -3,7 +3,7 @@ import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260924-condition-tags';
 import {effectCombatModes} from './combat-modes.mjs?v=20260924-condition-tags';
 import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-common-skills';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-switch-controls';
 import {upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-common-skills';
 import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-fullpage';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
@@ -52,6 +52,7 @@ export function retargetReport(report,selection) {
  const context={...report.context,killer:false,attack,damageType:selection.type,element:elementIds[selection.element]??null};
  if(typeof selection.specialAttack==='boolean')context.killerOverride=selection.specialAttack;
  if(typeof selection.break==='boolean')context.break=selection.break;
+ if(typeof selection.boss==='boolean')context.boss=selection.boss;
   if(typeof selection.fullHp==='boolean')context.fullHp=selection.fullHp;
   for(const field of ['back','air','ailment','ground','weakness','stunned'])if(typeof selection[field]==='boolean')context[field]=selection[field];
   if(Object.hasOwn(selection,'enemyRaces'))context.enemyRaces=selection.enemyRaces;

@@ -8,6 +8,7 @@ import {CATALOG} from '../dist/roxy-rules.mjs';
 import {ACCOUNT_BLESSING_CATALOG} from '../dist/account-blessings.mjs';
 import {buildDamageImport} from '../dist/damage-import.mjs';
 import {resolveAttackLayers,projectAttackLayers} from '../dist/attack-layers.mjs';
+import {defaultInput,calculate} from '../dist/damage-engine.mjs';
 // Event adapter for workflow integration, not a browser/rendering test.
 function controls() {
  const html=readFileSync(new URL('../dist/damage-calculator.html',import.meta.url),'utf8');
@@ -96,6 +97,9 @@ test('review UI events preserve manual panel, save from both sections, keep remi
  let stat=last.review.panelLayers.intelligence;
  assert.equal(stat.value,10111);assert.equal(projectAttackLayers(stat,12133).panel,10111);
  assert.equal(projectAttackLayers(stat,12133).percent,50);
+ const offLayer=projectAttackLayers(stat,12133),offImport=buildDamageImport(last.r);
+ const offDamage=calculate({...defaultInput(),attackBasis:'layers',attackBase:offLayer.base,runtimeStatPercent:offLayer.percent,attack:offLayer.panel,type:'magical',skillType:'magic',element:'冰',effects:offImport.effects});
+ assert(offDamage.normal.mean>0,'switching full HP off must still produce damage');
  assert.equal(magicBuffLayer(stat,12133,guidance).panel,11122);
  ui.get('fullHp').checked=true;ui.get('fullHp').fire('change');stat=last.review.panelLayers.intelligence;
  assert.equal(projectAttackLayers(stat,10111).panel,12133);
@@ -267,7 +271,7 @@ test('switches activate configured critical, killer and full-HP packages after r
  workflow.receive(report());assert(!workflow.isConfirmed());assert.match(ui.get('entryStatus').textContent,/重新选择|未选择/);
 });
 
-test('near-death and opening/awaken controls retain separate states across saved sessions',async()=>{
+test('near-death, opening and bundled conditional Buff retain their state across saved sessions',async()=>{
  const {BASIC_STAT_CATALOG}=await import('../dist/basic-stat-catalog.mjs');
  const ui=controls(),base={hp:1000,mp:100,attack:1000,defense:1000,intelligence:1000,mind:1000};
  const names=['激昂','觉醒','快速鼓舞','自动鼓舞'];
@@ -279,15 +283,16 @@ test('near-death and opening/awaken controls retain separate states across saved
  w.receive({kind:'last-cloudia-effect-report',characterId:'generic',profile,...evaluateCatalog(sources,{weaponCount:0,accountBlessings:false,fullHp:true})});
  const toggle=(id,value)=>{ui.get(id).checked=value;ui.get(id).fire('change');};
  toggle('lowHp',true);assert.equal(w.selection().fullHp,false);assert.equal(ui.get('fullHp').checked,false);
- toggle('awakeningBuffActive',true);toggle('fullHp',true);
+ toggle('conditionBuffActive',true);toggle('fullHp',true);
  assert.equal(w.selection().lowHp,false);assert.equal(ui.get('lowHp').checked,false);assert.equal(w.selection().awakeningBuffActive,true);
  toggle('openingBuffActive',true);
- for(const id of ['ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','realSunday','ultimateGaugeFull'])toggle(id,true);
- assert.equal(w.selection().ultimateGaugeFull,true,'a past special-use buff does not imply the gauge is currently empty');
+ for(const id of ['awakeningBuffActive','magicAwakeningBuffActive','ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','ultimateGaugeFull'])assert.equal(w.selection()[id],true);
+ assert.equal(w.selection().realSunday,false);
  const saved=w.exportSession(),nextUI=controls();
  const next=initEntryWorkflow({characterId:'generic',onConfirm(){},onInvalidate(){},onSelection(){}});
  assert(next.restoreSession(saved));
  assert.equal(nextUI.get('fullHp').checked,true);assert.equal(nextUI.get('lowHp').checked,false);
- assert.equal(nextUI.get('openingBuffActive').checked,true);assert.equal(nextUI.get('awakeningBuffActive').checked,true);
- for(const id of ['ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','realSunday','ultimateGaugeFull'])assert.equal(nextUI.get(id).checked,true);
+ assert.equal(nextUI.get('openingBuffActive').checked,true);assert.equal(nextUI.get('conditionBuffActive').checked,true);
+ for(const id of ['awakeningBuffActive','magicAwakeningBuffActive','ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','ultimateGaugeFull'])assert.equal(nextUI.get(id).checked,true);
+ assert.equal(nextUI.get('realSunday').checked,false);
 });

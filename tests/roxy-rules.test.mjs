@@ -137,7 +137,7 @@ test('multiple killer sources remain one trigger and unrelated stats remain list
 test('general engine has no Roxy equipment assumptions and conditions are readable', () => {
   const result = normalizeContext({ equipmentIds: ['roxy-staff'], boss: false });
   assert.equal(result.staff, false);
-  assert.equal(result.boss, true);
+  assert.equal(result.boss, false);
   assert.match(describeCondition({ field: 'attackKind', op: 'in', value: ['skill', 'ultimate'] }), /特技.*超必杀/);
 });
 

@@ -59,10 +59,18 @@ test('basic stat penalties and independent additive cap clauses both survive',()
  assert.equal(run(['荒神御魂'],{select:{attack:'magic',type:'magical'}}).imported.capAdded,0);
 });
 
-test('replacement cap branches are exclusive and require actual weak-element hit',()=>{
- for(const [weaponCount,cap] of [[0,2000],[1,4000],[2,2000]])assert.equal(run(['炎属性弱点突破2'],{context:{weaponCount},battle:{resistance:-20}}).imported.capAdded,cap);
+test('replacement cap branches are exclusive and require the weak-element switch',()=>{
+ for(const [weaponCount,cap] of [[0,2000],[1,4000],[2,2000]])assert.equal(run(['炎属性弱点突破2'],{context:{weaponCount},battle:{resistance:-20,weakness:true}}).imported.capAdded,cap);
  assert.equal(run(['炎属性弱点突破2'],{context:{weaponCount:1}}).imported.capAdded,0);
- const unknown=run(['炎属性弱点突破2'],{context:{weaponCount:null},battle:{resistance:-20}});assert.equal(unknown.imported.capAdded,0);assert(unknown.unresolved.length);
+ const unknown=run(['炎属性弱点突破2'],{context:{weaponCount:null},battle:{resistance:-20,weakness:true}});assert.equal(unknown.imported.capAdded,0);assert(unknown.unresolved.length);
+});
+
+test('Boss and weak-element switches control only their matching effects',()=>{
+ const bossOn=run(['巨型净化3'],{select:{attack:'magic',type:'magical',statReference:'int'},battle:{boss:true,type:'magical',skillType:'magic'}}),bossOff=run(['巨型净化3'],{select:{attack:'magic',type:'magical',statReference:'int'},battle:{boss:false,type:'magical',skillType:'magic'}});
+ assert(bossOn.imported.effects.length>0);assert.equal(bossOff.imported.effects.length,0);
+ const weakOff=run(['炎属性弱点突破2'],{context:{weaponCount:1},battle:{resistance:-20,weakness:false}});
+ const weakOn=run(['炎属性弱点突破2'],{context:{weaponCount:1},battle:{resistance:-20,weakness:true}});
+ assert.equal(weakOff.imported.capAdded,0);assert.equal(weakOn.imported.capAdded,4000);
 });
 
 test('multi-race targets match OR once, missing race remains unresolved',()=>{
@@ -80,14 +88,14 @@ test('killer qualification and 特攻增幅 use the existing killer factor, not 
  assert.equal(buildDamageImport(other).killerCorrection,0);
 });
 
-test('special attack and dual wield switches require a selected qualifying skill',()=>{
+test('special attack and dual wield work as manual switches without equipped skills',()=>{
  const plain=run([],{select:{specialAttack:true,dualWield:true},battle:{races:['战士']}});
- assert.equal(plain.input.specialAttack,false);assert.equal(plain.input.hitMultiplier,1);assert.equal(plain.input.hitDamageRatio,1);
+ assert.equal(plain.input.specialAttack,true);assert.equal(plain.input.hitMultiplier,2);assert.equal(plain.input.hitDamageRatio,0.6);assert.equal(plain.input.hitScaleStage,'core');
  const selected=run(['战士杀手'],{select:{specialAttack:true},battle:{races:['战士']}});
  const disabled=run(['战士杀手'],{select:{specialAttack:false},battle:{races:['战士']}});
  assert.equal(selected.input.specialAttack,true);assert.equal(disabled.input.specialAttack,false);
  const wrongRace=run(['战士杀手'],{select:{specialAttack:true},battle:{races:['鸟']}});
- assert.equal(wrongRace.input.specialAttack,false);
+ assert.equal(wrongRace.input.specialAttack,true);assert.equal(wrongRace.input.killerCorrection,0);
 });
 
 test('critical bonuses stay in the critical branch and switches remove them',()=>{

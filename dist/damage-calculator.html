@@ -35,14 +35,11 @@
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
-      <section class="damage-condition-group" aria-labelledby="specialDamageTitle"><h3 id="specialDamageTitle">特殊伤害改变</h3><h4>基础改变伤害方式</h4><div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">Break</label><label><input id="criticalEnabled" type="checkbox">暴击</label></div></section>
+      <section class="damage-condition-group" aria-labelledby="specialDamageTitle"><h3 id="specialDamageTitle">特殊伤害改变</h3><h4>基础改变伤害方式</h4><div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">Break</label><label><input id="criticalEnabled" type="checkbox">暴击</label><label><input id="boss" type="checkbox" checked>BOSS</label><label><input id="weakness" type="checkbox">弱属</label></div></section>
       <div id="magicBuffOptions" class="magic-buff-options" hidden><h3>魔法</h3><div id="magicBuffChoices"></div></div>
       <section class="damage-condition-group" aria-labelledby="generalDamageTitle"><h3 id="generalDamageTitle">通用伤害改变</h3>
-        <h4>自身状态</h4><div class="inline-options"><label><input id="fullHp" type="checkbox">满血</label><label><input id="lowHp" type="checkbox">濒死（HP≤30%）</label></div>
-        <h4>位置与目标状态</h4><div class="inline-options"><label><input id="air" type="checkbox">目标浮空</label><label><input id="back" type="checkbox">背后攻击</label><label><input id="ailment" type="checkbox">目标异常</label><label><input id="ground" type="checkbox">自身在地面</label><span id="weaknessStatus" class="condition-value">弱点：依目标抗性判断</span></div>
-        <h4>开局BUFF</h4><div class="inline-options"><label><input id="openingBuffActive" type="checkbox">开场生效（40秒内）</label><span class="condition-value">始终生效：随已选技能自动计算</span></div>
-        <h4>条件BUFF</h4><div class="inline-options"><label><input id="awakeningBuffActive" type="checkbox">觉醒（触发后40秒）</label><label><input id="magicAwakeningBuffActive" type="checkbox">魔导觉醒（触发后40秒）</label><label><input id="ultimateUsedBuffActive" type="checkbox">使用必杀后（40秒内）</label><label><input id="damageTakenBuffActive" type="checkbox">受到伤害时</label><label><input id="reviveBuffActive" type="checkbox">复活后（40秒内）</label></div>
-        <h4>其他条件</h4><div class="inline-options"><label><input id="realSunday" type="checkbox">现实时间为周日</label><label><input id="ultimateGaugeFull" type="checkbox">必杀槽满</label></div>
+        <div class="inline-options"><label><input id="fullHp" type="checkbox">满血</label><label><input id="lowHp" type="checkbox">濒死（HP≤30%）</label><label><input id="air" type="checkbox">目标浮空</label><label><input id="back" type="checkbox">背后攻击</label><label><input id="ailment" type="checkbox">目标异常</label><label><input id="ground" type="checkbox">自身在地面</label><label><input id="openingBuffActive" type="checkbox">开局BUFF</label><label><input id="conditionBuffActive" type="checkbox">条件BUFF</label></div>
+        <div hidden><input id="awakeningBuffActive" type="checkbox"><input id="magicAwakeningBuffActive" type="checkbox"><input id="ultimateUsedBuffActive" type="checkbox"><input id="damageTakenBuffActive" type="checkbox"><input id="reviveBuffActive" type="checkbox"><input id="ultimateGaugeFull" type="checkbox"><input id="realSunday" type="checkbox"></div>
       </section>
       <section id="entrySpecialSection" class="special-reminders" hidden><h3>角色特殊效果</h3><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源</th><th>效果</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
       <p class="help">法强与技能攻击修正会自动分层计算，避免重复计入 EX、月光等加成。</p>
@@ -87,7 +84,7 @@
       <div id="bossResistances" class="fields three"></div>
       <p id="bossReference" class="help"></p>
       <label id="mixedDefenseControl" hidden><span id="defenseLabel">混合结算防御值</span><input id="defense" type="number" min="0" max="100000000" step="1" required></label>
-      <input id="resistance" type="number" hidden><input id="boss" type="checkbox" checked hidden><small id="resistanceHint" hidden></small>
+      <input id="resistance" type="number" hidden><small id="resistanceHint" hidden></small>
       <button type="button" id="debuff">填入实测降防值 2599</button>
       <div class="fields two"><label>结算防御参照倍率 ×<input id="defenseRatio" type="number" min="0" max="1" step="any" value="1" required></label><p class="help">贯导触发时为0.5；上方仍填写原始当前魔抗，不需要手动减半。</p></div>
       <details><summary>其他战斗条件</summary><div class="inline-options"><label><input id="guarded" type="checkbox"> 本段被格挡</label></div><div class="fields two"><label>格挡减伤 %<input id="guardReduction" type="number" min="0" max="100" step="any" value="50" required></label><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="0.5" required></label></div><p class="help">降防填写在「当前防御力」；Boss 的 Break 防御修正在此基础上单独计算。</p></details>
@@ -154,5 +151,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260926-support-magic"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260926-switch-controls"></script>
 </body></html>

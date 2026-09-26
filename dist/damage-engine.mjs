@@ -15,7 +15,7 @@ export function defaultInput() {
   return {attack:3805, attackBasis:'panel', attackBase:3805, runtimeStatPercent:0, settledAttack:3805, defense:4000, hits:8, critRate:20, coefficient:0.334,
     skillAdd:0, skillPercent:51.8, skillPostAdd:0, attackRatio:0, runtimeRatio:1,
     integerRatio:0, type:'physical', skillType:'skill', element:'无', resistance:0,
-    resistCorrection:0, boss:true, races:[], killerRaces:[], killerCorrection:0,
+    resistCorrection:0, boss:true, weakness:false, races:[], killerRaces:[], killerCorrection:0,
     break:false, breakDefenseRatio:0.5, back:false, air:false, ailment:false, ground:false,
     guarded:false, guardReduction:50, cap:9999, bossKiller:false, defenseRatio:1,
     hitMultiplier:1, hitDamageRatio:1, hitScaleStage:'core', effects:[]};
@@ -58,7 +58,7 @@ export function context(s) {
   const resistance = (s.element==='无' ? 0 : s.resistance)+s.resistCorrection;
   const element = f(1-clamp(f(resistance/100),-9.99,1));
   const killer = typeof s.specialAttack==='boolean'?s.specialAttack:(s.boss && s.bossKiller) || s.races.some(r=>s.killerRaces.includes(r));
-  return {attack,defense,resistance,element,killer,weak:resistance<0,
+  return {attack,defense,resistance,element,killer,weak:s.weakness===true,
     killerFactor:killer ? f(f(1.5)*Math.max(f(1+f(s.killerCorrection/100)),0)) : 1};
 }
 export function applies(e,s,c,critical) {
