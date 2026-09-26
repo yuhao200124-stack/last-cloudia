@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>配装与伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260926-condition-sources">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260926-confirmed-effects">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html?v=20260924-condition-tags">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./skill-labeling.html?v=20260924-attack-labels">技能列表打标签用的</a><a id="calculatorCharacterBack" href="./characters.html?v=20260924-condition-tags">角色列表</a><a href="./index.html?v=20260924-condition-tags">技能表</a></nav></header>
@@ -25,7 +25,7 @@
       <label>读取报告<input id="entryReportFile" type="file" accept=".json,application/json"></label>
       <p id="entryFileNote" class="help"></p><label>本次角色<select id="entryUnit"><option value="">尚未导入</option></select></label>
       <p id="entrySaveStatus" class="help" role="status"></p>
-      <div class="inline-options"><button id="openReview" type="button" class="primary">面板与加成核对</button><span id="entryReviewSummary" class="help">导入后选择要采用的面板与加成。</span></div>
+      <div class="inline-options"><button id="openReview" type="button" class="primary">面板与加成核对</button><button id="openConfirmedEffects" type="button" class="primary" aria-controls="confirmedEffectsSection" aria-expanded="false">已确认的伤害加成</button><span id="entryReviewSummary" hidden></span></div>
     </section>
     <section class="card" id="attackPanel"><div class="section-heading"><h2><span>03</span>招式与技能参数</h2><button type="button" id="reset">重置</button></div>
       <div class="fields two"><label hidden>攻击方式<select id="attackChoice"></select></label><label hidden>伤害参照<select id="statReference"><option value="">待确认</option><option value="str">攻击力</option><option value="int">法强（魔力）</option><option value="mixed">攻击力＋法强（混合）</option></select></label></div>
@@ -86,7 +86,7 @@
       <div class="fields two"><label>结算防御参照倍率 ×<input id="defenseRatio" type="number" min="0" max="1" step="any" value="1" required></label><p class="help">贯导触发时为0.5；上方仍填写原始当前魔抗，不需要手动减半。</p></div>
       <details><summary>其他战斗条件</summary><div class="inline-options"><label><input id="guarded" type="checkbox"> 本段被格挡</label></div><div class="fields two"><label>格挡减伤 %<input id="guardReduction" type="number" min="0" max="100" step="any" value="50" required></label><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="0.5" required></label></div><p class="help">降防填写在「当前防御力」；Boss 的 Break 防御修正在此基础上单独计算。</p></details>
     </section>
-    <section id="confirmedEffectsSection" class="card" hidden><div class="section-heading"><h2><span>05</span>已确认的伤害加成</h2><button type="button" id="addEffect" class="primary">＋ 添加一条</button></div>
+    <section id="confirmedEffectsSection" class="card" hidden aria-labelledby="confirmedEffectsTitle"><div class="section-heading"><h2 id="confirmedEffectsTitle" tabindex="-1"><span>05</span>已确认的伤害加成</h2><div class="inline-options"><button type="button" id="addEffect" class="primary">＋ 添加一条</button><button type="button" id="closeConfirmedEffects">返回伤害计算</button></div></div>
       <p class="help">每条填写一个实际生效的效果。同名效果是否叠加须先确认；被覆盖的效果请取消勾选。装备、个性与其他条件由你确认。</p>
       <div id="effects"></div>
       <details><summary>加成如何计算</summary><p>常见 Boss、属性、物理、魔法、特技等增伤按所填顺序逐条结算，并逐步四舍五入。同类描述不自动合并。</p><p>若已确认某效果使用原生核心前入口，可在该条「更多」中更改。上移、下移用于对照实际生效顺序；未核对的顺序可能带来取整差异。</p></details>
@@ -148,5 +148,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260926-weapon-calculation"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260926-confirmed-effects"></script>
 </body></html>

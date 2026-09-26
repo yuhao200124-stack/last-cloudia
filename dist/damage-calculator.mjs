@@ -99,11 +99,28 @@ const booleanKeys=Object.keys(defaultInput()).filter(k=>typeof defaultInput()[k]
 $('element').innerHTML=options(ELEMENTS,'无');
 $('bossResistances').innerHTML=Object.entries(BOSS_ELEMENTS).map(([key,label])=>`<label>${label}抗性 %<input data-boss-resistance="${key}" type="number" min="-999" max="1000" step="any"></label>`).join('');
 function showReview(open) {
+  if(open)showConfirmedEffects(false,false);
   $('reviewPage').hidden=!open;$('calculationPage').hidden=open;
   if(open){$('reviewTitle').tabIndex=-1;$('reviewTitle').focus();}
   else $('openReview').focus();
 }
+let effectsReturnScroll=0;
+function showConfirmedEffects(open,restoreFocus=true){
+  if(open)effectsReturnScroll=window.scrollY;
+  document.body.classList.toggle('confirmed-effects-view',open);
+  $('confirmedEffectsSection').hidden=!open;
+  $('openConfirmedEffects').setAttribute('aria-expanded',String(open));
+  if(open){
+    $('reviewPage').hidden=true;$('calculationPage').hidden=false;
+    effects=readEffects();renderEffects();update();
+    $('confirmedEffectsTitle').focus();window.scrollTo(0,0);
+  }else if(restoreFocus){
+    effects=readEffects();update();$('openConfirmedEffects').focus();window.scrollTo(0,effectsReturnScroll);
+  }
+}
 $('openReview').addEventListener('click',()=>showReview(true));
+$('openConfirmedEffects').addEventListener('click',()=>showConfirmedEffects(true));
+$('closeConfirmedEffects').addEventListener('click',()=>showConfirmedEffects(false));
 $('closeReview').addEventListener('click',()=>workflow?.saveAndReturn());
 $('resolveReview').addEventListener('click',()=>showReview(true));
 function fillReaderPreview() {
