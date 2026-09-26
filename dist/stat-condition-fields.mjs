@@ -1,6 +1,7 @@
 // These flags describe the current scenario, not an automatic event simulator.
 // A trigger and a continuous condition have different lifetimes/stacking rules.
 export const STAT_CONDITIONS = Object.freeze({
+ conditionBuffActive:{label:'条件BUFF',kind:'buff'},
  openingBuffActive:{label:'开场Buff（40秒内）',kind:'buff'},
  awakeningBuffActive:{label:'觉醒Buff（触发后40秒）',kind:'buff'},
  magicAwakeningBuffActive:{label:'魔导觉醒Buff（触发后40秒）',kind:'buff'},

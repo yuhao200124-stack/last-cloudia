@@ -1,8 +1,10 @@
-import {STAT_CONDITIONS,STAT_CONDITION_FIELDS,STAT_CONDITION_DEFAULTS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
+import {STAT_CONDITIONS,STAT_CONDITION_FIELDS,STAT_CONDITION_DEFAULTS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {upgradeStatRule, STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullpage';
 /* Declarative effect conditions. This module does not compute final damage. */
 const options = (entries) => entries.map(([value, label]) => ({ value, label }));
 const yesNo = options([[null, '待确认'], [true, '是'], [false, '否']]);
+const weaponTypes=[['sword','剑'],['axe','斧'],['spear','枪'],['hammer','槌'],['bow','弓'],['machine','机械'],['claw','爪'],['staff','法杖']];
+const weaponElements=[['none','无'],['fire','火'],['ice','冰'],['earth','树'],['thunder','雷'],['light','光'],['dark','暗']];
 export const ATTACKS = [
   { id: 'normal', label: '普通攻击' }, { id: 's1', label: '特技1' },
   { id: 's2', label: '特技2' }, { id: 's3', label: '特技3' },
@@ -20,6 +22,22 @@ export const DEFAULT_CONTEXT = {
   enemyRaces:null, back:null, air:null, ailment:null, ground:null, stunned:false,
 };
 export const CONDITION_FIELDS = {
+  comboHits:{label:'当前连续Hit数',numeric:true,options:[]},
+  selfHpPercent:{label:'自身当前HP百分比',numeric:true,options:[]},
+  enemyHpPercent:{label:'敌人当前HP百分比',numeric:true,options:[]},
+  enemyDebuffCount:{label:'敌人减益数量',numeric:true,options:[]},
+  selfAilment:{label:'自身处于异常状态',options:yesNo},
+  enemyPoison:{label:'敌人中毒',options:yesNo},enemySilence:{label:'敌人沉默',options:yesNo},
+  rangedAttack:{label:'当前为远程攻击',options:yesNo},
+  usedSkillFull:{label:'本次使用的特技库存已满',options:yesNo},
+  enemyUsingSkillOrCounter:{label:'敌人正在发动特技或反击',options:yesNo},
+  openingStrAtLeastInt:{label:'开场攻击力不低于魔力',options:yesNo},
+  sharedEnemyRace:{label:'自身与敌人有相同类型',options:yesNo},
+  nonStackingMagic:{label:'重魔法',options:yesNo},
+  weaponSignatures:{label:'已装备武器的类型与属性',multiple:true,options:options(weaponTypes.flatMap(([t,tl])=>weaponElements.map(([e,el])=>[`${t}:${e}`,`${el}属性${tl}`])))},
+  sameWeaponType:{label:'两把武器类型相同',options:yesNo},
+  sameWeaponElement:{label:'两把武器属性相同',options:yesNo},
+  weaponAttackMatches:{label:'攻击与装备武器属性相同',options:yesNo},
   enemyRaces: {label:'目标种族',multiple:true,options:options([['soldier','战士'],['sniper','狙击手'],['knight','骑士'],['sorcerer','魔法师'],['beast','兽'],['plant','植物'],['insect','昆虫'],['bird','鸟'],['creature','魔法生物'],['undead','不死生物'],['stone','石'],['machine','机械'],['spirit','精灵'],['dragon','龙'],['god','神'],['fish','鱼']])},
   back:{label:'从背后攻击',options:yesNo},air:{label:'目标浮空',options:yesNo},ailment:{label:'目标处于异常状态',options:yesNo},ground:{label:'自身在地面',options:yesNo},
   breakOrStunned:{label:'目标气绝或Break',options:yesNo},
@@ -74,6 +92,8 @@ export function normalizeContext(input = {}) {
   for(const field of ['back','air','ailment','ground'])if(typeof ctx[field]!=='boolean')ctx[field]=null;
   ctx.breakOrStunned=ctx.break===true||ctx.stunned===true?true:ctx.break===false&&ctx.stunned===false?false:null;
   ctx.enemyRaces=Array.isArray(input.enemyRaces)&&input.enemyRaces.every(r=>CONDITION_FIELDS.enemyRaces.options.some(o=>o.value===r))?[...new Set(input.enemyRaces)]:null;
+  ctx.sharedEnemyRace=Array.isArray(input.selfRaces)&&ctx.enemyRaces?input.selfRaces.some(r=>ctx.enemyRaces.includes(r)):null;
+  ctx.openingStrAtLeastInt=Number.isFinite(input.openingStats?.attack)&&Number.isFinite(input.openingStats?.intelligence)?input.openingStats.attack>=input.openingStats.intelligence:null;
   if (ctx.iceStaff === true) ctx.staff = true;
   if (ctx.weaponCount === 0) { ctx.staff = false; ctx.iceStaff = false; }
   for (const key of ['sword', 'axe', 'spear', 'hammer', 'bow', 'machine', 'claw']) {
@@ -85,6 +105,15 @@ export function normalizeContext(input = {}) {
   }
   if (ctx.weaponCount === 2) ctx.robe = false;
   ctx.bodyArmor = ctx.robe === true || ctx.clothes === true || ctx.armor === true;
+  const weapons=Array.isArray(input.weaponDetails)?input.weaponDetails.filter(w=>weaponTypes.some(([t])=>t===w?.type)&&weaponElements.some(([e])=>e===w?.element)):null;
+  const complete=weapons&&weapons.length===ctx.weaponCount;
+  ctx.weaponSignatures=ctx.weaponCount===0?[]:complete?weapons.map(w=>`${w.type}:${w.element}`):input.iceStaff===true?['staff:ice']:null;
+  // A known matching weapon proves existence; incomplete equipment cannot
+  // prove a negative. Keep the completeness bit for intersects below.
+  ctx.weaponSignaturesComplete=ctx.weaponCount===0||!!complete;
+  ctx.sameWeaponType=ctx.weaponCount!==null&&ctx.weaponCount<2?false:complete?weapons.length===2&&weapons[0].type===weapons[1].type:null;
+  ctx.sameWeaponElement=ctx.weaponCount!==null&&ctx.weaponCount<2?false:complete?weapons.length===2&&weapons[0].element===weapons[1].element:null;
+  ctx.weaponAttackMatches=ctx.weaponCount===0?false:complete?weapons.every(w=>w.element===ctx.element):null;
   ctx.chainStacks = Number.isFinite(ctx.chainStacks) ? Math.max(0, Math.min(5, Math.floor(ctx.chainStacks))) : null;
   ctx.boss = input.boss!==false;
   return ctx;
@@ -98,15 +127,16 @@ export function describeCondition(condition) {
   const label = CONDITION_FIELDS[condition.field]?.label ?? condition.field ?? '未知条件';
   const values = Array.isArray(condition.value) ? condition.value : [condition.value];
   const rendered = values.map((v) => valueLabel(condition.field, v)).join('／');
-  return `${label}${({ eq: '：', in: '：', notIn: '排除：', gte: '至少：', intersects:'包含任一种：' })[condition.op] ?? '（待确认）：'}${rendered}`;
+  return `${label}${({ eq: '：', in: '：', notIn: '排除：', gte: '至少：', lte:'至多：', lt:'低于：', intersects:'包含任一种：',disjoint:'不包含：' })[condition.op] ?? '（待确认）：'}${rendered}`;
 }
 function conditionMatch(condition, ctx) {
   if (!condition || !CONDITION_FIELDS[condition.field]) return null;
   const actual = ctx[condition.field];
   if (actual === null || actual === undefined) return null;
-  if(condition.op==='intersects'){
+  if(['intersects','disjoint'].includes(condition.op)){
     if(!CONDITION_FIELDS[condition.field].multiple||!Array.isArray(actual)||!Array.isArray(condition.value)||!condition.value.length||condition.value.some(v=>!CONDITION_FIELDS[condition.field].options.some(o=>o.value===v)))return null;
-    return condition.value.some(v=>actual.includes(v));
+    const match=condition.value.some(v=>actual.includes(v));
+    return !match&&condition.field==='weaponSignatures'&&!ctx.weaponSignaturesComplete?null:condition.op==='disjoint'?!match:match;
   }
   // A mixed attack can contain physical and magical portions. Until those
   // portions are described separately, neither scope can safely be rejected
@@ -119,12 +149,14 @@ function conditionMatch(condition, ctx) {
   // not evidence that its condition does not apply.
   if (['eq', 'in', 'notIn'].includes(condition.op)) {
     const values = condition.op === 'eq' ? [condition.value] : condition.value;
-    if (!Array.isArray(values) || !values.length || values.some((value) => value === null || !CONDITION_FIELDS[condition.field].options.some((option) => option.value === value))) return null;
+    if (!Array.isArray(values) || !values.length || values.some((value) => value === null || !(CONDITION_FIELDS[condition.field].numeric?Number.isFinite(value):CONDITION_FIELDS[condition.field].options.some((option) => option.value === value)))) return null;
   }
   if (condition.op === 'eq') return actual === condition.value;
   if (condition.op === 'in' && Array.isArray(condition.value)) return condition.value.includes(actual);
   if (condition.op === 'notIn' && Array.isArray(condition.value)) return !condition.value.includes(actual);
   if (condition.op === 'gte' && typeof actual === 'number' && Number.isFinite(condition.value)) return actual >= condition.value;
+  if (condition.op === 'lte' && typeof actual === 'number' && Number.isFinite(condition.value)) return actual <= condition.value;
+  if (condition.op === 'lt' && typeof actual === 'number' && Number.isFinite(condition.value)) return actual < condition.value;
   return null;
 }
 
@@ -151,7 +183,7 @@ function makeRow(source, original, ctx, overrides) {
     row.status = 'disabled'; row.reasons.push('未选择这件装备'); return row;
   }
   if (!Array.isArray(rule.conditions) || !Array.isArray(rule.effects) || rule.effects.length === 0) {
-    row.status = 'pending'; row.reasons.push('效果或条件尚未完成拆分'); return row;
+    row.status = 'pending'; row.reasons.push(rule.note||`「${rule.text||source.text}」缺少可执行数值，请补充具体效果或公式`); return row;
   }
   const conditions = rule.conditions.map((condition) => ({ condition, matched: conditionMatch(condition, ctx) }));
   if (conditions.some(({ matched }) => matched === false)) {
@@ -178,6 +210,18 @@ export function evaluateCatalog(catalog, input = {}, overrides = {}) {
     : context.killer === null || killerRows.some((row) => row.status === 'pending') ? null : false;
   context.killer = typeof context.killerOverride==='boolean'?context.killerOverride:killer;
   const rows = sources.flatMap((source) => (source.rules ?? []).map((rule) => makeRow(source, rule, context, overrides)));
+  // Generated damage Buff rules have one effect. Resolve only their explicit
+  // same-type group; passive multipliers and stat Buffs keep their own engines.
+  const buffs=new Map();
+  for(const row of rows){
+    const e=row.rule.effects?.[0];
+    if(row.status!=='active'||row.rule.effects.length!==1||e.runtime?.layer!=='runtime-effect'||e.runtime.stackPolicy!=='exclusive')continue;
+    const key=JSON.stringify([e.type,e.runtime.stackGroup]),previous=buffs.get(key);
+    if(!previous){buffs.set(key,row);continue;}
+    const loser=e.value>previous.rule.effects[0].value?previous:row;
+    if(loser===previous)buffs.set(key,row);
+    loser.status='inactive';loser.reasons=['同类型BUFF已采用最高一项'];
+  }
   const warnings = [];
   if (rows.some((row) => row.status === 'active' && row.rule.verification === 'untested')) warnings.push('当前招式含尚未完成实测的特殊结算；本页只核对效果，不能保证最终伤害准确。');
   if (rows.some((row) => row.status === 'pending')) warnings.push('存在待确认效果或条件；待确认项目暂不计入。');
@@ -192,6 +236,7 @@ export function formatEffect(effect) {
   if (type === 'defenseReference') return `${target}按${value}${unit}计算（仅本次结算）`;
   if (type === 'killer') return `对${target || 'Boss'}触发特攻（只判定一次）`;
   if (type === 'critPermission') return `${target}可触发暴击`;
+  if (type === 'utility') return `${target}${effect.detail?`（${effect.detail}）`:''}`;
   const number = typeof value === 'number' ? `${value >= 0 ? '+' : ''}${value.toLocaleString('en-US')}${unit}` : `${value ?? '待确认'}${unit}`;
   return `${target}${number}${effect.detail ? `（${effect.detail}）` : ''}`;
 }

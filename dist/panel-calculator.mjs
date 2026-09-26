@@ -1,4 +1,4 @@
-import {statActivationCondition} from './stat-condition-fields.mjs?v=20260924-condition-tags';
+import {statActivationCondition} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
 import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-condition-tags';
 import {upgradeStatRule, verifiedRuntimeFamily,verifiedHpRuntime} from './stat-mechanics.mjs?v=20260924-fullpage';

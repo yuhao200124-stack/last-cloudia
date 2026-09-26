@@ -1,15 +1,15 @@
 import {hpStatRule, upgradeStatRule} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-condition-tags';
-import {commonSkillRules} from './common-skill-rules.mjs?v=20260926-common-skills';
+import {commonSkillRules,upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-skill-coverage';
 /** Reusable, description-matched rule templates. No imported content is executable. */
-import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260926-common-skills';
+import { CONDITION_FIELDS } from './effect-rule-engine.mjs?v=20260926-skill-coverage';
 
 export const LEARNING_STORAGE_KEY = 'lc-effect-rules:learned:v1';
 
 const LIMITS = Object.freeze({ text: 8192, templates: 1000, rules: 100, conditions: 30, effects: 40, bytes: 2_000_000 });
 const TYPES = new Set(['stat', 'statBuff', 'damage', 'cap', 'critRate', 'critPermission', 'hit', 'statReference', 'equipmentStat', 'defense', 'recovery', 'utility', 'castSpeed', 'defenseReference', 'killer', 'killerPower']);
 const FIELDS = new Set(Object.keys(CONDITION_FIELDS));
-const OPS = new Set(['eq', 'in', 'notIn', 'gte', 'intersects']);
+const OPS = new Set(['eq', 'in', 'notIn', 'gte', 'lte', 'lt', 'intersects','disjoint']);
 const DANGEROUS_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 const record = value => value !== null && typeof value === 'object' && !Array.isArray(value) && (Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null);
@@ -56,16 +56,16 @@ function validateRule(rule, path, errors, sourceText) {
       unknownKeys(condition, ['field', 'op', 'value'], p, errors);
       if (!FIELDS.has(condition.field)) errors.push(`${p}：未知条件字段`);
       if (!OPS.has(condition.op)) errors.push(`${p}：未知比较方式`);
-      if (['in','notIn','intersects'].includes(condition.op)) {
+      if (['in','notIn','intersects','disjoint'].includes(condition.op)) {
         if (!Array.isArray(condition.value) || condition.value.length < 1 || condition.value.length > 30 || !condition.value.every(scalar)) errors.push(`${p}：集合值无效`);
-      } else if (condition.op === 'gte') {
+      } else if (['gte','lte','lt'].includes(condition.op)) {
         if (!finite(condition.value)) errors.push(`${p}：阈值必须是有限数值`);
       } else if (!scalar(condition.value)) errors.push(`${p}：条件值无效`);
-      const permitted = CONDITION_FIELDS[condition.field]?.options?.map(option => option.value).filter(value => value !== null);
+      const permitted = CONDITION_FIELDS[condition.field]?.numeric?null:CONDITION_FIELDS[condition.field]?.options?.map(option => option.value).filter(value => value !== null);
       const values = Array.isArray(condition.value) ? condition.value : [condition.value];
       if (permitted && values.some(value => !permitted.includes(value))) errors.push(`${p}：条件值不在当前支持范围内`);
-      if (condition.op === 'gte' && !['weaponCount', 'chainStacks'].includes(condition.field)) errors.push(`${p}：只有数值条件支持阈值比较`);
-      if(condition.op==='intersects'&&!CONDITION_FIELDS[condition.field]?.multiple)errors.push(`${p}：只有多值条件支持交集比较`);
+      if (['gte','lte','lt'].includes(condition.op) && !CONDITION_FIELDS[condition.field]?.numeric&&!['weaponCount', 'chainStacks'].includes(condition.field)) errors.push(`${p}：只有数值条件支持阈值比较`);
+      if(['intersects','disjoint'].includes(condition.op)&&!CONDITION_FIELDS[condition.field]?.multiple)errors.push(`${p}：只有多值条件支持交集比较`);
     });
   }
   if (!Array.isArray(rule.effects) || rule.effects.length > LIMITS.effects) {
@@ -83,7 +83,7 @@ function validateRule(rule, path, errors, sourceText) {
           if(hasOwn(r,'lifetime')&&!['permanent','opening-40s','triggered-40s','condition'].includes(r.lifetime))errors.push(`${p}：Buff持续方式无效`);
           if(hasOwn(r,'kind')&&!['buff','conditional-passive'].includes(r.kind))errors.push(`${p}：实时属性类型无效`);
           if(r.kind==='conditional-passive'&&(r.stackPolicy!=='add'||r.lifetime!=='condition'||hasOwn(r,'resolution')))errors.push(`${p}：条件属性不能按互斥Buff处理`);
-          if(r.layer!=='runtime-stat'||!['exclusive','add'].includes(r.stackPolicy)||!shortString(r.stackGroup,128)||!r.stackGroup||!shortString(r.evidence,512)||!r.evidence||hasOwn(r,'resolution')&&r.resolution!=='highest')errors.push(`${p}：Buff分组无效`);
+          if(!['runtime-stat','runtime-effect'].includes(r.layer)||r.layer==='runtime-effect'&&(!['damage','cap','critRate'].includes(effect.type)||r.stackPolicy!=='exclusive'||r.resolution!=='highest')||!['exclusive','add'].includes(r.stackPolicy)||!shortString(r.stackGroup,128)||!r.stackGroup||!shortString(r.evidence,512)||!r.evidence||hasOwn(r,'resolution')&&r.resolution!=='highest')errors.push(`${p}：Buff分组无效`);
         }
       }
       if (!TYPES.has(effect.type)) errors.push(`${p}：未知效果类型`);
@@ -211,7 +211,7 @@ export function buildCatalog(sources, seedCatalog = [], learnedTemplates = {}) {
       if (validated) return { ...source, rules: rebaseRules(validated.rules, source), learned: true, seeded: false, unknown: false };
     }
     const seed = seedIndex.get(key);
-    if (seed) return { ...source, rules: rebaseRules(seed.rules, source), learned: false, seeded: true, unknown: false };
+    if (seed) return upgradeCommonSource({ ...source, rules: rebaseRules(seed.rules, source), learned: false, seeded: true, unknown: false });
     const registered = commonSkillRules(source) || basicStatRules(source);
     if (registered) return { ...source, rules: registered, learned: false, seeded: false, unknown: false, registered: true };
     const parsed = hpStatRule(source) || simpleStatRule(source);

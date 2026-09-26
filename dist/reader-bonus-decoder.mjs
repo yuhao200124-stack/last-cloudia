@@ -1,5 +1,5 @@
 import {PROCESS_SIGNATURES,PROCESS_DOCUMENTATION} from './reader-process-evidence.mjs';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-common-skills';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
 import {READ_ID_TO_SOURCE_ID,decodeKnownBlessingEntry} from './account-blessings.mjs?v=20260924-fullpage';
 const eq=(field,value)=>({field,op:'eq',value}), inside=(field,value)=>({field,op:'in',value});
 const finite=v=>typeof v==='number'&&Number.isFinite(v);

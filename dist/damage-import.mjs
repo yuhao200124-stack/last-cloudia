@@ -1,6 +1,6 @@
 import {characterHitStage,characterSourceAllowed} from './character-combat-rules.mjs?v=20260924-fullpage';
-import {criticalDamageEffect} from './critical-options.mjs?v=20260924-condition-tags';
-import {blockedCombatModes} from './combat-modes.mjs?v=20260924-condition-tags';
+import {criticalDamageEffect} from './critical-options.mjs?v=20260926-skill-coverage';
+import {blockedCombatModes} from './combat-modes.mjs?v=20260926-skill-coverage';
 // Transfer qualified effects, never reinterpret a stat bonus as a skill multiplier.
 export const reportStorageKey = id => `lc-damage-report:${id}:v1`;
 const elements = { none:'无', fire:'火', ice:'冰', earth:'树', thunder:'雷', light:'光', dark:'暗' };
@@ -57,9 +57,9 @@ export function buildDamageImport(report) {
   }
   if(refs.length===1 && refs[0].effect.target==='法强' && refs[0].effect.value==='魔抗') imported.statReference='int';
   else if(refs.length) imported.blockers.push('存在未确认或多个攻击属性参照，需先核对。');
-  if(defense.length===1 && defense[0].effect.target==='敌方魔抗' && defense[0].effect.unit==='%' && typeof defense[0].effect.value==='number' && defense[0].effect.value>=0 && defense[0].effect.value<=100) {
-    if(c.attackKind==='magic' || c.statReference==='int' || imported.statReference==='int') imported.defenseRatio=defense[0].effect.value/100;
-    else imported.blockers.push('当前防御参照不是魔抗，不能应用魔抗修正。');
+  if(defense.length===1 && ['敌方魔抗','敌方防御力'].includes(defense[0].effect.target) && defense[0].effect.unit==='%' && typeof defense[0].effect.value==='number' && defense[0].effect.value>=0 && defense[0].effect.value<=100) {
+    if(defense[0].effect.target==='敌方防御力'?c.statReference==='str'||!c.statReference&&c.damageType==='physical':c.attackKind==='magic'||c.statReference==='int'||imported.statReference==='int') imported.defenseRatio=defense[0].effect.value/100;
+    else imported.blockers.push(`当前防御参照与${defense[0].effect.target}不匹配，不能应用修正。`);
   } else if(defense.length) imported.blockers.push('存在未确认或多个防御参照修正，需先核对。');
   if(hit.length===1 && Number.isInteger(hit[0].effect.value) && hit[0].effect.value>0 && Number.isFinite(hit[0].effect.secondary) && hit[0].effect.secondary>=0) {
     imported.hitMultiplier=hit[0].effect.value;imported.hitDamageRatio=hit[0].effect.secondary;

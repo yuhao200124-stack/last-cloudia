@@ -82,9 +82,9 @@ body.is-embedded main { padding-top:14px; }
 .bonus-section .section-heading h3{margin:0}
 .ark-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
 .common-skill{border:1px solid var(--line,#d2deea);border-radius:10px;padding:16px;margin-top:12px;background:#f8fbff}
-.common-skill label{display:flex;align-items:center;gap:10px;font-weight:700}
-.common-skill label input{width:auto;flex:0 0 auto}
-.common-skill p{line-height:1.6;margin:10px 0 0;overflow-wrap:anywhere}
-.common-skill .help{font-size:13px}
+.common-skill label{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;text-align:left;gap:10px;font-weight:700;font-size:1rem;line-height:1.5;margin:0}
+.common-skill label input{width:18px;height:18px;flex:0 0 18px;margin:0;accent-color:#285d91}
+.common-skill p{line-height:1.6;margin:9px 0 0;text-align:left;font-size:1rem;overflow-wrap:anywhere}
+.common-skill .help{font-size:.875rem;margin-top:7px}
 .common-skill.is-inactive{opacity:.65}
 @media(max-width:900px){.confirmed-effects-view #calculationPage{grid-template-columns:1fr}.confirmed-effects-view #unifiedResults{position:static;max-height:none;overflow:visible;grid-column:1!important;grid-row:2!important}.ark-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}

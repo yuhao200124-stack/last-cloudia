@@ -1,10 +1,10 @@
-import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
-import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs?v=20260926-common-skills';
-import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260926-common-skills';
-import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260926-common-skills';
+import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
+import { CATALOG as ROXY_CATALOG } from './roxy-rules.mjs?v=20260926-skill-coverage';
+import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260926-skill-coverage';
+import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260926-skill-coverage';
 import { summarizeEffects } from './effect-totals.mjs';
 import { ACCOUNT_BLESSING_CATALOG, ACCOUNT_BLESSING_META } from './account-blessings.mjs?v=20260924-fullpage';
-import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260926-common-skills';
+import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260926-skill-coverage';
 
 mountAccountBlessings();
 

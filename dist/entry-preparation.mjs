@@ -1,10 +1,10 @@
-import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260924-condition-tags';
+import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullpage';
-import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260924-condition-tags';
-import {effectCombatModes} from './combat-modes.mjs?v=20260924-condition-tags';
-import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-switch-controls';
-import {upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-common-skills';
+import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260926-skill-coverage';
+import {effectCombatModes} from './combat-modes.mjs?v=20260926-skill-coverage';
+import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-skill-coverage';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
+import {upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-skill-coverage';
 import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-fullpage';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
@@ -50,6 +50,7 @@ export function retargetReport(report,selection) {
  for(const source of ACCOUNT_BLESSING_CATALOG)if(!report.reviewedByUser&&!grouped.has(source.id))grouped.set(source.id,source);
  const attack=selection.attack==='heavy_magic'?'magic':selection.attack;
  const context={...report.context,killer:false,attack,damageType:selection.type,element:elementIds[selection.element]??null,statReference:selection.statReference??report.context.statReference};
+ context.nonStackingMagic=selection.attack==='heavy_magic';
  if(typeof selection.specialAttack==='boolean')context.killerOverride=selection.specialAttack;
  if(typeof selection.break==='boolean')context.break=selection.break;
  if(typeof selection.boss==='boolean')context.boss=selection.boss;

@@ -1,6 +1,6 @@
-import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-common-skills';
-import {requiresCritical} from './critical-options.mjs?v=20260924-condition-tags';
+import {readerBonusState} from './reader-bonus-decoder.mjs?v=20260926-skill-coverage';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
+import {requiresCritical} from './critical-options.mjs?v=20260926-skill-coverage';
 
 // A supplement is a reader source, never a fabricated website/account value.
 // Only fully decoded, scoped outgoing percentages are supported here.

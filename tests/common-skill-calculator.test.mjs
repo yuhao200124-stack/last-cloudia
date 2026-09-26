@@ -125,7 +125,7 @@ test('classification-ready mechanics do not inject guesses; incoming defense is 
  const p=run(['狂战士','生命鼓舞','星眼','命运抽签','巨型护罩']);
  assert(p.imported.effects.some(e=>e.name.startsWith('狂战士')&&e.percent===30));
  assert(!p.imported.effects.some(e=>/生命鼓舞|星眼|命运抽签|巨型护罩/.test(e.name)));
- assert(p.unresolved.some(e=>e.name==='生命鼓舞'));assert(p.unresolved.some(e=>e.name==='星眼'));
+ assert(!p.unresolved.some(e=>e.name==='生命鼓舞'));assert(!p.unresolved.some(e=>e.name==='星眼'));
  assert(!p.unresolved.some(e=>e.name==='巨型护罩'));
  const source=structuredClone(registry.entries.find(e=>e.name==='剑增幅'));
  for(const d of Object.values(source.tagDetails))for(const b of d.bindings||[])b.scope.extraUnknownCondition=true;
@@ -133,13 +133,13 @@ test('classification-ready mechanics do not inject guesses; incoming defense is 
 });
 
 test('party predicates distributed into effectConditions are never lost or silently treated as constants',()=>{
- for(const name of ['阵形：进击的奥尔达纳','纳萨力克的统治者','腐蚀之牙']){
+ for(const name of ['阵形：进击的奥尔达纳','腐蚀之牙']){
   const p=run([name]);assert.equal(p.imported.effects.length,0,name);assert(p.unresolved.some(e=>e.name===name),name);
  }
  for(const source of registry.entries)for(const detail of Object.values(source.tagDetails))for(const condition of detail.effectConditions||[]){
   const binding=condition.effectBinding;if(!binding||binding.scope?.direction!=='outgoing')continue;
   const matching=catalog[source.id].rules.filter(rule=>binding.partIds.slice().sort().join('|')===rule.part);
-  assert(matching.length,source.name);assert(matching.every(r=>r.review==='pending'),source.name+' must require real party state');
+  assert(matching.length,source.name);assert(matching.every(r=>r.review==='pending'||r.note?.startsWith('最大值试算：')||r.effects.every(e=>e.type==='utility')),source.name+' requires actual party state unless an explicit maximum was selected');
  }
 });
 
@@ -161,4 +161,75 @@ test('new character/common source loading recognizes official rules without a lo
  const result=buildCatalog([source])[0];assert.equal(result.registered,true);assert(result.rules.every(r=>r.review==='ready'));
  const report={...base,...evaluateCatalog([result],{attack:'magic',damageType:'magical',element:'fire'})};
  assert.equal(buildDamageImport(report).effects[0].percent,30);
+});
+
+test('healing is recognized without changing main-hit damage; explicit chain maximum changes magic only',()=>{
+ const baseline=run([]),healing=run(['骄傲之力']);
+ assert.deepEqual(healing.imported.effects,baseline.imported.effects);assert.equal(calculate(healing.input).mean,calculate(baseline.input).mean);assert.equal(healing.unresolved.length,0);
+ assert(healing.commonSkills[0].rows.some(r=>r.rule.effects.some(e=>e.type==='utility'&&e.target==='HP回复')));
+ const select={attack:'magic',type:'magical',statReference:'int'},battle={type:'magical',skillType:'magic'};
+ const magic=run(['魔法连锁'],{select,battle}),empty=run([],{select,battle});
+ assert.equal(magic.imported.effects[0].percent,20);assert.equal(magic.unresolved.length,0);assert(calculate(magic.input).mean>calculate(empty.input).mean);
+ assert.equal(run(['魔法连锁']).imported.effects.length,0);
+ const off=prepareLoadoutPreview({baseReport:base,snapshot:{characterId:'test',items:[item('魔法连锁')],sourceIds:[]},selection:{...selection,...select},input:{...input,...battle},disabledCommonIds:[magic.commonSkills[0].confirmationKey]});
+ assert.equal(off.imported.effects.length,0);
+});
+
+test('maximum stat scenarios and grouped Buff switches preserve negatives and active-only stacking',()=>{
+ const on=run(['生命鼓舞'],{select:{lowHp:true}}),off=run(['生命鼓舞']);
+ assert.equal(on.panel.values.attack,1500);assert.equal(off.panel.values.attack,1000);
+ assert.equal(run(['命运抽签'],{select:{openingBuffActive:true}}).panel.values.attack,1500);
+ const negative=run(['寻找“有趣的东西”'],{select:{conditionBuffActive:true}});
+ assert.equal(negative.panel.values.attack,1200);assert.equal(negative.panel.values.intelligence,800);
+ for(const [flag,on] of [['openingBuffActive',false],['openingBuffActive',true]]){
+  const result=run(['快速暴击','自动暴击'],{select:{[flag]:on,criticalEnabled:true}});
+  assert.equal(result.imported.critAdded,on?15:0);
+ }
+ const damage=run(['龙卷攻击','进击的姿势','桶～子'],{select:{conditionBuffActive:true}});
+ assert.deepEqual(damage.imported.effects.map(e=>e.percent),[30]);
+ assert.equal(run(['龙卷攻击','进击的姿势','桶～子']).imported.effects.length,0);
+ assert.equal(run(['星眼'],{select:{conditionBuffActive:true}}).imported.effects[0].percent,50);
+});
+
+test('equipment maximum respects real weapon element and heavy magic retains its own scope',()=>{
+ for(const [element,count] of [['ice',1],['fire',0]]){
+  const result=run(['冲浪冲击'],{context:{weaponCount:1,staff:true,weaponDetails:[{type:'staff',element}]},select:{element:'冰'},battle:{element:'冰'}});
+  assert.equal(result.imported.effects.length,count);if(count)assert.equal(result.imported.effects[0].percent,40);
+ }
+ const heavy=run(['人工精灵'],{select:{attack:'heavy_magic',type:'magical',statReference:'int'},battle:{type:'magical',skillType:'magic'}});
+ const normal=run(['人工精灵'],{select:{attack:'magic',type:'magical',statReference:'int'},battle:{type:'magical',skillType:'magic'}});
+ assert.equal(heavy.imported.capAdded-normal.imported.capAdded,5000);
+});
+
+test('v155 machine pending rules upgrade by full signature; custom, disabled and edited sources survive',()=>{
+ const e=entry('魔法连锁'),original=structuredClone(e.legacyPending[0]);
+ const source={...item(e.name),id:'saved-chain',rules:[{...original,id:'old-chain'}]};
+ const select={...selection,attack:'magic',type:'magical',statReference:'int'};
+ const report={...base,...evaluateCatalog([source],{attack:'magic',damageType:'magical',element:'fire',accountBlessings:false})};
+ const upgraded=retargetReport(report,select);assert.equal(buildDamageImport(upgraded).effects[0].percent,20);assert.equal(upgraded.rows.find(r=>r.sourceId==='saved-chain').rule.id,'old-chain');
+ const disabled=structuredClone(report);disabled.rows[0].status='disabled';assert.equal(buildDamageImport(retargetReport(disabled,select)).effects.length,0);
+ const custom=structuredClone(report);custom.rows[0].rule.effects=[{type:'damage',target:'伤害',value:13,unit:'%'}];custom.rows[0].rule.review='ready';assert.equal(buildDamageImport(retargetReport(custom,select)).effects[0].percent,13);
+ const modified=structuredClone(report);modified.rows[0].sourceText+='（我修改过）';assert.equal(buildDamageImport(retargetReport(modified,select)).effects.length,0);
+});
+
+test('all 935 skills have specific explanations and unrecorded conversion formulas never get a fabricated maximum',()=>{
+ for(const e of Object.values(catalog)){
+  const source={...e,rules:commonSkillRules(e)};
+  for(const row of evaluateCatalog([source],{attack:'magic',damageType:'magical'}).rows)assert(!row.reasons.some(r=>r.includes('效果或条件尚未完成拆分')),e.name);
+ }
+ const unknown=run(['斗智转轮'],{select:{attack:'magic',type:'magical',statReference:'int'},battle:{type:'magical',skillType:'magic'}});
+ assert.equal(unknown.imported.effects.length,0);assert(unknown.unresolved.some(r=>r.reason.includes('没有明确最大值')));
+});
+
+test('numeric conditions preserve Hit and HP boundaries; missing observations do not mean zero',()=>{
+ const source=name=>{const e=entry(name);return {...e,rules:commonSkillRules(e)};};
+ const damage=(name,ctx)=>buildDamageImport({kind:'last-cloudia-effect-report',characterId:'test',...evaluateCatalog([source(name)],{attack:'s1',damageType:'physical',element:'fire',accountBlessings:false,...ctx})});
+ for(const [hits,boost,cap] of [[10,10,0],[11,0,0],[107,0,0],[108,0,108000],[109,0,0]]){
+  const r=damage('百八之钟',{comboHits:hits});assert.equal(r.effects[0]?.percent||0,boost);assert.equal(r.capAdded,cap);
+ }
+ const missing=evaluateCatalog([source('百八之钟')],{attack:'s1',damageType:'physical'});assert(missing.rows.every(r=>r.status==='pending'&&r.reasons.some(t=>t.includes('连续Hit'))));
+ for(const [hp,on] of [[25,true],[25.1,false]])assert.equal(damage('暴击艺术',{attack:'ultimate',selfHpPercent:hp}).effects.length,on?1:0);
+ assert.equal(damage('暴击艺术',{attack:'ultimate',lowHp:true}).effects.length,0,'30% near-death cannot prove the 25% threshold');
+ assert.equal(damage('毒之力',{enemyPoison:true}).effects[0].percent,30);assert.equal(damage('毒之力',{ailment:true}).effects.length,0);
+ for(const [atk,int,on] of [[100,100,true],[99,100,false]])assert.equal(damage('作战行动',{openingStats:{attack:atk,intelligence:int}}).effects.length,on?1:0);
 });

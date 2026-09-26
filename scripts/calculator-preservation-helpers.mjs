@@ -9,10 +9,16 @@ const exclusiveWeapon=JSON.parse(fs.readFileSync(new URL('../docs/exclusive-weap
 const weaponCalculation=JSON.parse(fs.readFileSync(new URL('../docs/weapon-calculation-preservation-2026-09-26.json',import.meta.url)));
 const confirmedEffects=JSON.parse(fs.readFileSync(new URL('../docs/confirmed-effects-preservation-2026-09-26.json',import.meta.url)));
 const confirmationGroups=JSON.parse(fs.readFileSync(new URL('../docs/confirmation-groups-preservation-2026-09-26.json',import.meta.url)));
+const skillCoverage=JSON.parse(fs.readFileSync(new URL('../docs/skill-coverage-preservation-2026-09-26.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const coverage=skillCoverage.files[path];
+ if(coverage){
+  if(hash(text)!==coverage.afterHash||hash(coverage.beforeText)!==coverage.beforeHash)throw Error(`Skill coverage preservation drift: ${path}`);
+  text=coverage.beforeText;
+ }
  const groups=confirmationGroups.files[path];
  if(groups){
   if(hash(text)!==groups.afterHash||hash(groups.beforeText)!==groups.beforeHash)throw Error(`Confirmation group preservation drift: ${path}`);

@@ -1,5 +1,5 @@
 import {ACCOUNT_BLESSING_CATALOG, STAT_BLESSINGS} from './account-blessings.mjs?v=20260924-fullpage';
-import {describeCondition} from './effect-rule-engine.mjs?v=20260926-common-skills';
+import {describeCondition} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
 const labels={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 const escape=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 

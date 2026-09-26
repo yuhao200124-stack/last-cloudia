@@ -1,13 +1,13 @@
-import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-common-skills';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-loadout-sources';
-import {buildDamageImport} from './damage-import.mjs?v=20260926-loadout-sources';
-import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-condition-tags';
+import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-skill-coverage';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-skill-coverage';
+import {buildDamageImport} from './damage-import.mjs?v=20260926-skill-coverage';
+import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260926-skill-coverage';
 import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
 import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-condition-tags';
 import {magicBuffCap} from './magic-buffs.mjs?v=20260924-condition-tags';
 import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-condition-tags';
-import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-common-skills';
-import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-common-skills';
+import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-skill-coverage';
+import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
 import {EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
 
 const eq=(field,value)=>({field,op:'eq',value});
@@ -148,6 +148,7 @@ export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
   const type=baseReport.profile.equipment?.find(e=>e.name===item.name)?.type,field=equipmentFields[type];
   if(field){context[field]=true;if(!['robe','clothes','armor'].includes(field)&&Number.isFinite(context.weaponCount))context.weaponCount++;}
  }
+ if(JSON.stringify(context.equipmentIds)!==JSON.stringify(baseReport.context.equipmentIds||[]))delete context.weaponDetails;
  if(loadoutSources(baseReport).some(s=>s.group==='blessings'&&represented.has(s.sourceId)&&selected.has(s.sourceId)))context.accountBlessings=true;
  const extra=snapshot.items.filter(s=>!s.sourceIds?.length||s.edited).map(s=>({id:`loadout:${s.id}`,catalogId:s.catalogId,edited:s.edited,name:s.name,text:s.text,group:'common'}));
  const editedIds=new Set(snapshot.items.filter(s=>s.edited).flatMap(s=>s.sourceIds||[]));
