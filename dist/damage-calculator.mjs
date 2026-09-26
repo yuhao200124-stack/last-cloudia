@@ -2,13 +2,13 @@ import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fiel
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
 import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-loadout-sources';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-loadout-sources';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-exclusive-weapon';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
 import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-loadout-sources';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-exclusive-weapon';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
 import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-condition-observation';
 import {retargetReport} from './entry-preparation.mjs?v=20260926-loadout-sources';
@@ -550,7 +550,9 @@ unified=mountUnifiedCalculator({
   attackOverride:attackBasisTouched?Object.fromEntries(['attackBasis','attack','attackBase','runtimeStatPercent','settledAttack'].map(key=>[key,read()[key]])):null,
   manualDefenseRatio:defenseRatioTouched||imported&&$('defenseRatio').valueAsNumber!==imported.defenseRatio?$('defenseRatio').valueAsNumber:null,
   criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),
- onChange:update
+ onChange:update,
+ onWeaponChange:enabled=>{$('specialWeapon').checked=enabled;}
 });
+$('specialWeapon').addEventListener('change',()=>{unified.setExclusiveWeapon($('specialWeapon').checked);update();});
 if(characterId&&!latestReport)loadCharacterReport(characterId).then(report=>{if(!latestReport){receiveReport(report);unified.refreshSources();}}).catch(e=>unified.error(e.message));
 if(params.get('unified')==='1')unified.open();

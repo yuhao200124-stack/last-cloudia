@@ -1067,6 +1067,17 @@
         items: calculateSc().items.map(item => ({ id: item.id, catalogId:item.row.basicStats?.catalogId, name: rowValue(item.row, 'name'), text: rowValue(item.row, 'effect'), sc: item.freeBy ? 0 : item.sc,
           sourceIds: bindings[item.id] || [], skillTags:skillTagLabels(item.row).length?item.row.skillTags:null, edited: rowValue(item.row, 'effect') !== String(item.row.effect || '') })) };
     },
+    setEquipmentSources({sourceIds,enabled}) {
+      const id=calculatorState.characterId, sources=unifiedCatalog[id]?.sources||[];
+      const allowed=new Set(sources.filter(s=>s.group==='equipment'&&['法杖','剑','斧','枪','槌','弓','机械','爪','刀','弩','锤'].includes(s.equipmentType)).map(s=>s.sourceId));
+      const requested=new Set((sourceIds||[]).filter(sourceId=>allowed.has(sourceId)));
+      if(!requested.size)return;
+      for(const [skill,ids] of Object.entries(sourceBindings[id]||{}))if(ids.length&&ids.every(sourceId=>requested.has(sourceId))){
+        calculatorState.skillIds=calculatorState.skillIds.filter(item=>item!==skill);
+        if(enabled)calculatorState.skillIds.push(skill);
+      }
+      saveCalculatorState();render();
+    },
     initialize({characterId, sources}) {
       const id = String(characterId), wasSame = calculatorState.characterId === id, oldOwned = new Set(characterLoadouts[id]?.skillIds || []);
       const knownSources = new Set((unifiedCatalog[id]?.sources || []).map(s=>s.sourceId));

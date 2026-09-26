@@ -5,10 +5,16 @@ const layout=JSON.parse(fs.readFileSync(new URL('../docs/excel-layout-preservati
 const damageConditions=JSON.parse(fs.readFileSync(new URL('../docs/damage-conditions-preservation-2026-09-26.json',import.meta.url)));
 const characterRestore=JSON.parse(fs.readFileSync(new URL('../docs/character-restore-preservation-2026-09-26.json',import.meta.url)));
 const loadoutSources=JSON.parse(fs.readFileSync(new URL('../docs/loadout-sources-preservation-2026-09-26.json',import.meta.url)));
+const exclusiveWeapon=JSON.parse(fs.readFileSync(new URL('../docs/exclusive-weapon-preservation-2026-09-26.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const weapon=exclusiveWeapon.files[path];
+ if(weapon){
+  if(hash(text)!==weapon.afterHash||hash(weapon.beforeText)!==weapon.beforeHash)throw Error(`Exclusive weapon preservation drift: ${path}`);
+  text=weapon.beforeText;
+ }
  const integration=loadoutSources.files[path];
  if(integration){
   if(hash(text)!==integration.afterHash||hash(integration.beforeText)!==integration.beforeHash)throw Error(`Loadout source preservation drift: ${path}`);

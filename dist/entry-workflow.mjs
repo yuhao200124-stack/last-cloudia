@@ -238,7 +238,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   const openDetails=new Set([...document.querySelectorAll('[data-entry-details][open]')].map(el=>el.dataset.entryDetails));
   renderSnapshotPicker();
   const move=selectedMove();
-  $('entryMoveNote').textContent=move?`${move.source}：${move.name}。${move.purpose==='support'?'这是辅助魔法，不按攻击伤害计算。':''}${state.selection.attack==='heavy_magic'?'按你选定的重魔法条件核对。':''}`:'请选择攻击方式和具体招式。';
+  $('entryMoveNote').textContent=move?.purpose==='support'?'这是辅助魔法，不按攻击伤害计算。':'';
+  $('entryMoveNote').hidden=!$('entryMoveNote').textContent;
   $('entryCandidateCount').textContent=`${compared.length} 项加成${state.accountBlessings?'（含账户加护）':''}`;
   const pending=candidate.rows.filter(r=>r.status==='pending');
   $('entryPendingCount').textContent=`网站待确认项（${pending.length}）`;

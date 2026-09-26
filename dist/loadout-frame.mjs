@@ -10,6 +10,7 @@ if(embedded){
  window.addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==window.parent)return;
   if(e.data?.type==='lc-loadout-init'){window.LC_LOADOUT_CALCULATOR.initialize(e.data);publish(window.LC_LOADOUT_CALCULATOR.snapshot());}
+  if(e.data?.type==='lc-loadout-set-equipment'){window.LC_LOADOUT_CALCULATOR.setEquipmentSources(e.data);publish(window.LC_LOADOUT_CALCULATOR.snapshot());}
   if(e.data?.type==='lc-loadout-get-state')publish(window.LC_LOADOUT_CALCULATOR.snapshot());
   if(e.data?.type==='lc-loadout-recommendations')render(e.data.payload);
  });

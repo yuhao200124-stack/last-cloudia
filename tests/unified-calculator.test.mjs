@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareLoadoutPreview,loadoutSources,simpleLoadoutRules} from '../dist/loadout-preview.mjs';
+import {prepareLoadoutPreview,loadoutSources,simpleLoadoutRules,exclusiveWeaponSourceIds} from '../dist/loadout-preview.mjs';
 import {recommendDamage,damageGauge} from '../dist/damage-recommendations.mjs';
 import {defaultInput,calculate} from '../dist/damage-engine.mjs';
 import {CATALOG} from '../dist/roxy-rules.mjs';
@@ -98,6 +98,7 @@ test('critical observation is retained and identified skill changes apply as del
 });
 test('traits, equipment and blessings are selectable sources; removing equipment updates its conditions and restoring is exact',()=>{
  const all=loadoutSources(baseReport);
+ assert.deepEqual(exclusiveWeaponSourceIds(all),['roxy-staff']);
  assert(all.some(s=>s.group==='traits'));assert(all.some(s=>s.group==='equipment'));assert(all.some(s=>s.group==='blessings'));
  const full=preview(),withoutStaff={...snapshot,items:snapshot.items.filter(s=>s.sourceId!=='roxy-staff')};
  const removed=preview({snapshot:withoutStaff});
@@ -113,6 +114,31 @@ test('traits, equipment and blessings are selectable sources; removing equipment
  assert(selectedGear.report.rows.some(r=>r.sourceId==='roxy-staff'));
  assert.equal(selectedGear.report.context.staff,true);assert.equal(selectedGear.report.context.weaponCount,1);
  assert.equal(selectedGear.input.attackBase,full.input.attackBase);
+});
+test('special weapon control sends the actual equipment IDs and follows manual loadout changes',async()=>{
+ const {mountUnifiedCalculator}=await import('../dist/unified-calculator.mjs');
+ const controls=new Map(),messages=[],listeners={};
+ const make=()=>({hidden:false,src:'',textContent:'',addEventListener(){}});
+ for(const id of ['unifiedLoadoutFrame','unifiedWorkspace','unifiedStart','unifiedSummary','unifiedSettings','unifiedExit','unifiedUnresolved'])controls.set(id,make());
+ const child={postMessage(message){messages.push(message);}};controls.get('unifiedLoadoutFrame').contentWindow=child;
+ globalThis.document={getElementById:id=>controls.get(id),body:{classList:{toggle(){}}}};
+ globalThis.localStorage={getItem(){return null;}};
+ globalThis.location={origin:'https://example.test',href:'https://example.test/damage-calculator.html?character=260'};
+ globalThis.window={addEventListener(type,fn){listeners[type]=fn;}};
+ try{
+  let checked=null;
+  const ui=mountUnifiedCalculator({getContext:()=>({characterId:'260',baseReport,selection}),onChange(){},onWeaponChange:value=>{checked=value;}});
+  ui.setExclusiveWeapon(false);
+  listeners.message({origin:location.origin,source:child,data:{type:'lc-loadout-ready'}});
+  assert.deepEqual(messages.at(-1),{type:'lc-loadout-set-equipment',sourceIds:['roxy-staff'],enabled:false});
+  const removed={...snapshot,items:snapshot.items.filter(item=>item.sourceId!=='roxy-staff')};
+  listeners.message({origin:location.origin,source:child,data:{type:'lc-loadout-change',snapshot:removed}});
+  assert.equal(checked,false);
+  ui.setExclusiveWeapon(true);
+  assert.deepEqual(messages.at(-1),{type:'lc-loadout-set-equipment',sourceIds:['roxy-staff'],enabled:true});
+  listeners.message({origin:location.origin,source:child,data:{type:'lc-loadout-change',snapshot}});
+  assert.equal(checked,true);
+ }finally{for(const key of ['document','localStorage','location','window'])delete globalThis[key];}
 });
 test('defense modifiers for INT-based skills keep the selected reference during per-effect validation',()=>{
  const report={...baseReport,rows:[...baseReport.rows,{sourceId:'defense-test',sourceName:'测试魔抗修正',sourceText:'敌方魔抗按25%计算',group:'common',status:'active',rule:{id:'test-defense',review:'ready',conditions:[],effects:[{type:'defenseReference',target:'敌方魔抗',value:25,unit:'%'}]}}]};

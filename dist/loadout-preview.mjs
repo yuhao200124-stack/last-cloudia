@@ -58,9 +58,15 @@ export function loadoutSources(report,manualEffects=[]){
   source.effects=[...new Set(source.effects)];
   if(!source.text)source.text=source.effects.join('；');
   if(source.group==='blessings'&&report.context.accountBlessings===false)source.enabled=false;
+  if(source.group==='equipment')source.equipmentType=report.profile?.equipment?.find(e=>e.name===source.name)?.type||'';
  }
  for(const e of manualEffects)if(!e.importId)sources.set(`manual-effect:${e.id}`,{sourceId:`manual-effect:${e.id}`,name:e.name||'手动加成',text:`${EFFECTS[e.kind]||e.kind}${['element','race'].includes(e.kind)?'（'+e.target+'）':''} ${e.percent}%`,group:'manual',enabled:e.enabled===true,effects:[`${e.percent}% · ${{post:'结算后逐条修正',offense:'核心前攻击侧',received:'核心前目标受伤',reduction:'核心前减伤'}[e.stage]||e.stage}`]});
  return [...sources.values()];
+}
+
+// The character's weapon is distinct from their armor and other equipment.
+export function exclusiveWeaponSourceIds(sources){
+ return sources.filter(s=>s.group==='equipment'&&['法杖','剑','斧','枪','槌','弓','机械','爪','刀','弩','锤'].includes(s.equipmentType)).map(s=>s.sourceId);
 }
 
 export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){

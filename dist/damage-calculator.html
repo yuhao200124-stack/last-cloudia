@@ -31,11 +31,12 @@
       <div class="fields two"><label hidden>攻击方式<select id="attackChoice"></select></label><label hidden>伤害参照<select id="statReference"><option value="">待确认</option><option value="str">攻击力</option><option value="int">法强（魔力）</option><option value="mixed">攻击力＋法强（混合）</option></select></label></div>
       <label class="wide">具体招式／魔法<select id="preset"><option value="eris">艾莉絲 · 伯雷亞斯拳 Lv.5</option><option value="custom">自定义技能</option></select></label>
       <p id="entryMoveNote" class="help"></p>
+      <div class="fields two"><label>伤害分类（词条适用类型）<select id="type"><option value="physical">物理</option><option value="magical">魔法</option></select></label><label>攻击属性<select id="element"></select></label></div>
       <div class="fields two">
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
-      <section class="damage-condition-group" aria-labelledby="specialDamageTitle"><h3 id="specialDamageTitle">特殊伤害改变</h3><h4>基础改变伤害方式</h4><div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">Break</label><label><input id="criticalEnabled" type="checkbox">暴击</label><label><input id="boss" type="checkbox" checked>BOSS</label><label><input id="weakness" type="checkbox">弱属</label></div></section>
+      <section class="damage-condition-group" aria-labelledby="specialDamageTitle"><h3 id="specialDamageTitle">特殊伤害改变</h3><h4>基础改变伤害方式</h4><div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">Break</label><label><input id="criticalEnabled" type="checkbox">暴击</label><label><input id="boss" type="checkbox" checked>BOSS</label><label><input id="weakness" type="checkbox">弱属</label><label><input id="specialWeapon" type="checkbox">专武</label></div></section>
       <div id="magicBuffOptions" class="magic-buff-options" hidden><h3>魔法</h3><div id="magicBuffChoices"></div></div>
       <section class="damage-condition-group" aria-labelledby="generalDamageTitle"><h3 id="generalDamageTitle">通用伤害改变</h3>
         <div class="inline-options"><label><input id="fullHp" type="checkbox">满血</label><label><input id="lowHp" type="checkbox">濒死（HP≤30%）</label><label><input id="air" type="checkbox">目标浮空</label><label><input id="back" type="checkbox">背后攻击</label><label><input id="ailment" type="checkbox">目标异常</label><label><input id="ground" type="checkbox">自身在地面</label><label><input id="openingBuffActive" type="checkbox">开局BUFF</label><label><input id="conditionBuffActive" type="checkbox">条件BUFF</label></div>
@@ -43,7 +44,6 @@
         <div hidden><input id="awakeningBuffActive" type="checkbox"><input id="magicAwakeningBuffActive" type="checkbox"><input id="ultimateUsedBuffActive" type="checkbox"><input id="damageTakenBuffActive" type="checkbox"><input id="reviveBuffActive" type="checkbox"><input id="ultimateGaugeFull" type="checkbox"><input id="realSunday" type="checkbox"></div>
       </section>
       <section id="entrySpecialSection" class="special-reminders" hidden><h3>角色特殊效果</h3><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源</th><th>效果</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
-      <p class="help">法强与技能攻击修正会自动分层计算，避免重复计入 EX、月光等加成。</p>
       <details id="settlementDetails"><summary>高级计算明细（通常自动处理）</summary><p class="help">这里展示面板如何换算成本段结算攻击值，通常不用填写。它不代表额外加伤。</p>
         <label>计算方式<select id="attackBasis"><option value="auto">自动核对属性层</option><option value="panel">面板无实时加成，应用技能修正</option><option value="layers">手填状态前面板＋同层实时加成</option><option value="settlement">直接采用读取器结算攻击值（仅对照）</option></select></label>
         <div id="attackLayerControls" class="fields two" hidden><label>状态加成前面板<input id="attackBase" type="number" min="0" max="100000000" step="1"></label><label>已确认的同层实时属性加成 %<input id="runtimeStatPercent" type="number" min="-100" max="100000" step="any"></label></div>
@@ -51,17 +51,14 @@
         <p id="attackBasisNote" class="help"></p>
         <details><summary>从结算文件读取</summary><label>结算记录 CSV<input id="formulaCaptureFile" type="file" accept=".csv,text/csv"></label><p id="formulaCaptureNote" class="help">导入 DamageFormulaCapture.csv，选择本次战斗及结算样本；不会以掉血次数替代命中段数。</p><label>战斗与结算样本<select id="formulaCapturePick"><option value="">尚未导入</option></select></label><button id="applyFormulaCapture" type="button" disabled>读取本组面板并核对公式</button></details>
       </details>
-      <div id="importStatControls" class="fields two" hidden><label>暴击率基准<select id="critBasis"><option value="reader">读取器面板</option><option value="website">网站加成＋手填基础</option></select></label><label><span id="baseCritLabel">基础及额外暴击率 %</span><input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help"></p></div>
+      <div id="importStatControls" class="fields two" hidden><label>暴击率基准<select id="critBasis"><option value="reader">读取器面板</option><option value="website">网站加成＋手填基础</option></select></label><label><span id="baseCritLabel">基础及额外暴击率 %</span><input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help" hidden></p></div>
       <div class="fields three">
-        <label>伤害分类（词条适用类型）<select id="type"><option value="physical">物理</option><option value="magical">魔法</option></select></label>
         <label>攻击方式<select id="skillType"><option value="skill">特技</option><option value="normal">普通攻击</option><option value="magic">魔法</option><option value="ultimate">超必杀技</option></select></label>
-        <label>攻击属性<select id="element"></select></label>
       </div>
       <div class="skill-summary" id="skillSummary"></div>
       <p id="mixedReferenceNote" class="help" hidden>混合参照不自动按50/50分配。请填写已确认的混合结算攻击值与对应结算防御值，再进行试算。</p>
       <details id="skillDetails"><summary>技能参数</summary><label id="readerSkillControl" hidden>对应读取器招式<select id="readerSkillPick"></select></label>
-        <p id="parameterReadNote" class="help"></p>
-        <p class="help">技能参数属于每段伤害结算。更换技能时必须使用该技能自己的参数，不能只换名称。</p>
+        <p id="parameterReadNote" class="help" hidden></p>
         <div class="fields two">
           <label>每段基础系数 ×<input id="coefficient" type="number" min="0" max="10000" step="any" value="0.334" required></label>
           <label>技能内攻击修正 %<input id="skillPercent" type="number" min="-100" max="100000" step="any" value="51.8" required></label>
@@ -74,7 +71,7 @@
         <label>命中数倍率 ×<input id="hitMultiplier" type="number" min="1" max="100" step="1" value="1" required></label>
         <label>单段伤害倍率 ×<input id="hitDamageRatio" type="number" min="0" max="100" step="any" value="1" required></label>
         <label id="hitScaleControl">修正试算位置<select id="hitScaleStage"><option value="">待确认</option><option value="core" selected>核心系数中</option><option value="beforeCap">伤害上限前</option><option value="afterCap">伤害上限后</option></select></label>
-      </div><p id="hitSourceNote" class="help"></p><p class="help">基础段数不含翻倍；如果填写的是实际总段数，请将命中数倍率设为1。清空倍率可恢复自动值。单段倍率为1时无需选择修正位置；其他倍率需选择试算位置，执行顺序未实测。</p></details>
+      </div><p id="hitSourceNote" class="help" hidden></p></details>
     </section>
     <section class="card"><div class="section-heading"><h2><span>04</span>Boss 与战斗条件</h2></div>
       <label class="wide">目标预设<select id="bossPreset"><option value="bird">轟鳥龍恩德爾羅納</option><option value="beast">神獸帕帕拉納</option><option value="custom">自定义目标</option></select></label>
@@ -83,7 +80,7 @@
       <label><input id="stunned" type="checkbox">目标气绝（用于气绝／Break增伤条件，不自动应用Break降防）</label>
       <div class="fields two"><label>防御力 DEF<input id="bossDefense" type="number" min="0" max="100000000" step="1" value="4000"></label><label>魔抗 MND<input id="bossMind" type="number" min="0" max="100000000" step="1" value="10000"></label></div>
       <div id="bossResistances" class="fields three"></div>
-      <p id="bossReference" class="help"></p>
+      <p id="bossReference" class="help" hidden></p>
       <label id="mixedDefenseControl" hidden><span id="defenseLabel">混合结算防御值</span><input id="defense" type="number" min="0" max="100000000" step="1" required></label>
       <input id="resistance" type="number" hidden><small id="resistanceHint" hidden></small>
       <button type="button" id="debuff">填入实测降防值 2599</button>
@@ -152,5 +149,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260926-loadout-sources"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260926-exclusive-weapon"></script>
 </body></html>

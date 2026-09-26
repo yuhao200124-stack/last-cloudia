@@ -1,4 +1,4 @@
-import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260926-loadout-sources';
+import {prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds} from './loadout-preview.mjs?v=20260926-exclusive-weapon';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
 import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-common-skills';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
@@ -15,9 +15,15 @@ export function renderDamageGauges(result,input){
   track.firstElementChild.style.width=`${gauge.fill}%`;track.setAttribute('aria-valuenow',String(Math.round(branch.mean)));track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax',String(gauge.cap));track.setAttribute('aria-valuetext',`每段 ${fmt(gauge.min)} 至 ${fmt(gauge.max)}，上限 ${fmt(gauge.cap)}`);
  }
 }
-export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
- const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,sourceKey='',showSettings=false,resultsCollapsed=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES);
+export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponChange}){
+ const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,sourceKey='',showSettings=false,resultsCollapsed=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES),pendingWeapon=null;
  const send=(type,extra={})=>{if(ready)frame.contentWindow.postMessage({type,...extra},location.origin);};
+ const weaponIds=()=>{const report=getContext().baseReport;return report?exclusiveWeaponSourceIds(loadoutSources(report)):[];};
+ function setExclusiveWeapon(enabled){
+  const sourceIds=weaponIds();if(!sourceIds.length)return;
+  pendingWeapon=enabled===true;
+  if(ready){send('lc-loadout-set-equipment',{sourceIds,enabled:pendingWeapon});pendingWeapon=null;}
+ }
  function layout(){
   document.body.classList.toggle('unified-mode',active);document.body.classList.toggle('unified-settings',active&&showSettings);
   document.body.classList.toggle('unified-results-collapsed',active&&resultsCollapsed);
@@ -42,6 +48,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
   if(e.origin!==location.origin||e.source!==frame.contentWindow)return;
   if(e.data?.type==='lc-loadout-ready'){
    ready=true;initialize();
+   if(pendingWeapon!==null)setExclusiveWeapon(pendingWeapon);
    const url=new URL(location.href);url.searchParams.delete('editPlan');url.searchParams.delete('draft');globalThis.history?.replaceState(null,'',url.href);
   }
   if(e.data?.type==='lc-loadout-change'){
@@ -50,7 +57,9 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
    if(String(next.characterId)!==String(context.characterId||'')){
     const url=new URL(location.href);if(next.characterId)url.searchParams.set('character',next.characterId);else url.searchParams.delete('character');url.searchParams.set('unified','1');for(const key of ['embedded','session','editPlan','draft'])url.searchParams.delete(key);location.assign(url.href);return;
    }
-   snapshot=next;onChange();
+   snapshot=next;
+   const ids=weaponIds();if(ids.length&&pendingWeapon===null)onWeaponChange?.(next.items.some(item=>item.sourceIds?.some(id=>ids.includes(id))));
+   onChange();
   }
   if(e.data?.type==='lc-loadout-rates'){
    const next=e.data.rates;if(!Object.keys(DEFAULT_SC_RATES).every(k=>Number.isFinite(next?.[k])&&next[k]>0&&next[k]<=1000))return;
@@ -82,5 +91,5 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
   $('unifiedUnresolvedList').innerHTML=items.map(x=>`<li><b>${esc(x.name)}</b><p>${esc(x.reason)}</p>${x.text?`<details><summary>技能原文</summary><p>${esc(x.text)}</p></details>`:''}</li>`).join('');
  }
  function error(message){if(active)send('lc-loadout-recommendations',{payload:{error:message,rates,contextKey:'incomplete'}});}
- return {get active(){return active;},get hasLoadout(){return !!snapshot;},open,prepare,error,refreshSources:initialize};
+ return {get active(){return active;},get hasLoadout(){return !!snapshot;},open,prepare,error,refreshSources:initialize,setExclusiveWeapon};
 }
