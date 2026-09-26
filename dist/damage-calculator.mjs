@@ -10,6 +10,8 @@ import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
 import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-hp-panel';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
+import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss,keepsObservedPanel} from './damage-condition-display.mjs?v=20260926-condition-sources';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-switch-controls';
 import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
@@ -30,6 +32,31 @@ let panelLayers=null,layerSourceKey='',attackBasisTouched=false,autoLayer=null;
 let magicOptions=[],magicSelection={};
 let defenseRatioTouched=false;
 let unified=null;
+let lastWeaknessKey='',weaknessManual=false,automaticWeaknessEvent=false;
+let lastAppliedSelection=null;
+const GENERAL_NAMES={fullHp:'满血',lowHp:'濒死',air:'目标浮空',back:'背后攻击',ailment:'目标异常',ground:'自身在地面',openingBuffActive:'开局BUFF',conditionBuffActive:'条件BUFF'};
+function showConditionSources(report){
+ const selected=Object.keys(GENERAL_CONDITIONS).filter(id=>$(id).checked);
+ const target=$('generalConditionSources');target.hidden=!selected.length;
+ target.innerHTML=selected.map(id=>{
+  const sources=activeConditionSources(report,id);
+  return `<div><b>${GENERAL_NAMES[id]}</b>${sources.length?`<ul>${sources.map(s=>`<li><b>${esc(s.name)}</b>：<span>${esc(s.text)}</span></li>`).join('')}</ul>`:'<p class="help">本次所选技能没有符合条件的已确认效果。</p>'}</div>`;
+ }).join('');
+}
+function syncWeaknessDefault(){
+ const key=JSON.stringify([$('bossPreset').value,$('element').value,$('resistance').value,$('resistCorrection').value]);
+ if(key!==lastWeaknessKey){lastWeaknessKey=key;weaknessManual=false;}
+ if(weaknessManual)return;
+ const active=weakElementFromBoss($('element').value,$('resistance').value,$('resistCorrection').value);
+ if($('weakness').checked===active&&workflow?.selection().weakness===active)return;
+ $('weakness').checked=active;
+ if(workflow&&workflow.hasReport())queueMicrotask(()=>{
+  if($('weakness').checked!==active||weaknessManual||workflow.selection().weakness===active)return;
+  automaticWeaknessEvent=true;
+  try{$('weakness').dispatchEvent(new Event('change',{bubbles:true}));}finally{automaticWeaknessEvent=false;}
+ });
+}
+$('weakness').addEventListener('change',()=>{if(!automaticWeaknessEvent)weaknessManual=true;});
 let openingFullPage=false;
 async function openFullPage(){
  if(openingFullPage)return;openingFullPage=true;$('unifiedStart').disabled=true;
@@ -259,6 +286,7 @@ function labels() {
   $('defenseLabel').textContent=mode==='mixed'?'混合结算防御值':magic?'当前魔抗 MND':'当前防御力 DEF';
   const neutral=$('element').value==='无';$('resistance').disabled=neutral;
   syncBossReference();
+  syncWeaknessDefault();
   $('bossReference').textContent=`本次参照：${mode==='mixed'?'手填混合防御值':magic?'魔抗 MND':'防御力 DEF'}；${neutral?'无属性不使用六属性抗性':`使用${$('element').value||'所选'}抗性`}。`;
   const p=bosses[$('bossPreset').value];$('debuff').hidden=!p?.debuff||magic||mode==='mixed';
   if(p?.debuff)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
@@ -295,6 +323,8 @@ function update() {
     $('critRate').value=criticalDisabled()?0:Number.isFinite(crit)?Math.min(100,Math.max(0,crit)):'';
   }
   labels();
+  const selectedReport=workflow?.planningBase()||latestReport;
+  showConditionSources(selectedReport&&retargetReport(selectedReport,workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':'s1',type:$('type').value,element:$('element').value,fullHp:$('fullHp').checked,lowHp:$('lowHp').checked,...Object.fromEntries(STAT_CONDITION_FIELDS.map(f=>[f,$(f).checked]))}));
   const invalid=[...$('calculator').querySelectorAll('input[type=number]')].find(e=>!e.disabled&&!e.checkValidity());
   try {
     if(!unified?.active){
@@ -307,6 +337,7 @@ function update() {
     }
     if(unified?.active)for(const [id,label] of [['coefficient','每段基础系数'],['hits','基础命中段数'],['skillPercent','技能内攻击修正'],['skillAdd','技能内攻击前加算'],['skillPostAdd','技能内攻击后加算']])if(!Number.isFinite($(id).valueAsNumber))throw new Error(`请在“战斗设置”中填写${label}。`);
     const preview=unified?.active?unified.prepare(read()):null;
+    if(preview)showConditionSources(preview.report);
     const s=preview?.input||read(),r=calculate(s),c=r.context;
     $('error').hidden=true;$('resolveReview').hidden=true;$('resultValues').hidden=false;
     $('resultState').textContent=c.element<=0?'属性免疫':r.normal.uncappedMax>s.cap?'普通伤害触及上限':imported?'导入条件下试算':'实时计算';
@@ -353,6 +384,7 @@ function update() {
 }
 function reset(clearSaved=true) {
   defenseRatioTouched=false;
+  lastAppliedSelection=null;lastWeaknessKey='';weaknessManual=false;
   captureApplication=null;panelLayers=null;layerSourceKey='';attackBasisTouched=false;$('attackBasis').value='panel';
   if(clearSaved){magicSelection={};try{localStorage.removeItem(`lc-magic-buffs:${characterId}`);}catch{}renderMagicBuffs(latestReport?.profile);}
   retainedImportDraft=null;
@@ -436,9 +468,11 @@ function applyImport(report,review) {
   }),...current.filter(e=>!e.importId)];
   retainedImportDraft=null;
   imported=next;
+  const hpOnly=keepsObservedPanel(lastAppliedSelection,review.selection);
   const sourceKey=JSON.stringify([review.unitId,review.battleId,review.selection.statReference,review.panelLayers]);
-  if(layerSourceKey&&sourceKey!==layerSourceKey&&$('attackBasis').value==='layers'){$('attackBase').value='';$('runtimeStatPercent').value='';}
-  panelLayers=review.panelLayers;layerSourceKey=sourceKey;
+  if(!hpOnly&&layerSourceKey&&sourceKey!==layerSourceKey&&$('attackBasis').value==='layers'){$('attackBase').value='';$('runtimeStatPercent').value='';}
+  if(!hpOnly||!panelLayers){panelLayers=review.panelLayers;layerSourceKey=sourceKey;}
+  lastAppliedSelection=review.selection;
   if(!attackBasisTouched)$('attackBasis').value=(attackStat()?.runtimeCandidates?.length||attackStat()?.buffs?.length||activeMagicBuffs().some(b=>b.stat===attackStat()?.key))?'auto':'panel';
   $('critBasis').querySelector('[value="reader"]').disabled=observedCritical(readUnit).value==null;
   if(observedCritical(readUnit).value==null)$('critBasis').value='website';
@@ -447,7 +481,7 @@ function applyImport(report,review) {
     if(id==='defenseRatio'&&defenseRatioTouched)continue;
     if(typeof value==='boolean')$(id).checked=value;else $(id).value=value??'';
   }
-  $('attack').value=next.statReference==='int'?review.panels.intelligence:next.statReference==='str'?review.panels.attack:'';
+  if(!hpOnly)$('attack').value=next.statReference==='int'?review.panels.intelligence:next.statReference==='str'?review.panels.attack:'';
   if(next.statReference==='mixed')$('defense').value='';else syncBossReference();
   $('defenseRatio').disabled=false;
   for(const id of ['hitMultiplier','hitDamageRatio'])$(id).disabled=false;
@@ -485,7 +519,7 @@ document.addEventListener('keydown',e=>{if(embedded&&e.key==='Escape')window.par
 if(characterId)workflow=initEntryWorkflow({
   characterId,
   onInvalidate(message){
-    panelLayers=null;
+    panelLayers=null;lastAppliedSelection=null;
     clearSettlementCapture('核对条件已改变，请重新选择本次结算值。');
     reviewBlocker=message;
     if(imported)retainedImportDraft={base:imported.effects,rows:readEffects().filter(e=>e.importId)};
