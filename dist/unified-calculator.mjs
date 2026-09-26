@@ -4,7 +4,8 @@ import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-skill-
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-skill-coverage';
 import {retargetReport} from './entry-preparation.mjs?v=20260926-skill-coverage';
 import {buildDamageImport} from './damage-import.mjs?v=20260926-skill-coverage';
-import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260926-skill-coverage';
+import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260926-scenario-summary';
+import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-scenario-summary';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const saved=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};
@@ -103,7 +104,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
   $('unifiedStatus').textContent=`${snapshot.items.length} 个配装来源 · ${snapshot.totalSc} SC${context.baseReport.reviewedByUser?' · 沿用已核对数值':''}${criticalAnchor?'；暴击率按所选来源增减':''}`;
   showUnresolved(preview.unresolved);
   const recommendations=recommendDamage({input:preview.input,criticalEnabled:context.selection.criticalEnabled,magicCanCrit:context.selection.criticalEnabled||preview.imported.magicCanCrit,statReference:context.selection.statReference,projectStatPercent:preview.projectStatPercent,rates});
-  send('lc-loadout-recommendations',{payload:{...recommendations,rates,contextKey:JSON.stringify([snapshot,context.selection,preview.input,rates])}});
+  send('lc-loadout-recommendations',{payload:{...recommendations,rates,scenarioBonuses:scenarioBonuses(preview.report,{disabledCommonIds:context.disabledCommonIds}),contextKey:JSON.stringify([snapshot,context.selection,preview.input,rates])}});
   return preview;
  }
  function showUnresolved(items){

@@ -11,10 +11,16 @@ const confirmedEffects=JSON.parse(fs.readFileSync(new URL('../docs/confirmed-eff
 const confirmationGroups=JSON.parse(fs.readFileSync(new URL('../docs/confirmation-groups-preservation-2026-09-26.json',import.meta.url)));
 const skillCoverage=JSON.parse(fs.readFileSync(new URL('../docs/skill-coverage-preservation-2026-09-26.json',import.meta.url)));
 const calculatorHeadings=JSON.parse(fs.readFileSync(new URL('../docs/calculator-heading-preservation-2026-09-26.json',import.meta.url)));
+const scenarioSummary=JSON.parse(fs.readFileSync(new URL('../docs/scenario-summary-preservation-2026-09-26.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const scenario=scenarioSummary.files[path];
+ if(scenario){
+  if(hash(text)!==scenario.afterHash||hash(scenario.beforeText)!==scenario.beforeHash)throw Error(`Scenario summary preservation drift: ${path}`);
+  text=scenario.beforeText;
+ }
  const headings=calculatorHeadings.files[path];
  if(headings){
   if(hash(text)!==headings.afterHash||hash(headings.beforeText)!==headings.beforeHash)throw Error(`Calculator heading preservation drift: ${path}`);

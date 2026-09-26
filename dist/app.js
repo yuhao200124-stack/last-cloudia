@@ -71,7 +71,12 @@
       ],
     },
   };
-  let calculatorState = { skillIds: [], characterFreeIds: [], characterId: '', currentPlanId: '', activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, expandedBonusKey: '' };
+  let calculatorState = { skillIds: [], characterFreeIds: [], characterId: '', currentPlanId: '', activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, detailsMode: 0, expandedBonusKey: '' };
+  let scenarioMetrics = [];
+  window.addEventListener('lc:scenario-summary', event => {
+    scenarioMetrics = Array.isArray(event.detail) ? event.detail : [];
+    if (calculatorState.detailsMode === 1) renderCalculator();
+  });
   let loadoutPlans = [];
   let editingPlanId = '';
   let editingPlanMetadataOnly = false;
@@ -92,9 +97,10 @@
       activeBreaks: [...new Set(savedBreaks)],
       sortDirection: savedCalculator.sortDirection === 'asc' ? 'asc' : 'desc',
       detailsOpen: false,
+      detailsMode: 0,
       expandedBonusKey: '',
     };
-  } catch { calculatorState = { skillIds: [], characterFreeIds: [], characterId: '', currentPlanId: '', activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, expandedBonusKey: '' }; }
+  } catch { calculatorState = { skillIds: [], characterFreeIds: [], characterId: '', currentPlanId: '', activeBreaks: [7, 12, 20], sortDirection: 'desc', detailsOpen: false, detailsMode: 0, expandedBonusKey: '' }; }
   try {
     const storedPlans = JSON.parse(localStorage.getItem(loadoutPlansStorageKey) || '[]');
     loadoutPlans = Array.isArray(storedPlans) ? storedPlans.filter(plan => plan && typeof plan.id === 'string') : [];
@@ -160,7 +166,7 @@
     calculatorState.characterId = typeof inboundPlanState.characterId === 'string' ? inboundPlanState.characterId : '';
     calculatorState.currentPlanId = inboundPlanState.id;
     calculatorState.activeBreaks = [...new Set((inboundPlanState.activeBreaks || []).map(Number).filter(value => [7, 12, 20].includes(value)))];
-    calculatorState.detailsOpen = false;
+    calculatorState.detailsOpen = false; calculatorState.detailsMode = 0;
     calculatorState.expandedBonusKey = '';
     openCalculatorOnLoad = true;
     localStorage.setItem(calculatorStorageKey, JSON.stringify(calculatorState));
@@ -171,7 +177,7 @@
     calculatorState.characterFreeIds = [...includedIds];
     calculatorState.characterId = inboundCharacterId;
     calculatorState.currentPlanId = '';
-    calculatorState.detailsOpen = false;
+    calculatorState.detailsOpen = false; calculatorState.detailsMode = 0;
     calculatorState.expandedBonusKey = '';
     openCalculatorOnLoad = true;
     localStorage.setItem(calculatorStorageKey, JSON.stringify(calculatorState));
@@ -307,6 +313,21 @@
     return `${sign}${amount}${unit}`;
   }
 
+  function scenarioSummaryMarkup(metrics) {
+    if (!metrics.length) return '<div class="calculator-empty">当前招式没有已确认的适用伤害加成；请先选定招式和战斗条件。</div>';
+    const groups = [['damage','伤害加成合计','%'],['cap','伤害上限合计','']];
+    return `<div class="bonus-summary">${groups.map(([type,title,unit]) => {
+      const entries = metrics.filter(row => row.type === type && row.unit === unit);
+      if (!entries.length) return '';
+      const sum = entries.reduce((total,row) => total + row.value, 0);
+      return `<div class="scenario-total"><span>${title}</span><strong>${escapeHtml(formatBonus(sum,unit))}</strong></div>${entries.map(row => {
+        const expanded = calculatorState.expandedBonusKey === row.key;
+        const sources = (row.sources || []).filter(source => !source.hidden);
+        return `<button class="bonus-row${expanded?' is-expanded':''}" type="button" data-bonus-key="${escapeHtml(row.key)}" aria-expanded="${expanded}"><span>${escapeHtml(row.label)}</span><strong>${escapeHtml(formatBonus(row.value,row.unit))}</strong></button>${expanded && sources.length ? `<div class="bonus-sources">${sources.map(source => `<article><strong>${escapeHtml(source.name)}</strong><p>${escapeHtml(source.text)}</p></article>`).join('')}</div>` : ''}`;
+      }).join('')}`;
+    }).join('')}<p class="bonus-note">按当前招式与战斗条件筛选；百分比为适用词条的数值合计，最终伤害仍按计算器的结算顺序计算。</p></div>`;
+  }
+
   function rowText(row) {
     return fold([row.type, rowValue(row, 'name'), ...(row.aliases || []), rowValue(row, 'sc'), rowValue(row, 'effect'), effectNotes(row), ...skillTagLabels(row), ...(rowValue(row,'effect')===String(row.effect||'')?row.basicStats?.targets||[]:[]), ...editedSources(row)].join(' '));
   }
@@ -431,15 +452,18 @@
       return descending ? b.sc - a.sc : a.sc - b.sc;
     });
     const bonuses = summarizeBonuses(result.items);
-    calculatorSkills.innerHTML = calculatorState.detailsOpen
+    calculatorSkills.innerHTML = calculatorState.detailsMode === 1
+      ? scenarioSummaryMarkup(scenarioMetrics)
+      : calculatorState.detailsOpen
       ? (bonuses.length
         ? `<div class="bonus-summary">${bonuses.map(item => {
           const expanded = calculatorState.expandedBonusKey === item.key;
-          return `<button class="bonus-row${expanded ? ' is-expanded' : ''}" type="button" data-bonus-key="${escapeHtml(item.key)}" aria-expanded="${expanded}" title="点击查看提供该效果的技能"><span>${escapeHtml(item.metric)}</span><strong>${escapeHtml(formatBonus(item.value, item.unit))}</strong></button>${expanded ? `<div class="bonus-sources">${item.skills.map(skill => `<article><strong>${escapeHtml(skill.name)}</strong><p>${escapeHtml(skill.effect)}</p></article>`).join('')}</div>` : ''}`;
+          const visibleSkills = item.skills.filter(skill => characterSource(skill.id)?.group !== 'blessings');
+          return `<button class="bonus-row${expanded ? ' is-expanded' : ''}" type="button" data-bonus-key="${escapeHtml(item.key)}" aria-expanded="${expanded}" title="点击查看提供该效果的技能"><span>${escapeHtml(item.metric)}</span><strong>${escapeHtml(formatBonus(item.value, item.unit))}</strong></button>${expanded && visibleSkills.length ? `<div class="bonus-sources">${visibleSkills.map(skill => `<article><strong>${escapeHtml(skill.name)}</strong><p>${escapeHtml(skill.effect)}</p></article>`).join('')}</div>` : ''}`;
         }).join('')}<p class="bonus-note">仅合计技能描述中的明确数值，技能发动条件仍需满足。</p></div>`
         : '<div class="calculator-empty">当前技能没有可合并的明确数值</div>')
-      : displayItems.length
-      ? displayItems.map(item => {
+      : displayItems.filter(item => characterSource(item.id)?.group !== 'blessings').length
+      ? displayItems.filter(item => characterSource(item.id)?.group !== 'blessings').map(item => {
         const rating = rowValue(item.row, 'mark').trim();
         return `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
           <button class="calculator-skill-name" type="button" data-skill-effect="${escapeHtml(item.id)}" title="双击查看技能效果">${escapeHtml(rowValue(item.row, 'name'))}</button>
@@ -557,7 +581,7 @@
     calculatorState.characterId = typeof plan.characterId === 'string' ? plan.characterId : '';
     calculatorState.currentPlanId = plan.id;
     calculatorState.activeBreaks = [...new Set((plan.activeBreaks || []).map(Number).filter(value => [7, 12, 20].includes(value)))];
-    calculatorState.detailsOpen = false;
+    calculatorState.detailsOpen = false; calculatorState.detailsMode = 0;
     calculatorEffectsOpen = false;
     expandedSkillEffects.clear();
     calculatorState.expandedBonusKey = '';
@@ -577,7 +601,7 @@
       return;
     }
     if (!open) {
-      calculatorState.detailsOpen = false;
+      calculatorState.detailsOpen = false; calculatorState.detailsMode = 0;
       calculatorEffectsOpen = false;
       expandedSkillEffects.clear();
       calculatorState.expandedBonusKey = '';
@@ -858,7 +882,8 @@
   });
 
   calculatorDetails.addEventListener('click', () => {
-    calculatorState.detailsOpen = !calculatorState.detailsOpen;
+    calculatorState.detailsMode = (calculatorState.detailsMode + 1) % 3;
+    calculatorState.detailsOpen = calculatorState.detailsMode !== 0;
     calculatorEffectsOpen = false;
     calculatorState.expandedBonusKey = '';
     saveCalculatorState();
@@ -867,7 +892,7 @@
 
   calculatorEffects.addEventListener('click', () => {
     calculatorEffectsOpen = !calculatorEffectsOpen;
-    calculatorState.detailsOpen = false;
+    calculatorState.detailsOpen = false; calculatorState.detailsMode = 0;
     calculatorState.expandedBonusKey = '';
     saveCalculatorState();
     renderCalculator();
@@ -1051,6 +1076,7 @@
     const groups = new Map();
     for (const id of Object.keys(bindings)) {
       const group = characterSource(id)?.group || 'common';
+      if (group === 'blessings') continue;
       if (!groups.has(group)) groups.set(group, []);
       groups.get(group).push(id);
     }

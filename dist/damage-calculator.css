@@ -96,3 +96,11 @@ body.is-embedded main { padding-top:14px; }
 .reference-section-heading h2{display:flex;align-items:center;gap:10px}
 .reference-section-heading h2 span{padding:0;color:#b9dcff;font-size:.78rem;letter-spacing:.08em}
 .special-reminders h3.reference-section-title,.bonus-section h3.reference-section-title{display:flex;margin:0 0 16px}
+.confirmation-actions{display:flex;flex-wrap:wrap;gap:8px}
+.native-skill-overview h4{margin:0 0 12px;font-size:1rem;color:#223e62}
+.native-skill-overview article{border:1px solid #d2deea;border-radius:7px;padding:12px 14px;margin-bottom:9px;background:#f8fbff}
+.native-skill-overview article p{margin:5px 0 0;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.scenario-summary{border:1px solid #d2deea;border-radius:7px;background:#f8fbff;padding:8px 14px}
+.scenario-summary-total,.scenario-summary-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid #dbe5ef}
+.scenario-summary-total{font-weight:700;color:#163b66}.scenario-summary-total strong,.scenario-summary-row b{color:#285b95;white-space:nowrap}
+.scenario-summary-row span{overflow-wrap:anywhere}

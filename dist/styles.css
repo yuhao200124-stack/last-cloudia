@@ -569,6 +569,8 @@ input.cell-editor { height: 40px; text-align: center; }
 .skill-effect-notes > span { display: inline-block; margin-right: 7px; color: inherit; font-size: .88em; font-weight: 600; }
 
 .bonus-summary { padding: 7px 12px 11px; }
+.scenario-total{display:flex;justify-content:space-between;gap:12px;padding:11px 3px;border-bottom:2px solid #cfdbe8;font-weight:700;color:#203b60}
+.scenario-total strong{color:var(--blue-strong);white-space:nowrap}
 .bonus-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 40px; padding: 7px 3px; border: 0; border-bottom: 1px solid #e2e8f1; background: transparent; font: inherit; text-align: left; cursor: pointer; }
 .bonus-row:hover, .bonus-row.is-expanded { background: var(--blue-pale); }
 .bonus-row span { color: #33445c; }

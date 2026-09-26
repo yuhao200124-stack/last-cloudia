@@ -12,7 +12,10 @@ if(embedded){
   if(e.data?.type==='lc-loadout-init'){window.LC_LOADOUT_CALCULATOR.initialize(e.data);publish(window.LC_LOADOUT_CALCULATOR.snapshot());}
   if(e.data?.type==='lc-loadout-set-equipment'){window.LC_LOADOUT_CALCULATOR.setEquipmentSources(e.data);publish(window.LC_LOADOUT_CALCULATOR.snapshot());}
   if(e.data?.type==='lc-loadout-get-state')publish(window.LC_LOADOUT_CALCULATOR.snapshot());
-  if(e.data?.type==='lc-loadout-recommendations')render(e.data.payload);
+  if(e.data?.type==='lc-loadout-recommendations'){
+   render(e.data.payload);
+   window.dispatchEvent(new CustomEvent('lc:scenario-summary',{detail:e.data.payload.scenarioBonuses||[]}));
+  }
  });
  const box=document.getElementById('loadoutRecommendations');
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

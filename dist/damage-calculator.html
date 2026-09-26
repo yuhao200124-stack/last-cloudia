@@ -4,10 +4,10 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>配装与伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260926-section-headings">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260926-scenario-summary">
 </head>
 <body>
-<header class="site-header"><a class="brand" href="./index.html?v=20260926-skill-coverage">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./skill-labeling.html?v=20260924-attack-labels">技能列表打标签用的</a><a id="calculatorCharacterBack" href="./characters.html?v=20260926-skill-coverage">角色列表</a><a href="./index.html?v=20260926-skill-coverage">技能表</a></nav></header>
+<header class="site-header"><a class="brand" href="./index.html?v=20260926-scenario-summary">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./skill-labeling.html?v=20260924-attack-labels">技能列表打标签用的</a><a id="calculatorCharacterBack" href="./characters.html?v=20260926-skill-coverage">角色列表</a><a href="./index.html?v=20260926-scenario-summary">技能表</a></nav></header>
 <main>
   <div class="page-intro"><p>输入当前战斗属性，查看每段与整次技能伤害。</p><span class="tag">PvE · 普通物理 / 魔法伤害</span></div>
   <div class="calculator-layout" id="calculationPage">
@@ -100,9 +100,9 @@
       </section>
       <div id="effects">
         <section class="bonus-section" aria-labelledby="arkDamageTitle"><div class="section-heading"><h3 id="arkDamageTitle">圣物伤害添加</h3><button type="button" id="addEffect" class="primary">＋ 添加一条</button></div><div id="arkEffects"></div></section>
-        <section class="bonus-section" aria-labelledby="nativeEffectsTitle"><h3 id="nativeEffectsTitle" class="reference-section-title">角色自带技能确认</h3><div id="nativeEffects"></div></section>
+        <section class="bonus-section" aria-labelledby="nativeEffectsTitle"><div class="section-heading reference-section-heading"><h3 id="nativeEffectsTitle">角色自带技能确认</h3><button type="button" id="nativeDetails">详细</button></div><div id="nativeSkillOverview"></div><div id="nativeScenario" hidden></div><div id="nativeEffects" hidden></div></section>
       </div>
-      <section class="bonus-section" aria-labelledby="commonEffectsTitle"><div class="section-heading reference-section-heading"><h3 id="commonEffectsTitle">通用技能确认</h3><button type="button" id="editConfirmedLoadout">配装</button></div><div id="commonEffects"></div></section>
+      <section class="bonus-section" aria-labelledby="commonEffectsTitle"><div class="section-heading reference-section-heading"><h3 id="commonEffectsTitle">通用技能确认</h3><div class="confirmation-actions"><button type="button" id="commonDetails">详细</button><button type="button" id="editConfirmedLoadout">配装</button></div></div><div id="commonScenario" hidden></div><div id="commonEffects"></div></section>
     </section>
     <section class="card"><div id="importCapControls" class="fields two" hidden><label>基础及额外单段上限<input id="baseCap" type="number" min="1" max="2000000000" step="1" value="9999" required></label><p id="capImportNote" class="help"></p></div><div class="fields two"><label>每段最终伤害上限<input id="cap" type="number" min="1" max="2000000000" step="1" value="9999" required></label><div class="help">填写包含装备、个性与技能上限加成后的最终值；上限逐段生效。</div></div>
       <details><summary>运行时修正（通常保持默认）</summary><div class="fields two">
@@ -161,5 +161,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260926-skill-coverage"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260926-scenario-summary"></script>
 </body></html>

@@ -9,10 +9,11 @@ import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-skill-cove
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-skill-coverage';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-scenario-summary';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-skill-coverage';
 import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-condition-observation';
 import {retargetReport} from './entry-preparation.mjs?v=20260926-skill-coverage';
+import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-scenario-summary';
 import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260926-skill-coverage';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
@@ -26,6 +27,7 @@ const characterId=params.get('character');
 if(characterId&&/^\d+$/.test(characterId)){$('calculatorCharacterBack').href=`./character-${characterId}.html`;$('calculatorCharacterBack').textContent='返回角色';}
 const bonusStorageKey=`lc-confirmed-bonuses:${characterId||'generic'}:v1`;
 let savedBonuses=null,bonusStoreReady=false,disabledCommonIds=new Set();
+let nativeDetailsMode=0,commonDetailsMode=0;
 try{savedBonuses=JSON.parse(localStorage.getItem(bonusStorageKey));}catch{}
 const embedded=params.get('embedded')==='1' && window.parent!==window;
 let imported=null,latestReport=null,workflow=null,readUnit=null,bossRaces=[],reviewBlocker='请导入读取报告并选择采用的数据。',lastHitKey='';
@@ -204,6 +206,47 @@ function renderCommonSkills(preview=null){
   }).join('')||'<p class="help">尚未选择额外通用技能。点击「配装」选择后，会在这里显示名称与技能效果。</p>';
   if($('commonEffects').innerHTML!==html)$('commonEffects').innerHTML=html;
 }
+function renderScenarioSummary(target,report,group){
+ const metrics=scenarioBonuses(report,{group,disabledCommonIds:[...disabledCommonIds]});
+ const rows=type=>metrics.filter(row=>row.type===type&&row.unit===(type==='damage'?'%':''));
+ const signed=value=>`${value>0?'+':''}${fmt(value)}`;
+ $(target).innerHTML=metrics.length?`<div class="scenario-summary">${[['damage','伤害加成合计','%'],['cap','伤害上限合计','']].map(([type,title,unit])=>{
+  const selected=rows(type);if(!selected.length)return '';
+  return `<div class="scenario-summary-total"><span>${title}</span><strong>${signed(selected.reduce((sum,row)=>sum+row.value,0))}${unit}</strong></div>${selected.map(row=>`<div class="scenario-summary-row"><span>${esc(row.label)}</span><b>${signed(row.value)}${esc(row.unit)}</b></div>`).join('')}`;
+ }).join('')}<p class="help">按当前招式和战斗条件筛选；百分比是词条数值合计，最终伤害仍由计算器按结算顺序计算。账户加护单独条目已隐藏，生效数值仍计入。</p></div>`:'<p class="help">当前招式没有已确认的适用伤害词条。</p>';
+}
+function renderNativeOverview(report){
+ const sources=new Map();
+ const base=workflow?.planningBase()||latestReport||report;
+ const selected=unified?.snapshot?new Set(unified.snapshot.items.flatMap(item=>item.sourceIds||[])):null;
+ for(const row of [...(base?.rows||[]),...(base?.loadoutInventory||[])]){
+  if(!['traits','equipment','exclusive','common','transcend'].includes(row.group)||row.status==='disabled')continue;
+  if(selected&&!selected.has(row.sourceId))continue;
+  if(!sources.has(row.sourceId))sources.set(row.sourceId,{name:row.sourceName,text:row.sourceText||row.rule?.text||''});
+ }
+ $('nativeSkillOverview').innerHTML=sources.size?`<div class="native-skill-overview"><h4>技能总览</h4>${[...sources.values()].map(source=>`<article><strong>${esc(source.name)}</strong><p>${esc(source.text)}</p></article>`).join('')}</div>`:'<p class="help">选择角色及配装后，显示角色自带技能的名称和完整效果。</p>';
+}
+function renderConfirmationSummaries(report){
+ renderNativeOverview(report);
+ renderScenarioSummary('nativeScenario',report,'native');
+ renderScenarioSummary('commonScenario',report,'common');
+}
+function toggleConfirmationDetails(section){
+ if(section==='native'){
+  nativeDetailsMode=(nativeDetailsMode+1)%3;
+  $('nativeSkillOverview').hidden=nativeDetailsMode!==0;
+  $('nativeScenario').hidden=nativeDetailsMode!==1;
+  $('nativeEffects').hidden=nativeDetailsMode!==2;
+  $('nativeDetails').setAttribute('aria-pressed',String(nativeDetailsMode!==0));
+ }else{
+  commonDetailsMode=(commonDetailsMode+1)%2;
+  $('commonScenario').hidden=commonDetailsMode!==1;
+  $('commonEffects').hidden=commonDetailsMode===1;
+  $('commonDetails').setAttribute('aria-pressed',String(commonDetailsMode===1));
+ }
+}
+$('nativeDetails').addEventListener('click',()=>toggleConfirmationDetails('native'));
+$('commonDetails').addEventListener('click',()=>toggleConfirmationDetails('common'));
 function attackFormula(s,c) {
   if(s.attackBasis==='settlement')return `直接采用读取器结算攻击 ${fmt(c.attack)}；不再应用技能攻击修正或 AtkRatio。`;
   if(s.attackBasis==='layers')return `同层属性：(${fmt(s.attackBase)} + ${s.skillAdd}) × (1 + ${s.runtimeStatPercent}% + ${s.skillPercent}%) + ${s.skillPostAdd}，再应用 AtkRatio。`;
@@ -306,7 +349,8 @@ function read() {
   s.effects=readEffects().map(e=>!$('criticalEnabled').checked&&(e.kind==='critical'||e.criticalOnly)?{...e,enabled:false}:e);return s;
 }
 function renderEffects() {
-  for(const [id,group] of [['arkEffects',effects.filter(e=>!e.importId)],['nativeEffects',effects.filter(e=>e.importId)]])$(id).innerHTML=group.map((e,i)=>{
+  const hiddenBlessings=(workflow?.planningBase()||latestReport)?.rows?.filter(row=>row.group==='blessings').map(row=>row.sourceId)||[];
+  for(const [id,group] of [['arkEffects',effects.filter(e=>!e.importId)],['nativeEffects',effects.filter(e=>e.importId&&!e.importId.startsWith('account-blessing-')&&!hiddenBlessings.some(sourceId=>e.importId.startsWith(`${sourceId}:`)))]])$(id).innerHTML=group.map((e,i)=>{
     const targets=e.kind==='element'?ELEMENTS:e.kind==='race'?RACES:['无需选择'];
     const target=targets.includes(e.target)?e.target:targets[0];
     return `<div class="effect" data-id="${e.id}"><div class="effect-head"><label><input type="checkbox" data-field="enabled" ${e.enabled?'checked':''} aria-label="启用第 ${i+1} 条加成"><span class="order">加成 ${String(i+1).padStart(2,'0')}</span></label><button type="button" data-action="up" aria-label="上移第 ${i+1} 条加成" ${i===0?'disabled':''}>↑</button><button type="button" data-action="down" aria-label="下移第 ${i+1} 条加成" ${i===group.length-1?'disabled':''}>↓</button><button type="button" data-action="remove" aria-label="删除第 ${i+1} 条加成">删除</button></div>
@@ -386,6 +430,7 @@ function update() {
     for(const el of document.querySelectorAll('[data-ark-stat],.effect input[data-field=percent]'))if(!el.checkValidity())throw new Error('请检查圣物属性或加成数值的输入范围。');
     const preview=unified?.active||unified?.hasLoadout?unified.prepare(read()):null;
     renderCommonSkills(preview);
+    renderConfirmationSummaries(preview?.report||selectedReport);
     if(preview)showConditionSources(preview.report);
     const s=preview?.input||read();
     if(!preview){
@@ -443,6 +488,8 @@ function update() {
     });
   } catch(e) {
     unified?.error(e.message);
+    renderScenarioSummary('nativeScenario',null,'native');
+    renderScenarioSummary('commonScenario',null,'common');
     $('error').hidden=false;$('error').textContent=e.message;$('resultValues').hidden=true;$('resultState').textContent=characterId&&!workflow?.isConfirmed()?'等待核对':'请检查输入';
     $('resolveReview').hidden=unified?.active||!characterId||workflow?.isConfirmed();
     $('trace').replaceChildren();$('formulaText').textContent='';$('activeNote').textContent='输入有效数值后会自动重新计算。';
