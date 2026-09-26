@@ -8,10 +8,16 @@ const loadoutSources=JSON.parse(fs.readFileSync(new URL('../docs/loadout-sources
 const exclusiveWeapon=JSON.parse(fs.readFileSync(new URL('../docs/exclusive-weapon-preservation-2026-09-26.json',import.meta.url)));
 const weaponCalculation=JSON.parse(fs.readFileSync(new URL('../docs/weapon-calculation-preservation-2026-09-26.json',import.meta.url)));
 const confirmedEffects=JSON.parse(fs.readFileSync(new URL('../docs/confirmed-effects-preservation-2026-09-26.json',import.meta.url)));
+const confirmationGroups=JSON.parse(fs.readFileSync(new URL('../docs/confirmation-groups-preservation-2026-09-26.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const groups=confirmationGroups.files[path];
+ if(groups){
+  if(hash(text)!==groups.afterHash||hash(groups.beforeText)!==groups.beforeHash)throw Error(`Confirmation group preservation drift: ${path}`);
+  text=groups.beforeText;
+ }
  const effects=confirmedEffects.files[path];
  if(effects){
   if(hash(text)!==effects.afterHash||hash(effects.beforeText)!==effects.beforeHash)throw Error(`Confirmed effects preservation drift: ${path}`);

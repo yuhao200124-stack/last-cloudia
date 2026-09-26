@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareLoadoutPreview,loadoutSources,simpleLoadoutRules,exclusiveWeaponSourceIds} from '../dist/loadout-preview.mjs';
+import {prepareLoadoutPreview,loadoutSources,simpleLoadoutRules,exclusiveWeaponSourceIds,extraCommonSkills} from '../dist/loadout-preview.mjs';
 import {recommendDamage,damageGauge} from '../dist/damage-recommendations.mjs';
 import {defaultInput,calculate} from '../dist/damage-engine.mjs';
 import {CATALOG} from '../dist/roxy-rules.mjs';
+import {COMMON_SKILL_CATALOG} from '../dist/common-skill-catalog.mjs';
+import {commonSkillRules} from '../dist/common-skill-rules.mjs';
 import {ACCOUNT_BLESSING_CATALOG} from '../dist/account-blessings.mjs';
 import {evaluateCatalog} from '../dist/effect-rule-engine.mjs';
 import {SUPPORT_BUFFS} from '../dist/runtime-buff-definitions.mjs';
@@ -129,6 +131,10 @@ test('special weapon control sends the actual equipment IDs and follows manual l
   let checked=null;
   const ui=mountUnifiedCalculator({getContext:()=>({characterId:'260',baseReport,selection}),onChange(){},onWeaponChange:value=>{checked=value;}});
   ui.refreshSources();assert.equal(checked,true);
+  ui.loadSelection();
+  assert.equal(ui.active,false,'confirmation loads saved selection without switching to the loadout screen');
+  assert.match(controls.get('unifiedLoadoutFrame').src,/embeddedLoadout=1/);
+  assert.equal(ui.prepare(input).input.attackBase,6741);
   ui.setExclusiveWeapon(false);
   assert.equal(ui.hasLoadout,true,'ordinary calculator must change without opening the loadout iframe');
   const off=ui.prepare(input);
@@ -189,4 +195,52 @@ test('explicit character waits for its report before accepting any previous ifra
  report=baseReport;ui.refreshSources();assert.equal(messages.at(-1).type,'lc-loadout-init');assert.equal(messages.at(-1).characterId,'260');
  listeners.message({origin:'https://other.test',source:child,data:{type:'lc-loadout-ready'}});assert.equal(messages.length,1);
  for(const key of ['document','localStorage','location','window'])delete globalThis[key];
+});
+
+test('holy ark blank and zero values preserve results; fixed stats add once before existing stat percentages',()=>{
+ const baseline=preview();
+ assert.deepEqual(preview({arkStats:{hp:'',intelligence:'0',attack:0}}).input,baseline.input);
+ const arkStats={hp:100,mp:10,attack:30,defense:40,intelligence:100,mind:50},changed=preview({arkStats});
+ for(const [key,amount] of Object.entries(arkStats)){
+  const old=baseline.panel.stats[key],stat=changed.panel.stats[key];
+  assert.equal(stat.flat,old.flat+amount);
+  const baseWithEquipment=old.base+old.equipment.reduce((sum,item)=>sum+item.value,0)+old.flat;
+  assert.equal(stat.beforeBuffRaw,Math.floor((baseWithEquipment+amount)*old.precision*(100+old.percent)/100));
+ }
+ assert(changed.input.attackBase>baseline.input.attackBase);
+ assert(calculate(changed.input).normal.uncappedMax>calculate(baseline.input).normal.uncappedMax);
+ assert.deepEqual(preview({arkStats}).input,changed.input,'refreshing must not accumulate ark stats');
+ assert.deepEqual(preview().input,baseline.input,'clearing restores the original result');
+ assert.throws(()=>preview({arkStats:{intelligence:-1}}),/圣物法强/);
+});
+test('holy ark damage checkbox retains authority after loadout initialization and contributes only once',()=>{
+ const ark={id:900,bonusGroup:'ark',kind:'all',percent:20,enabled:true,target:'无',stage:'post',name:'圣物测试'};
+ const withManual={...snapshot,sourceIds:[...snapshot.sourceIds,'manual-effect:900'],items:[...snapshot.items,{id:'manual-effect:900',sourceIds:['manual-effect:900']}]};
+ const enabled=preview({snapshot:withManual,input:{...input,effects:[ark]}});
+ assert.equal(enabled.input.effects.filter(e=>e.id===900).length,1);
+ assert(calculate(enabled.input).normal.uncappedMax>calculate(preview().input).normal.uncappedMax);
+ const off=preview({snapshot:withManual,input:{...input,effects:[{...ark,enabled:false}]}});
+ assert.equal(off.input.effects.find(e=>e.id===900).enabled,false);
+ assert.equal(calculate(off.input).normal.uncappedMax,calculate(preview().input).normal.uncappedMax);
+});
+test('common confirmation includes selected stat and damage skills, disabling removes all contributions without unequipping',()=>{
+ const extra={id:'user-common',name:'自选复合技能',text:'法强+10%、冰属性伤害+20%、伤害上限+3000'};
+ const equipped={...snapshot,items:[...snapshot.items,extra]};
+ const before=JSON.stringify(equipped),baseline=preview(),on=preview({snapshot:equipped});
+ assert.deepEqual(on.commonSkills.map(s=>s.name),[extra.name]);
+ assert(on.commonSkills[0].enabled);assert(on.input.attackBase>baseline.input.attackBase);assert(on.input.cap>baseline.input.cap);
+ const off=preview({snapshot:equipped,disabledCommonIds:[on.commonSkills[0].confirmationKey]});
+ assert.equal(off.commonSkills[0].enabled,false);assert.deepEqual(off.input,baseline.input);
+ assert.equal(JSON.stringify(equipped),before,'confirmation cannot delete the selected skill');
+ assert.deepEqual(preview({snapshot:equipped}).input,on.input,'re-enabling restores all effects once');
+});
+test('common confirmation keeps native catalog duplicates in character sources and exposes unknown extra text',()=>{
+ const native=Object.values(COMMON_SKILL_CATALOG).find(s=>s.name==='炎攻击提升3');assert(native);
+ const source={...native,id:'native-fire',group:'common'},report={...baseReport,rows:[...baseReport.rows,...evaluateCatalog([{...source,rules:commonSkillRules(source)}],baseReport.context).rows]};
+ const extras={...snapshot,sourceIds:[...snapshot.sourceIds,'native-fire'],items:[...snapshot.items,{...source,sourceIds:['native-fire']},{...native,id:'category-copy',catalogId:native.id},{id:'not-known',name:'未知自选',text:'尚未确认的技能原文'}]};
+ const common=extraCommonSkills(report,extras);
+ assert.deepEqual(common.map(s=>s.id),['not-known']);
+ const p=preview({baseReport:report,snapshot:extras,selection:{...selection,element:'火'},input:{...input,element:'火'}});
+ assert.equal(p.imported.effects.filter(e=>e.name.startsWith(native.name)).length,1);
+ assert.equal(p.commonSkills[0].text,'尚未确认的技能原文');assert(p.unresolved.some(s=>s.name==='未知自选'));
 });

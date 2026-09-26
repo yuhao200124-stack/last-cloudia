@@ -86,8 +86,7 @@ export function toggleExclusiveWeapon(snapshot,sources,enabled){
  return {...snapshot,sourceIds:[...new Set([...(snapshot.sourceIds||[]),...ids])],items};
 }
 
-export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
- if(String(snapshot.characterId)!==String(baseReport.characterId))throw new Error('配装角色与伤害资料不一致');
+export function resolvedLoadoutItems(baseReport,snapshot){
  // Category copies share their catalog identity. Native character rules retain
  // their source IDs, including exclusions and confirmed reader replacements.
  const native=new Map();
@@ -101,7 +100,26 @@ export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
   const item={...original,catalogId,sourceIds},key=catalogId||original.id;
   if(!items.has(key)||sourceIds.length&&!items.get(key).sourceIds.length)items.set(key,item);
  }
- snapshot={...snapshot,items:[...items.values()]};
+ return [...items.values()];
+}
+
+export function extraCommonSkills(baseReport,snapshot){
+ return resolvedLoadoutItems(baseReport,snapshot).filter(s=>!s.sourceIds.length||s.edited).map(s=>({...s,confirmationKey:String(s.catalogId||s.id)}));
+}
+
+export const ARK_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
+export function withArkStats(report,values={}){
+ const effects=Object.entries(ARK_STATS).flatMap(([key,target])=>{
+  const raw=values[key],value=raw===''||raw==null?0:Number(raw);
+  if(!Number.isFinite(value)||value<0)throw new Error(`圣物${target}请填写不小于 0 的数值`);
+  return value?[{type:'stat',target,value,unit:''}]:[];
+ });
+ return {...report,rows:[...report.rows,...(effects.length?[{sourceId:'custom-ark-stats',sourceName:'圣物固定属性',sourceText:'手填圣物固定属性',group:'ark',status:'active',rule:{id:'custom-ark-stats',review:'ready',conditions:[],effects}}]:[])]};
+}
+
+export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
+ if(String(snapshot.characterId)!==String(baseReport.characterId))throw new Error('配装角色与伤害资料不一致');
+ snapshot={...snapshot,items:resolvedLoadoutItems(baseReport,snapshot)};
  const represented=new Set(snapshot.sourceIds||[]),selected=new Set(snapshot.items.flatMap(s=>s.sourceIds||[]));
  const availableIds=new Set(baseReport.rows.map(r=>r.sourceId));
  const newlySelected=(baseReport.loadoutInventory||[]).filter(r=>!availableIds.has(r.sourceId)&&selected.has(r.sourceId)&&
@@ -139,11 +157,15 @@ export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
  return retargetReport({...baseReport,context,rows:[...rows.filter(r=>!editedIds.has(r.sourceId)),...additions]},selection);
 }
 
-export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseCap=9999,baseCritRate=0,templates={},selectedBuffs=[],runtimeAnchor=[],criticalAnchor=null,manualDefenseRatio=null,baselineImport=null,attackOverride=null}){
+export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseCap=9999,baseCritRate=0,templates={},selectedBuffs=[],runtimeAnchor=[],criticalAnchor=null,manualDefenseRatio=null,baselineImport=null,attackOverride=null,arkStats={},disabledCommonIds=[]}){
  const raceIds={'战士':'soldier','狙击手':'sniper','骑士':'knight','魔法师':'sorcerer','兽':'beast','植物':'plant','昆虫':'insect','鸟':'bird','魔法生物':'creature','不死生物':'undead','石':'stone','机械':'machine','精灵':'spirit','龙':'dragon','神':'god','鱼':'fish'};
  selection={...selection,boss:input.boss===true,back:input.back,air:input.air,ailment:input.ailment,ground:input.ground,stunned:input.stunned===true,weakness:input.weakness===true,
   enemyRaces:input.races?.length?input.races.map(r=>raceIds[r]||r):null};
- const report=buildLoadoutReport(baseReport,snapshot,selection,templates);
+ snapshot={...snapshot,items:resolvedLoadoutItems(baseReport,snapshot)};
+ const commonSkills=extraCommonSkills(baseReport,snapshot),disabled=new Set(disabledCommonIds);
+ const offIds=new Set(commonSkills.filter(s=>disabled.has(s.confirmationKey)).map(s=>s.id));
+ snapshot={...snapshot,items:snapshot.items.filter(s=>!offIds.has(s.id))};
+ const report=withArkStats(buildLoadoutReport(baseReport,snapshot,selection,templates),arkStats);
  const unresolved=[];
  for(const row of report.rows)if(row.status==='pending')unresolved.push({name:row.sourceName,text:row.sourceText,reason:row.reasons.join('；')||'尚未识别'});
  // Keep known effects calculable while exposing unmapped operations explicitly.
@@ -180,7 +202,7 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
  // effect list while filtering out operations whose loadout source was removed.
  const retained=new Map(imported.effects.map(e=>[e.importId,e]));
  const representedSources=new Set(snapshot.sourceIds||[]),selectedSources=new Set(snapshot.items.flatMap(item=>item.sourceIds||[]));
- const manualEffect=e=>{const sourceId=`manual-effect:${e.id}`;return !representedSources.has(sourceId)?[e]:selectedSources.has(sourceId)?[{...e,enabled:true}]:[];};
+ const manualEffect=e=>{if(e.bonusGroup==='ark')return [e];const sourceId=`manual-effect:${e.id}`;return !representedSources.has(sourceId)?[e]:selectedSources.has(sourceId)?[{...e,enabled:true}]:[];};
  const matched=new Set();
  const draftEffects=input.effects.flatMap(e=>{
   if(!e.importId)return manualEffect(e);
@@ -214,5 +236,5 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
   next.hitDamageRatio=selection.hitDamageRatio??(imported.hitSources.length?imported.hitDamageRatio:0.6);
   next.hitScaleStage=selection.hitScaleStage||imported.hitScaleStage||(imported.hitSources.length?input.hitScaleStage:'core');
  }else{next.hitMultiplier=1;next.hitDamageRatio=1;}
- return {input:next,report:safe,imported,panel,projectStatPercent,unresolved:[...new Map(unresolved.map(x=>[JSON.stringify(x),x])).values()]};
+ return {input:next,report:safe,imported,panel,projectStatPercent,commonSkills:commonSkills.map(s=>({...s,enabled:!disabled.has(s.confirmationKey),rows:safe.rows.filter(r=>r.sourceId===`loadout:${s.id}`),issues:unresolved.filter(item=>item.name===s.name).map(item=>item.reason)})),unresolved:[...new Map(unresolved.map(x=>[JSON.stringify(x),x])).values()]};
 }

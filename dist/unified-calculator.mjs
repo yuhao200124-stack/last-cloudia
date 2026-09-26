@@ -1,4 +1,4 @@
-import {prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds,reportLoadoutSnapshot,toggleExclusiveWeapon} from './loadout-preview.mjs?v=20260926-weapon-calculation';
+import {prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds,reportLoadoutSnapshot,toggleExclusiveWeapon} from './loadout-preview.mjs?v=20260926-confirmation-groups';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
 import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-common-skills';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
@@ -20,6 +20,15 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
  const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,sourceKey='',showSettings=false,resultsCollapsed=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES),pendingWeapon=saved(weaponStorageKey,null);
  const send=(type,extra={})=>{if(ready)frame.contentWindow.postMessage({type,...extra},location.origin);};
  const weaponIds=()=>{const report=getContext().baseReport;return report?exclusiveWeaponSourceIds(loadoutSources(report)):[];};
+ function ensureLoadout(){
+  const context=getContext();
+  if(!snapshot&&context.baseReport){anchor=context.runtimeAnchor||[];criticalAnchor=captureCritical(context);snapshot=reportLoadoutSnapshot(context.baseReport,context.manualEffects);}
+  return snapshot;
+ }
+ function loadSelection(){
+  ensureLoadout();
+  if(!frame.src)frame.src=loadoutFrameUrl(location.href);else if(ready)initialize();
+ }
  function setExclusiveWeapon(enabled){
   const context=getContext(),sourceIds=weaponIds();if(!sourceIds.length)return;
   if(!snapshot){anchor=context.runtimeAnchor||[];criticalAnchor=captureCritical(context);snapshot=reportLoadoutSnapshot(context.baseReport,context.manualEffects);}
@@ -102,5 +111,5 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
   $('unifiedUnresolvedList').innerHTML=items.map(x=>`<li><b>${esc(x.name)}</b><p>${esc(x.reason)}</p>${x.text?`<details><summary>技能原文</summary><p>${esc(x.text)}</p></details>`:''}</li>`).join('');
  }
  function error(message){if(active)send('lc-loadout-recommendations',{payload:{error:message,rates,contextKey:'incomplete'}});}
- return {get active(){return active;},get hasLoadout(){return !!snapshot;},open,prepare,error,refreshSources:initialize,setExclusiveWeapon};
+ return {get active(){return active;},get hasLoadout(){return !!snapshot;},get snapshot(){return snapshot;},ensureLoadout,loadSelection,open,prepare,error,refreshSources:initialize,setExclusiveWeapon};
 }

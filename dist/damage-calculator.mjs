@@ -1,3 +1,4 @@
+import {extraCommonSkills} from './loadout-preview.mjs?v=20260926-confirmation-groups';
 import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-switch-controls';
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
 import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-loadout-sources';
@@ -8,7 +9,7 @@ import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-common-ski
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-weapon-calculation';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-confirmation-groups';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
 import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-condition-observation';
 import {retargetReport} from './entry-preparation.mjs?v=20260926-loadout-sources';
@@ -23,6 +24,9 @@ let effects=[],nextId=0,timer;
 const params=new URLSearchParams(location.search);
 const characterId=params.get('character');
 if(characterId&&/^\d+$/.test(characterId)){$('calculatorCharacterBack').href=`./character-${characterId}.html`;$('calculatorCharacterBack').textContent='返回角色';}
+const bonusStorageKey=`lc-confirmed-bonuses:${characterId||'generic'}:v1`;
+let savedBonuses=null,bonusStoreReady=false,disabledCommonIds=new Set();
+try{savedBonuses=JSON.parse(localStorage.getItem(bonusStorageKey));}catch{}
 const embedded=params.get('embedded')==='1' && window.parent!==window;
 let imported=null,latestReport=null,workflow=null,readUnit=null,bossRaces=[],reviewBlocker='请导入读取报告并选择采用的数据。',lastHitKey='';
 let manualCriticalBase='';
@@ -93,7 +97,7 @@ $('magicBuffOptions').addEventListener('change',e=>{
   clearSettlementCapture('魔法增益已改变，请采用对应状态下的结算样本。');update();
 });
 document.body.classList.toggle('is-embedded',embedded);
-const newEffect=(kind='all')=>({id:++nextId,kind,percent:0,enabled:true,target:'无',stage:'post',name:''});
+const newEffect=(kind='all')=>({id:++nextId,kind,percent:0,enabled:true,target:'无',stage:'post',name:'',bonusGroup:'ark'});
 const numericKeys=Object.keys(defaultInput()).filter(k=>typeof defaultInput()[k]==='number');
 const booleanKeys=Object.keys(defaultInput()).filter(k=>typeof defaultInput()[k]==='boolean');
 $('element').innerHTML=options(ELEMENTS,'无');
@@ -112,7 +116,7 @@ function showConfirmedEffects(open,restoreFocus=true){
   $('openConfirmedEffects').setAttribute('aria-expanded',String(open));
   if(open){
     $('reviewPage').hidden=true;$('calculationPage').hidden=false;
-    effects=readEffects();renderEffects();update();
+    effects=readEffects();if(!effects.some(e=>!e.importId))effects.push(newEffect());renderEffects();unified?.loadSelection();update();
     $('confirmedEffectsTitle').focus();window.scrollTo(0,0);
   }else if(restoreFocus){
     effects=readEffects();update();$('openConfirmedEffects').focus();window.scrollTo(0,effectsReturnScroll);
@@ -167,13 +171,35 @@ function receiveEntryData({battle,unit,panelOnly=false}) {
   applyBoss();fillReaderPreview();update();
 }
 function readEffects() {
-  return [...document.querySelectorAll('.effect')].map(row=>({...effects.find(e=>e.id===Number(row.dataset.id)),id:Number(row.dataset.id),
-    kind:row.querySelector('[data-field=kind]').value,
-    percent:row.querySelector('[data-field=percent]').valueAsNumber,
-    enabled:row.querySelector('[data-field=enabled]').checked,
-    target:row.querySelector('[data-field=target]').value,
-    stage:row.querySelector('[data-field=stage]').value,
-    name:row.querySelector('[data-field=name]').value.trim()}));
+  const rows=new Map([...document.querySelectorAll('.effect')].map(row=>[Number(row.dataset.id),row]));
+  // Visual grouping must never change the previously adopted execution order.
+  return effects.map(effect=>{
+    const row=rows.get(effect.id);if(!row)return effect;
+    const percent=row.querySelector('[data-field=percent]');
+    return {...effect,kind:row.querySelector('[data-field=kind]').value,
+      percent:percent.value.trim()===''?0:percent.valueAsNumber,
+      ...(!effect.importId?{bonusGroup:'ark'}:{}),
+      enabled:row.querySelector('[data-field=enabled]').checked,
+      target:row.querySelector('[data-field=target]').value,
+      stage:row.querySelector('[data-field=stage]').value,
+      name:row.querySelector('[data-field=name]').value.trim()};
+  });
+}
+function arkValues(){return Object.fromEntries([...document.querySelectorAll('[data-ark-stat]')].map(el=>[el.dataset.arkStat,el.value]));}
+function saveBonuses(){
+  if(!bonusStoreReady)return;
+  try{localStorage.setItem(bonusStorageKey,JSON.stringify({stats:arkValues(),effects:readEffects().filter(e=>!e.importId),disabledCommonIds:[...disabledCommonIds]}));}catch{}
+}
+function renderCommonSkills(preview=null){
+  const report=workflow?.planningBase()||latestReport,snapshot=unified?.snapshot;
+  const skills=preview?.commonSkills||(report&&snapshot?extraCommonSkills(report,snapshot).map(s=>({...s,enabled:!disabledCommonIds.has(s.confirmationKey)})):[]);
+  const html=skills.map(s=>{
+    const active=s.rows||[],issues=s.issues||[];
+    const applied=[...new Set(active.flatMap(r=>r.rule.effects.map(formatEffect)))];
+    const status=!s.enabled?'已关闭，不计入计算':!s.rows?'按当前战斗条件计算':applied.length?`当前生效：${applied.join('；')}${issues.length?'；其他效果未计入：'+issues.join('；'):''}`:issues.length?`未计入：${issues.join('；')}`:'当前条件未触发伤害或属性加成';
+    return `<article class="common-skill ${!s.enabled?'is-inactive':''}"><label><input type="checkbox" data-common-key="${esc(s.confirmationKey)}" ${s.enabled?'checked':''}>${esc(s.name)}</label><p>${esc(s.text||'')}</p><p class="help">${esc(status)}</p></article>`;
+  }).join('')||'<p class="help">尚未选择额外通用技能。点击「配装」选择后，会在这里显示名称与技能效果。</p>';
+  if($('commonEffects').innerHTML!==html)$('commonEffects').innerHTML=html;
 }
 function attackFormula(s,c) {
   if(s.attackBasis==='settlement')return `直接采用读取器结算攻击 ${fmt(c.attack)}；不再应用技能攻击修正或 AtkRatio。`;
@@ -277,13 +303,13 @@ function read() {
   s.effects=readEffects().map(e=>!$('criticalEnabled').checked&&(e.kind==='critical'||e.criticalOnly)?{...e,enabled:false}:e);return s;
 }
 function renderEffects() {
-  $('effects').innerHTML=effects.map((e,i)=>{
+  for(const [id,group] of [['arkEffects',effects.filter(e=>!e.importId)],['nativeEffects',effects.filter(e=>e.importId)]])$(id).innerHTML=group.map((e,i)=>{
     const targets=e.kind==='element'?ELEMENTS:e.kind==='race'?RACES:['无需选择'];
     const target=targets.includes(e.target)?e.target:targets[0];
-    return `<div class="effect" data-id="${e.id}"><div class="effect-head"><label><input type="checkbox" data-field="enabled" ${e.enabled?'checked':''} aria-label="启用第 ${i+1} 条加成"><span class="order">加成 ${String(i+1).padStart(2,'0')}</span></label><button type="button" data-action="up" aria-label="上移第 ${i+1} 条加成" ${i===0?'disabled':''}>↑</button><button type="button" data-action="down" aria-label="下移第 ${i+1} 条加成" ${i===effects.length-1?'disabled':''}>↓</button><button type="button" data-action="remove" aria-label="删除第 ${i+1} 条加成">删除</button></div>
-      ${e.importId?`<p class="import-source">${esc(e.name)}</p>`:''}<div class="effect-fields"><label>加成类型<select data-field="kind">${Object.entries(EFFECTS).map(([k,v])=>`<option value="${k}" ${k===e.kind?'selected':''}>${v}</option>`).join('')}</select></label><label>数值 %<input data-field="percent" type="number" min="-100" max="10000" step="any" value="${e.percent}" required></label><label>限定对象<select data-field="target" ${targets.length===1?'disabled':''}>${options(targets,target)}</select></label></div>
+    return `<div class="effect" data-id="${e.id}"><div class="effect-head"><label><input type="checkbox" data-field="enabled" ${e.enabled?'checked':''} aria-label="启用第 ${i+1} 条加成"><span class="order">加成 ${String(i+1).padStart(2,'0')}</span></label><button type="button" data-action="up" aria-label="上移第 ${i+1} 条加成" ${i===0?'disabled':''}>↑</button><button type="button" data-action="down" aria-label="下移第 ${i+1} 条加成" ${i===group.length-1?'disabled':''}>↓</button><button type="button" data-action="remove" aria-label="删除第 ${i+1} 条加成">删除</button></div>
+      ${e.importId?`<p class="import-source">${esc(e.name)}</p>`:''}<div class="effect-fields"><label>加成类型<select data-field="kind">${Object.entries(EFFECTS).map(([k,v])=>`<option value="${k}" ${k===e.kind?'selected':''}>${v}</option>`).join('')}</select></label><label>数值 %<input data-field="percent" type="number" min="-100" max="10000" step="any" value="${!e.importId&&e.percent===0?'':e.percent}" placeholder="0"></label><label>限定对象<select data-field="target" ${targets.length===1?'disabled':''}>${options(targets,target)}</select></label></div>
       <p class="effect-state"></p><details><summary>更多：来源与结算方式</summary><div class="fields two"><label>来源名称（选填）<input data-field="name" maxlength="60" value="${esc(e.name)}" placeholder="装备、技能或个性名称"></label><label>结算方式<select data-field="stage">${Object.entries(stages).map(([k,v])=>`<option value="${k}" ${k===e.stage?'selected':''}>${v}</option>`).join('')}</select></label></div><p class="help">结算后减伤填负数；原生核心前减伤填正数。类型条件以本页选项筛选，其他条件用本条勾选框确认。</p></details></div>`;
-  }).join('');
+  }).join('')||(id==='nativeEffects'?'<p class="help">采用角色加成后，在这里确认各条效果。</p>':'<p class="help">点击「添加一条」填写圣物的伤害效果。</p>');
 }
 function referenceMode() {return workflow?.selection().statReference||imported?.statReference||(!characterId&&$('type').value==='magical'?'int':'str');}
 function syncBossReference() {
@@ -321,6 +347,8 @@ function applyBoss() {
   labels();
 }
 function update() {
+  saveBonuses();renderCommonSkills();
+  if(Object.values(arkValues()).some(v=>Number(v)!==0))unified?.ensureLoadout();
   if(captureApplication&&captureApplication.key!==captureKey())clearSettlementCapture('面板、招式或战斗条件已改变，请重新采用相应的结算样本。');
   if(imported) {
     const magicCap=magicBuffCap(activeMagicBuffs(),imported.skillType,imported.reference);
@@ -352,9 +380,18 @@ function update() {
       if(invalid) throw new Error(`请检查「${invalid.closest('label')?.textContent.trim()||'数值'}」的输入范围，必填数值不能留空。`);
     }
     if(unified?.active||unified?.hasLoadout)for(const [id,label] of [['coefficient','每段基础系数'],['hits','基础命中段数'],['skillPercent','技能内攻击修正'],['skillAdd','技能内攻击前加算'],['skillPostAdd','技能内攻击后加算']])if(!Number.isFinite($(id).valueAsNumber))throw new Error(`请在“战斗设置”中填写${label}。`);
+    for(const el of document.querySelectorAll('[data-ark-stat],.effect input[data-field=percent]'))if(!el.checkValidity())throw new Error('请检查圣物属性或加成数值的输入范围。');
     const preview=unified?.active||unified?.hasLoadout?unified.prepare(read()):null;
+    renderCommonSkills(preview);
     if(preview)showConditionSources(preview.report);
-    const s=preview?.input||read(),r=calculate(s),c=r.context;
+    const s=preview?.input||read();
+    if(!preview){
+      const added=Number(arkValues()[referenceMode()==='int'?'intelligence':'attack'])||0;
+      if(added&&s.attackBasis==='settlement')throw new Error('填写圣物属性后，请切换为面板或属性分层计算。');
+      if(s.attackBasis==='layers'){s.attackBase+=added;s.attack=Math.floor(s.attackBase*(1+s.runtimeStatPercent/100));}
+      else s.attack+=added;
+    }
+    const r=calculate(s),c=r.context;
     if(preview){
       $('cap').value=s.cap;$('critRate').value=s.critRate;
       if(!attackBasisTouched||$('attackBasis').value==='auto'){
@@ -395,8 +432,9 @@ function update() {
     $('activeNote').textContent=`已计入 ${count} 条非零加成${s.boss&&s.break?'；Boss Break 防御修正已生效':''}。${autoLayer?.projected&&$('attackBasis').value==='auto'?`当前条件下预估面板 ${fmt(autoLayer.panel)}；同类型 Buff 只保留本次启用的一份。`:''}`;
     $('trace').innerHTML=r.normal.trace.map(t=>`<li><span>${esc(t.label)}</span><b>${fmt(t.value)}</b></li>`).join('');
     $('formulaText').textContent=`${attackFormula(s,c)} A=${fmt(c.attack)}，F=${fmt(c.defense)}，C=${s.coefficient}。先算普通核心，再按生效列表逐条修正，最后格挡与限额。`;
-    if(!preview)document.querySelectorAll('.effect').forEach((el,i)=>{
-      const e=s.effects[i],normal=applies(e,s,c,false),crit=applies(e,s,c,true);
+    document.querySelectorAll('.effect').forEach(el=>{
+      const draft=effects.find(e=>e.id===Number(el.dataset.id)),e=s.effects.find(e=>draft.importId?e.importId===draft.importId:e.id===draft.id)||{...draft,enabled:false};
+      const normal=applies(e,s,c,false),crit=applies(e,s,c,true);
       el.classList.toggle('is-inactive',!normal&&!crit);
       el.querySelector('.effect-state').textContent=!e.enabled?'已关闭':!normal&&!crit?'条件不匹配，不计入':e.percent===0?'当前为 0%，不改变伤害':normal?'条件匹配，已计入':'仅暴击命中时计入';
     });
@@ -411,7 +449,7 @@ function reset(clearSaved=true) {
   defenseRatioTouched=false;
   lastWeaknessKey='';weaknessManual=false;
   captureApplication=null;panelLayers=null;layerSourceKey='';attackBasisTouched=false;$('attackBasis').value='panel';
-  if(clearSaved){magicSelection={};try{localStorage.removeItem(`lc-magic-buffs:${characterId}`);}catch{}renderMagicBuffs(latestReport?.profile);}
+  if(clearSaved){disabledCommonIds.clear();for(const el of document.querySelectorAll('[data-ark-stat]'))el.value='';magicSelection={};try{localStorage.removeItem(`lc-magic-buffs:${characterId}`);}catch{}renderMagicBuffs(latestReport?.profile);}
   retainedImportDraft=null;
   const s=defaultInput();
   for(const k of numericKeys) if($(k))$(k).value=s[k];
@@ -435,12 +473,12 @@ function reset(clearSaved=true) {
   }
 }
 $('reset').addEventListener('click',()=>reset());
-$('addEffect').addEventListener('click',()=>{effects=readEffects();effects.push(newEffect());renderEffects();update();$('effects').lastElementChild.querySelector('select').focus();});
+$('addEffect').addEventListener('click',()=>{effects=readEffects();effects.push(newEffect());renderEffects();update();$('arkEffects').lastElementChild.querySelector('select').focus();});
 $('effects').addEventListener('click',event=>{
   const button=event.target.closest('[data-action]');if(!button)return;
   effects=readEffects();const i=effects.findIndex(e=>e.id===Number(button.closest('.effect').dataset.id));
   if(button.dataset.action==='remove')effects.splice(i,1);
-  else {const j=i+(button.dataset.action==='up'?-1:1);[effects[i],effects[j]]=[effects[j],effects[i]];}
+  else {const group=effects.filter(e=>Boolean(e.importId)===Boolean(effects[i].importId)),pos=group.indexOf(effects[i]),other=group[pos+(button.dataset.action==='up'?-1:1)];if(other){const j=effects.indexOf(other);[effects[i],effects[j]]=[effects[j],effects[i]];}}
   renderEffects();update();
 });
 $('effects').addEventListener('change',event=>{
@@ -450,6 +488,13 @@ $('effects').addEventListener('change',event=>{
   }
   update();
 });
+$('commonEffects').addEventListener('change',event=>{
+ const key=event.target.dataset.commonKey;if(!key)return;
+ if(event.target.checked)disabledCommonIds.delete(key);else disabledCommonIds.add(key);
+ update();
+ [...$('commonEffects').querySelectorAll('[data-common-key]')].find(el=>el.dataset.commonKey===key)?.focus();
+});
+$('editConfirmedLoadout').addEventListener('click',()=>unified.open());
 $('calculator').addEventListener('submit',e=>e.preventDefault());
 $('calculator').addEventListener('input',event=>{if(event.target.id==='defenseRatio')defenseRatioTouched=true;clearTimeout(timer);timer=setTimeout(update,70);});
 $('calculator').addEventListener('change',event=>{
@@ -571,11 +616,20 @@ if(transferred?.calculator){
  const restoredUrl=new URL(location.href);restoredUrl.searchParams.delete('session');history.replaceState(null,'',restoredUrl.href);
  removeCalculatorSession(params.get('session')).catch(()=>{});
 }
+if(savedBonuses){
+ disabledCommonIds=new Set((savedBonuses.disabledCommonIds||[]).map(String));
+ if(!transferred){
+  for(const el of document.querySelectorAll('[data-ark-stat]'))el.value=savedBonuses.stats?.[el.dataset.arkStat]??'';
+  const manual=(savedBonuses.effects||[]).filter(e=>EFFECTS[e.kind]&&Number.isFinite(e.percent)).map(e=>({...e,id:++nextId,bonusGroup:'ark'}));
+  effects=[...readEffects().filter(e=>e.importId),...manual];renderEffects();
+ }
+}
+bonusStoreReady=true;
 unified=mountUnifiedCalculator({
- beforeOpen:()=>{if(!embedded)return true;openFullPage();return false;},
+ beforeOpen:()=>{showConfirmedEffects(false,false);if(!embedded)return true;openFullPage();return false;},
  getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,lowHp:$('lowHp').checked,...Object.fromEntries(STAT_CONDITION_FIELDS.map(f=>[f,$(f).checked])),break:$('break').checked,boss:$('boss').checked,weakness:$('weakness').checked,dualWield:$('dualWield').checked},
   baseCap:$('baseCap').valueAsNumber,baseCritRate:$('critBasis').value==='reader'?Number(manualCriticalBase)||0:$('baseCritRate').valueAsNumber||0,
-  selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],baselineImport:imported,manualEffects:readEffects().filter(e=>!e.importId),
+  selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],baselineImport:imported,manualEffects:[],arkStats:arkValues(),disabledCommonIds:[...disabledCommonIds],
   attackOverride:attackBasisTouched&&$('attackBasis').value!=='auto'?Object.fromEntries(['attackBasis','attack','attackBase','runtimeStatPercent','settledAttack'].map(key=>[key,read()[key]])):null,
   manualDefenseRatio:defenseRatioTouched||imported&&$('defenseRatio').valueAsNumber!==imported.defenseRatio?$('defenseRatio').valueAsNumber:null,
   criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),
@@ -583,6 +637,6 @@ unified=mountUnifiedCalculator({
  onWeaponChange:enabled=>{$('specialWeapon').checked=enabled;}
 });
 $('specialWeapon').addEventListener('change',()=>unified.setExclusiveWeapon($('specialWeapon').checked));
-unified.refreshSources();
+unified.refreshSources();update();
 if(characterId&&!latestReport)loadCharacterReport(characterId).then(report=>{if(!latestReport){receiveReport(report);unified.refreshSources();}}).catch(e=>unified.error(e.message));
 if(params.get('unified')==='1')unified.open();

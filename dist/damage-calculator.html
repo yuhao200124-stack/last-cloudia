@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>配装与伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260926-confirmed-effects">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260926-confirmation-groups">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html?v=20260924-condition-tags">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./skill-labeling.html?v=20260924-attack-labels">技能列表打标签用的</a><a id="calculatorCharacterBack" href="./characters.html?v=20260924-condition-tags">角色列表</a><a href="./index.html?v=20260924-condition-tags">技能表</a></nav></header>
@@ -86,10 +86,23 @@
       <div class="fields two"><label>结算防御参照倍率 ×<input id="defenseRatio" type="number" min="0" max="1" step="any" value="1" required></label><p class="help">贯导触发时为0.5；上方仍填写原始当前魔抗，不需要手动减半。</p></div>
       <details><summary>其他战斗条件</summary><div class="inline-options"><label><input id="guarded" type="checkbox"> 本段被格挡</label></div><div class="fields two"><label>格挡减伤 %<input id="guardReduction" type="number" min="0" max="100" step="any" value="50" required></label><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="0.5" required></label></div><p class="help">降防填写在「当前防御力」；Boss 的 Break 防御修正在此基础上单独计算。</p></details>
     </section>
-    <section id="confirmedEffectsSection" class="card" hidden aria-labelledby="confirmedEffectsTitle"><div class="section-heading"><h2 id="confirmedEffectsTitle" tabindex="-1"><span>05</span>已确认的伤害加成</h2><div class="inline-options"><button type="button" id="addEffect" class="primary">＋ 添加一条</button><button type="button" id="closeConfirmedEffects">返回伤害计算</button></div></div>
-      <p class="help">每条填写一个实际生效的效果。同名效果是否叠加须先确认；被覆盖的效果请取消勾选。装备、个性与其他条件由你确认。</p>
-      <div id="effects"></div>
-      <details><summary>加成如何计算</summary><p>常见 Boss、属性、物理、魔法、特技等增伤按所填顺序逐条结算，并逐步四舍五入。同类描述不自动合并。</p><p>若已确认某效果使用原生核心前入口，可在该条「更多」中更改。上移、下移用于对照实际生效顺序；未核对的顺序可能带来取整差异。</p></details>
+    <section id="confirmedEffectsSection" class="card" hidden aria-labelledby="confirmedEffectsTitle">
+      <div class="section-heading"><h2 id="confirmedEffectsTitle" tabindex="-1"><span>05</span>已确认的伤害加成</h2><button type="button" id="closeConfirmedEffects">返回伤害计算</button></div>
+      <section class="bonus-section" aria-labelledby="arkStatsTitle"><h3 id="arkStatsTitle">圣物属性加成</h3><p class="help">填写圣物增加的固定属性；留空按 0 计算。</p>
+        <div class="ark-stats fields">
+          <label>HP +<input id="arkHp" data-ark-stat="hp" type="number" min="0" step="any" placeholder="0"></label>
+          <label>MP +<input id="arkMp" data-ark-stat="mp" type="number" min="0" step="any" placeholder="0"></label>
+          <label>攻击力 +<input id="arkAttack" data-ark-stat="attack" type="number" min="0" step="any" placeholder="0"></label>
+          <label>防御力 +<input id="arkDefense" data-ark-stat="defense" type="number" min="0" step="any" placeholder="0"></label>
+          <label>法强 +<input id="arkIntelligence" data-ark-stat="intelligence" type="number" min="0" step="any" placeholder="0"></label>
+          <label>魔抗 +<input id="arkMind" data-ark-stat="mind" type="number" min="0" step="any" placeholder="0"></label>
+        </div>
+      </section>
+      <div id="effects">
+        <section class="bonus-section" aria-labelledby="arkDamageTitle"><div class="section-heading"><h3 id="arkDamageTitle">圣物伤害添加</h3><button type="button" id="addEffect" class="primary">＋ 添加一条</button></div><div id="arkEffects"></div></section>
+        <section class="bonus-section" aria-labelledby="nativeEffectsTitle"><h3 id="nativeEffectsTitle">角色自带技能确认</h3><div id="nativeEffects"></div></section>
+      </div>
+      <section class="bonus-section" aria-labelledby="commonEffectsTitle"><div class="section-heading"><h3 id="commonEffectsTitle">通用技能确认</h3><button type="button" id="editConfirmedLoadout">配装</button></div><div id="commonEffects"></div></section>
     </section>
     <section class="card"><div id="importCapControls" class="fields two" hidden><label>基础及额外单段上限<input id="baseCap" type="number" min="1" max="2000000000" step="1" value="9999" required></label><p id="capImportNote" class="help"></p></div><div class="fields two"><label>每段最终伤害上限<input id="cap" type="number" min="1" max="2000000000" step="1" value="9999" required></label><div class="help">填写包含装备、个性与技能上限加成后的最终值；上限逐段生效。</div></div>
       <details><summary>运行时修正（通常保持默认）</summary><div class="fields two">
@@ -115,7 +128,7 @@
         <p id="resultCapNote" class="result-cap-note" hidden></p>
       </div>
     </div>
-    <button id="unifiedStart" class="primary unified-start" type="button">边配装边计算</button>
+    <button id="unifiedStart" class="primary unified-start" type="button">配装</button>
     <section id="unifiedSummary" class="card unified-summary" hidden><h3>当前配装加成</h3><div id="unifiedStats"></div><div id="unifiedBonuses"></div><p id="unifiedStatus" class="help"></p><p class="help">通用技能按完整原文与本次条件读取；防御、回复等不会作为增伤。未识别的公式或条件列在下方，不以最高值代入。</p></section>
     <details id="unifiedUnresolved" class="card unified-unresolved" hidden open><summary>未计入／待研究 <span id="unifiedUnresolvedCount"></span></summary><ul id="unifiedUnresolvedList"></ul></details>
     <div class="result-notes"><p id="activeNote"></p><p>角色资料先与入场报告核对，只有你确认采用的加成才进入计算；另行添加时请避免重复。</p><p>输出为所填条件下的伤害。护盾、保命、帧内无敌、Boss 专属减伤等未填入机制，可能让实际掉血更低。</p></div>
@@ -148,5 +161,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260926-confirmed-effects"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260926-confirmation-groups"></script>
 </body></html>
