@@ -7,7 +7,7 @@ import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-f
 import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
-import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer} from './magic-buffs.mjs?v=20260924-condition-tags';
+import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
 import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-common-skills';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
 import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-condition-tags';
@@ -45,8 +45,13 @@ const activeMagicBuffs=()=>selectedMagicBuffs(magicOptions,magicSelection);
 const criticalDisabled=()=>!$('criticalEnabled').checked||imported?.skillType==='magic'&&!imported.magicCanCrit;
 const attackStat=()=>panelLayers?.[referenceMode()==='int'?'intelligence':referenceMode()==='str'?'attack':''];
 function renderMagicBuffs(profile) {
-  magicOptions=magicBuffOptions(profile);$('magicBuffOptions').hidden=!magicOptions.length;
-  $('magicBuffChoices').innerHTML=magicOptions.map(b=>`<label class="magic-buff-check"><input type="checkbox" data-magic-buff="${esc(b.id)}"${magicSelection[b.id]?' checked':''}>${esc(b.name)}：${esc(b.label)}</label>`).join('');
+  magicOptions=magicBuffOptions(profile);
+  const spells=nonDamageMagic(profile);$('magicBuffOptions').hidden=!spells.length;
+  $('magicBuffChoices').innerHTML=spells.map(spell=>{
+    const rule=supportMagicRule(spell,magicOptions);
+    return rule?`<label class="magic-buff-check"><input type="checkbox" data-magic-buff="${esc(rule.id)}"${magicSelection[rule.id]?' checked':''}>${esc(rule.name)}：${esc(rule.label)}</label>`:
+      `<div class="magic-buff-check">${esc(spell.name)}：${esc(spell.description||'效果尚待核对')}</div>`;
+  }).join('');
 }
 for(const id of ['fullHp','lowHp'])$(id).addEventListener('change',()=>{if($(id).checked)$(id==='fullHp'?'lowHp':'fullHp').checked=false;});
 $('magicBuffOptions').addEventListener('change',e=>{

@@ -1,6 +1,8 @@
 import {projectAttackLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {SUPPORT_BUFFS,normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
 const normalized=s=>String(s||'').replace(/\s|[,，。、]/g,'').replaceAll('＋','+');
+export const nonDamageMagic=profile=>(profile?.magic||[]).filter(spell=>spell.purpose!=='attack');
+export const supportMagicRule=(spell,options)=>options.find(rule=>normalized(rule.name)===normalized(spell.name)&&normalized(rule.description)===normalized(spell.description));
 export function magicBuffOptions(profile) {
  return SUPPORT_BUFFS.flatMap(def=>{
   const spell=(profile?.magic||[]).find(m=>normalized(m.name)===normalized(def.name)&&normalized(m.description)===normalized(def.description));

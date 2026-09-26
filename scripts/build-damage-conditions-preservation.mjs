@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 const baseline='af787c65731cb5324e2f67d46af0ae05074116f3';
 const allowed=new Set([
  'dist/damage-calculator.css','dist/damage-calculator.html','dist/damage-calculator.mjs',
- 'dist/damage-engine.mjs','dist/effect-rule-engine.mjs','dist/entry-preparation.mjs','dist/loadout-preview.mjs'
+ 'dist/damage-engine.mjs','dist/effect-rule-engine.mjs','dist/entry-preparation.mjs','dist/loadout-preview.mjs','dist/magic-buffs.mjs'
 ]);
 const hash=text=>createHash('sha256').update(text).digest('hex');
 const changed=execFileSync('git',['diff',baseline,'--name-only','--','dist'],{encoding:'utf8'}).trim().split('\n').filter(Boolean);
