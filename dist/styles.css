@@ -208,7 +208,7 @@ main { padding: 18px clamp(10px, 2vw, 28px) 42px; }
 
 .split-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(780px, 1fr));
+  grid-template-columns: repeat(2, minmax(960px, 1fr));
   gap: 18px;
   overflow-x: auto;
   padding-bottom: 4px;
@@ -232,6 +232,19 @@ main { padding: 18px clamp(10px, 2vw, 28px) 42px; }
 .excel-table col.rating { width: 7%; }
 .excel-table col.action { width: 5%; }
 .excel-table.all-skills col.effect { width: 70%; }
+
+/* Ordinary list follows the workbook; the labeling table keeps its own layout. */
+.skill-list-table { min-width: 960px; font-size: .875rem; }
+.skill-list-table col.type { width: 10%; }
+.skill-list-table col.name { width: 16%; }
+.skill-list-table col.sc { width: 6%; }
+.skill-list-table col.effect { width: 34%; }
+.skill-list-table col.sources { width: 24%; }
+.skill-list-table col.rating { width: 5%; }
+.skill-list-table col.action { width: 5%; }
+.skill-list-table.all-skills col.name { width: 20%; }
+.skill-list-table.all-skills col.effect { width: 40%; }
+.skill-list-table .source-list > div + div { margin-top: 4px; }
 
 .excel-table th,
 .excel-table td {
@@ -279,6 +292,9 @@ main { padding: 18px clamp(10px, 2vw, 28px) 42px; }
   font-weight: 700;
   text-align: center;
 }
+
+.skill-list-table thead .book-title th { color: #fff; background: var(--navy); }
+.skill-list-table thead .column-title th { color: #fff; background: var(--blue); }
 
 .judgment-cell .judgment-ready { color: #111; }
 .judgment-cell .judgment-partial { color: #175cd3; }
@@ -650,6 +666,7 @@ mark {
   .split-grid { display: block; overflow: visible; }
   .split-grid .table-scroll + .table-scroll { margin-top: 16px; }
   .excel-table { min-width: 760px; font-size: .82rem; }
+  .skill-list-table { min-width: 960px; font-size: .875rem; }
   .site-header { min-height: 70px; }
   .brand-mark { width: 42px; height: 42px; }
   .sc-calculator { right: 10px; bottom: 72px; }

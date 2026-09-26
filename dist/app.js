@@ -218,6 +218,10 @@
     return rowValue(row, 'sources').split('\n').map(item => item.trim()).filter(Boolean);
   }
 
+  function sourcesContent(row) {
+    return `<div class="source-list">${editedSources(row).map(source => `<div>${highlight(source)}</div>`).join('')}</div>`;
+  }
+
   function parseSc(value) {
     const match = String(value ?? '').replace(',', '.').match(/-?\d+(?:\.\d+)?/);
     const parsed = match ? Number(match[0]) : 0;
@@ -594,7 +598,7 @@
   function splitTable(rows, label) {
     const groups = groupRows(rows);
     const body = groups.map(group => group.separator
-      ? '<tr class="separator-row" aria-hidden="true"><td colspan="5"></td></tr>'
+      ? '<tr class="separator-row" aria-hidden="true"><td colspan="7"></td></tr>'
       : group.rows.map((row, index) => {
         const key = rowKey(row);
         const typeKey = `type:${activeSheet}:${label}:${group.type}`;
@@ -605,16 +609,18 @@
         return `<tr data-skill-id="${escapeHtml(row.id)}">
           ${index === 0 ? `<td class="type-cell" rowspan="${group.rows.length}">${cell(highlight(typeValue), 'cell-center')}</td>` : ''}
           ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
+          ${editableTd(key, 'sc', rowValue(row, 'sc'), cell(highlight(rowValue(row, 'sc')), 'cell-center'), 'sc-cell')}
           ${editableTd(key, 'effect', effect, cell(effectContent(row)), '')}
+          ${editableTd(key, 'sources', rowValue(row, 'sources'), cell(sourcesContent(row)), 'sources-cell')}
           ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
           <td class="action-cell">${addButton(row)}</td>
         </tr>`;
       }).join('')).join('');
-    return `<div class="table-scroll"><table class="excel-table" aria-label="${escapeHtml(label)}">
-      <colgroup><col class="type"><col class="name"><col class="effect"><col class="rating"><col class="action"></colgroup>
+    return `<div class="table-scroll"><table class="excel-table skill-list-table" aria-label="${escapeHtml(label)}">
+      <colgroup><col class="type"><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"><col class="action"></colgroup>
       <thead>
-        <tr class="book-title"><th colspan="5">一、被动技能</th></tr>
-        <tr class="column-title"><th>技能类型</th><th>技能名称</th><th>技能效果／说明</th><th>评价</th><th>添加</th></tr>
+        <tr class="book-title"><th colspan="7">一、被动技能</th></tr>
+        <tr class="column-title"><th>技能类型</th><th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th><th>添加</th></tr>
       </thead>
       <tbody>${body}</tbody>
     </table></div>`;
@@ -628,16 +634,18 @@
       const markValue = rowValue(row, 'mark');
       return `<tr data-skill-id="${escapeHtml(row.id)}">
         ${editableTd(key, 'name', name, cell(skillName(row), 'cell-center'), 'skill-name')}
+        ${editableTd(key, 'sc', rowValue(row, 'sc'), cell(highlight(rowValue(row, 'sc')), 'cell-center'), 'sc-cell')}
         ${editableTd(key, 'effect', effect, cell(effectContent(row)), '')}
+        ${editableTd(key, 'sources', rowValue(row, 'sources'), cell(sourcesContent(row)), 'sources-cell')}
         ${editableTd(key, 'mark', markValue, cell(escapeHtml(markValue), 'cell-center'), 'rating-cell')}
         <td class="action-cell">${addButton(row)}</td>
       </tr>`;
     }).join('');
-    return `<div class="table-scroll"><table class="excel-table all-skills" aria-label="${escapeHtml(label)}">
-      <colgroup><col class="name"><col class="effect"><col class="rating"><col class="action"></colgroup>
+    return `<div class="table-scroll"><table class="excel-table skill-list-table all-skills" aria-label="${escapeHtml(label)}">
+      <colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"><col class="action"></colgroup>
       <thead>
-        <tr class="book-title"><th colspan="4">${activeSheet==='基础属性'?escapeHtml(label):'一、被动技能'}</th></tr>
-        <tr class="column-title"><th>技能名称</th><th>技能效果／说明</th><th>评价</th><th>添加</th></tr>
+        <tr class="book-title"><th colspan="6">${activeSheet==='基础属性'?escapeHtml(label):'一、被动技能'}</th></tr>
+        <tr class="column-title"><th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th><th>添加</th></tr>
       </thead>
       <tbody>${body}</tbody>
     </table></div>`;

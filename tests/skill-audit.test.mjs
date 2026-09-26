@@ -99,7 +99,12 @@ test('ordinary skill list has no tag or judgment UI and preserves descriptions a
  for(const sheet of data.sheetOrder){
   const markup=boot({},sheet).elements.get('#tableArea').innerHTML;
   assert(!/judgment|skill-tags-cell|skill-stat-metadata|skill-condition-tags|data-edit-field="(?:type|tags|skillTags|basicStats)"/.test(markup));
-  assert(!/data-edit-field="(?:sc|sources)"|source-list|<th[^>]*>SC<\/th>|<th>获得方式<\/th>/.test(markup));
+  assert.match(markup,/<th>技能名称<\/th><th>SC<\/th><th>技能效果／说明<\/th><th>可学习圣物<\/th><th>评价<\/th><th>添加<\/th>/);
+  assert.match(markup,/data-edit-field="sc"/);
+  assert.match(markup,/data-edit-field="sources"/);
+  const columns=data.sheets[sheet].kind==='split'?7:6;
+  assert.match(markup,new RegExp(`<th colspan="${columns}">`));
+  if(columns===7)assert.match(markup,/<div class="split-grid">/);
   for(const match of markup.matchAll(/<td[^>]*data-edit-field="effect"[^>]*>([\s\S]*?)<\/td>/g))assert(!/skill-stat-metadata|skill-condition-tags|judgment-label/.test(match[1]));
  }
  const edits={[`skill:${complete.id}`]:{effect:'自定义效果',sc:'19',sources:'用户保存的来源'}};
@@ -107,7 +112,8 @@ test('ordinary skill list has no tag or judgment UI and preserves descriptions a
  const editedRow=rowHtml(edited.elements.get('#tableArea').innerHTML,complete);
  assert.match(editedRow,/自定义效果/);
  assert(!editedRow.includes('skill-stat-metadata'));
- assert(!editedRow.includes('用户保存的来源'));
+ assert.match(editedRow,/用户保存的来源/);
+ assert.match(editedRow,/data-edit-field="sc" data-edit-value="19"/);
  assert.equal(edited.window.LC_LOADOUT_CALCULATOR.snapshot().items[0].sc,19);
  assert.deepEqual(JSON.parse(edited.saved.get('lc-sheet-table:cell-edits-v1')),edits);
 });
