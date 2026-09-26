@@ -4,10 +4,16 @@ const manifest=JSON.parse(fs.readFileSync(new URL('../docs/calculator-integratio
 const layout=JSON.parse(fs.readFileSync(new URL('../docs/excel-layout-preservation-2026-09-26.json',import.meta.url)));
 const damageConditions=JSON.parse(fs.readFileSync(new URL('../docs/damage-conditions-preservation-2026-09-26.json',import.meta.url)));
 const characterRestore=JSON.parse(fs.readFileSync(new URL('../docs/character-restore-preservation-2026-09-26.json',import.meta.url)));
+const loadoutSources=JSON.parse(fs.readFileSync(new URL('../docs/loadout-sources-preservation-2026-09-26.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const integration=loadoutSources.files[path];
+ if(integration){
+  if(hash(text)!==integration.afterHash||hash(integration.beforeText)!==integration.beforeHash)throw Error(`Loadout source preservation drift: ${path}`);
+  text=integration.beforeText;
+ }
  const restore=characterRestore.files[path];
  if(restore){
   if(hash(text)!==restore.afterHash||hash(restore.beforeText)!==restore.beforeHash)throw Error(`Character restore preservation drift: ${path}`);

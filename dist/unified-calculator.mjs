@@ -1,9 +1,9 @@
-import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260926-condition-observation';
+import {prepareLoadoutPreview,loadoutSources} from './loadout-preview.mjs?v=20260926-loadout-sources';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
 import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-common-skills';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-switch-controls';
-import {buildDamageImport} from './damage-import.mjs?v=20260926-common-skills';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-loadout-sources';
+import {buildDamageImport} from './damage-import.mjs?v=20260926-loadout-sources';
 import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -16,7 +16,7 @@ export function renderDamageGauges(result,input){
  }
 }
 export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
- const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,showSettings=false,resultsCollapsed=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES);
+ const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,sourceKey='',showSettings=false,resultsCollapsed=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES);
  const send=(type,extra={})=>{if(ready)frame.contentWindow.postMessage({type,...extra},location.origin);};
  function layout(){
   document.body.classList.toggle('unified-mode',active);document.body.classList.toggle('unified-settings',active&&showSettings);
@@ -24,7 +24,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
   $('unifiedWorkspace').hidden=!active;$('unifiedStart').hidden=active;$('unifiedSummary').hidden=!active;
   $('unifiedSettings').textContent=showSettings?'返回技能配装':'战斗设置';
  }
- function initialize(){const {baseReport,characterId}=getContext();if(baseReport)send('lc-loadout-init',{characterId:baseReport.characterId,sources:loadoutSources(baseReport)});else if(!characterId)send('lc-loadout-get-state');}
+ function initialize(){const {baseReport,characterId,manualEffects}=getContext();if(baseReport){const sources=loadoutSources(baseReport,manualEffects);sourceKey=JSON.stringify(sources);send('lc-loadout-init',{characterId:baseReport.characterId,sources});}else if(!characterId)send('lc-loadout-get-state');}
  function captureCritical(context){
   return Number.isFinite(context.criticalObservation)&&context.baseReport?{rate:context.criticalObservation,contribution:buildDamageImport(retargetReport(context.baseReport,context.selection)).critAdded}:null;
  }
@@ -61,6 +61,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
   const context=getContext();
   if(!snapshot)throw new Error('正在载入配装；请在配装区选择角色。');
   if(!context.baseReport)throw new Error('请在配装区选择角色，以加载基础属性。');
+  if(ready&&sourceKey!==JSON.stringify(loadoutSources(context.baseReport,context.manualEffects)))initialize();
   if(!criticalAnchor)criticalAnchor=captureCritical(context);
   const preview=prepareLoadoutPreview({...context,input,snapshot,templates:saved(LEARNING_STORAGE_KEY,{}),runtimeAnchor:anchor,criticalAnchor});
   $('unifiedStats').innerHTML=Object.values(preview.panel.stats).map(stat=>`<div><span>${esc(stat.label)}</span><strong>${preview.panel.values[stat.key]==null?'待补全':fmt(preview.panel.values[stat.key])}</strong><small>属性 +${fmt(stat.percent)}%</small></div>`).join('');
@@ -70,7 +71,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
    const entry=groups.get(key)||{...effect,value:0};entry.value+=effect.value;groups.set(key,entry);
   }
   $('unifiedBonuses').innerHTML=[...groups.values()].map(effect=>`<span>${esc(formatEffect(effect))}</span>`).join('');
-  $('unifiedStatus').textContent=`${snapshot.items.length} 个所选技能 · ${snapshot.totalSc} SC · 按已识别规则实时预览${criticalAnchor?'；暴击率沿用核对基准，再按所选技能增减':''}`;
+  $('unifiedStatus').textContent=`${snapshot.items.length} 个配装来源 · ${snapshot.totalSc} SC${context.baseReport.reviewedByUser?' · 沿用已核对数值':''}${criticalAnchor?'；暴击率按所选来源增减':''}`;
   showUnresolved(preview.unresolved);
   const recommendations=recommendDamage({input:preview.input,criticalEnabled:context.selection.criticalEnabled,magicCanCrit:context.selection.criticalEnabled||preview.imported.magicCanCrit,statReference:context.selection.statReference,projectStatPercent:preview.projectStatPercent,rates});
   send('lc-loadout-recommendations',{payload:{...recommendations,rates,contextKey:JSON.stringify([snapshot,context.selection,preview.input,rates])}});
@@ -81,5 +82,5 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen}){
   $('unifiedUnresolvedList').innerHTML=items.map(x=>`<li><b>${esc(x.name)}</b><p>${esc(x.reason)}</p>${x.text?`<details><summary>技能原文</summary><p>${esc(x.text)}</p></details>`:''}</li>`).join('');
  }
  function error(message){if(active)send('lc-loadout-recommendations',{payload:{error:message,rates,contextKey:'incomplete'}});}
- return {get active(){return active;},open,prepare,error,refreshSources:initialize};
+ return {get active(){return active;},get hasLoadout(){return !!snapshot;},open,prepare,error,refreshSources:initialize};
 }

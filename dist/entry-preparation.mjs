@@ -47,9 +47,9 @@ export function retargetReport(report,selection) {
  }
  // Add newly recognized account entries to older saved calculator reports.
  // Existing rules, exclusions and user edits keep their identity.
- for(const source of ACCOUNT_BLESSING_CATALOG)if(!grouped.has(source.id))grouped.set(source.id,source);
+ for(const source of ACCOUNT_BLESSING_CATALOG)if(!report.reviewedByUser&&!grouped.has(source.id))grouped.set(source.id,source);
  const attack=selection.attack==='heavy_magic'?'magic':selection.attack;
- const context={...report.context,killer:false,attack,damageType:selection.type,element:elementIds[selection.element]??null};
+ const context={...report.context,killer:false,attack,damageType:selection.type,element:elementIds[selection.element]??null,statReference:selection.statReference??report.context.statReference};
  if(typeof selection.specialAttack==='boolean')context.killerOverride=selection.specialAttack;
  if(typeof selection.break==='boolean')context.break=selection.break;
  if(typeof selection.boss==='boolean')context.boss=selection.boss;
@@ -64,6 +64,10 @@ export function retargetReport(report,selection) {
  // single/dual-weapon skill conditions come only from the basic calculator.
  const sources=[...grouped.values()].map(s=>s.rules.some(r=>overrides[r.id]?.disabled)?s:upgradeCommonSource(s));
  const evaluated=evaluateCatalog(sources,context,overrides);
+ const originals=new Map((report.rows||[]).map(row=>[JSON.stringify([row.sourceId,row.rule.id]),row]));
+ const order=new Map([...originals.keys()].map((key,i)=>[key,i]));
+ evaluated.rows=evaluated.rows.map(row=>{const original=originals.get(JSON.stringify([row.sourceId,row.rule.id]));return {...row,...(original?{sourceText:original.sourceText,sourceName:original.sourceName,group:original.group}:{}),...(original?.effectIndices?{effectIndices:original.effectIndices}:{}),...(original?.origin?{origin:original.origin}:{})};})
+  .sort((a,b)=>(order.get(JSON.stringify([a.sourceId,a.rule.id]))??Infinity)-(order.get(JSON.stringify([b.sourceId,b.rule.id]))??Infinity));
  return applyCriticalOption({...report,...evaluated});
 }
 export function websiteCandidates(report) {

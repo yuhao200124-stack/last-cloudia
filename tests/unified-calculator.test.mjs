@@ -96,6 +96,40 @@ test('critical observation is retained and identified skill changes apply as del
  assert.equal(added.input.critRate,31);
  assert.equal(preview({criticalAnchor:anchor}).input.critRate,0);
 });
+test('traits, equipment and blessings are selectable sources; removing equipment updates its conditions and restoring is exact',()=>{
+ const all=loadoutSources(baseReport);
+ assert(all.some(s=>s.group==='traits'));assert(all.some(s=>s.group==='equipment'));assert(all.some(s=>s.group==='blessings'));
+ const full=preview(),withoutStaff={...snapshot,items:snapshot.items.filter(s=>s.sourceId!=='roxy-staff')};
+ const removed=preview({snapshot:withoutStaff});
+ assert(!removed.report.rows.some(r=>r.sourceId==='roxy-staff'));
+ assert.equal(removed.report.context.staff,false);assert.equal(removed.report.context.weaponCount,0);
+ assert(removed.input.attackBase<full.input.attackBase);assert(removed.input.cap<full.input.cap);
+ const empty=preview({snapshot:{...snapshot,items:[]}});
+ assert(!empty.report.rows.some(r=>r.group==='blessings'));
+ assert.equal(empty.input.attackBase,baseReport.profile.baseStats.intelligence);
+ assert.deepEqual(calculate(preview().input),calculate(full.input));
+ const noGear={...baseReport,...evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG],{...baseReport.context,equipmentIds:[],staff:false,robe:false,weaponCount:0})};
+ const selectedGear=preview({baseReport:noGear});
+ assert(selectedGear.report.rows.some(r=>r.sourceId==='roxy-staff'));
+ assert.equal(selectedGear.report.context.staff,true);assert.equal(selectedGear.report.context.weaponCount,1);
+ assert.equal(selectedGear.input.attackBase,full.input.attackBase);
+});
+test('defense modifiers for INT-based skills keep the selected reference during per-effect validation',()=>{
+ const report={...baseReport,rows:[...baseReport.rows,{sourceId:'defense-test',sourceName:'测试魔抗修正',sourceText:'敌方魔抗按25%计算',group:'common',status:'active',rule:{id:'test-defense',review:'ready',conditions:[],effects:[{type:'defenseReference',target:'敌方魔抗',value:25,unit:'%'}]}}]};
+ const p=preview({baseReport:report,selection:{...selection,attack:'s3',statReference:'int'},input:{...input,skillType:'skill',defense:10000}});
+ assert.equal(p.input.defenseRatio,.25);assert.equal(calculate(p.input).context.defense,2500);
+ assert(!p.unresolved.some(x=>x.name==='测试魔抗修正'));
+});
+test('manual damage sources remain controllable from the same loadout and keep their execution stage',()=>{
+ const effect={id:7,name:'手填来源',kind:'magical',percent:20,enabled:true,stage:'offense',target:'冰'};
+ const source=loadoutSources(baseReport,[effect]).find(s=>s.group==='manual');
+ assert(source);assert.equal(source.sourceId,'manual-effect:7');
+ const selected={...snapshot,sourceIds:[...snapshot.sourceIds,source.sourceId],items:[...snapshot.items,{...source,id:source.sourceId,sourceIds:[source.sourceId]}]};
+ const on=preview({input:{...input,effects:[effect]},snapshot:selected});
+ assert.equal(on.input.effects.find(e=>e.id===7).stage,'offense');
+ const off=preview({input:{...input,effects:[effect]},snapshot:{...selected,items:snapshot.items}});
+ assert(!off.input.effects.some(e=>e.id===7));assert(calculate(on.input).mean>calculate(off.input).mean);
+});
 test('explicit character waits for its report before accepting any previous iframe state',async()=>{
  const {mountUnifiedCalculator}=await import('../dist/unified-calculator.mjs');
  const controls=new Map(),messages=[],listeners={};

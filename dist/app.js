@@ -117,6 +117,7 @@
   const embeddedLoadout = new URLSearchParams(location.search).get('embeddedLoadout') === '1' && window.parent !== window;
   const unifiedCatalogKey = 'lc-sheet-table:unified-character-skills-v1';
   let unifiedCatalog = {}, sourceBindings = {};
+  const sourceGroupNames = {traits:'个性',equipment:'专武／装备',exclusive:'专属技能',common:'自带通用技能',transcend:'超越',blessings:'账户加护',readerGroup:'读取器加成',readerSupplement:'读取器补充',manual:'手动加成'};
   try { unifiedCatalog = JSON.parse(localStorage.getItem(unifiedCatalogKey) || '{}'); } catch {}
   const sourceNameKey = name => String(name || '').replace(/[\s·・]/g, '').replace(/III$|Ⅲ$/g,'3').replace(/II$|Ⅱ$/g,'2').replace(/IV$|Ⅳ$/g,'4').replace(/V$|Ⅴ$/g,'5').replace(/I$|Ⅰ$/g,'1')
     .replace('MP提升','法力提升').replace('特攻界限突破','特攻极限突破').replace('冰系超级增幅','冰魔法超阶增幅')
@@ -126,8 +127,9 @@
     for (const source of sources) {
       const candidates = [...skillIndex.values()].filter(row => !row.unifiedCharacter);
       // Keep existing character/source IDs stable across translated-name corrections.
-      let matches = candidates.filter(row => sourceNameKey(row.bindingName || row.name) === sourceNameKey(source.name));
-      if (!matches.length) matches = candidates.filter(row => [row.name, ...(row.aliases || [])].some(name => sourceNameKey(name) === sourceNameKey(source.name)));
+      const skillSource = !source.group || ['common','exclusive','transcend'].includes(source.group);
+      let matches = skillSource ? candidates.filter(row => sourceNameKey(row.bindingName || row.name) === sourceNameKey(source.name)) : [];
+      if (skillSource && !matches.length) matches = candidates.filter(row => [row.name, ...(row.aliases || [])].some(name => sourceNameKey(name) === sourceNameKey(source.name)));
       const row = matches.length === 1 ? matches[0] : { id: `character:${id}:${source.sourceId}`, name: source.name, effect: source.text, sc: '0', sources: [], type: '角色技能', unifiedCharacter: id };
       skillIndex.set(String(row.id), row);
       (bindings[row.id] ||= []).push(source.sourceId);
@@ -442,9 +444,9 @@
         return `<div class="calculator-skill${item.freeBy ? ' is-free' : ''}">
           <button class="calculator-skill-name" type="button" data-skill-effect="${escapeHtml(item.id)}" title="双击查看技能效果">${escapeHtml(rowValue(item.row, 'name'))}</button>
           <input class="calculator-skill-rating${rating ? '' : ' is-empty'}" type="text" value="${escapeHtml(rating)}" placeholder="+评分" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" data-edit-calculator-rating="${escapeHtml(item.id)}" aria-label="${escapeHtml(rowValue(item.row, 'name'))}的评分" title="直接输入评分，回车或离开输入框保存">
-          <div class="calculator-skill-sc">${item.freeBy === 'character' ? `<strong>0 SC</strong><small>角色自带</small><del>原 ${formatSc(item.sc)} SC</del>` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
+          <div class="calculator-skill-sc">${item.freeBy === 'character' ? `<strong>0 SC</strong><small>${escapeHtml(sourceGroupNames[characterSource(item.id)?.group]||'角色自带')}</small>${item.sc?`<del>原 ${formatSc(item.sc)} SC</del>`:''}` : item.freeBy ? `<strong>0 SC</strong><small>${item.freeBy} SC突破减免</small><del>原 ${formatSc(item.sc)} SC</del>` : `<strong>${formatSc(item.sc)} SC</strong>`}</div>
           <button type="button" data-remove-skill="${escapeHtml(item.id)}" aria-label="移除${escapeHtml(rowValue(item.row, 'name'))}" title="从计算器移除">×</button>
-          ${calculatorEffectsOpen || expandedSkillEffects.has(item.id) ? `<div class="calculator-skill-effect">${effectContent(item.row)}</div>` : ''}
+          ${calculatorEffectsOpen || expandedSkillEffects.has(item.id) ? `<div class="calculator-skill-effect">${effectContent(item.row)}${sourceEffectDetails(item.id)}</div>` : ''}
         </div>`;
       }).join('')
       : '<div class="calculator-empty">点击技能右侧的“＋”添加技能</div>';
@@ -846,7 +848,7 @@
     const id = calculatorState.characterId;
     if (!characterLoadouts[id]) return;
     const owned = [...new Set([...(characterLoadouts[id].skillIds || []), ...Object.keys(sourceBindings[id] || {})])]
-      .filter(skill => skillIndex.has(skill));
+      .filter(skill => skillIndex.has(skill) && characterSource(skill)?.group !== 'manual');
     calculatorState.skillIds = owned;
     calculatorState.characterFreeIds = [...owned];
     calculatorState.currentPlanId = '';
@@ -1035,13 +1037,27 @@
     });
   }
 
+  function characterSource(id) {
+    const ids = sourceBindings[calculatorState.characterId]?.[id] || [];
+    return unifiedCatalog[calculatorState.characterId]?.sources?.find(s => ids.includes(s.sourceId));
+  }
+  function sourceEffectDetails(id) {
+    const effects = characterSource(id)?.effects || [];
+    return effects.length ? `<details><summary>当前计算词条</summary><ul>${effects.map(text=>`<li>${escapeHtml(text)}</li>`).join('')}</ul></details>` : '';
+  }
   function renderCharacterSkillPicker() {
     const picker = document.getElementById('unifiedCharacterSkills'); if (!picker) return;
     const bindings = sourceBindings[calculatorState.characterId] || {};
-    picker.innerHTML = Object.keys(bindings).map(id => {
+    const groups = new Map();
+    for (const id of Object.keys(bindings)) {
+      const group = characterSource(id)?.group || 'common';
+      if (!groups.has(group)) groups.set(group, []);
+      groups.get(group).push(id);
+    }
+    picker.innerHTML = [...groups].map(([group,ids])=>`<section class="loadout-source-group"><h3>${escapeHtml(sourceGroupNames[group]||'其他来源')}</h3>${ids.map(id => {
       const row = skillIndex.get(id), checked = calculatorState.skillIds.includes(id);
-      return `<label><input type="checkbox" data-unified-skill="${escapeHtml(id)}" ${checked ? 'checked' : ''}>${escapeHtml(rowValue(row, 'name'))}</label>`;
-    }).join('');
+      return `<div><label><input type="checkbox" data-unified-skill="${escapeHtml(id)}" ${checked ? 'checked' : ''}>${escapeHtml(rowValue(row, 'name'))}</label><details><summary>效果</summary><p>${escapeHtml(rowValue(row,'effect'))}</p>${sourceEffectDetails(id)}</details></div>`;
+    }).join('')}</section>`).join('');
   }
   window.LC_LOADOUT_CALCULATOR = {
     snapshot() {
@@ -1053,6 +1069,9 @@
     },
     initialize({characterId, sources}) {
       const id = String(characterId), wasSame = calculatorState.characterId === id, oldOwned = new Set(characterLoadouts[id]?.skillIds || []);
+      const knownSources = new Set((unifiedCatalog[id]?.sources || []).map(s=>s.sourceId));
+      const incomingSources = new Set(sources.map(s=>s.sourceId));
+      sources = [...sources,...(unifiedCatalog[id]?.sources || []).filter(s=>!incomingSources.has(s.sourceId)).map(s=>({...s,enabled:false,effects:[]}))];
       installCharacterSources(id, sources);
       if (!wasSame) {
         const previousOwned = new Set(calculatorState.characterFreeIds);
@@ -1060,8 +1079,9 @@
         calculatorState.characterId = id; calculatorState.currentPlanId = '';
       }
       const bindings = sourceBindings[id], enabled = new Set(sources.filter(s => s.enabled).map(s => s.sourceId));
-      if (!unifiedCatalog[id]?.initialized || !wasSame) for (const [skill, ids] of Object.entries(bindings)) {
-        if (ids.some(source => enabled.has(source)) && (!wasSame || !oldOwned.has(skill)) && !calculatorState.skillIds.includes(skill)) calculatorState.skillIds.push(skill);
+      for (const [skill, ids] of Object.entries(bindings)) {
+        const newlyAvailable = ids.some(source => !knownSources.has(source));
+        if ((!unifiedCatalog[id]?.initialized || !wasSame || newlyAvailable) && ids.some(source => enabled.has(source)) && (newlyAvailable || !wasSame || !oldOwned.has(skill)) && !calculatorState.skillIds.includes(skill)) calculatorState.skillIds.push(skill);
       }
       calculatorState.characterFreeIds = [...new Set([...(characterLoadouts[id]?.skillIds || []), ...Object.keys(bindings)])];
       unifiedCatalog[id] = {sources, initialized: true};

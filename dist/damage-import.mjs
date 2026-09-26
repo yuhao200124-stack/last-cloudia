@@ -58,7 +58,7 @@ export function buildDamageImport(report) {
   if(refs.length===1 && refs[0].effect.target==='法强' && refs[0].effect.value==='魔抗') imported.statReference='int';
   else if(refs.length) imported.blockers.push('存在未确认或多个攻击属性参照，需先核对。');
   if(defense.length===1 && defense[0].effect.target==='敌方魔抗' && defense[0].effect.unit==='%' && typeof defense[0].effect.value==='number' && defense[0].effect.value>=0 && defense[0].effect.value<=100) {
-    if(c.attackKind==='magic' || imported.statReference==='int') imported.defenseRatio=defense[0].effect.value/100;
+    if(c.attackKind==='magic' || c.statReference==='int' || imported.statReference==='int') imported.defenseRatio=defense[0].effect.value/100;
     else imported.blockers.push('当前防御参照不是魔抗，不能应用魔抗修正。');
   } else if(defense.length) imported.blockers.push('存在未确认或多个防御参照修正，需先核对。');
   if(hit.length===1 && Number.isInteger(hit[0].effect.value) && hit[0].effect.value>0 && Number.isFinite(hit[0].effect.secondary) && hit[0].effect.secondary>=0) {

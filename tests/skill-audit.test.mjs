@@ -105,6 +105,19 @@ test('internal tags remain searchable for saved workflows but never render; edit
  assert(!edited.search('光头猴').includes('条件标签'));
 });
 
+test('existing loadouts gain previously hidden sources once, keep removals, and restore every source without extra SC',()=>{
+ const native={sourceId:'native',name:'自带测试',text:'攻击力+10%',group:'exclusive',enabled:true};
+ const page=boot({'lc-sheet-table:unified-character-skills-v1':{'259':{sources:[native],initialized:true}},'lc-sheet-table:sc-calculator-v1':{characterId:'259',skillIds:['character:259:native'],characterFreeIds:['character:259:native'],activeBreaks:[]}});
+ const sources=[native,...['traits','equipment','blessings','readerSupplement'].map(group=>({sourceId:group,name:group+'测试',text:'伤害+10%',group,enabled:true}))];
+ page.window.LC_LOADOUT_CALCULATOR.initialize({characterId:'259',sources});
+ assert.equal(page.window.LC_LOADOUT_CALCULATOR.snapshot().items.length,5);
+ page.elements.get('#calculatorClear').listeners.click();
+ page.window.LC_LOADOUT_CALCULATOR.initialize({characterId:'259',sources});
+ assert.equal(page.window.LC_LOADOUT_CALCULATOR.snapshot().items.length,0,'refresh does not undo deselection');
+ page.elements.get('#calculatorRestore').listeners.click();
+ const snapshot=page.window.LC_LOADOUT_CALCULATOR.snapshot();assert.equal(snapshot.items.length,5);assert.equal(snapshot.totalSc,0);
+});
+
 test('ordinary skill list has no tag or judgment UI and preserves descriptions and saves',()=>{
  const complete=skill(8),partial=skill(339),opening=skill(390);
  const unknown=primary.find(r=>!r.basicStats&&!r.skillTags);

@@ -1,12 +1,14 @@
 import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-common-skills';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-switch-controls';
-import {buildDamageImport} from './damage-import.mjs?v=20260926-common-skills';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-loadout-sources';
+import {buildDamageImport} from './damage-import.mjs?v=20260926-loadout-sources';
 import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-condition-tags';
 import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
 import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-condition-tags';
 import {magicBuffCap} from './magic-buffs.mjs?v=20260924-condition-tags';
 import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-condition-tags';
 import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-common-skills';
+import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-common-skills';
+import {EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
 
 const eq=(field,value)=>({field,op:'eq',value});
 const elements={火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark',无:'none'};
@@ -39,12 +41,25 @@ export function simpleLoadoutRules(source){
  return rules;
 }
 
-export function loadoutSources(report){
+export function loadoutSources(report,manualEffects=[]){
  const sources=new Map();
- for(const row of report.rows||[])if(['common','exclusive','transcend'].includes(row.group)){
-  if(!sources.has(row.sourceId))sources.set(row.sourceId,{sourceId:row.sourceId,name:row.sourceName,text:row.sourceText,group:row.group,enabled:false});
-  if(row.status!=='disabled')sources.get(row.sourceId).enabled=true;
+ for(const row of [...(report.loadoutInventory||[]),...(report.rows||[])]){
+  if(!sources.has(row.sourceId))sources.set(row.sourceId,{sourceId:row.sourceId,name:row.sourceName,text:row.sourceText||'',group:row.group,enabled:false,effects:[]});
+  const source=sources.get(row.sourceId);
+  if(row.status!=='disabled')source.enabled=true;
+  if(!source.text&&row.sourceText)source.text=row.sourceText;
  }
+ for(const row of report.rows||[]){
+  const source=sources.get(row.sourceId);
+  const text=(row.rule.effects||[]).map(formatEffect).join('；');
+  if(text)source.effects.push(`${row.rule.conditions?.length?row.rule.conditions.map(describeCondition).join('、')+'：':''}${text}`);
+ }
+ for(const source of sources.values()){
+  source.effects=[...new Set(source.effects)];
+  if(!source.text)source.text=source.effects.join('；');
+  if(source.group==='blessings'&&report.context.accountBlessings===false)source.enabled=false;
+ }
+ for(const e of manualEffects)if(!e.importId)sources.set(`manual-effect:${e.id}`,{sourceId:`manual-effect:${e.id}`,name:e.name||'手动加成',text:`${EFFECTS[e.kind]||e.kind}${['element','race'].includes(e.kind)?'（'+e.target+'）':''} ${e.percent}%`,group:'manual',enabled:e.enabled===true,effects:[`${e.percent}% · ${{post:'结算后逐条修正',offense:'核心前攻击侧',received:'核心前目标受伤',reduction:'核心前减伤'}[e.stage]||e.stage}`]});
  return [...sources.values()];
 }
 
@@ -65,16 +80,43 @@ export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
  }
  snapshot={...snapshot,items:[...items.values()]};
  const represented=new Set(snapshot.sourceIds||[]),selected=new Set(snapshot.items.flatMap(s=>s.sourceIds||[]));
- const rows=baseReport.rows.filter(r=>!represented.has(r.sourceId)||selected.has(r.sourceId));
+ const availableIds=new Set(baseReport.rows.map(r=>r.sourceId));
+ const newlySelected=(baseReport.loadoutInventory||[]).filter(r=>!availableIds.has(r.sourceId)&&selected.has(r.sourceId)&&
+  (r.group==='equipment'&&r.reasons?.includes('未选择这件装备')||r.group==='blessings'&&baseReport.context.accountBlessings===false));
+ const rows=[...baseReport.rows,...newlySelected].map(r=>{
+  if(represented.has(r.sourceId)&&!selected.has(r.sourceId))return {...r,status:'disabled'};
+  if(selected.has(r.sourceId)&&r.group==='equipment'&&r.reasons?.includes('未选择这件装备'))return {...r,status:'inactive'};
+  return r;
+ });
+ const equipmentFields={'法杖':'staff','长袍':'robe','衣服':'clothes','铠甲':'armor','剑':'sword','斧':'axe','枪':'spear','槌':'hammer','弓':'bow','机械':'machine','爪':'claw'};
+ const context={...baseReport.context};
+ const gear=loadoutSources(baseReport).filter(s=>s.group==='equipment');
+ const equippedIds=new Set(context.equipmentIds||[]);
+ const removed=gear.filter(s=>equippedIds.has(s.sourceId)&&represented.has(s.sourceId)&&!selected.has(s.sourceId));
+ for(const item of removed){
+  const type=baseReport.profile.equipment?.find(e=>e.name===item.name)?.type,field=equipmentFields[type];
+  if(field){
+   const other=gear.some(s=>s.sourceId!==item.sourceId&&selected.has(s.sourceId)&&baseReport.profile.equipment?.some(e=>e.name===s.name&&e.type===type));
+   if(!other){context[field]=false;if(field==='staff')context.iceStaff=false;}
+   if(!['robe','clothes','armor'].includes(field)&&Number.isFinite(context.weaponCount))context.weaponCount=Math.max(0,context.weaponCount-1);
+  }
+ }
+ context.equipmentIds=(context.equipmentIds||[]).filter(id=>!removed.some(s=>s.sourceId===id));
+ for(const item of gear.filter(s=>represented.has(s.sourceId)&&selected.has(s.sourceId)&&!equippedIds.has(s.sourceId))){
+  context.equipmentIds.push(item.sourceId);
+  const type=baseReport.profile.equipment?.find(e=>e.name===item.name)?.type,field=equipmentFields[type];
+  if(field){context[field]=true;if(!['robe','clothes','armor'].includes(field)&&Number.isFinite(context.weaponCount))context.weaponCount++;}
+ }
+ if(loadoutSources(baseReport).some(s=>s.group==='blessings'&&represented.has(s.sourceId)&&selected.has(s.sourceId)))context.accountBlessings=true;
  const extra=snapshot.items.filter(s=>!s.sourceIds?.length||s.edited).map(s=>({id:`loadout:${s.id}`,catalogId:s.catalogId,edited:s.edited,name:s.name,text:s.text,group:'common'}));
  const editedIds=new Set(snapshot.items.filter(s=>s.edited).flatMap(s=>s.sourceIds||[]));
  const seeds=Object.values(Object.groupBy(baseReport.rows,r=>r.sourceId)).map(rs=>({id:rs[0].sourceId,name:rs[0].sourceName,text:rs[0].sourceText,rules:rs.map(r=>r.rule)}));
  const catalog=buildCatalog(extra,seeds,templates).map(s=>s.unknown&&simpleLoadoutRules(s)?{...s,unknown:false,rules:simpleLoadoutRules(s)}:s);
  const additions=catalog.flatMap(s=>s.rules.map(rule=>({sourceId:s.id,sourceName:s.name,sourceText:s.text,group:s.group,status:'active',rule})));
- return retargetReport({...baseReport,rows:[...rows.filter(r=>!editedIds.has(r.sourceId)),...additions]},selection);
+ return retargetReport({...baseReport,context,rows:[...rows.filter(r=>!editedIds.has(r.sourceId)),...additions]},selection);
 }
 
-export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseCap=9999,baseCritRate=0,templates={},selectedBuffs=[],runtimeAnchor=[],criticalAnchor=null,manualDefenseRatio=null}){
+export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseCap=9999,baseCritRate=0,templates={},selectedBuffs=[],runtimeAnchor=[],criticalAnchor=null,manualDefenseRatio=null,baselineImport=null,attackOverride=null}){
  const raceIds={'战士':'soldier','狙击手':'sniper','骑士':'knight','魔法师':'sorcerer','兽':'beast','植物':'plant','昆虫':'insect','鸟':'bird','魔法生物':'creature','不死生物':'undead','石':'stone','机械':'machine','精灵':'spirit','龙':'dragon','神':'god','鱼':'fish'};
  selection={...selection,boss:input.boss===true,back:input.back,air:input.air,ailment:input.ailment,ground:input.ground,stunned:input.stunned===true,weakness:input.weakness===true,
   enemyRaces:input.races?.length?input.races.map(r=>raceIds[r]||r):null};
@@ -83,11 +125,13 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
  for(const row of report.rows)if(row.status==='pending')unresolved.push({name:row.sourceName,text:row.sourceText,reason:row.reasons.join('；')||'尚未识别'});
  // Keep known effects calculable while exposing unmapped operations explicitly.
  const safeRows=report.rows.filter(r=>r.status==='active').map(row=>{
-  const effects=row.rule.effects.filter(effect=>{
-   const one=buildDamageImport({...report,rows:[{...row,rule:{...row.rule,effects:[effect]}}]});
+  const effectIndices=[];
+  const effects=row.rule.effects.filter((effect,index)=>{
+   const one=buildDamageImport({...report,rows:[{...row,effectIndices:[row.effectIndices?.[index]??index],rule:{...row.rule,effects:[effect]}}]});
    if(one.blockers.length){unresolved.push({name:row.sourceName,text:row.sourceText,reason:one.blockers.join('；')});return false;}
+   effectIndices.push(row.effectIndices?.[index]??index);
    return true;
-  });return {...row,rule:{...row.rule,effects}};
+  });return {...row,effectIndices,rule:{...row.rule,effects}};
  });
  const safe={...report,rows:safeRows},imported=buildDamageImport(safe);
  if(imported.blockers.length)throw new Error(imported.blockers.join('；'));
@@ -109,7 +153,21 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
   const result=combineRuntimeBuffs([...known,...anchors],selected);
   if(!result.ok)throw new Error(result.reason);return result.percent;
  };
- const next={...structuredClone(input),effects:[...imported.effects,...input.effects.filter(e=>!e.importId)],cap:baseCap+imported.capAdded+magicBuffCap(selectedBuffs,imported.skillType,imported.reference),criticalCapAdded:imported.criticalCapAdded,
+ // Preserve edits, deletions and ordering made in the calculator's imported
+ // effect list while filtering out operations whose loadout source was removed.
+ const retained=new Map(imported.effects.map(e=>[e.importId,e]));
+ const representedSources=new Set(snapshot.sourceIds||[]),selectedSources=new Set(snapshot.items.flatMap(item=>item.sourceIds||[]));
+ const manualEffect=e=>{const sourceId=`manual-effect:${e.id}`;return !representedSources.has(sourceId)?[e]:selectedSources.has(sourceId)?[{...e,enabled:true}]:[];};
+ const matched=new Set();
+ const draftEffects=input.effects.flatMap(e=>{
+  if(!e.importId)return manualEffect(e);
+  const current=retained.get(e.importId),original=baselineImport?.effects.find(b=>b.importId===e.importId);
+  if(!current)return [];
+  matched.add(e.importId);
+  return [original&&JSON.stringify(original)===JSON.stringify(current)?e:current];
+ });
+ const newEffects=imported.effects.filter(e=>!matched.has(e.importId)&&!(baselineImport?.effects.some(b=>b.importId===e.importId&&JSON.stringify(b)===JSON.stringify(e))));
+ const next={...structuredClone(input),effects:baselineImport?[...draftEffects,...newEffects]:[...imported.effects,...input.effects.filter(e=>!e.importId).flatMap(manualEffect)],cap:baseCap+imported.capAdded+magicBuffCap(selectedBuffs,imported.skillType,imported.reference),criticalCapAdded:imported.criticalCapAdded,
   defenseRatio:Number.isFinite(manualDefenseRatio)?manualDefenseRatio:imported.defenseRatio,
   killerCorrection:imported.killerCorrection,specialAttack:selection.specialAttack===true,critRate:selection.criticalEnabled?Math.min(100,Math.max(0,(criticalAnchor?criticalAnchor.rate-criticalAnchor.contribution:baseCritRate)+imported.critAdded)):0};
  let projectStatPercent;
@@ -118,6 +176,7 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
   if(!Number.isFinite(stat.beforeBuff)||stat.beforeBuff<=0)throw new Error(`${stat.label}缺少有效基础值，请先补齐角色属性`);
   const runtime=buffsFor(stat);
   next.attackBasis='layers';next.attackBase=stat.beforeBuff+stat.crossAdd;next.runtimeStatPercent=runtime;next.attack=Math.floor(next.attackBase*(100+runtime)/100);
+  if(attackOverride)Object.assign(next,attackOverride);
   panel.values[key]=next.attack;
   if(!stat.issues.length)projectStatPercent=percent=>{
    const row={sourceId:'recommend-stat',sourceName:'属性推荐',status:'active',rule:{id:'recommend-stat',review:'ready',conditions:[],effects:[{type:'stat',target:stat.label,value:percent,unit:'%'}]}};

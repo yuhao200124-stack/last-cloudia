@@ -1,17 +1,17 @@
 import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-switch-controls';
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
-import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-common-skills';
+import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-loadout-sources';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
-import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-condition-observation';
+import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-loadout-sources';
 import {BOSS_ELEMENTS,readBossRecord} from './battle-entry-data.mjs?v=20260924-fullpage';
 import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-common-skills';
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-condition-observation';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-loadout-sources';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
 import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-condition-observation';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-switch-controls';
+import {retargetReport} from './entry-preparation.mjs?v=20260926-loadout-sources';
 import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
@@ -332,7 +332,7 @@ function update() {
       if(invalid) throw new Error(`请检查「${invalid.closest('label')?.textContent.trim()||'数值'}」的输入范围，必填数值不能留空。`);
     }
     if(unified?.active)for(const [id,label] of [['coefficient','每段基础系数'],['hits','基础命中段数'],['skillPercent','技能内攻击修正'],['skillAdd','技能内攻击前加算'],['skillPostAdd','技能内攻击后加算']])if(!Number.isFinite($(id).valueAsNumber))throw new Error(`请在“战斗设置”中填写${label}。`);
-    const preview=unified?.active?unified.prepare(read()):null;
+    const preview=unified?.active||unified?.hasLoadout?unified.prepare(read()):null;
     if(preview)showConditionSources(preview.report);
     const s=preview?.input||read(),r=calculate(s),c=r.context;
     $('error').hidden=true;$('resolveReview').hidden=true;$('resultValues').hidden=false;
@@ -422,7 +422,7 @@ $('effects').addEventListener('change',event=>{
   update();
 });
 $('calculator').addEventListener('submit',e=>e.preventDefault());
-$('calculator').addEventListener('input',event=>{clearTimeout(timer);timer=setTimeout(update,70);});
+$('calculator').addEventListener('input',event=>{if(event.target.id==='defenseRatio')defenseRatioTouched=true;clearTimeout(timer);timer=setTimeout(update,70);});
 $('calculator').addEventListener('change',event=>{
   const id=event.target.id;
   if(id==='attack'&&workflow)workflow.setManualPanel(referenceMode()==='int'?'intelligence':referenceMode()==='str'?'attack':'mixed',$('attack').valueAsNumber);
@@ -546,7 +546,9 @@ unified=mountUnifiedCalculator({
  beforeOpen:()=>{if(!embedded)return true;openFullPage();return false;},
  getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,lowHp:$('lowHp').checked,...Object.fromEntries(STAT_CONDITION_FIELDS.map(f=>[f,$(f).checked])),break:$('break').checked,boss:$('boss').checked,weakness:$('weakness').checked,dualWield:$('dualWield').checked},
   baseCap:$('baseCap').valueAsNumber,baseCritRate:$('critBasis').value==='reader'?Number(manualCriticalBase)||0:$('baseCritRate').valueAsNumber||0,
-  selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],manualDefenseRatio:defenseRatioTouched?$('defenseRatio').valueAsNumber:null,
+  selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],baselineImport:imported,manualEffects:readEffects().filter(e=>!e.importId),
+  attackOverride:attackBasisTouched?Object.fromEntries(['attackBasis','attack','attackBase','runtimeStatPercent','settledAttack'].map(key=>[key,read()[key]])):null,
+  manualDefenseRatio:defenseRatioTouched||imported&&$('defenseRatio').valueAsNumber!==imported.defenseRatio?$('defenseRatio').valueAsNumber:null,
   criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),
  onChange:update
 });

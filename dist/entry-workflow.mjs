@@ -3,7 +3,7 @@ import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260924-con
 import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-fullpage';
 import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260926-common-skills';
 import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullpage';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260926-switch-controls';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260926-loadout-sources';
 import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-common-skills';
 import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs?v=20260926-common-skills';
 import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260924-condition-tags';
@@ -33,7 +33,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  migrateCharacterHitDrafts(characterId,saved,state.hitParameters);
  state.hitMechanicsRevision=2;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
- let confirmed=false,bonusGroups=[],readerBonuses=[],modeCatalog={},potentialModeGroups=[];
+ let confirmed=false,reviewedReport=null,bonusGroups=[],readerBonuses=[],modeCatalog={},potentialModeGroups=[];
  let reportFingerprint=null,storageSaveFailed=false,importGeneration=0;
  state.readerDrafts=saved.readerDrafts||{};
  let supplementChoices={},supplements=[],groupReaderChoices={},attackObservations={},snapshotSelection='entry';
@@ -94,7 +94,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   }
   return computed;
  }
- function invalidate(message='数据待核对，确认后才会用于伤害计算。') {confirmed=false;onInvalidate(message);$('entryStatus').textContent=message;$('entryReviewSummary').textContent=message;}
+ function invalidate(message='数据待核对，确认后才会用于伤害计算。') {confirmed=false;reviewedReport=null;onInvalidate(message);$('entryStatus').textContent=message;$('entryReviewSummary').textContent=message;}
  function saveParameter(id){state.parameters[paramKey()]={...state.parameters[paramKey()],[id]:$(id).value};save();}
  function setParameters() {
   const move=selectedMove(),p=state.parameters[paramKey()],mappingKey=`${unit?.unitId}:${paramKey()}`,mapped=state.readerSkillMappings[mappingKey];
@@ -430,7 +430,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
    if(refs.some(e=>e.target==='法强')&&state.selection.statReference!=='int')throw new Error('已选规则要求以法强参照；请改选法强，或把该参照规则暂不计入。');
    const defenseRefs=reviewed.rows.filter(r=>r.status==='active').flatMap(r=>r.rule.effects).filter(e=>e.type==='defenseReference');
    if(defenseRefs.some(e=>e.target==='敌方魔抗')&&state.selection.statReference!=='int')throw new Error('已选魔抗修正要求以魔抗结算；请确认属性参照或暂不计入该修正。');
-   confirmed=true;
+   confirmed=true;reviewedReport=reviewed;
    onConfirm(reviewed,{panels,panelLayers:computed.stats,selection:selection(),profile:{...clone(profile),baseStats:{...profile.baseStats,...state.base}},unitId:unit.unitId,battleId:battle.battleId,finish});
    $('entryStatus').textContent='已按你的选择同步到伤害计算器。修改采用数据会自动更新。';
    $('entryReviewSummary').textContent='已确认面板与加成，已自动带入计算器。';
@@ -450,6 +450,12 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function planningBase(){
   if(!report)return null;
+  // The loadout must use the same adopted reader/manual operations as the
+  // calculator. Keep the complete inventory separately from active effects.
+  if(confirmed&&reviewedReport)return {...reviewedReport,
+   profile:{...profile,baseStats:{...profile.baseStats,...state.base}},
+   loadoutInventory:report.rows,
+   excludedEquipmentStats:currentPanelReport().excludedEquipmentStats};
   const explicit=state.decisions;
   const rows=report.rows.map(r=>{
    const effects=[],effectIndices=[];

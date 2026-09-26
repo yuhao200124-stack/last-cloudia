@@ -11,6 +11,8 @@ import {resolveAttackLayers,projectAttackLayers} from '../dist/attack-layers.mjs
 import {defaultInput,calculate} from '../dist/damage-engine.mjs';
 import {buildCatalog} from '../dist/effect-rule-learning.mjs';
 import {BASIC_STAT_CATALOG} from '../dist/basic-stat-catalog.mjs';
+import {retargetReport} from '../dist/entry-preparation.mjs';
+import {loadoutSources,prepareLoadoutPreview} from '../dist/loadout-preview.mjs';
 // Event adapter for workflow integration, not a browser/rendering test.
 function controls() {
  const html=readFileSync(new URL('../dist/damage-calculator.html',import.meta.url),'utf8');
@@ -44,6 +46,15 @@ test('reader-matched Moonlight preserves the 12133 observation and computes ever
    assert(layer.ok,layer.reason);assert.equal(layer.base,6741);assert.equal(layer.percent,fullHp?80:50);
    const result=calculate({...defaultInput(),attackBasis:'layers',attackBase:layer.base,runtimeStatPercent:layer.percent,attack:layer.panel,type:'magical',skillType:'magic',element:'冰',coefficient:.52,skillPercent:67,cap:2e9});
    assert.equal(result.context.attack,fullHp?16650:14627);assert(result.normal.mean>0);
+   const planning=w.planningBase(),selected=w.selection();
+   const adopted=buildDamageImport(last.r),planned=buildDamageImport(retargetReport(planning,selected));
+   assert.deepEqual(planned.effects,adopted.effects,'planning must retain adopted reader operations and their order');
+   assert.equal(planned.critAdded,adopted.critAdded);
+   const sources=loadoutSources(planning),snapshot={characterId:'260',sourceIds:sources.map(s=>s.sourceId),items:sources.map(s=>({...s,id:s.sourceId,sourceIds:[s.sourceId]}))};
+   assert(sources.some(s=>s.group==='traits'));assert(sources.some(s=>s.group==='equipment'));assert(sources.some(s=>s.group==='blessings'));
+   const input={...defaultInput(),attackBasis:'layers',attackBase:layer.base,runtimeStatPercent:layer.percent,attack:layer.panel,type:'magical',skillType:'magic',element:'冰',coefficient:.52,skillPercent:67,hits:35,hitMultiplier:2,hitDamageRatio:.6,hitScaleStage:'core',defense:10000,defenseRatio:.25,critRate:26,cap:9999+adopted.capAdded,criticalCapAdded:adopted.criticalCapAdded,effects:adopted.effects,killerCorrection:adopted.killerCorrection,specialAttack:true};
+   const preview=prepareLoadoutPreview({baseReport:planning,selection:selected,snapshot,input,baselineImport:adopted,manualDefenseRatio:.25,criticalAnchor:{rate:26,contribution:adopted.critAdded}});
+   assert.deepEqual(calculate(preview.input),calculate(input),'all equipped: ordinary calculator and loadout preview must agree');
   }
  }
  // A saved v148 group omitted some HP reader approvals. Repair the same
