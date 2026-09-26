@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>配装与伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260924-table-layout">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260926-damage-conditions">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html?v=20260924-condition-tags">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./skill-labeling.html?v=20260924-attack-labels">技能列表打标签用的</a><a id="calculatorCharacterBack" href="./characters.html?v=20260924-condition-tags">角色列表</a><a href="./index.html?v=20260924-condition-tags">技能表</a></nav></header>
@@ -35,11 +35,16 @@
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
-      <div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">break</label><label><input id="fullHp" type="checkbox">满血</label><label><input id="lowHp" type="checkbox">濒死（HP≤30%）</label><label><input id="criticalEnabled" type="checkbox">暴击</label><label><input id="openingBuffActive" type="checkbox">开场Buff（40秒内）</label><label><input id="awakeningBuffActive" type="checkbox">觉醒Buff（触发后40秒）</label><label><input id="magicAwakeningBuffActive" type="checkbox">魔导觉醒Buff（触发后40秒）</label><span hidden data-deferred-condition-controls><label><input id="ultimateUsedBuffActive" type="checkbox">使用必杀后Buff（40秒内）</label><label><input id="damageTakenBuffActive" type="checkbox">受到伤害时</label><label><input id="reviveBuffActive" type="checkbox">复活Buff（40秒内）</label><label><input id="realSunday" type="checkbox">现实时间为周日</label><label><input id="ultimateGaugeFull" type="checkbox">必杀槽满</label></span></div>
-      <p class="help">暴击：控制相关技能、暴伤及附带上限；关闭后这些加成不计入。结果仍显示暴击伤害对照。</p>
-      <div id="magicBuffOptions" class="magic-buff-options" hidden><div id="magicBuffChoices"></div><div id="magicBuffRelationControl" hidden><small>同类型 Buff 只保留一个：指导的法强 +65% 替换原来的 +50%。满血等独立被动仍按各自条件计算；已读到指导后面板时不重复添加。魔法上限只加一次。</small></div></div>
-      <p id="conditionStatus" class="help"></p>
-      <section id="entrySpecialSection" class="special-reminders" hidden><h3>角色特殊效果</h3><p class="help">仅作提醒。是否触发按上方战斗选项与技能参数计算。</p><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源</th><th>效果</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
+      <section class="damage-condition-group" aria-labelledby="specialDamageTitle"><h3 id="specialDamageTitle">特殊伤害改变</h3><h4>基础改变伤害方式</h4><div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">Break</label><label><input id="criticalEnabled" type="checkbox">暴击</label></div></section>
+      <div id="magicBuffOptions" class="magic-buff-options" hidden><h3>魔法</h3><div id="magicBuffChoices"></div></div>
+      <section class="damage-condition-group" aria-labelledby="generalDamageTitle"><h3 id="generalDamageTitle">通用伤害改变</h3>
+        <h4>自身状态</h4><div class="inline-options"><label><input id="fullHp" type="checkbox">满血</label><label><input id="lowHp" type="checkbox">濒死（HP≤30%）</label></div>
+        <h4>位置与目标状态</h4><div class="inline-options"><label><input id="air" type="checkbox">目标浮空</label><label><input id="back" type="checkbox">背后攻击</label><label><input id="ailment" type="checkbox">目标异常</label><label><input id="ground" type="checkbox">自身在地面</label><span id="weaknessStatus" class="condition-value">弱点：依目标抗性判断</span></div>
+        <h4>开局BUFF</h4><div class="inline-options"><label><input id="openingBuffActive" type="checkbox">开场生效（40秒内）</label><span class="condition-value">始终生效：随已选技能自动计算</span></div>
+        <h4>条件BUFF</h4><div class="inline-options"><label><input id="awakeningBuffActive" type="checkbox">觉醒（触发后40秒）</label><label><input id="magicAwakeningBuffActive" type="checkbox">魔导觉醒（触发后40秒）</label><label><input id="ultimateUsedBuffActive" type="checkbox">使用必杀后（40秒内）</label><label><input id="damageTakenBuffActive" type="checkbox">受到伤害时</label><label><input id="reviveBuffActive" type="checkbox">复活后（40秒内）</label></div>
+        <h4>其他条件</h4><div class="inline-options"><label><input id="realSunday" type="checkbox">现实时间为周日</label><label><input id="ultimateGaugeFull" type="checkbox">必杀槽满</label></div>
+      </section>
+      <section id="entrySpecialSection" class="special-reminders" hidden><h3>角色特殊效果</h3><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>来源</th><th>效果</th></tr></thead><tbody id="entrySpecialReview"></tbody></table></div></section>
       <p class="help">法强与技能攻击修正会自动分层计算，避免重复计入 EX、月光等加成。</p>
       <details id="settlementDetails"><summary>高级计算明细（通常自动处理）</summary><p class="help">这里展示面板如何换算成本段结算攻击值，通常不用填写。它不代表额外加伤。</p>
         <label>计算方式<select id="attackBasis"><option value="auto">自动核对属性层</option><option value="panel">面板无实时加成，应用技能修正</option><option value="layers">手填状态前面板＋同层实时加成</option><option value="settlement">直接采用读取器结算攻击值（仅对照）</option></select></label>
@@ -85,7 +90,7 @@
       <input id="resistance" type="number" hidden><input id="boss" type="checkbox" checked hidden><small id="resistanceHint" hidden></small>
       <button type="button" id="debuff">填入实测降防值 2599</button>
       <div class="fields two"><label>结算防御参照倍率 ×<input id="defenseRatio" type="number" min="0" max="1" step="any" value="1" required></label><p class="help">贯导触发时为0.5；上方仍填写原始当前魔抗，不需要手动减半。</p></div>
-      <details><summary>其他战斗条件</summary><div class="inline-options"><label><input id="back" type="checkbox"> 背后攻击</label><label><input id="air" type="checkbox"> 对空条件满足</label><label><input id="ailment" type="checkbox"> 异常状态条件满足</label><label><input id="guarded" type="checkbox"> 本段被格挡</label></div><div class="fields two"><label>格挡减伤 %<input id="guardReduction" type="number" min="0" max="100" step="any" value="50" required></label><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="0.5" required></label></div><p class="help">降防填写在「当前防御力」；Boss 的 Break 防御修正在此基础上单独计算。</p></details>
+      <details><summary>其他战斗条件</summary><div class="inline-options"><label><input id="guarded" type="checkbox"> 本段被格挡</label></div><div class="fields two"><label>格挡减伤 %<input id="guardReduction" type="number" min="0" max="100" step="any" value="50" required></label><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="0.5" required></label></div><p class="help">降防填写在「当前防御力」；Boss 的 Break 防御修正在此基础上单独计算。</p></details>
     </section>
     <section id="confirmedEffectsSection" class="card" hidden><div class="section-heading"><h2><span>05</span>已确认的伤害加成</h2><button type="button" id="addEffect" class="primary">＋ 添加一条</button></div>
       <p class="help">每条填写一个实际生效的效果。同名效果是否叠加须先确认；被覆盖的效果请取消勾选。装备、个性与其他条件由你确认。</p>
@@ -149,5 +154,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260926-common-skills"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260926-damage-conditions"></script>
 </body></html>

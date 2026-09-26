@@ -17,11 +17,11 @@ export const DEFAULT_CONTEXT = {
   lowHp: null, firstLowHp: null, mpEnough: null, killer: false, killerOverride:null, break:false, equipmentIds: [],
   sword: false, axe: false, spear: false, hammer: false, bow: false, machine: false, claw: false,
   clothes: false, armor: false, incomingElement: null, incomingAttackKind: null,
-  enemyRaces:null, back:null, air:null, ailment:null, stunned:false,
+  enemyRaces:null, back:null, air:null, ailment:null, ground:null, stunned:false,
 };
 export const CONDITION_FIELDS = {
   enemyRaces: {label:'目标种族',multiple:true,options:options([['soldier','战士'],['sniper','狙击手'],['knight','骑士'],['sorcerer','魔法师'],['beast','兽'],['plant','植物'],['insect','昆虫'],['bird','鸟'],['creature','魔法生物'],['undead','不死生物'],['stone','石'],['machine','机械'],['spirit','精灵'],['dragon','龙'],['god','神'],['fish','鱼']])},
-  back:{label:'从背后攻击',options:yesNo},air:{label:'目标浮空',options:yesNo},ailment:{label:'目标处于异常状态',options:yesNo},
+  back:{label:'从背后攻击',options:yesNo},air:{label:'目标浮空',options:yesNo},ailment:{label:'目标处于异常状态',options:yesNo},ground:{label:'自身在地面',options:yesNo},
   breakOrStunned:{label:'目标气绝或Break',options:yesNo},
   attack: { label: '攻击方式', options: ATTACKS.map(({ id, label }) => ({ value: id, label })) },
   attackKind: { label: '攻击类别', options: options([['normal', '普通攻击'], ['skill', '特技'], ['magic', '魔法'], ['ultimate', '超必杀']]) },
@@ -71,7 +71,7 @@ export function normalizeContext(input = {}) {
   else if(ctx.fullHp===true)ctx.lowHp=false;
   else if(ctx.lowHp===true)ctx.fullHp=false;
   for(const field of STAT_CONDITION_FIELDS)if(typeof ctx[field]!=='boolean')ctx[field]=null;
-  for(const field of ['back','air','ailment'])if(typeof ctx[field]!=='boolean')ctx[field]=null;
+  for(const field of ['back','air','ailment','ground'])if(typeof ctx[field]!=='boolean')ctx[field]=null;
   ctx.breakOrStunned=ctx.break===true||ctx.stunned===true?true:ctx.break===false&&ctx.stunned===false?false:null;
   ctx.enemyRaces=Array.isArray(input.enemyRaces)&&input.enemyRaces.every(r=>CONDITION_FIELDS.enemyRaces.options.some(o=>o.value===r))?[...new Set(input.enemyRaces)]:null;
   if (ctx.iceStaff === true) ctx.staff = true;

@@ -30,9 +30,10 @@ test('low HP scaling and shared-skill counts are not reduced to fixed near-death
  assert.equal(life.calculationClass,'conditional-passive');assert.equal(life.requirements.hpDependency,'continuous-decreasing');assert.equal(life.requirements.lowHp,undefined);assert.equal(life.formulaStatus,'pending');
  assert.equal(alliance.requirements.countIncludesSelf,true);assert.equal(alliance.requirements.partySkillId,entry('魔兽同盟').id);assert.deepEqual(alliance.percentByCount,{2:5,3:10,4:15});
 });
-test('the visible screenshot controls stay unchanged while future fields remain deferred',()=>{
+test('special damage switches are separate from general conditions',()=>{
  const html=fs.readFileSync(new URL('../dist/damage-calculator.html',import.meta.url),'utf8');
- const row=html.match(/<div class="inline-options attack-options">([\s\S]*?)<\/div>/)[1].replace(/<span hidden data-deferred-condition-controls>[\s\S]*?<\/span>/,'');
- assert.deepEqual([...row.matchAll(/id="([^"]+)"/g)].map(m=>m[1]),['dualWield','specialAttack','break','fullHp','lowHp','criticalEnabled','openingBuffActive','awakeningBuffActive','magicAwakeningBuffActive']);
+ const row=html.match(/<div class="inline-options attack-options">([\s\S]*?)<\/div>/)[1];
+ assert.deepEqual([...row.matchAll(/id="([^"]+)"/g)].map(m=>m[1]),['dualWield','specialAttack','break','criticalEnabled']);
+ assert.match(html,/<h3>魔法<\/h3>/);assert.match(html,/<h3 id="generalDamageTitle">通用伤害改变<\/h3>/);
  for(const field of ['ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','realSunday','ultimateGaugeFull'])assert.equal(STAT_CONDITIONS[field].deferred,true);
 });

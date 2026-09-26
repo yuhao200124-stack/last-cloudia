@@ -47,7 +47,6 @@ const attackStat=()=>panelLayers?.[referenceMode()==='int'?'intelligence':refere
 function renderMagicBuffs(profile) {
   magicOptions=magicBuffOptions(profile);$('magicBuffOptions').hidden=!magicOptions.length;
   $('magicBuffChoices').innerHTML=magicOptions.map(b=>`<label class="magic-buff-check"><input type="checkbox" data-magic-buff="${esc(b.id)}"${magicSelection[b.id]?' checked':''}>${esc(b.name)}：${esc(b.label)}</label>`).join('');
-  $('magicBuffRelationControl').hidden=!activeMagicBuffs().length;
 }
 for(const id of ['fullHp','lowHp'])$(id).addEventListener('change',()=>{if($(id).checked)$(id==='fullHp'?'lowHp':'fullHp').checked=false;});
 $('magicBuffOptions').addEventListener('change',e=>{
@@ -57,7 +56,6 @@ $('magicBuffOptions').addEventListener('change',e=>{
     magicSelection[e.target.dataset.magicBuff]=e.target.checked;
     renderMagicBuffs(latestReport?.profile);
   }
-  $('magicBuffRelationControl').hidden=!activeMagicBuffs().length;
   try{localStorage.setItem(`lc-magic-buffs:${characterId}`,JSON.stringify(magicSelection));}catch{}
   if(activeMagicBuffs().some(b=>b.stat===attackStat()?.key)){$('attackBasis').value='auto';attackBasisTouched=false;}
   clearSettlementCapture('魔法增益已改变，请采用对应状态下的结算样本。');update();
@@ -222,9 +220,10 @@ function read() {
   const s=defaultInput();
   for(const k of numericKeys) if($(k))s[k]=$(k).valueAsNumber;
   for(const k of booleanKeys) if($(k))s[k]=$(k).checked;
+  if(characterId&&!imported?.hitSources.length){s.hitMultiplier=1;s.hitDamageRatio=1;}
   for(const k of ['type','skillType','element','hitScaleStage','attackBasis']) s[k]=$(k).value;
   if(s.attackBasis==='auto')s.attackBasis='layers';
-  s.races=bossRaces;s.stunned=$('stunned').checked;s.killerRaces=[];s.specialAttack=$('specialAttack').checked;s.killerCorrection=imported?.killerCorrection??0;
+  s.races=bossRaces;s.stunned=$('stunned').checked;s.killerRaces=[];s.specialAttack=$('specialAttack').checked&&(!characterId||imported?.reference.some(row=>row.effect.type==='killer'&&row.effect.value===true)===true);s.killerCorrection=imported?.killerCorrection??0;
   if(criticalDisabled())s.critRate=0;
   s.criticalCapAdded=imported?.criticalCapAdded??0;
   s.effects=readEffects().map(e=>!$('criticalEnabled').checked&&(e.kind==='critical'||e.criticalOnly)?{...e,enabled:false}:e);return s;
@@ -255,7 +254,8 @@ function labels() {
   $('bossReference').textContent=`本次参照：${mode==='mixed'?'手填混合防御值':magic?'魔抗 MND':'防御力 DEF'}；${neutral?'无属性不使用六属性抗性':`使用${$('element').value||'所选'}抗性`}。`;
   const p=bosses[$('bossPreset').value];$('debuff').hidden=!p?.debuff||magic||mode==='mixed';
   if(p?.debuff)$('debuff').textContent=`填入实测降防值 ${p.debuff}`;
-  $('conditionStatus').textContent=($('dualWield').checked?'双刀按下方命中与单段倍率计算；':'')+'满血与濒死互斥；开场Buff仅在40秒内勾选。觉醒类勾选表示已经触发且仍有效，回血后可继续保持；永久Buff随已选技能生效。';
+  const resistance=$('resistance').valueAsNumber,correction=$('resistCorrection').valueAsNumber;
+  $('weaknessStatus').textContent=`弱点：${$('element').value==='无'?'无属性':Number.isFinite(resistance)&&Number.isFinite(correction)?resistance+correction<0?'已命中':'未命中':'目标抗性待确认'}`;
   hitSourceNote();
 }
 $('bossRaceChoices').innerHTML=RACES.map((race,i)=>`<label><input id="bossRace${i}" data-boss-race="${esc(race)}" type="checkbox">${esc(race)}</label>`).join('');
@@ -354,7 +354,7 @@ function reset(clearSaved=true) {
   for(const k of numericKeys) if($(k))$(k).value=s[k];
   $('settledAttack').value='';$('attackBase').value='';
   for(const k of booleanKeys) if($(k))$(k).checked=s[k];
-  $('stunned').checked=false;
+  $('stunned').checked=false;$('ground').checked=false;
   for(const k of ['type','skillType','element']) $(k).value=s[k];
   $('preset').value='eris';$('bossPreset').value='bird';
   document.querySelectorAll('.choices input').forEach(e=>e.checked=false);

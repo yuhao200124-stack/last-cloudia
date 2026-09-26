@@ -16,7 +16,7 @@ export function defaultInput() {
     skillAdd:0, skillPercent:51.8, skillPostAdd:0, attackRatio:0, runtimeRatio:1,
     integerRatio:0, type:'physical', skillType:'skill', element:'无', resistance:0,
     resistCorrection:0, boss:true, races:[], killerRaces:[], killerCorrection:0,
-    break:false, breakDefenseRatio:0.5, back:false, air:false, ailment:false,
+    break:false, breakDefenseRatio:0.5, back:false, air:false, ailment:false, ground:false,
     guarded:false, guardReduction:50, cap:9999, bossKiller:false, defenseRatio:1,
     hitMultiplier:1, hitDamageRatio:1, hitScaleStage:'core', effects:[]};
 }

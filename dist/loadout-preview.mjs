@@ -76,9 +76,14 @@ export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){
 
 export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseCap=9999,baseCritRate=0,templates={},selectedBuffs=[],runtimeAnchor=[],criticalAnchor=null,manualDefenseRatio=null}){
  const raceIds={'战士':'soldier','狙击手':'sniper','骑士':'knight','魔法师':'sorcerer','兽':'beast','植物':'plant','昆虫':'insect','鸟':'bird','魔法生物':'creature','不死生物':'undead','石':'stone','机械':'machine','精灵':'spirit','龙':'dragon','神':'god','鱼':'fish'};
- selection={...selection,back:input.back,air:input.air,ailment:input.ailment,stunned:input.stunned===true,weakness:input.element!=='无'&&input.resistance+input.resistCorrection<0,
+ selection={...selection,back:input.back,air:input.air,ailment:input.ailment,ground:input.ground,stunned:input.stunned===true,weakness:input.element!=='无'&&input.resistance+input.resistCorrection<0,
   enemyRaces:input.races?.length?input.races.map(r=>raceIds[r]||r):null};
- const report=buildLoadoutReport(baseReport,snapshot,selection,templates),unresolved=[];
+ let report=buildLoadoutReport(baseReport,snapshot,selection,templates);
+ // The switch describes an actual killer hit, not a source of killer qualification.
+ // Re-evaluate dependent bonuses with the switch off when no selected source qualifies.
+ const qualified=report.rows.some(row=>row.status==='active'&&row.rule.effects.some(effect=>effect.type==='killer'&&effect.value===true));
+ if(selection.specialAttack===true&&!qualified){selection={...selection,specialAttack:false};report=buildLoadoutReport(baseReport,snapshot,selection,templates);}
+ const unresolved=[];
  for(const row of report.rows)if(row.status==='pending')unresolved.push({name:row.sourceName,text:row.sourceText,reason:row.reasons.join('；')||'尚未识别'});
  // Keep known effects calculable while exposing unmapped operations explicitly.
  const safeRows=report.rows.filter(r=>r.status==='active').map(row=>{
@@ -89,6 +94,7 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
   });return {...row,rule:{...row.rule,effects}};
  });
  const safe={...report,rows:safeRows},imported=buildDamageImport(safe);
+ const killerQualified=safeRows.some(row=>row.rule.effects.some(effect=>effect.type==='killer'&&effect.value===true));
  if(imported.blockers.length)throw new Error(imported.blockers.join('；'));
  const base=baseReport.profile.baseStats,equipment=baseReport.profile.equipment;
  function panelFor(source){return calculateWebsitePanel(base,source,{equipment});}
@@ -107,7 +113,7 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
  };
  const next={...structuredClone(input),effects:[...imported.effects,...input.effects.filter(e=>!e.importId)],cap:baseCap+imported.capAdded+magicBuffCap(selectedBuffs,imported.skillType,imported.reference),criticalCapAdded:imported.criticalCapAdded,
   defenseRatio:Number.isFinite(manualDefenseRatio)?manualDefenseRatio:imported.defenseRatio,
-  killerCorrection:imported.killerCorrection,specialAttack:selection.specialAttack===true,critRate:selection.criticalEnabled&&(imported.skillType!=='magic'||imported.magicCanCrit)?Math.min(100,Math.max(0,(criticalAnchor?criticalAnchor.rate-criticalAnchor.contribution:baseCritRate)+imported.critAdded)):0};
+  killerCorrection:imported.killerCorrection,specialAttack:selection.specialAttack===true&&killerQualified,critRate:selection.criticalEnabled&&(imported.skillType!=='magic'||imported.magicCanCrit)?Math.min(100,Math.max(0,(criticalAnchor?criticalAnchor.rate-criticalAnchor.contribution:baseCritRate)+imported.critAdded)):0};
  let projectStatPercent;
  if(key){
   const stat=panel.stats[key];
@@ -127,6 +133,6 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
   next.hitMultiplier=selection.hitMultiplier??imported.hitMultiplier;
   next.hitDamageRatio=selection.hitDamageRatio??imported.hitDamageRatio;
   next.hitScaleStage=selection.hitScaleStage||imported.hitScaleStage||input.hitScaleStage;
- }else if(!selection.dualWield){next.hitMultiplier=1;next.hitDamageRatio=1;}
+ }else{next.hitMultiplier=1;next.hitDamageRatio=1;}
  return {input:next,report:safe,imported,panel,projectStatPercent,unresolved:[...new Map(unresolved.map(x=>[JSON.stringify(x),x])).values()]};
 }

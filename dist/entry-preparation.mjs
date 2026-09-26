@@ -53,7 +53,7 @@ export function retargetReport(report,selection) {
  if(typeof selection.specialAttack==='boolean')context.killerOverride=selection.specialAttack;
  if(typeof selection.break==='boolean')context.break=selection.break;
   if(typeof selection.fullHp==='boolean')context.fullHp=selection.fullHp;
-  for(const field of ['back','air','ailment','weakness','stunned'])if(typeof selection[field]==='boolean')context[field]=selection[field];
+  for(const field of ['back','air','ailment','ground','weakness','stunned'])if(typeof selection[field]==='boolean')context[field]=selection[field];
   if(Object.hasOwn(selection,'enemyRaces'))context.enemyRaces=selection.enemyRaces;
   for(const field of ['lowHp',...STAT_CONDITION_FIELDS])if(typeof selection[field]==='boolean')context[field]=selection[field];
   if(selection.fullHp===true&&selection.lowHp!==true)context.lowHp=false;

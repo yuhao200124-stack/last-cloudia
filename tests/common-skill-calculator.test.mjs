@@ -80,6 +80,16 @@ test('killer qualification and 特攻增幅 use the existing killer factor, not 
  assert.equal(buildDamageImport(other).killerCorrection,0);
 });
 
+test('special attack and dual wield switches require a selected qualifying skill',()=>{
+ const plain=run([],{select:{specialAttack:true,dualWield:true},battle:{races:['战士']}});
+ assert.equal(plain.input.specialAttack,false);assert.equal(plain.input.hitMultiplier,1);assert.equal(plain.input.hitDamageRatio,1);
+ const selected=run(['战士杀手'],{select:{specialAttack:true},battle:{races:['战士']}});
+ const disabled=run(['战士杀手'],{select:{specialAttack:false},battle:{races:['战士']}});
+ assert.equal(selected.input.specialAttack,true);assert.equal(disabled.input.specialAttack,false);
+ const wrongRace=run(['战士杀手'],{select:{specialAttack:true},battle:{races:['鸟']}});
+ assert.equal(wrongRace.input.specialAttack,false);
+});
+
 test('critical bonuses stay in the critical branch and switches remove them',()=>{
  const on=run(['暴击提升','瞄准要害'],{select:{criticalEnabled:true}}),off=run(['暴击提升','瞄准要害']);
  assert.equal(on.imported.critAdded,2);assert.equal(off.imported.critAdded,0);assert.equal(off.imported.effects.length,0);
