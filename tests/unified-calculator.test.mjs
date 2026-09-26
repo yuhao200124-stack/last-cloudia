@@ -119,15 +119,27 @@ test('special weapon control sends the actual equipment IDs and follows manual l
  const {mountUnifiedCalculator}=await import('../dist/unified-calculator.mjs');
  const controls=new Map(),messages=[],listeners={};
  const make=()=>({hidden:false,src:'',textContent:'',addEventListener(){}});
- for(const id of ['unifiedLoadoutFrame','unifiedWorkspace','unifiedStart','unifiedSummary','unifiedSettings','unifiedExit','unifiedUnresolved'])controls.set(id,make());
+ for(const id of ['unifiedLoadoutFrame','unifiedWorkspace','unifiedStart','unifiedSummary','unifiedSettings','unifiedExit','unifiedUnresolved','unifiedStats','unifiedBonuses','unifiedStatus','unifiedUnresolvedCount','unifiedUnresolvedList'])controls.set(id,make());
  const child={postMessage(message){messages.push(message);}};controls.get('unifiedLoadoutFrame').contentWindow=child;
  globalThis.document={getElementById:id=>controls.get(id),body:{classList:{toggle(){}}}};
- globalThis.localStorage={getItem(){return null;}};
+ const stored=new Map();globalThis.localStorage={getItem:key=>stored.get(key)??null,setItem:(key,value)=>stored.set(key,value)};
  globalThis.location={origin:'https://example.test',href:'https://example.test/damage-calculator.html?character=260'};
  globalThis.window={addEventListener(type,fn){listeners[type]=fn;}};
  try{
   let checked=null;
   const ui=mountUnifiedCalculator({getContext:()=>({characterId:'260',baseReport,selection}),onChange(){},onWeaponChange:value=>{checked=value;}});
+  ui.refreshSources();assert.equal(checked,true);
+  ui.setExclusiveWeapon(false);
+  assert.equal(ui.hasLoadout,true,'ordinary calculator must change without opening the loadout iframe');
+  const off=ui.prepare(input);
+  assert(!off.report.rows.some(row=>row.sourceId==='roxy-staff'));
+  assert.equal(off.report.context.staff,false);
+  assert(off.input.attackBase<6741);
+  ui.setExclusiveWeapon(true);
+  const on=ui.prepare(input);
+  assert.equal(on.input.attackBase,6741);
+  assert(on.input.cap>off.input.cap);
+  assert(calculate(on.input).normal.uncappedMax>calculate(off.input).normal.uncappedMax);
   ui.setExclusiveWeapon(false);
   listeners.message({origin:location.origin,source:child,data:{type:'lc-loadout-ready'}});
   assert.deepEqual(messages.at(-1),{type:'lc-loadout-set-equipment',sourceIds:['roxy-staff'],enabled:false});
@@ -138,6 +150,10 @@ test('special weapon control sends the actual equipment IDs and follows manual l
   assert.deepEqual(messages.at(-1),{type:'lc-loadout-set-equipment',sourceIds:['roxy-staff'],enabled:true});
   listeners.message({origin:location.origin,source:child,data:{type:'lc-loadout-change',snapshot}});
   assert.equal(checked,true);
+  ui.setExclusiveWeapon(false);
+  const reopened=mountUnifiedCalculator({getContext:()=>({characterId:'260',baseReport,selection}),onChange(){},onWeaponChange:value=>{checked=value;}});
+  reopened.refreshSources();assert.equal(checked,false);
+  assert.equal(reopened.prepare(input).input.attackBase,off.input.attackBase,'unchecked weapon stays unequipped after reopening');
  }finally{for(const key of ['document','localStorage','location','window'])delete globalThis[key];}
 });
 test('defense modifiers for INT-based skills keep the selected reference during per-effect validation',()=>{

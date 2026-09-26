@@ -1,4 +1,4 @@
-import {prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds} from './loadout-preview.mjs?v=20260926-exclusive-weapon';
+import {prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds,reportLoadoutSnapshot,toggleExclusiveWeapon} from './loadout-preview.mjs?v=20260926-weapon-calculation';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
 import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-common-skills';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-common-skills';
@@ -7,7 +7,7 @@ import {buildDamageImport} from './damage-import.mjs?v=20260926-loadout-sources'
 import {loadoutFrameUrl} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const saved=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))||fallback;}catch{return fallback;}};
+const saved=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};
 export function renderDamageGauges(result,input){
  for(const [name,branch] of [['normal',result.normal],['critical',result.critical]]){
   const gauge=damageGauge(branch,input.hitScaleStage==='afterCap'?input.hitDamageRatio:1),track=$(`${name}Gauge`);
@@ -16,13 +16,18 @@ export function renderDamageGauges(result,input){
  }
 }
 export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponChange}){
- const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,sourceKey='',showSettings=false,resultsCollapsed=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES),pendingWeapon=null;
+ const weaponStorageKey=`lc-exclusive-weapon:${getContext().characterId}`;
+ const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,sourceKey='',showSettings=false,resultsCollapsed=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES),pendingWeapon=saved(weaponStorageKey,null);
  const send=(type,extra={})=>{if(ready)frame.contentWindow.postMessage({type,...extra},location.origin);};
  const weaponIds=()=>{const report=getContext().baseReport;return report?exclusiveWeaponSourceIds(loadoutSources(report)):[];};
  function setExclusiveWeapon(enabled){
-  const sourceIds=weaponIds();if(!sourceIds.length)return;
+  const context=getContext(),sourceIds=weaponIds();if(!sourceIds.length)return;
+  if(!snapshot){anchor=context.runtimeAnchor||[];criticalAnchor=captureCritical(context);snapshot=reportLoadoutSnapshot(context.baseReport,context.manualEffects);}
+  snapshot=toggleExclusiveWeapon(snapshot,loadoutSources(context.baseReport,context.manualEffects),enabled===true);
   pendingWeapon=enabled===true;
+  try{localStorage.setItem(weaponStorageKey,JSON.stringify(pendingWeapon));}catch{}
   if(ready){send('lc-loadout-set-equipment',{sourceIds,enabled:pendingWeapon});pendingWeapon=null;}
+  onWeaponChange?.(enabled===true);onChange();
  }
  function layout(){
   document.body.classList.toggle('unified-mode',active);document.body.classList.toggle('unified-settings',active&&showSettings);
@@ -30,7 +35,11 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
   $('unifiedWorkspace').hidden=!active;$('unifiedStart').hidden=active;$('unifiedSummary').hidden=!active;
   $('unifiedSettings').textContent=showSettings?'返回技能配装':'战斗设置';
  }
- function initialize(){const {baseReport,characterId,manualEffects}=getContext();if(baseReport){const sources=loadoutSources(baseReport,manualEffects);sourceKey=JSON.stringify(sources);send('lc-loadout-init',{characterId:baseReport.characterId,sources});}else if(!characterId)send('lc-loadout-get-state');}
+ function initialize(){const {baseReport,characterId,manualEffects}=getContext();if(baseReport){
+  const sources=loadoutSources(baseReport,manualEffects);sourceKey=JSON.stringify(sources);send('lc-loadout-init',{characterId:baseReport.characterId,sources});
+  if(typeof pendingWeapon==='boolean')setExclusiveWeapon(pendingWeapon);
+  else if(!snapshot)onWeaponChange?.(sources.some(s=>s.enabled&&exclusiveWeaponSourceIds(sources).includes(s.sourceId)));
+ }else if(!characterId)send('lc-loadout-get-state');}
  function captureCritical(context){
   return Number.isFinite(context.criticalObservation)&&context.baseReport?{rate:context.criticalObservation,contribution:buildDamageImport(retargetReport(context.baseReport,context.selection)).critAdded}:null;
  }
@@ -48,7 +57,6 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
   if(e.origin!==location.origin||e.source!==frame.contentWindow)return;
   if(e.data?.type==='lc-loadout-ready'){
    ready=true;initialize();
-   if(pendingWeapon!==null)setExclusiveWeapon(pendingWeapon);
    const url=new URL(location.href);url.searchParams.delete('editPlan');url.searchParams.delete('draft');globalThis.history?.replaceState(null,'',url.href);
   }
   if(e.data?.type==='lc-loadout-change'){
@@ -58,7 +66,10 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
     const url=new URL(location.href);if(next.characterId)url.searchParams.set('character',next.characterId);else url.searchParams.delete('character');url.searchParams.set('unified','1');for(const key of ['embedded','session','editPlan','draft'])url.searchParams.delete(key);location.assign(url.href);return;
    }
    snapshot=next;
-   const ids=weaponIds();if(ids.length&&pendingWeapon===null)onWeaponChange?.(next.items.some(item=>item.sourceIds?.some(id=>ids.includes(id))));
+   const ids=weaponIds();if(ids.length&&pendingWeapon===null){
+    const enabled=next.items.some(item=>item.sourceIds?.some(id=>ids.includes(id)));onWeaponChange?.(enabled);
+    try{localStorage.setItem(weaponStorageKey,JSON.stringify(enabled));}catch{}
+   }
    onChange();
   }
   if(e.data?.type==='lc-loadout-rates'){

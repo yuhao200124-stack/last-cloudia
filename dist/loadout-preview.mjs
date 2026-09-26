@@ -58,7 +58,10 @@ export function loadoutSources(report,manualEffects=[]){
   source.effects=[...new Set(source.effects)];
   if(!source.text)source.text=source.effects.join('；');
   if(source.group==='blessings'&&report.context.accountBlessings===false)source.enabled=false;
-  if(source.group==='equipment')source.equipmentType=report.profile?.equipment?.find(e=>e.name===source.name)?.type||'';
+  if(source.group==='equipment'){
+   source.equipmentType=(report.profile?.equipment?.find(e=>e.name===source.name)?.type||'').trim();
+   source.enabled=source.enabled&&(report.context.equipmentIds||[]).includes(source.sourceId);
+  }
  }
  for(const e of manualEffects)if(!e.importId)sources.set(`manual-effect:${e.id}`,{sourceId:`manual-effect:${e.id}`,name:e.name||'手动加成',text:`${EFFECTS[e.kind]||e.kind}${['element','race'].includes(e.kind)?'（'+e.target+'）':''} ${e.percent}%`,group:'manual',enabled:e.enabled===true,effects:[`${e.percent}% · ${{post:'结算后逐条修正',offense:'核心前攻击侧',received:'核心前目标受伤',reduction:'核心前减伤'}[e.stage]||e.stage}`]});
  return [...sources.values()];
@@ -67,6 +70,20 @@ export function loadoutSources(report,manualEffects=[]){
 // The character's weapon is distinct from their armor and other equipment.
 export function exclusiveWeaponSourceIds(sources){
  return sources.filter(s=>s.group==='equipment'&&['法杖','剑','斧','枪','槌','弓','机械','爪','刀','弩','锤'].includes(s.equipmentType)).map(s=>s.sourceId);
+}
+
+export function reportLoadoutSnapshot(report,manualEffects=[]){
+ const sources=loadoutSources(report,manualEffects);
+ return {characterId:report.characterId,totalSc:0,sourceIds:sources.map(s=>s.sourceId),items:sources.filter(s=>s.enabled).map(s=>({...s,id:s.sourceId,sourceIds:[s.sourceId]}))};
+}
+export function toggleExclusiveWeapon(snapshot,sources,enabled){
+ const ids=exclusiveWeaponSourceIds(sources),weapons=new Set(ids);
+ const items=snapshot.items.filter(item=>!item.sourceIds?.some(id=>weapons.has(id)));
+ if(enabled)for(const source of sources.filter(s=>weapons.has(s.sourceId))){
+  const previous=snapshot.items.find(item=>item.sourceIds?.includes(source.sourceId));
+  items.push(previous||{...source,id:source.sourceId,sourceIds:[source.sourceId]});
+ }
+ return {...snapshot,sourceIds:[...new Set([...(snapshot.sourceIds||[]),...ids])],items};
 }
 
 export function buildLoadoutReport(baseReport,snapshot,selection,templates={}){

@@ -49,17 +49,17 @@
         <div id="attackLayerControls" class="fields two" hidden><label>状态加成前面板<input id="attackBase" type="number" min="0" max="100000000" step="1"></label><label>已确认的同层实时属性加成 %<input id="runtimeStatPercent" type="number" min="-100" max="100000" step="any"></label></div>
         <label id="settledAttackControl" hidden>实际结算攻击值<input id="settledAttack" type="number" min="0" max="100000000" step="1"></label>
         <p id="attackBasisNote" class="help"></p>
-        <details><summary>从结算文件读取</summary><label>结算记录 CSV<input id="formulaCaptureFile" type="file" accept=".csv,text/csv"></label><p id="formulaCaptureNote" class="help">导入 DamageFormulaCapture.csv，选择本次战斗及结算样本；不会以掉血次数替代命中段数。</p><label>战斗与结算样本<select id="formulaCapturePick"><option value="">尚未导入</option></select></label><button id="applyFormulaCapture" type="button" disabled>读取本组面板并核对公式</button></details>
+        <div hidden><input id="formulaCaptureFile" type="file" accept=".csv,text/csv"><p id="formulaCaptureNote"></p><select id="formulaCapturePick"><option value="">尚未导入</option></select><button id="applyFormulaCapture" type="button" disabled></button></div>
       </details>
       <div id="importStatControls" class="fields two" hidden><label>暴击率基准<select id="critBasis"><option value="reader">读取器面板</option><option value="website">网站加成＋手填基础</option></select></label><label><span id="baseCritLabel">基础及额外暴击率 %</span><input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help" hidden></p></div>
       <div class="fields three">
         <label>攻击方式<select id="skillType"><option value="skill">特技</option><option value="normal">普通攻击</option><option value="magic">魔法</option><option value="ultimate">超必杀技</option></select></label>
       </div>
-      <div class="skill-summary" id="skillSummary"></div>
       <p id="mixedReferenceNote" class="help" hidden>混合参照不自动按50/50分配。请填写已确认的混合结算攻击值与对应结算防御值，再进行试算。</p>
       <details id="skillDetails"><summary>技能参数</summary><label id="readerSkillControl" hidden>对应读取器招式<select id="readerSkillPick"></select></label>
         <p id="parameterReadNote" class="help" hidden></p>
         <div class="fields two">
+          <label id="baseHitsControl"><span id="hitsLabel">基础命中段数（手动填写）</span><input id="hits" type="number" min="1" max="1000" step="1" required></label>
           <label>每段基础系数 ×<input id="coefficient" type="number" min="0" max="10000" step="any" value="0.334" required></label>
           <label>技能内攻击修正 %<input id="skillPercent" type="number" min="-100" max="100000" step="any" value="51.8" required></label>
           <label>技能内攻击前加算<input id="skillAdd" type="number" min="-100000000" max="100000000" step="any" required></label>
@@ -67,7 +67,6 @@
         </div>
       </details>
       <details id="hitDetails"><summary>双刀信息</summary><div class="fields two">
-        <label><span id="hitsLabel">基础命中段数（手动填写）</span><input id="hits" type="number" min="1" max="1000" step="1" required></label>
         <label>命中数倍率 ×<input id="hitMultiplier" type="number" min="1" max="100" step="1" value="1" required></label>
         <label>单段伤害倍率 ×<input id="hitDamageRatio" type="number" min="0" max="100" step="any" value="1" required></label>
         <label id="hitScaleControl">修正试算位置<select id="hitScaleStage"><option value="">待确认</option><option value="core" selected>核心系数中</option><option value="beforeCap">伤害上限前</option><option value="afterCap">伤害上限后</option></select></label>
@@ -149,5 +148,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260926-exclusive-weapon"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260926-weapon-calculation"></script>
 </body></html>

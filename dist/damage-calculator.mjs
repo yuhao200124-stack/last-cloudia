@@ -8,7 +8,7 @@ import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-common-ski
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-exclusive-weapon';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-weapon-calculation';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
 import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-condition-observation';
 import {retargetReport} from './entry-preparation.mjs?v=20260926-loadout-sources';
@@ -276,6 +276,9 @@ function syncBossReference() {
 }
 function labels() {
   syncAttackBasis();
+  $('importStatControls').hidden=!imported||criticalDisabled();
+  $('critRate').closest('label').hidden=criticalDisabled();
+  $('hitDetails').hidden=!$('dualWield').checked;
   const mode=referenceMode(),magic=mode==='int';
   $('attackLabel').textContent=mode==='mixed'?'已确认的混合结算攻击值':magic?'当前战斗法强':'当前战斗攻击力';
   $('mixedReferenceNote').hidden=mode!=='mixed';$('mixedDefenseControl').hidden=mode!=='mixed';
@@ -323,7 +326,7 @@ function update() {
   showConditionSources(selectedReport&&retargetReport(selectedReport,workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':'s1',type:$('type').value,element:$('element').value,fullHp:$('fullHp').checked,lowHp:$('lowHp').checked,...Object.fromEntries(STAT_CONDITION_FIELDS.map(f=>[f,$(f).checked]))}));
   const invalid=[...$('calculator').querySelectorAll('input[type=number]')].find(e=>!e.disabled&&!e.checkValidity());
   try {
-    if(!unified?.active){
+    if(!unified?.active&&!unified?.hasLoadout){
       if(characterId&&(!imported||!workflow?.isConfirmed()))throw new Error(reviewBlocker);
       if(imported&&!criticalDisabled()&&$('critBasis').value==='reader'&&imported.critUnresolved.length)throw new Error('部分暴击加成的作用阶段未确认，请核对或改用网站加成＋手填基础。');
       if(imported?.blockers.length)throw new Error(imported.blockers.join('；'));
@@ -331,10 +334,21 @@ function update() {
       if($('attackBasis').value==='auto'&&!autoLayer?.ok)throw new Error(autoLayer?.reason||'请先核对属性层来源。');
       if(invalid) throw new Error(`请检查「${invalid.closest('label')?.textContent.trim()||'数值'}」的输入范围，必填数值不能留空。`);
     }
-    if(unified?.active)for(const [id,label] of [['coefficient','每段基础系数'],['hits','基础命中段数'],['skillPercent','技能内攻击修正'],['skillAdd','技能内攻击前加算'],['skillPostAdd','技能内攻击后加算']])if(!Number.isFinite($(id).valueAsNumber))throw new Error(`请在“战斗设置”中填写${label}。`);
+    if(unified?.active||unified?.hasLoadout)for(const [id,label] of [['coefficient','每段基础系数'],['hits','基础命中段数'],['skillPercent','技能内攻击修正'],['skillAdd','技能内攻击前加算'],['skillPostAdd','技能内攻击后加算']])if(!Number.isFinite($(id).valueAsNumber))throw new Error(`请在“战斗设置”中填写${label}。`);
     const preview=unified?.active||unified?.hasLoadout?unified.prepare(read()):null;
     if(preview)showConditionSources(preview.report);
     const s=preview?.input||read(),r=calculate(s),c=r.context;
+    if(preview){
+      $('cap').value=s.cap;$('critRate').value=s.critRate;
+      if(!attackBasisTouched||$('attackBasis').value==='auto'){
+        $('attack').value=s.attack;
+        if(s.attackBasis==='layers'){
+          $('attackBase').value=s.attackBase;$('runtimeStatPercent').value=s.runtimeStatPercent;
+          $('attackLayerControls').hidden=false;
+          $('attackBasisNote').textContent=`当前配装：状态前面板 ${fmt(s.attackBase)}；实时属性加成 ${s.runtimeStatPercent}%，战斗面板 ${fmt(s.attack)}。`;
+        }
+      }
+    }
     $('error').hidden=true;$('resolveReview').hidden=true;$('resultValues').hidden=false;
     $('resultState').textContent=c.element<=0?'属性免疫':r.normal.uncappedMax>s.cap?'普通伤害触及上限':imported?'导入条件下试算':'实时计算';
     if(preview)$('resultState').textContent=preview.unresolved.length?'配装预览 · 有待研究项':'实时配装';
@@ -360,7 +374,6 @@ function update() {
     $('effectiveAttack').textContent=fmt(c.attack);
     $('effectiveDefense').textContent=fmt(c.defense);
     $('killerState').textContent=c.killer?`本次触发 · 基础 ×${fmt(c.killerFactor)}`:'未触发';
-    $('skillSummary').textContent=`每段系数 ×${s.coefficient} · ${s.attackBasis==='settlement'?'读取器结算攻击已含技能修正':`技能内攻击修正 ${s.skillPercent>=0?'+':''}${s.skillPercent}%`} · ${r.totalHits} 段`;
     const count=r.active.filter(e=>e.percent!==0).length;
     $('activeNote').textContent=`已计入 ${count} 条非零加成${s.boss&&s.break?'；Boss Break 防御修正已生效':''}。${autoLayer?.projected&&$('attackBasis').value==='auto'?`当前条件下预估面板 ${fmt(autoLayer.panel)}；同类型 Buff 只保留本次启用的一份。`:''}`;
     $('trace').innerHTML=r.normal.trace.map(t=>`<li><span>${esc(t.label)}</span><b>${fmt(t.value)}</b></li>`).join('');
@@ -375,7 +388,6 @@ function update() {
     $('error').hidden=false;$('error').textContent=e.message;$('resultValues').hidden=true;$('resultState').textContent=characterId&&!workflow?.isConfirmed()?'等待核对':'请检查输入';
     $('resolveReview').hidden=unified?.active||!characterId||workflow?.isConfirmed();
     $('trace').replaceChildren();$('formulaText').textContent='';$('activeNote').textContent='输入有效数值后会自动重新计算。';
-    $('skillSummary').textContent=imported?`${imported.attackName} · 请填写该招式自己的原始系数、攻击修正及段数。`:'请检查技能参数。';
   }
 }
 function reset(clearSaved=true) {
@@ -547,12 +559,13 @@ unified=mountUnifiedCalculator({
  getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,lowHp:$('lowHp').checked,...Object.fromEntries(STAT_CONDITION_FIELDS.map(f=>[f,$(f).checked])),break:$('break').checked,boss:$('boss').checked,weakness:$('weakness').checked,dualWield:$('dualWield').checked},
   baseCap:$('baseCap').valueAsNumber,baseCritRate:$('critBasis').value==='reader'?Number(manualCriticalBase)||0:$('baseCritRate').valueAsNumber||0,
   selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],baselineImport:imported,manualEffects:readEffects().filter(e=>!e.importId),
-  attackOverride:attackBasisTouched?Object.fromEntries(['attackBasis','attack','attackBase','runtimeStatPercent','settledAttack'].map(key=>[key,read()[key]])):null,
+  attackOverride:attackBasisTouched&&$('attackBasis').value!=='auto'?Object.fromEntries(['attackBasis','attack','attackBase','runtimeStatPercent','settledAttack'].map(key=>[key,read()[key]])):null,
   manualDefenseRatio:defenseRatioTouched||imported&&$('defenseRatio').valueAsNumber!==imported.defenseRatio?$('defenseRatio').valueAsNumber:null,
   criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),
  onChange:update,
  onWeaponChange:enabled=>{$('specialWeapon').checked=enabled;}
 });
-$('specialWeapon').addEventListener('change',()=>{unified.setExclusiveWeapon($('specialWeapon').checked);update();});
+$('specialWeapon').addEventListener('change',()=>unified.setExclusiveWeapon($('specialWeapon').checked));
+unified.refreshSources();
 if(characterId&&!latestReport)loadCharacterReport(characterId).then(report=>{if(!latestReport){receiveReport(report);unified.refreshSources();}}).catch(e=>unified.error(e.message));
 if(params.get('unified')==='1')unified.open();
