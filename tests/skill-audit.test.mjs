@@ -71,6 +71,26 @@ test('translated names preserve the original character binding identity',()=>{
  const snapshot=page.window.LC_LOADOUT_CALCULATOR.snapshot();assert.equal(snapshot.items.length,1);assert.equal(snapshot.items[0].id,selected);assert.equal(snapshot.items[0].sourceIds[0],'test-recast');assert.equal(snapshot.totalSc,0);
 });
 
+test('restore equips only the current character innate skills after clearing or editing the loadout',()=>{
+ const extra=skill(649),sources=[{sourceId:'native-one',name:'角色测试技能一',text:'攻击力+10%'},{sourceId:'native-two',name:'角色测试技能二',text:'魔法伤害+10%'}];
+ const page=boot({'lc-sheet-table:unified-character-skills-v1':{'259':{sources,initialized:true}},'lc-sheet-table:sc-calculator-v1':{characterId:'259',skillIds:[extra.id],characterFreeIds:[],activeBreaks:[]}});
+ const restore=page.elements.get('#calculatorRestore');
+ assert.equal(restore.disabled,false);
+ restore.listeners.click();
+ let snapshot=page.window.LC_LOADOUT_CALCULATOR.snapshot();
+ assert.equal(snapshot.items.length,2);
+ assert.deepEqual([...snapshot.items.flatMap(item=>item.sourceIds)].sort(),['native-one','native-two']);
+ assert.equal(snapshot.totalSc,0);
+ assert(!snapshot.items.some(item=>item.id===extra.id));
+ page.elements.get('#calculatorClear').listeners.click();
+ assert.equal(page.window.LC_LOADOUT_CALCULATOR.snapshot().items.length,0);
+ restore.listeners.click();
+ snapshot=page.window.LC_LOADOUT_CALCULATOR.snapshot();
+ assert.equal(snapshot.items.length,2);
+ assert.equal(JSON.stringify(JSON.parse(page.saved.get('lc-sheet-table:sc-calculator-v1')).skillIds),JSON.stringify(snapshot.items.map(item=>item.id)));
+ const noCharacter=boot();assert.equal(noCharacter.elements.get('#calculatorRestore').disabled,true);
+});
+
 test('internal tags remain searchable for saved workflows but never render; edited descriptions invalidate metadata',()=>{
  const monkey=skill(304),life=skill(267),alliance=skill(284);
  const state={skillIds:[monkey.id,life.id,alliance.id],characterId:'',activeBreaks:[]};

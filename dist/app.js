@@ -24,6 +24,7 @@
   const calculatorSkills = document.querySelector('#calculatorSkills');
   const calculatorTotal = document.querySelector('#calculatorTotal');
   const calculatorClear = document.querySelector('#calculatorClear');
+  const calculatorRestore = document.querySelector('#calculatorRestore');
   const saveLoadoutButton = document.querySelector('#saveLoadout');
   const openSavedLoadoutsButton = document.querySelector('#openSavedLoadouts');
   const savedLoadoutCount = document.querySelector('#savedLoadoutCount');
@@ -383,6 +384,7 @@
 
   function renderCalculator() {
     const result = calculateSc();
+    calculatorRestore.disabled = !calculatorState.characterId || !characterLoadouts[calculatorState.characterId];
     const matchingPlans = currentCharacterPlans();
     calculatorCharacterSelect.value = calculatorState.characterId || '';
     savedLoadoutCount.textContent = String(matchingPlans.length);
@@ -834,6 +836,19 @@
   calculatorClear.addEventListener('click', () => {
     calculatorState.skillIds = [];
     calculatorState.characterFreeIds = [];
+    calculatorState.currentPlanId = '';
+    expandedSkillEffects.clear();
+    saveCalculatorState();
+    render();
+  });
+
+  calculatorRestore.addEventListener('click', () => {
+    const id = calculatorState.characterId;
+    if (!characterLoadouts[id]) return;
+    const owned = [...new Set([...(characterLoadouts[id].skillIds || []), ...Object.keys(sourceBindings[id] || {})])]
+      .filter(skill => skillIndex.has(skill));
+    calculatorState.skillIds = owned;
+    calculatorState.characterFreeIds = [...owned];
     calculatorState.currentPlanId = '';
     expandedSkillEffects.clear();
     saveCalculatorState();

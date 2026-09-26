@@ -584,6 +584,7 @@ input.cell-editor { height: 40px; text-align: center; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   padding: 13px 15px;
   border-top: 2px solid #a7b9d1;
   background: #f4f8fd;
@@ -591,6 +592,9 @@ input.cell-editor { height: 40px; text-align: center; }
 
 .calculator-total .calculator-clear { min-height: 32px; padding: 5px 14px; border: 1px solid #b9c7d9; background: #fff; color: #8a3440; font-weight: 700; cursor: pointer; }
 .calculator-total .calculator-clear:hover { background: #fff0f2; border-color: #c98992; }
+.calculator-total .calculator-restore { min-height: 32px; padding: 5px 14px; border: 1px solid #b9c7d9; background: #fff; color: var(--navy); font-weight: 700; cursor: pointer; }
+.calculator-total .calculator-restore:hover { background: #eaf3ff; border-color: #819fc6; }
+.calculator-total .calculator-restore:disabled { opacity: .45; cursor: not-allowed; }
 .calculator-total > span { margin-left: auto; }
 .calculator-character-select { min-width: 0; max-width: 210px; height: 34px; padding: 4px 28px 4px 9px; border: 1px solid rgba(255,255,255,.45); border-radius: 4px; background: #fff; color: var(--navy); font: inherit; font-weight: 700; }
 
