@@ -8,7 +8,7 @@ import {observedCritical} from './reader-bonus-decoder.mjs?v=20260926-common-ski
 import {parseDamageFormulaCsv} from './formula-csv-parser.mjs';
 import {projectAttackLayers,needsAttributeLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBuffLayer,nonDamageMagic,supportMagicRule} from './magic-buffs.mjs?v=20260926-support-magic';
-import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-switch-controls';
+import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-hp-panel';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-common-skills';
 import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260924-condition-tags';
 const $=id=>document.getElementById(id);
@@ -138,8 +138,11 @@ function attackFormula(s,c) {
   return '按无实时属性加成的面板应用技能攻击修正。';
 }
 function syncAttackBasis() {
-  let mode=$('attackBasis').value;
-  const stat=attackStat();
+ let mode=$('attackBasis').value;
+ const stat=attackStat();
+  // HP switches control conditional damage rules; the observed battle panel
+  // remains the supplied attribute input until the reader/panel is changed.
+  const observedStat=stat?{...stat,runtimeConditions:{...stat.runtimeConditions,fullHp:null,lowHp:null}}:stat;
   // Never let a previously selected panel mode multiply an already buffed INT
   // again. Missing layer evidence stays unresolved instead of falling back.
   if(needsAttributeLayers(mode,stat,$('attack').valueAsNumber)){mode='auto';$('attackBasis').value=mode;}
@@ -148,7 +151,7 @@ function syncAttackBasis() {
   $('settledAttack').disabled=mode!=='settlement';$('settledAttack').required=mode==='settlement';
   $('attack').required=mode==='panel';
   for(const id of ['skillAdd','skillPercent','skillPostAdd','attackRatio'])$(id).disabled=mode==='settlement';
-  autoLayer=mode==='auto'?(magicBuffLayer(stat,$('attack').valueAsNumber,activeMagicBuffs())||projectAttackLayers(stat,$('attack').valueAsNumber)):null;
+  autoLayer=mode==='auto'?(magicBuffLayer(observedStat,$('attack').valueAsNumber,activeMagicBuffs())||projectAttackLayers(observedStat,$('attack').valueAsNumber)):null;
   if(mode==='auto'){
     $('attackBase').value=autoLayer.ok?autoLayer.base:'';$('runtimeStatPercent').value=autoLayer.ok?autoLayer.percent:'';
     $('attackBasisNote').textContent=!autoLayer.ok?autoLayer.reason:autoLayer.projected?

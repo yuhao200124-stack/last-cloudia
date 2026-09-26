@@ -97,6 +97,8 @@ test('review UI events preserve manual panel, save from both sections, keep remi
  let stat=last.review.panelLayers.intelligence;
  assert.equal(stat.value,10111);assert.equal(projectAttackLayers(stat,12133).panel,10111);
  assert.equal(projectAttackLayers(stat,12133).percent,50);
+ const observedStat={...stat,runtimeConditions:{...stat.runtimeConditions,fullHp:null,lowHp:null}};
+ assert.equal(projectAttackLayers(observedStat,12133).panel,12133,'the full-HP damage switch leaves the adopted panel in place');
  const offLayer=projectAttackLayers(stat,12133),offImport=buildDamageImport(last.r);
  const offDamage=calculate({...defaultInput(),attackBasis:'layers',attackBase:offLayer.base,runtimeStatPercent:offLayer.percent,attack:offLayer.panel,type:'magical',skillType:'magic',element:'冰',effects:offImport.effects});
  assert(offDamage.normal.mean>0,'switching full HP off must still produce damage');

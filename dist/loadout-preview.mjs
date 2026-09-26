@@ -93,13 +93,17 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
  if(imported.blockers.length)throw new Error(imported.blockers.join('；'));
  const base=baseReport.profile.baseStats,equipment=baseReport.profile.equipment;
  function panelFor(source){return calculateWebsitePanel(base,source,{equipment});}
- const panel=panelFor(safe),key=selection.statReference==='int'?'intelligence':selection.statReference==='str'?'attack':null;
+ // The HP switch gates this attack's damage rules; attribute inputs retain
+ // their original observed HP state until a new panel is explicitly adopted.
+ const panelSelection={...selection,fullHp:baseReport.context.fullHp===true,lowHp:baseReport.context.lowHp===true};
+ const panelReport=buildLoadoutReport(baseReport,snapshot,panelSelection,templates);
+ const panel=panelFor(panelReport),key=selection.statReference==='int'?'intelligence':selection.statReference==='str'?'attack':null;
  for(const p of Object.values(panel.stats))for(const reason of p.issues)unresolved.push({name:p.label,text:'',reason});
  const buffsFor=stat=>{
   const known=stat.buffs.flatMap(b=>{const normalized=normalizeRuntimeBuff(b,stat.key);if(normalized)return [normalized];unresolved.push({name:b.source,text:'',reason:'实时属性增益的叠加类型尚未识别，暂未计入'});return [];});
   // An observed runtime buff is retained only while its source still exists;
   // selected HP conditions and selected spells are evaluated anew.
-  const existing=new Set(report.rows.filter(r=>r.status==='active').map(r=>r.sourceName));
+  const existing=new Set(panelReport.rows.filter(r=>r.status==='active').map(r=>r.sourceName));
   const anchors=runtimeAnchor.filter(b=>!b.hpCondition&&!b.activationCondition&&(!b.source||existing.has(b.source))&&!known.some(x=>x.runtime.stackGroup===b.runtime.stackGroup));
   const selected=selectedBuffs.filter(b=>b.stat===stat.key).map(b=>normalizeRuntimeBuff({id:b.id,source:b.name,value:b.statPercent,runtime:b.runtime},stat.key));
   if(selected.some(b=>!b))throw new Error('所选魔法增益的类型尚未确认');
@@ -118,7 +122,7 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
   panel.values[key]=next.attack;
   if(!stat.issues.length)projectStatPercent=percent=>{
    const row={sourceId:'recommend-stat',sourceName:'属性推荐',status:'active',rule:{id:'recommend-stat',review:'ready',conditions:[],effects:[{type:'stat',target:stat.label,value:percent,unit:'%'}]}};
-   const changed=panelFor({...safe,rows:[...safe.rows,row]}).stats[key];
+   const changed=panelFor({...panelReport,rows:[...panelReport.rows,row]}).stats[key];
    if(changed.issues.length)throw new Error(changed.issues.join('；'));
    const attackBase=changed.beforeBuff+changed.crossAdd;
    return {...structuredClone(next),attackBase,attack:Math.floor(attackBase*(100+runtime)/100)};
