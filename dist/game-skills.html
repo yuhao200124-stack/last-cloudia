@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="最后的克劳迪娅可从圣物学习的被动技能（游戏数据版）：游戏内名称、SC、效果和可学习圣物。" />
+    <title>游戏数据技能表</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="stylesheet" href="./styles.css?v=20260927-excel-two-column" />
+    <link rel="stylesheet" href="./game-skills.css?v=20260927-game-table" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand-mark" aria-hidden="true">LC</div>
+      <div class="brand-copy">
+        <h1>最后的克劳迪娅技能分类表（游戏数据版）</h1>
+        <p>可从圣物学习的被动技能 · 名称、SC、效果、圣物均取自游戏主数据</p>
+      </div>
+      <nav class="header-actions" aria-label="页面导航"><a class="header-nav-link" href="./index.html">原技能表</a><a class="header-nav-link" href="./characters.html?v=20260926-mayly">角色列表</a><a class="header-nav-link" href="./damage-calculator.html?v=20260926-mayly">伤害计算器</a></nav>
+    </header>
+    <main>
+      <section class="workspace" aria-label="游戏数据技能表">
+        <div class="toolbar">
+          <label class="search-box">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="searchInput" type="search" autocomplete="off" placeholder="搜索技能名称、效果或圣物（繁简均可）" />
+            <button id="clearSearch" type="button" aria-label="清空搜索" hidden>清空</button>
+          </label>
+          <div class="game-toolbar-right">
+            <div class="script-toggle" role="group" aria-label="文字">
+              <button type="button" data-script="t" aria-pressed="true">游戏原文（繁）</button>
+              <button type="button" data-script="s" aria-pressed="false">简体</button>
+            </div>
+            <label class="site-name-toggle"><input id="showSiteName" type="checkbox" checked />显示原表名称</label>
+            <div class="result-summary" id="resultSummary" aria-live="polite"></div>
+          </div>
+        </div>
+        <nav class="sheet-tabs" id="sheetTabs" aria-label="工作表分类"></nav>
+        <div class="sheet-heading">
+          <div>
+            <span class="sheet-kicker">当前工作表</span>
+            <h2 id="sheetTitle"></h2>
+            <span class="edit-hint" id="sheetHint"></span>
+          </div>
+          <button class="back-top" id="backTop" type="button">回到顶部</button>
+        </div>
+        <div id="tableArea" class="table-area"></div>
+        <div id="emptyState" class="empty-state" hidden>
+          <strong>没有找到符合条件的技能</strong>
+          <span>可以换一个关键词，或切换到其他工作表。</span>
+        </div>
+      </section>
+    </main>
+    <script src="./game-skill-data.js?v=20260927-game-table"></script>
+    <script src="./game-skills.js?v=20260927-game-table"></script>
+  </body>
+</html>
