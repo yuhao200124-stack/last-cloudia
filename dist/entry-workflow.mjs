@@ -42,7 +42,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  state.hitMechanicsRevision=2;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
  let game=null;
- gameCharacterForSite(characterId).then(g=>{game=g;if(initialized&&g){promoteNonStacking();setParameters();updateCandidate();}}).catch(()=>{});
+ gameCharacterForSite(characterId).then(g=>{game=g;if(initialized&&g){promoteNonStacking();fillFromGame();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();updateCandidate();}}).catch(()=>{});
  let confirmed=false,reviewedReport=null,bonusGroups=[],readerBonuses=[],modeCatalog={},potentialModeGroups=[];
  let reportFingerprint=null,storageSaveFailed=false,importGeneration=0;
  state.readerDrafts=saved.readerDrafts||{};
@@ -145,8 +145,16 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   state.selection.statReference=move?.statReference||'';
   if(['magic','heavy_magic'].includes(state.selection.attack))state.selection.type='magical';
   else state.selection.type=move?.damageType||'';
+  fillFromGame(move);
   for(const key of ['element','statReference','type'])$(key).value=state.selection[key];
   setParameters();
+ }
+ // Game data fills what the character page leaves open: 伤害分类、伤害参照、攻击属性.
+ function fillFromGame(move=selectedMove()) {
+  const gp=gameMoveParameters(findGameMove(game,move));if(!gp)return;
+  if(!state.selection.type&&gp.type!=='mixed')state.selection.type=gp.type;
+  if(!state.selection.statReference)state.selection.statReference=gp.type==='magical'?'int':gp.type==='physical'?'str':'';
+  if(!state.selection.element&&gp.element)state.selection.element=gp.element;
  }
  function updateCandidate() {
   if(!report)return;
@@ -521,7 +529,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(battle){$('entryUnit').innerHTML=option('','请选择本次测试角色','')+battle.units.map((u,i)=>option(String(i),`${u.name||'未命名'} · Unit ${u.unitId}`,unit?String(data.unitIndex):'')).join('');$('entryFileNote').textContent=data.fileNote||'';onRead({battle,unit:selectedUnit()});}
   updateCandidate();return true;
  }
- return {setSpecialWeapon:enabled=>{if(state.selection.specialWeapon===enabled)return;state.selection.specialWeapon=enabled;updateCandidate();},setDerivedConditions:values=>{Object.assign(state.selection,values);},setDerivedAttackElement:element=>{state.selection.element=element;},receive,selection,panelsPreview,planningBase,exportSession,restoreSession,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
+ return {gameMove:()=>gameMoveParameters(findGameMove(game,selectedMove())),setSpecialWeapon:enabled=>{if(state.selection.specialWeapon===enabled)return;state.selection.specialWeapon=enabled;updateCandidate();},setDerivedConditions:values=>{Object.assign(state.selection,values);},setDerivedAttackElement:element=>{state.selection.element=element;},receive,selection,panelsPreview,planningBase,exportSession,restoreSession,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
   state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};groupReaderChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
   if(initialized){for(const [field] of characterConditions){state.selection[field]=report.context[field]===true;if($(field))$(field).checked=state.selection[field];}state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),specialAttack:report.context.killer===true,break:false,boss:report.context.boss!==false,weakness:false,realSunday:false};for(const id of ['dualWield','specialAttack','break','boss','weakness','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id];$('conditionBuffActive').checked=CONDITION_BUFF_FIELDS.some(field=>state.selection[field]);renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();

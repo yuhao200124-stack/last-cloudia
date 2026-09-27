@@ -45,6 +45,6 @@ export function gameMoveParameters(move) {
     type, element: move.inheritWeaponElement && move.element === '无' ? null : move.element, heavy: !!move.nonStackable,
     skillType: { 特技: 'skill', 魔法: 'magic', 超必杀: 'ultimate', 普通攻击: 'normal' }[move.type] || null,
     extraCap: cap, level: part.level, variants,
-    note: `游戏数据：${move.nameS}${part.level ? ` Lv.${part.level}` : ''}，攻击修正 +${part.statPercent ?? 0}%，每段系数 ${part.coef}${cap ? `，招式自带伤害上限 +${cap.toLocaleString('zh-CN')}` : ''}${move.nonStackable ? '，不可叠加魔法（重魔法）' : ''}${variants > 1 ? '；该招式有多种弹道参数，这里取第一段' : ''}。段数不在游戏主数据中，需实测填写。`
+    note: `游戏数据：${move.nameS}${part.level ? ` Lv.${part.level}` : ''}，攻击修正 +${part.statPercent ?? 0}%，每段系数 ${part.coef}${cap ? `，招式自带伤害上限 +${cap.toLocaleString('zh-CN')}（已计入上限）` : ''}${move.nonStackable ? '，不可叠加魔法（重魔法）' : ''}${variants > 1 ? '；该招式有多种弹道参数，这里取第一段' : ''}。段数不在游戏主数据中，需实测填写。`
   };
 }

@@ -409,6 +409,13 @@ function applyBoss() {
   bossRaces=p?.races||[];syncBossRaces();
   labels();
 }
+// The move's own damage cap (game BulletLvInfoMst 82600, e.g. 豪雷积雨云 +150,000) unless a character rule already counts it.
+function moveCap(){
+ const g=workflow?.gameMove?.();if(!g?.extraCap)return 0;
+ if(imported)return imported.moveCapCounted?0:g.extraCap;
+ const base=workflow?.planningBase?.();if(!base)return g.extraCap;
+ try{return buildDamageImport(retargetReport(base,workflow.selection())).moveCapCounted?0:g.extraCap;}catch{return g.extraCap;}
+}
 function update() {
   const derivedElement=unified?.derivedAttackElement();
   if(derivedElement){$('element').value=derivedElement;workflow?.setDerivedAttackElement(derivedElement);}
@@ -417,8 +424,8 @@ function update() {
   if(captureApplication&&captureApplication.key!==captureKey())clearSettlementCapture('面板、招式或战斗条件已改变，请重新采用相应的结算样本。');
   if(imported) {
     const magicCap=magicBuffCap(activeMagicBuffs(),imported.skillType,imported.reference);
-    const cap=$('baseCap').valueAsNumber+imported.capAdded+magicCap;
-    $('capImportNote').textContent=`已确认固定上限 +${fmt(imported.capAdded)}${magicCap?`；所选魔法增益 +${fmt(magicCap)}`:''}${imported.criticalCapAdded?`；仅暴击命中时另加 +${fmt(imported.criticalCapAdded)}`:''}。`;
+    const own=moveCap(),cap=$('baseCap').valueAsNumber+imported.capAdded+magicCap+own;
+    $('capImportNote').textContent=`已确认固定上限 +${fmt(imported.capAdded)}${own?`；招式自带上限 +${fmt(own)}（游戏数据）`:''}${magicCap?`；所选魔法增益 +${fmt(magicCap)}`:''}${imported.criticalCapAdded?`；仅暴击命中时另加 +${fmt(imported.criticalCapAdded)}`:''}。`;
     const fromReader=$('critBasis').value==='reader',observed=observedCritical(readUnit).value;
     $('baseCritRate').readOnly=fromReader;
     $('baseCritRate').required=!criticalDisabled();
@@ -595,8 +602,9 @@ $('gameMove').addEventListener('change',()=>{
  if(g.type!=='mixed')$('type').value=g.type;
  if(g.skillType)$('skillType').value=g.skillType;
  if(g.element&&[...$('element').options].some(o=>o.value===g.element))$('element').value=g.element;
+ if(!imported)$('cap').value=9999+(g.extraCap||0);
  $('preset').value='custom';$('skillDetails').open=true;
- $('gameMoveNote').textContent=g.note;$('gameMoveNote').hidden=false;
+ $('gameMoveNote').textContent=g.note+(g.extraCap?`已把每段上限设为 9,999 + ${g.extraCap.toLocaleString('zh-CN')}。`:'');$('gameMoveNote').hidden=false;
 });
 initGamePicker();
 $('calculator').addEventListener('change',event=>{
@@ -730,7 +738,7 @@ bonusStoreReady=true;
 unified=mountUnifiedCalculator({
  beforeOpen:()=>{showConfirmedEffects(false,false);if(!embedded)return true;openFullPage();return false;},
  getContext:()=>({characterId,baseReport:workflow?.planningBase()||latestReport,selection:workflow?.selection()||{attack:$('skillType').value==='magic'?'magic':$('skillType').value==='skill'?'s1':$('skillType').value,type:$('type').value,element:$('element').value,statReference:referenceMode(),criticalEnabled:$('criticalEnabled').checked,specialAttack:$('specialAttack').checked,fullHp:$('fullHp').checked,lowHp:$('lowHp').checked,...Object.fromEntries(STAT_CONDITION_FIELDS.map(f=>[f,$(f).checked])),break:$('break').checked,boss:$('boss').checked,weakness:$('weakness').checked,dualWield:$('dualWield').checked},
-  baseCap:$('baseCap').valueAsNumber,baseCritRate:$('critBasis').value==='reader'?Number(manualCriticalBase)||0:$('baseCritRate').valueAsNumber||0,
+  baseCap:$('baseCap').valueAsNumber+moveCap(),baseCritRate:$('critBasis').value==='reader'?Number(manualCriticalBase)||0:$('baseCritRate').valueAsNumber||0,
   selectedBuffs:activeMagicBuffs(),runtimeAnchor:autoLayer?.active||[],baselineImport:imported,manualEffects:[],arkStats:arkValues(),disabledCommonIds:[...disabledCommonIds],
   attackOverride:attackBasisTouched&&$('attackBasis').value!=='auto'?Object.fromEntries(['attackBasis','attack','attackBase','runtimeStatPercent','settledAttack'].map(key=>[key,read()[key]])):null,
   manualDefenseRatio:defenseRatioTouched||imported&&$('defenseRatio').valueAsNumber!==imported.defenseRatio?$('defenseRatio').valueAsNumber:null,

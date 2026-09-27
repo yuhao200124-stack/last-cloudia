@@ -14,6 +14,7 @@ const calculatorHeadings=JSON.parse(fs.readFileSync(new URL('../docs/calculator-
 const scenarioSummary=JSON.parse(fs.readFileSync(new URL('../docs/scenario-summary-preservation-2026-09-26.json',import.meta.url)));
 const characterTemplate=JSON.parse(fs.readFileSync(new URL('../docs/character-template-preservation-2026-09-26.json',import.meta.url)));
 const mayly=JSON.parse(fs.readFileSync(new URL('../docs/mayly-preservation-2026-09-26.json',import.meta.url)));
+const moveCapLayer=JSON.parse(fs.readFileSync(new URL('../docs/move-cap-preservation-2026-09-27.json',import.meta.url)));
 const gameData=JSON.parse(fs.readFileSync(new URL('../docs/game-data-preservation-2026-09-27.json',import.meta.url)));
 const heavyMagic=JSON.parse(fs.readFileSync(new URL('../docs/heavy-magic-preservation-2026-09-27.json',import.meta.url)));
 const switchPlan=JSON.parse(fs.readFileSync(new URL('../docs/switch-plan-preservation-2026-09-27.json',import.meta.url)));
@@ -28,6 +29,11 @@ const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const capLayer=moveCapLayer.files[path];
+ if(capLayer){
+  if(hash(text)!==capLayer.afterHash||hash(capLayer.beforeText)!==capLayer.beforeHash)throw Error(`Move-cap preservation drift: ${path}`);
+  text=capLayer.beforeText;
+ }
  const dataLayer=gameData.files[path];
  if(dataLayer){
   if(hash(text)!==dataLayer.afterHash||hash(dataLayer.beforeText)!==dataLayer.beforeHash)throw Error(`Game-data preservation drift: ${path}`);

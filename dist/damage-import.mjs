@@ -37,7 +37,7 @@ export function buildDamageImport(report) {
         else imported.blockers.push(`${row.sourceName}：特攻威力修正未确认。`);
         imported.reference.push(entry);
       } else if(e.type==='cap') {
-        if(number && e.unit==='') {if(criticalOnly)imported.criticalCapAdded+=e.value;else imported.capAdded+=e.value;}
+        if(number && e.unit==='') {if(criticalOnly)imported.criticalCapAdded+=e.value;else {imported.capAdded+=e.value;if(row.group==='specials')imported.moveCapCounted=true;}}
         else imported.blockers.push(`${row.sourceName}：上限修正${e.value}${e.unit}尚未确认计算顺序。`);
         imported.reference.push(entry);
       } else if(e.type==='critRate' && number && e.unit==='%') {
