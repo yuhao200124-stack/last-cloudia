@@ -28,6 +28,27 @@ const growthChoice = { level: null, awake: null, accountBlessings: true };
 const LOADOUT_KEY = 'lc-engine-loadout-report';
 let loadoutReport = null, switches = null;
 try { const saved = localStorage.getItem(LOADOUT_KEY); if (saved) loadoutReport = JSON.parse(saved); } catch {}
+// Loadout builder (配装模式): baseline = the character's own passives (个性 / 自带 / 超越) + account blessings, with or
+// without the exclusive gear, everything upgradable at its maximum; the user then adds common passives one by one
+// and sees what each one adds to the current build. Per character, kept in the browser.
+const BUILD_KEY = dress => `lc-engine-build:${dress}`;
+const defaultBuild = () => ({ on: false, exclusive: true, own: { personality: true, ownPassives: true, transcend: true, blessings: true }, selected: [] });
+let build = defaultBuild(), buildDress = null, passiveIndex = null, buildCtx = null, buildGen = 0;
+const buildGains = new Map(); // passive id → { gain, perCall } relative to the current build (removed) or candidate (added)
+let buildCurrent = null, buildBaseline = null, buildQuery = '', lastBuildKey = '', buildOwnPaid = [];
+function loadBuildFor(dress) {
+  if (buildDress === dress) return;
+  buildDress = dress; buildGains.clear(); buildCurrent = buildBaseline = null;
+  try { const saved = JSON.parse(localStorage.getItem(BUILD_KEY(dress)) || 'null'); build = saved ? { ...defaultBuild(), ...saved, own: { ...defaultBuild().own, ...(saved.own || {}) } } : defaultBuild(); } catch { build = defaultBuild(); }
+  syncBuildControls();
+}
+function saveBuild() { try { if (buildDress) localStorage.setItem(BUILD_KEY(buildDress), JSON.stringify(build)); } catch {} }
+async function ensurePassiveIndex() {
+  if (!passiveIndex) { const t = await fetch(new URL('./game-data/engine/passive-index.json', import.meta.url)).then(r => r.json()); passiveIndex = t.rows.map(r => ({ id: r[0], name: r[1], nameS: r[2], cost: r[3], order: r[4] })); }
+  return passiveIndex;
+}
+const passiveLabel = id => { const row = passiveIndex?.find(r => r.id === id); const m = battle?.master.passive.get(id); const name = row?.nameS || m?.NAME || String(id); const trad = row?.name && row.name !== row.nameS ? ` <small>${esc(row.name)}</small>` : ''; return `${esc(name)}${trad}`; };
+const passiveCost = id => passiveIndex?.find(r => r.id === id)?.cost ?? battle?.master.passive.get(id)?.COST ?? null;
 function keepLoadout(report) {
   // keep only what the engine uses so the report fits in storage
   const slim = { tool: report.tool, version: report.version, capturedAt: report.capturedAt || null, units: (report.units || []).map(u => ({ unitDressId: u.unitDressId, lv: u.lv, limitbreakLv: u.limitbreakLv, awakeLv: u.awakeLv, abilityPieceInfo: u.abilityPieceInfo })), equipList: (report.equipList || []).map(e => ({ unitDressId: e.unitDressId, passiveSkillInfo: e.passiveSkillInfo, magicInfo: e.magicInfo, equipInfo: e.equipInfo, equipLvInfo: e.equipLvInfo })) };
@@ -48,7 +69,7 @@ function websitePanel() {
   return { str: Number.isFinite(p.attack) ? p.attack : latest?.referenceMode === 'str' ? base : null, int: Number.isFinite(p.intelligence) ? p.intelligence : latest?.referenceMode === 'int' ? base : null };
 }
 
-const STYLE = `#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
+const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-cands{display:flex;flex-wrap:wrap;gap:6px}.engine-build-cand{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid #3a526f;border-radius:6px;background:#1c2f45}.engine-build-cand button{min-height:26px;padding:2px 8px;font-size:.8rem}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
 // ---- the main result card: driven by the sandbox; the old rules move under 网页旧规则（对照） ----
 // The hit count is the calculator's own 基础命中段数 field (the user's tested count, saved per move by the
 // workflow); the card edits that same field.
@@ -127,6 +148,15 @@ function mount() {
     <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
     <p class="help" id="engineLoadoutNote"></p>
     <p class="help" id="enginePanelNote">未导入读取报告时，局外面板直接按游戏数据计算：等级成长 + 觉醒 + 全开能力盘 + 专属武器／防具满强化，再过一遍状态计算被动（与游戏面板一致）；手填只用于覆盖。导入报告后自动改用报告里的入场面板与实际配置。</p>
+    <details id="engineBuild"><summary>配装模式：自带被动基线 → 逐个加被动看收益</summary>
+      <p class="help">基线只装角色不花 SC 的自带被动（个性、固有被动、超越）＋本账号加护，等级／觉醒／能力盘／强化全按最大，专武可开关。启用后主结果卡按这里的配装结算；每加一个被动（本角色能力盘上要花 SC 的，或任意通用被动），就重新结算并给出它对当前配装的收益（去掉它伤害会少多少）。</p>
+      <div class="inline-options"><label><input id="engineBuildOn" type="checkbox">启用配装模式</label><label><input id="engineBuildExclusive" type="checkbox" checked>有专武（专属武器＋防具）</label><label><input id="engineBuildOwnPersonality" type="checkbox" checked>个性</label><label><input id="engineBuildOwnPassives" type="checkbox" checked>固有免费被动</label><label><input id="engineBuildOwnTranscend" type="checkbox" checked>超越</label><label><input id="engineBuildOwnBlessings" type="checkbox" checked>加护</label></div>
+      <div class="inline-options"><button type="button" id="engineBuildFromReport" class="secondary">从配装报告载入已装被动</button><button type="button" id="engineBuildRecalc" class="secondary">重算全部收益</button><button type="button" id="engineBuildClear" class="secondary">清空所选</button></div>
+      <p class="help" id="engineBuildSummary">未启用。</p>
+      <div class="entry-table-wrap"><table class="entry-table engine-build-table"><thead><tr><th>已选被动</th><th>SC</th><th>对当前配装的收益</th><th></th></tr></thead><tbody id="engineBuildRows"><tr><td colspan="4" class="help">还没有加被动。</td></tr></tbody></table></div>
+      <div class="fields two engine-fields"><label>添加被动（名称，简体或繁体）<input id="engineBuildSearch" type="search" placeholder="例如 光魔法 / 月光 / 贯导"></label></div>
+      <div id="engineBuildCandidates" class="help"></div>
+    </details>
     <details id="engineTarget"><summary>目标：从游戏怪物表选择</summary><p class="help">直接用游戏 MonsterMst 的数值（HP、防御、魔抗、种族、属性抗性、Boss 自带被动），与读取报告里的 Boss 完全一致。不选时按上方计算器的目标栏位或读取报告的 Boss。</p>
       <div class="fields two engine-fields"><label>Boss 名称<input id="engineMonsterName" list="engineMonsterNames" placeholder="输入名称筛选"><datalist id="engineMonsterNames"></datalist></label><label>版本（等级 / HP / 防御 / 魔抗）<select id="engineMonsterVariant"><option value="">先输入名称</option></select></label></div>
       <p class="help" id="engineMonsterNote">未选择怪物表目标。</p><button type="button" id="engineMonsterClear" class="secondary">改回计算器目标</button></details>
@@ -156,6 +186,109 @@ function mount() {
   $('engineLevel').addEventListener('change', e => { growthChoice.level = e.target.value === '' ? null : Number(e.target.value); run(); });
   $('engineAwake').addEventListener('change', e => { growthChoice.awake = e.target.value === '' ? null : Number(e.target.value); run(); });
   $('engineResult').addEventListener('change', e => { const key = e.target.dataset.assume; if (!key) return; if (e.target.checked) assumed.add(key); else assumed.delete(key); run(); });
+  // loadout builder controls
+  $('engineBuildOn').addEventListener('change', e => { build.on = e.target.checked; saveBuild(); buildGains.clear(); if (build.on) ensurePassiveIndex().then(renderCandidates); run(); });
+  $('engineBuildExclusive').addEventListener('change', e => { build.exclusive = e.target.checked; saveBuild(); buildGains.clear(); run(); });
+  for (const [id, key] of [['engineBuildOwnPersonality', 'personality'], ['engineBuildOwnPassives', 'ownPassives'], ['engineBuildOwnTranscend', 'transcend'], ['engineBuildOwnBlessings', 'blessings']]) $(id).addEventListener('change', e => { build.own[key] = e.target.checked; saveBuild(); buildGains.clear(); run(); });
+  $('engineBuildClear').addEventListener('click', () => { build.selected = []; saveBuild(); buildGains.clear(); run(); });
+  $('engineBuildRecalc').addEventListener('click', () => { buildGains.clear(); if (buildCtx) computeGains(buildCtx); });
+  $('engineBuildFromReport').addEventListener('click', async () => {
+    if (!loadoutReport || !buildDress) { $('engineBuildSummary').textContent = '先导入配装报告（上方文件框）。'; return; }
+    const M = await ensureEngine(buildDress);
+    const lo = M.unitLoadout(loadoutReport, battle.master, await ensureSwitches(), buildDress);
+    if (!lo) { $('engineBuildSummary').textContent = '配装报告里没有这个角色。'; return; }
+    const c = await gameCharacter(buildDress); const own = new Set(ownPassiveIds(c, true));
+    build.selected = lo.passives.filter(id => !own.has(id)); build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); run();
+  });
+  $('engineBuildSearch').addEventListener('input', e => { buildQuery = e.target.value.trim(); ensurePassiveIndex().then(renderCandidates); });
+  $('engineBuildCandidates').addEventListener('click', async e => {
+    const add = e.target.closest('[data-build-add]'), probe = e.target.closest('[data-build-probe]');
+    if (add) { const id = Number(add.dataset.buildAdd); if (!build.selected.includes(id)) build.selected.push(id); build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); run(); }
+    else if (probe) { const id = Number(probe.dataset.buildProbe); probe.disabled = true; probe.textContent = '…'; const r = await probeCandidate(id); probe.disabled = false; probe.textContent = r == null ? '试算' : `${r >= 0 ? '+' : ''}${(r * 100).toFixed(1)}%`; }
+  });
+  $('engineBuildRows').addEventListener('click', e => { const rm = e.target.closest('[data-build-remove]'); if (!rm) return; build.selected = build.selected.filter(id => id !== Number(rm.dataset.buildRemove)); saveBuild(); buildGains.clear(); run(); });
+}
+function syncBuildControls() {
+  if (!$('engineBuildOn')) return;
+  $('engineBuildOn').checked = build.on; $('engineBuildExclusive').checked = build.exclusive;
+  $('engineBuildOwnPersonality').checked = build.own.personality; $('engineBuildOwnPassives').checked = build.own.ownPassives; $('engineBuildOwnTranscend').checked = build.own.transcend; $('engineBuildOwnBlessings').checked = build.own.blessings;
+  if (build.on) $('engineBuild').open = true;
+}
+// The character's own passives (game-data/c/<dress>.json) split by SC: COST 99 marks the free ones (unique
+// passives such as 赤裸之力II / 救世的聖劍, 【超越】, 迷宮踏破) that are always on; the rest cost SC like any common
+// passive and are offered as candidates. `all` ignores the group toggles.
+const FREE_COST = 99;
+const isFreePassive = id => { const c = battle?.master.passive.get(id)?.COST; return c == null || c >= FREE_COST; };
+function ownPassiveIds(c, all = false) {
+  if (!c) return [];
+  const g = all ? { personality: true, ownPassives: true, transcend: true, blessings: true } : build.own;
+  return [...(g.personality ? (c.personality || []).map(p => p.passive) : []), ...(g.ownPassives ? (c.ownPassives || []).map(p => p.passive).filter(isFreePassive) : []), ...(g.transcend ? (c.transcend || []).map(p => p.passive) : []), ...(g.blessings ? (c.blessings || []) : [])];
+}
+const ownPaidIds = c => (c?.ownPassives || []).map(p => p.passive).filter(id => !isFreePassive(id));
+// Expected damage per call of the move (the main card's metric) from one scenario run.
+function metricOf(out) {
+  const all = out.hits.filter(h => !h.cancelled && h.normal), live = all.filter(h => h.bulletId === all[0]?.bulletId);
+  const critRate = Math.min(100, Math.max(0, out.stats.crt.real || 0)) / 100;
+  const perCall = live.reduce((sum, h) => sum + h.normal.mean * (1 - critRate) + (h.critical ? h.critical.mean : h.normal.mean) * critRate, 0);
+  return { perCall, cap: live[0]?.cap ?? null, errors: out.errors.length };
+}
+// One evaluation of a passive set with the current move / target / state (single random 0.95: relative gains only).
+function evalBuild(ctx, passiveIds) {
+  const M = engineModules;
+  battle.reset();
+  const spec = { ...ctx.attackerSpec, passives: passiveIds.map(id => (typeof id === 'object' ? id : { id })) };
+  const a = M.addAttacker(battle, spec), t = M.addTarget(battle, ctx.targetSpec);
+  return metricOf(M.runScenario({ battle, attacker: a, target: t, skill: { id: ctx.move.id }, state: ctx.state, assume: { probability: probabilityMode, instances: [...ctx.assumeSet] }, randoms: [0.95] }));
+}
+const yieldUi = () => new Promise(r => setTimeout(r, 0));
+// Baseline (own only) and the marginal of every selected passive, computed one run at a time so the page stays live;
+// a new main run cancels the loop and reschedules it.
+async function computeGains(ctx) {
+  const gen = ++buildGen;
+  const rows = $('engineBuildRows'); if (!rows) return;
+  try {
+    if (!buildCurrent) { buildCurrent = evalBuild(ctx, ctx.buildPassives); renderBuild(ctx); await yieldUi(); if (gen !== buildGen) return; }
+    if (!buildBaseline) { buildBaseline = evalBuild(ctx, ctx.buildOwn); renderBuild(ctx); await yieldUi(); if (gen !== buildGen) return; }
+    for (const id of build.selected) {
+      if (buildGains.has(id)) continue;
+      const without = evalBuild(ctx, ctx.buildPassives.filter(p => (p.id ?? p) !== id));
+      buildGains.set(id, { removed: true, perCall: without.perCall, gain: without.perCall > 0 ? buildCurrent.perCall / without.perCall - 1 : null });
+      renderBuild(ctx); await yieldUi(); if (gen !== buildGen || running) return;
+    }
+  } catch (err) { console.error(err); $('engineBuildSummary').textContent = `收益计算失败：${err.message}`; }
+}
+async function probeCandidate(id) {
+  if (!buildCtx || !buildCurrent) return null;
+  await engineModules.loadPassives(battle.master, [id]);
+  if (!battle.master.passive.has(id)) return null;
+  const withIt = evalBuild(buildCtx, [...buildCtx.buildPassives, { id }]);
+  buildGains.set(id, { removed: false, perCall: withIt.perCall, gain: buildCurrent.perCall > 0 ? withIt.perCall / buildCurrent.perCall - 1 : null });
+  return buildGains.get(id).gain;
+}
+const pct = g => g == null ? '—' : `${g >= 0 ? '+' : ''}${(g * 100).toFixed(1)}%`;
+function renderBuild(ctx) {
+  const rows = $('engineBuildRows'), summary = $('engineBuildSummary'); if (!rows) return;
+  if (!build.on) { summary.textContent = '未启用。启用后基线按自带被动结算，加的每个被动都单独给出收益。'; rows.innerHTML = '<tr><td colspan="4" class="help">还没有加被动。</td></tr>'; return; }
+  const sc = build.selected.reduce((s, id) => { const c = passiveCost(id); return s + (c && c < 99 ? c : 0); }, 0);
+  const hits = currentHits().hits;
+  const cur = buildCurrent ? `当前配装每次 <b>${fmt(buildCurrent.perCall)}</b>（${hits} 段 ≈ ${fmt(buildCurrent.perCall * hits)}）` : '当前配装：结算中…';
+  const base = buildBaseline ? ` · 自带基线每次 ${fmt(buildBaseline.perCall)}${buildCurrent && buildBaseline.perCall > 0 ? `（当前比基线 ${pct(buildCurrent.perCall / buildBaseline.perCall - 1)}）` : ''}` : '';
+  summary.innerHTML = `${cur}${base} · 已选 ${build.selected.length} 个被动 · SC 合计 ${sc}${build.exclusive ? ' · 有专武' : ' · 无专武'}${ctx?.buildNote ? ` · ${esc(ctx.buildNote)}` : ''}<br><small>收益按随机 0.95 单点比较；上限附近的被动收益会随段数上限变化。</small>`;
+  rows.innerHTML = build.selected.length ? build.selected.map(id => { const g = buildGains.get(id); const missing = !battle?.master.passive.has(id); return `<tr><td>${passiveLabel(id)}${missing ? ' <small>（主数据缺失）</small>' : ''}</td><td>${passiveCost(id) ?? '—'}</td><td>${g ? (g.removed ? `<b>${pct(g.gain)}</b> <small>去掉它每次 ${fmt(g.perCall)}</small>` : pct(g.gain)) : '<small>计算中…</small>'}</td><td><button type="button" class="secondary" data-build-remove="${id}">移除</button></td></tr>`; }).join('') : '<tr><td colspan="4" class="help">还没有加被动：在下面搜索并点「加入」。</td></tr>';
+}
+function candidateChip(id, nameS, name, cost) {
+  const g = buildGains.get(id);
+  return `<span class="engine-build-cand"><b>${esc(nameS)}</b>${name && name !== nameS ? ` <small>${esc(name)}</small>` : ''} <small>SC ${cost == null ? '—' : cost >= FREE_COST ? '免' : cost}</small> <button type="button" class="secondary" data-build-probe="${id}" title="加进当前配装的收益">${g && !g.removed ? pct(g.gain) : '试算'}</button><button type="button" class="primary" data-build-add="${id}">加入</button></span>`;
+}
+function renderCandidates() {
+  const box = $('engineBuildCandidates'); if (!box || !passiveIndex) return;
+  const q = buildQuery.toLowerCase(), taken = new Set(build.selected);
+  const byId = new Map(passiveIndex.map(r => [r.id, r]));
+  const own = buildOwnPaid.filter(id => !taken.has(id)).map(id => { const r = byId.get(id), m = battle?.master.passive.get(id); return candidateChip(id, r?.nameS || m?.NAME || String(id), r?.name, r?.cost ?? m?.COST); });
+  const ownBlock = own.length ? `<p class="help">本角色能力盘上要花 SC 的被动：</p><div class="engine-build-cands">${own.join('')}</div>` : '';
+  if (!q) { box.innerHTML = `${ownBlock}<p class="help">或输入名称筛选任意通用被动（例如 光魔法、暴击、上限、月光）。</p>`; return; }
+  const list = passiveIndex.filter(r => !taken.has(r.id) && (r.nameS.toLowerCase().includes(q) || r.name.toLowerCase().includes(q))).sort((a, b) => a.order - b.order || a.id - b.id).slice(0, 40);
+  box.innerHTML = `${ownBlock}${list.length ? `<p class="help">搜索结果：</p><div class="engine-build-cands">${list.map(r => candidateChip(r.id, r.nameS, r.name, r.cost)).join('')}</div>` : '<p class="help">没有匹配的被动。</p>'}`;
 }
 
 let siteIndex = null, characterCache = new Map();
@@ -297,6 +430,23 @@ async function run(force = false) {
         const passives = [...ids.map(id => ({ id })), ...blessings.filter(b => !ids.includes(b.id))];
         attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, level: growthChoice.level, awake: growthChoice.awake, stats: override, passives, personality: c?.personality || [], equips, statsSource: `游戏数据计算（${loadoutReport ? '配装报告里没有这个角色；' : ''}${equips.length ? equips.map(e => battle.master.itemEquip.get(e.id)?.NAME).join('、') + ' 满强化' : '无专属装备'}；被动按全部自带技能${growthChoice.accountBlessings ? '＋本账号加护' : ''}${Object.keys(override).length ? '；' + Object.keys(override).map(k => ({ str: '攻击力', int: '法强' }[k]) + '按手填').join('、') : ''}）` };
       }
+      // 配装模式 replaces both: own passives (by group) + the picked common passives, exclusive gear on / off
+      loadBuildFor(dress);
+      if (build.on) {
+        await ensurePassiveIndex();
+        await M.loadPassives(battle.master, [...ownPassiveIds(c, true), ...build.selected]);
+        const own = ownPassiveIds(c), ownSet = new Set(own);
+        const picked = build.selected.filter(id => !ownSet.has(id));
+        buildOwnPaid = ownPaidIds(c);
+        const equips = build.exclusive ? M.exclusiveEquipment(battle.master, dress) : [];
+        const bless = build.own.blessings ? blessings.filter(b => !ownSet.has(b.id)) : [];
+        const buildOwn = [...own.map(id => ({ id })), ...bless];
+        const buildPassives = [...buildOwn, ...picked.map(id => ({ id }))];
+        const crest = fromLoadout?.crest || null;
+        attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, level: growthChoice.level, awake: growthChoice.awake, stats: override, passives: buildPassives, personality: build.own.personality ? c?.personality || [] : [], equips, crest,
+          statsSource: `配装模式（自带免费被动 ${own.length} 个${bless.length ? '＋加护' : ''}＋所选 ${picked.length} 个被动 · ${equips.length ? '有专武' : '无专武'}${crest ? ' · 徽章按配装报告' : ''}；全部按最大）` };
+        attackerSpec.buildOwn = buildOwn; attackerSpec.buildPassives = buildPassives; attackerSpec.buildNote = crest ? '徽章按配装报告' : '';
+      } else renderBuild(null);
     }
     const attacker = M.addAttacker(battle, attackerSpec);
     renderPreCasts(attacker, battle.master, move.id);
@@ -315,6 +465,15 @@ async function run(force = false) {
     render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), attacker: attacker2, out, dress });
     renderPrimary(out, { move, dress });
     setState(`已结算 · ${new Date().toLocaleTimeString('zh-CN')}`); setPrimaryState(`游戏脚本 · ${new Date().toLocaleTimeString('zh-CN')}`);
+    if (attackerSpec.buildPassives) {
+      const { buildOwn, buildPassives, buildNote, ...rest } = attackerSpec;
+      buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), buildOwn, buildPassives, buildNote };
+      const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], probabilityMode, buildPassives.map(p => p.id), buildOwn.map(p => p.id), currentHits().hits]);
+      if (key !== lastBuildKey) { buildGains.clear(); buildCurrent = buildBaseline = null; }
+      lastBuildKey = key; buildCtx.key = key;
+      renderBuild(buildCtx); renderCandidates();
+      computeGains(buildCtx); // continues between main runs; a new run cancels it
+    } else buildCtx = null;
   } catch (err) {
     setState('结算失败'); setPrimaryState('结算失败'); $('engineResult').innerHTML = `<p class="help">${esc(err.message)}</p>`; console.error(err);
   } finally {

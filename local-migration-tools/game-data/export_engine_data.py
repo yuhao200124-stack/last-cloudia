@@ -151,6 +151,18 @@ def main(src, out):
         size2 = dump(os.path.join(eng, 'monster-passives.json'), {'MonsterPassiveSkillMst': table('MonsterPassiveSkillMst', mps)})
         print('monsters.json', size, 'monsters', len(monsters), '| monster-passives.json', size2, 'passives', len(mps))
 
+    # Equippable common passives (SC cost 1–99; 99 marks special free-slot passives such as 迷宮踏破; ids ≥ 5,000,000 are crest traits, 7xxxxxxx the characters' own transcend passives)
+    # for the calculator's loadout builder: id, name (traditional + simplified), SC.
+    try:
+        from cc import t2s
+    except Exception:
+        t2s = lambda x: x
+    pool = [r for r in T['PassiveSkillMst'] if 0 < r['COST'] <= 99 and r['PASSIVE_SKILL_ID'] < 5000000 and 'coming soon' not in str(r['NAME'])]
+    strip = lambda s: __import__('re').sub(r'<[^>]+>', '', str(s or '')).strip()
+    idx = {'cols': ['PASSIVE_SKILL_ID', 'NAME', 'NAME_S', 'COST', 'SORT_ORDER'], 'rows': [[r['PASSIVE_SKILL_ID'], strip(r['NAME']), t2s(strip(r['NAME'])), r['COST'], r['SORT_ORDER']] for r in pool]}
+    size = dump(os.path.join(eng, 'passive-index.json'), idx)
+    print('passive-index.json', size, 'passives', len(pool))
+
     # Every passive, bucketed by id // 10000 (≈1.4 MB in 105 files): a loadout report can carry passives learned
     # from any character, so the panel fetches the missing buckets on demand (engine-data.mjs loadPassives).
     compact_info = lambda info: '@'.join(seg.rstrip(':') for seg in str(info).split('@') if seg.strip(':'))
