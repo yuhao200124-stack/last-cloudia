@@ -1,0 +1,194 @@
+{
+ "note": "Per-hit samples captured by the damage reader v0.41 (2026-09-27, 洛琪希 異度克里昂 vs 吸血鬼阿努彌拉, same battle as roxy-battle-report.json): the game's settlement attack/defence, coefficient ratios, core damage and final value of each call.",
+ "samples": [
+  {
+   "hitIndex": 0,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10033,
+   "value": 163860
+  },
+  {
+   "hitIndex": 0,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10674,
+   "value": 174321
+  },
+  {
+   "hitIndex": 0,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10690,
+   "value": 174584
+  },
+  {
+   "hitIndex": 0,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10423,
+   "value": 170232
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10058,
+   "value": 164258
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10026,
+   "value": 163736
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 9804,
+   "value": 160116
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10281,
+   "value": 167915
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10270,
+   "value": 167721
+  },
+  {
+   "hitIndex": 0,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 9883,
+   "value": 161415
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10178,
+   "value": 166218
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10373,
+   "value": 169404
+  },
+  {
+   "hitIndex": 0,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10088,
+   "value": 164757
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 9917,
+   "value": 161962
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 9664,
+   "value": 157833
+  },
+  {
+   "hitIndex": 0,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10561,
+   "value": 172485
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10574,
+   "value": 172686
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10200,
+   "value": 166577
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10263,
+   "value": 167617
+  },
+  {
+   "hitIndex": 0,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10226,
+   "value": 167005
+  },
+  {
+   "hitIndex": 1,
+   "settlementAtk": 14627,
+   "settlementDef": 2500,
+   "baseRatio": 0.311999977,
+   "finalRatio": 0.877499938,
+   "core": 10346,
+   "value": 168973
+  }
+ ]
+}

@@ -440,7 +440,9 @@ export class Battle {
     let received = 1; for (const e of this.entriesFor(target, K.OP.DMG_POWER, { work: true })) received = f32(received * Math.max(f32(1 + f32((e.params[0] || 0) / 10000)), 0));
     let reduction = 1; for (const e of this.entriesFor(target, magical ? K.OP.REDUCTION_MAG : K.OP.REDUCTION_PHYS, { work: true })) reduction = f32(reduction * f32(1 - (e.params[0] || 0) / 10000));
     const invalid = this.entriesFor(target, K.OP.INVALID_DMG, { work: true }).length > 0;
-    let q = f32(f32(per / 10000) * f32(bullet.dmgRatio / 10000));
+    // coefficient: the single-precision skill ratio times the call's damage ratio as a double
+    // (f32(0.52) × 0.6 → f32 0.311999977, the base_ratio the damage reader captures; other orders land one ulp off)
+    let q = f32(f32(per / 10000) * (bullet.dmgRatio / 10000));
     q = f32(q * elementFactor); q = f32(q * killerFactor); q = f32(q * f32(offense * received)); q = f32(q * reduction);
     const critical = bullet.critical;
     const exponent = attack > 0 ? f32(f32(defense / attack) * (critical ? 6 : 10)) : 0;

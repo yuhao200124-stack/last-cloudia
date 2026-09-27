@@ -100,7 +100,7 @@ test('engine: the damage cap collects every DmgLimitUp control from passives, bu
 });
 
 // ---- the report path the calculator uses: reader battle report → adapter → scenario ----
-import { runScenario, addAttacker, addTarget } from '../dist/engine/scenario.mjs';
+import { runScenario, addAttacker, addTarget, setupBattle } from '../dist/engine/scenario.mjs';
 import { attackerFromReport, targetFromReport, isBattleReport } from '../dist/engine/report-adapter.mjs';
 
 const report = JSON.parse(fs.readFileSync(new URL('./fixtures/roxy-battle-report.json', import.meta.url), 'utf8'));
@@ -155,4 +155,32 @@ test('scenario: HP below the 月光/knowledge thresholds switches those layers o
   const low = await reportScenario(270090, { hpPercent: 30 });
   assert.equal(full.stats.crt.real, 21);
   assert.ok(low.stats.crt.real < full.stats.crt.real, '銳氣 (HP condition) drops at low HP');
+});
+
+// ---- bit-exactness against per-hit values the damage reader captured from the game itself ----
+const samples = JSON.parse(fs.readFileSync(new URL('./fixtures/roxy-damage-samples.json', import.meta.url), 'utf8')).samples;
+
+test('game samples: every captured hit (core → final value) is reproduced exactly by the script chain', async () => {
+  const { master, scripts } = await dataPromise;
+  const battle = new Battle(master, scripts);
+  const attacker = addAttacker(battle, attackerFromReport(report, master));
+  const target = addTarget(battle, targetFromReport(report));
+  setupBattle(battle, attacker, target, { hpPercent: 100 });
+  battle.beginSkill(attacker, target, 270090);
+  const base = battle.snapshot();
+  const run = random => { battle.restore(base); const bullet = battle.createBullet(attacker, target, { skillId: 270090, bulletId: 2700900, level: 9, random }); bullet.singlePass = true; battle.hit(bullet); return bullet.results[0]; };
+  const probe = run(0.95);
+  assert.equal(probe.attack, samples[0].settlementAtk);
+  assert.equal(probe.defense, samples[0].settlementDef);
+  assert.equal(probe.q, Math.fround(samples[0].finalRatio));
+  const bq = Math.fround(probe.base * probe.q);
+  let exact = 0;
+  for (const s of samples) {
+    // pick the random roll that yields the captured core, then compare the final value
+    let found = null;
+    for (let i = 0; i < 60 && !found; i++) { const r = (s.core + 0.5) / bq + (i - 30) * 1e-5; if (r < 0.9 || r > 1.0) continue; const res = run(r); if (res.coreDamage === s.core) found = res; }
+    assert.ok(found, `core ${s.core} reachable`);
+    if (found.damage === s.value) exact++;
+  }
+  assert.equal(exact, samples.length, `${exact}/${samples.length} captured hits bit-exact`);
 });
