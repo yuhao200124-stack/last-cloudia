@@ -118,6 +118,7 @@ export class Battle {
     this.wave = 1;
     this.frame = 0;
     this.stack = []; // current process contexts (innermost last)
+    this._buffChangeDepth = 0; this._buffChangePending = new Set();
     this.trace = [];
     this.unsupported = new Map();
     this.host = new LuaHost({ natives: this.natives(), onUnknownNative: (name, args) => { this.unsupported.set(name, (this.unsupported.get(name) || 0) + 1); this.log('native-missing', name, args); return undefined; }, log: (k, m) => this.log(k, m) });
@@ -242,12 +243,24 @@ export class Battle {
     this.log('buff-add', u.name, buffId, mst.NAME, p);
     // "While this buff is on" (trigger 60) effects apply immediately and last until removal.
     if (buff.trigger === K.TRIG.ON_ADDED_BUFF) this.runInstance(buff, u, u, null, K.TRIG.ON_ADDED_BUFF);
-    this.dispatch(K.TRIG.CHANGE_BUFF, u, u, null);
+    this.notifyBuffChange(u);
     return buff.uid;
+  }
+  // ChangeBuff (54) is delivered once after the current buff change settles, never re-entrantly
+  // (a 54-triggered process may itself add buffs; the game evaluates the trigger per frame).
+  notifyBuffChange(u) {
+    if (this._buffChangeDepth > 0) { this._buffChangePending.add(u.id); return; }
+    this._buffChangeDepth = 1; this._buffChangePending = new Set([u.id]);
+    try {
+      for (let round = 0; round < 4 && this._buffChangePending.size; round++) {
+        const ids = [...this._buffChangePending]; this._buffChangePending = new Set();
+        for (const id of ids) { const unit = this.unit(id); if (unit) this.dispatch(K.TRIG.CHANGE_BUFF, unit, unit, null); }
+      }
+    } finally { this._buffChangeDepth = 0; this._buffChangePending = new Set(); }
   }
   removeBuff(u, uid) {
     const i = u.buffs.findIndex(b => b.uid === uid); if (i < 0) return false;
-    u.buffs.splice(i, 1); this.removeEntriesBySource(uid); return true;
+    u.buffs.splice(i, 1); this.removeEntriesBySource(uid); this.notifyBuffChange(u); return true;
   }
   buffInfo(b) {
     const u = this.unit(b.owner);
@@ -510,11 +523,11 @@ export class Battle {
         if (masterType === K.MASTER.UNIT_DRESS) { const d = B.master.unitDress.get(id); if (!d) return null; if (paramNo === 1) { const ps = parseInts(d.PERSONAL_SKILL); return ps[subId - 1] ?? 0; } return new LuaTable(Object.entries({ unitDressId: d.UNIT_DRESS_ID, name: d.NAME, unitId: d.UNIT_ID, characterType: d.CHARACTER_TYPE, personalSkill: parseInts(d.PERSONAL_SKILL), group: parseInts(d.CHARACTER_INFO) })); }
         B.log('native-partial', 'GetMasterInfo', masterType, id, paramNo, subId); return null;
       },
-      GetBattleInfo(kind) { B.log('native-partial', 'GetBattleInfo', kind); return 0; },
+      GetBattleInfo(kind) { switch (kind) { case 4: return 0; case 5: return B.options.questId ?? 0; case 6: return 0; case 7: return 0; case 10: return B.options.questType ?? 0; case 700: return false; case 900: return [B.options.difficulty ?? 0]; case 1001: return false; default: B.log('native-partial', 'GetBattleInfo', kind); return 0; } },
       GetWaveCount() { return B.wave; },
       NumWaves() { return B.options.waves ?? 1; },
       GetWaveTimer() { return B.frame; },
-      GetDateTime() { return B.options.dateTime || [2026, 1, 1, 12, 0, 0, 1]; },
+      GetDateTime() { return multi(...(B.options.dateTime || [2026, 1, 1, 12, 0, 0, 1])); },
       GetScriptStatus() { return false; },
       IsSucceeded() { return true; },
       GetOperationUnit() { return B.options.operationUnit ?? 1; },
@@ -695,6 +708,7 @@ export class Battle {
           case K.BULLET_PROPERTY.OWNER_UID: return b.owner; case K.BULLET_PROPERTY.TARGET_UID: return b.target;
           case K.BULLET_PROPERTY.ISVALID: case K.BULLET_PROPERTY.ISBULLET: return true;
           case K.BULLET_PROPERTY.DAMAGE_LIMIT: return 9999;
+          case 433: case 434: return 0; // fatal blow incidence / attack ratio
           default: B.log('native-partial', 'BulletGetProperty', prop, args); return null;
         }
       },
@@ -744,7 +758,7 @@ export class Battle {
       UnitSetMissTypeMode() {}, UnitShowTargetMarker() {}, UnitSetOpacity() {}, UnitSetScale() {}, UnitSetExclude() {}, UnitSetProperty2() {},
       UnitChangeBossFlag() {}, UnitChangeBossGaugeOwner() {}, UnitChangeCharacter() {}, UnitPrepareCharacter() {},
       UnitSelectTarget() { return 0; }, UnitFindInCircle() { return []; }, UnitCalcPos() { return multi(0, 0, 0); }, UnitPosVector() { return multi(0, 0, 0); },
-      GetNearestUnit() { return 0; }, GetNearestUnitForFirst() { return 0; }, GetDistanceWall() { return 999; }, InsideArea() { return false; },
+      GetNearestUnit() { return 0; }, GetNearestUnitForFirst() { return 0; }, GetDistanceWall() { return multi(3000, 3000, 3000, 3000); }, InsideArea() { return false; },
       GetTerrain() { return 0; }, GetBgTerrainType() { return 0; }, GetTotalZel() { return 0; }, GetRarityOfStolenItem() { return 0; },
       GetUserInfo() { return null; }, GetUiMsg() { return ''; }, CallQuestFunc() {}, InvokeQuestFunc() {}, BattleControl() {}, CalculateType() { return 0; },
       // The skill timeline being played (set by Battle.beginSkill); property ids from procCondCommon.lua.
@@ -771,6 +785,12 @@ function cloneState(state) {
 
 // Saves/restores the script-side context around nested dispatches (see Battle.saveGlobals).
 const CONTEXT_STACK_LUA = `
+-- fengari integers are 32-bit: 2^31 has no integer representation there, so the bit helpers of
+-- luaCommon.lua are re-expressed with shifts (same results for the 32-bit values the scripts use).
+function bitToBoolean(_val, _bit)
+  if not isNumber(_val) or _bit > 32 then return false end
+  return ((_val >> (_bit - 1)) & 1) == 1
+end
 __sandboxStack = {}
 function __sandboxSaveContext()
   table.insert(__sandboxStack, {this = this, target = target, units = units, myTrigger = myTrigger, procTrigger = procTrigger, ownUnit = ownUnit,
