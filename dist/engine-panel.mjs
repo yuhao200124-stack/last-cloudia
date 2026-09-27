@@ -208,7 +208,7 @@ function render(out, ctx) {
   const conditionals = [...groups.entries()].map(([g, list]) => `<p class="help"><b>${esc(g)}</b>${$(Object.keys(SWITCH_LABELS).find(k => SWITCH_LABELS[k] === g))?.checked ? '（开关已打开，同组默认勾选）' : ''}</p>` + list.map(c => `<label class="engine-conditional"><input type="checkbox" data-assume="${esc(c.key)}" ${assumed.has(c.key) || ctx.autoAssume.has(c.key) ? 'checked' : ''}>${esc(c.passiveName)} · ${esc(c.processName)} <small>${esc(c.triggerLabel)}${c.condition ? ` · ${esc(c.condition)}` : ''}</small></label>`).join('')).join('');
   const prob = out.probabilistic.map(p => `<li>${esc(p.passiveName)} · ${esc(p.processName)} <small>${p.prob}% · ${esc(p.triggerLabel)}</small></li>`).join('');
   const buffs = out.buffs.filter(b => b.remain !== 0).map(b => `<li>${esc(b.name)}${b.from ? ` <small>来自 ${esc(b.from)}</small>` : ''}${b.remain > 0 ? ` <small>${Math.round(b.remain / 60)} 秒</small>` : ''}</li>`).join('');
-  const issues = [...out.errors.map(e => `脚本 ${esc(e.name)} (${e.id})：${esc(e.error)}`), ...out.unsupported.map(n => `未实现的原生函数：${esc(n)}`)];
+  const issues = [...out.errors.map(e => `脚本 ${esc(e.name)} (${e.id})：${esc(e.error)}`), ...out.unsupported.map(n => `未实现的原生函数：${esc(n)}`), ...(out.assumptions || []).map(a => `简化假定：${esc(a)}`)];
   $('engineResult').innerHTML = `
     <p class="help">招式 <b>${esc(ctx.move.name || ctx.move.id)}</b>（${ctx.move.id}）· 攻击方 ${esc(ctx.attackerSpec.name || ctx.attackerSpec.unitDressId)} · 面板来源：${esc(ctx.attackerSpec.statsSource || '读取报告')} · 目标 ${esc(ctx.targetSpec.name)} · HP ${ctx.state.hpPercent}% · MP ${ctx.state.mpPercent}%</p>
     <p class="help">面板→局内：${statLine}</p>${panelLine(ctx)}
@@ -228,7 +228,7 @@ function panelLine(ctx) {
   const parts = ['hp', 'mp', 'str', 'def', 'int', 'mnd'].map(k => `${{ hp: 'HP', mp: 'MP', str: 'STR', def: 'DEF', int: 'INT', mnd: 'MND' }[k]} ${fmt(p.stats[k])}`).join(' · ');
   const gear = u.equips.map(e => `${esc(e.name)}${e.estimated ? '（强化估算）' : ''}`).join('、') || '无装备';
   const compare = [site.str != null ? `攻击力 ${fmt(site.str)}` : '', site.int != null ? `法强 ${fmt(site.int)}` : ''].filter(Boolean).join('、');
-  return `<p class="help">局外面板（游戏数据 Lv${p.level}${p.estimated ? '·成长率估算' : ''} · 觉醒${p.awake} · 属性格 ${p.pieceCount}）：裸属性 ${parts} · CRT ${p.stats.crt}；装备 ${gear}；经状态计算被动后 HP ${fmt(pct('hp'))} · STR ${fmt(pct('str'))} · DEF ${fmt(pct('def'))} · INT ${fmt(pct('int'))} · MND ${fmt(pct('mnd'))} · CRT ${fmt(pct('crt'))}${compare ? `（网站旧规则面板：${compare}）` : ''}</p>`;
+  return `<p class="help">局外面板（游戏数据 Lv${p.level}${p.estimated ? '·成长率估算' : ''} · 觉醒${p.awake} · 能力盘 ${p.pieceCount} 格）：裸属性 ${parts} · CRT ${p.stats.crt}；装备 ${gear}；经状态计算被动后 HP ${fmt(pct('hp'))} · STR ${fmt(pct('str'))} · DEF ${fmt(pct('def'))} · INT ${fmt(pct('int'))} · MND ${fmt(pct('mnd'))} · CRT ${fmt(pct('crt'))}${compare ? `（网站旧规则面板：${compare}）` : ''}</p>`;
 }
 
 document.addEventListener('lc:calculator-update', e => { latest = e.detail || {}; if (latest.battle) report = latest.battle; mount();

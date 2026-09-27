@@ -128,6 +128,8 @@ export class Battle {
     this._buffChangeDepth = 0; this._buffChangePending = new Set();
     this.trace = [];
     this.unsupported = new Map();
+    this.assumptions = new Set(); // simplifications the sandbox made (reported to the user)
+    this.collisions = new Map(); this.nextCollision = 1; this.scores = {};
     this.host = new LuaHost({ natives: this.natives(), onUnknownNative: (name, args) => { this.unsupported.set(name, (this.unsupported.get(name) || 0) + 1); this.log('native-missing', name, args); return undefined; }, log: (k, m) => this.log(k, m) });
     this.host.registerAll(NATIVE_NAMES);
     this.host.setGlobal('procTrigger', 0); this.host.setGlobal('ownUnit', 0);
@@ -136,7 +138,26 @@ export class Battle {
   }
   log(kind, ...rest) { if (this.options.log) this.options.log(kind, ...rest); }
   // Clears every unit and battle state so the loaded VM can run another scenario.
-  reset() { this.units = new Map(); this.nextId = 1; this.nextUid = 1; this.fieldValues = {}; this.wave = 1; this.frame = 0; this.stack = []; this.trace = []; this.timeline = null; }
+  reset() { this.units = new Map(); this.nextId = 1; this.nextUid = 1; this.fieldValues = {}; this.wave = 1; this.frame = 0; this.stack = []; this.trace = []; this.timeline = null; this.assumptions = new Set(); this.collisions = new Map(); this.nextCollision = 1; this.scores = {}; }
+  // BattleControl: battle scores, timers and 領域展開 collisions. The sandbox has no positions, so every
+  // alive unit counts as inside every area (flagged as an assumption).
+  battleControl(code, ...a) {
+    switch (code) {
+      case 100: return this.scores[a[0]] || 0;
+      case 101: this.scores[a[0]] = (this.scores[a[0]] || 0) + (a[1] || 0); return true;
+      case 102: case 103: this.scores[a[0]] = a[1] || 0; return true;
+      case 150: return 0;
+      case 210: return 0; case 211: return 0; case 212: return Math.floor(this.frame / 60); case 213: case 214: return true;
+      case 451: { const id = this.nextCollision++; this.collisions.set(id, { id, owner: a[0], collisionId: a[8], active: true }); this.assumptions.add('领域展开：沙盒没有位置，按所有单位都在领域范围内计算'); return id; }
+      case 452: { const c = this.collisions.get(a[0]); if (c) c.active = false; return true; }
+      case 453: return [...this.collisions.values()].filter(c => c.active && c.owner === a[0]).map(c => c.id);
+      case 454: case 456: return this.collisions.get(a[0])?.active ? this.aliveUnits().map(u => u.id) : [];
+      case 455: return this.collisions.get(a[0])?.owner ?? 0;
+      case 457: return !!this.collisions.get(a[0])?.active;
+      case 620: return false;
+      default: return undefined;
+    }
+  }
   get current() { return this.stack[this.stack.length - 1] || null; }
 
   // ---- units ----
@@ -348,7 +369,7 @@ export class Battle {
   // A native called from a script (e.g. Bullet:Damage → ProcControl2) re-enters Lua for the damage
   // triggers; Field:FrameUpdate then rewrites the script globals (this/target/units/Bullet/...), so the
   // outer script's view is saved on a Lua-side stack before the nested calls and restored afterwards.
-  saveGlobals() { if (this.stack.length > 1) this.host.call('__sandboxSaveContext', [], 0); return this.stack.length > 1; }
+  saveGlobals() { const nested = this.stack.length > 0; if (nested) this.host.call('__sandboxSaveContext', [], 0); return nested; }
   restoreGlobals(saved) { if (saved) this.host.call('__sandboxRestoreContext', [], 0); }
 
   // Fire a trigger for the owner's own instances (passives + buffs), highest PRIORITY first.
@@ -789,7 +810,7 @@ export class Battle {
       UnitSelectTarget() { return 0; }, UnitFindInCircle() { return []; }, UnitCalcPos() { return multi(0, 0, 0); }, UnitPosVector() { return multi(0, 0, 0); },
       GetNearestUnit() { return 0; }, GetNearestUnitForFirst() { return 0; }, GetDistanceWall() { return multi(3000, 3000, 3000, 3000); }, InsideArea() { return false; },
       GetTerrain() { return 0; }, GetBgTerrainType() { return 0; }, GetTotalZel() { return 0; }, GetRarityOfStolenItem() { return 0; },
-      GetUserInfo() { return null; }, GetUiMsg() { return ''; }, CallQuestFunc() {}, InvokeQuestFunc() {}, BattleControl() {}, CalculateType() { return 0; },
+      GetUserInfo() { return null; }, GetUiMsg() { return ''; }, CallQuestFunc() {}, InvokeQuestFunc() {}, BattleControl: (...a) => B.battleControl(...a), CalculateType() { return 0; },
       // The skill timeline being played (set by Battle.beginSkill); property ids from procCondCommon.lua.
       GetTimelineParameter(propId, puid) {
         const tl = B.timeline; if (propId === 100) return Math.random();

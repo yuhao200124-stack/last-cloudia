@@ -167,5 +167,6 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
     fired: fired.map(t => ({ trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '', passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: t.name, localId: t.localId, index: t.index })),
     errors: battle.trace.filter(t => t.error).map(t => ({ name: t.name, id: t.id, error: t.error })),
     unsupported: [...battle.unsupported.keys()],
+    assumptions: [...battle.assumptions],
   };
 }
