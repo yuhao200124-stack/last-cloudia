@@ -90,3 +90,21 @@ test('魯迪烏斯: 豪雷積雨雲 as the first action of a battle is reproduce
   const { exact, checked } = await replay(fixture('rudeus-battle-report.json'), fixture('rudeus-damage-samples.json').samples);
   assert.equal(checked, 4); assert.equal(exact, 4);
 });
+
+// ---- targets from MonsterMst (engine/monsters.json + engine/monster-passives.json, loaded on demand) ----
+import { targetFromMonster } from '../dist/engine/scenario.mjs';
+test('targets: MonsterMst reproduces the reader\'s boss and monster passives load without errors', async () => {
+  const { master, scripts } = await dataPromise;
+  master.merge(await read('engine/monsters.json', false)); master.merge(await read('engine/monster-passives.json', false));
+  const report = fixture('ark-battle-report.json');
+  const fromReport = targetFromReport(report), fromMst = targetFromMonster(master, 320602001);
+  assert.equal(fromMst.name, fromReport.name);
+  assert.deepEqual([fromMst.stats.hp, fromMst.stats.def, fromMst.stats.mnd, fromMst.stats.str, fromMst.stats.int], [fromReport.stats.hp, fromReport.stats.def, fromReport.stats.mnd, fromReport.stats.str, fromReport.stats.int]);
+  assert.deepEqual(fromMst.elemResist, { 1: 0, 2: -25, 3: 0, 4: 0, 5: -25, 6: 50 });
+  assert.deepEqual(fromMst.charTypes, [2006]);
+  const run = spec => { const battle = new Battle(master, scripts, { probability: 'skip' }); const a = addAttacker(battle, attackerFromReport(report, master)), t = addTarget(battle, spec); const out = runScenario({ battle, attacker: a, target: t, skill: { id: 5021305 }, state: { hpPercent: 100 }, assume: { probability: 'skip' }, randoms: [0.95] }); return { hit: out.hits.find(h => !h.cancelled), errors: out.errors, passives: t.instances.length }; };
+  const a = run(fromReport), b = run({ monsterId: 320602001 });
+  assert.deepEqual([b.hit.attack, b.hit.defense, b.hit.normal.min, b.hit.cap], [a.hit.attack, a.hit.defense, a.hit.normal.min, a.hit.cap]);
+  const c = run({ monsterId: 320901401 }); // 神獸帕帕拉納 carries its own passives (瀕死ステアップバフ, ブレイク時基本 …)
+  assert.equal(c.passives > 0, true); assert.deepEqual(c.errors, []); assert.equal(c.hit.defense, 5500);
+});

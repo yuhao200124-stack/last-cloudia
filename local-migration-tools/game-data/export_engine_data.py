@@ -29,7 +29,11 @@ COLS = {
     'UnitDressAwakeMst': ['UNIT_DRESS_ID', 'AWAKE_LV', 'HP', 'MP', 'ATK', 'DEF', 'MATK', 'MDEF'],
     'UnitDressLimitbreakMst': ['UNIT_DRESS_ID', 'LIMITBREAK_LV', 'MAX_LV'],
     'UnitDressAbilityPieceMst': ['UNIT_DRESS_ID', 'PIECE_NO', 'ABILITY_PIECE_TYPE', 'PARAM', 'LIMITBREAK_LV', 'SWITCH_INDEX'],
+    # targets: boss-class monsters (their stats, race, resistances and own passives) for the calculator's target picker
+    'MonsterMst': ['MONSTER_ID', 'NAME', 'LV', 'HP', 'MP', 'ATK', 'DEF', 'MATK', 'MDEF', 'CHARACTER_TYPE', 'CRITICAL_RATE', 'RESIST_ELEM_INFO', 'RESIST_STATUS_INFO', 'BREAK_TIME', 'PASSIVE_SKILL_INFO'],
+    'MonsterPassiveSkillMst': ['MONSTER_PASSIVE_SKILL_ID', 'NAME', 'PROCESS_INFO'],
 }
+MONSTER_MIN_HP = 500000  # below this the rows are stage fodder; the calculator targets bosses
 
 def ints(s):
     return [int(x) for x in str(s or '').split(':') if x.strip().lstrip('-').isdigit()]
@@ -41,7 +45,7 @@ def table(name, rows):
 def main(src, out):
     T = {n: load(os.path.join(src, n + '.bin'))[1] for n in ['ProcessMst', 'ProcessCondMst', 'BuffMst', 'PassiveSkillMst', 'SkillMst', 'BulletMst', 'BulletLvInfoMst', 'UnitDressMst', 'UnitDressAbilityPieceMst', 'UnitDressAwakeMst', 'UnitDressLimitbreakMst', 'ItemEquipMst', 'ArkMst']}
     # growth curves arrive with reader v0.10; older dumps simply leave them out (dist/engine/panel.mjs keeps the verified Lv120 rate)
-    for n in ['GrowthMst', 'ItemEquipParameterGrowthMst']:
+    for n in ['GrowthMst', 'ItemEquipParameterGrowthMst', 'MonsterMst', 'MonsterPassiveSkillMst']:
         path = os.path.join(src, n + '.bin')
         T[n] = load(path)[1] if os.path.exists(path) else None
     ps = {r['PASSIVE_SKILL_ID']: r for r in T['PassiveSkillMst']}
@@ -119,6 +123,26 @@ def main(src, out):
         switch[name] = pairs
     size = dump(os.path.join(eng, 'switch.json'), switch)
     print('switch.json', size)
+
+    # Targets: one row per distinct (name, level, stats, race, resistances, passives) among boss-class monsters,
+    # plus the monster passives they reference (same shape as PassiveSkillMst; separate id space).
+    if T['MonsterMst'] is not None:
+        seen, monsters, mp_ids = set(), [], set()
+        for r in T['MonsterMst']:
+            if r['HP'] < MONSTER_MIN_HP or 'coming soon' in str(r['NAME']): continue
+            key = (r['NAME'], r['LV'], r['HP'], r['ATK'], r['DEF'], r['MATK'], r['MDEF'], r['CHARACTER_TYPE'], r['RESIST_ELEM_INFO'], r['PASSIVE_SKILL_INFO'])
+            if key in seen: continue
+            seen.add(key); monsters.append(r)
+            for part in str(r['PASSIVE_SKILL_INFO']).split('-'):
+                f = part.split(':')
+                if len(f) == 2 and f[1].isdigit(): mp_ids.add(int(f[1]))
+        # PROCESS_INFO padding ('@:::::::::::' empty segments, trailing empty fields) carries no data: parseProcessInfo
+        # skips empty segments and the scripts see missing parameters as 0
+        compact = lambda info: '@'.join(seg.rstrip(':') for seg in str(info).split('@') if seg.strip(':'))
+        mps = [dict(r, PROCESS_INFO=compact(r['PROCESS_INFO'])) for r in (T['MonsterPassiveSkillMst'] or []) if r['MONSTER_PASSIVE_SKILL_ID'] in mp_ids]
+        size = dump(os.path.join(eng, 'monsters.json'), {'MonsterMst': table('MonsterMst', monsters)})
+        size2 = dump(os.path.join(eng, 'monster-passives.json'), {'MonsterPassiveSkillMst': table('MonsterPassiveSkillMst', mps)})
+        print('monsters.json', size, 'monsters', len(monsters), '| monster-passives.json', size2, 'passives', len(mps))
 
     total = 0
     for u in T['UnitDressMst']:

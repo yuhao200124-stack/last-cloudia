@@ -71,10 +71,19 @@ export class Master {
     this.abilityPieces = group('UnitDressAbilityPieceMst', 'UNIT_DRESS_ID');
     this.growth = map('GrowthMst', 'GROWTH_ID');
     this.equipGrowth = map('ItemEquipParameterGrowthMst', 'EQUIP_GROWTH_TYPE');
+    // targets: boss-class monsters and their own passives (a separate id space from PassiveSkillMst)
+    this.monster = map('MonsterMst', 'MONSTER_ID');
+    this.monsterPassive = map('MonsterPassiveSkillMst', 'MONSTER_PASSIVE_SKILL_ID');
     this.bulletLv = new Map();
     const bl = tables.BulletLvInfoMst;
     if (bl) { const bi = bl.cols.indexOf('BULLET_ID'), li = bl.cols.indexOf('LV'); for (const r of bl.rows) { const o = {}; bl.cols.forEach((c, i) => o[c] = r[i]); if (!this.bulletLv.has(r[bi])) this.bulletLv.set(r[bi], new Map()); this.bulletLv.get(r[bi]).set(r[li], o); } }
     this._segments = new Map();
+  }
+  // Adds rows of further bundles (e.g. engine/monsters.json loaded on demand) to the existing maps.
+  merge(tables) {
+    const add = (name, key, target) => { const t = tables[name]; if (!t) return; const ki = t.cols.indexOf(key); for (const r of t.rows) { const o = {}; t.cols.forEach((c, i) => o[c] = r[i]); if (!target.has(r[ki])) target.set(r[ki], o); } };
+    add('MonsterMst', 'MONSTER_ID', this.monster); add('MonsterPassiveSkillMst', 'MONSTER_PASSIVE_SKILL_ID', this.monsterPassive);
+    add('PassiveSkillMst', 'PASSIVE_SKILL_ID', this.passive); add('SkillMst', 'SKILL_ID', this.skill); add('BulletMst', 'BULLET_ID', this.bullet);
   }
   processSegments(processInfo) {
     if (!this._segments.has(processInfo)) this._segments.set(processInfo, parseProcessInfo(processInfo));
@@ -195,8 +204,8 @@ export class Battle {
   // A passive (PassiveSkillMst) becomes one process instance per PROCESS_INFO segment.
   // `paramOverrides` ({segmentIndex: [params...]}) replaces master parameters with runtime ones, e.g. the
   // account's blessing levels (the reader reports the values the game actually loaded).
-  addPassive(u, passiveId, affiliation = K.AFF.AUTOSKILL, localId = passiveId, level = 1, paramOverrides = null) {
-    const row = this.master.passive.get(passiveId);
+  addPassive(u, passiveId, affiliation = K.AFF.AUTOSKILL, localId = passiveId, level = 1, paramOverrides = null, table = 'passive') {
+    const row = (table === 'monster' ? this.master.monsterPassive : this.master.passive).get(passiveId);
     if (!row) { this.log('missing-passive', passiveId); return []; }
     u.passiveIds.push(passiveId);
     const made = [];
