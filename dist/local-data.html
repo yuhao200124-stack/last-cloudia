@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>本地迁移与备份 · 最后的克劳迪娅</title>
+<link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./local-data.css"></head>
+<body><header><div><p>最后的克劳迪娅 · 原站第 160 版</p><h1>本地迁移与备份</h1></div><a class="button primary" href="./index.html">打开网站</a></header>
+<main>
+<p class="intro">首次使用：先从原网站导出存档，再在这里恢复。原网站和原浏览器数据会继续保留。</p>
+<section><h2><span>01</span> 从原网站导出</h2>
+<ol><li>用平时保存配装的浏览器打开<a href="https://last-cloudia-skill-table.yuhao200124.chatgpt.site" target="_blank" rel="noreferrer">原网站</a>，先保存正在编辑的方案和核对结果，保留原始战斗报告文件。</li>
+<li>点击下方“复制导出脚本”。在原网站按 F12 打开“控制台／Console”，粘贴这份脚本并运行。脚本只读取本站存档并下载 JSON，不上传数据、不删除原记录。</li>
+<li>保留下载的 <code>LastCloudia-backup-….json</code>。如有其他标签页的临时草稿，请在对应标签页分别导出；迁移期间暂停编辑。</li></ol>
+<div class="actions"><button id="copyExporter">复制导出脚本</button><a href="./export-old-site.js" download>下载导出脚本</a></div>
+<p id="copyStatus" role="status"></p><details id="scriptFallback" hidden><summary>手动复制脚本</summary><textarea id="exporterText" readonly aria-label="原网站存档导出脚本"></textarea></details>
+</section>
+<section><h2><span>02</span> 导入并核对</h2>
+<p>导入前请关闭其他 <strong>localhost 本地版</strong> 标签页。备份会保存在本地包的 <code>backups</code> 文件夹；不会覆盖历史备份。</p>
+<label class="file">选择完整存档备份 <input id="backupFile" type="file" accept=".json,application/json"></label>
+<div id="inspection" hidden><dl id="counts"></dl><p id="conflicts"></p><label id="overwriteLabel" hidden><input type="checkbox" id="overwrite"> 已了解差异，用备份中的值恢复这些同名记录（原值会先备份）。</label>
+<label><input type="checkbox" id="closedTabs"> 已关闭其他本地版标签页，迁移期间暂停编辑。</label>
+<div class="actions"><button id="restore" disabled>恢复这份备份</button></div></div>
+<p id="importStatus" role="status" aria-live="polite">尚未选择备份。战斗读取器的 JSON 应在伤害计算器中导入。</p>
+<div id="sessionLinks" hidden><h3>备份中的计算器会话</h3><p>在本页恢复成功后，可继续打开保存过的会话。当前未保存的输入也保留了网页快照供核对，但不会执行或自动套用快照。</p><ul></ul></div>
+</section>
+<section><h2><span>03</span> 日常备份</h2><p>浏览器存档不会自动写入项目源码。更新网站、清理浏览器或更换电脑前，请保存一份完整备份。</p>
+<div class="actions"><button id="exportLocal">保存并下载当前存档</button><button class="secondary" id="refreshBackups">刷新磁盘备份列表</button></div>
+<p id="exportStatus" role="status"></p><ul id="backupList"></ul></section>
+<footer>本站计算与资料沿用原代码。读取器独立运行；在计算器中继续选择 BattleEntryReport.json 或 BattleCurrentReport.json。</footer>
+</main><script src="./local-backup.js"></script><script src="./local-data.js"></script></body></html>
