@@ -31,7 +31,7 @@ export function readCharacterProfile(doc) {
   const coef=text.match(/(?:每段基础系数|基础伤害倍率)\s*[：:=]\s*[×x]?\s*(\d+(?:\.\d+)?)/i);
   return {id,name,kind,description:text,damageType:characterMoveDefaults(characterId,kind).damageType||null,element:new Set(es).size===1?es[0]:characterMoveDefaults(characterId,kind).element||null,hits:hit?Number(hit[1]):null,
    coefficient:coef?Number(coef[1]):null,skillPercent:null,statReference:kind==='magic'?'int':characterMoveDefaults(characterId,kind).statReference||null,
-   purpose:attackText?'attack':/我方|降低.*敌|降低全体/.test(text)?'support':'unknown',source:'角色页面'};
+   purpose:attackText?'attack':/我方|降低.*敌|降低全体/.test(text)?'support':'unknown',nonStacking:el.dataset?.nonStacking==='true',source:'角色页面'};
  }
  const moves=[{id:'normal',name:'普通攻击',kind:'normal',element:null,hits:null,coefficient:null,skillPercent:null,statReference:null,purpose:'attack',source:'通用入口，参数待确认',...characterMoveDefaults(characterId,'normal')}];
  [...doc.querySelectorAll('#specials tbody tr')].forEach((el,i)=>{if(i<4)moves.push(move(el,['s1','s2','s3','ultimate'][i],['s1','s2','s3','ultimate'][i]));});

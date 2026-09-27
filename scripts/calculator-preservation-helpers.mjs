@@ -14,6 +14,7 @@ const calculatorHeadings=JSON.parse(fs.readFileSync(new URL('../docs/calculator-
 const scenarioSummary=JSON.parse(fs.readFileSync(new URL('../docs/scenario-summary-preservation-2026-09-26.json',import.meta.url)));
 const characterTemplate=JSON.parse(fs.readFileSync(new URL('../docs/character-template-preservation-2026-09-26.json',import.meta.url)));
 const mayly=JSON.parse(fs.readFileSync(new URL('../docs/mayly-preservation-2026-09-26.json',import.meta.url)));
+const heavyMagic=JSON.parse(fs.readFileSync(new URL('../docs/heavy-magic-preservation-2026-09-27.json',import.meta.url)));
 const switchPlan=JSON.parse(fs.readFileSync(new URL('../docs/switch-plan-preservation-2026-09-27.json',import.meta.url)));
 const alwaysBuffs=JSON.parse(fs.readFileSync(new URL('../docs/always-buffs-preservation-2026-09-27.json',import.meta.url)));
 const gameConditions=JSON.parse(fs.readFileSync(new URL('../docs/game-conditions-preservation-2026-09-27.json',import.meta.url)));
@@ -26,6 +27,11 @@ const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const heavyLayer=heavyMagic.files[path];
+ if(heavyLayer){
+  if(hash(text)!==heavyLayer.afterHash||hash(heavyLayer.beforeText)!==heavyLayer.beforeHash)throw Error(`Heavy-magic preservation drift: ${path}`);
+  text=heavyLayer.beforeText;
+ }
  const planLayer=switchPlan.files[path];
  if(planLayer){
   if(hash(text)!==planLayer.afterHash||hash(planLayer.beforeText)!==planLayer.beforeHash)throw Error(`Switch-plan preservation drift: ${path}`);

@@ -120,8 +120,19 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   $('preset').innerHTML=option('','请选择具体招式',state.selection.preset)+list.map(m=>option(m.id,`${m.name}${m.purpose==='support'?'（辅助，不计算攻击伤害）':''}`,state.selection.preset)).join('');
   $('preset').disabled=false;
  }
+ // A non-stackable spell (game SkillMst SKILL_PARAM x:1, e.g. 泽诺克莱昂) is always cast as 重魔法.
+ // Parameters saved under 魔法 move with it, so nothing entered is lost.
+ function promoteNonStacking(move=selectedMove()) {
+  if(!move?.nonStacking||state.selection.attack!=='magic')return;
+  const from=`magic:${state.selection.preset}`,to=`heavy_magic:${state.selection.preset}`;
+  if(state.parameters[from]&&!state.parameters[to])state.parameters[to]=state.parameters[from];
+  for(const [key,value] of Object.entries(state.hitParameters||{}))if(key.startsWith(from+':')&&!state.hitParameters[to+key.slice(from.length)])state.hitParameters[to+key.slice(from.length)]=value;
+  for(const [key,value] of Object.entries(state.readerSkillMappings||{}))if(key.endsWith(':'+from)){const next=key.slice(0,-from.length)+to;if(!state.readerSkillMappings[next])state.readerSkillMappings[next]=value;}
+  state.selection.attack='heavy_magic';$('attackChoice').value='heavy_magic';
+ }
  function applyMove() {
   const move=selectedMove();
+  promoteNonStacking(move);
   state.selection.element=move?.element||'';
   state.selection.statReference=move?.statReference||'';
   if(['magic','heavy_magic'].includes(state.selection.attack))state.selection.type='magical';
@@ -313,7 +324,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(!$('element').querySelector('option[value=""]'))$('element').insertAdjacentHTML('afterbegin','<option value="">待确认</option>');
   if(!$('type').querySelector('option[value=""]'))$('type').insertAdjacentHTML('afterbegin','<option value="">待确认</option>');
   for(const [field] of characterConditions){if(typeof state.selection[field]!=='boolean')state.selection[field]=report.context[field]===true;if($(field))$(field).checked=state.selection[field];}
-  renderProfile();renderPresets();
+  renderProfile();renderPresets();promoteNonStacking();
   const defaults=selectedMove();
   if(defaults?.damageType){for(const key of ['element','statReference'])if(!state.selection[key])state.selection[key]=defaults[key]||'';if(!state.selection.type)state.selection.type=defaults.damageType;}
   for(const key of ['element','statReference','type']){$(key).value=state.selection[key]||'';$(key).disabled=false;}
