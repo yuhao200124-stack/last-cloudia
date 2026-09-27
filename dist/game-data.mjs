@@ -41,6 +41,7 @@ export function gameMoveParameters(move) {
   const cap = Math.max(0, ...move.parts.map(p => p.cap || 0));
   const variants = new Set(move.parts.filter(p => p.coef != null).map(p => `${p.statPercent}/${p.coef}`)).size;
   return {
+    id: move.id, name: move.nameS,
     coefficient: part.coef, skillPercent: part.statPercent ?? 0, skillAdd: part.statAdd ?? 0, skillPostAdd: 0,
     type, element: move.inheritWeaponElement && move.element === '无' ? null : move.element, heavy: !!move.nonStackable,
     skillType: { 特技: 'skill', 魔法: 'magic', 超必杀: 'ultimate', 普通攻击: 'normal' }[move.type] || null,

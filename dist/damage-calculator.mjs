@@ -35,6 +35,13 @@ let nativeDetailsMode=0,commonDetailsMode=0;
 try{savedBonuses=JSON.parse(localStorage.getItem(bonusStorageKey));}catch{}
 const embedded=params.get('embedded')==='1' && window.parent!==window;
 let imported=null,latestReport=null,workflow=null,readUnit=null,bossRaces=[],reviewBlocker='请导入读取报告并选择采用的数据。',lastHitKey='';
+// Sandbox engine panel (engine-panel.mjs) listens for the calculator state; the reader battle report and the game character are kept for it.
+let latestBattle=null,gameCharacterData=null;
+function notifyEnginePanel(){
+  const picked=gameMoves[Number($('gameMove')?.value)]?.move;
+  const gameMove=workflow?.gameMove?.()||(picked?gameMoveParameters(picked):null);
+  document.dispatchEvent(new CustomEvent('lc:calculator-update',{detail:{battle:latestBattle,unit:readUnit,gameMove,selection:workflow?.selection?.()||{},referenceMode:referenceMode(),unitDressId:gameCharacterData?.unitDressId||null,ownPassives:gameCharacterData?[...(gameCharacterData.personality||[]).map(p=>p.passive),...(gameCharacterData.ownPassives||[]).map(p=>p.passive),...(gameCharacterData.transcend||[]).map(p=>p.passive),...(gameCharacterData.blessings||[])]:[]}}));
+}
 let manualCriticalBase='';
 let retainedImportDraft=null;
 let formulaCapture=null,captureOptions=[],captureApplication=null;
@@ -164,7 +171,7 @@ function hitSourceNote(){
   $('hitScaleControl').hidden=$('hitDamageRatio').value!==''&&$('hitDamageRatio').valueAsNumber===1;
 }
 function receiveEntryData({battle,unit,panelOnly=false}) {
-  readUnit=unit;
+  readUnit=unit;latestBattle=battle||latestBattle;
   panelLayers=null;layerSourceKey='';attackBasisTouched=false;$('attackBasis').value='panel';$('attackBase').value='';$('runtimeStatPercent').value='';
   clearSettlementCapture('读取报告或角色已改变，请重新选择结算样本。');renderCaptureOptions();
   if(panelOnly){fillReaderPreview();update();return;}
@@ -511,6 +518,7 @@ function update() {
       el.classList.toggle('is-inactive',!normal&&!crit);
       el.querySelector('.effect-state').textContent=!e.enabled?'已关闭':!normal&&!crit?'条件不匹配，不计入':e.percent===0?'当前为 0%，不改变伤害':normal?'条件匹配，已计入':'仅暴击命中时计入';
     });
+    notifyEnginePanel();
   } catch(e) {
     unified?.error(e.message);
     renderScenarioSummary('nativeScenario',null,'native');
@@ -518,6 +526,7 @@ function update() {
     $('error').hidden=false;$('error').textContent=e.message;$('resultValues').hidden=true;$('resultState').textContent=characterId&&!workflow?.isConfirmed()?'等待核对':'请检查输入';
     $('resolveReview').hidden=unified?.active||!characterId||workflow?.isConfirmed();
     $('trace').replaceChildren();$('formulaText').textContent='';$('activeNote').textContent='输入有效数值后会自动重新计算。';
+    notifyEnginePanel();
   }
 }
 function reset(clearSaved=true) {
@@ -587,7 +596,7 @@ $('gameCharacter').addEventListener('change',async()=>{
  $('gameMove').innerHTML='<option value="">读取中…</option>';$('gameMove').disabled=true;
  try{
   if(v.startsWith('magic:')){const m=await loadGameMagic();gameMoves=m[v.slice(6)].map(x=>({label:`${x.nameS}${x.element&&x.element!=='无'?` · ${x.element}`:''}`,move:x}));}
-  else if(v){const c=await loadGameCharacter(v);
+  else if(v){const c=await loadGameCharacter(v);gameCharacterData=c;
    const add=(label,x)=>{if(x&&x.parts?.some(p=>p.coef!=null))gameMoves.push({label:`${label} · ${x.nameS}`,move:x});};
    (c.normal||[]).forEach(x=>add('普通攻击',x));(c.specials||[]).forEach((x,i)=>add(`特技${i+1}`,x));add('超必杀',c.ultimate);
    (c.form2||[]).forEach((x,i)=>add(i<3?`形态2 特技${i+1}`:'形态2 超必杀',x));
@@ -605,6 +614,7 @@ $('gameMove').addEventListener('change',()=>{
  if(!imported)$('cap').value=9999+(g.extraCap||0);
  $('preset').value='custom';$('skillDetails').open=true;
  $('gameMoveNote').textContent=g.note+(g.extraCap?`已把每段上限设为 9,999 + ${g.extraCap.toLocaleString('zh-CN')}。`:'');$('gameMoveNote').hidden=false;
+ notifyEnginePanel();
 });
 initGamePicker();
 $('calculator').addEventListener('change',event=>{
