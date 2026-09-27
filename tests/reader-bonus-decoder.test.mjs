@@ -40,7 +40,7 @@ test('HP, resonance, chain and element conditions use current choices instead of
  const s=setup({fullHp:false,resonance:false,chainStacks:0});
  assert.equal(s.groups.find(g=>g.target==='冰属性伤害').readTotal,84.06);
  assert.equal(s.groups.find(g=>g.target==='暴击率').readTotal,8);
- assert.equal(s.groups.find(g=>g.target==='魔法伤害').readTotal,35);
+ assert.equal(s.groups.find(g=>g.target==='魔法伤害').readTotal,36); // 杖20 + 袍15 + 雷尼烏斯的加護(长袍·魔法伤害)1；链击0
  const phys=setup({attack:'s1',damageType:'physical'});
  const dynamic=phys.bonuses.find(b=>b.processId===1082627);assert.equal(dynamic.value,null);assert.notEqual(readerBonusState(dynamic,phys.report.context).status,'active');
 });

@@ -86,7 +86,8 @@ test('skills and ultimate get stat reference without being reclassified as magic
     assert.equal(result.context.damageType, 'physical');
     assert.equal(status(result, 'water-magic-killer'), 'inactive');
     assert.equal(status(result, 'water-ice-hits'), 'inactive');
-    assert.equal(status(result, 'staff-physical'), 'active');
+    // 杖神階增幅's physical part only fires for skill type 物理(普攻+特技) (ProcessMst 1050253, cond param skill type 10) — not ultimates.
+    assert.equal(status(result, 'staff-physical'), attack === 'ultimate' ? 'inactive' : 'active');
     assert.equal(status(result, 'staff-magical'), 'inactive');
     assert.ok(result.warnings.some((warning) => warning.includes('尚未完成实测')));
   }
@@ -143,7 +144,8 @@ test('general engine has no Roxy equipment assumptions and conditions are readab
 
 test('mixed damage leaves physical and magical scopes pending until portions are known', () => {
   const result = evaluate({ attack: 's1', damageType: 'mixed', staff: true, robe: true, weaponCount: 1, equipmentIds: ['roxy-robe'] });
-  for (const id of ['staff-physical', 'staff-magical', 'robe-magic-damage', 'roxy-robe-team-cap']) assert.equal(status(result, id), 'pending', id);
+  // The game picks these by skill type (普攻+特技 / 魔法), not by the stat the damage reads, so a mixed-reference skill is still decided.
+  for (const [id, expected] of Object.entries({ 'staff-physical': 'active', 'staff-magical': 'inactive', 'robe-magic-damage': 'inactive', 'roxy-robe-team-cap': 'active' })) assert.equal(status(result, id), expected, id);
   assert.equal(status(result, 'water-skill-reference'), 'active');
   const fixture = (condition) => [{ id: 'mixed-fixture', name: '混合条件', group: 'common', text: '原文', rules: [{ id: 'mixed-rule', part: '条件', text: '原文', conditions: [condition], effects: [{ type: 'damage', target: '伤害', value: 20, unit: '%' }], review: 'ready', verification: 'description' }] }];
   const check = (condition) => evaluateCatalog(fixture(condition), { damageType: 'mixed' }).rows[0].status;

@@ -7,7 +7,10 @@ const totals = (context = {}, overrides = {}, catalog = CATALOG) => summarizeEff
 const get = (list,id) => list.find(m=>m.id===id);
 test('qualified totals keep damage scopes and stat buffs separate',()=>{
   const result=totals();
-  for(const [id,value] of Object.entries({'stat:法强':70,'statBuff:法强':50,'damage:冰属性伤害':80,'damage:冰属性魔法伤害':60,'damage:对Boss的魔法伤害':40,'damage:特攻伤害':50,'castSpeed':30})) assert.equal(get(result,id).total,value,id);
+  for(const [id,value] of Object.entries({'stat:法强':70,'statBuff:法强':50,'damage:冰属性伤害':80,'damage:冰属性魔法伤害':60,'damage:对Boss的魔法伤害':40,'castSpeed':30})) assert.equal(get(result,id).total,value,id);
+  // 特攻增幅 is the killer multiplier (game ProcessMst 1050900, op 509: ×1.5×(1+Σ)), not a damage-scope increase.
+  assert.equal(get(result,'damage:特攻伤害'),undefined);
+  assert.deepEqual(get(result,'other:killerPower:特攻威力修正').contributions.map(c=>[c.sourceName,c.effect.value]),[['特攻增幅',50]]);
   assert.deepEqual(get(result,'damage:冰属性伤害').contributions.map(c=>c.sourceId),['water-king','ice-attack-iii']);
   assert.equal(get(result,'stat:攻击力'),undefined);
   assert.ok(result.every(m=>m.contributions.length>0));

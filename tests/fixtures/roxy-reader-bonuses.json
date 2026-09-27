@@ -8116,6 +8116,197 @@
     "parameterMeaningRecognized": false,
     "appliedToHit": null
    }
+  },
+  {
+   "id": "100:60002460:0:mapped_configured_parameter",
+   "sourceName": "施加者「洛琪希」 / 被动技能「雷尼烏斯的加護」",
+   "effectType": "damage",
+   "target": "魔法伤害修正",
+   "value": 1,
+   "unit": "%",
+   "state": "candidate",
+   "processId": 1050354,
+   "conditionId": 27026,
+   "evidence": "stable_buff_inventory_not_application_proof",
+   "raw": {
+    "buffUid": 100,
+    "passiveId": 0,
+    "localId": 60002460,
+    "affiliation": 4,
+    "operationIndex": 0,
+    "operationFlag": 1,
+    "operationActive": 1,
+    "buffEnabled": 1,
+    "buffActive": 0,
+    "buffRemoved": 0,
+    "buffIgnored": 0,
+    "trigger": 27,
+    "component": "mapped_configured_parameter",
+    "add": 0,
+    "mul": 0,
+    "postAdd": 0,
+    "mulDenominator": 10000,
+    "flags": 0,
+    "statType": 0,
+    "values": [
+     22,
+     100,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "function": "process1050354",
+    "masterFunction": "",
+    "conditionParams": [
+     1,
+     1,
+     2,
+     1,
+     1
+    ],
+    "masterCondition": 0,
+    "masterConditionParams": [],
+    "sourceProvenance": {
+     "captured": true,
+     "state": "verified_master_source_id",
+     "direct": {
+      "affiliation": 4,
+      "category": "被动技能",
+      "localId": 60002460,
+      "localIndex": 0,
+      "passiveId": 0,
+      "carrier": {
+       "id": 60002460,
+       "name": "雷尼烏斯的加護",
+       "description": "【全角色】\n裝備法袍時魔法傷害+{0}%",
+       "processInfo": "1050354:10000:22:100::::::::@:::::::::::@:::::::::::@:::::::::::@:::::::::::@:::::::::::@:::::::::::@:::::::::::",
+       "table": "PassiveSkillMst",
+       "state": "verified_master_id",
+       "verified": true,
+       "accessor": 2594938398752,
+       "binary": 2596786085888
+      },
+      "passiveSkill": {
+       "id": 0,
+       "name": "",
+       "description": "",
+       "processInfo": "",
+       "table": "",
+       "state": "not_requested",
+       "verified": false,
+       "accessor": 0,
+       "binary": 0
+      }
+     },
+     "related": {
+      "affiliation": 0,
+      "category": "技能/弹体",
+      "localId": 0,
+      "localIndex": 0,
+      "passiveId": 0,
+      "carrier": {
+       "id": 0,
+       "name": "",
+       "description": "",
+       "processInfo": "",
+       "table": "",
+       "state": "not_requested",
+       "verified": false,
+       "accessor": 0,
+       "binary": 0
+      },
+      "passiveSkill": {
+       "id": 0,
+       "name": "",
+       "description": "",
+       "processInfo": "",
+       "table": "",
+       "state": "not_requested",
+       "verified": false,
+       "accessor": 0,
+       "binary": 0
+      }
+     },
+     "caster": {
+      "address": 2598803689472,
+      "unitId": 502220,
+      "uniqueId": 1,
+      "name": "洛琪希",
+      "verified": true
+     },
+     "recipient": {
+      "address": 2598803689472,
+      "unitId": 502220,
+      "uniqueId": 1,
+      "name": "洛琪希",
+      "verified": true
+     },
+     "relatedIds": {
+      "captured": true,
+      "buffUid": 0,
+      "affiliation": 0,
+      "localId": 0,
+      "localIndex": 0,
+      "processId": 0
+     },
+     "verifiedAncestorUids": [],
+     "activeSkillMatch": {
+      "state": "not_requested",
+      "skillId": 0,
+      "bulletId": 0,
+      "processId": 0,
+      "skillLevel": 0
+     },
+     "isTriggerProof": false,
+     "autoApply": false
+    },
+    "runtimeStatRepresentation": false,
+    "panelStatCandidate": false,
+    "criticalValueUnit": null,
+    "interpretation": {
+     "status": "numeric_configuration",
+     "title": "指定装备時魔法与伤害增减",
+     "source": "current_captured_process.lua",
+     "function": "process1050354",
+     "documentation": "特定装備時魔法与ダメージ増減\nparams[1]:装備タイプ条件\nparams[2]:ダメージ倍率補正\n",
+     "scriptCalls": "Bullet:EditDamagePer, Field:FrameUpdate, Process:ShowPassive",
+     "nativeFlagName": "ByScript",
+     "nativeOperationName": "",
+     "reason": "配置数值已解析；条件、作用范围及本段是否触发仍需核对",
+     "controller": false,
+     "dynamicAmount": false,
+     "appliedToHit": null,
+     "autoApply": false,
+     "parameters": [
+      {
+       "index": 1,
+       "label": "装备类型条件",
+       "raw": 22
+      },
+      {
+       "index": 2,
+       "label": "伤害倍率修正",
+       "raw": 100
+      }
+     ],
+     "components": [
+      {
+       "target": "伤害修正",
+       "unit": "%",
+       "parameterIndex": 2,
+       "configuredValue": 1
+      }
+     ]
+    },
+    "parameterMeaningRecognized": false,
+    "appliedToHit": null,
+    "role": "stored_operation_candidate"
+   }
   }
  ],
  "statsMeta": {
