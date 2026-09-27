@@ -51,7 +51,7 @@ function mount() {
   card.id = 'enginePanel'; card.className = 'card engine-panel'; card.setAttribute('aria-labelledby', 'enginePanelTitle');
   card.innerHTML = `<div class="section-heading"><h3 id="enginePanelTitle">游戏脚本结算（沙盒引擎）</h3><span id="engineState" class="help">未开始</span></div>
     <p class="help">用读取器捕获的游戏 Lua 脚本和主数据逐段结算：每个被动、Buff、弹道按游戏自己的触发时机与顺序计算。这是与上方网页规则并列的对照，不改变上方结果。</p>
-    <div class="fields two engine-fields"><label>当前 HP %<input id="engineHp" type="number" min="1" max="100" step="1" placeholder="按开关"></label><label>当前 MP %<input id="engineMp" type="number" min="0" max="100" step="1" placeholder="按开关"></label></div>
+    <div class="fields two engine-fields"><label>当前 HP %<input id="engineHp" type="number" min="1" max="100" step="1" placeholder="满血100／濒死25／否则99"></label><label>当前 MP %<input id="engineMp" type="number" min="0" max="100" step="1" placeholder="按开关"></label></div>
     <div class="fields two engine-fields" id="enginePanelStats"><label>角色等级<select id="engineLevel"><option value="">最大</option></select></label><label>觉醒<select id="engineAwake"><option value="">最大</option></select></label><label>手填局外攻击力<input id="engineStr" type="number" min="0" step="1" placeholder="按游戏数据"></label><label>手填局外法强<input id="engineInt" type="number" min="0" step="1" placeholder="按游戏数据"></label></div>
     <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
     <p class="help" id="engineLoadoutNote"></p>
@@ -110,9 +110,12 @@ function targetFromFields(detail) {
   return { name: $('bossPreset')?.selectedOptions[0]?.textContent || '目标', isBoss: $('boss')?.checked !== false, charTypes: races, stats: { hp: 99999999, mp: 100, def: Number($('bossDefense')?.value) || 0, mnd: Number($('bossMind')?.value) || 0, str: 0, int: 0 }, elemResist: { 1: res[0] || 0, 2: res[1] || 0, 3: res[2] || 0, 4: res[3] || 0, 5: res[4] || 0, 6: res[5] || 0 } };
 }
 
+// HP follows the calculator's two switches exactly like the old rules: 满血 → 100% (full-HP effects such as
+// 月光II fire), 濒死 → 25%, neither → 99% (alive and healthy, but nothing that needs full HP fires).
 function stateFromSwitches(detail) {
   const sel = detail.selection || {};
-  const hp = hpPercent ?? (sel.lowHp || $('lowHp')?.checked ? 25 : 100);
+  const full = sel.fullHp || $('fullHp')?.checked, low = sel.lowHp || $('lowHp')?.checked;
+  const hp = hpPercent ?? (low ? 25 : full ? 100 : 99);
   const mp = mpPercent ?? (sel.mpLow || $('mpLow')?.checked ? 20 : 100);
   return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true };
 }
@@ -210,7 +213,7 @@ function render(out, ctx) {
   const buffs = out.buffs.filter(b => b.remain !== 0).map(b => `<li>${esc(b.name)}${b.from ? ` <small>来自 ${esc(b.from)}</small>` : ''}${b.remain > 0 ? ` <small>${Math.round(b.remain / 60)} 秒</small>` : ''}</li>`).join('');
   const issues = [...out.errors.map(e => `脚本 ${esc(e.name)} (${e.id})：${esc(e.error)}`), ...out.unsupported.map(n => `未实现的原生函数：${esc(n)}`), ...(out.assumptions || []).map(a => `简化假定：${esc(a)}`)];
   $('engineResult').innerHTML = `
-    <p class="help">招式 <b>${esc(ctx.move.name || ctx.move.id)}</b>（${ctx.move.id}）· 攻击方 ${esc(ctx.attackerSpec.name || ctx.attackerSpec.unitDressId)} · 面板来源：${esc(ctx.attackerSpec.statsSource || '读取报告')} · 目标 ${esc(ctx.targetSpec.name)} · HP ${ctx.state.hpPercent}% · MP ${ctx.state.mpPercent}%</p>
+    <p class="help">招式 <b>${esc(ctx.move.name || ctx.move.id)}</b>（${ctx.move.id}）· 攻击方 ${esc(ctx.attackerSpec.name || ctx.attackerSpec.unitDressId)} · 面板来源：${esc(ctx.attackerSpec.statsSource || '读取报告')} · 目标 ${esc(ctx.targetSpec.name)} · HP ${ctx.state.hpPercent}%${hpPercent == null ? ctx.state.hpPercent === 100 ? '（满血开关）' : ctx.state.hpPercent === 25 ? '（濒死开关）' : '（未勾选满血：满HP条件不触发）' : ''} · MP ${ctx.state.mpPercent}%</p>
     <p class="help">面板→局内：${statLine}</p>${panelLine(ctx)}
     <div class="entry-table-wrap"><table class="entry-table engine-hits"><thead><tr><th>段</th><th>普通每段</th><th>暴击每段</th><th>期望（暴击率 ${Math.round(critRate * 100)}%）</th><th>每段上限</th><th>A / F</th><th>特攻</th></tr></thead><tbody>${hitRows || '<tr><td colspan="7">没有伤害段</td></tr>'}</tbody></table></div>
     <p class="help">每次命中（含双刀／多段魔法的追加击）期望 <b>${fmt(perCast)}</b>${hitCount ? `；按计算器填写的 ${hitCount} 段命中，整次期望 <b>${fmt(perCast * hitCount)}</b>` : '；段数取自计算器的“基础命中段数”'}。暴击率用局内 CRT 面板值。</p>
