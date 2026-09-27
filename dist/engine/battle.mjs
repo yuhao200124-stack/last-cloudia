@@ -127,6 +127,8 @@ export class Battle {
     this.host.load(CONTEXT_STACK_LUA, '__sandbox');
   }
   log(kind, ...rest) { if (this.options.log) this.options.log(kind, ...rest); }
+  // Clears every unit and battle state so the loaded VM can run another scenario.
+  reset() { this.units = new Map(); this.nextId = 1; this.nextUid = 1; this.fieldValues = {}; this.wave = 1; this.frame = 0; this.stack = []; this.trace = []; this.timeline = null; }
   get current() { return this.stack[this.stack.length - 1] || null; }
 
   // ---- units ----
@@ -254,7 +256,7 @@ export class Battle {
 
   // ---- process execution ----
   // Runs one process/buff instance: condition function → probability → script or native operation.
-  runInstance(inst, owner, target, bullet, trigger) {
+  runInstance(inst, owner, target, bullet, trigger, { force = false } = {}) {
     const ctx = { uid: inst.uid, inst, trigger, ownUnit: owner.id, target: target ? target.id : owner.id, bullet, buff: inst.kind === 'buff' ? inst : (this.current?.buff || null), affiliation: inst.affiliation, localId: inst.localId, localIndex: inst.localIndex, processId: inst.processId, succeeded: true, params: inst.params };
     const saved = this.saveGlobals();
     this.stack.push(ctx);
@@ -263,11 +265,11 @@ export class Battle {
     try {
       const funcName = inst.cond.LUA_FUNC_NAME;
       let ok = true;
-      if (funcName) {
+      if (funcName && !force) {
         if (!this.host.hasFunction(funcName)) { this.log('missing-condition', funcName); ok = false; }
         else ok = !!this.host.call(funcName, [ctx.target, inst.condParams], 1)[0];
       }
-      if (ok && inst.kind === 'process' && inst.prob < 10000) ok = this.roll(inst);
+      if (ok && !force && inst.kind === 'process' && inst.prob < 10000) ok = this.roll(inst);
       if (ok) {
         fired = true;
         if (inst.mst.USE_SCRIPT === 1) {
@@ -319,7 +321,18 @@ export class Battle {
   dispatch(trigger, owner, target, bullet) {
     const list = [...owner.instances.filter(i => i.enabled && i.trigger === trigger), ...owner.buffs.filter(b => b.enabled && b.trigger === trigger)];
     list.sort((a, b) => (b.priority ?? 100) - (a.priority ?? 100));
+    // LIFETYPE_CONTINUOUS (3) controls last until their trigger is evaluated again.
+    const uids = new Set(list.map(i => i.uid));
+    if (uids.size) for (const u of this.units.values()) { u.real = u.real.filter(e => !(e.lifeType === K.LIFE.CONTINUOUS && uids.has(e.source))); u.status = u.status.filter(e => !(e.lifeType === K.LIFE.CONTINUOUS && uids.has(e.source))); }
     for (const inst of list) this.runInstance(inst, owner, target || owner, bullet, trigger);
+  }
+
+  // ---- snapshot / restore (evaluate several random rolls or crit branches from one prepared state) ----
+  snapshot() { return cloneState({ units: this.units, fieldValues: this.fieldValues, nextUid: this.nextUid, timeline: this.timeline, wave: this.wave, frame: this.frame, traceLength: this.trace.length }); }
+  restore(snap) {
+    const copy = cloneState(snap);
+    this.units = copy.units; this.fieldValues = copy.fieldValues; this.nextUid = copy.nextUid; this.timeline = copy.timeline; this.wave = copy.wave; this.frame = copy.frame;
+    this.trace.length = snap.traceLength; this.stack = [];
   }
 
   // ---- ProcControl2: the native operation switchboard ----
@@ -690,8 +703,9 @@ export class Battle {
         if (prop === K.BULLET_PROPERTY.CALC_LUA_VALUE) { const [key, calc, val] = args; b.values[String(key)] = csCalc(calc, b.values[String(key)], val); return b.values[String(key)]; }
         B.log('native-partial', 'BulletSetProperty', prop, args); return false;
       },
-      GetBulletWork(index, ever) { const b = curBullet(); return b ? (b.values[`work:${index}`] ?? null) : null; },
-      SetBulletWork(index, val, ever, calc) { const b = curBullet(); if (!b) return null; b.values[`work:${index}`] = csCalc(calc || 0, b.values[`work:${index}`], val); return b.values[`work:${index}`]; },
+      // Process:KeepParam / GetKeptParam: per-process-instance work values (kept across triggers).
+      GetBulletWork(index, ever) { const c = cur(); if (!c?.inst) return null; const store = ever ? (c.inst.keptEver || {}) : (c.inst.kept || {}); return store[index] ?? null; },
+      SetBulletWork(index, val, ever, calc) { const c = cur(); if (!c?.inst) return null; const key = ever ? 'keptEver' : 'kept'; c.inst[key] = c.inst[key] || {}; c.inst[key][index] = csCalc(calc || 0, c.inst[key][index], val); return c.inst[key][index]; },
       BulletWasCritical() { return !!curBullet()?.critical; },
       BulletWasGuarded() { return false; }, BulletTargetUseCounter() { return false; }, BulletWasLastAttack() { return false; },
       BulletGetKiller() { const b = curBullet(); if (!b) return [0]; return B.killerTypes(b); },
@@ -742,6 +756,15 @@ export class Battle {
       EFFECT_TIMELINE_SEGMENT_ELEMENT2() { return 0; },
     };
   }
+}
+
+// Deep-copies the mutable battle state; master rows (mst/cond) stay shared references.
+function cloneState(state) {
+  const cloneEntries = list => list.map(e => ({ ...e, params: e.params.slice() }));
+  const cloneInst = i => ({ ...i, params: i.params.slice(), procValues: structuredClone(i.procValues || {}), kept: structuredClone(i.kept || null), keptEver: structuredClone(i.keptEver || null), flags: structuredClone(i.flags || null), parameters: structuredClone(i.parameters || null), work: i.work ? cloneEntries(i.work) : undefined, values: i.values ? structuredClone(i.values) : undefined });
+  const units = new Map();
+  for (const [id, u] of state.units) units.set(id, { ...u, status: cloneEntries(u.status), real: cloneEntries(u.real), work: cloneEntries(u.work), buffs: u.buffs.map(cloneInst), instances: u.instances.map(cloneInst), values: structuredClone(u.values), procValues: structuredClone(u.procValues), passiveIds: u.passiveIds.slice(), activeSkill: u.activeSkill ? { ...u.activeSkill } : u.activeSkill });
+  return { units, fieldValues: structuredClone(state.fieldValues), nextUid: state.nextUid, timeline: state.timeline ? { ...state.timeline } : null, wave: state.wave, frame: state.frame, traceLength: state.traceLength };
 }
 
 // Saves/restores the script-side context around nested dispatches (see Battle.saveGlobals).

@@ -96,3 +96,60 @@ test('engine: the damage cap collects every DmgLimitUp control from passives, bu
   const ult = (await castOnce(5022206, { random: 1.0 })).results;
   assert.ok(ult[0].capVal >= 150000, `ultimate own cap +150,000 counted (got ${ult[0].capVal})`);
 });
+
+// ---- the report path the calculator uses: reader battle report → adapter → scenario ----
+import { runScenario, addAttacker, addTarget } from '../dist/engine/scenario.mjs';
+import { attackerFromReport, targetFromReport, isBattleReport } from '../dist/engine/report-adapter.mjs';
+
+const report = JSON.parse(fs.readFileSync(new URL('./fixtures/roxy-battle-report.json', import.meta.url), 'utf8'));
+
+async function reportScenario(skillId, state = {}) {
+  const { master, scripts } = await dataPromise;
+  const battle = new Battle(master, scripts);
+  const attacker = addAttacker(battle, attackerFromReport(report, master));
+  const target = addTarget(battle, targetFromReport(report));
+  return runScenario({ battle, attacker, target, skill: { id: skillId }, state });
+}
+
+test('report adapter: entry panel, equipment and every process instance (with runtime parameters) come from the report', async () => {
+  const { master } = await dataPromise;
+  assert.ok(isBattleReport(report));
+  const spec = attackerFromReport(report, master);
+  assert.equal(spec.unitDressId, 502220);
+  assert.deepEqual(spec.stats, { hp: 13591, mp: 1018, str: 1270, def: 1621, int: 6741, mnd: 2808, crt: 11, source: '入场面板快照 panel-1', inBattle: false });
+  assert.deepEqual(spec.equips.map(e => [e.pos, e.id, e.type, e.elem]), [[1, 108119, 17, 2], [2, 203110, 22, 0]]);
+  const ice = spec.passives.find(p => p.id === 60001280);
+  assert.deepEqual(ice.params[0].slice(0, 2), [2, 406], 'blessing level value read from the battle, not the master 100');
+  assert.equal(spec.passives[0].id, 50222014, 'game creation order: personality first');
+  assert.deepEqual(spec.personality, [{ passive: 50222014, level: 4, base: 50222011 }, { passive: 50222022, level: 2, base: 50222021 }]);
+});
+
+test('scenario: replaying the setup reproduces the reader\'s in-battle panel (DEF 2,295 / INT 10,111 / MND 3,482 / CRT 21)', async () => {
+  const out = await reportScenario(270090);
+  assert.equal(out.stats.def.real, 2295);
+  assert.equal(out.stats.int.real, 10111);
+  assert.equal(out.stats.mnd.real, 3482);
+  assert.equal(out.stats.crt.real, 21);
+  assert.deepEqual(out.errors, []);
+  assert.deepEqual(out.unsupported, []);
+});
+
+test('scenario: 異度克里昂 from the report gives main + 60% passes with normal/critical ranges and the calculator-verified sub-hit', async () => {
+  const out = await reportScenario(270090);
+  const sub = out.hits.find(h => h.bulletId === 2700900 && h.hitIndex === 1);
+  assert.equal(sub.dmgRatio, 6000);
+  assert.equal(sub.attack, 14627);
+  assert.deepEqual([sub.normal.min, sub.normal.max], [157572, 175079]); // calculator: 157,565–175,076
+  assert.ok(sub.critical.min > sub.normal.max);
+  assert.ok(out.hits.find(h => h.hitIndex === 0).cap === sub.cap && sub.cap > 200000);
+  assert.ok(out.probabilistic.some(p => p.passiveName === '指導者' && p.prob === 25));
+  assert.ok(out.conditionals.length >= 1);
+  assert.ok(sub.edits.some(e => e.passiveName === '冰之皇帝賽裡歐斯的加護'));
+});
+
+test('scenario: HP below the 月光/knowledge thresholds switches those layers off automatically', async () => {
+  const full = await reportScenario(270090, { hpPercent: 100 });
+  const low = await reportScenario(270090, { hpPercent: 30 });
+  assert.equal(full.stats.crt.real, 21);
+  assert.ok(low.stats.crt.real < full.stats.crt.real, '銳氣 (HP condition) drops at low HP');
+});
