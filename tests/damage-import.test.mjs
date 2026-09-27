@@ -42,10 +42,10 @@ test('Boss killer applies once, defense scaling does not mutate input, and scope
  const effects=buildDamageImport(report()).effects;
  assert.equal(calculate({...defaultInput(),effects}).active.length,0,'ice magic import cannot leak to Eris physical');
 });
-test('split hit correction requires explicit placement and caps apply at chosen stage',()=>{
+test('split hit correction defaults to the core coefficient (game code) and caps apply at chosen stage',()=>{
  assert.doesNotThrow(()=>calculate({...defaultInput(),hitMultiplier:1,hitDamageRatio:1,hitScaleStage:''}));
  const s={...defaultInput(),cap:600,hitMultiplier:2,hitDamageRatio:.6,hitScaleStage:''};
- assert.throws(()=>calculate(s),/试算位置/);
+ assert.deepEqual(calculate(s).normal,calculate({...s,hitScaleStage:'core'}).normal,'missing placement uses the core coefficient');
  const before=calculate({...s,hitScaleStage:'beforeCap'}),after=calculate({...s,hitScaleStage:'afterCap'});
  assert.equal(before.totalHits,16);assert.equal(after.totalHits,16);
  assert.equal(after.normal.max,360);assert(before.normal.max>360);

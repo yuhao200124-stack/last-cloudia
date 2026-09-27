@@ -38,7 +38,9 @@ export function validate(s) {
   }
   if (!Number.isInteger(s.hits) || !Number.isInteger(s.cap)) throw new Error('段数和伤害上限必须是整数');
   if (!Number.isInteger(s.hitMultiplier) || s.hits*s.hitMultiplier>10000) throw new Error('请检查原始段数与段数倍率');
-  if (s.hitDamageRatio!==1 && !['core','beforeCap','afterCap'].includes(s.hitScaleStage)) throw new Error('分段修正已导入；请选择单段伤害修正的试算位置，当前尚未确认实际执行顺序。');
+  // Game code (ProcessWork.ProcControlDamage 0x1865A90): the per-hit dmgRatio of dual wield / multi-hit magic
+  // (CalcDamageHealWrapper.dmgRatio) multiplies the skill coefficient before ProcessWork.CalcDamage, i.e. inside the core.
+  // A missing placement therefore defaults to the core; beforeCap/afterCap remain manual what-if options.
   if (!['physical','magical'].includes(s.type) || !ELEMENTS.includes(s.element)) throw new Error('请选择有效的攻击类型与属性');
   for (const e of s.effects) {
     if (!(e.kind in EFFECTS) || !['post','offense','received','reduction'].includes(e.stage) ||
@@ -91,7 +93,7 @@ export function prepare(s,critical=false) {
     if(e.stage==='reduction') reduction=f(reduction*f(1-p));
   }
   let q=f(f(s.coefficient)*f(s.runtimeRatio));
-  if(s.hitScaleStage==='core') q=f(q*f(s.hitDamageRatio));
+  if(!['beforeCap','afterCap'].includes(s.hitScaleStage)) q=f(q*f(s.hitDamageRatio));
   q=f(q*c.element); q=f(q*c.killerFactor); q=f(q*f(offense*received)); q=f(q*reduction);
   const exponent=c.attack>0 ? f(f(c.defense/c.attack)*(critical?6:10)) : 0;
   const base=c.attack>0 ? f(f(Math.pow(f(.9),exponent))*c.attack) : 0;

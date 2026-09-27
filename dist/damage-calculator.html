@@ -70,7 +70,7 @@
       <details id="hitDetails"><summary>双刀信息</summary><div class="fields two">
         <label>命中数倍率 ×<input id="hitMultiplier" type="number" min="1" max="100" step="1" value="1" required></label>
         <label>单段伤害倍率 ×<input id="hitDamageRatio" type="number" min="0" max="100" step="any" value="1" required></label>
-        <label id="hitScaleControl">修正试算位置<select id="hitScaleStage"><option value="">待确认</option><option value="core" selected>核心系数中</option><option value="beforeCap">伤害上限前</option><option value="afterCap">伤害上限后</option></select></label>
+        <label id="hitScaleControl">修正试算位置<select id="hitScaleStage"><option value="core" selected>核心系数中（游戏代码确认）</option><option value="beforeCap">伤害上限前</option><option value="afterCap">伤害上限后</option></select></label>
       </div><p id="hitSourceNote" class="help" hidden></p></details>
     </section>
     <section class="card"><div class="section-heading reference-section-heading"><h2><span>04</span>Boss 与战斗条件</h2></div>
@@ -162,5 +162,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260926-mayly"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260927-hit-core"></script>
 </body></html>

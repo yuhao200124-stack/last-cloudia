@@ -14,11 +14,17 @@ const calculatorHeadings=JSON.parse(fs.readFileSync(new URL('../docs/calculator-
 const scenarioSummary=JSON.parse(fs.readFileSync(new URL('../docs/scenario-summary-preservation-2026-09-26.json',import.meta.url)));
 const characterTemplate=JSON.parse(fs.readFileSync(new URL('../docs/character-template-preservation-2026-09-26.json',import.meta.url)));
 const mayly=JSON.parse(fs.readFileSync(new URL('../docs/mayly-preservation-2026-09-26.json',import.meta.url)));
+const hitCore=JSON.parse(fs.readFileSync(new URL('../docs/hit-core-preservation-2026-09-27.json',import.meta.url)));
 const twoColumn=JSON.parse(fs.readFileSync(new URL('../docs/two-column-preservation-2026-09-27.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const hitCoreLayer=hitCore.files[path];
+ if(hitCoreLayer){
+  if(hash(text)!==hitCoreLayer.afterHash||hash(hitCoreLayer.beforeText)!==hitCoreLayer.beforeHash)throw Error(`Hit-core preservation drift: ${path}`);
+  text=hitCoreLayer.beforeText;
+ }
  const layoutTwoColumn=twoColumn.files[path];
  if(layoutTwoColumn){
   if(hash(text)!==layoutTwoColumn.afterHash||hash(layoutTwoColumn.beforeText)!==layoutTwoColumn.beforeHash)throw Error(`Two-column preservation drift: ${path}`);

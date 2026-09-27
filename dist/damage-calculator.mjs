@@ -1,6 +1,6 @@
-import {extraCommonSkills} from './loadout-preview.mjs?v=20260926-mayly';
+import {extraCommonSkills} from './loadout-preview.mjs?v=20260927-hit-core';
 import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
-import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
+import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260927-hit-core';
 import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-mayly';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-mayly';
 import {initEntryWorkflow} from './entry-workflow.mjs?v=20260926-mayly';
@@ -145,7 +145,7 @@ function syncHitControls(force=false){
     $(id).disabled=!s.dualWield;
     $(id).value=!s.dualWield?1:s[id]!=null&&s[id]!==''?s[id]:imported?.hitSources.length?imported[id]:id==='hitMultiplier'?2:0.6;
   }
-  $('hitScaleStage').value=s.dualWield?s.hitScaleStage||imported?.hitScaleStage||(imported?.hitSources.length?'':'core'):'';
+  $('hitScaleStage').value=s.dualWield?s.hitScaleStage||imported?.hitScaleStage||'core':'';
   if(s.dualWield||Number($('hitDamageRatio').value)!==1)$('hitDetails').open=true;
 }
 function hitSourceNote(){

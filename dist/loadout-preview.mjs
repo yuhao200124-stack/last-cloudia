@@ -8,7 +8,7 @@ import {magicBuffCap} from './magic-buffs.mjs?v=20260926-mayly';
 import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-condition-tags';
 import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-skill-coverage';
 import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-mayly';
-import {EFFECTS} from './damage-engine.mjs?v=20260926-switch-controls';
+import {EFFECTS} from './damage-engine.mjs?v=20260927-hit-core';
 
 const eq=(field,value)=>({field,op:'eq',value});
 const elements={火:'fire',冰:'ice',树:'earth',雷:'thunder',光:'light',暗:'dark',无:'none'};
@@ -247,7 +247,7 @@ export function prepareLoadoutPreview({baseReport,snapshot,selection,input,baseC
  if(selection.dualWield){
   next.hitMultiplier=selection.hitMultiplier??(imported.hitSources.length?imported.hitMultiplier:2);
   next.hitDamageRatio=selection.hitDamageRatio??(imported.hitSources.length?imported.hitDamageRatio:0.6);
-  next.hitScaleStage=selection.hitScaleStage||imported.hitScaleStage||(imported.hitSources.length?input.hitScaleStage:'core');
+  next.hitScaleStage=selection.hitScaleStage||imported.hitScaleStage||(input.hitScaleStage||'core');
  }else{next.hitMultiplier=1;next.hitDamageRatio=1;}
  return {input:next,report:safe,imported,panel,projectStatPercent,commonSkills:commonSkills.map(s=>({...s,enabled:!disabled.has(s.confirmationKey),rows:safe.rows.filter(r=>r.sourceId===`loadout:${s.id}`),issues:unresolved.filter(item=>item.name===s.name).map(item=>item.reason)})),unresolved:[...new Map(unresolved.map(x=>[JSON.stringify(x),x])).values()]};
 }
