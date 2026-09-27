@@ -22,7 +22,13 @@ COLS = {
     'BulletMst': ['BULLET_ID', 'NAME', 'PARAM', 'HIT_DAMAGE'],
     'BulletLvInfoMst': ['BULLET_ID', 'LV', 'BULLET_PARAM', 'PROCESS_INFO'],
     'UnitDressMst': ['UNIT_DRESS_ID', 'NAME', 'UNIT_ID', 'EQUIP_TYPE_INFO', 'PARAMETER_INFO', 'RESIST_ELEM_INFO', 'RESIST_STATUS_INFO', 'CHARACTER_TYPE', 'CRITICAL_RATE', 'PRESET_SKILL', 'PRESET_SKILL2', 'SKILL_SLOT_INFO', 'SKILL_SLOT_INFO2', 'PERSONAL_SKILL', 'CHARACTER_INFO'],
-    'ItemEquipMst': ['ITEM_EQUIP_ID', 'NAME', 'RARE', 'EQUIP_TYPE', 'ELEM', 'PARAMETER_INFO', 'RESIST_ELEM_INFO', 'PASSIVE_SKILL_INFO', 'UNIT_DRESS_ID', 'MAX_LV', 'PARAMETER_MAX_INFO', 'SUB_TYPE'],
+    'ItemEquipMst': ['ITEM_EQUIP_ID', 'NAME', 'RARE', 'EQUIP_TYPE', 'ELEM', 'PARAMETER_INFO', 'RESIST_ELEM_INFO', 'PASSIVE_SKILL_INFO', 'UNIT_DRESS_ID', 'MAX_LV', 'EQUIP_GROWTH_TYPE', 'PARAMETER_MAX_INFO', 'SUB_TYPE'],
+    # out-of-battle panel: level growth (GrowthMst, one curve, GROWTH_ID 2), awakening and ability-board stat pieces
+    'GrowthMst': ['GROWTH_ID', 'GROWTH_RATE'],
+    'ItemEquipParameterGrowthMst': ['EQUIP_GROWTH_TYPE', 'PARAM_MAP'],
+    'UnitDressAwakeMst': ['UNIT_DRESS_ID', 'AWAKE_LV', 'HP', 'MP', 'ATK', 'DEF', 'MATK', 'MDEF'],
+    'UnitDressLimitbreakMst': ['UNIT_DRESS_ID', 'LIMITBREAK_LV', 'MAX_LV'],
+    'UnitDressAbilityPieceMst': ['UNIT_DRESS_ID', 'PIECE_NO', 'ABILITY_PIECE_TYPE', 'PARAM', 'LIMITBREAK_LV'],
 }
 
 def ints(s):
@@ -33,7 +39,11 @@ def table(name, rows):
     return {'cols': cols, 'rows': [[r[c] for c in cols] for r in rows]}
 
 def main(src, out):
-    T = {n: load(os.path.join(src, n + '.bin'))[1] for n in ['ProcessMst', 'ProcessCondMst', 'BuffMst', 'PassiveSkillMst', 'SkillMst', 'BulletMst', 'BulletLvInfoMst', 'UnitDressMst', 'UnitDressAbilityPieceMst', 'ItemEquipMst', 'ArkMst']}
+    T = {n: load(os.path.join(src, n + '.bin'))[1] for n in ['ProcessMst', 'ProcessCondMst', 'BuffMst', 'PassiveSkillMst', 'SkillMst', 'BulletMst', 'BulletLvInfoMst', 'UnitDressMst', 'UnitDressAbilityPieceMst', 'UnitDressAwakeMst', 'UnitDressLimitbreakMst', 'ItemEquipMst', 'ArkMst']}
+    # growth curves arrive with reader v0.10; older dumps simply leave them out (dist/engine/panel.mjs keeps the verified Lv120 rate)
+    for n in ['GrowthMst', 'ItemEquipParameterGrowthMst']:
+        path = os.path.join(src, n + '.bin')
+        T[n] = load(path)[1] if os.path.exists(path) else None
     ps = {r['PASSIVE_SKILL_ID']: r for r in T['PassiveSkillMst']}
     sk = {r['SKILL_ID']: r for r in T['SkillMst']}
     bm = {r['BULLET_ID']: r for r in T['BulletMst']}
@@ -90,6 +100,10 @@ def main(src, out):
     shared = bundle(shared_p, shared_s)
     shared['ItemEquipMst'] = table('ItemEquipMst', T['ItemEquipMst'])
     shared['UnitDressMst'] = table('UnitDressMst', T['UnitDressMst'])
+    shared['UnitDressAwakeMst'] = table('UnitDressAwakeMst', T['UnitDressAwakeMst'])
+    shared['UnitDressLimitbreakMst'] = table('UnitDressLimitbreakMst', T['UnitDressLimitbreakMst'])
+    for n in ['GrowthMst', 'ItemEquipParameterGrowthMst']:
+        if T[n] is not None: shared[n] = table(n, T[n])
     size = dump(os.path.join(eng, 'shared.json'), shared)
     print('shared.json', size, 'passives', len(shared['PassiveSkillMst']['rows']), 'skills', len(shared['SkillMst']['rows']), 'bullets', len(shared['BulletMst']['rows']))
 
@@ -109,6 +123,8 @@ def main(src, out):
         for e in T['ItemEquipMst']:
             if e['UNIT_DRESS_ID'] == uid: p_ids.update(ints(e['PASSIVE_SKILL_INFO']))
         data = bundle(p_ids - shared_p, s_ids - shared_s)
+        # the character's ability board (stat / resist pieces and which limit break opens them) for the out-of-battle panel
+        data['UnitDressAbilityPieceMst'] = table('UnitDressAbilityPieceMst', [r for r in pieces.get(uid, []) if r['ABILITY_PIECE_TYPE'] in (10, 11, 12, 13, 14, 15, 30, 40)])
         total += dump(os.path.join(eng, 'c', f'{uid}.json'), data)
     print('characters total', total)
 

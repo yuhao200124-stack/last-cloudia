@@ -63,6 +63,13 @@ export class Master {
     this.bullet = map('BulletMst', 'BULLET_ID');
     this.unitDress = map('UnitDressMst', 'UNIT_DRESS_ID');
     this.itemEquip = map('ItemEquipMst', 'ITEM_EQUIP_ID');
+    // out-of-battle panel sources (dist/engine/panel.mjs): rows grouped by unit dress / growth id
+    const group = (name, key) => { const t = tables[name], out = new Map(); if (!t) return out; const ki = t.cols.indexOf(key); for (const r of t.rows) { const o = {}; t.cols.forEach((c, i) => o[c] = r[i]); if (!out.has(r[ki])) out.set(r[ki], []); out.get(r[ki]).push(o); } return out; };
+    this.awake = group('UnitDressAwakeMst', 'UNIT_DRESS_ID');
+    this.limitBreak = group('UnitDressLimitbreakMst', 'UNIT_DRESS_ID');
+    this.abilityPieces = group('UnitDressAbilityPieceMst', 'UNIT_DRESS_ID');
+    this.growth = map('GrowthMst', 'GROWTH_ID');
+    this.equipGrowth = map('ItemEquipParameterGrowthMst', 'EQUIP_GROWTH_TYPE');
     this.bulletLv = new Map();
     const bl = tables.BulletLvInfoMst;
     if (bl) { const bi = bl.cols.indexOf('BULLET_ID'), li = bl.cols.indexOf('LV'); for (const r of bl.rows) { const o = {}; bl.cols.forEach((c, i) => o[c] = r[i]); if (!this.bulletLv.has(r[bi])) this.bulletLv.set(r[bi], new Map()); this.bulletLv.get(r[bi]).set(r[li], o); } }
@@ -204,15 +211,29 @@ export class Battle {
     if (statType === K.STAT.VIT) return u.vit;
     if (statType === K.STAT.TOTAL_MAX_HP) statType = K.STAT.MAX_HP;
     const op = Object.keys(STAT_OF_OP).find(k => STAT_OF_OP[k] === statType);
-    const base = u.pure[statType] ?? 0;
+    const base = (u.pure[statType] ?? 0) + (u.panelGiven ? 0 : this.equipmentStat(u, statType));
     if (!op) return base;
     const sum = list => { let val = 0, per = 0, add = 0; for (const e of list) { val += e.params[0] || 0; per += e.params[1] || 0; add += e.params[2] || 0; } return { val, per, add }; };
     const s = sum(u.panelGiven ? [] : u.status.filter(e => e.op === Number(op)));
-    const panel = Math.floor((base + s.val) * (1 + s.per * 0.0001)) + s.add;
+    const override = u.panelOverride?.[statType];
+    const panel = override != null ? override : Math.floor((base + s.val) * (1 + s.per * 0.0001)) + s.add;
     if (layer === 'status') return panel;
     const runtime = [...u.real.filter(e => e.op === Number(op)), ...(work ? u.work.filter(e => e.op === Number(op)) : []), ...(bullet ? bullet.work.filter(e => e.op === Number(op)) : [])];
     const r = sum(runtime);
     return Math.floor((panel + r.val) * (1 + r.per * 0.0001)) + r.add;
+  }
+  // Equipment parameters enter the panel before the percentage layer; EquipParam (319: equip type, stat,
+  // per) from 特定装備時装備パラメータ増減 passives raises the piece's own value, percentages adding up
+  // (洛琪希: staff INT 365 ×(1+100%), robe INT 229 ×(1+50%) → 344, robe MND 116 ×(1+100%+50%)).
+  equipmentStat(u, statType) {
+    let total = 0;
+    for (const e of u.equips) {
+      const v = e.stats?.[statType] || 0; if (!v) continue;
+      let per = 0;
+      for (const c of [...u.status, ...u.real]) if (c.op === K.OP.EQUIP_PARAM && c.params[0] === e.type && c.params[1] === statType) per += c.params[2] || 0;
+      total += per ? Math.floor(v * (1 + per * 0.0001) + 0.5) : v;
+    }
+    return total;
   }
   elemResist(u, elem, { work = true } = {}) {
     let v = u.elemResist[elem] ?? 0;
