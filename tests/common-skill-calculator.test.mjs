@@ -181,9 +181,11 @@ test('maximum stat scenarios and grouped Buff switches preserve negatives and ac
  assert.equal(run(['命运抽签'],{select:{openingBuffActive:true}}).panel.values.attack,1500);
  const negative=run(['寻找“有趣的东西”'],{select:{conditionBuffActive:true}});
  assert.equal(negative.panel.values.attack,1200);assert.equal(negative.panel.values.intelligence,800);
+ // Game data: 自动暴击 is always-on (trigger 65, no duration); 快速暴击 is the 40s opening version of the same exclusive buff.
  for(const [flag,on] of [['openingBuffActive',false],['openingBuffActive',true]]){
   const result=run(['快速暴击','自动暴击'],{select:{[flag]:on,criticalEnabled:true}});
-  assert.equal(result.imported.critAdded,on?15:0);
+  assert.equal(result.imported.critAdded,15);
+  assert.equal(run(['快速暴击'],{select:{[flag]:on,criticalEnabled:true}}).imported.critAdded,on?15:0);
  }
  const damage=run(['龙卷攻击','进击的姿势','桶～子'],{select:{conditionBuffActive:true}});
  assert.deepEqual(damage.imported.effects.map(e=>e.percent),[30]);
@@ -231,5 +233,7 @@ test('numeric conditions preserve Hit and HP boundaries; missing observations do
  for(const [hp,on] of [[25,true],[25.1,false]])assert.equal(damage('暴击艺术',{attack:'ultimate',selfHpPercent:hp}).effects.length,on?1:0);
  assert.equal(damage('暴击艺术',{attack:'ultimate',lowHp:true}).effects.length,0,'30% near-death cannot prove the 25% threshold');
  assert.equal(damage('毒之力',{enemyPoison:true}).effects[0].percent,30);assert.equal(damage('毒之力',{ailment:true}).effects.length,0);
- for(const [atk,int,on] of [[100,100,true],[99,100,false]])assert.equal(damage('作战行动',{openingStats:{attack:atk,intelligence:int}}).effects.length,on?1:0);
+ // Game data: 作战行动 is a 40s opening buff (trigger 10, 継続時間 2400).
+ for(const [atk,int,on] of [[100,100,true],[99,100,false]])assert.equal(damage('作战行动',{openingBuffActive:true,openingStats:{attack:atk,intelligence:int}}).effects.length,on?1:0);
+ assert.equal(damage('作战行动',{openingStats:{attack:100,intelligence:100}}).effects.length,0);
 });

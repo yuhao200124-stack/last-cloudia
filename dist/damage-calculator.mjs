@@ -13,9 +13,12 @@ import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mj
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-mayly';
 import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-mayly';
 import {retargetReport} from './entry-preparation.mjs?v=20260926-mayly';
+import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-skill-coverage';
+import {gameTimingLabel,gameTimingLabelByName} from './game-skill-timing.mjs?v=20260927-game-timing';
 import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-character-template';
 import {captureControls,restoreControls,saveCalculatorSession,loadCalculatorSession,removeCalculatorSession} from './calculator-navigation.mjs?v=20260926-mayly';
 const $=id=>document.getElementById(id);
+const timingTag=(name,text)=>{let id=null;try{id=commonSkillIdentity({name,text});}catch{}const label=id?gameTimingLabel(id):gameTimingLabelByName(name);return label?`<small class="game-timing">游戏判定：${esc(label)}</small>`:'';};
 const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const options=(values,current)=>values.map(v=>`<option value="${esc(v)}" ${v===current?'selected':''}>${esc(v)}</option>`).join('');
@@ -45,7 +48,7 @@ function showConditionSources(report){
  const target=$('generalConditionSources');target.hidden=!selected.length;
  target.innerHTML=selected.map(id=>{
   const sources=activeConditionSources(report,id);
-  return `<div><b>${GENERAL_NAMES[id]}</b>${sources.length?`<ul>${sources.map(s=>`<li><b>${esc(s.name)}</b>：<span>${esc(s.text)}</span></li>`).join('')}</ul>`:'<p class="help">本次所选技能没有符合条件的已确认效果。</p>'}</div>`;
+  return `<div><b>${GENERAL_NAMES[id]}</b>${sources.length?`<ul>${sources.map(s=>`<li><b>${esc(s.name)}</b>：<span>${esc(s.text)}</span>${timingTag(s.name,s.text)}</li>`).join('')}</ul>`:'<p class="help">本次所选技能没有符合条件的已确认效果。</p>'}</div>`;
  }).join('');
 }
 function syncWeaknessDefault(){
@@ -225,7 +228,7 @@ function renderNativeOverview(report){
   if(selected&&!selected.has(row.sourceId))continue;
   if(!sources.has(row.sourceId))sources.set(row.sourceId,{name:row.sourceName,text:row.sourceText||row.rule?.text||''});
  }
- $('nativeSkillOverview').innerHTML=sources.size?`<div class="native-skill-overview"><h4>技能总览</h4>${[...sources.values()].map(source=>`<article><strong>${esc(source.name)}</strong><p>${esc(source.text)}</p></article>`).join('')}</div>`:'<p class="help">选择角色及配装后，显示角色自带技能的名称和完整效果。</p>';
+ $('nativeSkillOverview').innerHTML=sources.size?`<div class="native-skill-overview"><h4>技能总览</h4>${[...sources.values()].map(source=>`<article><strong>${esc(source.name)}</strong><p>${esc(source.text)}</p>${timingTag(source.name,source.text)}</article>`).join('')}</div>`:'<p class="help">选择角色及配装后，显示角色自带技能的名称和完整效果。</p>';
 }
 function renderConfirmationSummaries(report){
  renderNativeOverview(report);

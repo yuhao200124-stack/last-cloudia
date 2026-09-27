@@ -104,3 +104,4 @@ body.is-embedded main { padding-top:14px; }
 .scenario-summary-total,.scenario-summary-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid #dbe5ef}
 .scenario-summary-total{font-weight:700;color:#163b66}.scenario-summary-total strong,.scenario-summary-row b{color:#285b95;white-space:nowrap}
 .scenario-summary-row span{overflow-wrap:anywhere}
+.game-timing{display:inline-block;margin-top:4px;padding:1px 7px;border-radius:9px;background:#e7f0fb;color:#35577f;font-size:.78rem}

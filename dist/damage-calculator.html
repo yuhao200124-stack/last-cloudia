@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>配装与伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260926-scenario-summary">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260927-game-timing">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html?v=20260926-mayly">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./skill-labeling.html?v=20260926-mayly">技能列表打标签用的</a><a id="calculatorCharacterBack" href="./characters.html?v=20260926-mayly">角色列表</a><a href="./index.html?v=20260926-mayly">技能表</a></nav></header>
@@ -39,7 +39,7 @@
       <section class="damage-condition-group" aria-labelledby="specialDamageTitle"><h3 id="specialDamageTitle">特殊伤害改变</h3><h4>基础改变伤害方式</h4><div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">Break</label><label><input id="criticalEnabled" type="checkbox">暴击</label><label><input id="boss" type="checkbox" checked>BOSS</label><label><input id="weakness" type="checkbox">弱属</label><label><input id="specialWeapon" type="checkbox">专武</label></div></section>
       <div id="magicBuffOptions" class="magic-buff-options" hidden><h3>魔法</h3><div id="magicBuffChoices"></div></div>
       <section class="damage-condition-group" aria-labelledby="generalDamageTitle"><h3 id="generalDamageTitle">通用伤害改变</h3>
-        <div class="inline-options"><label><input id="fullHp" type="checkbox">满血</label><label><input id="lowHp" type="checkbox">濒死（HP≤30%）</label><label><input id="air" type="checkbox">目标浮空</label><label><input id="back" type="checkbox">背后攻击</label><label><input id="ailment" type="checkbox">目标异常</label><label><input id="ground" type="checkbox">自身在地面</label><label><input id="openingBuffActive" type="checkbox">开局BUFF</label><label><input id="conditionBuffActive" type="checkbox">条件BUFF</label></div>
+        <div class="inline-options"><label><input id="fullHp" type="checkbox">满血</label><label><input id="lowHp" type="checkbox">濒死（HP≤30%）</label><label><input id="air" type="checkbox">目标浮空</label><label><input id="back" type="checkbox">背后攻击</label><label><input id="ailment" type="checkbox">目标异常</label><label><input id="ground" type="checkbox">自身在地面</label><label title="游戏判定：战斗/Wave开始时获得的限时BUFF（多为40秒），过时后失效"><input id="openingBuffActive" type="checkbox">开局BUFF</label><label title="游戏判定：满足事件后才获得的BUFF（队友倒下、复活、击败敌人、发动必杀、必杀槽满、定时等）"><input id="conditionBuffActive" type="checkbox">条件BUFF</label></div>
         <div id="characterScenarioConditions" class="inline-options" hidden></div>
         <div id="generalConditionSources" class="condition-source-list" aria-live="polite" hidden></div>
         <div hidden><input id="awakeningBuffActive" type="checkbox"><input id="magicAwakeningBuffActive" type="checkbox"><input id="ultimateUsedBuffActive" type="checkbox"><input id="damageTakenBuffActive" type="checkbox"><input id="reviveBuffActive" type="checkbox"><input id="ultimateGaugeFull" type="checkbox"><input id="realSunday" type="checkbox"></div>
@@ -162,5 +162,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260927-hit-core"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260927-game-timing"></script>
 </body></html>

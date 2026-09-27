@@ -1,5 +1,6 @@
 import {COMMON_SKILL_CATALOG,COMMON_SKILL_ALIASES} from './common-skill-catalog.mjs?v=20260926-skill-coverage';
 import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-condition-tags';
+import {applyGameTiming} from './game-skill-timing.mjs?v=20260927-game-timing';
 const clean=t=>String(t||'').replace(/＋/g,'+').replace(/％/g,'%').replace(/\s+/g,' ').trim();
 const names=new Map();
 for(const entry of Object.values(COMMON_SKILL_CATALOG)){const list=names.get(entry.name)||[];list.push(entry);names.set(entry.name,list);}
@@ -17,7 +18,7 @@ export function commonSkillRules(source){
  const extra=structuredClone(entry.rules).map(r=>({...r,id:`${source.id}:${r.id}`}));
  // Keep existing stat layers (and unresolved stat formulas), replacing only
  // their former catch-all non-stat placeholder with explicit common rules.
- const rules=[...basic.filter(r=>r.part!=='other'),...extra];
+ const rules=applyGameTiming(id,[...basic.filter(r=>r.part!=='other'),...extra]);
  return rules.length?rules:[{id:`${source.id}:reference`,part:'reference',text:entry.text,conditions:[],effects:[{type:'utility',target:'不直接改变本次主攻击伤害',value:0,unit:''}],review:'ready',verification:'description'}];
 }
 
