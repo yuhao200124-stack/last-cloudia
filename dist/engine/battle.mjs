@@ -387,6 +387,8 @@ export class Battle {
     if (multi && !(subWeapon && physical)) passes.push({ hitIndex: 1, dmgRatio: multi.params[0] || 10000, weaponIndex: 0 });
     if (bullet.singlePass) passes.length = 1;
     for (const pass of passes) {
+      // each pass is a new bullet process: transient work stores start empty again
+      owner.work = []; target.work = [];
       bullet.hitIndex = pass.hitIndex; bullet.dmgRatio = pass.dmgRatio; bullet.weaponIndex = pass.weaponIndex; bullet.cancelled = false; bullet.work = [];
       this.dispatch(K.TRIG.BULLET_HIT, owner, target, bullet);
       this.dispatch(K.TRIG.BULLET_WAS_HIT, target, owner, bullet);

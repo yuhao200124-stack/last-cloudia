@@ -11,6 +11,14 @@ const SWITCH_LABELS = { conditionBuffActive: '条件BUFF', reviveBuffActive: '�
 
 let engineModules = null, battle = null, loadedDress = null, loading = null;
 let latest = null, report = null, assumed = new Set(), probabilityMode = 'assume', hpPercent = null, mpPercent = null, running = false, pending = false;
+const manualPanel = { engineStr: null, engineInt: null };
+// Out-of-battle panel for the no-report path: the user's own numbers first, then the site's panel preview / 状态前面板.
+function websitePanel() {
+  const p = latest?.panels || {};
+  const pick = (manual, key, fallback) => manual ?? (Number.isFinite(p[key]) ? p[key] : fallback);
+  const base = Number.isFinite(latest?.attackBase) ? latest.attackBase : null;
+  return { hp: Number.isFinite(p.hp) ? p.hp : 1, mp: Number.isFinite(p.mp) ? p.mp : 0, str: pick(manualPanel.engineStr, 'attack', latest?.referenceMode === 'str' ? base : null), def: Number.isFinite(p.defense) ? p.defense : 0, int: pick(manualPanel.engineInt, 'intelligence', latest?.referenceMode === 'int' ? base : null), mnd: Number.isFinite(p.mind) ? p.mind : 0, crt: Number($('baseCritRate')?.value) || 0 };
+}
 
 const STYLE = `.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
 function mount() {
@@ -21,6 +29,8 @@ function mount() {
   card.innerHTML = `<div class="section-heading"><h3 id="enginePanelTitle">游戏脚本结算（沙盒引擎）</h3><span id="engineState" class="help">未开始</span></div>
     <p class="help">用读取器捕获的游戏 Lua 脚本和主数据逐段结算：每个被动、Buff、弹道按游戏自己的触发时机与顺序计算。这是与上方网页规则并列的对照，不改变上方结果。</p>
     <div class="fields two engine-fields"><label>当前 HP %<input id="engineHp" type="number" min="1" max="100" step="1" placeholder="按开关"></label><label>当前 MP %<input id="engineMp" type="number" min="0" max="100" step="1" placeholder="按开关"></label></div>
+    <div class="fields two engine-fields" id="enginePanelStats"><label>局外面板 攻击力<input id="engineStr" type="number" min="0" step="1" placeholder="网站面板"></label><label>局外面板 法强<input id="engineInt" type="number" min="0" step="1" placeholder="网站面板"></label></div>
+    <p class="help" id="enginePanelNote">未导入读取报告时，用这里的局外面板（不含局内 Buff）与全部自带技能结算；导入报告后自动改用报告里的入场面板与实际配置。</p>
     <div class="inline-options"><label><input id="engineProbability" type="checkbox" checked>概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
     <div id="engineResult"></div>`;
   const anchor = $('unifiedSummary') || aside.querySelector('.result-notes');
@@ -29,6 +39,7 @@ function mount() {
   $('engineProbability').addEventListener('change', e => { probabilityMode = e.target.checked ? 'assume' : 'skip'; run(); });
   $('engineHp').addEventListener('change', e => { hpPercent = e.target.value === '' ? null : Number(e.target.value); run(); });
   $('engineMp').addEventListener('change', e => { mpPercent = e.target.value === '' ? null : Number(e.target.value); run(); });
+  for (const id of ['engineStr', 'engineInt']) $(id).addEventListener('change', () => { manualPanel[id] = $(id).value === '' ? null : Number($(id).value); run(); });
   $('engineResult').addEventListener('change', e => { const key = e.target.dataset.assume; if (!key) return; if (e.target.checked) assumed.add(key); else assumed.delete(key); run(); });
 }
 
@@ -91,9 +102,11 @@ async function run(force = false) {
     else {
       // no report: the game character with the calculator's reference stat and every own passive (max loadout)
       const c = await gameCharacter(dress);
-      const stat = Number($('attack')?.value) || 0;
+      const panel = websitePanel();
+      const need = latest.referenceMode === 'str' ? 'str' : 'int';
+      if (!Number.isFinite(panel[need]) || panel[need] == null) { setState(`请填写局外面板${need === 'str' ? '攻击力' : '法强'}（不含局内 Buff）`); running = false; return; }
       const ids = latest.ownPassives?.length ? latest.ownPassives : c ? [...(c.personality || []).map(p => p.passive), ...(c.ownPassives || []).map(p => p.passive), ...(c.transcend || []).map(p => p.passive), ...(c.blessings || [])] : [];
-      attackerSpec = { unitDressId: dress, name: c?.nameS, stats: { str: latest.referenceMode === 'str' ? stat : 0, int: latest.referenceMode === 'int' ? stat : 0, def: 0, mnd: 0, hp: 1, mp: 0, crt: Number($('baseCritRate')?.value) || 0 }, passives: ids.map(id => ({ id })), personality: c?.personality || [], equips: [], statsSource: '计算器攻击/法强栏位；被动按全部自带技能（未导入报告）' };
+      attackerSpec = { unitDressId: dress, name: c?.nameS, stats: { str: panel.str ?? 0, int: panel.int ?? 0, def: panel.def, mnd: panel.mnd, hp: panel.hp, mp: panel.mp, crt: panel.crt }, passives: ids.map(id => ({ id })), personality: c?.personality || [], equips: [], statsSource: '局外面板（网站面板／手填）；被动按全部自带技能，装备未计（未导入报告）' };
     }
     const attacker = M.addAttacker(battle, attackerSpec);
     const targetSpec = report && $('bossPreset')?.value?.startsWith('reader-') ? M.targetFromReport(report, { bossIndex: Number($('bossPreset').value.slice(7)) || 0 }) : targetFromFields(latest);
@@ -118,7 +131,7 @@ async function run(force = false) {
 
 function render(out, ctx) {
   const st = out.stats;
-  const statLine = ['str', 'def', 'int', 'mnd', 'crt'].map(k => `${{ str: 'STR', def: 'DEF', int: 'INT', mnd: 'MND', crt: 'CRT' }[k]} ${fmt(st[k].panel)}→${fmt(st[k].real)}`).join(' · ');
+  const statLine = ['str', 'def', 'int', 'mnd', 'crt'].filter(k => st[k].panel || st[k].real).map(k => `${{ str: 'STR', def: 'DEF', int: 'INT', mnd: 'MND', crt: 'CRT' }[k]} ${fmt(st[k].panel)}→${fmt(st[k].real)}`).join(' · ');
   // identical bullets (e.g. single-target / area variants of one move) collapse into one row
   const hits = [];
   for (const h of out.hits.filter(h => !h.cancelled)) {
@@ -144,6 +157,8 @@ function render(out, ctx) {
     ${issues.length ? `<details class="engine-issues" open><summary>未能完整模拟（${issues.length}）</summary><ul>${issues.map(i => `<li>${i}</li>`).join('')}</ul></details>` : ''}`;
 }
 
-document.addEventListener('lc:calculator-update', e => { latest = e.detail || {}; if (latest.battle) report = latest.battle; mount(); if (battle || $('engineResult')?.innerHTML) run(); else setState(latest.gameMove?.id ? '点击“用游戏脚本结算”' : '先选择有游戏数据的招式'); });
+document.addEventListener('lc:calculator-update', e => { latest = e.detail || {}; if (latest.battle) report = latest.battle; mount();
+  const p = websitePanel(); if ($('engineStr') && manualPanel.engineStr == null) $('engineStr').placeholder = Number.isFinite(p.str) && p.str != null ? `网站面板 ${p.str}` : '请填写'; if ($('engineInt') && manualPanel.engineInt == null) $('engineInt').placeholder = Number.isFinite(p.int) && p.int != null ? `网站面板 ${p.int}` : '请填写';
+  if ($('enginePanelStats')) $('enginePanelStats').hidden = !!(report && report.units?.length); if (battle || $('engineResult')?.innerHTML) run(); else setState(latest.gameMove?.id ? '点击“用游戏脚本结算”' : '先选择有游戏数据的招式'); });
 $('entryReportFile')?.addEventListener('change', e => { const f = e.target.files?.[0]; if (!f) return; f.text().then(t => { try { const j = JSON.parse(t); if (j && j.kind === 'last-cloudia-battle-entry') report = j; } catch {} }); });
 mount();

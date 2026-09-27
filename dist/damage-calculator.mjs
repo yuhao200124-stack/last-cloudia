@@ -40,7 +40,8 @@ let latestBattle=null,gameCharacterData=null;
 function notifyEnginePanel(){
   const picked=gameMoves[Number($('gameMove')?.value)]?.move;
   const gameMove=workflow?.gameMove?.()||(picked?gameMoveParameters(picked):null);
-  document.dispatchEvent(new CustomEvent('lc:calculator-update',{detail:{battle:latestBattle,unit:readUnit,gameMove,selection:workflow?.selection?.()||{},referenceMode:referenceMode(),unitDressId:gameCharacterData?.unitDressId||null,ownPassives:gameCharacterData?[...(gameCharacterData.personality||[]).map(p=>p.passive),...(gameCharacterData.ownPassives||[]).map(p=>p.passive),...(gameCharacterData.transcend||[]).map(p=>p.passive),...(gameCharacterData.blessings||[])]:[]}}));
+  let panels=null;try{panels=workflow?.panelsPreview?.()||null;}catch{}
+  document.dispatchEvent(new CustomEvent('lc:calculator-update',{detail:{battle:latestBattle,unit:readUnit,gameMove,selection:workflow?.selection?.()||{},referenceMode:referenceMode(),panels,attackBase:$('attackBasis')?.value==='layers'?$('attackBase').valueAsNumber:null,unitDressId:gameCharacterData?.unitDressId||null,ownPassives:gameCharacterData?[...(gameCharacterData.personality||[]).map(p=>p.passive),...(gameCharacterData.ownPassives||[]).map(p=>p.passive),...(gameCharacterData.transcend||[]).map(p=>p.passive),...(gameCharacterData.blessings||[])]:[]}}));
 }
 let manualCriticalBase='';
 let retainedImportDraft=null;
