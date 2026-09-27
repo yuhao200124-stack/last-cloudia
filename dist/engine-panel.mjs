@@ -286,11 +286,12 @@ async function run(force = false) {
           await ensureCrests();
           const cm = battle.master.crest.get(lo.crest.crestId);
           const traitNames = lo.crest.traits.map(t => battle.master.passive.get(t.passive)?.NAME || `词条${t.passive}`);
-          crestNote = ` · 徽章 ${cm ? `${cm.NAME} Lv${cm.LV}` : `#${lo.crest.crestId}（主数据缺失）`}${traitNames.length ? '：' + traitNames.join('、') : '（无词条）'}`;
+          crestNote = ` · 徽章 ${cm ? cm.NAME.replace(/^Crest:\s*/, '') : `#${lo.crest.crestId}（主数据缺失）`}${traitNames.length ? '：' + traitNames.join('、') : '（无词条）'}`;
         }
-        const gearNote = lo.equips.map(e => `${battle.master.itemEquip.get(e.id)?.NAME || e.id}${e.level != null ? `+${e.level}` : ''}`).join('、') || '无装备';
+        const gearNote = lo.equips.map(e => battle.master.itemEquip.get(e.id)?.NAME || e.id).join('、') || '无装备';
         const unknown = lo.missingPassives + unresolved.length;
-        attackerSpec = { ...fromLoadout, name: c?.nameS || fromLoadout.name, stats: override, statsSource: `配装报告（本账号实际配置：Lv${lo.level} · 觉醒${lo.awake} · 能力盘 ${lo.pieceCount} 格 · ${lo.passives.length} 个被动 · ${gearNote}${lo.equips.some(e => e.level == null) ? '（强化按满级）' : ''}${crestNote}${growthChoice.accountBlessings ? ' ＋本账号加护' : ''}${unknown ? `；${unknown} 个被动未在主数据中找到` : ''}）` };
+        // the user's rule: the report decides what is equipped; everything upgradable is taken at its maximum
+        attackerSpec = { ...fromLoadout, name: c?.nameS || fromLoadout.name, stats: override, statsSource: `配装报告（${lo.passives.length} 个被动 · ${gearNote}${crestNote}${growthChoice.accountBlessings ? ' ＋本账号加护' : ''}；等级／觉醒／能力盘／强化／徽章等级按最大${unknown ? `；${unknown} 个被动未在主数据中找到` : ''}）` };
       } else {
         const equips = M.exclusiveEquipment(battle.master, dress);
         const passives = [...ids.map(id => ({ id })), ...blessings.filter(b => !ids.includes(b.id))];

@@ -97,14 +97,16 @@ export function equipmentStats(master, equipId, level = null) {
 }
 
 // A crest's own parameters (CrestMst PARAMETER_INFO "HP:MP:STR:DEF:INT:MND", added like equipment) and resistances.
-export function crestStats(master, crestId) {
-  const row = master.crest?.get(Number(crestId));
+// `maxLevel`: the top level of the same crest line (ids share the prefix, LV 1–10: 200101 … 200110).
+export function crestStats(master, crestId, { maxLevel = false } = {}) {
+  let row = master.crest?.get(Number(crestId));
   if (!row) return null;
+  if (maxLevel) { const family = Math.floor(row.CREST_ID / 100); for (const r of master.crest.values()) if (Math.floor(r.CREST_ID / 100) === family && r.LV > row.LV) row = r; }
   const vals = parseInts(row.PARAMETER_INFO), stats = {};
   STAT_ORDER.forEach((k, i) => { stats[k] = vals[i] || 0; });
   const elemResist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
   parseInts(row.RESIST_ELEM_INFO).forEach((v, i) => { if (i < 6) elemResist[i + 1] = v; });
-  return { id: row.CREST_ID, name: row.NAME, level: row.LV, rare: row.RARE, stats, elemResist, lotteryGroup: row.CREST_TRAIT_LOTTERY_GROUP_NUMBER };
+  return { id: row.CREST_ID, name: row.NAME, level: row.LV, rare: row.RARE, stats, elemResist, lotteryGroup: row.CREST_TRAIT_LOTTERY_GROUP_NUMBER, upgradedFrom: row.CREST_ID !== Number(crestId) ? Number(crestId) : null };
 }
 
 // The character's exclusive weapon and armour (ItemEquipMst UNIT_DRESS_ID), the default loadout without a report.

@@ -38,7 +38,7 @@ test('loadout: the attacker built from the report reproduces the reader entry pa
   const { master, scripts } = await dataPromise;
   const battle = new Battle(master, scripts, { probability: 'assume' });
   const blessings = Object.entries({ 60001010: [0, 400], 60001040: [0, 300], 60001110: [0, 300], 60001720: [0, 500], 60003280: [0, 700], 60003380: [0, 300] }).map(([id, p]) => ({ id: Number(id), params: { 0: p } }));
-  const spec = attackerFromLoadout(report, master, switches, 502220, { extraPassives: blessings });
+  const spec = attackerFromLoadout(report, master, switches, 502220, { extraPassives: blessings, maxGrowth: false });
   const roxy = addAttacker(battle, spec);
   assert.deepEqual(roxy.skills.map(s => s.id), [5022201, 5022203, 5022204, 5022205, 5022206, 360240, 270090, 391040]);
   const boss = addTarget(battle, { name: 'boss', charTypes: [2006], stats: { hp: 22400000, mp: 100, def: 1800, mnd: 2500 } });
@@ -69,10 +69,10 @@ test('loadout v0.11: the crest in slot 6 adds its parameters and its trait passi
   assert.deepEqual(lo.slots.map(e => e.pos), [1, 2, 6]);
   assert.equal(lo.crest.crestId, 200110);
   const battle = new Battle(master, scripts, { probability: 'assume' });
-  const spec = attackerFromLoadout(r, master, switches, 502220);
+  const spec = attackerFromLoadout(r, master, switches, 502220, { maxGrowth: false });
   const roxy = addAttacker(battle, spec);
   assert.deepEqual([roxy.crest.stats[K.STAT.STR], roxy.crest.stats[K.STAT.DEF], roxy.crest.stats[K.STAT.INT]], [352, 185, 0], 'CrestMst PARAMETER_INFO STR/DEF');
-  const base = new Battle(master, scripts, { probability: 'assume' }); const noCrest = addAttacker(base, attackerFromLoadout(report, master, switches, 502220));
+  const base = new Battle(master, scripts, { probability: 'assume' }); const noCrest = addAttacker(base, attackerFromLoadout(report, master, switches, 502220, { maxGrowth: false }));
   assert.deepEqual([roxy.elemResist[2] - noCrest.elemResist[2], roxy.elemResist[4] - noCrest.elemResist[4], roxy.elemResist[1] - noCrest.elemResist[1]], [10, 10, 0], 'crest RESIST_ELEM_INFO');
   const crestInst = roxy.instances.filter(i => i.affiliation === K.AFF.CREST).map(i => [i.localId, i.localIndex, i.processId, i.params.slice(0, 3)]);
   assert.deepEqual(crestInst, [[400218, 0, 1082608, [10, 10, 3200]], [400218, 1, 1082602, [10, 10, 3200]], [400219, 0, 1030000, [0, 1500, 0]], [400220, 0, 1082604, [-2, 5, 15000]]], 'local ids as the battle numbers them');
@@ -91,7 +91,7 @@ test('loadout v0.11: 亞克 / 魯迪烏斯 entry panels (7 stats) are reproduced
   const scripts = (await dataPromise).scripts;
   for (const [file, dress, skillId] of cases) {
     const report = JSON.parse(fs.readFileSync(new URL(`./fixtures/${file}`, import.meta.url), 'utf8'));
-    const rep = attackerFromReport(report, base), lo = attackerFromLoadout(v011, base, switches, dress);
+    const rep = attackerFromReport(report, base), lo = attackerFromLoadout(v011, base, switches, dress, { maxGrowth: false });
     assert.equal(lo.crest.crestId, 200109, 'Crest: Jala Lv9');
     assert.deepEqual(lo.crest.traits.map(t => t.localId), [400218, 400219, 400220]);
     // the battle's own passive instances (the loadout has since changed passives / accessories), gear the battle had
@@ -120,11 +120,36 @@ test('loadout v0.11: 亞克 / 魯迪烏斯 entry panels (7 stats) are reproduced
 import { loadPassives } from '../dist/engine/engine-data.mjs';
 test('loadout: passives outside the character bundle load from their id buckets (亞克 carries 12 of them)', async () => {
   const { master } = await loadEngineData({ unitDressIds: [502130], read });
-  const lo = attackerFromLoadout(v011, master, switches, 502130);
+  const lo = attackerFromLoadout(v011, master, switches, 502130, { maxGrowth: false });
   const before = lo.passives.filter(p => !master.passive.has(p.id)).map(p => p.id);
   assert.deepEqual(before, [210, 700, 5500, 6800, 12600, 24900, 25640, 25740, 26484, 27576, 27956, 28140]);
   const unresolved = await loadPassives(master, lo.passives.map(p => p.id), read);
   assert.deepEqual(unresolved, []);
   assert.equal(master.passive.get(26484).NAME, '光屬性超階驅動');
   assert.deepEqual(await loadPassives(master, [26484, 999999999], read), [999999999]);
+});
+
+// ---- default (the user's rule): the report picks the gear / passives / crest, every upgrade is taken at its maximum ----
+test('loadout: by default level, awakening, board, enhancement and crest level are maximal; only the configuration is the account\'s', async () => {
+  const { master, scripts } = await dataPromise;
+  master.merge(await read('engine/crests.json', false));
+  const r = JSON.parse(JSON.stringify(report));
+  r.units[0].lv = 100; r.units[0].awakeLv = 5; r.units[0].abilityPieceInfo = '8'; // a barely raised 洛琪希 …
+  r.equipList[0].equipInfo = '1:108119-2:203110-3:0-4:0-5:0-6:1006';
+  r.crests = [{ key: 1006, crestId: 200103, userCrestId: 1006, favorite: 1, slots: [[4, 4, 1, 36, 5050015], [4, 4, 1, 4, 5004014], [5, 5, 0, 56, 5078029]] }];
+  r.equipItems = [[108119, 1, 0, 3, 0], [203110, 1, 0, 0, 1]];
+  const spec = attackerFromLoadout(r, master, switches, 502220);
+  assert.equal(spec.maxGrowth, true);
+  assert.deepEqual([spec.level, spec.awake, spec.pieces, spec.limitBreak], [null, null, 'all', null]);
+  assert.deepEqual(spec.equips, [{ pos: 1, id: 108119 }, { pos: 2, id: 203110 }], 'no enhancement levels → full enhancement');
+  assert.deepEqual(spec.personality.map(p => [p.base, p.level]).sort(), [[50222011, 4], [50222021, 2]], 'personality at the board\'s top level (4 / 2 for 洛琪希)');
+  const battle = new Battle(master, scripts, { probability: 'assume' });
+  const roxy = addAttacker(battle, spec);
+  assert.deepEqual([roxy.level, roxy.awake, roxy.panelParts.pieceCount], [120, 9, 134]);
+  assert.equal(roxy.equips[0].level, 40);
+  assert.deepEqual([roxy.crest.id, roxy.crest.level, roxy.crest.upgradedFrom], [200110, 10, 200103], 'Crest: Jala Lv3 → its Lv10 line, traits as rolled');
+  assert.deepEqual(roxy.instances.filter(i => i.affiliation === K.AFF.CREST).map(i => i.localId), [400218, 400218, 400219, 400220]);
+  // the same report with the actual levels
+  const exact = addAttacker(new Battle(master, scripts, { probability: 'assume' }), attackerFromLoadout(r, master, switches, 502220, { maxGrowth: false }));
+  assert.deepEqual([exact.level, exact.awake, exact.panelParts.pieceCount, exact.equips[0].level, exact.crest.id], [100, 5, 1, 3, 200103]);
 });

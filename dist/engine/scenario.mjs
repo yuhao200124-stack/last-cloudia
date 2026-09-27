@@ -38,8 +38,8 @@ export function addAttacker(battle, spec) {
       for (const [k, v] of Object.entries(es.elemResist)) elemResist[k] = (elemResist[k] || 0) + v;
     }
     if (spec.crest?.crestId) {
-      const cs = crestStats(master, spec.crest.crestId);
-      if (cs) { crest = { id: cs.id, name: cs.name, level: cs.level, stats: statCodes(cs.stats), traits: spec.crest.traits || [] }; for (const [k, v] of Object.entries(cs.elemResist)) elemResist[k] = (elemResist[k] || 0) + v; }
+      const cs = crestStats(master, spec.crest.crestId, { maxLevel: !!spec.crest.maxLevel });
+      if (cs) { crest = { id: cs.id, name: cs.name, level: cs.level, upgradedFrom: cs.upgradedFrom, stats: statCodes(cs.stats), traits: spec.crest.traits || [] }; for (const [k, v] of Object.entries(cs.elemResist)) elemResist[k] = (elemResist[k] || 0) + v; }
       else crest = { id: spec.crest.crestId, name: null, missing: true, stats: {}, traits: spec.crest.traits || [] };
     }
   }

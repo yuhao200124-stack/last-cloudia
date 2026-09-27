@@ -31,10 +31,7 @@ export function unitLoadout(report, master, switches, unitDressId) {
   const opened = pieceRows.filter(r => openedSwitch.has(Number(r.SWITCH_INDEX)));
   const pieces = new Set(opened.map(r => r.PIECE_NO));
   // personality: the highest opened level per base (UnitDressMst PERSONAL_SKILL lists the level-1 passives)
-  const dress = master.unitDress.get(id);
-  const personality = new Map();
-  for (const base of parseInts(dress?.PERSONAL_SKILL || '').filter(Boolean)) personality.set(base, { passive: base, level: 1, base });
-  for (const r of opened) if (r.ABILITY_PIECE_TYPE === 61) { const [passive, level, base] = parseInts(r.PARAM); if (base && (!personality.has(base) || personality.get(base).level < level)) personality.set(base, { passive, level, base }); }
+  const personality = personalityFromPieces(master, id, opened);
   const skillLevels = {};
   for (const r of opened) if (r.ABILITY_PIECE_TYPE === 50 || r.ABILITY_PIECE_TYPE === 51) { const [skill, level] = parseInts(r.PARAM); if (skill) skillLevels[skill] = Math.max(skillLevels[skill] || 0, level || 1); }
   const passives = decodeFlags(equip.passiveSkillInfo).map(i => passiveOf.get(i)).filter(Boolean);
@@ -51,7 +48,16 @@ export function unitLoadout(report, master, switches, unitDressId) {
   for (const e of equips) if (e.level == null && itemLevels.has(e.id)) e.level = itemLevels.get(e.id);
   const crestSlot = equips.find(e => e.pos === 6), gear = equips.filter(e => e.pos <= 4);
   const crest = crestSlot ? crestOf(report, crestSlot.id) : null;
-  return { unitDressId: id, level: unit.lv, limitBreak: unit.limitbreakLv, awake: unit.awakeLv, pieces, pieceCount: opened.length, personality: [...personality.values()], skillLevels, passives, magic, equips: gear, crest, slots: equips, missingPassives: decodeFlags(equip.passiveSkillInfo).length - passives.length };
+  return { unitDressId: id, level: unit.lv, limitBreak: unit.limitbreakLv, awake: unit.awakeLv, pieces, pieceCount: opened.length, totalPieces: pieceRows.length, personality, skillLevels, passives, magic, equips: gear, crest, slots: equips, missingPassives: decodeFlags(equip.passiveSkillInfo).length - passives.length };
+}
+
+// Personality passives (type-61 pieces "passive:level:base"): the highest level per base among `rows`.
+export function personalityFromPieces(master, unitDressId, rows) {
+  const dress = master.unitDress.get(Number(unitDressId));
+  const personality = new Map();
+  for (const base of parseInts(dress?.PERSONAL_SKILL || '').filter(Boolean)) personality.set(base, { passive: base, level: 1, base });
+  for (const r of rows) if (r.ABILITY_PIECE_TYPE === 61) { const [passive, level, base] = parseInts(r.PARAM); if (base && (!personality.has(base) || personality.get(base).level < level)) personality.set(base, { passive, level, base }); }
+  return [...personality.values()];
 }
 
 // Map equipment id → enhancement level from the report's owned-equipment rows (v0.11 `equipItems`).
@@ -76,10 +82,19 @@ export function crestOf(report, userCrestId) {
 }
 
 // Attacker spec for scenario.addAttacker: computed panel (panelGiven false) from the report's growth and loadout.
-export function attackerFromLoadout(report, master, switches, unitDressId, { extraPassives = [] } = {}) {
+// `maxGrowth` (default, the user's rule): what the report says is equipped — passives, gear, magic, crest and its
+// rolled traits — but everything upgradable at its maximum: level / awakening / whole ability board, personality
+// at top level, gear at full enhancement, the crest line at its top level. `maxGrowth: false` uses the account's
+// actual levels (verified exact against the battle-entry panels).
+export function attackerFromLoadout(report, master, switches, unitDressId, { extraPassives = [], maxGrowth = true } = {}) {
   const lo = unitLoadout(report, master, switches, unitDressId);
   if (!lo) return null;
+  const personality = maxGrowth ? personalityFromPieces(master, lo.unitDressId, master.abilityPieces?.get(lo.unitDressId) || []) : lo.personality;
   const listed = new Set(lo.passives);
-  const passives = [...lo.passives.map(id => ({ id })), ...lo.personality.map(p => ({ id: p.passive })), ...extraPassives.filter(p => !listed.has(p.id))];
-  return { unitDressId: lo.unitDressId, name: master.unitDress.get(lo.unitDressId)?.NAME, panelGiven: false, level: lo.level, limitBreak: lo.limitBreak, awake: lo.awake, pieces: lo.pieces, personality: lo.personality, passives, equips: lo.equips, magic: lo.magic, crest: lo.crest?.crestId ? { crestId: lo.crest.crestId, traits: lo.crest.traits } : null, loadout: lo };
+  const passives = [...lo.passives.map(id => ({ id })), ...personality.map(p => ({ id: p.passive })), ...extraPassives.filter(p => !listed.has(p.id))];
+  const growth = maxGrowth
+    ? { level: null, limitBreak: null, awake: null, pieces: 'all', equips: lo.equips.map(e => ({ pos: e.pos, id: e.id })) }
+    : { level: lo.level, limitBreak: lo.limitBreak, awake: lo.awake, pieces: lo.pieces, equips: lo.equips };
+  const crest = lo.crest?.crestId ? { crestId: lo.crest.crestId, traits: lo.crest.traits, maxLevel: maxGrowth } : null;
+  return { unitDressId: lo.unitDressId, name: master.unitDress.get(lo.unitDressId)?.NAME, panelGiven: false, ...growth, personality, passives, magic: lo.magic, crest, maxGrowth, loadout: lo };
 }
