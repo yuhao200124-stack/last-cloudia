@@ -743,3 +743,100 @@ mark {
 .skill-condition-tags { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem .5rem; margin-top:.55rem; font-size:.875rem; line-height:1.5; }
 .skill-condition-tags b { color:inherit; font-weight:600; }
 .skill-condition-tags span { border:1px solid #b9c6d6; border-radius:3px; padding:.1rem .35rem; color:inherit; }
+
+/* 2026-09-26 Excel two-column look for the ordinary skill table only.
+   Scoped to the standalone page: the calculator's embedded skill list
+   (index.html?embeddedLoadout=1, html.lc-embedded) keeps its previous look. */
+:root:not(.lc-embedded) {
+  --xl-banner: #203864;
+  --xl-header: #4472c4;
+  --xl-all-header: #104862;
+  --xl-type: #dde8f5;
+  --xl-link: #1155cc;
+  --xl-grid: #7c7c7c;
+}
+:root:not(.lc-embedded) .split-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px;
+  overflow: visible;
+}
+:root:not(.lc-embedded) .skill-list-table {
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #000;
+}
+:root:not(.lc-embedded) .skill-list-table col.type { width: 10%; }
+:root:not(.lc-embedded) .skill-list-table col.name { width: 15%; }
+:root:not(.lc-embedded) .skill-list-table col.sc { width: 5%; }
+:root:not(.lc-embedded) .skill-list-table col.effect { width: 35%; }
+:root:not(.lc-embedded) .skill-list-table col.sources { width: 24%; }
+:root:not(.lc-embedded) .skill-list-table col.rating { width: 6%; }
+:root:not(.lc-embedded) .skill-list-table col.action { width: 5%; }
+:root:not(.lc-embedded) .skill-list-table.all-skills col.name { width: 17%; }
+:root:not(.lc-embedded) .skill-list-table.all-skills col.sc { width: 5%; }
+:root:not(.lc-embedded) .skill-list-table.all-skills col.effect { width: 40%; }
+:root:not(.lc-embedded) .skill-list-table.all-skills col.sources { width: 28%; }
+:root:not(.lc-embedded) .skill-list-table.all-skills col.rating { width: 5%; }
+:root:not(.lc-embedded) .skill-list-table.all-skills col.action { width: 5%; }
+:root:not(.lc-embedded) .skill-list-table th,
+:root:not(.lc-embedded) .skill-list-table td {
+  border: 1px solid var(--xl-grid);
+  padding: 4px 5px;
+  vertical-align: middle;
+}
+:root:not(.lc-embedded) .skill-list-table tbody td { height: 44px; }
+:root:not(.lc-embedded) .skill-list-table .cell-content { padding: 0 2px; }
+:root:not(.lc-embedded) .skill-list-table thead .book-title th {
+  padding: 7px 8px;
+  border-color: var(--xl-banner);
+  background: var(--xl-banner);
+  color: #fff;
+  font-size: 14px;
+}
+:root:not(.lc-embedded) .skill-list-table thead .column-title th {
+  position: static;
+  padding: 7px 4px;
+  border-color: var(--xl-header);
+  background: var(--xl-header);
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+}
+/* 「全部技能」 sheet: one plain table with a single dark header row, as in the workbook. */
+:root:not(.lc-embedded) .table-area > .table-scroll > .all-skills .book-title { display: none; }
+:root:not(.lc-embedded) .table-area > .table-scroll > .all-skills .column-title th {
+  border-color: var(--xl-all-header);
+  background: var(--xl-all-header);
+}
+:root:not(.lc-embedded) .skill-list-table .type-cell {
+  background: var(--xl-type);
+  font-weight: 700;
+}
+:root:not(.lc-embedded) .skill-list-table .skill-name { font-weight: 400; }
+:root:not(.lc-embedded) .skill-list-table .skill-name .cell-content { justify-content: flex-start; text-align: left; }
+:root:not(.lc-embedded) .skill-list-table .skill-name a {
+  color: var(--xl-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+:root:not(.lc-embedded) .skill-list-table .skill-name a:visited { color: #6a3ea1; }
+:root:not(.lc-embedded) .skill-list-table .sources-cell { text-align: center; }
+:root:not(.lc-embedded) .skill-list-table .source-list > div + div { margin-top: 1px; }
+:root:not(.lc-embedded) .skill-list-table .rating-cell { font-weight: 400; }
+:root:not(.lc-embedded) .skill-list-table .skill-effect-notes { font-size: 12px; }
+:root:not(.lc-embedded) .skill-list-table .add-skill-button { width: 26px; height: 26px; }
+:root:not(.lc-embedded) .skill-list-table .add-skill-button span { font-size: 1.1rem; }
+:root:not(.lc-embedded) .skill-list-table .separator-row td {
+  height: 26px;
+  border-top: 1px solid var(--xl-grid);
+  border-bottom: 1px solid var(--xl-grid);
+  border-left: 0;
+  border-right: 0;
+}
+@media (max-width: 1279px) {
+  :root:not(.lc-embedded) .split-grid { display: block; }
+  :root:not(.lc-embedded) .split-grid .table-scroll + .table-scroll { margin-top: 16px; }
+  :root:not(.lc-embedded) .skill-list-table { min-width: 720px; }
+}
