@@ -72,7 +72,7 @@ test('saved Eris overrides and edited descriptions never silently inherit offici
  assert.equal(sourceRow(report,'斗志提升极').status,'disabled');assert.equal(report.context.fullHp,true);
 });
 
-test('exclusive sword toggles both fixed panel attributes and its damage, independently of armor',()=>{
+test('exclusive gear switch equips every exclusive item (weapon and armor) with its panel attributes and damage',()=>{
  const report=makeReport(),sources=loadoutSources(report),original=reportLoadoutSnapshot(report);
  const on=toggleExclusiveWeapon(original,sources,true),off=toggleExclusiveWeapon(on,sources,false);
  const yes=preview({report,snapshot:on}),no=preview({report,snapshot:off});
@@ -82,9 +82,8 @@ test('exclusive sword toggles both fixed panel attributes and its damage, indepe
  assert.equal(yes.input.hitMultiplier,1);assert.equal(yes.input.hitDamageRatio,1);
  assert(Number.isFinite(calculate(yes.input).mean));assert(Number.isFinite(calculate(no.input).mean));
  const armor=sources.find(s=>s.name==='艾莉丝的服装');
- const armored={...on,items:[...on.items,{...armor,id:armor.sourceId,sourceIds:[armor.sourceId]}]};
- assert(toggleExclusiveWeapon(armored,sources,false).items.some(i=>i.sourceId===armor.sourceId));
- assert(preview({report,snapshot:armored}).input.attackBase>yes.input.attackBase);
+ assert(on.items.some(i=>i.sourceId===armor.sourceId),'专武 equips the exclusive armor too');
+ assert(!off.items.some(i=>i.sourceId===armor.sourceId),'switching 专武 off removes every exclusive item');
 });
 
 test('removing the base blade skill also removes its mastery bonus, with no change to crit proc branch',()=>{

@@ -148,12 +148,12 @@ test('special weapon control sends the actual equipment IDs and follows manual l
   assert(calculate(on.input).normal.uncappedMax>calculate(off.input).normal.uncappedMax);
   ui.setExclusiveWeapon(false);
   listeners.message({origin:location.origin,source:child,data:{type:'lc-loadout-ready'}});
-  assert.deepEqual(messages.at(-1),{type:'lc-loadout-set-equipment',sourceIds:['roxy-staff'],enabled:false});
+  assert.deepEqual(messages.at(-1),{type:'lc-loadout-set-equipment',sourceIds:['roxy-staff','roxy-robe'],enabled:false});
   const removed={...snapshot,items:snapshot.items.filter(item=>item.sourceId!=='roxy-staff')};
   listeners.message({origin:location.origin,source:child,data:{type:'lc-loadout-change',snapshot:removed}});
   assert.equal(checked,false);
   ui.setExclusiveWeapon(true);
-  assert.deepEqual(messages.at(-1),{type:'lc-loadout-set-equipment',sourceIds:['roxy-staff'],enabled:true});
+  assert.deepEqual(messages.at(-1),{type:'lc-loadout-set-equipment',sourceIds:['roxy-staff','roxy-robe'],enabled:true});
   listeners.message({origin:location.origin,source:child,data:{type:'lc-loadout-change',snapshot}});
   assert.equal(checked,true);
   ui.setExclusiveWeapon(false);

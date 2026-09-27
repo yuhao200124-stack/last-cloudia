@@ -72,12 +72,18 @@ export function exclusiveWeaponSourceIds(sources){
  return sources.filter(s=>s.group==='equipment'&&['法杖','剑','斧','枪','槌','弓','机械','爪','刀','弩','锤'].includes(s.equipmentType)).map(s=>s.sourceId);
 }
 
+// The damage page's 专武 switch equips every exclusive item the character has
+// (weapon and armor alike), independent of the basic calculator.
+export function exclusiveGearSourceIds(sources){
+ return sources.filter(s=>s.group==='equipment').map(s=>s.sourceId);
+}
+
 export function reportLoadoutSnapshot(report,manualEffects=[]){
  const sources=loadoutSources(report,manualEffects);
  return {characterId:report.characterId,totalSc:0,sourceIds:sources.map(s=>s.sourceId),items:sources.filter(s=>s.enabled).map(s=>({...s,id:s.sourceId,sourceIds:[s.sourceId]}))};
 }
 export function toggleExclusiveWeapon(snapshot,sources,enabled){
- const ids=exclusiveWeaponSourceIds(sources),weapons=new Set(ids);
+ const ids=exclusiveGearSourceIds(sources),weapons=new Set(ids);
  const items=snapshot.items.filter(item=>!item.sourceIds?.some(id=>weapons.has(id)));
  if(enabled)for(const source of sources.filter(s=>weapons.has(s.sourceId))){
   const previous=snapshot.items.find(item=>item.sourceIds?.includes(source.sourceId));

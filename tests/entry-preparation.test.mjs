@@ -20,9 +20,10 @@ test('changing magic to normal clears derived killer eligibility',()=>{
  assert.equal(r.context.killer,false);
  assert.equal(r.rows.some(r=>r.status==='active'&&r.rule.conditions.some(c=>c.field==='killer')),false);
 });
-test('heavy magic inherits magic conditions but does not assume resonance is active',()=>{
+test('heavy magic inherits magic conditions and is itself a non-stackable magic cast (resonance)',()=>{
  const r=retargetReport(initial(),{attack:'heavy_magic',type:'magical',element:'冰'});
- assert.equal(r.context.attackKind,'magic');assert.equal(r.context.resonance,false);
+ assert.equal(r.context.attackKind,'magic');assert.equal(r.context.resonance,true,'game: 魔術共鳴 buff is granted while our non-stackable magic is being cast');
+ assert.equal(retargetReport(initial(),{attack:'magic',type:'magical',element:'冰'}).context.resonance,false);
  assert(r.rows.some(r=>r.status==='active'&&r.rule.effects.some(e=>e.type==='hit')));
 });
 test('unresolved choices cannot be silently applied',()=>{
@@ -78,4 +79,14 @@ test('battle report null stats stay null; wrong kind and invalid numbers rejecte
  assert.equal(validateBattleEntry(r).units[0].stats.attack,null);
  assert.throws(()=>validateBattleEntry({...r,kind:'other'}),/格式不匹配/);
  assert.throws(()=>validateBattleEntry({...r,units:[{stats:{hp:-1},bonuses:[]}]}),/无效/);
+});
+test('damage page 专武 switch equips every exclusive item even when the report had none selected',()=>{
+ const base=initial(),unequipped={...base,context:{...base.context,equipmentIds:[],staff:false,robe:false,iceStaff:false},rows:(base.rows||[]).map(r=>r.group==='equipment'?{...r,status:'disabled',reasons:['未选择这件装备']}:r)};
+ const on=retargetReport(unequipped,{attack:'magic',type:'magical',element:'冰',specialWeapon:true});
+ const gear=[...new Set(on.rows.filter(r=>r.group==='equipment').map(r=>r.sourceId))];
+ assert(gear.length>0);
+ for(const id of gear)assert(on.context.equipmentIds.includes(id));
+ assert(on.rows.filter(r=>r.group==='equipment').some(r=>r.status==='active'),'unequipped gear is re-evaluated, not treated as manually disabled');
+ const off=retargetReport(on,{attack:'magic',type:'magical',element:'冰',specialWeapon:false});
+ assert(!off.rows.some(r=>r.group==='equipment'&&r.status==='active'));
 });

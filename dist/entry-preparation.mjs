@@ -1,4 +1,4 @@
-import {characterMoveDefaults} from './character-template.mjs?v=20260926-mayly';
+import {characterMoveDefaults,characterDefinition} from './character-template.mjs?v=20260926-mayly';
 import {STAT_CONDITION_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260926-skill-coverage';
@@ -45,7 +45,9 @@ export function retargetReport(report,selection) {
  for(const row of report.rows||[]) {
   if(!grouped.has(row.sourceId))grouped.set(row.sourceId,{id:row.sourceId,name:row.sourceName,text:row.sourceText,group:row.group,rules:[]});
   grouped.get(row.sourceId).rules.push(row.rule);
-  if(row.status==='disabled')overrides[row.rule.id]={disabled:true};
+  // Only a manual switch-off carries over; an unequipped item is re-evaluated
+  // under this page's own equipment context.
+  if(row.status==='disabled'&&!(row.group==='equipment'&&(row.reasons||[]).includes('未选择这件装备')))overrides[row.rule.id]={disabled:true};
  }
  // Add newly recognized account entries to older saved calculator reports.
  // Existing rules, exclusions and user edits keep their identity.
@@ -53,6 +55,12 @@ export function retargetReport(report,selection) {
  const attack=selection.attack==='heavy_magic'?'magic':selection.attack;
  const context={...report.context,killer:false,attack,damageType:selection.type,element:elementIds[selection.element]??null,statReference:selection.statReference??report.context.statReference};
  context.nonStackingMagic=selection.attack==='heavy_magic';
+ // Casting a non-stackable (heavy) magic is exactly the 魔术共鸣-type condition
+ // "我方正在发动不可叠加魔法" (game: buff granted at skill start, applied at trigger 27).
+ if(selection.attack==='heavy_magic')context.resonance=true;
+ // 魔法连锁 (process1050443) counts the current cast before checking, so an
+ // attack magic always has at least the first tier; later casts are chosen explicitly.
+ if(['magic','heavy_magic'].includes(selection.attack))context.chainStacks=Number.isFinite(selection.chainStacks)?selection.chainStacks:Math.max(1,Number(context.chainStacks)||0);
  if(typeof selection.specialAttack==='boolean')context.killerOverride=selection.specialAttack;
  if(typeof selection.break==='boolean')context.break=selection.break;
  if(typeof selection.boss==='boolean')context.boss=selection.boss;
@@ -63,8 +71,21 @@ export function retargetReport(report,selection) {
   if(selection.fullHp===true&&selection.lowHp!==true)context.lowHp=false;
   if(selection.lowHp===true&&selection.fullHp!==true)context.fullHp=false;
  if(typeof selection.criticalEnabled==='boolean'){context.criticalEnabled=selection.criticalEnabled;context.critical=selection.criticalEnabled;}
- // Damage-page dual wield is a manual hit-calculation option. Equipment and
- // single/dual-weapon skill conditions come only from the basic calculator.
+ // Damage-page dual wield is a manual hit-calculation option.
+ // The damage page's 专武 switch equips every exclusive item of the character
+ // (weapon and armor); it does not follow the basic calculator's checkboxes.
+ if(typeof selection.specialWeapon==='boolean'){
+  const gear=characterDefinition(report.characterId).gear||{},ids=Object.keys(gear);
+  const equipped=new Set((context.equipmentIds||[]).filter(id=>!ids.includes(id)));
+  for(const [id,g] of Object.entries(gear)){
+   if(selection.specialWeapon)equipped.add(id);
+   context[g.field]=selection.specialWeapon;
+   if(g.iceStaff)context.iceStaff=selection.specialWeapon;
+  }
+  context.equipmentIds=[...equipped];
+  const weapons=Object.values(gear).filter(g=>!g.armor).length;
+  if(selection.specialWeapon&&weapons)context.weaponCount=Math.max(1,Math.min(2,weapons));
+ }
  const sources=[...grouped.values()].map(s=>s.rules.some(r=>overrides[r.id]?.disabled)?s:upgradeCommonSource(s));
  const evaluated=evaluateCatalog(sources,context,overrides);
  const originals=new Map((report.rows||[]).map(row=>[JSON.stringify([row.sourceId,row.rule.id]),row]));

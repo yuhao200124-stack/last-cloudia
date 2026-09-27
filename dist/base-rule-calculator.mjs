@@ -183,7 +183,7 @@ function mount() {
       }
     }
     metrics = summarizeEffects(result, { availableRows });
-    window.LC_EFFECT_CALCULATOR = { getReport: makeReport, characterId };
+    window.LC_EFFECT_CALCULATOR = { getReport: makeReport, getIndependentReport: makeIndependentReport, characterId };
     window.dispatchEvent(new CustomEvent('lc:effect-rules-change', { detail: { characterId } }));
   }
   function option(value, label, current) { return `<option value="${esc(JSON.stringify(value))}"${JSON.stringify(value) === JSON.stringify(current) ? ' selected' : ''}>${esc(label)}</option>`; }
@@ -376,6 +376,27 @@ function mount() {
   function notify(message, error = false, scroll = true) {
     const el = root.querySelector('#brMessage'); el.hidden = false; el.textContent = message; el.classList.toggle('is-error', error);
     if (scroll) el.scrollIntoView({ block: 'nearest' });
+  }
+  // The damage calculator must not follow this panel's checkboxes. It receives the
+  // character's rules evaluated under the default context; its own switches
+  // (专武, 满血, BOSS ...) decide the conditions from there.
+  function makeIndependentReport() {
+    const keep = { context: state.context, disabledSources: state.disabledSources, disabledRules: state.disabledRules, result };
+    try {
+      // Default: the character wears all of its exclusive gear (the damage page's 专武 switch starts on).
+      const context = characterContext(characterId);
+      context.equipmentIds = Object.keys(gear);
+      for (const g of Object.values(gear)) { context[g.field] = true; if (g.iceStaff) context.iceStaff = true; }
+      const weapons = Object.values(gear).filter(g => !g.armor).length;
+      if (weapons) context.weaponCount = Math.min(2, weapons);
+      state.context = context; state.disabledSources = []; state.disabledRules = [];
+      prepareContext();
+      result = evaluateCatalog(catalog, state.context, {});
+      if (result.context.nativeElementAttacks?.includes(result.context.attack)) state.context.element = result.context.element;
+      return makeReport();
+    } finally {
+      state.context = keep.context; state.disabledSources = keep.disabledSources; state.disabledRules = keep.disabledRules; result = keep.result;
+    }
   }
   function makeReport() {
     return { schemaVersion: 1, characterTemplateRevision:1, mechanicsRevision: result.mechanicsRevision, kind: 'last-cloudia-effect-report', characterId, characterName, accountBlessings: ACCOUNT_BLESSING_META, createdAt: new Date().toISOString(), scope: '当前条件下的加成合计，非最终伤害', totals: clone(metrics), context: result.context, killer: result.killer, warnings: result.warnings,

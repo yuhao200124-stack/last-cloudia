@@ -696,7 +696,7 @@ unified=mountUnifiedCalculator({
   manualDefenseRatio:defenseRatioTouched||imported&&$('defenseRatio').valueAsNumber!==imported.defenseRatio?$('defenseRatio').valueAsNumber:null,
   criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),
  onChange:update,
- onWeaponChange:enabled=>{$('specialWeapon').checked=enabled;}
+ onWeaponChange:enabled=>{$('specialWeapon').checked=enabled;workflow?.setSpecialWeapon?.(enabled);}
 });
 $('specialWeapon').addEventListener('change',()=>unified.setExclusiveWeapon($('specialWeapon').checked));
 unified.refreshSources();update();

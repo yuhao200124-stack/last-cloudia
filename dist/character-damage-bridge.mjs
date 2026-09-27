@@ -11,7 +11,8 @@ const characterId=document.body.dataset.characterId;
 let ready=false;
 let lastStored='';
 function publish() {
-  const base=window.LC_EFFECT_CALCULATOR?.getReport()||characterReportFromDocument(document);
+  const calc=window.LC_EFFECT_CALCULATOR;
+  const base=(calc?.getIndependentReport?.()||calc?.getReport())||characterReportFromDocument(document);
   const report=base?{...base,profile:readCharacterProfile(document)}:null;
   if(!report || String(report.characterId)!==characterId) return;
   const fingerprint=JSON.stringify({...report,createdAt:''});

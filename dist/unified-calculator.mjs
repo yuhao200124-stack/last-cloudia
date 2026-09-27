@@ -1,4 +1,4 @@
-import {buildLoadoutReport,prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds,reportLoadoutSnapshot,toggleExclusiveWeapon} from './loadout-preview.mjs?v=20260926-mayly';
+import {buildLoadoutReport,prepareLoadoutPreview,loadoutSources,exclusiveWeaponSourceIds,exclusiveGearSourceIds,reportLoadoutSnapshot,toggleExclusiveWeapon} from './loadout-preview.mjs?v=20260926-mayly';
 import {recommendDamage,DEFAULT_SC_RATES,damageGauge} from './damage-recommendations.mjs?v=20260924-fullpage';
 import {LEARNING_STORAGE_KEY} from './effect-rule-learning.mjs?v=20260926-mayly';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-mayly';
@@ -20,7 +20,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
  const weaponStorageKey=`lc-exclusive-weapon:${getContext().characterId}`;
  const frame=$('unifiedLoadoutFrame');let active=false,ready=false,snapshot=null,sourceKey='',showSettings=false,resultsCollapsed=false,anchor=[],criticalAnchor=null,rates=saved('lc-recommendation-sc-rates:v1',DEFAULT_SC_RATES),pendingWeapon=saved(weaponStorageKey,null);
  const send=(type,extra={})=>{if(ready)frame.contentWindow.postMessage({type,...extra},location.origin);};
- const weaponIds=()=>{const report=getContext().baseReport;return report?exclusiveWeaponSourceIds(loadoutSources(report)):[];};
+ const weaponIds=()=>{const report=getContext().baseReport;return report?exclusiveGearSourceIds(loadoutSources(report)):[];};
  function ensureLoadout(){
   const context=getContext();
   if(!snapshot&&context.baseReport){anchor=context.runtimeAnchor||[];criticalAnchor=captureCritical(context);snapshot=reportLoadoutSnapshot(context.baseReport,context.manualEffects);}
@@ -48,7 +48,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
  function initialize(){const {baseReport,characterId,manualEffects}=getContext();if(baseReport){
   const sources=loadoutSources(baseReport,manualEffects);sourceKey=JSON.stringify(sources);send('lc-loadout-init',{characterId:baseReport.characterId,sources});
   if(typeof pendingWeapon==='boolean')setExclusiveWeapon(pendingWeapon);
-  else if(!snapshot)onWeaponChange?.(sources.some(s=>s.enabled&&exclusiveWeaponSourceIds(sources).includes(s.sourceId)));
+  else if(!snapshot){const ids=exclusiveGearSourceIds(sources);onWeaponChange?.(ids.length>0&&ids.every(id=>sources.some(s=>s.enabled&&s.sourceId===id)));}
  }else if(!characterId)send('lc-loadout-get-state');}
  function captureCritical(context){
   return Number.isFinite(context.criticalObservation)&&context.baseReport?{rate:context.criticalObservation,contribution:buildDamageImport(retargetReport(context.baseReport,context.selection)).critAdded}:null;
@@ -77,7 +77,7 @@ export function mountUnifiedCalculator({getContext,onChange,beforeOpen,onWeaponC
    }
    snapshot=next;
    const ids=weaponIds();if(ids.length&&pendingWeapon===null){
-    const enabled=next.items.some(item=>item.sourceIds?.some(id=>ids.includes(id)));onWeaponChange?.(enabled);
+    const enabled=ids.every(id=>next.items.some(item=>item.sourceIds?.includes(id)));onWeaponChange?.(enabled);
     try{localStorage.setItem(weaponStorageKey,JSON.stringify(enabled));}catch{}
    }
    onChange();
