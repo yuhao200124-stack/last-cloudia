@@ -31,6 +31,11 @@ try { const saved = localStorage.getItem(LOADOUT_KEY); if (saved) loadoutReport 
 function keepLoadout(report) {
   // keep only what the engine uses so the report fits in storage
   const slim = { tool: report.tool, version: report.version, capturedAt: report.capturedAt || null, units: (report.units || []).map(u => ({ unitDressId: u.unitDressId, lv: u.lv, limitbreakLv: u.limitbreakLv, awakeLv: u.awakeLv, abilityPieceInfo: u.abilityPieceInfo })), equipList: (report.equipList || []).map(e => ({ unitDressId: e.unitDressId, passiveSkillInfo: e.passiveSkillInfo, magicInfo: e.magicInfo, equipInfo: e.equipInfo, equipLvInfo: e.equipLvInfo })) };
+  // reader v0.11: only the crests that are equipped and the enhancement levels of equipped items
+  const used = new Set(), crestIds = new Set();
+  for (const e of report.equipList || []) for (const part of String(e.equipInfo || '').split('-')) { const [pos, id] = part.split(':').map(Number); if (!id) continue; if (pos === 5) crestIds.add(id); else used.add(id); }
+  if (Array.isArray(report.crests)) { slim.crests = report.crests.filter(c => crestIds.has(c.userCrestId) || crestIds.has(c.key)).map(c => ({ key: c.key, crestId: c.crestId, userCrestId: c.userCrestId, favorite: c.favorite, slots: c.slots })); slim.crestSlotColumns = report.crestSlotColumns; }
+  if (Array.isArray(report.equipItems)) { const cols = report.equipItemColumns || ['itemEquipId', 'possession', 'newRecord', 'alchemyLevel', 'favorite']; const idI = cols.indexOf('itemEquipId'); slim.equipItems = report.equipItems.filter(r => used.has(r[idI])); slim.equipItemColumns = cols; }
   loadoutReport = slim;
   try { localStorage.setItem(LOADOUT_KEY, JSON.stringify(slim)); } catch {}
 }
@@ -172,9 +177,15 @@ async function ensureEngine(unitDressId) {
     const { master, scripts } = await engineModules.loadEngineData({ unitDressIds: unitDressId ? [unitDressId] : [] });
     battle = new engineModules.Battle(master, scripts, { probability: probabilityMode });
     loadedDress = unitDressId;
-    if (monsterBundle) battle.master.merge(monsterBundle); if (monsterPassiveBundle) battle.master.merge(monsterPassiveBundle);
+    if (monsterBundle) battle.master.merge(monsterBundle); if (monsterPassiveBundle) battle.master.merge(monsterPassiveBundle); if (crestBundle) battle.master.merge(crestBundle);
   }
   return engineModules;
+}
+// Crests (徽章): CrestMst + the trait passive pool (engine/crests.json), loaded when a loadout carries one.
+let crestBundle = null;
+async function ensureCrests() {
+  if (!crestBundle) { crestBundle = await fetch(new URL('./game-data/engine/crests.json', import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(crestBundle); }
+  return crestBundle;
 }
 
 const setState = text => { const el = $('engineState'); if (el) el.textContent = text; };
@@ -266,9 +277,17 @@ async function run(force = false) {
       const fromLoadout = loadoutReport ? M.attackerFromLoadout(loadoutReport, battle.master, await ensureSwitches(), dress, { extraPassives: blessings }) : null;
       for (const id of ['engineLevel', 'engineAwake']) if ($(id)) $(id).disabled = !!fromLoadout;
       if (fromLoadout) {
-        // the account's real loadout: its level / awakening / opened board, equipped passives, gear and magic
+        // the account's real loadout: its level / awakening / opened board, equipped passives, gear, magic and crest
         const lo = fromLoadout.loadout;
-        attackerSpec = { ...fromLoadout, name: c?.nameS || fromLoadout.name, stats: override, statsSource: `配装报告（本账号实际配置：Lv${lo.level} · 觉醒${lo.awake} · 能力盘 ${lo.pieceCount} 格 · ${lo.passives.length} 个被动 · ${lo.equips.map(e => battle.master.itemEquip.get(e.id)?.NAME || e.id).join('、') || '无装备'}${lo.equips.some(e => !e.level) ? '（强化按满级）' : ''}${growthChoice.accountBlessings ? ' ＋本账号加护' : ''}${lo.missingPassives ? `；${lo.missingPassives} 个被动未在主数据中找到` : ''}）` };
+        let crestNote = '';
+        if (lo.crest) {
+          await ensureCrests();
+          const cm = battle.master.crest.get(lo.crest.crestId);
+          const traitNames = lo.crest.traits.map(t => battle.master.passive.get(t.passive)?.NAME || `词条${t.passive}`);
+          crestNote = ` · 徽章 ${cm ? `${cm.NAME} Lv${cm.LV}` : `#${lo.crest.crestId}（主数据缺失）`}${traitNames.length ? '：' + traitNames.join('、') : '（无词条）'}`;
+        }
+        const gearNote = lo.equips.map(e => `${battle.master.itemEquip.get(e.id)?.NAME || e.id}${e.level != null ? `+${e.level}` : ''}`).join('、') || '无装备';
+        attackerSpec = { ...fromLoadout, name: c?.nameS || fromLoadout.name, stats: override, statsSource: `配装报告（本账号实际配置：Lv${lo.level} · 觉醒${lo.awake} · 能力盘 ${lo.pieceCount} 格 · ${lo.passives.length} 个被动 · ${gearNote}${lo.equips.some(e => e.level == null) ? '（强化按满级）' : ''}${crestNote}${growthChoice.accountBlessings ? ' ＋本账号加护' : ''}${lo.missingPassives ? `；${lo.missingPassives} 个被动未在主数据中找到` : ''}）` };
       } else {
         const equips = M.exclusiveEquipment(battle.master, dress);
         const passives = [...ids.map(id => ({ id })), ...blessings.filter(b => !ids.includes(b.id))];

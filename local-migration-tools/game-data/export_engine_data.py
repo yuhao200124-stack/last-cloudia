@@ -32,7 +32,12 @@ COLS = {
     # targets: boss-class monsters (their stats, race, resistances and own passives) for the calculator's target picker
     'MonsterMst': ['MONSTER_ID', 'NAME', 'LV', 'HP', 'MP', 'ATK', 'DEF', 'MATK', 'MDEF', 'CHARACTER_TYPE', 'CRITICAL_RATE', 'RESIST_ELEM_INFO', 'RESIST_STATUS_INFO', 'BREAK_TIME', 'PASSIVE_SKILL_INFO'],
     'MonsterPassiveSkillMst': ['MONSTER_PASSIVE_SKILL_ID', 'NAME', 'PROCESS_INFO'],
+    # crests (徽章): the crest's own stats/resistances and the trait passive pool (reader v0.11 adds the group table)
+    'CrestMst': ['CREST_ID', 'NAME', 'LV', 'RARE', 'PARAMETER_INFO', 'RESIST_ELEM_INFO', 'RESIST_STATUS_INFO', 'CREST_TRAIT_LOTTERY_GROUP_NUMBER'],
+    'CrestTraitParameterGroupMst': ['CREST_TRAIT_PARAMETER_GROUP_NUMBER', 'PASSIVE_SKILL_ID', 'RATE', 'ORDER_NUMBER'],
+    'CrestTraitLotteryMst': ['CREST_TRAIT_LOTTERY_GROUP_NUMBER', 'RANK', 'TRAIT_LOTTERY_NUMBER', 'RATE', 'IS_DUPLICATE_ALLOWED', 'CREST_TRAIT_PARAMETER_GROUP_NUMBER'],
 }
+CREST_TRAIT_RANGE = (5000000, 5200000)  # PassiveSkillMst ids of the crest trait pool (family 5xxx + rank/parameter suffix)
 MONSTER_MIN_HP = 500000  # below this the rows are stage fodder; the calculator targets bosses
 
 def ints(s):
@@ -45,7 +50,7 @@ def table(name, rows):
 def main(src, out):
     T = {n: load(os.path.join(src, n + '.bin'))[1] for n in ['ProcessMst', 'ProcessCondMst', 'BuffMst', 'PassiveSkillMst', 'SkillMst', 'BulletMst', 'BulletLvInfoMst', 'UnitDressMst', 'UnitDressAbilityPieceMst', 'UnitDressAwakeMst', 'UnitDressLimitbreakMst', 'ItemEquipMst', 'ArkMst']}
     # growth curves arrive with reader v0.10; older dumps simply leave them out (dist/engine/panel.mjs keeps the verified Lv120 rate)
-    for n in ['GrowthMst', 'ItemEquipParameterGrowthMst', 'MonsterMst', 'MonsterPassiveSkillMst']:
+    for n in ['GrowthMst', 'ItemEquipParameterGrowthMst', 'MonsterMst', 'MonsterPassiveSkillMst', 'CrestMst', 'CrestTraitParameterGroupMst', 'CrestTraitLotteryMst']:
         path = os.path.join(src, n + '.bin')
         T[n] = load(path)[1] if os.path.exists(path) else None
     ps = {r['PASSIVE_SKILL_ID']: r for r in T['PassiveSkillMst']}
@@ -143,6 +148,17 @@ def main(src, out):
         size = dump(os.path.join(eng, 'monsters.json'), {'MonsterMst': table('MonsterMst', monsters)})
         size2 = dump(os.path.join(eng, 'monster-passives.json'), {'MonsterPassiveSkillMst': table('MonsterPassiveSkillMst', mps)})
         print('monsters.json', size, 'monsters', len(monsters), '| monster-passives.json', size2, 'passives', len(mps))
+
+    # Crests: CrestMst (stats per crest id) + the trait passive pool, loaded on demand when a loadout carries a crest.
+    if T['CrestMst'] is not None:
+        pool = {p for p in ps if CREST_TRAIT_RANGE[0] <= p < CREST_TRAIT_RANGE[1]}
+        if T['CrestTraitParameterGroupMst'] is not None: pool.update(r['PASSIVE_SKILL_ID'] for r in T['CrestTraitParameterGroupMst'] if r['PASSIVE_SKILL_ID'] in ps)
+        crests = bundle(pool, set())
+        crests['CrestMst'] = table('CrestMst', T['CrestMst'])
+        for n in ['CrestTraitParameterGroupMst', 'CrestTraitLotteryMst']:
+            if T[n] is not None: crests[n] = table(n, T[n])
+        size = dump(os.path.join(eng, 'crests.json'), crests)
+        print('crests.json', size, 'crests', len(crests['CrestMst']['rows']), 'trait passives', len(crests['PassiveSkillMst']['rows']))
 
     total = 0
     for u in T['UnitDressMst']:

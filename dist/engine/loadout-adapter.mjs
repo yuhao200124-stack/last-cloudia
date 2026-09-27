@@ -44,7 +44,32 @@ export function unitLoadout(report, master, switches, unitDressId) {
   const equipLevels = {};
   for (const part of String(equip.equipLvInfo || '').split('-')) { const [pos, lv] = part.split(':').map(Number); if (pos && lv) equipLevels[pos] = lv; }
   for (const e of equips) if (equipLevels[e.pos]) e.level = equipLevels[e.pos];
-  return { unitDressId: id, level: unit.lv, limitBreak: unit.limitbreakLv, awake: unit.awakeLv, pieces, pieceCount: opened.length, personality: [...personality.values()], skillLevels, passives, magic, equips, missingPassives: decodeFlags(equip.passiveSkillInfo).length - passives.length };
+  // reader v0.11: enhancement level per owned equipment id (UserItem.ItemEquipInfoList AlchemyLevel) and the
+  // crest instance in slot 5 (UserItem.CrestInfoList keyed by user crest id) with its rolled trait passives
+  const itemLevels = equipItemLevels(report);
+  for (const e of equips) if (e.level == null && itemLevels.has(e.id)) e.level = itemLevels.get(e.id);
+  const crestSlot = equips.find(e => e.pos === 5), gear = equips.filter(e => e.pos !== 5 && e.pos !== 6);
+  const crest = crestSlot ? crestOf(report, crestSlot.id) : null;
+  return { unitDressId: id, level: unit.lv, limitBreak: unit.limitbreakLv, awake: unit.awakeLv, pieces, pieceCount: opened.length, personality: [...personality.values()], skillLevels, passives, magic, equips: gear, crest, slots: equips, missingPassives: decodeFlags(equip.passiveSkillInfo).length - passives.length };
+}
+
+// Map equipment id → enhancement level from the report's owned-equipment rows (v0.11 `equipItems`).
+export function equipItemLevels(report) {
+  const m = new Map();
+  const cols = report.equipItemColumns || ['itemEquipId', 'possession', 'newRecord', 'alchemyLevel', 'favorite'];
+  const idI = cols.indexOf('itemEquipId'), lvI = cols.indexOf('alchemyLevel');
+  for (const row of report.equipItems || []) if (Array.isArray(row) && row[idI] > 0) m.set(row[idI], row[lvI] || 0);
+  return m;
+}
+
+// The crest instance behind a loadout's slot 5 (user crest id): crest id and its slot traits.
+export function crestOf(report, userCrestId) {
+  const c = (report.crests || []).find(x => x.userCrestId === userCrestId || x.key === userCrestId);
+  if (!c) return userCrestId ? { userCrestId, crestId: 0, traits: [], missing: true } : null;
+  const cols = report.crestSlotColumns || ['rank', 'maxRank', 'locked', 'lotteryNumber', 'passiveId'];
+  const at = (row, name) => row[cols.indexOf(name)] || 0;
+  const traits = (c.slots || []).map((row, i) => ({ slot: i + 1, rank: at(row, 'rank'), maxRank: at(row, 'maxRank'), locked: at(row, 'locked'), lotteryNumber: at(row, 'lotteryNumber'), passive: at(row, 'passiveId') })).filter(t => t.passive);
+  return { userCrestId, crestId: c.crestId, favorite: c.favorite, traits };
 }
 
 // Attacker spec for scenario.addAttacker: computed panel (panelGiven false) from the report's growth and loadout.
@@ -53,5 +78,5 @@ export function attackerFromLoadout(report, master, switches, unitDressId, { ext
   if (!lo) return null;
   const listed = new Set(lo.passives);
   const passives = [...lo.passives.map(id => ({ id })), ...lo.personality.map(p => ({ id: p.passive })), ...extraPassives.filter(p => !listed.has(p.id))];
-  return { unitDressId: lo.unitDressId, name: master.unitDress.get(lo.unitDressId)?.NAME, panelGiven: false, level: lo.level, limitBreak: lo.limitBreak, awake: lo.awake, pieces: lo.pieces, personality: lo.personality, passives, equips: lo.equips, magic: lo.magic, loadout: lo };
+  return { unitDressId: lo.unitDressId, name: master.unitDress.get(lo.unitDressId)?.NAME, panelGiven: false, level: lo.level, limitBreak: lo.limitBreak, awake: lo.awake, pieces: lo.pieces, personality: lo.personality, passives, equips: lo.equips, magic: lo.magic, crest: lo.crest?.crestId ? { crestId: lo.crest.crestId, traits: lo.crest.traits } : null, loadout: lo };
 }

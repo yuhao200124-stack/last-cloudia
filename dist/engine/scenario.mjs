@@ -2,8 +2,8 @@
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
 import { Battle, K, parseInts } from './battle.mjs';
-import { bareStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs';
-export { bareStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -28,7 +28,7 @@ export function addAttacker(battle, spec) {
   const master = battle.master;
   const equips = (spec.equips || []).map(e => equipSpec(master, e)).filter(e => e.id);
   const dress = master.unitDress.get(Number(spec.unitDressId));
-  let stats = toStats(spec.stats), elemResist = { ...(spec.elemResist || {}) }, panel = null, panelOverride = null, level = spec.level ?? 120;
+  let stats = toStats(spec.stats), elemResist = { ...(spec.elemResist || {}) }, panel = null, panelOverride = null, level = spec.level ?? 120, crest = null;
   if (spec.panelGiven === false) {
     panel = bareStats(master, spec.unitDressId, { level: spec.level, awake: spec.awake, pieces: spec.pieces, limitBreak: spec.limitBreak });
     if (panel) { level = panel.level; panelOverride = stats; stats = statCodes(panel.stats); elemResist = { ...panel.elemResist, ...(spec.elemResist || {}) }; }
@@ -36,6 +36,11 @@ export function addAttacker(battle, spec) {
       const es = equipmentStats(master, e.id, e.level); if (!es) continue;
       e.stats = statCodes(es.stats); e.name = es.name; e.estimated = es.estimated; e.level = es.level;
       for (const [k, v] of Object.entries(es.elemResist)) elemResist[k] = (elemResist[k] || 0) + v;
+    }
+    if (spec.crest?.crestId) {
+      const cs = crestStats(master, spec.crest.crestId);
+      if (cs) { crest = { id: cs.id, name: cs.name, level: cs.level, stats: statCodes(cs.stats), traits: spec.crest.traits || [] }; for (const [k, v] of Object.entries(cs.elemResist)) elemResist[k] = (elemResist[k] || 0) + v; }
+      else crest = { id: spec.crest.crestId, name: null, missing: true, stats: {}, traits: spec.crest.traits || [] };
     }
   }
   const skills = spec.skills || [];
@@ -53,6 +58,9 @@ export function addAttacker(battle, spec) {
   unit.panelGiven = spec.panelGiven !== false;
   unit.panelOverride = panelOverride && Object.keys(panelOverride).length ? panelOverride : null;
   unit.panelParts = panel;
+  unit.crest = crest;
+  // crest traits (徽章词条): passives of the trait pool, registered under affiliation 18 like the game does
+  if (crest) for (const t of crest.traits) { const pid = typeof t === 'object' ? t.passive : t; if (pid && master.passive.has(pid)) battle.addPassive(unit, pid, K.AFF.CREST, (typeof t === 'object' && t.localId) || pid); else if (pid) battle.log('missing-crest-trait', pid); }
   for (const p of spec.passives || []) if (p.affiliation && p.affiliation !== K.AFF.AUTOSKILL) { if (p.processes) battle.addProcesses(unit, p); else battle.addPassive(unit, p.id, p.affiliation, p.localId ?? p.id, p.level ?? 1, p.params); }
   // equipment passives (weapon 6 / armour 7 / accessories 8) come from ItemEquipMst unless the caller listed them
   const listed = new Set((spec.passives || []).filter(p => p.affiliation && p.affiliation !== K.AFF.AUTOSKILL).map(p => `${p.affiliation}:${p.localId ?? p.id}`));

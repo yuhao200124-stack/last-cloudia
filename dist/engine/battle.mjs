@@ -17,7 +17,7 @@ export const K = {
   SIDE: { ALLY: 2, OPPONENT: 1 },
   TARGET_SIDE: { ALL: 0, OPPONENT: 1, ALLY: 2, ME: 3, NONE: 5 },
   TARGET_COND: { ALL: -1, BOTH: 0, ALIVE: 1, DEAD: 2, SECEDE: 3 },
-  AFF: { NONE: 0, BUFF: 2, AUTOSKILL: 4, ARK: 5, WEAPON: 6, ARMOR: 7, ACCESSORY: 8, TERRAIN: 9, FORMATION: 12, SUB_BUFF: 64 },
+  AFF: { NONE: 0, BUFF: 2, AUTOSKILL: 4, ARK: 5, WEAPON: 6, ARMOR: 7, ACCESSORY: 8, TERRAIN: 9, FORMATION: 12, SUPPORT: 15, CREST: 18, SUB_BUFF: 64 },
   TRIG: { STATUS: 1, WAVE_START: 10, BEFORE_SKILL: 18, BEFORE_CREATE_BULLET: 19, BULLET_PROCESS: 20, BULLET_HIT: 21, BULLET_WAS_HIT: 22, ON_CALC_ATTACK: 23, ON_CALC_DAMAGE: 24, AFTER_ATTACK: 25, AFTER_DAMAGE: 26, AFTER_CALC_ATTACK: 27, AFTER_CALC_DAMAGE: 28, PRE_AFTER_ATTACK: 29, PRE_AFTER_DAMAGE: 30, CHANGE_HP: 40, CHANGE_BUFF: 54, ON_ADDED_BUFF: 60, CHANGE_SURVIVORS: 65 },
   OP: { PHYS_DMG: 100, MAG_DMG: 101, STR: 300, DEF: 301, INT: 302, MND: 303, CRT: 304, MAX_HP: 305, STATUS_RESIST: 306, ELEM_RESIST: 307, KILLER: 308, SPD: 310, MAX_MP: 318, EQUIP_PARAM: 319, REDUCTION_PHYS: 502, REDUCTION_MAG: 503, DMG_POWER: 504, INVALID_DMG: 505, OVERRIDE_ELEMENT: 507, KILLER_POWER: 509, DMG_LIMIT_OFF: 824, MULTI_BULLET: 825, DMG_LIMIT_UP: 826, MAGIC_CRITICAL: 800, SPECIAL_CRITICAL: 829 },
   SKILL: { SKILL: 1, MAGIC: 2, PRECAST: 3, SUMMON: 4, SPECIAL: 5, PASSIVE: 6, ARK: 7, ATTACK: 9, PHYSIC: 10, COUNTER: 15 },
@@ -74,6 +74,9 @@ export class Master {
     // targets: boss-class monsters and their own passives (a separate id space from PassiveSkillMst)
     this.monster = map('MonsterMst', 'MONSTER_ID');
     this.monsterPassive = map('MonsterPassiveSkillMst', 'MONSTER_PASSIVE_SKILL_ID');
+    // crests (徽章, engine/crests.json on demand): the crest's own stats and the trait passive groups
+    this.crest = map('CrestMst', 'CREST_ID');
+    this.crestTraitGroup = group('CrestTraitParameterGroupMst', 'CREST_TRAIT_PARAMETER_GROUP_NUMBER');
     this.bulletLv = new Map();
     const bl = tables.BulletLvInfoMst;
     if (bl) { const bi = bl.cols.indexOf('BULLET_ID'), li = bl.cols.indexOf('LV'); for (const r of bl.rows) { const o = {}; bl.cols.forEach((c, i) => o[c] = r[i]); if (!this.bulletLv.has(r[bi])) this.bulletLv.set(r[bi], new Map()); this.bulletLv.get(r[bi]).set(r[li], o); } }
@@ -84,6 +87,9 @@ export class Master {
     const add = (name, key, target) => { const t = tables[name]; if (!t) return; const ki = t.cols.indexOf(key); for (const r of t.rows) { const o = {}; t.cols.forEach((c, i) => o[c] = r[i]); if (!target.has(r[ki])) target.set(r[ki], o); } };
     add('MonsterMst', 'MONSTER_ID', this.monster); add('MonsterPassiveSkillMst', 'MONSTER_PASSIVE_SKILL_ID', this.monsterPassive);
     add('PassiveSkillMst', 'PASSIVE_SKILL_ID', this.passive); add('SkillMst', 'SKILL_ID', this.skill); add('BulletMst', 'BULLET_ID', this.bullet);
+    add('CrestMst', 'CREST_ID', this.crest);
+    const g = tables.CrestTraitParameterGroupMst;
+    if (g) { const ki = g.cols.indexOf('CREST_TRAIT_PARAMETER_GROUP_NUMBER'); for (const r of g.rows) { const o = {}; g.cols.forEach((c, i) => o[c] = r[i]); if (!this.crestTraitGroup.has(r[ki])) this.crestTraitGroup.set(r[ki], []); this.crestTraitGroup.get(r[ki]).push(o); } }
   }
   processSegments(processInfo) {
     if (!this._segments.has(processInfo)) this._segments.set(processInfo, parseProcessInfo(processInfo));
@@ -263,11 +269,12 @@ export class Battle {
     const r = sum(runtime);
     return Math.floor((panel + r.val) * (1 + r.per * 0.0001)) + r.add;
   }
-  // Equipment parameters enter the panel before the percentage layer; EquipParam (319: equip type, stat,
+  // Equipment parameters enter the panel before the percentage layer (the crest's own parameters join them
+  // unedited, UnitUtil.AddCrestParameter); EquipParam (319: equip type, stat,
   // per) from 特定装備時装備パラメータ増減 passives raises the piece's own value, percentages adding up
   // (洛琪希: staff INT 365 ×(1+100%), robe INT 229 ×(1+50%) → 344, robe MND 116 ×(1+100%+50%)).
   equipmentStat(u, statType) {
-    let total = 0;
+    let total = u.crest?.stats?.[statType] || 0;
     for (const e of u.equips) {
       const v = e.stats?.[statType] || 0; if (!v) continue;
       let per = 0;

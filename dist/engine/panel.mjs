@@ -95,6 +95,17 @@ export function equipmentStats(master, equipId, level = null) {
   return { id: row.ITEM_EQUIP_ID, name: row.NAME, type: row.EQUIP_TYPE, elem: row.ELEM, level: lv, maxLevel: maxLv, stats, elemResist, estimated };
 }
 
+// A crest's own parameters (CrestMst PARAMETER_INFO "HP:MP:STR:DEF:INT:MND", added like equipment) and resistances.
+export function crestStats(master, crestId) {
+  const row = master.crest?.get(Number(crestId));
+  if (!row) return null;
+  const vals = parseInts(row.PARAMETER_INFO), stats = {};
+  STAT_ORDER.forEach((k, i) => { stats[k] = vals[i] || 0; });
+  const elemResist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+  parseInts(row.RESIST_ELEM_INFO).forEach((v, i) => { if (i < 6) elemResist[i + 1] = v; });
+  return { id: row.CREST_ID, name: row.NAME, level: row.LV, rare: row.RARE, stats, elemResist, lotteryGroup: row.CREST_TRAIT_LOTTERY_GROUP_NUMBER };
+}
+
 // The character's exclusive weapon and armour (ItemEquipMst UNIT_DRESS_ID), the default loadout without a report.
 export function exclusiveEquipment(master, unitDressId) {
   const out = [];

@@ -31,6 +31,7 @@
 - 技能类型组合码（SKILL_CATEGORY_EXPANSION）：bit(type+3) 展开后，其中的 10（物理）再展开为 普攻+技能（270592 → 普攻/技能/特技/反击）。
 - 技能目标（TARGET_INFO 第 1、2 段 = 目标侧、规模）通过 `UnitGetSkillTarget/UnitGetSkillTargetType` 提供，`ActValidOwnerSkillBefore` 类条件比较目标侧。
 - 报告里 affiliation 18（徽章词条）、15（支援被动）等没有 PassiveSkillMst 行的来源，按"流程 ID + 读取到的参数"直接建实例（`Battle.addProcesses`）。
+- 徽章（CrestMst）：`UnitUtil.AddCrestParameter` 按 DataManager.UserItem.CrestInfoList[用户徽章 id] 取 CrestID → CrestMst.PARAMETER_INFO（HP:MP:STR:DEF:INT:MND）与装备一样在倍率层之前加入面板（不经 EquipParam 修正），RESIST_ELEM_INFO 加入属性抗性；词条是 PassiveSkillMst 5,000,000–5,199,999 段的被动（家族 5xxx + 档位后缀，如 5050015 劍魔法增幅界限突破 = 1082608/1082602 各 3200、5004014 攻擊力提升 +15%、5078029 超必殺技界限突破 +15,000，与亞克报告里 affiliation 18 实例的流程与参数相同），CrestInfo.Slot {Rank, MaxRank, Locked, LotteryNumber, PassiveID}；`engine/crests.json` 按需加载，`spec.crest = {crestId, traits}` 由读取器 v0.11 的 `crests`/`equipItems` 生成。
 - 施放前已用技能（`state.preCasts`）：按顺序完整施放（自身/友方目标技能打在自己身上），累计计数类被动、自我 Buff（如神託的誓言 必杀上限 +100,000）由此产生。
 - LIFETYPE_CONTINUOUS 的控制在其触发再次评估时失效；ChangeBuff(54) 在一次 Buff 变化结束后统一派发一次。
 - fengari 整数为 32 位：`bitToBoolean` 以移位重写，其余脚本按原样运行。
@@ -51,5 +52,6 @@
 - 段数（时间轴）不在主数据中，仍取计算器填写值。
 - 目标可直接从游戏怪物表选择（面板「目标：从游戏怪物表选择」），含 Boss 自带被动；Break 状态、Boss 的 HP 阶段等仍需手动条件。
 - 导入配装报告后按本账号实际配置结算（面板里「配装报告」文件框，存于浏览器本地）；未导入时按全部自带技能 + 专属武器／防具满强化 + 本账号加护（`dist/account-blessings.mjs` 的读取值）。圣物加成、装备强化等级（报告未含时按满级）仍未计。
-- 装备强化等级：配装报告的 equipLvInfo 目前为空，按满强化计；有读取值时按 ItemEquipParameterGrowthMst 精确计算。
+- 装备强化等级：配装报告的 equipLvInfo 为空；读取器 v0.11 起从 UserItem.ItemEquipInfoList（AlchemyLevel，按装备 id）取当前强化等级，按 ItemEquipParameterGrowthMst 精确计算，缺失时按满强化。
+- 徽章：读取器 v0.11 起按配装报告的徽章实例（本体参数 + 三个词条被动）计入；v0.10 及更早的报告没有徽章数据，按无徽章计。报告里 affiliation 18 实例的 local_id（如 400218）与词条被动 id 的对应关系待 v0.11 数据确认。
 - 加护数值随账号等级变化，报告或账号加护记录里的运行时参数才是真实值。

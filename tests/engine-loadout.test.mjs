@@ -48,3 +48,35 @@ test('loadout: the attacker built from the report reproduces the reader entry pa
   assert.equal(out.stats.int.real, 10111); // EX aura only: 月光II is not in this loadout
   assert.deepEqual(out.errors, []);
 });
+
+// ---- reader v0.11: crest instance (徽章 + 词条) and per-item enhancement levels ----
+import { crestOf, equipItemLevels } from '../dist/engine/loadout-adapter.mjs';
+test('loadout v0.11: the crest in slot 5 adds its parameters and its trait passives register under affiliation 18', async () => {
+  const { master, scripts } = await dataPromise;
+  master.merge(await read('engine/crests.json', false));
+  // 洛琪希's entry with a synthetic 亞克-style crest (Crest: Jala Lv10, STR +352 / DEF +185) whose three traits are the
+  // passives the battle report showed as crest instances: 劍魔法增幅界限突破, 攻擊力提升, 超必殺技界限突破
+  const r = JSON.parse(JSON.stringify(report));
+  r.equipList[0].equipInfo = '1:108119-2:203110-3:0-4:0-5:400096-6:0';
+  r.crests = [{ key: 400096, crestId: 200110, userCrestId: 400096, favorite: 1, slots: [[5, 5, 0, 218, 5050015], [3, 5, 1, 219, 5004014], [4, 5, 0, 220, 5078029]] }];
+  r.crestSlotColumns = ['rank', 'maxRank', 'locked', 'lotteryNumber', 'passiveId'];
+  r.equipItems = [[108119, 1, 0, 30, 0], [203110, 1, 0, 40, 1]]; r.equipItemColumns = ['itemEquipId', 'possession', 'newRecord', 'alchemyLevel', 'favorite'];
+  assert.deepEqual([...equipItemLevels(r)], [[108119, 30], [203110, 40]]);
+  assert.deepEqual(crestOf(r, 400096).traits.map(t => [t.slot, t.rank, t.passive]), [[1, 5, 5050015], [2, 3, 5004014], [3, 4, 5078029]]);
+  assert.equal(crestOf(r, 400099).missing, true);
+  const lo = unitLoadout(r, master, switches, 502220);
+  assert.deepEqual(lo.equips, [{ pos: 1, id: 108119, level: 30 }, { pos: 2, id: 203110, level: 40 }]);
+  assert.deepEqual(lo.slots.map(e => e.pos), [1, 2, 5]);
+  assert.equal(lo.crest.crestId, 200110);
+  const battle = new Battle(master, scripts, { probability: 'assume' });
+  const spec = attackerFromLoadout(r, master, switches, 502220);
+  const roxy = addAttacker(battle, spec);
+  assert.deepEqual([roxy.crest.stats[K.STAT.STR], roxy.crest.stats[K.STAT.DEF], roxy.crest.stats[K.STAT.INT]], [352, 185, 0], 'CrestMst PARAMETER_INFO STR/DEF');
+  const base = new Battle(master, scripts, { probability: 'assume' }); const noCrest = addAttacker(base, attackerFromLoadout(report, master, switches, 502220));
+  assert.deepEqual([roxy.elemResist[2] - noCrest.elemResist[2], roxy.elemResist[4] - noCrest.elemResist[4], roxy.elemResist[1] - noCrest.elemResist[1]], [10, 10, 0], 'crest RESIST_ELEM_INFO');
+  const crestInst = roxy.instances.filter(i => i.affiliation === K.AFF.CREST).map(i => [i.localId, i.localIndex, i.processId, i.params.slice(0, 3)]);
+  assert.deepEqual(crestInst, [[5050015, 0, 1082608, [10, 10, 3200]], [5050015, 1, 1082602, [10, 10, 3200]], [5004014, 0, 1030000, [0, 1500, 0]], [5078029, 0, 1082604, [-2, 5, 15000]]]);
+  // the panel: bare + equipment (+30 staff instead of +40) + crest, before the percentage layer
+  assert.equal(battle.finalStat(roxy, K.STAT.DEF, { layer: 'status' }) - base.finalStat(noCrest, K.STAT.DEF, { layer: 'status' }), 185);
+  assert.ok(roxy.equips[0].stats[K.STAT.INT] < noCrest.equips[0].stats[K.STAT.INT], 'staff +30 gives less INT than +40');
+});
