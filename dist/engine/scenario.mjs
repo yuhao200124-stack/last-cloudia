@@ -81,7 +81,7 @@ export const instanceKey = inst => `${inst.affiliation}:${inst.localId}:${inst.l
 export function conditionalInstances(battle, unit) {
   const fired = new Set(battle.trace.filter(t => t.fired && t.owner === unit.name).map(t => `${t.localId}:${t.index}`));
   return unit.instances.filter(i => !AUTOMATIC_TRIGGERS.has(i.trigger) && !fired.has(`${i.localId}:${i.localIndex}`)).map(i => ({
-    key: instanceKey(i), passiveId: i.passiveId || i.localId, passiveName: battle.master.passive.get(i.passiveId || i.localId)?.NAME || '', processId: i.processId, processName: i.mst.NAME,
+    key: instanceKey(i), passiveId: i.passiveId || i.localId, passiveName: clean(battle.master.passive.get(i.passiveId || i.localId)?.NAME || battle.master.itemEquip.get(i.localId)?.NAME || ''), processId: i.processId, processName: i.mst.NAME,
     trigger: i.trigger, triggerLabel: TRIGGER_LABELS[i.trigger] || `触发${i.trigger}`, condition: i.cond.NAME || '', luaCondition: i.cond.LUA_FUNC_NAME || '', switchGroup: SWITCH_OF_TRIGGER[i.trigger] || 'conditionBuffActive', prob: i.prob,
   }));
 }
@@ -105,6 +105,7 @@ function evaluate(battle, attacker, target, skillId, bulletId, level, critical, 
   return bullet.results;
 }
 
+const clean = s => String(s ?? '').replace(/<[^>]+>/g, '');
 const summarize = values => ({ min: Math.min(...values), max: Math.max(...values), mean: values.reduce((a, b) => a + b, 0) / values.length });
 
 // Full scenario: returns hits (per bullet pass) with normal/critical ranges, plus what fired and what could be assumed.
@@ -135,19 +136,19 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
       const s = p.sample;
       hits.push({ bulletId: p.bulletId, bulletName: battle.master.bullet.get(p.bulletId)?.NAME || '', hitIndex: p.hitIndex, cancelled: p.cancelled, dmgRatio: s?.dmgRatio ?? null, normal: p.normal.length ? summarize(p.normal) : null, critical: p.critical.length ? summarize(p.critical) : null, core: s?.coreDamage ?? null, afterPassives: s?.afterPassives ?? null,
         attack: s?.attack ?? null, defense: s?.defense ?? null, element: s?.element ?? null, resist: s?.resist ?? null, killer: s?.killer ?? false, killerFactor: s?.killerFactor ?? 1, offense: s?.offense ?? 1, received: s?.received ?? 1, reduction: s?.reduction ?? 1, coefficient: s ? s.per / 10000 : null, cap: s?.cap ?? null, capVal: s?.capVal ?? 0, capPer: s?.capPer ?? 0, capAdd: s?.capAdd ?? 0,
-        edits: (s?.edits || []).map(e => ({ name: e.by, id: e.id, localId: e.localId, value: e.value, passiveName: battle.master.passive.get(e.localId)?.NAME || battle.master.itemEquip.get(e.localId)?.NAME || '' })) });
+        edits: (s?.edits || []).map(e => ({ name: e.by, id: e.id, localId: e.localId, value: e.value, passiveName: clean(battle.master.passive.get(e.localId)?.NAME || battle.master.itemEquip.get(e.localId)?.NAME || '') })) });
     }
   }
   // a final representative cast keeps its trace so callers see what fired during the attack too
   battle.restore(base);
   if (bullets.length) evaluate(battle, attacker, target, skill.id, bullets[0], level, false, randoms[Math.floor(randoms.length / 2)]);
   const fired = battle.trace.filter(t => t.fired && t.owner === attacker.name);
-  const probabilistic = [...new Map(battle.trace.filter(t => t.fired && t.prob < 10000).map(t => [`${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.localId}:${t.index}`, passiveName: battle.master.passive.get(t.localId)?.NAME || '', processName: t.name, prob: t.prob / 100, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
+  const probabilistic = [...new Map(battle.trace.filter(t => t.fired && t.prob < 10000).map(t => [`${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.localId}:${t.index}`, passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: t.name, prob: t.prob / 100, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
   return {
     stats: { str: stats(K.STAT.STR), def: stats(K.STAT.DEF), int: stats(K.STAT.INT), mnd: stats(K.STAT.MND), crt: stats(K.STAT.CRT), hp: { panel: battle.finalStat(attacker, K.STAT.MAX_HP, { layer: 'status' }), real: battle.finalStat(attacker, K.STAT.MAX_HP), current: attacker.hp } },
-    buffs: attacker.buffs.map(b => ({ uid: b.uid, buffId: b.buffId, name: b.mst.NAME, params: b.params, remain: b.remain, from: battle.master.passive.get(b.related?.localId)?.NAME || '' })),
+    buffs: attacker.buffs.map(b => ({ uid: b.uid, buffId: b.buffId, name: clean(b.mst.NAME), params: b.params, remain: b.remain, from: clean(battle.master.passive.get(b.related?.localId)?.NAME || battle.master.itemEquip.get(b.related?.localId)?.NAME || '') })),
     hits, conditionals, probabilistic,
-    fired: fired.map(t => ({ trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '', passiveName: battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || '', processName: t.name, localId: t.localId, index: t.index })),
+    fired: fired.map(t => ({ trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '', passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: t.name, localId: t.localId, index: t.index })),
     errors: battle.trace.filter(t => t.error).map(t => ({ name: t.name, id: t.id, error: t.error })),
     unsupported: [...battle.unsupported.keys()],
   };
