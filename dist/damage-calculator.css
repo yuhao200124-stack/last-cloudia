@@ -105,3 +105,10 @@ body.is-embedded main { padding-top:14px; }
 .scenario-summary-total{font-weight:700;color:#163b66}.scenario-summary-total strong,.scenario-summary-row b{color:#285b95;white-space:nowrap}
 .scenario-summary-row span{overflow-wrap:anywhere}
 .game-timing{display:inline-block;margin-top:4px;padding:1px 7px;border-radius:9px;background:#e7f0fb;color:#35577f;font-size:.78rem}
+.condition-row{display:grid;grid-template-columns:128px 1fr;gap:10px;align-items:start;padding:7px 0;border-top:1px dashed #d8e2ec}
+.condition-row:first-of-type{border-top:0}
+.condition-row-title{font-weight:600;color:#223e62;font-size:.9rem;line-height:1.3}
+.condition-row-title small{display:block;font-weight:400;color:#6b7f95;font-size:.74rem}
+.condition-row .inline-options{margin:0}
+.condition-all{font-weight:600}
+@media (max-width:640px){.condition-row{grid-template-columns:1fr;gap:4px}}

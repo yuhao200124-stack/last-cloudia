@@ -352,6 +352,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   for(const field of CONDITION_BUFF_FIELDS){state.selection[field]=$('conditionBuffActive').checked;$(field).checked=state.selection[field];}
   updateCandidate();
  });
+ for(const field of CONDITION_BUFF_FIELDS)$(field)?.addEventListener('change',()=>{state.selection[field]=$(field).checked;updateCandidate();});
  for(const [field] of characterConditions)$(field)?.addEventListener('change',()=>{state.selection[field]=$(field).checked;updateCandidate();});
  for(const id of ['specialAttack','break','boss','weakness','fullHp','lowHp','openingBuffActive','criticalEnabled','specialWeapon'])$(id).addEventListener('change',()=>{
   state.selection[id]=$(id).checked;

@@ -13,9 +13,13 @@ export function gameTimingLabel(catalogId){
  const e=gameSkillTiming(catalogId);
  return e?e.timing.map(t=>t.label).join('；'):'';
 }
+// Game trigger of each event buff that used the generic 条件BUFF switch.
+export const GAME_CONDITION_EVENTS={"d0f3dc6c3cee545e": "allyDownBuffActive", "865f4f238437b7a5": "allyDownBuffActive", "1773fd0e181f0d48": "allyDownBuffActive", "c68e5d899b2196da": "allyDownBuffActive", "ee6342cbdb0251e7": "reviveBuffActive", "563cffc7c5fa9c59": "reviveBuffActive", "763f4480345cdbb6": "killBuffActive", "7fa993c76e14f621": "killBuffActive", "71ac299474a52c86": "ultimateUsedBuffActive", "77ca049322fad0af": "ultimateUsedBuffActive", "7caf7c48fe8b8715": "enemyUltimateBuffActive", "6c8bc1de0d7802c2": "damageTakenBuffActive", "e97879470b786304": "damageTakenBuffActive", "403a540b2ffa9519": "timedBuffActive", "daa5fb62f2887078": "timedBuffActive", "b782149b137d2614": "timedBuffActive", "e2016a861d776638": "timedBuffActive", "a1166f16d23a209d": "timedBuffActive", "8a5d23a0f83cd5f5": "timedBuffActive", "8cbe5117030485dc": "timedBuffActive", "f838f311a82579e0": "timedBuffActive", "3e86dffa826956a7": "partyConditionActive", "edc04a2cb5cbc357": "partyConditionActive", "23dfdab660ed35dd": "otherConditionActive", "84d23b82f37b1490": "otherConditionActive", "e61761228b58bde4": "otherConditionActive"};
 const cond=field=>({field,op:'eq',value:true});
 // Correct only the rules whose on/off switch disagreed with the game's own trigger data.
 export function applyGameTiming(catalogId,rules){
+ const event=GAME_CONDITION_EVENTS[catalogId];
+ if(event&&Array.isArray(rules))rules=rules.map(rule=>(rule.conditions||[]).some(c=>c.field==='conditionBuffActive')?{...rule,conditions:rule.conditions.map(c=>c.field==='conditionBuffActive'?{...c,field:event}:c)}:rule);
  const fix=GAME_TIMING_FIXES[catalogId];
  if(!fix||!Array.isArray(rules))return rules;
  return rules.map(rule=>{

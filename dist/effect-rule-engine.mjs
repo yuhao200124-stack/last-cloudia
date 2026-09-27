@@ -1,4 +1,4 @@
-import {STAT_CONDITIONS,STAT_CONDITION_FIELDS,STAT_CONDITION_DEFAULTS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
+import {STAT_CONDITIONS,STAT_CONDITION_FIELDS,STAT_CONDITION_DEFAULTS,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {upgradeStatRule, STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullpage';
 /* Declarative effect conditions. This module does not compute final damage. */
 const options = (entries) => entries.map(([value, label]) => ({ value, label }));
@@ -94,6 +94,8 @@ export function normalizeContext(input = {}) {
   else if(ctx.fullHp===true)ctx.lowHp=false;
   else if(ctx.lowHp===true)ctx.fullHp=false;
   for(const field of STAT_CONDITION_FIELDS)if(typeof ctx[field]!=='boolean')ctx[field]=null;
+  // “条件BUFF（全部）” stands for every event buff that was not set individually.
+  if(typeof ctx.conditionBuffActive==='boolean')for(const field of CONDITION_BUFF_FIELDS)if(ctx[field]===null)ctx[field]=ctx.conditionBuffActive;
   for(const field of ['back','air','ailment','ground'])if(typeof ctx[field]!=='boolean')ctx[field]=null;
   ctx.breakOrStunned=ctx.break===true||ctx.stunned===true?true:ctx.break===false&&ctx.stunned===false?false:null;
   ctx.enemyRaces=Array.isArray(input.enemyRaces)&&input.enemyRaces.every(r=>CONDITION_FIELDS.enemyRaces.options.some(o=>o.value===r))?[...new Set(input.enemyRaces)]:null;

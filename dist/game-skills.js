@@ -57,7 +57,7 @@
   function render() {
     const sheet = data.sheets[active];
     $('sheetTitle').textContent = active;
-    $('sheetHint').textContent = active === '网站未收录' ? '游戏里能从圣物学习、但原技能表还没有的被动' : '名称、SC、效果、圣物为游戏数据；分类、排序和评价沿用原技能表';
+    $('sheetHint').textContent = active === '杂项' ? '名称、SC、效果、圣物为游戏数据；最后一组“原表未收录”是原技能表还没有的圣物被动' : '名称、SC、效果、圣物为游戏数据；分类、排序和评价沿用原技能表';
     let visible = 0, html = '';
     if (sheet.kind === 'all') {
       const rows = sheet.rows.filter(matches); visible = uniq(rows);
@@ -76,7 +76,7 @@
     const total = sheet.kind === 'all' ? uniq(sheet.rows) : uniq(sheet.lanes.flatMap(l => l.rows));
     $('resultSummary').textContent = query ? `找到 ${visible} 个技能（本页共 ${total} 个）` : `本页 ${visible} 个技能 · 游戏可从圣物学习 ${data.total} 个（原表对应 ${data.siteMatched} 个）`;
     $('clearSearch').hidden = !query;
-    $('sheetTabs').innerHTML = data.sheetOrder.map(n => `<button class="sheet-tab${n === '网站未收录' ? ' is-new' : ''}" type="button" data-sheet="${esc(n)}" role="tab" aria-selected="${n === active}">${esc(n)}</button>`).join('');
+    $('sheetTabs').innerHTML = data.sheetOrder.map(n => `<button class="sheet-tab" type="button" data-sheet="${esc(n)}" role="tab" aria-selected="${n === active}">${esc(n)}</button>`).join('');
     document.querySelectorAll('[data-script]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.script === script)));
     $('showSiteName').checked = showSite;
   }
