@@ -31,13 +31,15 @@
 - 技能类型组合码（SKILL_CATEGORY_EXPANSION）：bit(type+3) 展开后，其中的 10（物理）再展开为 普攻+技能（270592 → 普攻/技能/特技/反击）。
 - 技能目标（TARGET_INFO 第 1、2 段 = 目标侧、规模）通过 `UnitGetSkillTarget/UnitGetSkillTargetType` 提供，`ActValidOwnerSkillBefore` 类条件比较目标侧。
 - 报告里 affiliation 18（徽章词条）、15（支援被动）等没有 PassiveSkillMst 行的来源，按"流程 ID + 读取到的参数"直接建实例（`Battle.addProcesses`）。
-- 徽章（CrestMst）：`UnitUtil.AddCrestParameter` 按 DataManager.UserItem.CrestInfoList[用户徽章 id] 取 CrestID → CrestMst.PARAMETER_INFO（HP:MP:STR:DEF:INT:MND）与装备一样在倍率层之前加入面板（不经 EquipParam 修正），RESIST_ELEM_INFO 加入属性抗性；词条是 PassiveSkillMst 5,000,000–5,199,999 段的被动（家族 5xxx + 档位后缀，如 5050015 劍魔法增幅界限突破 = 1082608/1082602 各 3200、5004014 攻擊力提升 +15%、5078029 超必殺技界限突破 +15,000，与亞克报告里 affiliation 18 实例的流程与参数相同），CrestInfo.Slot {Rank, MaxRank, Locked, LotteryNumber, PassiveID}；`engine/crests.json` 按需加载，`spec.crest = {crestId, traits}` 由读取器 v0.11 的 `crests`/`equipItems` 生成。
+- 徽章（CrestMst）：`UnitUtil.AddCrestParameter` 按 DataManager.UserItem.CrestInfoList[用户徽章 id] 取 CrestID → CrestMst.PARAMETER_INFO（HP:MP:STR:DEF:INT:MND）与装备一样在倍率层之前加入面板（不经 EquipParam 修正），RESIST_ELEM_INFO 加入属性抗性；词条是 PassiveSkillMst 5,000,000–5,199,999 段的被动（家族 5xxx + 档位后缀，如 5050015 劍魔法增幅界限突破 = 1082608/1082602 各 3200、5004014 攻擊力提升 +15%、5078029 超必殺技界限突破 +15,000，与亞克报告里 affiliation 18 实例的流程与参数相同），CrestInfo.Slot {Rank, MaxRank, Locked, LotteryNumber, PassiveID}；`engine/crests.json` 按需加载，`spec.crest = {crestId, traits}` 由读取器 v0.11 的 `crests`/`equipItems` 生成。配装 equipInfo 的 6 个槽位：1 武器、2 防具、3/4 饰品、5 外观（ItemEquipMst EQUIP_TYPE 40，无数值）、6 徽章（用户徽章 id，即 UserItem.CrestInfoList 的键）；局内词条实例的 local_id 固定为 400218/400219/400220（槽位顺序，两名角色的报告相同）。装备强化等级来自 UserItem.ItemEquipInfoList.AlchemyLevel（按装备 id）；MAX_LV=0 的装备（如均衡的天冥珠）PARAMETER_MAX_INFO 为空，数值取 PARAMETER_INFO。
 - 施放前已用技能（`state.preCasts`）：按顺序完整施放（自身/友方目标技能打在自己身上），累计计数类被动、自我 Buff（如神託的誓言 必杀上限 +100,000）由此产生。
 - LIFETYPE_CONTINUOUS 的控制在其触发再次评估时失效；ChangeBuff(54) 在一次 Buff 变化结束后统一派发一次。
 - fengari 整数为 32 位：`bitToBoolean` 以移位重写，其余脚本按原样运行。
 - 局外面板（UnitUtil.GetUnitBasicStatus / FillUnitDressParam）：`裸属性 = min + round(max × GROWTH_RATE[lv] / 10000) + Σ觉醒(UnitDressAwakeMst) + Σ已开属性格(UnitDressAbilityPieceMst 类型 10–15)`，PARAMETER_INFO 的 `min-max` 中 max 是成长量而非 100 级值；所有角色 GROWTH_ID=2，成长率来自 GrowthMst（读取器 v0.10 导出，120 级：Lv100=10000、Lv110=10813、Lv120=12633；12633 与此前用 4 个已验证角色六维拟合的值相同）。装备参数按 ItemEquipParameterGrowthMst：`min + round((max − min) × map[lv] / map[MAX_LV])`（+0 … +MAX_LV，满强化即 PARAMETER_MAX_INFO），`EquipParam`(319: 装备种类, 属性, 倍率) 逐件加算后四舍五入（洛琪希之魔杖 INT 365→730、衣服 INT 229→344、MND 116→290），再进入 `floor((裸 + 装备 + Σ值) × (1 + Σ倍率)) + Σ加算`。
 
 ## 验证
+
+`tests/engine-loadout.test.mjs`：用读取器 v0.11 配装报告的成长／装备强化等级／徽章，配合入场报告里的被动实例，亞克（封劍 +0、神帝劍 +40、Crest: Jala Lv9：劍魔法增幅界限突破／攻擊力提升／超必殺技界限突破）与魯迪烏斯的入场面板七项（HP/MP/STR/DEF/INT/MND/CRT）逐项相等（亞克 21,744/359/7,286/3,115/1,281/1,820/22；去掉徽章则 STR −1,230、DEF −283）；词条实例的流程与参数与报告的 affiliation 18 实例相同。
 
 `tests/engine-panel.test.mjs`：4 个角色的裸属性与网站「最大阶段属性」逐项相等；洛琪希 裸属性 + 专属装备 + 状态计算被动 + 本账号加护 = 读取器入场面板 HP 13,591 / MP 1,018 / STR 1,270 / DEF 1,621 / INT 6,741 / MND 2,808 / CRT 11（逐项相等）。
 
@@ -53,5 +55,6 @@
 - 目标可直接从游戏怪物表选择（面板「目标：从游戏怪物表选择」），含 Boss 自带被动；Break 状态、Boss 的 HP 阶段等仍需手动条件。
 - 导入配装报告后按本账号实际配置结算（面板里「配装报告」文件框，存于浏览器本地）；未导入时按全部自带技能 + 专属武器／防具满强化 + 本账号加护（`dist/account-blessings.mjs` 的读取值）。圣物加成、装备强化等级（报告未含时按满级）仍未计。
 - 装备强化等级：配装报告的 equipLvInfo 为空；读取器 v0.11 起从 UserItem.ItemEquipInfoList（AlchemyLevel，按装备 id）取当前强化等级，按 ItemEquipParameterGrowthMst 精确计算，缺失时按满强化。
-- 徽章：读取器 v0.11 起按配装报告的徽章实例（本体参数 + 三个词条被动）计入；v0.10 及更早的报告没有徽章数据，按无徽章计。报告里 affiliation 18 实例的 local_id（如 400218）与词条被动 id 的对应关系待 v0.11 数据确认。
+- 徽章：读取器 v0.11 起按配装报告的徽章实例（本体参数 + 三个词条被动）计入；v0.10 及更早的报告没有徽章数据，按无徽章计。
+- 配装里从其他角色学来的被动不在角色包里，按 id 桶（`engine/p/<id÷10000>.json`，共 105 个文件 1.5 MB）按需加载；无法解析的 id 在面板摘要里计数。
 - 加护数值随账号等级变化，报告或账号加护记录里的运行时参数才是真实值。

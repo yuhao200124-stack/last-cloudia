@@ -3,6 +3,8 @@
 Usage: python3 export_engine_data.py <reader output dir with *.bin> <dist/game-data dir>
 
 Writes <out>/engine/core.json       ProcessMst, ProcessCondMst, BuffMst (complete)
+       <out>/engine/p/<id//10000>.json  every PassiveSkillMst row, bucketed by id, fetched on demand for passives a
+                                    loadout carries that no other bundle has (learned from other characters)
        <out>/engine/shared.json     player-usable rows every character may need: blessings, common/relic/
                                     equipment passives, magic & ark skills and their bullets, ItemEquipMst
        <out>/engine/c/<dress>.json  the character's own passives (own, personality, transcend, exclusive
@@ -34,7 +36,7 @@ COLS = {
     'MonsterPassiveSkillMst': ['MONSTER_PASSIVE_SKILL_ID', 'NAME', 'PROCESS_INFO'],
     # crests (徽章): the crest's own stats/resistances and the trait passive pool (reader v0.11 adds the group table)
     'CrestMst': ['CREST_ID', 'NAME', 'LV', 'RARE', 'PARAMETER_INFO', 'RESIST_ELEM_INFO', 'RESIST_STATUS_INFO', 'CREST_TRAIT_LOTTERY_GROUP_NUMBER'],
-    'CrestTraitParameterGroupMst': ['CREST_TRAIT_PARAMETER_GROUP_NUMBER', 'PASSIVE_SKILL_ID', 'RATE', 'ORDER_NUMBER'],
+    'CrestTraitParameterGroupMst': ['CREST_TRAIT_PARAMETER_GROUP_NUMBER', 'PASSIVE_SKILL_ID', 'RATE'],  # (ORDER_NUMBER has a trailing space in the sheet)
     'CrestTraitLotteryMst': ['CREST_TRAIT_LOTTERY_GROUP_NUMBER', 'RANK', 'TRAIT_LOTTERY_NUMBER', 'RATE', 'IS_DUPLICATE_ALLOWED', 'CREST_TRAIT_PARAMETER_GROUP_NUMBER'],
 }
 CREST_TRAIT_RANGE = (5000000, 5200000)  # PassiveSkillMst ids of the crest trait pool (family 5xxx + rank/parameter suffix)
@@ -148,6 +150,15 @@ def main(src, out):
         size = dump(os.path.join(eng, 'monsters.json'), {'MonsterMst': table('MonsterMst', monsters)})
         size2 = dump(os.path.join(eng, 'monster-passives.json'), {'MonsterPassiveSkillMst': table('MonsterPassiveSkillMst', mps)})
         print('monsters.json', size, 'monsters', len(monsters), '| monster-passives.json', size2, 'passives', len(mps))
+
+    # Every passive, bucketed by id // 10000 (≈1.4 MB in 105 files): a loadout report can carry passives learned
+    # from any character, so the panel fetches the missing buckets on demand (engine-data.mjs loadPassives).
+    compact_info = lambda info: '@'.join(seg.rstrip(':') for seg in str(info).split('@') if seg.strip(':'))
+    buckets = collections.defaultdict(list)
+    for r in T['PassiveSkillMst']: buckets[r['PASSIVE_SKILL_ID'] // 10000].append(dict(r, PROCESS_INFO=compact_info(r['PROCESS_INFO'])))
+    psize = 0
+    for k, rs in buckets.items(): psize += dump(os.path.join(eng, 'p', f'{k}.json'), {'PassiveSkillMst': table('PassiveSkillMst', rs)})
+    print('p/*.json', psize, 'buckets', len(buckets))
 
     # Crests: CrestMst (stats per crest id) + the trait passive pool, loaded on demand when a loadout carries a crest.
     if T['CrestMst'] is not None:

@@ -44,11 +44,12 @@ export function unitLoadout(report, master, switches, unitDressId) {
   const equipLevels = {};
   for (const part of String(equip.equipLvInfo || '').split('-')) { const [pos, lv] = part.split(':').map(Number); if (pos && lv) equipLevels[pos] = lv; }
   for (const e of equips) if (equipLevels[e.pos]) e.level = equipLevels[e.pos];
-  // reader v0.11: enhancement level per owned equipment id (UserItem.ItemEquipInfoList AlchemyLevel) and the
-  // crest instance in slot 5 (UserItem.CrestInfoList keyed by user crest id) with its rolled trait passives
+  // reader v0.11: enhancement level per owned equipment id (UserItem.ItemEquipInfoList AlchemyLevel); equipInfo
+  // slots 1–4 are gear, 5 the costume (ItemEquipMst EQUIP_TYPE 40, no parameters) and 6 the crest instance
+  // (UserItem.CrestInfoList keyed by user crest id) with its rolled trait passives
   const itemLevels = equipItemLevels(report);
   for (const e of equips) if (e.level == null && itemLevels.has(e.id)) e.level = itemLevels.get(e.id);
-  const crestSlot = equips.find(e => e.pos === 5), gear = equips.filter(e => e.pos !== 5 && e.pos !== 6);
+  const crestSlot = equips.find(e => e.pos === 6), gear = equips.filter(e => e.pos <= 4);
   const crest = crestSlot ? crestOf(report, crestSlot.id) : null;
   return { unitDressId: id, level: unit.lv, limitBreak: unit.limitbreakLv, awake: unit.awakeLv, pieces, pieceCount: opened.length, personality: [...personality.values()], skillLevels, passives, magic, equips: gear, crest, slots: equips, missingPassives: decodeFlags(equip.passiveSkillInfo).length - passives.length };
 }
@@ -62,13 +63,15 @@ export function equipItemLevels(report) {
   return m;
 }
 
-// The crest instance behind a loadout's slot 5 (user crest id): crest id and its slot traits.
+export const CREST_TRAIT_LOCAL_ID = 400218; // observed for slot 1 in every battle report (亞克, 魯迪烏斯)
+// The crest instance behind a loadout's slot 6 (user crest id): crest id and its slot traits.
 export function crestOf(report, userCrestId) {
   const c = (report.crests || []).find(x => x.userCrestId === userCrestId || x.key === userCrestId);
   if (!c) return userCrestId ? { userCrestId, crestId: 0, traits: [], missing: true } : null;
   const cols = report.crestSlotColumns || ['rank', 'maxRank', 'locked', 'lotteryNumber', 'passiveId'];
   const at = (row, name) => row[cols.indexOf(name)] || 0;
-  const traits = (c.slots || []).map((row, i) => ({ slot: i + 1, rank: at(row, 'rank'), maxRank: at(row, 'maxRank'), locked: at(row, 'locked'), lotteryNumber: at(row, 'lotteryNumber'), passive: at(row, 'passiveId') })).filter(t => t.passive);
+  // the battle registers the three traits as affiliation-18 instances with local ids 400218–400220 (slot order)
+  const traits = (c.slots || []).map((row, i) => ({ slot: i + 1, localId: CREST_TRAIT_LOCAL_ID + i, rank: at(row, 'rank'), maxRank: at(row, 'maxRank'), locked: at(row, 'locked'), lotteryNumber: at(row, 'lotteryNumber'), passive: at(row, 'passiveId') })).filter(t => t.passive);
   return { userCrestId, crestId: c.crestId, favorite: c.favorite, traits };
 }
 

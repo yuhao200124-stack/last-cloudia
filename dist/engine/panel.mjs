@@ -80,7 +80,8 @@ export function bareStats(master, unitDressId, { level = null, awake = null, pie
 export function equipmentStats(master, equipId, level = null) {
   const row = master.itemEquip.get(Number(equipId));
   if (!row) return null;
-  const lo = parseInts(row.PARAMETER_INFO), hi = parseInts(row.PARAMETER_MAX_INFO), maxLv = row.MAX_LV || 0;
+  const lo = parseInts(row.PARAMETER_INFO), hi0 = parseInts(row.PARAMETER_MAX_INFO), maxLv = row.MAX_LV || 0;
+  const hi = maxLv > 0 ? hi0 : lo; // MAX_LV 0 (e.g. 均衡的天冥珠): not enhanceable, PARAMETER_MAX_INFO is empty and PARAMETER_INFO is the value
   const lv = level == null ? maxLv : Math.max(0, Math.min(maxLv, level));
   let t = maxLv <= 0 ? 1 : lv / maxLv, estimated = false;
   const g = master.equipGrowth?.get(row.EQUIP_GROWTH_TYPE);

@@ -36,3 +36,15 @@ export async function loadEngineData({ unitDressIds = [], read = defaultRead } =
   await Promise.all(SCRIPT_NAMES.map(async n => { scripts[n] = await read(`lua/${n}.lua`, true); }));
   return { master: new Master(mergeTables(core, shared, ...characters)), scripts, tables: { core, shared, characters } };
 }
+
+// Passives a loadout carries that no loaded bundle has (learned from other characters): fetch their id buckets
+// (engine/p/<id // 10000>.json) and merge them into the master. Returns the ids still missing afterwards.
+const loadedBuckets = new WeakMap();
+export async function loadPassives(master, ids, read = defaultRead) {
+  const missing = [...new Set(ids)].filter(id => id > 0 && !master.passive.has(id));
+  if (!missing.length) return [];
+  const done = loadedBuckets.get(master) || new Set(); loadedBuckets.set(master, done);
+  const buckets = [...new Set(missing.map(id => Math.floor(id / 10000)))].filter(b => !done.has(b));
+  await Promise.all(buckets.map(async b => { done.add(b); try { master.merge(await read(`engine/p/${b}.json`, false)); } catch { /* bucket absent */ } }));
+  return missing.filter(id => !master.passive.has(id));
+}
