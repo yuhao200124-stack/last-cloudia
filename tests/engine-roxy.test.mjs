@@ -70,29 +70,31 @@ test('engine: in-battle INT comes from the EX aura buff (6,741 → 10,111) and �
   assert.equal(b.battle.finalStat(b.roxy, K.STAT.INT), 12133);
 });
 
-test('engine: 異度克里昂 reproduces the verified sub-hit damage (multi-magic pass at 60%)', async () => {
+test('engine: 異度克里昂 reproduces the verified per-hit damage (多段魔法: two calls at 60%)', async () => {
   const lo = (await castOnce(270090, { random: 0.9 })).results;
   const hi = (await castOnce(270090, { random: 1.0 })).results;
   assert.equal(lo[0].attack, 14627); // 6,741 × (1 + 50% EX + 67% skill)
   assert.equal(lo[0].defense, 2500);
   assert.equal(lo[0].killer, true); // 水王級魔術師 grants an undead killer; 特攻増幅 raises it to ×2.25
   assert.equal(lo[0].killerFactor, Math.fround(2.25));
-  assert.equal(lo[1].dmgRatio, 6000);
+  assert.deepEqual(lo.map(r => r.dmgRatio), [6000, 6000], '多段魔法: both calls at 60%');
+  assert.deepEqual([lo[0].damage, hi[0].damage], [157564, 175070]);
   assert.deepEqual([lo[1].damage, hi[1].damage], [157564, 175070]);
 });
 
-test('engine: full HP with 月光II raises the sub-hit to 183,331–203,687 (core 11,848 at 0.95)', async () => {
+test('engine: full HP with 月光II raises the hit to 183,331–203,687 (core 11,848 at 0.95)', async () => {
   const mid = (await castOnce(270090, { moon: true, random: 0.95 })).results;
   assert.equal(mid[0].attack, 16650);
-  assert.equal(mid[1].coreDamage, 11848);
+  assert.equal(mid[0].coreDamage, 11848);
   const lo = (await castOnce(270090, { moon: true, random: 0.9 })).results;
   const hi = (await castOnce(270090, { moon: true, random: 1.0 })).results;
-  assert.deepEqual([lo[1].damage, hi[1].damage], [183327, 203687]);
+  assert.deepEqual([lo[0].damage, hi[0].damage], [183327, 203687]);
 });
 
 test('engine: the damage cap collects every DmgLimitUp control from passives, buffs and the weapon', async () => {
   const [main] = (await castOnce(270090, { critical: true, random: 1.0 })).results;
   assert.ok(main.cap > 9999 && main.damage === Math.min(main.uncapped, main.cap));
+  assert.ok(main.capVal >= 25500, 'killer cap breaks (特攻界限突破 ×3 + weapon) counted');
   const ult = (await castOnce(5022206, { random: 1.0 })).results;
   assert.ok(ult[0].capVal >= 150000, `ultimate own cap +150,000 counted (got ${ult[0].capVal})`);
 });
@@ -134,14 +136,15 @@ test('scenario: replaying the setup reproduces the reader\'s in-battle panel (DE
   assert.deepEqual(out.unsupported, []);
 });
 
-test('scenario: 異度克里昂 from the report gives main + 60% passes with normal/critical ranges and the calculator-verified sub-hit', async () => {
+test('scenario: 異度克里昂 from the report gives two 60% calls with normal/critical ranges matching the calculator-verified hit', async () => {
   const out = await reportScenario(270090);
-  const sub = out.hits.find(h => h.bulletId === 2700900 && h.hitIndex === 1);
-  assert.equal(sub.dmgRatio, 6000);
+  const calls = out.hits.filter(h => h.bulletId === 2700900);
+  assert.deepEqual(calls.map(h => [h.hitIndex, h.dmgRatio]), [[1, 6000], [2, 6000]]);
+  const sub = calls[0];
   assert.equal(sub.attack, 14627);
   assert.deepEqual([sub.normal.min, sub.normal.max], [157572, 175079]); // calculator: 157,565–175,076
   assert.ok(sub.critical.min > sub.normal.max);
-  assert.ok(out.hits.find(h => h.hitIndex === 0).cap === sub.cap && sub.cap > 200000);
+  assert.ok(calls[1].cap === sub.cap && sub.cap > 200000);
   assert.ok(out.probabilistic.some(p => p.passiveName === '指導者' && p.prob === 25));
   assert.ok(out.conditionals.length >= 1);
   assert.ok(sub.edits.some(e => e.passiveName === '冰之皇帝賽裡歐斯的加護'));

@@ -385,22 +385,25 @@ export class Battle {
     b.instances = segments.map((seg, i) => this.makeInstance({ owner: owner.id, affiliation: K.AFF.NONE, localId: spec.bulletId, localIndex: i, processId: seg.processId, prob: seg.prob, params: seg.params })).filter(Boolean);
     return b;
   }
-  // One bullet hit. Dual wield (a weapon in the armour slot) and the MultiBullet control (多段魔法) make the
-  // native run the bullet process again with hit index 1 at the reduced damage ratio (10000 → 6000);
-  // BulletHit/BulletWasHit (21/22) run before each pass and may cancel it or rewrite the ratio, then the
-  // bullet's own processes (20) fire, which call the damage operation.
+  // One bullet hit. 二刀流 (control 808 with a weapon in the armour slot, physical bullets) and 多段魔法
+  // (MultiBullet control 825) make the native call the bullet process twice, every call at the reduced
+  // damage ratio (e.g. 6000 = 60% each: 「連撃数が2倍、毎回のダメージは60%」). Hit indexes are 1-based;
+  // BulletHit/BulletWasHit (21/22) run before each call and may rewrite the ratio or cancel the call
+  // (that is how 水王級魔術師 restores non-ice attacks to one full hit).
   hit(bullet) {
     const owner = this.unit(bullet.owner), target = this.unit(bullet.target);
-    owner.work = []; target.work = []; bullet.results = [];
-    const passes = [{ hitIndex: 0, dmgRatio: 10000, weaponIndex: 0 }];
+    bullet.results = [];
+    const passes = [{ hitIndex: 1, dmgRatio: 10000, weaponIndex: 0 }];
+    const controls = [...owner.status, ...owner.real];
     const subWeapon = owner.equips.find(e => e.pos === 2 && e.type >= 10 && e.type < 20);
-    const physical = bullet.skill.skillType === K.SKILL.ATTACK || bullet.skill.skillType === K.SKILL.SKILL;
-    if (subWeapon && physical) passes.push({ hitIndex: 1, dmgRatio: 6000, weaponIndex: 1 });
-    const multi = [...owner.status, ...owner.real].find(e => e.op === K.OP.MULTI_BULLET);
-    if (multi && !(subWeapon && physical)) passes.push({ hitIndex: 1, dmgRatio: multi.params[0] || 10000, weaponIndex: 0 });
+    const physical = bullet.segments.some(seg => seg.processId >= 10000 && seg.processId < 10100);
+    const dual = controls.find(e => e.op === 808);
+    const multi = controls.find(e => e.op === K.OP.MULTI_BULLET);
+    if (dual && subWeapon && physical) { passes[0].dmgRatio = dual.params[0] || 10000; passes.push({ hitIndex: 2, dmgRatio: dual.params[0] || 10000, weaponIndex: 1 }); }
+    else if (multi && bullet.skill.skillType === K.SKILL.MAGIC) { passes[0].dmgRatio = multi.params[0] || 10000; passes.push({ hitIndex: 2, dmgRatio: multi.params[0] || 10000, weaponIndex: 0 }); }
     if (bullet.singlePass) passes.length = 1;
     for (const pass of passes) {
-      // each pass is a new bullet process: transient work stores start empty again
+      // each call is a new bullet process: transient work stores start empty again
       owner.work = []; target.work = [];
       bullet.hitIndex = pass.hitIndex; bullet.dmgRatio = pass.dmgRatio; bullet.weaponIndex = pass.weaponIndex; bullet.cancelled = false; bullet.work = [];
       this.dispatch(K.TRIG.BULLET_HIT, owner, target, bullet);
@@ -467,6 +470,8 @@ export class Battle {
   bulletElement(bullet) {
     const owner = this.unit(bullet.owner);
     for (const e of [...bullet.work, ...owner.work, ...owner.real]) if (e.op === K.OP.OVERRIDE_ELEMENT) return e.params[0];
+    // a weapon-element skill takes the element of the weapon swung in this call (sub weapon on the second)
+    if (bullet.skill.weaponElem && bullet.skill.elem === 0 && bullet.weaponIndex) return owner.equips.find(e => e.pos === 2)?.elem ?? bullet.element;
     return bullet.element;
   }
   // Character types the bullet has a killer against: the skill's KILLER_INFO plus Killer (308) controls.
@@ -715,7 +720,8 @@ export class Battle {
       BulletSetProperty(uid, prop, ...args) {
         const b = curBullet(); if (!b) return false;
         if (prop === K.BULLET_PROPERTY.LUA_VALUE) { b.values[String(args[0])] = plainValue(args[1]); return true; }
-        if (prop === K.BULLET_PROPERTY.DAMAGE_RATIO_READ_ONLY) { b.dmgRatio = args[0]; return true; }
+        // the scripts write 1000 to restore a full-damage call (per-mille); reads report 10000/6000
+        if (prop === K.BULLET_PROPERTY.DAMAGE_RATIO_READ_ONLY) { b.dmgRatio = args[0] <= 1000 ? args[0] * 10 : args[0]; return true; }
         if (prop === K.BULLET_PROPERTY.CALC_LUA_VALUE) { const [key, calc, val] = args; b.values[String(key)] = csCalc(calc, b.values[String(key)], val); return b.values[String(key)]; }
         B.log('native-partial', 'BulletSetProperty', prop, args); return false;
       },
