@@ -40,7 +40,7 @@ export function verifiedRuntimeFamily(rule,effect) {
  const parsed=parseHpStatDescription(rule.text);
  if(parsed?.conditions[0].field==='fullHp'&&parsed.effects.length===1&&parsed.effects[0].target==='法强'&&parsed.effects[0].value===30&&effect.value===30&&
   JSON.stringify(rule.conditions)===JSON.stringify(parsed.conditions))return 'moonlight-ii';
- if(clean(rule.text)==='始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果'&&effect.value===50&&rule.conditions?.length===0)return 'ex-aura';
+ if(clean(rule.text)==='始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果'&&effect.value===50&&(rule.conditions?.length===0||(rule.conditions?.length===1&&rule.conditions[0].field==='permanentBuffActive'&&rule.conditions[0].value===true)))return 'ex-aura';
  return null;
 }
 

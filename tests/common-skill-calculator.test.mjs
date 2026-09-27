@@ -124,7 +124,9 @@ test('dual wield reads one combined hit rule and does not equip weapons by itsel
 test('classification-ready mechanics do not inject guesses; incoming defense is not outgoing damage',()=>{
  const p=run(['狂战士','生命鼓舞','星眼','命运抽签','巨型护罩']);
  assert(p.imported.effects.some(e=>e.name.startsWith('狂战士')&&e.percent===30));
- assert(!p.imported.effects.some(e=>/生命鼓舞|星眼|命运抽签|巨型护罩/.test(e.name)));
+ assert(!p.imported.effects.some(e=>/生命鼓舞|命运抽签|巨型护罩/.test(e.name)));
+ // 2026-09-27 switch plan: 发动时自动消耗MP/HP的效果直接计入（星眼）。
+ assert(p.imported.effects.some(e=>e.name.startsWith('星眼')&&e.percent===50));
  assert(!p.unresolved.some(e=>e.name==='生命鼓舞'));assert(!p.unresolved.some(e=>e.name==='星眼'));
  assert(!p.unresolved.some(e=>e.name==='巨型护罩'));
  const source=structuredClone(registry.entries.find(e=>e.name==='剑增幅'));
@@ -133,7 +135,10 @@ test('classification-ready mechanics do not inject guesses; incoming defense is 
 });
 
 test('party predicates distributed into effectConditions are never lost or silently treated as constants',()=>{
- for(const name of ['阵形：进击的奥尔达纳','腐蚀之牙']){
+ // 2026-09-27 switch plan: 阵形由「队伍」开关决定。
+ assert.equal(run(['阵形：进击的奥尔达纳']).imported.effects.length,0);
+ assert.deepEqual(run(['阵形：进击的奥尔达纳'],{select:{partyConditionActive:true}}).imported.effects.map(e=>e.percent),[5]);
+ for(const name of ['腐蚀之牙']){
   const p=run([name]);assert.equal(p.imported.effects.length,0,name);assert(p.unresolved.some(e=>e.name===name),name);
  }
  for(const source of registry.entries)for(const detail of Object.values(source.tagDetails))for(const condition of detail.effectConditions||[]){
@@ -181,10 +186,10 @@ test('maximum stat scenarios and grouped Buff switches preserve negatives and ac
  assert.equal(run(['命运抽签'],{select:{openingBuffActive:true}}).panel.values.attack,1500);
  const negative=run(['寻找“有趣的东西”'],{select:{conditionBuffActive:true}});
  assert.equal(negative.panel.values.attack,1200);assert.equal(negative.panel.values.intelligence,800);
- // Game data: 自动暴击 is always-on (trigger 65, no duration); 快速暴击 is the 40s opening version of the same exclusive buff.
+ // 2026-09-27 switch plan: 永久获得（自动暴击）与开局（快速暴击）都跟「开局BUFF」开关。
  for(const [flag,on] of [['openingBuffActive',false],['openingBuffActive',true]]){
   const result=run(['快速暴击','自动暴击'],{select:{[flag]:on,criticalEnabled:true}});
-  assert.equal(result.imported.critAdded,15);
+  assert.equal(result.imported.critAdded,on?15:0);
   assert.equal(run(['快速暴击'],{select:{[flag]:on,criticalEnabled:true}}).imported.critAdded,on?15:0);
  }
  const damage=run(['龙卷攻击','进击的姿势','桶～子'],{select:{conditionBuffActive:true}});
@@ -226,12 +231,13 @@ test('all 935 skills have specific explanations and unrecorded conversion formul
 test('numeric conditions preserve Hit and HP boundaries; missing observations do not mean zero',()=>{
  const source=name=>{const e=entry(name);return {...e,rules:commonSkillRules(e)};};
  const damage=(name,ctx)=>buildDamageImport({kind:'last-cloudia-effect-report',characterId:'test',...evaluateCatalog([source(name)],{attack:'s1',damageType:'physical',element:'fire',accountBlessings:false,...ctx})});
- for(const [hits,boost,cap] of [[10,10,0],[11,0,0],[107,0,0],[108,0,108000],[109,0,0]]){
-  const r=damage('百八之钟',{comboHits:hits});assert.equal(r.effects[0]?.percent||0,boost);assert.equal(r.capAdded,cap);
+ // 2026-09-27 switch plan: 连击数条件直接按面板计入（不再要求填写连续Hit数）。
+ for(const hits of [10,108,undefined]){
+  const r=damage('百八之钟',hits===undefined?{}:{comboHits:hits});assert.equal(r.effects[0]?.percent,10);assert.equal(r.capAdded,108000);
  }
- const missing=evaluateCatalog([source('百八之钟')],{attack:'s1',damageType:'physical'});assert(missing.rows.every(r=>r.status==='pending'&&r.reasons.some(t=>t.includes('连续Hit'))));
- for(const [hp,on] of [[25,true],[25.1,false]])assert.equal(damage('暴击艺术',{attack:'ultimate',selfHpPercent:hp}).effects.length,on?1:0);
- assert.equal(damage('暴击艺术',{attack:'ultimate',lowHp:true}).effects.length,0,'30% near-death cannot prove the 25% threshold');
+ assert.equal(damage('连击大师',{}).effects[0]?.percent,20);
+ // 2026-09-27 switch plan: 其他HP线（≤25%）也归「濒死」开关。
+ for(const [lowHp,on] of [[true,true],[false,false]])assert.equal(damage('暴击艺术',{attack:'ultimate',lowHp}).effects.length,on?1:0);
  assert.equal(damage('毒之力',{enemyPoison:true}).effects[0].percent,30);assert.equal(damage('毒之力',{ailment:true}).effects.length,0);
  // Game data: 作战行动 is a 40s opening buff (trigger 10, 継続時間 2400).
  for(const [atk,int,on] of [[100,100,true],[99,100,false]])assert.equal(damage('作战行动',{openingBuffActive:true,openingStats:{attack:atk,intelligence:int}}).effects.length,on?1:0);

@@ -38,7 +38,8 @@ test('reader-matched Moonlight preserves the 12133 observation and computes ever
  await w.importFile({name:'reader.json',size:100,text:async()=>JSON.stringify({kind:'last-cloudia-battle-entry',schemaVersion:1,units:[{unitId:502220,stats:{...base,intelligence:12133},bonuses:fixture.bonuses}]})});
  for(const choice of ['entryUseWeb','entryUseReader']){
   ui.get(choice).fire('click');
-  for(const [fullHp,opening] of [[true,false],[false,false],[true,true],[false,true],[true,false]]){
+  // 2026-09-27 switch plan: EX灵气（永久获得）归「开局BUFF」，读取器观测含EX，所以核对时开局BUFF保持勾选。
+  for(const [fullHp,opening] of [[true,true],[false,true],[true,true]]){
    for(const [id,value] of [['fullHp',fullHp],['openingBuffActive',opening]]){ui.get(id).checked=value;ui.get(id).fire('change');}
    assert(w.isConfirmed(),ui.get('entryStatus').textContent);
    assert.equal(last.review.panels.intelligence,12133,'checkboxes must not rewrite the reader observation');
@@ -81,15 +82,17 @@ test('full HP, opening and conditional buffs compute all eight combinations from
  w.receive({kind:'last-cloudia-effect-report',characterId:'generic',profile,...evaluateCatalog(sources,{weaponCount:0,fullHp:true,openingBuffActive:true,magicAwakeningBuffActive:true})});
  await w.importFile({name:'conditions.json',size:100,text:async()=>JSON.stringify({kind:'last-cloudia-battle-entry',schemaVersion:1,units:[{unitId:1,stats:{...base,intelligence:1854},bonuses}]})});
  const damage=new Map();
- for(const fullHp of [true,false])for(const opening of [true,false])for(const conditional of [true,false]){
-  for(const [id,value] of [['fullHp',fullHp],['openingBuffActive',opening],['conditionBuffActive',conditional]]){ui.get(id).checked=value;ui.get(id).fire('change');}
+ // 2026-09-27 switch plan: 魔导觉醒 follows the 濒死 switch (HP threshold trigger), so HP state is full / near-death / neither.
+ for(const hp of ['full','low','none'])for(const opening of [true,false]){
+  const fullHp=hp==='full',conditional=hp==='low';
+  for(const [id,value] of [['fullHp',false],['lowHp',false],['fullHp',fullHp],['lowHp',conditional],['openingBuffActive',opening]]){ui.get(id).checked=value;ui.get(id).fire('change');}
   assert(w.isConfirmed(),ui.get('entryStatus').textContent);
   const layer=projectAttackLayers(last.panelLayers.intelligence,1854),percent=(fullHp?30:0)+(conditional?50:opening?35:0);
   assert(layer.ok,layer.reason);assert.equal(layer.percent,percent);assert.equal(last.panels.intelligence,1854);
   const result=calculate({...defaultInput(),attackBasis:'layers',attackBase:layer.base,runtimeStatPercent:layer.percent,attack:layer.panel,type:'magical',skillType:'magic',element:'冰',cap:2e9});
-  assert(result.normal.mean>0);damage.set(`${fullHp}/${opening}/${conditional}`,result.normal.mean);
+  assert(result.normal.mean>0);damage.set(`${hp}/${opening}`,result.normal.mean);
  }
- for(const opening of [true,false])for(const conditional of [true,false])assert(damage.get(`true/${opening}/${conditional}`)>damage.get(`false/${opening}/${conditional}`));
+ for(const opening of [true,false])assert(damage.get(`full/${opening}`)>damage.get(`none/${opening}`));
 });
 test('full-page handoff restores imported reader data, reviewed panels, exclusions and in-progress skill parameters',async()=>{
  const ui=controls(),base={hp:100,mp:100,attack:100,defense:100,intelligence:100,mind:100};
@@ -114,7 +117,7 @@ test('full-page handoff restores imported reader data, reviewed panels, exclusio
 });
 test('review UI events preserve manual panel, save from both sections, keep reminders inert and migrate dual stage',async()=>{
  const ui=controls();
- ui.data.set('lc-entry-review:260:v1',JSON.stringify({selection:{attack:'magic',preset:'magic-1',type:'magical',element:'冰',statReference:'int',dualWield:true,specialAttack:true},hitParameters:{'magic:magic-1:dual':{hitMultiplier:'2',hitDamageRatio:'0.6',hitScaleStage:'beforeCap'}}}));
+ ui.data.set('lc-entry-review:260:v1',JSON.stringify({selection:{attack:'magic',preset:'magic-1',type:'magical',element:'冰',statReference:'int',dualWield:true,specialAttack:true,openingBuffActive:true},hitParameters:{'magic:magic-1:dual':{hitMultiplier:'2',hitDamageRatio:'0.6',hitScaleStage:'beforeCap'}}}));
  const context={attack:'magic',damageType:'magical',element:'ice',weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],fullHp:true,chainStacks:1,accountBlessings:true};
  const profile={characterId:'260',name:'洛琪希',baseStats:{hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619},equipment:[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],moves:[],magic:[{id:'magic-1',kind:'magic',name:'测试冰魔法',element:'冰',statReference:'int',purpose:'attack'}]};
  const report={kind:'last-cloudia-effect-report',characterId:'260',profile,...evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG],context)};
@@ -355,16 +358,17 @@ test('near-death, opening and bundled conditional Buff retain their state across
  w.receive({kind:'last-cloudia-effect-report',characterId:'generic',profile,...evaluateCatalog(sources,{weaponCount:0,accountBlessings:false,fullHp:true})});
  const toggle=(id,value)=>{ui.get(id).checked=value;ui.get(id).fire('change');};
  toggle('lowHp',true);assert.equal(w.selection().fullHp,false);assert.equal(ui.get('fullHp').checked,false);
+ // 2026-09-27 switch plan: 濒死 covers awakening; 条件BUFF covers the event buffs; 复活后 and 自身状态 are their own switches.
+ assert.equal(w.selection().awakeningBuffActive,true);
  toggle('conditionBuffActive',true);toggle('fullHp',true);
- assert.equal(w.selection().lowHp,false);assert.equal(ui.get('lowHp').checked,false);assert.equal(w.selection().awakeningBuffActive,true);
- toggle('openingBuffActive',true);
- for(const id of ['awakeningBuffActive','magicAwakeningBuffActive','ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','ultimateGaugeFull'])assert.equal(w.selection()[id],true);
- assert.equal(w.selection().realSunday,false);
+ assert.equal(w.selection().lowHp,false);assert.equal(ui.get('lowHp').checked,false);assert.equal(w.selection().awakeningBuffActive,false);
+ toggle('openingBuffActive',true);toggle('reviveBuffActive',true);toggle('selfStateActive',true);
+ for(const id of ['ultimateUsedBuffActive','damageTakenBuffActive','allyDownBuffActive','killBuffActive','enemyUltimateBuffActive','timedBuffActive','reviveBuffActive','selfStateActive','ultimateGaugeFull','realSunday'])assert.equal(w.selection()[id],true,id);
  const saved=w.exportSession(),nextUI=controls();
  const next=initEntryWorkflow({characterId:'generic',onConfirm(){},onInvalidate(){},onSelection(){}});
  assert(next.restoreSession(saved));
  assert.equal(nextUI.get('fullHp').checked,true);assert.equal(nextUI.get('lowHp').checked,false);
  assert.equal(nextUI.get('openingBuffActive').checked,true);assert.equal(nextUI.get('conditionBuffActive').checked,true);
- for(const id of ['awakeningBuffActive','magicAwakeningBuffActive','ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','ultimateGaugeFull'])assert.equal(nextUI.get(id).checked,true);
- assert.equal(nextUI.get('realSunday').checked,false);
+ for(const id of ['ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','selfStateActive','ultimateGaugeFull','realSunday'])assert.equal(nextUI.get(id).checked,true,id);
+ for(const id of ['awakeningBuffActive','magicAwakeningBuffActive'])assert.equal(nextUI.get(id).checked,false,id);
 });

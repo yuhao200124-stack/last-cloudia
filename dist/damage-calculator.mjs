@@ -1,5 +1,5 @@
 import {extraCommonSkills} from './loadout-preview.mjs?v=20260927-hit-core';
-import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
+import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS,SWITCH_GROUPS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {defaultInput,calculate,context,prepare,applies,RACES,ELEMENTS,EFFECTS} from './damage-engine.mjs?v=20260927-hit-core';
 import {buildDamageImport,reportStorageKey} from './damage-import.mjs?v=20260926-mayly';
 import {formatEffect} from './effect-rule-engine.mjs?v=20260926-mayly';
@@ -42,24 +42,15 @@ let magicOptions=[],magicSelection={};
 let defenseRatioTouched=false;
 let unified=null;
 let lastWeaknessKey='',weaknessManual=false,automaticWeaknessEvent=false;
-const GENERAL_NAMES={bleeding:'目标出血',enemyLightWeak:'目标弱光',enemyDarkWeak:'目标弱暗',nearestEnemy:'攻击最近的敌人',partyAllAlive:'我方至少2人且全员存活',enemyAttacking:'敌人正在进行攻击动作',selfAilment:'自身处于异常状态',fullHp:'满血',lowHp:'濒死',air:'目标浮空',back:'背后攻击',ailment:'目标异常',ground:'自身在地面',openingBuffActive:'开局BUFF',allyDownBuffActive:'队友倒下后',reviveBuffActive:'自身复活后',killBuffActive:'击败敌人后',ultimateUsedBuffActive:'发动必杀后',enemyUltimateBuffActive:'敌人发动必杀后',damageTakenBuffActive:'受到伤害后',awakeningBuffActive:'觉醒（濒死触发）',magicAwakeningBuffActive:'魔导觉醒（濒死触发）',timedBuffActive:'战斗经过一段时间后',ultimateGaugeFull:'必杀槽满时',partyConditionActive:'队伍编成条件满足',otherConditionActive:'其他条件（概率触发、移动中等）',conditionBuffActive:'条件BUFF（全部）'};
+const GENERAL_NAMES={bleeding:'目标出血',enemyLightWeak:'目标弱光',enemyDarkWeak:'目标弱暗',nearestEnemy:'攻击最近的敌人',partyAllAlive:'我方至少2人且全员存活',enemyAttacking:'敌人正在进行攻击动作',selfAilment:'自身处于异常状态',fullHp:'满血',lowHp:'濒死',air:'目标浮空',back:'背后攻击',ailment:'目标异常',ground:'自身在地面',openingBuffActive:'开局BUFF',conditionBuffActive:'条件BUFF',mpFull:'MP满',mpLow:'MP≤20',reviveBuffActive:'复活后',guardBuffActive:'自身格挡',selfStateActive:'自身状态',partyConditionActive:'队伍'};
 function showConditionSources(report){
  const selected=Object.keys(GENERAL_CONDITIONS).filter(id=>$(id)?.checked);
  const target=$('generalConditionSources');
- // Always-on battle buffs (game “自动/常時保有” effects, e.g. EX灵气) need no switch; list them so it is visible they are counted.
- const switchFields=new Set(Object.values(GENERAL_CONDITIONS).flat().concat(STAT_CONDITION_FIELDS));
- const always=new Map();
- for(const row of report?.rows||[]){
-  if(row.status!=='active'||!row.rule?.effects?.some(e=>e.type==='statBuff'))continue;
-  if(row.rule.conditions?.some(c=>switchFields.has(c.field)))continue;
-  const key=row.sourceId||row.sourceName;
-  if(!always.has(key))always.set(key,{name:row.sourceName,text:row.rule.effects.filter(e=>e.type==='statBuff').map(e=>`${e.target} +${e.value}${e.unit||''}`).join('、')});
- }
- target.hidden=!selected.length&&!always.size;
+ target.hidden=!selected.length;
  // Only list switches that actually turn on an effect of the current loadout.
  const used=selected.map(id=>[id,activeConditionSources(report,id)]).filter(([,sources])=>sources.length);
  const unused=selected.filter(id=>!used.some(([u])=>u===id)).map(id=>GENERAL_NAMES[id]);
- target.innerHTML=(always.size?`<div><b>战斗中常驻BUFF（已自动计入，无需勾选）</b><ul>${[...always.values()].map(x=>`<li><b>${esc(x.name)}</b>：<span>${esc(x.text)}</span><small class="game-timing">游戏判定：战斗中常驻</small></li>`).join('')}</ul></div>`:'')+used.map(([id,sources])=>`<div><b>${GENERAL_NAMES[id]}</b><ul>${sources.map(s=>`<li><b>${esc(s.name)}</b>：<span>${esc(s.text)}</span>${timingTag(s.name,s.text)}</li>`).join('')}</ul></div>`).join('')
+ target.innerHTML=used.map(([id,sources])=>`<div><b>${GENERAL_NAMES[id]}</b><ul>${sources.map(s=>`<li><b>${esc(s.name)}</b>：<span>${esc(s.text)}</span>${timingTag(s.name,s.text)}</li>`).join('')}</ul></div>`).join('')
   +(unused.length?`<p class="help">已勾选但本次所选技能没有对应效果：${unused.map(esc).join('、')}。</p>`:'');
 }
 function syncWeaknessDefault(){
@@ -99,8 +90,8 @@ function renderMagicBuffs(profile) {
       `<div class="magic-buff-check">${esc(spell.name)}：${esc(spell.description||'效果尚待核对')}</div>`;
   }).join('');
 }
-for(const id of ['fullHp','lowHp'])$(id).addEventListener('change',()=>{if($(id).checked)$(id==='fullHp'?'lowHp':'fullHp').checked=false;});
-$('conditionBuffActive').addEventListener('change',()=>{for(const id of CONDITION_BUFF_FIELDS)$(id).checked=$('conditionBuffActive').checked;});
+for(const id of ['fullHp','lowHp'])$(id).addEventListener('change',()=>{if($(id).checked){const other=id==='fullHp'?'lowHp':'fullHp';$(other).checked=false;for(const f of SWITCH_GROUPS[other]||[])if($(f))$(f).checked=false;}});
+for(const [key,fields] of Object.entries(SWITCH_GROUPS))$(key)?.addEventListener('change',()=>{for(const id of fields)if($(id))$(id).checked=$(key).checked;});
 $('magicBuffOptions').addEventListener('change',e=>{
   if(e.target.dataset.magicBuff){
     const chosen=magicOptions.find(b=>b.id===e.target.dataset.magicBuff);

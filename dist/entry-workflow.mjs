@@ -1,5 +1,5 @@
 import {characterDefinition} from './character-template.mjs?v=20260926-mayly';
-import {STAT_CONDITION_FIELDS,STAT_CONDITION_ACTIVE,pickStatConditions,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
+import {STAT_CONDITION_FIELDS,STAT_CONDITION_ACTIVE,pickStatConditions,CONDITION_BUFF_FIELDS,SWITCH_GROUPS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260926-skill-coverage';
 import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-fullpage';
 import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260926-mayly';
@@ -97,7 +97,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   });
   for(const [key,stat] of Object.entries(computed.stats)){
    stat.runtimeCandidates=[...new Map([...stat.buffs,...potentials.flatMap(p=>p.stats[key].buffs.filter(b=>b.hpCondition||b.activationCondition))].map(b=>[b.id,b])).values()];
-   stat.runtimeConditions={...Object.fromEntries(fields.map(f=>[f,state.selection[f]])),permanentBuffActive:true};
+   stat.runtimeConditions={...Object.fromEntries(fields.map(f=>[f,state.selection[f]])),permanentBuffActive:state.selection.permanentBuffActive!==false};
   }
   return computed;
  }
@@ -299,12 +299,13 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  }
  function initialize() {
   initialized=true;
-  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),specialAttack:report.context.killer===true,break:report.context.break===true,boss:report.context.boss!==false,weakness:false,...state.selection,realSunday:false};
+  state.selection={attack:report.context.attack==='magic'?'magic':report.context.attack||'normal',type:report.context.damageType||'',element:'',statReference:'',dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),openingBuffActive:true,specialAttack:report.context.killer===true,break:report.context.break===true,boss:report.context.boss!==false,weakness:false,...state.selection,realSunday:false};
   if(state.selection.fullHp&&state.selection.lowHp){state.selection.fullHp=false;state.selection.lowHp=false;}
   const buffOn=state.selection.conditionBuffActive===true||CONDITION_BUFF_FIELDS.some(field=>state.selection[field]===true);
   state.selection.conditionBuffActive=buffOn;
   for(const field of CONDITION_BUFF_FIELDS)state.selection[field]=buffOn;
   $('conditionBuffActive').checked=buffOn;
+  for(const [key,fields] of Object.entries(SWITCH_GROUPS))if(key!=='conditionBuffActive')for(const field of fields)state.selection[field]=state.selection[key]===true;
   for(const id of ['dualWield','specialAttack','break','boss','weakness','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id]===true;
   $('characterPanel').hidden=false;$('entryPreparation').hidden=false;$('entryReview').hidden=false;$('attackChoice').closest('label').hidden=false;$('statReference').closest('label').hidden=false;
   $('skillType').closest('label').hidden=true;
@@ -347,6 +348,9 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  $('entryUnit').addEventListener('change',e=>{rememberReaderDraft();unit=battle?.units[Number(e.target.value)]||null;if(e.target.value==='')unit=null;restoreReaderDraft();invalidate('读取资料已暂填；数值差异由你决定。');setParameters();onRead({battle,unit:selectedUnit()});updateCandidate();});
  $('entrySupplementReview').addEventListener('change',e=>{const b=supplements[Number(e.target.dataset.readerSupplement)];if(!b||adoptedGroupReaderIds(bonusGroups).has(b.id))return;supplementChoices[supplementKey(b)]=e.target.value;invalidate('读取器补充加成已更新。');save();renderReview();});
  for(const id of ['dualWield'])$(id).addEventListener('change',()=>{state.selection[id]=$(id).checked;save();renderReview();onSelection(selection());});
+ // Each in-battle switch also sets the detail fields it covers (e.g. 濒死 → 觉醒), before the switch's own handler recalculates.
+ for(const [key,fields] of Object.entries(SWITCH_GROUPS))if(key!=='conditionBuffActive')$(key)?.addEventListener('change',()=>{for(const field of fields){state.selection[field]=$(key).checked;if($(field))$(field).checked=state.selection[field];}});
+ for(const id of ['mpFull','mpLow','reviveBuffActive','guardBuffActive','selfStateActive','partyConditionActive'])$(id)?.addEventListener('change',()=>{state.selection[id]=$(id).checked;updateCandidate();});
  $('conditionBuffActive').addEventListener('change',()=>{
   state.selection.conditionBuffActive=$('conditionBuffActive').checked;
   for(const field of CONDITION_BUFF_FIELDS){state.selection[field]=$('conditionBuffActive').checked;$(field).checked=state.selection[field];}
@@ -356,7 +360,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  for(const [field] of characterConditions)$(field)?.addEventListener('change',()=>{state.selection[field]=$(field).checked;updateCandidate();});
  for(const id of ['specialAttack','break','boss','weakness','fullHp','lowHp','openingBuffActive','criticalEnabled','specialWeapon'])$(id).addEventListener('change',()=>{
   state.selection[id]=$(id).checked;
-  if(['fullHp','lowHp'].includes(id)&&state.selection[id]){const other=id==='fullHp'?'lowHp':'fullHp';state.selection[other]=false;$(other).checked=false;}
+  if(['fullHp','lowHp'].includes(id)&&state.selection[id]){const other=id==='fullHp'?'lowHp':'fullHp';state.selection[other]=false;$(other).checked=false;for(const f of SWITCH_GROUPS[other]||[]){state.selection[f]=false;if($(f))$(f).checked=false;}}
   updateCandidate();
  });
  $('attackChoice').addEventListener('change',()=>{state.selection.attack=$('attackChoice').value;renderPresets(true);applyMove();invalidate('攻击方式已改变，请核对这次攻击对应的加成。');updateCandidate();});

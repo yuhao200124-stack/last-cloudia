@@ -1,5 +1,5 @@
 import {characterMoveDefaults,characterDefinition} from './character-template.mjs?v=20260926-mayly';
-import {STAT_CONDITION_FIELDS,CONDITION_BUFF_FIELDS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
+import {STAT_CONDITION_FIELDS,SWITCH_GROUPS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260926-skill-coverage';
 import {effectCombatModes} from './combat-modes.mjs?v=20260926-skill-coverage';
@@ -69,7 +69,7 @@ export function retargetReport(report,selection) {
   if(Object.hasOwn(selection,'enemyRaces'))context.enemyRaces=selection.enemyRaces;
   for(const field of ['lowHp',...STAT_CONDITION_FIELDS])if(typeof selection[field]==='boolean')context[field]=selection[field];
   // “条件BUFF（全部）” covers each event buff the selection does not set on its own.
-  if(typeof selection.conditionBuffActive==='boolean')for(const field of CONDITION_BUFF_FIELDS)if(typeof selection[field]!=='boolean')context[field]=selection.conditionBuffActive;
+  for(const [key,fields] of Object.entries(SWITCH_GROUPS))if(typeof selection[key]==='boolean')for(const field of fields)if(typeof selection[field]!=='boolean')context[field]=selection[key];
   if(selection.fullHp===true&&selection.lowHp!==true)context.lowHp=false;
   if(selection.lowHp===true&&selection.fullHp!==true)context.fullHp=false;
  if(typeof selection.criticalEnabled==='boolean'){context.criticalEnabled=selection.criticalEnabled;context.critical=selection.criticalEnabled;}

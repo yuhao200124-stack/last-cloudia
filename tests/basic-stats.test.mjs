@@ -96,7 +96,8 @@ test('opening and permanent buffs share one runtime group and expiry falls back 
  assert.equal(calc(['自动鼓舞']).p.values.attack,1200);
  assert.equal(calc(['自动鼓舞','快速鼓舞'],{openingBuffActive:true}).p.values.attack,1200);
  assert.equal(calc(['自动鼓舞','快速大鼓舞'],{openingBuffActive:true}).p.values.attack,1350);
- assert.equal(calc(['自动鼓舞','快速大鼓舞'],{openingBuffActive:false}).p.values.attack,1200);
+ // 2026-09-27 switch plan: 永久获得的BUFF（自动X）归「开局BUFF」开关，明确关闭开局BUFF时一并不计。
+ assert.equal(calc(['自动鼓舞','快速大鼓舞'],{openingBuffActive:false}).p.values.attack,1000);
  const both=calc(['攻击提升极','自动鼓舞']);
  assert.equal(both.p.stats.attack.beforeBuff,1150);assert.equal(both.p.values.attack,1380);
  assert.equal(calc(['自动活力','快速高阶活力'],{openingBuffActive:true}).p.values.hp,3000);
@@ -106,7 +107,9 @@ test('opening and permanent buffs share one runtime group and expiry falls back 
 
 test('near-death passive and triggered awakening have separate lifetimes and groups',()=>{
  const run=flags=>buildLoadoutReport(baseReport,snapshot(['激昂','觉醒','自动鼓舞']),{...selection,...flags});
- assert.equal(calculateWebsitePanel(base,run({lowHp:true})).values.attack,1400);
+ // 2026-09-27 switch plan: 「濒死」包含觉醒类（HP降到阈值触发）。
+ assert.equal(calculateWebsitePanel(base,run({lowHp:true})).values.attack,1700);
+ assert.equal(calculateWebsitePanel(base,run({lowHp:true,awakeningBuffActive:false})).values.attack,1400);
  assert.equal(calculateWebsitePanel(base,run({lowHp:true,awakeningBuffActive:true})).values.attack,1700,'20% passive plus highest 50% standard buff');
  assert.equal(calculateWebsitePanel(base,run({lowHp:false,awakeningBuffActive:true})).values.attack,1500,'awakening remains after healing');
  assert.equal(calculateWebsitePanel(base,run({lowHp:false,awakeningBuffActive:false})).values.attack,1200);
@@ -154,14 +157,15 @@ test('Sunday and full special gauge are independent conditional attributes, not 
  const names=['玛娜的节日','强力反击','自动鼓舞'];
  const run=flags=>prepareLoadoutPreview({baseReport,snapshot:snapshot(names),selection:{...selection,...flags},input:{...defaultInput(),attack:1000,defense:1000}});
  assert.equal(run({}).input.attack,1200);
- assert.equal(run({realSunday:true}).input.attack,1250);
- assert.equal(run({ultimateGaugeFull:true}).input.attack,1500);
- const both=run({realSunday:true,ultimateGaugeFull:true});
+ // 2026-09-27 switch plan: 现实时间（周日）归「开局BUFF」，必杀槽满归「自身状态」。
+ assert.equal(run({openingBuffActive:true}).input.attack,1250);
+ assert.equal(run({selfStateActive:true}).input.attack,1500);
+ const both=run({openingBuffActive:true,selfStateActive:true});
  assert.equal(both.input.attackBase,1000);assert.equal(both.input.runtimeStatPercent,55);assert.equal(both.input.attack,1550);
  assert.equal(both.panel.values.intelligence,1050);assert.equal(both.imported.effects.length,0);
  const passive=both.panel.stats.attack.buffs.filter(b=>b.runtime.kind==='conditional-passive');
  assert.equal(passive.length,2);assert(passive.every(b=>b.runtime.stackPolicy==='add'&&b.runtime.lifetime==='condition'));
- const unknown=buildLoadoutReport({...baseReport,context:{...baseReport.context,realSunday:null}},snapshot(['玛娜的节日']),selection);
+ const unknown=buildLoadoutReport({...baseReport,context:{...baseReport.context,openingBuffActive:null}},snapshot(['玛娜的节日']),selection);
  assert(unknown.rows.some(r=>r.status==='pending'));
 });
 
@@ -171,7 +175,7 @@ test('damage, revival and special-use buffs share existing spell groups and expi
  assert.equal(run(['复仇鼓舞'],{damageTakenBuffActive:true}).values.attack,1200);
  assert.equal(run(['自动鼓舞','复仇鼓舞'],{damageTakenBuffActive:true}).values.attack,1200);
  const names=['自动鼓舞','复仇鼓舞','黄泉之理','玛娜的节日','强力反击'];
- const flags={damageTakenBuffActive:true,reviveBuffActive:true,realSunday:true,ultimateGaugeFull:true};
+ const flags={damageTakenBuffActive:true,reviveBuffActive:true,openingBuffActive:true,selfStateActive:true};
  assert.equal(run(names,flags).values.attack,1650);assert.equal(run(names,flags).values.intelligence,1350);
  assert.equal(run(names,{...flags,reviveBuffActive:false}).values.attack,1550);
  const party=['万圣节派对','自动堡垒','自动梅蒂斯','自动活力','体力提升极'];
@@ -185,11 +189,11 @@ test('damage, revival and special-use buffs share existing spell groups and expi
 test('new condition switches project a past observation without reviving expired buffs or discarded skills',async()=>{
  const {projectAttackLayers}=await import('../dist/attack-layers.mjs');
  const names=['复仇鼓舞','黄泉之理','玛娜的节日','强力反击'];
- const flags={damageTakenBuffActive:true,reviveBuffActive:true,realSunday:true,ultimateGaugeFull:true};
+ const flags={damageTakenBuffActive:true,reviveBuffActive:true,openingBuffActive:true,selfStateActive:true};
  const active=buildLoadoutReport(baseReport,snapshot(names),{...selection,...flags});
  const stat=calculateWebsitePanel(base,active).stats.attack;
  stat.runtimeCandidates=stat.buffs;
- stat.runtimeConditions={damageTakenBuffActive:false,reviveBuffActive:false,realSunday:true,ultimateGaugeFull:false};
+ stat.runtimeConditions={damageTakenBuffActive:false,reviveBuffActive:false,openingBuffActive:true,selfStateActive:false};
  const projected=projectAttackLayers(stat,1650);
  assert(projected.ok,projected.reason);assert.equal(projected.panel,1050);
  const input={...defaultInput(),attack:1650,defense:1000};

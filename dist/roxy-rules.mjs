@@ -79,7 +79,7 @@ export const CATALOG = [
     rule('incantation-speed', '冰杖攻击魔法咏唱', '装备冰属性法杖时，攻击魔法咏唱速度+50%', [eq('iceStaff', true), magic], [effect('castSpeed', '攻击魔法咏唱速度', 50)]),
   ]),
   source('extraordinary-magician', '超规格的魔术师', 'exclusive', '始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果；超必杀技伤害+100%、伤害上限+200,000', [
-    rule('extraordinary-aura', '常驻 EX 灵气', '始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果', [], [effect('statBuff', '法强', 50, '%', { detail: 'EX灵气；已计入战斗面板时不重复加算' })]),
+    rule('extraordinary-aura', '常驻 EX 灵气', '始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果', [eq('permanentBuffActive', true)], [effect('statBuff', '法强', 50, '%', { detail: 'EX灵气；已计入战斗面板时不重复加算' })]),
     rule('extraordinary-mp', '常驻超级魔法阵', '始终保持“EX灵气”（法强+50%）与“超级魔法阵”（持续大量恢复MP）的效果', [], [effect('recovery', 'MP', '持续大量恢复', '')], { note: '原文没有每次恢复数值和间隔，不猜测回复量。' }),
     rule('extraordinary-ultimate', '超必增伤与上限', '超必杀技伤害+100%、伤害上限+200,000', [ultimate], [damage('超必杀技伤害', 100), cap('超必杀技伤害上限', 200000)]),
   ]),

@@ -21,5 +21,7 @@ test('active general conditions list the selected skill and its original effect'
  assert.deepEqual(activeConditionSources(selected,'conditionBuffActive'),[]);
  const off=evaluateCatalog(sources,{attack:'magic',damageType:'magical',element:'ice',fullHp:false,awakeningBuffActive:true});
  assert.deepEqual(activeConditionSources(off,'fullHp'),[]);
- assert.equal(activeConditionSources(off,'conditionBuffActive')[0].name,'觉醒');
+ // 2026-09-27 switch plan: 觉醒 belongs to the 濒死 switch.
+ assert.deepEqual(activeConditionSources(off,'conditionBuffActive'),[]);
+ assert.equal(activeConditionSources(off,'lowHp')[0].name,'觉醒');
 });

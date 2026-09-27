@@ -83,14 +83,14 @@ test('bleed and basic ailments are independent; defense penetration and ailment 
  const ailment=preview({attackInput:{...input,ailment:true}});
  assert.equal(total(ailment.report,'魔性祝福','cap'),20000);assert.equal(ailment.input.defenseRatio,1);
  const bleed=preview({selected:{...selection,bleeding:true,criticalEnabled:true}});
- assert.equal(bleed.input.defenseRatio,.85);assert.equal(bleed.input.critRate,20); // 双龙 crit lasts until KO (game 継続時間 -1)assert.equal(total(bleed.report,'魔性祝福','cap'),0);
+ assert.equal(bleed.input.defenseRatio,.85);assert.equal(bleed.input.critRate,5); // 双龙 follows the 开局BUFF switch (2026-09-27 switch plan)assert.equal(total(bleed.report,'魔性祝福','cap'),0);
  assert.equal(base.input.defenseRatio,1);
 });
 
 test('full HP, opening and conditional buffs remain independent and all combinations calculate',()=>{
  for(const fullHp of [false,true])for(const openingBuffActive of [false,true])for(const conditionBuffActive of [false,true]){
   const result=preview({selected:{...selection,criticalEnabled:true,fullHp,openingBuffActive,conditionBuffActive}});
-  assert.equal(result.input.critRate,(fullHp?10:0)+15); // 双龙: game duration -1, always on
+  assert.equal(result.input.critRate,(fullHp?10:0)+(openingBuffActive?15:0)); // 双龙 follows the 开局BUFF switch
   assert.equal(total(result.report,'噩梦三重奏','damage'),conditionBuffActive?36:0);
   assert(Number.isFinite(calculate(result.input).mean));
  }
