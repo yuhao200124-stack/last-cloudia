@@ -12,6 +12,7 @@
 | `dist/engine/scenario.mjs` | 计算器调用入口：构造攻击方／目标、回放开局触发、施放技能、汇总每段结果 |
 | `dist/engine/report-adapter.mjs` | 读取器入场报告 → 攻击方（入场面板、装备、个性等级、每个流程实例及其运行时参数） |
 | `dist/engine/panel.mjs` | 未导入报告时按主数据算局外面板：等级成长 + 觉醒 + 能力盘属性格 + 装备参数（含专属装备参数增减）再过状态计算被动 |
+| `dist/engine/loadout-adapter.mjs` | 读取器配装报告（LoadoutReport.json，战斗外）→ 本账号每个角色的真实等级／突破／觉醒／已开能力盘（个性等级、技能等级）、已装被动、装备、魔法；位图按游戏 FlagDecryptor 解码，SWITCH_INDEX→ID 表在 `engine/switch.json`（主数据行序，重复取首行） |
 | `dist/engine/engine-data.mjs` | 读取 `dist/game-data/engine/{core,shared,c/<dress>}.json` 与 `dist/game-data/lua/*.lua` |
 | `dist/engine-panel.mjs` | 计算器面板；监听 `lc:calculator-update` |
 | `local-migration-tools/game-data/export_engine_data.py` | 从读取器导出的 *Mst.bin 生成引擎数据 |
@@ -40,6 +41,6 @@
 ## 已知限制
 
 - 段数（时间轴）不在主数据中，仍取计算器填写值。
-- 未导入报告时按全部自带技能 + 专属武器／防具满强化 + 本账号加护（`dist/account-blessings.mjs` 的读取值）结算；圣物、通用装备与实际装备的被动组合仍需报告。
+- 导入配装报告后按本账号实际配置结算（面板里「配装报告」文件框，存于浏览器本地）；未导入时按全部自带技能 + 专属武器／防具满强化 + 本账号加护（`dist/account-blessings.mjs` 的读取值）。圣物加成、装备强化等级（报告未含时按满级）仍未计。
 - Lv100／120 以外的等级成长率、装备中间强化等级为估算（面板会标注），读取器 v0.10 导出 GrowthMst / ItemEquipParameterGrowthMst 后改为精确值。
 - 加护数值随账号等级变化，报告或账号加护记录里的运行时参数才是真实值。

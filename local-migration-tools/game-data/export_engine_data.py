@@ -28,7 +28,7 @@ COLS = {
     'ItemEquipParameterGrowthMst': ['EQUIP_GROWTH_TYPE', 'PARAM_MAP'],
     'UnitDressAwakeMst': ['UNIT_DRESS_ID', 'AWAKE_LV', 'HP', 'MP', 'ATK', 'DEF', 'MATK', 'MDEF'],
     'UnitDressLimitbreakMst': ['UNIT_DRESS_ID', 'LIMITBREAK_LV', 'MAX_LV'],
-    'UnitDressAbilityPieceMst': ['UNIT_DRESS_ID', 'PIECE_NO', 'ABILITY_PIECE_TYPE', 'PARAM', 'LIMITBREAK_LV'],
+    'UnitDressAbilityPieceMst': ['UNIT_DRESS_ID', 'PIECE_NO', 'ABILITY_PIECE_TYPE', 'PARAM', 'LIMITBREAK_LV', 'SWITCH_INDEX'],
 }
 
 def ints(s):
@@ -107,6 +107,19 @@ def main(src, out):
     size = dump(os.path.join(eng, 'shared.json'), shared)
     print('shared.json', size, 'passives', len(shared['PassiveSkillMst']['rows']), 'skills', len(shared['SkillMst']['rows']), 'bullets', len(shared['BulletMst']['rows']))
 
+    # Loadout-report bitmasks (CommonUtil.FlagDecryptor) index SWITCH_INDEX; the game maps it back to an id in
+    # master row order, first row wins on duplicates (PassiveSkillDataHolder.SwitchIndexToSkillId).
+    switch = {}
+    for name, key in (('PassiveSkillMst', 'PASSIVE_SKILL_ID'), ('SkillMst', 'SKILL_ID')):
+        seen, pairs = set(), []
+        for r in T[name]:
+            si = r.get('SWITCH_INDEX')
+            if si is None or si in seen: continue
+            seen.add(si); pairs.append([si, r[key]])
+        switch[name] = pairs
+    size = dump(os.path.join(eng, 'switch.json'), switch)
+    print('switch.json', size)
+
     total = 0
     for u in T['UnitDressMst']:
         if 'coming soon' in str(u['NAME']): continue
@@ -123,8 +136,9 @@ def main(src, out):
         for e in T['ItemEquipMst']:
             if e['UNIT_DRESS_ID'] == uid: p_ids.update(ints(e['PASSIVE_SKILL_INFO']))
         data = bundle(p_ids - shared_p, s_ids - shared_s)
-        # the character's ability board (stat / resist pieces and which limit break opens them) for the out-of-battle panel
-        data['UnitDressAbilityPieceMst'] = table('UnitDressAbilityPieceMst', [r for r in pieces.get(uid, []) if r['ABILITY_PIECE_TYPE'] in (10, 11, 12, 13, 14, 15, 30, 40)])
+        # the character's whole ability board (stat / resist pieces for the panel; skill, personality, magic and
+        # passive pieces so a loadout report's opened-piece bitmask (over SWITCH_INDEX) can be applied)
+        data['UnitDressAbilityPieceMst'] = table('UnitDressAbilityPieceMst', pieces.get(uid, []))
         total += dump(os.path.join(eng, 'c', f'{uid}.json'), data)
     print('characters total', total)
 

@@ -24,6 +24,18 @@ let latest = null, report = null, assumed = new Set(), probabilityMode = 'assume
 // exclusive gear + trigger-1 passives); these fields only override it.
 const manualPanel = { engineStr: null, engineInt: null };
 const growthChoice = { level: null, awake: null, accountBlessings: true };
+// Reader loadout report (LoadoutReport.json): the account's real growth and loadout for every owned character.
+const LOADOUT_KEY = 'lc-engine-loadout-report';
+let loadoutReport = null, switches = null;
+try { const saved = localStorage.getItem(LOADOUT_KEY); if (saved) loadoutReport = JSON.parse(saved); } catch {}
+function keepLoadout(report) {
+  // keep only what the engine uses so the report fits in storage
+  const slim = { tool: report.tool, version: report.version, capturedAt: report.capturedAt || null, units: (report.units || []).map(u => ({ unitDressId: u.unitDressId, lv: u.lv, limitbreakLv: u.limitbreakLv, awakeLv: u.awakeLv, abilityPieceInfo: u.abilityPieceInfo })), equipList: (report.equipList || []).map(e => ({ unitDressId: e.unitDressId, passiveSkillInfo: e.passiveSkillInfo, magicInfo: e.magicInfo, equipInfo: e.equipInfo, equipLvInfo: e.equipLvInfo })) };
+  loadoutReport = slim;
+  try { localStorage.setItem(LOADOUT_KEY, JSON.stringify(slim)); } catch {}
+}
+async function ensureSwitches() { if (!switches) switches = await fetch(new URL('./game-data/engine/switch.json', import.meta.url)).then(r => r.json()); return switches; }
+const loadoutNote = () => loadoutReport ? `已导入配装报告：${loadoutReport.units.length} 个角色${loadoutReport.capturedAt ? ` · ${loadoutReport.capturedAt}` : ''}` : '未导入配装报告（读取器 v0.9+ 在游戏角色页面运行生成的 LoadoutReport.json）';
 // The site's own panel preview (old rules), shown beside the game-data panel as a comparison.
 function websitePanel() {
   const p = latest?.panels || {};
@@ -41,7 +53,8 @@ function mount() {
     <p class="help">用读取器捕获的游戏 Lua 脚本和主数据逐段结算：每个被动、Buff、弹道按游戏自己的触发时机与顺序计算。这是与上方网页规则并列的对照，不改变上方结果。</p>
     <div class="fields two engine-fields"><label>当前 HP %<input id="engineHp" type="number" min="1" max="100" step="1" placeholder="按开关"></label><label>当前 MP %<input id="engineMp" type="number" min="0" max="100" step="1" placeholder="按开关"></label></div>
     <div class="fields two engine-fields" id="enginePanelStats"><label>角色等级<select id="engineLevel"><option value="">最大</option></select></label><label>觉醒<select id="engineAwake"><option value="">最大</option></select></label><label>手填局外攻击力<input id="engineStr" type="number" min="0" step="1" placeholder="按游戏数据"></label><label>手填局外法强<input id="engineInt" type="number" min="0" step="1" placeholder="按游戏数据"></label></div>
-    <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label></div>
+    <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
+    <p class="help" id="engineLoadoutNote"></p>
     <p class="help" id="enginePanelNote">未导入读取报告时，局外面板直接按游戏数据计算：等级成长 + 觉醒 + 全开能力盘 + 专属武器／防具满强化，再过一遍状态计算被动（与游戏面板一致）；手填只用于覆盖。导入报告后自动改用报告里的入场面板与实际配置。</p>
     <div class="inline-options"><label><input id="engineProbability" type="checkbox" checked>概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
     <div id="engineResult"></div>`;
@@ -53,6 +66,14 @@ function mount() {
   $('engineMp').addEventListener('change', e => { mpPercent = e.target.value === '' ? null : Number(e.target.value); run(); });
   for (const id of ['engineStr', 'engineInt']) $(id).addEventListener('change', () => { manualPanel[id] = $(id).value === '' ? null : Number($(id).value); run(); });
   $('engineAccountBlessings').addEventListener('change', e => { growthChoice.accountBlessings = e.target.checked; run(); });
+  $('engineLoadoutNote').textContent = loadoutNote();
+  $('engineLoadoutFile').addEventListener('change', async e => {
+    const f = e.target.files?.[0]; if (!f) return;
+    try { const j = JSON.parse(await f.text()); const M = await ensureEngine(null); if (!M.isLoadoutReport(j)) throw new Error('不是读取器的配装报告（LoadoutReport.json）'); keepLoadout(j); $('engineLoadoutNote').textContent = loadoutNote(); run(); }
+    catch (err) { $('engineLoadoutNote').textContent = `配装报告未导入：${err.message}`; }
+    e.target.value = '';
+  });
+  $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} $('engineLoadoutNote').textContent = loadoutNote(); run(); });
   $('engineLevel').addEventListener('change', e => { growthChoice.level = e.target.value === '' ? null : Number(e.target.value); run(); });
   $('engineAwake').addEventListener('change', e => { growthChoice.awake = e.target.value === '' ? null : Number(e.target.value); run(); });
   $('engineResult').addEventListener('change', e => { const key = e.target.dataset.assume; if (!key) return; if (e.target.checked) assumed.add(key); else assumed.delete(key); run(); });
@@ -70,7 +91,8 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs'), import('./engine/engine-data.mjs'), import('./engine/scenario.mjs'), import('./engine/report-adapter.mjs')]).then(([b, d, s, r]) => ({ ...b, ...d, ...s, ...r }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs'), import('./engine/engine-data.mjs'), import('./engine/scenario.mjs'), import('./engine/report-adapter.mjs'), import('./engine/loadout-adapter.mjs')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
     const { master, scripts } = await engineModules.loadEngineData({ unitDressIds: unitDressId ? [unitDressId] : [] });
@@ -121,10 +143,18 @@ async function run(force = false) {
       fillGrowthChoices(M, dress);
       const ids = latest.ownPassives?.length ? latest.ownPassives : c ? [...(c.personality || []).map(p => p.passive), ...(c.ownPassives || []).map(p => p.passive), ...(c.transcend || []).map(p => p.passive), ...(c.blessings || [])] : [];
       const override = {}; if (manualPanel.engineStr != null) override.str = manualPanel.engineStr; if (manualPanel.engineInt != null) override.int = manualPanel.engineInt;
-      const equips = M.exclusiveEquipment(battle.master, dress);
-      const passives = ids.map(id => ({ id }));
-      if (growthChoice.accountBlessings) for (const [id, params] of ACCOUNT_BLESSINGS) if (!ids.includes(id) && battle.master.passive.has(id)) passives.push({ id, params });
-      attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, level: growthChoice.level, awake: growthChoice.awake, stats: override, passives, personality: c?.personality || [], equips, statsSource: `游戏数据计算（${equips.length ? equips.map(e => battle.master.itemEquip.get(e.id)?.NAME).join('、') + ' 满强化' : '无专属装备'}；被动按全部自带技能${growthChoice.accountBlessings ? '＋本账号加护' : ''}${Object.keys(override).length ? '；' + Object.keys(override).map(k => ({ str: '攻击力', int: '法强' }[k]) + '按手填').join('、') : ''}）` };
+      const blessings = growthChoice.accountBlessings ? [...ACCOUNT_BLESSINGS].filter(([id]) => battle.master.passive.has(id)).map(([id, params]) => ({ id, params })) : [];
+      const fromLoadout = loadoutReport ? M.attackerFromLoadout(loadoutReport, battle.master, await ensureSwitches(), dress, { extraPassives: blessings }) : null;
+      for (const id of ['engineLevel', 'engineAwake']) if ($(id)) $(id).disabled = !!fromLoadout;
+      if (fromLoadout) {
+        // the account's real loadout: its level / awakening / opened board, equipped passives, gear and magic
+        const lo = fromLoadout.loadout;
+        attackerSpec = { ...fromLoadout, name: c?.nameS || fromLoadout.name, stats: override, statsSource: `配装报告（本账号实际配置：Lv${lo.level} · 觉醒${lo.awake} · 能力盘 ${lo.pieceCount} 格 · ${lo.passives.length} 个被动 · ${lo.equips.map(e => battle.master.itemEquip.get(e.id)?.NAME || e.id).join('、') || '无装备'}${lo.equips.some(e => !e.level) ? '（强化按满级）' : ''}${growthChoice.accountBlessings ? ' ＋本账号加护' : ''}${lo.missingPassives ? `；${lo.missingPassives} 个被动未在主数据中找到` : ''}）` };
+      } else {
+        const equips = M.exclusiveEquipment(battle.master, dress);
+        const passives = [...ids.map(id => ({ id })), ...blessings.filter(b => !ids.includes(b.id))];
+        attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, level: growthChoice.level, awake: growthChoice.awake, stats: override, passives, personality: c?.personality || [], equips, statsSource: `游戏数据计算（${loadoutReport ? '配装报告里没有这个角色；' : ''}${equips.length ? equips.map(e => battle.master.itemEquip.get(e.id)?.NAME).join('、') + ' 满强化' : '无专属装备'}；被动按全部自带技能${growthChoice.accountBlessings ? '＋本账号加护' : ''}${Object.keys(override).length ? '；' + Object.keys(override).map(k => ({ str: '攻击力', int: '法强' }[k]) + '按手填').join('、') : ''}）` };
+      }
     }
     const attacker = M.addAttacker(battle, attackerSpec);
     const targetSpec = report && $('bossPreset')?.value?.startsWith('reader-') ? M.targetFromReport(report, { bossIndex: Number($('bossPreset').value.slice(7)) || 0 }) : targetFromFields(latest);
