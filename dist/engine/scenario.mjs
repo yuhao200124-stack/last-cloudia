@@ -172,12 +172,13 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
         if (r.cancelled) return;
         (critical ? p.critical : p.normal).push(r.damage);
         if (!critical && random === randoms[Math.floor(randoms.length / 2)]) p.sample = r;
+        if (critical && random === randoms[Math.floor(randoms.length / 2)]) p.critSample = r;
       });
     }
     for (const p of passes.values()) {
       const s = p.sample;
       hits.push({ bulletId: p.bulletId, bulletName: battle.master.bullet.get(p.bulletId)?.NAME || '', hitIndex: p.hitIndex, cancelled: p.cancelled, dmgRatio: s?.dmgRatio ?? null, normal: p.normal.length ? summarize(p.normal) : null, critical: p.critical.length ? summarize(p.critical) : null, core: s?.coreDamage ?? null, afterPassives: s?.afterPassives ?? null,
-        attack: s?.attack ?? null, defense: s?.defense ?? null, element: s?.element ?? null, resist: s?.resist ?? null, killer: s?.killer ?? false, killerFactor: s?.killerFactor ?? 1, offense: s?.offense ?? 1, received: s?.received ?? 1, reduction: s?.reduction ?? 1, coefficient: s ? s.per / 10000 : null, cap: s?.cap ?? null, capVal: s?.capVal ?? 0, capPer: s?.capPer ?? 0, capAdd: s?.capAdd ?? 0,
+        attack: s?.attack ?? null, defense: s?.defense ?? null, element: s?.element ?? null, resist: s?.resist ?? null, killer: s?.killer ?? false, killerFactor: s?.killerFactor ?? 1, offense: s?.offense ?? 1, received: s?.received ?? 1, reduction: s?.reduction ?? 1, coefficient: s ? s.per / 10000 : null, cap: s?.cap ?? null, critCap: p.critSample?.cap ?? null, capVal: s?.capVal ?? 0, capPer: s?.capPer ?? 0, capAdd: s?.capAdd ?? 0,
         edits: (s?.edits || []).map(e => ({ name: e.by, id: e.id, localId: e.localId, value: e.value, passiveName: clean(battle.master.passive.get(e.localId)?.NAME || battle.master.itemEquip.get(e.localId)?.NAME || '') })) });
     }
   }

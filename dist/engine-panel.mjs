@@ -43,14 +43,80 @@ function websitePanel() {
   return { str: Number.isFinite(p.attack) ? p.attack : latest?.referenceMode === 'str' ? base : null, int: Number.isFinite(p.intelligence) ? p.intelligence : latest?.referenceMode === 'int' ? base : null };
 }
 
-const STYLE = `.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
+const STYLE = `#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
+// ---- the main result card: driven by the sandbox; the old rules move under 网页旧规则（对照） ----
+// The hit count is the calculator's own 基础命中段数 field (the user's tested count, saved per move by the
+// workflow); the card edits that same field.
+function siteHits() { const n = Number($('hits')?.value); return Number.isFinite(n) && n > 0 ? n : null; }
+function currentHits() { const n = siteHits(); return n ? { hits: n, source: '基础命中段数' } : { hits: 1, source: '未填（按 1 段）' }; }
+function mountPrimary() {
+  const main = document.querySelector('#unifiedResults .result-main'); if (!main || $('enginePrimary')) return;
+  const values = $('resultValues'); if (!values) return;
+  const block = document.createElement('div'); block.id = 'enginePrimary';
+  block.innerHTML = `<article class="primary-result"><span>普通每段伤害</span><strong id="ep-normal">—</strong><small id="ep-normalNote">游戏脚本结算 · 含随机波动与每段上限</small></article>
+    <section class="damage-gauges" aria-label="伤害与上限">
+      <div class="damage-gauge"><div class="gauge-label"><span>普通每段 <b id="ep-normalGauge">—</b></span><span>上限 <b id="ep-normalCap">—</b></span></div><div class="gauge-track" role="progressbar" aria-label="普通每段伤害占上限"><span id="ep-normalBar"></span></div></div>
+      <div class="damage-gauge"><div class="gauge-label"><span>暴击每段 <b id="ep-critGauge">—</b></span><span>上限 <b id="ep-critCap">—</b></span></div><div class="gauge-track critical" role="progressbar" aria-label="暴击每段伤害占上限"><span id="ep-critBar"></span></div></div>
+    </section>
+    <article class="critical-result"><span title="触发暴击时的伤害；整次期望按局内暴击率计算">暴击每段伤害</span><strong id="ep-critical">—</strong></article>
+    <div class="total-result"><span>整次技能期望伤害</span><strong id="ep-total">—</strong><small id="ep-totalNote"></small></div>
+    <dl class="result-details">
+      <div class="result-cap"><dt>每段伤害上限</dt><dd id="ep-cap">—</dd></div><div class="result-cap"><dt>暴击每段上限</dt><dd id="ep-capCrit">—</dd></div>
+      <div><dt>命中段数</dt><dd class="ep-hits"><input id="engineHits" type="number" min="1" max="999" step="1" placeholder="网站"><small id="ep-hitsNote"></small></dd></div>
+      <div><dt>全为普通命中时</dt><dd id="ep-normalTotal">—</dd></div><div><dt>本段结算攻击力</dt><dd id="ep-attack">—</dd></div><div><dt>本段结算防御力</dt><dd id="ep-defense">—</dd></div><div><dt>特攻匹配</dt><dd id="ep-killer">—</dd></div>
+    </dl><p id="ep-note" class="result-cap-note"></p>`;
+  const legacy = document.createElement('details'); legacy.id = 'legacyResults'; legacy.innerHTML = '<summary>网页旧规则（对照，不参与上方结果）</summary>';
+  main.insertBefore(block, values); main.append(legacy);
+  for (const id of ['error', 'resolveReview', 'resultValues']) if ($(id)) legacy.append($(id));
+  const state = document.createElement('span'); state.id = 'ep-state'; state.textContent = '等待招式'; $('resultState')?.after(state);
+  $('engineHits').addEventListener('change', e => { const h = $('hits'); if (!h) return; h.value = e.target.value; h.dispatchEvent(new Event('input', { bubbles: true })); h.dispatchEvent(new Event('change', { bubbles: true })); run(); });
+}
+let lastCtx = null;
+const setPrimaryState = text => { const el = $('ep-state'); if (el) el.textContent = text; };
+function renderPrimary(out, ctx) {
+  mountPrimary(); lastCtx = ctx;
+  // one 段 = the calls of the skill's first damaging bullet (二刀流／多段魔法 make two calls per 段); further bullets
+  // (finishers, single-target variants) are listed in the detail table below
+  const all = out.hits.filter(h => !h.cancelled && h.normal);
+  const live = all.filter(h => h.bulletId === all[0]?.bulletId);
+  const otherBullets = new Set(all.filter(h => h.bulletId !== all[0]?.bulletId).map(h => h.bulletId)).size;
+  const first = live[0]; const st = out.stats; const critRate = Math.min(100, Math.max(0, st.crt.real || 0)) / 100;
+  const { hits, source } = currentHits();
+  if (document.activeElement !== $('engineHits')) $('engineHits').value = siteHits() || '';
+  $('ep-hitsNote').textContent = `${source}${live.length > 1 ? ` · 每段 ${live.length} 次调用` : ''}`;
+  if (!first) { for (const id of ['ep-normal', 'ep-critical', 'ep-total', 'ep-cap', 'ep-capCrit', 'ep-normalTotal', 'ep-attack', 'ep-defense', 'ep-killer', 'ep-normalGauge', 'ep-normalCap', 'ep-critGauge', 'ep-critCap']) $(id).textContent = '—'; $('ep-note').textContent = out.errors.length ? `脚本错误：${out.errors[0].name}` : '这个招式没有伤害段。'; return; }
+  const range = (a, b) => `${fmt(a)} – ${fmt(b)}`;
+  const expect = h => h.normal.mean * (1 - critRate) + (h.critical ? h.critical.mean : h.normal.mean) * critRate;
+  const perCall = live.reduce((sum, h) => sum + expect(h), 0);
+  $('ep-normal').textContent = range(first.normal.min, first.normal.max);
+  $('ep-normalNote').textContent = `游戏脚本结算 · ${live.length > 1 ? `第1击（×${(first.dmgRatio / 10000).toLocaleString('zh-CN')}）；` : ''}含随机波动与每段上限`;
+  $('ep-critical').textContent = first.critical ? range(first.critical.min, first.critical.max) : '—';
+  $('ep-normalGauge').textContent = fmt(first.normal.max); $('ep-normalCap').textContent = fmt(first.cap);
+  $('ep-critGauge').textContent = first.critical ? fmt(first.critical.max) : '—'; $('ep-critCap').textContent = fmt(first.critCap ?? first.cap);
+  $('ep-normalBar').style.width = `${Math.min(100, first.cap ? first.normal.max / first.cap * 100 : 0)}%`;
+  $('ep-critBar').style.width = `${Math.min(100, (first.critCap ?? first.cap) && first.critical ? first.critical.max / (first.critCap ?? first.cap) * 100 : 0)}%`;
+  $('ep-total').textContent = `≈ ${fmt(perCall * hits)}`;
+  $('ep-totalNote').textContent = `${hits} 段${live.length > 1 ? ` × ${live.length} 次调用` : ''} · 暴击率 ${Math.round(critRate * 100)}%（局内 CRT ${st.crt.real}）· 含逐段上限`;
+  $('ep-cap').textContent = fmt(first.cap); $('ep-capCrit').textContent = fmt(first.critCap ?? first.cap);
+  $('ep-normalTotal').textContent = range(live.reduce((a, h) => a + h.normal.min, 0) * hits, live.reduce((a, h) => a + h.normal.max, 0) * hits);
+  $('ep-attack').textContent = fmt(first.attack); $('ep-defense').textContent = fmt(first.defense);
+  $('ep-killer').textContent = first.killer ? `触发 · ×${first.killerFactor.toFixed(2)}` : '未触发';
+  const notes = [];
+  if (first.normal.max >= first.cap) notes.push('普通伤害触及上限');
+  if (otherBullets) notes.push(`另有 ${otherBullets} 条弹道未计入整次期望，见下方明细`);
+  if (out.assumptions?.length) notes.push(out.assumptions.join('；'));
+  if (out.errors.length) notes.push(`${out.errors.length} 个脚本未能完整执行`);
+  $('ep-note').textContent = notes.join(' · ');
+}
+
 function mount() {
   const aside = $('unifiedResults'); if (!aside || $('enginePanel')) return;
+  mountPrimary();
   if (!$('enginePanelStyle')) { const st = document.createElement('style'); st.id = 'enginePanelStyle'; st.textContent = STYLE; document.head.append(st); }
   const card = document.createElement('section');
   card.id = 'enginePanel'; card.className = 'card engine-panel'; card.setAttribute('aria-labelledby', 'enginePanelTitle');
   card.innerHTML = `<div class="section-heading"><h3 id="enginePanelTitle">游戏脚本结算（沙盒引擎）</h3><span id="engineState" class="help">未开始</span></div>
-    <p class="help">用读取器捕获的游戏 Lua 脚本和主数据逐段结算：每个被动、Buff、弹道按游戏自己的触发时机与顺序计算。这是与上方网页规则并列的对照，不改变上方结果。</p>
+    <p class="help">用读取器捕获的游戏 Lua 脚本和主数据逐段结算：每个被动、Buff、弹道按游戏自己的触发时机与顺序计算。上方「计算结果」卡即由这里驱动；网页旧规则的数值收在卡片底部的对照区。</p>
     <div class="fields two engine-fields"><label>当前 HP %<input id="engineHp" type="number" min="1" max="100" step="1" placeholder="满血100／濒死25／否则99"></label><label>当前 MP %<input id="engineMp" type="number" min="0" max="100" step="1" placeholder="按开关"></label></div>
     <div class="fields two engine-fields" id="enginePanelStats"><label>角色等级<select id="engineLevel"><option value="">最大</option></select></label><label>觉醒<select id="engineAwake"><option value="">最大</option></select></label><label>手填局外攻击力<input id="engineStr" type="number" min="0" step="1" placeholder="按游戏数据"></label><label>手填局外法强<input id="engineInt" type="number" min="0" step="1" placeholder="按游戏数据"></label></div>
     <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
@@ -178,7 +244,8 @@ async function run(force = false) {
   if (!latest) { setState('等待计算器状态'); return; }
   if (running) { pending = true; return; }
   const move = latest.gameMove;
-  if (!move?.id) { setState('先选择有游戏数据的招式'); $('engineResult').innerHTML = ''; return; }
+  if (!move?.id) { setState('先选择有游戏数据的招式'); setPrimaryState('该招式没有游戏数据，见下方网页旧规则'); $('engineResult').innerHTML = ''; return; }
+  setPrimaryState('计算中…');
   running = true;
   try {
     const dress = report?.units?.[0]?.unitId || Number(latest.unitDressId) || await siteDress();
@@ -222,10 +289,11 @@ async function run(force = false) {
     battle.reset();
     const attacker2 = M.addAttacker(battle, attackerSpec), target2 = M.addTarget(battle, targetSpec);
     const out = M.runScenario({ battle, attacker: attacker2, target: target2, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...new Set([...assumed, ...autoAssume])] } });
-    render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), attacker: attacker2, out });
-    setState(`已结算 · ${new Date().toLocaleTimeString('zh-CN')}`);
+    render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), attacker: attacker2, out, dress });
+    renderPrimary(out, { move, dress });
+    setState(`已结算 · ${new Date().toLocaleTimeString('zh-CN')}`); setPrimaryState(`游戏脚本 · ${new Date().toLocaleTimeString('zh-CN')}`);
   } catch (err) {
-    setState('结算失败'); $('engineResult').innerHTML = `<p class="help">${esc(err.message)}</p>`; console.error(err);
+    setState('结算失败'); setPrimaryState('结算失败'); $('engineResult').innerHTML = `<p class="help">${esc(err.message)}</p>`; console.error(err);
   } finally {
     running = false;
     if (pending) { pending = false; run(); }
@@ -287,6 +355,6 @@ function panelLine(ctx) {
 }
 
 document.addEventListener('lc:calculator-update', e => { latest = e.detail || {}; if (latest.battle) report = latest.battle; mount();
-  if ($('enginePanelStats')) { const hide = !!(report && report.units?.length); $('enginePanelStats').hidden = hide; $('engineAccountRow').hidden = hide; } if (battle || $('engineResult')?.innerHTML) run(); else setState(latest.gameMove?.id ? '点击“用游戏脚本结算”' : '先选择有游戏数据的招式'); });
+  if ($('enginePanelStats')) { const hide = !!(report && report.units?.length); $('enginePanelStats').hidden = hide; $('engineAccountRow').hidden = hide; } run(); });
 $('entryReportFile')?.addEventListener('change', e => { const f = e.target.files?.[0]; if (!f) return; f.text().then(t => { try { const j = JSON.parse(t); if (j && j.kind === 'last-cloudia-battle-entry') report = j; } catch {} }); });
 mount();
