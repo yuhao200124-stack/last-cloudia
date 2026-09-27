@@ -56,6 +56,7 @@ function mount() {
     <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
     <p class="help" id="engineLoadoutNote"></p>
     <p class="help" id="enginePanelNote">未导入读取报告时，局外面板直接按游戏数据计算：等级成长 + 觉醒 + 全开能力盘 + 专属武器／防具满强化，再过一遍状态计算被动（与游戏面板一致）；手填只用于覆盖。导入报告后自动改用报告里的入场面板与实际配置。</p>
+    <details id="enginePreCasts"><summary>施放前已用过的技能（累计次数类被动、自我 Buff 魔法）</summary><p class="help">按这场战斗里在本招之前已经用过的顺序填次数：例如先放神託的誓言再打必杀，必杀上限就会多 100,000；累计类被动（超必殺技階段增幅等）也按次数累加。默认全为 0。</p><div id="enginePreCastList" class="fields two engine-fields"></div></details>
     <div class="inline-options"><label><input id="engineProbability" type="checkbox" checked>概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
     <div id="engineResult"></div>`;
   const anchor = $('unifiedSummary') || aside.querySelector('.result-notes');
@@ -117,7 +118,20 @@ function stateFromSwitches(detail) {
   const full = sel.fullHp || $('fullHp')?.checked, low = sel.lowHp || $('lowHp')?.checked;
   const hp = hpPercent ?? (low ? 25 : full ? 100 : 99);
   const mp = mpPercent ?? (sel.mpLow || $('mpLow')?.checked ? 20 : 100);
-  return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true };
+  return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: preCastList() };
+}
+
+// Skills used earlier in the battle (per character): id → count; the list is rebuilt for the attacker's own skills.
+const preCastCounts = new Map();
+function preCastList() { const out = []; for (const [id, n] of preCastCounts) for (let i = 0; i < n; i++) out.push(Number(id)); return out; }
+function renderPreCasts(attacker, master, currentMoveId) {
+  const box = $('enginePreCastList'); if (!box) return;
+  const skills = (attacker?.skills || []).filter(s => s.type !== 9);
+  const key = skills.map(s => s.id).join(',');
+  if (box.dataset.key === key) return; box.dataset.key = key;
+  for (const id of [...preCastCounts.keys()]) if (!skills.some(s => s.id === Number(id))) preCastCounts.delete(id);
+  box.innerHTML = skills.map(s => `<label>${esc(master.skill.get(s.id)?.NAME || s.id)}<small> · ${{ 1: '技能', 2: '魔法', 5: '必杀', 3: '咏唱', 4: '召唤', 7: '圣物' }[s.type] || s.type}</small><input type="number" min="0" max="20" step="1" data-precast="${s.id}" value="${preCastCounts.get(String(s.id)) || 0}"></label>`).join('');
+  box.onchange = e => { const id = e.target.dataset.precast; if (!id) return; const n = Math.max(0, Math.min(20, Number(e.target.value) || 0)); if (n) preCastCounts.set(id, n); else preCastCounts.delete(id); run(); };
 }
 
 function activeSwitchGroups() {
@@ -138,7 +152,7 @@ async function run(force = false) {
     setState('结算中…');
     battle.reset();
     let attackerSpec;
-    if (report && M.isBattleReport(report) && report.units?.[0]?.unitId === dress) attackerSpec = M.attackerFromReport(report, battle.master);
+    if (report && M.isBattleReport(report) && report.units?.[0]?.unitId === dress) { attackerSpec = M.attackerFromReport(report, battle.master); const extra = attackerSpec.passives.filter(p => p.processes).length; if (extra) attackerSpec.statsSource = `${attackerSpec.statsSource}（含徽章／支援等 ${extra} 项非被动来源）`; }
     else {
       // no report: the game character at the chosen growth (default max) with every own passive and its exclusive gear;
       // the out-of-battle panel comes from master data (scenario.mjs panelGiven:false), manual fields override it
@@ -160,6 +174,7 @@ async function run(force = false) {
       }
     }
     const attacker = M.addAttacker(battle, attackerSpec);
+    renderPreCasts(attacker, battle.master, move.id);
     const targetSpec = report && $('bossPreset')?.value?.startsWith('reader-') ? M.targetFromReport(report, { bossIndex: Number($('bossPreset').value.slice(7)) || 0 }) : targetFromFields(latest);
     const target = M.addTarget(battle, targetSpec);
     const state = stateFromSwitches(latest);
@@ -213,7 +228,7 @@ function render(out, ctx) {
   const buffs = out.buffs.filter(b => b.remain !== 0).map(b => `<li>${esc(b.name)}${b.from ? ` <small>来自 ${esc(b.from)}</small>` : ''}${b.remain > 0 ? ` <small>${Math.round(b.remain / 60)} 秒</small>` : ''}</li>`).join('');
   const issues = [...out.errors.map(e => `脚本 ${esc(e.name)} (${e.id})：${esc(e.error)}`), ...out.unsupported.map(n => `未实现的原生函数：${esc(n)}`), ...(out.assumptions || []).map(a => `简化假定：${esc(a)}`)];
   $('engineResult').innerHTML = `
-    <p class="help">招式 <b>${esc(ctx.move.name || ctx.move.id)}</b>（${ctx.move.id}）· 攻击方 ${esc(ctx.attackerSpec.name || ctx.attackerSpec.unitDressId)} · 面板来源：${esc(ctx.attackerSpec.statsSource || '读取报告')} · 目标 ${esc(ctx.targetSpec.name)} · HP ${ctx.state.hpPercent}%${hpPercent == null ? ctx.state.hpPercent === 100 ? '（满血开关）' : ctx.state.hpPercent === 25 ? '（濒死开关）' : '（未勾选满血：满HP条件不触发）' : ''} · MP ${ctx.state.mpPercent}%</p>
+    <p class="help">招式 <b>${esc(ctx.move.name || ctx.move.id)}</b>（${ctx.move.id}）· 攻击方 ${esc(ctx.attackerSpec.name || ctx.attackerSpec.unitDressId)} · 面板来源：${esc(ctx.attackerSpec.statsSource || '读取报告')} · 目标 ${esc(ctx.targetSpec.name)} · HP ${ctx.state.hpPercent}%${hpPercent == null ? ctx.state.hpPercent === 100 ? '（满血开关）' : ctx.state.hpPercent === 25 ? '（濒死开关）' : '（未勾选满血：满HP条件不触发）' : ''} · MP ${ctx.state.mpPercent}%${ctx.state.preCasts?.length ? ` · 施放前已用：${esc([...new Map(ctx.state.preCasts.map(id => [id, ctx.state.preCasts.filter(x => x === id).length])).entries()].map(([id, n]) => `${battle.master.skill.get(id)?.NAME || id}×${n}`).join('、'))}` : ''}</p>
     <p class="help">面板→局内：${statLine}</p>${panelLine(ctx)}
     <div class="entry-table-wrap"><table class="entry-table engine-hits"><thead><tr><th>段</th><th>普通每段</th><th>暴击每段</th><th>期望（暴击率 ${Math.round(critRate * 100)}%）</th><th>每段上限</th><th>A / F</th><th>特攻</th></tr></thead><tbody>${hitRows || '<tr><td colspan="7">没有伤害段</td></tr>'}</tbody></table></div>
     <p class="help">每次命中（含双刀／多段魔法的追加击）期望 <b>${fmt(perCast)}</b>${hitCount ? `；按计算器填写的 ${hitCount} 段命中，整次期望 <b>${fmt(perCast * hitCount)}</b>` : '；段数取自计算器的“基础命中段数”'}。暴击率用局内 CRT 面板值。</p>

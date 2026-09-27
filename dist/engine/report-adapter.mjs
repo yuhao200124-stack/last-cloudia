@@ -20,7 +20,9 @@ export function panelStatsOf(unit) {
   return { ...statsOf(unit.stats), crt: unit.statsMeta?.criticalRate, source: '战斗最终值（已含Buff）', inBattle: true };
 }
 
-// Process instances → passive specs with runtime parameters, in creation (uid) order.
+// Process instances → passive specs with runtime parameters, in creation (uid) order. Sources that are not
+// passive skills or equipment (affiliation 18 = 徽章/crest traits, 15 = support passives, 5 = ark, 9 = terrain,
+// 12 = formation) carry no PassiveSkillMst row, so they become raw process instances (process id + values).
 export function passivesOf(unit, master) {
   const buffs = (unit.raw?.buffs || []).filter(b => b.is_exactly_buff === 0 && !b.removed).slice().sort((a, b) => a.uid - b.uid);
   const specs = new Map(); // key → spec
@@ -28,6 +30,13 @@ export function passivesOf(unit, master) {
   for (const b of buffs) {
     const aff = b.affiliation, localId = b.local_id;
     const key = `${aff}:${localId}`;
+    if (aff !== K.AFF.AUTOSKILL && !EQUIP_AFFILIATIONS.has(aff)) {
+      const op = b.operations?.[0]; const processId = op?.rule?.id || op?.origin_process_id;
+      if (!processId) continue;
+      if (!specs.has(key)) specs.set(key, { id: 0, affiliation: aff, localId, level: 1, params: {}, processes: [], uid: b.uid, name: b.provenance?.direct?.carrier?.name || '' });
+      specs.get(key).processes.push({ processId, localIndex: b.local_index ?? 0, params: Array.isArray(op.values) ? op.values.slice() : [] });
+      continue;
+    }
     if (!specs.has(key)) {
       let id = localId;
       if (EQUIP_AFFILIATIONS.has(aff)) {
@@ -42,7 +51,7 @@ export function passivesOf(unit, master) {
     const values = b.operations?.[0]?.values;
     if (Array.isArray(values) && b.operations[0].values_read) specs.get(key).params[b.local_index] = values.slice();
   }
-  return { passives: [...specs.values()].filter(p => p.id), equips };
+  return { passives: [...specs.values()].filter(p => p.id || p.processes?.length), equips };
 }
 
 // Full attacker spec for scenario.addAttacker.
@@ -55,7 +64,7 @@ export function attackerFromReport(report, master, { unitIndex = 0 } = {}) {
   const personality = [];
   const dress = master?.unitDress.get(unit.unitId);
   if (dress) for (const base of parseInts(dress.PERSONAL_SKILL).filter(Boolean)) {
-    const p = passives.find(x => x.affiliation === K.AFF.AUTOSKILL && x.id >= base && x.id < base + 10);
+    const p = passives.find(x => x.affiliation === K.AFF.AUTOSKILL && x.id && x.id >= base && x.id < base + 10);
     if (p) personality.push({ passive: p.id, level: p.id - base + 1, base });
   }
   return { unitDressId: unit.unitId, name: unit.name, charTypes: racesOf(unit), stats: panel, statsSource: panel.source, equips, passives, skills,

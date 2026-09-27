@@ -1,0 +1,61 @@
+{
+ "note": "Per-hit samples captured by the damage reader v0.41 (2026-09-27 18:44Z, 魯迪烏斯 豪雷積雨雲 vs 吸血鬼阿努彌拉, same battle as rudeus-battle-report.json), with the sandbox inputs that reproduce them.",
+ "samples": [
+  {
+   "skillId": 291010,
+   "bulletId": 2910100,
+   "preCasts": [],
+   "time": 19273,
+   "settlementAtk": 12217,
+   "settlementDef": 2000,
+   "baseRatio": 0.459999979,
+   "finalRatio": 0.459999979,
+   "core": 4424,
+   "value": 87924,
+   "random": 0.9354127953244679,
+   "critical": false
+  },
+  {
+   "skillId": 291010,
+   "bulletId": 2910100,
+   "preCasts": [],
+   "time": 19820,
+   "settlementAtk": 12217,
+   "settlementDef": 2000,
+   "baseRatio": 0.459999979,
+   "finalRatio": 0.459999979,
+   "core": 4353,
+   "value": 86515,
+   "random": 0.9204006112430942,
+   "critical": false
+  },
+  {
+   "skillId": 291010,
+   "bulletId": 2910100,
+   "preCasts": [],
+   "time": 21654,
+   "settlementAtk": 12217,
+   "settlementDef": 2000,
+   "baseRatio": 0.459999979,
+   "finalRatio": 0.459999979,
+   "core": 4556,
+   "value": 90543,
+   "random": 0.9633227713630778,
+   "critical": false
+  },
+  {
+   "skillId": 291010,
+   "bulletId": 2910100,
+   "preCasts": [],
+   "time": 21780,
+   "settlementAtk": 12217,
+   "settlementDef": 2000,
+   "baseRatio": 0.459999979,
+   "finalRatio": 0.459999979,
+   "core": 4631,
+   "value": 92035,
+   "random": 0.9791807122941062,
+   "critical": false
+  }
+ ]
+}

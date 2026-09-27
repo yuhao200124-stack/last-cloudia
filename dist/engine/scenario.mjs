@@ -53,7 +53,7 @@ export function addAttacker(battle, spec) {
   unit.panelGiven = spec.panelGiven !== false;
   unit.panelOverride = panelOverride && Object.keys(panelOverride).length ? panelOverride : null;
   unit.panelParts = panel;
-  for (const p of spec.passives || []) if (p.affiliation && p.affiliation !== K.AFF.AUTOSKILL) battle.addPassive(unit, p.id, p.affiliation, p.localId ?? p.id, p.level ?? 1, p.params);
+  for (const p of spec.passives || []) if (p.affiliation && p.affiliation !== K.AFF.AUTOSKILL) { if (p.processes) battle.addProcesses(unit, p); else battle.addPassive(unit, p.id, p.affiliation, p.localId ?? p.id, p.level ?? 1, p.params); }
   // equipment passives (weapon 6 / armour 7 / accessories 8) come from ItemEquipMst unless the caller listed them
   const listed = new Set((spec.passives || []).filter(p => p.affiliation && p.affiliation !== K.AFF.AUTOSKILL).map(p => `${p.affiliation}:${p.localId ?? p.id}`));
   if (spec.equipPassives !== false) for (const e of equips) {
@@ -124,11 +124,25 @@ function evaluate(battle, attacker, target, skillId, bulletId, level, critical, 
 const clean = s => String(s ?? '').replace(/<[^>]+>/g, '');
 const summarize = values => ({ min: Math.min(...values), max: Math.max(...values), mean: values.reduce((a, b) => a + b, 0) / values.length });
 
+// Skills the attacker already used in this battle before the evaluated cast (self buffs such as 神託的誓言,
+// counters that grow per use such as 超必殺技階段增幅): every bullet of each one is played, self/ally-targeted
+// skills on the attacker, so their buffs, counts and cooldown states exist when the evaluated skill fires.
+export function preCast(battle, attacker, target, skillIds, level = 9) {
+  for (const id of skillIds || []) {
+    const info = battle.master.skillInfo(Number(id)); if (!info) continue;
+    const tgt = info.targetSide === K.TARGET_SIDE.ME || info.targetSide === K.TARGET_SIDE.ALLY ? attacker : target;
+    battle.beginSkill(attacker, tgt, Number(id));
+    for (const bulletId of parseInts(battle.master.skill.get(Number(id)).BULLET_INFO).filter(Boolean)) { const b = battle.createBullet(attacker, tgt, { skillId: Number(id), bulletId, level, random: 0.95 }); battle.hit(b); }
+    battle.dispatch(17, attacker, attacker); // skill end
+  }
+}
+
 // Full scenario: returns hits (per bullet pass) with normal/critical ranges, plus what fired and what could be assumed.
 export function runScenario({ battle, attacker, target, skill, state = {}, assume = {}, randoms = [0.9, 0.925, 0.95, 0.975, 1.0] }) {
   battle.options.probability = assume.probability || 'assume';
   setupBattle(battle, attacker, target, state);
   assumeInstances(battle, attacker, assume.instances);
+  preCast(battle, attacker, target, state.preCasts, skill.level ?? 9);
   const conditionals = conditionalInstances(battle, attacker);
   const level = skill.level ?? 9;
   const bullets = skill.bulletId ? [skill.bulletId] : damageBullets(battle.master, skill.id, level);

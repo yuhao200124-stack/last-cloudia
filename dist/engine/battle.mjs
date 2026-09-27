@@ -32,9 +32,10 @@ export const K = {
 const STAT_OF_OP = { 300: 2, 301: 3, 302: 4, 303: 5, 304: 8, 305: 96, 310: 6, 318: 33 };
 const ELEMENT_EXPANSION = { [-1]: [1, 2, 3, 4, 5, 6], [-2]: [0, 1, 2, 3, 4, 5, 6], [-11]: [0, 2, 3, 4, 5, 6], [-12]: [0, 1, 3, 4, 5, 6], [-13]: [0, 1, 2, 4, 5, 6], [-14]: [0, 1, 2, 3, 5, 6], [-15]: [0, 1, 2, 3, 4, 6], [-16]: [0, 1, 2, 3, 4, 5] };
 // Skill-type combination codes (SKILL_CATEGORY_EXPANSION in luaCommon.lua): bit (type+3) marks a type.
+// (SKILL_PHYSIC inside a combination still means 通常攻撃 + スキル: 270592 → {攻撃, スキル, 特技, カウンター}.)
 const expandSkillTypes = v => {
   if (v === K.SKILL.PHYSIC) return [K.SKILL.ATTACK, K.SKILL.SKILL];
-  if (v > K.SKILL.COUNTER) { const out = []; for (let t = 1; t <= 15; t++) if (v & (1 << (t + 3))) out.push(t); return out; }
+  if (v > K.SKILL.COUNTER) { const out = []; for (let t = 1; t <= 15; t++) if (v & (1 << (t + 3))) out.push(...(t === K.SKILL.PHYSIC ? [K.SKILL.ATTACK, K.SKILL.SKILL] : [t])); return out; }
   return [v];
 };
 
@@ -175,8 +176,18 @@ export class Battle {
     };
     u.hp = spec.hp ?? u.pure[96]; u.mp = spec.mp ?? u.pure[33];
     this.units.set(id, u);
-    for (const p of spec.passives || []) this.addPassive(u, p.id ?? p, p.affiliation ?? K.AFF.AUTOSKILL, p.localId, p.level, p.params);
+    for (const p of spec.passives || []) if (p.processes) this.addProcesses(u, p); else this.addPassive(u, p.id ?? p, p.affiliation ?? K.AFF.AUTOSKILL, p.localId, p.level, p.params);
     return u;
+  }
+  // Instances given directly as process id + parameters (crest traits, support passives, ark effects the
+  // battle report lists without a passive-skill row).
+  addProcesses(u, spec) {
+    const made = [];
+    for (const p of spec.processes || []) {
+      const inst = this.makeInstance({ owner: u.id, affiliation: spec.affiliation ?? K.AFF.NONE, localId: spec.localId ?? 0, localIndex: p.localIndex ?? 0, passiveId: 0, level: spec.level || 1, processId: p.processId, prob: p.prob ?? 10000, params: (p.params || []).slice() });
+      if (inst) { u.instances.push(inst); made.push(inst); }
+    }
+    return made;
   }
   unit(id) { return this.units.get(Number(id)) || null; }
   aliveUnits() { return [...this.units.values()].filter(u => u.alive && !u.excluded); }
@@ -347,6 +358,8 @@ export class Battle {
   }
   roll(inst) {
     const mode = this.options.probability;
+    if (this.options.forced?.has(`${inst.localId}:${inst.localIndex}`)) return true; // explicitly assumed (per instance)
+    if (this.options.skipped?.has(`${inst.localId}:${inst.localIndex}`)) return false;
     if (mode === 'assume') return true;
     if (mode === 'skip') return false;
     return Math.random() * 10000 < inst.prob;
@@ -483,8 +496,10 @@ export class Battle {
     let reduction = 1; for (const e of this.entriesFor(target, magical ? K.OP.REDUCTION_MAG : K.OP.REDUCTION_PHYS, { work: true })) reduction = f32(reduction * f32(1 - (e.params[0] || 0) / 10000));
     const invalid = this.entriesFor(target, K.OP.INVALID_DMG, { work: true }).length > 0;
     // coefficient: the single-precision skill ratio times the call's damage ratio as a double
-    // (f32(0.52) × 0.6 → f32 0.311999977, the base_ratio the damage reader captures; other orders land one ulp off)
-    let q = f32(f32(per / 10000) * (bullet.dmgRatio / 10000));
+    // Both factors are per-10000 integers scaled by the float constant 0.0001f before the float multiply:
+    // 5200 → 0.51999998 × 6000 → 0.59999996 = 0.311999977 (洛琪希) and 3410 × 6000 → 0.204599977 (亞克), the
+    // base_ratio the damage reader captures; dividing by 10000 in double lands one ulp off for 3410.
+    let q = f32(f32(per * f32(0.0001)) * f32(bullet.dmgRatio * f32(0.0001)));
     q = f32(q * elementFactor); q = f32(q * killerFactor); q = f32(q * f32(offense * received)); q = f32(q * reduction);
     const critical = bullet.critical;
     const exponent = attack > 0 ? f32(f32(defense / attack) * (critical ? 6 : 10)) : 0;
@@ -622,7 +637,9 @@ export class Battle {
       UnitGetEquipType(t, pos) { const u = B.unit(t); return u?.equips.find(e => e.pos === pos)?.type ?? 0; },
       UnitGetEquipElem(t, pos) { const u = B.unit(t); return u?.equips.find(e => e.pos === pos)?.elem ?? 0; },
       UnitGetWeaponType(t) { const u = B.unit(t); return u?.equips.find(e => e.pos === 1)?.type ?? 0; },
-      UnitGetArmorType(t) { const u = B.unit(t); return u?.equips.find(e => e.pos === 2)?.type ?? 0; },
+      // the armour type is 0 when a second weapon sits in the armour slot (二刀流); Unit:SubWeaponType() then
+      // reads the slot's raw type through UnitGetEquipType
+      UnitGetArmorType(t) { const u = B.unit(t); const type = u?.equips.find(e => e.pos === 2)?.type ?? 0; return type >= 20 ? type : 0; },
       UnitGetAccessoryElem(t) { const u = B.unit(t); return u ? u.equips.filter(e => e.pos === 3 || e.pos === 4).map(e => e.elem ?? 0) : []; },
       // --- stats ---
       UnitGetValue(t, statType, isReal, isFinal) {
@@ -789,7 +806,9 @@ export class Battle {
       UnitGetSkillKind() { return 0; }, UnitGetSkillIndex(t, skillType, index) { return index; },
       UnitGetSkillCharge() { return 0; }, UnitGetSkillCost(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? (B.master.skill.get(id)?.INVOKE_COST ?? 0) : 0; },
       UnitGetSkillElement(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? (B.master.skill.get(id)?.ELEM ?? 0) : 0; },
-      UnitGetSkillTarget() { return 0; }, UnitGetSkillTargetType() { return 0; },
+      // TARGET_INFO "side:scale:cond:range": SKILL_TARGET_XXX and SKILL_SCALE_XXX (conditions such as ActValidOwnerSkillBefore compare the side)
+      UnitGetSkillTarget(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? (B.master.skillInfo(id)?.targetSide ?? 0) : 0; },
+      UnitGetSkillTargetType(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? (B.master.skillInfo(id)?.targetType ?? 0) : 0; },
       UnitGetSkillType(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? parseInts(B.master.skill.get(id)?.SKILL_ROLE ?? '0') : [0]; },
       UnitGetSkillRoleDetail(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? parseInts(B.master.skill.get(id)?.SKILL_ROLE_DETAIL ?? '0') : [0]; },
       UnitGetSkillLevel() { return 1; }, GetSkillAbsLevel() { return 1; },
