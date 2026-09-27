@@ -34,7 +34,7 @@
 - 施放前已用技能（`state.preCasts`）：按顺序完整施放（自身/友方目标技能打在自己身上），累计计数类被动、自我 Buff（如神託的誓言 必杀上限 +100,000）由此产生。
 - LIFETYPE_CONTINUOUS 的控制在其触发再次评估时失效；ChangeBuff(54) 在一次 Buff 变化结束后统一派发一次。
 - fengari 整数为 32 位：`bitToBoolean` 以移位重写，其余脚本按原样运行。
-- 局外面板（UnitUtil.GetUnitBasicStatus / FillUnitDressParam）：`裸属性 = min + round(max × GROWTH_RATE[lv] / 10000) + Σ觉醒(UnitDressAwakeMst) + Σ已开属性格(UnitDressAbilityPieceMst 类型 10–15)`，PARAMETER_INFO 的 `min-max` 中 max 是成长量而非 100 级值；所有角色 GROWTH_ID=2，Lv120 的成长率 12633 由 4 个已验证角色（洛琪希／魔神梅莉／龙王阿尔克／艾莉丝）六维全部吻合拟合得到，其余等级待读取器 v0.10 导出 GrowthMst。装备参数按 PARAMETER_MAX_INFO（满强化），`EquipParam`(319: 装备种类, 属性, 倍率) 逐件加算后四舍五入（洛琪希之魔杖 INT 365→730、衣服 INT 229→344、MND 116→290），再进入 `floor((裸 + 装备 + Σ值) × (1 + Σ倍率)) + Σ加算`。
+- 局外面板（UnitUtil.GetUnitBasicStatus / FillUnitDressParam）：`裸属性 = min + round(max × GROWTH_RATE[lv] / 10000) + Σ觉醒(UnitDressAwakeMst) + Σ已开属性格(UnitDressAbilityPieceMst 类型 10–15)`，PARAMETER_INFO 的 `min-max` 中 max 是成长量而非 100 级值；所有角色 GROWTH_ID=2，成长率来自 GrowthMst（读取器 v0.10 导出，120 级：Lv100=10000、Lv110=10813、Lv120=12633；12633 与此前用 4 个已验证角色六维拟合的值相同）。装备参数按 ItemEquipParameterGrowthMst：`min + round((max − min) × map[lv] / map[MAX_LV])`（+0 … +MAX_LV，满强化即 PARAMETER_MAX_INFO），`EquipParam`(319: 装备种类, 属性, 倍率) 逐件加算后四舍五入（洛琪希之魔杖 INT 365→730、衣服 INT 229→344、MND 116→290），再进入 `floor((裸 + 装备 + Σ值) × (1 + Σ倍率)) + Σ加算`。
 
 ## 验证
 
@@ -51,5 +51,5 @@
 - 段数（时间轴）不在主数据中，仍取计算器填写值。
 - 目标可直接从游戏怪物表选择（面板「目标：从游戏怪物表选择」），含 Boss 自带被动；Break 状态、Boss 的 HP 阶段等仍需手动条件。
 - 导入配装报告后按本账号实际配置结算（面板里「配装报告」文件框，存于浏览器本地）；未导入时按全部自带技能 + 专属武器／防具满强化 + 本账号加护（`dist/account-blessings.mjs` 的读取值）。圣物加成、装备强化等级（报告未含时按满级）仍未计。
-- Lv100／120 以外的等级成长率、装备中间强化等级为估算（面板会标注），读取器 v0.10 导出 GrowthMst / ItemEquipParameterGrowthMst 后改为精确值。
+- 装备强化等级：配装报告的 equipLvInfo 目前为空，按满强化计；有读取值时按 ItemEquipParameterGrowthMst 精确计算。
 - 加护数值随账号等级变化，报告或账号加护记录里的运行时参数才是真实值。

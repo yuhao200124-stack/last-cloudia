@@ -6,9 +6,9 @@
 // Verified against four characters' in-game maximum panels (洛琪希 / 魔神梅莉 / 龙王阿尔克 / 艾莉丝, all six stats).
 import { K, parseInts } from './battle.mjs';
 
-// GrowthMst GROWTH_RATE is dumped by reader v0.10; until it is present only these points are certain
-// (Lv120 = 12633 fitted exactly on the four verified characters, Lv1 = min by definition).
-export const KNOWN_GROWTH_RATE = { 1: 0, 100: 10000, 120: 12633 };
+// GrowthMst GROWTH_RATE (reader v0.10: 120 levels, Lv100 = 10000, Lv110 = 10813, Lv120 = 12633) is the
+// source; these points are the fallback when an older export has no GrowthMst.
+export const KNOWN_GROWTH_RATE = { 1: 0, 100: 10000, 110: 10813, 120: 12633 };
 const STAT_ORDER = ['hp', 'mp', 'str', 'def', 'int', 'mnd']; // PARAMETER_INFO / awake / equipment column order
 const STAT_CODE = { hp: K.STAT.MAX_HP, mp: K.STAT.MAX_MP, str: K.STAT.STR, def: K.STAT.DEF, int: K.STAT.INT, mnd: K.STAT.MND, crt: K.STAT.CRT };
 const PIECE_STAT = { 10: 'hp', 11: 'mp', 12: 'str', 13: 'def', 14: 'int', 15: 'mnd' };
@@ -73,21 +73,23 @@ export function bareStats(master, unitDressId, { level = null, awake = null, pie
   return { stats, parts, elemResist, level: lv, awake: aw, rate, estimated, pieceCount: opened.length };
 }
 
-// Equipment parameters at an enhancement level (max by default). Between Lv1 and MAX_LV the game follows
-// ItemEquipParameterGrowthMst; without that table the value is interpolated and flagged `estimated`.
+// Equipment parameters at an enhancement level +0…+MAX_LV (max by default). ItemEquipParameterGrowthMst
+// PARAM_MAP gives one value per level (0 at +0, e.g. 99 at +40 for growth type 3, 40 for type 0); the
+// growth fraction is map[lv] / map[MAX_LV], so +MAX_LV is exactly PARAMETER_MAX_INFO (神帝劍 +40 = 198).
+// Without the table the value is interpolated linearly and flagged `estimated`.
 export function equipmentStats(master, equipId, level = null) {
   const row = master.itemEquip.get(Number(equipId));
   if (!row) return null;
-  const lo = parseInts(row.PARAMETER_INFO), hi = parseInts(row.PARAMETER_MAX_INFO), maxLv = row.MAX_LV || 1;
-  const lv = level == null ? maxLv : Math.max(1, Math.min(maxLv, level));
-  let t = maxLv <= 1 ? 1 : (lv - 1) / (maxLv - 1), estimated = false;
+  const lo = parseInts(row.PARAMETER_INFO), hi = parseInts(row.PARAMETER_MAX_INFO), maxLv = row.MAX_LV || 0;
+  const lv = level == null ? maxLv : Math.max(0, Math.min(maxLv, level));
+  let t = maxLv <= 0 ? 1 : lv / maxLv, estimated = false;
   const g = master.equipGrowth?.get(row.EQUIP_GROWTH_TYPE);
-  if (lv > 1 && lv < maxLv) {
-    if (g) { const map = parseInts(String(g.PARAM_MAP).replace(/,/g, ':')); if (map.length >= lv) t = map[lv - 1] / 10000; else estimated = true; }
-    else estimated = true;
+  if (lv > 0 && lv < maxLv) {
+    const map = g ? parseInts(String(g.PARAM_MAP).replace(/,/g, ':')) : [];
+    if (map.length > maxLv && map[maxLv] > 0) t = map[lv] / map[maxLv]; else estimated = true;
   }
   const stats = {};
-  STAT_ORDER.forEach((k, i) => { const a = lo[i] || 0, b = hi[i] || 0; stats[k] = lv >= maxLv ? b : lv <= 1 ? a : round(a + (b - a) * t); });
+  STAT_ORDER.forEach((k, i) => { const a = lo[i] || 0, b = hi[i] || 0; stats[k] = lv >= maxLv ? b : lv <= 0 ? a : round(a + (b - a) * t); });
   const elemResist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
   parseInts(row.RESIST_ELEM_INFO).forEach((v, i) => { if (i < 6) elemResist[i + 1] = v; });
   return { id: row.ITEM_EQUIP_ID, name: row.NAME, type: row.EQUIP_TYPE, elem: row.ELEM, level: lv, maxLevel: maxLv, stats, elemResist, estimated };

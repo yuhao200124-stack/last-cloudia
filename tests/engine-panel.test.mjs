@@ -24,7 +24,12 @@ test('panel: bare stats of four verified characters match their in-game maximum 
   }
   assert.equal(maxLevel(master, 502220), 120); assert.equal(maxLevel(master, 502220, 6), 110); assert.equal(maxAwake(master, 502220), 9);
   assert.deepEqual(growthRate(master, 120), { rate: 12633, estimated: false });
-  assert.equal(growthRate(master, 110).estimated, true, 'Lv110 needs GrowthMst (reader v0.10)');
+  assert.deepEqual(growthRate(master, 110), { rate: 10813, estimated: false }, 'GrowthMst (reader v0.10)');
+  assert.deepEqual(growthRate(master, 100), { rate: 10000, estimated: false });
+  assert.deepEqual(growthRate(master, 2), { rate: 191, estimated: false });
+  // Lv110 (limit break 6) of 洛琪希: min + round(max × 1.0813) per stat, awakening 9, full board
+  const lv110 = bareStats(master, 502220, { level: 110 });
+  assert.equal(lv110.estimated, false); assert.equal(lv110.stats.hp, 321 + Math.round(2599 * 1.0813) + 1598 + 5500);
 });
 
 test('panel: equipment parameters read the enhanced maximum and carry the piece type / element', async () => {
@@ -33,8 +38,10 @@ test('panel: equipment parameters read the enhanced maximum and carry the piece 
   assert.deepEqual([staff.type, staff.elem, staff.level, staff.stats.int, staff.stats.mnd, staff.stats.mp], [17, 2, 40, 365, 97, 50]);
   assert.deepEqual([robe.type, robe.stats.def, robe.stats.int, robe.stats.mnd, robe.stats.mp], [22, 167, 229, 116, 80]);
   assert.deepEqual(robe.elemResist, { 1: 5, 2: 5, 3: 5, 4: 5, 5: 0, 6: 0 });
-  assert.equal(equipmentStats(master, 108119, 1).stats.int, 285);
-  assert.equal(equipmentStats(master, 108119, 20).estimated, true, 'mid-level enhancement needs ItemEquipParameterGrowthMst');
+  assert.equal(equipmentStats(master, 108119, 0).stats.int, 285);
+  const mid = equipmentStats(master, 108119, 20); // growth type 3: map[20] = 50 of map[40] = 99
+  assert.equal(mid.estimated, false); assert.equal(mid.stats.int, 285 + Math.round(80 * 50 / 99));
+  assert.equal(equipmentStats(master, 101308, 40).stats.str, 198, '神帝劍 +40 shows 198 in game');
   assert.deepEqual(exclusiveEquipment(master, 502220), [{ pos: 1, id: 108119 }, { pos: 2, id: 203110 }]);
 });
 
