@@ -30,7 +30,7 @@
     <section class="card" id="attackPanel"><div class="section-heading reference-section-heading"><h2><span>03</span>招式与技能参数</h2><button type="button" id="reset">重置</button></div>
       <div class="fields two"><label hidden>攻击方式<select id="attackChoice"></select></label><label hidden>伤害参照<select id="statReference"><option value="">待确认</option><option value="str">攻击力</option><option value="int">法强（魔力）</option><option value="mixed">攻击力＋法强（混合）</option></select></label></div>
       <label class="wide">具体招式／魔法<select id="preset"><option value="eris">艾莉絲 · 伯雷亞斯拳 Lv.5</option><option value="custom">自定义技能</option></select></label>
-      <p id="entryMoveNote" class="help"></p>
+      <div class="fields two" id="gamePicker" hidden><label>游戏角色／魔法<select id="gameCharacter"><option value="">选择角色或魔法</option></select></label><label>游戏招式<select id="gameMove" disabled><option value="">先选择角色</option></select></label></div><p id="gameMoveNote" class="help" hidden></p><p id="entryMoveNote" class="help"></p>
       <div class="fields two"><label>伤害分类（词条适用类型）<select id="type"><option value="physical">物理</option><option value="magical">魔法</option></select></label><label>攻击属性<select id="element"></select></label></div>
       <div class="fields two">
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
@@ -162,5 +162,5 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260927-switch-plan"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260927-game-data"></script>
 </body></html>

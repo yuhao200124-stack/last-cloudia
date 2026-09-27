@@ -1,3 +1,4 @@
+import {gameCharacterForSite,findGameMove,gameMoveParameters} from './game-data.mjs?v=20260927-game-data';
 import {characterDefinition} from './character-template.mjs?v=20260926-mayly';
 import {STAT_CONDITION_FIELDS,STAT_CONDITION_ACTIVE,pickStatConditions,CONDITION_BUFF_FIELDS,SWITCH_GROUPS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260926-skill-coverage';
@@ -40,6 +41,8 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  migrateCharacterHitDrafts(characterId,saved,state.hitParameters);
  state.hitMechanicsRevision=2;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
+ let game=null;
+ gameCharacterForSite(characterId).then(g=>{game=g;if(initialized&&g){promoteNonStacking();setParameters();updateCandidate();}}).catch(()=>{});
  let confirmed=false,reviewedReport=null,bonusGroups=[],readerBonuses=[],modeCatalog={},potentialModeGroups=[];
  let reportFingerprint=null,storageSaveFailed=false,importGeneration=0;
  state.readerDrafts=saved.readerDrafts||{};
@@ -106,6 +109,11 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  function setParameters() {
   const move=selectedMove(),p=state.parameters[paramKey()],mappingKey=`${unit?.unitId}:${paramKey()}`,mapped=state.readerSkillMappings[mappingKey];
   const read=readMoveParameters(unit,mapped?{...move,skillId:mapped}:move);
+  // Game master data fills anything neither typed nor read (选技能即自动带出系数与攻击修正).
+  const gp=gameMoveParameters(findGameMove(game,move));
+  const readAny=Object.keys(read.parameters).length>0;
+  if(gp&&gp.type!=='mixed')for(const id of parameterIds)if(read.parameters[id]==null&&gp[id]!=null)read.parameters[id]=gp[id];
+  if(gp)read.source=readAny?`${read.source}（读取报告优先，游戏数据：攻击修正 +${gp.skillPercent}%，每段系数 ${gp.coefficient}）`:gp.note;
   const expected=move?.kind?.startsWith('s')?'skill':move?.kind;
   const choices=(unit?.skills||[]).filter(s=>!s.kind||s.kind===expected);
   $('readerSkillControl').hidden=!choices.length;
@@ -123,7 +131,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  // A non-stackable spell (game SkillMst SKILL_PARAM x:1, e.g. 泽诺克莱昂) is always cast as 重魔法.
  // Parameters saved under 魔法 move with it, so nothing entered is lost.
  function promoteNonStacking(move=selectedMove()) {
-  if(!move?.nonStacking||state.selection.attack!=='magic')return;
+  if(!(move?.nonStacking||gameMoveParameters(findGameMove(game,move))?.heavy)||state.selection.attack!=='magic')return;
   const from=`magic:${state.selection.preset}`,to=`heavy_magic:${state.selection.preset}`;
   if(state.parameters[from]&&!state.parameters[to])state.parameters[to]=state.parameters[from];
   for(const [key,value] of Object.entries(state.hitParameters||{}))if(key.startsWith(from+':')&&!state.hitParameters[to+key.slice(from.length)])state.hitParameters[to+key.slice(from.length)]=value;

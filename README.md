@@ -9,3 +9,5 @@
 - Claude 和 ChatGPT 共用本仓库：动手前先拉取最新版本，一次只由一方修改。
 
 - 游戏数据技能表（`dist/game-skills.html`）：数据来自 `docs/game-relic-passives.json`（游戏主数据导出，942 个可从圣物学习的被动），运行 `node scripts/build-game-skill-table.mjs` 生成 `dist/game-skill-data.js`；分类、排序、评价沿用 `dist/data.js`。
+
+- 游戏主数据后台（`dist/game-data/`）：读取器 v0.8 导出的主数据表经 `local-migration-tools/game-data/`（active.py → fulldata.py → publish.py）生成；`dist/game-data.mjs` 负责读取。计算器选择招式时，未手填、读取报告也没有的系数、攻击修正自动取自这里。

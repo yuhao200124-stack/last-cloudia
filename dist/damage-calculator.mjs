@@ -12,6 +12,7 @@ import {magicResistance,magicBuffOptions,selectedMagicBuffs,magicBuffCap,magicBu
 import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mjs?v=20260926-mayly';
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-mayly';
 import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-mayly';
+import {loadGameIndex,loadGameCharacter,loadGameMagic,gameMoveParameters} from './game-data.mjs?v=20260927-game-data';
 import {retargetReport} from './entry-preparation.mjs?v=20260926-mayly';
 import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-skill-coverage';
 import {gameTimingLabel,gameTimingLabelByName} from './game-skill-timing.mjs?v=20260927-game-timing';
@@ -564,6 +565,40 @@ $('commonEffects').addEventListener('change',event=>{
 $('editConfirmedLoadout').addEventListener('click',()=>unified.open());
 $('calculator').addEventListener('submit',e=>e.preventDefault());
 $('calculator').addEventListener('input',event=>{if(event.target.id==='defenseRatio')defenseRatioTouched=true;clearTimeout(timer);timer=setTimeout(update,70);});
+// Standalone mode: pick any character's move (or any magic) from the game data and fill the skill parameters.
+let gameMoves=[];
+async function initGamePicker(){
+ if(characterId)return;
+ try{
+  const index=await loadGameIndex();
+  $('gamePicker').hidden=false;
+  $('gameCharacter').insertAdjacentHTML('beforeend',`<option value="magic:normal">魔法（普通）</option><option value="magic:heavy">魔法（重魔法 · 不可叠加）</option>`+index.characters.map(c=>`<option value="${c.u}">${esc(c.n)}${c.d?` · ${esc(c.d)}`:''}</option>`).join(''));
+ }catch{}
+}
+$('gameCharacter').addEventListener('change',async()=>{
+ const v=$('gameCharacter').value;gameMoves=[];
+ $('gameMove').innerHTML='<option value="">读取中…</option>';$('gameMove').disabled=true;
+ try{
+  if(v.startsWith('magic:')){const m=await loadGameMagic();gameMoves=m[v.slice(6)].map(x=>({label:`${x.nameS}${x.element&&x.element!=='无'?` · ${x.element}`:''}`,move:x}));}
+  else if(v){const c=await loadGameCharacter(v);
+   const add=(label,x)=>{if(x&&x.parts?.some(p=>p.coef!=null))gameMoves.push({label:`${label} · ${x.nameS}`,move:x});};
+   (c.normal||[]).forEach(x=>add('普通攻击',x));(c.specials||[]).forEach((x,i)=>add(`特技${i+1}`,x));add('超必杀',c.ultimate);
+   (c.form2||[]).forEach((x,i)=>add(i<3?`形态2 特技${i+1}`:'形态2 超必杀',x));
+   (c.magic?.normal||[]).forEach(x=>add('魔法',x));(c.magic?.heavy||[]).forEach(x=>add('重魔法',x));}
+ }catch{gameMoves=[];}
+ $('gameMove').innerHTML=`<option value="">${gameMoves.length?'选择招式':'没有可计算伤害的招式'}</option>`+gameMoves.map((m,i)=>`<option value="${i}">${esc(m.label)}</option>`).join('');
+ $('gameMove').disabled=!gameMoves.length;$('gameMoveNote').hidden=true;
+});
+$('gameMove').addEventListener('change',()=>{
+ const g=gameMoveParameters(gameMoves[Number($('gameMove').value)]?.move);if(!g)return;
+ for(const key of ['coefficient','skillPercent','skillAdd','skillPostAdd'])$(key).value=g[key];
+ if(g.type!=='mixed')$('type').value=g.type;
+ if(g.skillType)$('skillType').value=g.skillType;
+ if(g.element&&[...$('element').options].some(o=>o.value===g.element))$('element').value=g.element;
+ $('preset').value='custom';$('skillDetails').open=true;
+ $('gameMoveNote').textContent=g.note;$('gameMoveNote').hidden=false;
+});
+initGamePicker();
 $('calculator').addEventListener('change',event=>{
   const id=event.target.id;
   if(id==='attack'&&workflow)workflow.setManualPanel(referenceMode()==='int'?'intelligence':referenceMode()==='str'?'attack':'mixed',$('attack').valueAsNumber);
