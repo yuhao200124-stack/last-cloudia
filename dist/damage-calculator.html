@@ -53,7 +53,7 @@
         <p id="attackBasisNote" class="help"></p>
         <div hidden><input id="formulaCaptureFile" type="file" accept=".csv,text/csv"><p id="formulaCaptureNote"></p><select id="formulaCapturePick"><option value="">尚未导入</option></select><button id="applyFormulaCapture" type="button" disabled></button></div>
       </details>
-      <div id="importStatControls" class="fields two" hidden><label>暴击率基准<select id="critBasis"><option value="reader">读取器面板</option><option value="website">网站加成＋手填基础</option></select></label><label><span id="baseCritLabel">基础及额外暴击率 %</span><input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required></label><p id="critImportNote" class="help" hidden></p></div>
+      <div id="importStatControls" class="fields two" hidden><label>暴击率基准<select id="critBasis"><option value="reader">读取器面板</option><option value="website">网站加成＋手填基础</option></select></label><label><span id="baseCritLabel">基础及额外暴击率 %</span><div class="field-icon-wrap"><input id="baseCritRate" type="number" min="0" max="100" step="any" value="0" required><button type="button" id="baseCritBreakdownToggle" class="field-icon-btn" hidden aria-expanded="false" title="暴击率加成明细">👁</button></div><div id="baseCritBreakdown" class="field-icon-panel" hidden><p id="baseCritBreakdownSummary" class="help"></p><ul id="baseCritBreakdownSteps" class="entry-source-list"></ul></div></label><p id="critImportNote" class="help" hidden></p></div>
       <div class="fields three">
         <label>攻击方式<select id="skillType"><option value="skill">特技</option><option value="normal">普通攻击</option><option value="magic">魔法</option><option value="ultimate">超必杀技</option></select></label>
       </div>

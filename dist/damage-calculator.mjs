@@ -175,6 +175,7 @@ function wireFieldIconToggle(toggleId,panelId) {
 }
 wireFieldIconToggle('attackBreakdownToggle','attackBreakdown');
 wireFieldIconToggle('critBreakdownToggle','critBreakdown');
+wireFieldIconToggle('baseCritBreakdownToggle','baseCritBreakdown');
 // Reference-only disclosure: never fills #attack, only explains how the website's own
 // panel arithmetic reaches its number -- the pre-buff baseline, then any named real-time
 // buff layer (常驻 EX 灵气 and the like) added on top, exactly as calculateWebsitePanel()
@@ -197,6 +198,20 @@ function renderCritBreakdown(observedCrit) {
   $('critBreakdownToggle').hidden=!has;
   if(!has){$('critBreakdown').hidden=true;$('critBreakdownToggle').setAttribute('aria-expanded','false');return;}
   $('critBreakdownNote').textContent=observedCrit.note;
+}
+// Reference-only disclosure for "暴击率基准＝网站加成＋手填基础": each named,
+// itemized critRate-type effect the confirmed report actually carries (already
+// listed, mixed with every other reference effect, under 已采用的属性、上限与
+// 特殊效果) -- this box isolates just the ones summed into #baseCritRate's
+// +critAdded%, so 加成顺序/来源 is visible next to the field it actually feeds.
+// Hidden unless that basis is selected and there is at least one such effect.
+function renderBaseCritBreakdown(source) {
+  const rows=(source?.reference||[]).filter(e=>e.effect.type==='critRate');
+  const show=$('critBasis').value==='website'&&rows.length>0;
+  $('baseCritBreakdownToggle').hidden=!show;
+  if(!show){$('baseCritBreakdown').hidden=true;$('baseCritBreakdownToggle').setAttribute('aria-expanded','false');return;}
+  $('baseCritBreakdownSummary').textContent=`已确认的暴击率加成合计 +${source.critAdded}%，来自以下 ${rows.length} 项：`;
+  $('baseCritBreakdownSteps').innerHTML=rows.map(e=>`<li><b>${esc(e.source)}</b>：${esc(formatEffect(e.effect))}</li>`).join('');
 }
 function syncHitControls(force=false){
   const s=workflow?.selection();if(!s)return;
@@ -604,7 +619,7 @@ function reset(clearSaved=true) {
   $('dualWield').checked=false;$('specialAttack').checked=false;if(!characterId)$('criticalEnabled').checked=true;applyBoss();
   renderEffects();labels();update();
   if(characterId) {
-    imported=null;effects=[];renderEffects();
+    imported=null;effects=[];renderEffects();renderBaseCritBreakdown(null);
     $('baseCritRate').value=0;$('baseCap').value=9999;
     for(const id of ['attack','hits','coefficient','skillPercent','skillAdd','skillPostAdd'])$(id).value='';
     $('preset').value='custom';$('hitScaleStage').value='';
@@ -698,7 +713,7 @@ $('calculator').addEventListener('change',event=>{
   update();
 });
 $('debuff').addEventListener('click',()=>{const p=bosses[$('bossPreset').value];if(p)$('bossDefense').value=p.debuff;update();});
-$('critBasis').addEventListener('change',()=>{if($('critBasis').value==='website')$('baseCritRate').value=manualCriticalBase;update();});
+$('critBasis').addEventListener('change',()=>{if($('critBasis').value==='website')$('baseCritRate').value=manualCriticalBase;renderBaseCritBreakdown(imported);update();});
 $('baseCritRate').addEventListener('change',()=>{if($('critBasis').value==='website')manualCriticalBase=$('baseCritRate').value;});
 function applyImport(report,review) {
   const next=buildDamageImport(report);
@@ -739,6 +754,7 @@ function applyImport(report,review) {
   $('skillDetails').open=true;
   $('entryReviewSummary').textContent=`${next.characterName} · ${next.attackName} · ${next.element||'属性待确认'} · 已确认 ${next.effects.length} 条伤害加成`;
   $('critImportNote').textContent=`已确认 +${next.critAdded}% 暴击率；暴击开关由你控制，最终暴击率以上方结果为准。`;
+  renderBaseCritBreakdown(next);
   $('capImportNote').textContent=`已确认固定上限 +${fmt(next.capAdded)}；最终值为左侧输入与确认加成之和。`;
   $('importReferences').innerHTML=`<ul>${next.reference.map(e=>`<li><b>${esc(e.source)}</b>：${esc(formatEffect(e.effect))}${['stat','statBuff','equipmentStat'].includes(e.effect.type)?'（面板核对，不重复乘算）':''}</li>`).join('')}</ul>`;
   const noLongerActive=report.rows.filter(r=>r.status!=='active').map(r=>`${r.sourceName}：确认后的前置条件不成立，相关效果未计入。`);
@@ -752,7 +768,7 @@ function receiveReport(report,force=false) {
     renderMagicBuffs(report.profile);
     workflow.receive(report);
     if(!workflow.isConfirmed())$('entryReviewSummary').textContent=`${report.characterName} · 固定资料已补齐；请核对采用的数据。`;
-  } catch(e){imported=null;$('entryReviewSummary').textContent=`导入失败：${e.message}`;update();}
+  } catch(e){imported=null;renderBaseCritBreakdown(null);$('entryReviewSummary').textContent=`导入失败：${e.message}`;update();}
 }
 function loadReport(force=false) {
   if(!characterId)return;
@@ -771,7 +787,7 @@ if(characterId)workflow=initEntryWorkflow({
     clearSettlementCapture('核对条件已改变，请重新选择本次结算值。');
     reviewBlocker=message;
     if(imported)retainedImportDraft={base:imported.effects,rows:readEffects().filter(e=>e.importId)};
-    imported=null;effects=readEffects().filter(e=>!e.importId);renderEffects();
+    imported=null;effects=readEffects().filter(e=>!e.importId);renderEffects();renderBaseCritBreakdown(null);
     $('importReferences').replaceChildren();$('importWarnings').replaceChildren();
     fillReaderPreview();$('cap').value=$('baseCap').value;
     $('entryReviewSummary').textContent=message;update();
