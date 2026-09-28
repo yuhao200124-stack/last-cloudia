@@ -1,8 +1,11 @@
 import json,os,shutil
 from cc import t2s
 d=json.load(open('/tmp/claude-0/fulldata.json'))
-OUT='/home/claude/v160/LastCloudia-Local-v160/project/dist/game-data'
-shutil.rmtree(OUT,ignore_errors=True);os.makedirs(OUT+'/c')
+# Writes dist/game-data/c/*.json, magic.json, relics.json and index.json. engine/ and lua/ are written
+# by export_engine_data.py and other tools, so only c/ is cleared. GAME_DATA_OUT overrides the target
+# (used to diff a fresh export against the published files before copying).
+OUT=os.environ.get('GAME_DATA_OUT') or os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','dist','game-data')
+shutil.rmtree(OUT+'/c',ignore_errors=True);os.makedirs(OUT+'/c')
 def move(s):
     if not s: return None
     parts=[];seen=set()
@@ -19,13 +22,13 @@ def move(s):
 P=d['passives']
 def pas(pid):
     x=P[str(pid)] if str(pid) in P else P.get(pid)
-    return {k:x[k] for k in ('id','name','nameS','sc','ap','text','textS','explainLong','steps','values','scope','timing','relicLearnable')}
+    return {k:x[k] for k in ('id','name','nameS','sc','ap','text','textS','explainLong','steps','values','scope','timing','relicLearnable','autoStates') if k in x}
 index=[]
 for c in d['characters']:
     ids=set()
     for p in c['personality']: ids.add(p['passive'])
     for p in c['ownPassives']+c['transcend']: ids.add(p['passive'])
-    for e in c['exclusiveEquipment']: ids.update(e['passives'])
+    for e in c['exclusiveEquipment']: ids.update(e['passives']+e.get('maxPassives',[]))
     out={**{k:c[k] for k in ('unitDressId','unitId','name','nameS','fullName','fullNameS','dress','dressS','characterType','equipTypes','parameters','criticalRate','resistElem','personality','ownPassives','transcend','blessings','exclusiveEquipment')},
          'normal':[move(x) for x in c['normal']],'specials':[move(x) for x in c['specials']],'ultimate':move(c['ultimate']),'form2':[move(x) for x in c['form2']],
          'magic':{'normal':[move(x) for x in c['magic']['normal']],'heavy':[move(x) for x in c['magic']['heavy']]},

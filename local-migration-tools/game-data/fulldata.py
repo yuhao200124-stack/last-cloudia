@@ -1,31 +1,22 @@
-import sys,json,collections,re
+import sys,os,json,collections,re
 sys.path.insert(0,'/home/claude/decode')
-from codeclass2 import classify,scope
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
+from codeclass2 import classify,scope,PM
 from values import values_of
 from timing import timing
 from sheet import load
 from cc import t2s
 U='/mnt/user-data/uploads/LastCloudiaLoadoutReader-v0.6/'
 _,PS=load(U+'PassiveSkillMst.bin');ps={r['PASSIVE_SKILL_ID']:r for r in PS}
+psName={pid:r['NAME'] for pid,r in ps.items()};psByName=collections.defaultdict(list)
+for pid,r in ps.items(): psByName[r['NAME']].append(pid)
 _,PX=load(U+'PassiveSkillExplainMst.bin');pxl={r['PASSIVE_SKILL_ID']:r['EXPLAIN_LONG'] for r in PX}
 _,UD=load(U+'UnitDressMst.bin');_,AP=load(U+'UnitDressAbilityPieceMst.bin');_,EQ=load(U+'ItemEquipMst.bin')
 _,ARK=load(U+'ArkMst.bin');_,PT=load(U+'ArkPartyTraitMst.bin');_,ASL=load(U+'ArkSkillLvMst.bin')
 act=json.load(open('/tmp/claude-0/active_skills.json'))
 at=json.load(open('arkteach.json'))
 relicPassives={int(k) for k in at['pas']}
-def clean(s): return re.sub(r'<[^>]+>','',str(s or '')).replace('\r','').strip()
-def filled(r,text_key='PROCESS_EXPLAIN',quote_key='PROCESS_EXPLAIN_QUOTE'):
-    procs=[seg.split(':') for seg in str(r['PROCESS_INFO']).split('@')]
-    txt=r.get(text_key) or ''
-    for i,q in enumerate([q for q in (r.get(quote_key) or '').split(',') if q]):
-        parts=q.split(':')
-        try:
-            pi,ai=int(parts[0]),int(parts[1]);fmt=int(parts[2]) if len(parts)>2 and parts[2] else 1
-            v=int(procs[pi-1][ai+1] or 0);val=v/100 if fmt==0 else v/1000 if fmt==2 else v
-            val=int(val) if val==int(val) else val
-        except Exception: val='?'
-        txt=txt.replace('{%d}'%i,str(val))
-    return clean(txt)
+from gametext import clean,filled,max_enhanced
 PC={}
 def passive(pid):
     if pid in PC: return pid
@@ -34,9 +25,16 @@ def passive(pid):
     lab,basis,_=classify(r['PROCESS_INFO'])
     txt=filled(r)
     tm=[{'kind':t[0],'trigger':t[2],'durationFrames':t[3]} for t in timing(r['PROCESS_INFO'])]
+    # autoStates: the reader-decoded segments of this passive's always-on state processes
+    # (ProcessMst NAME "PB_オート…": auto 鼓舞/护盾/速充/自愈/…), which "始终保持「…」效果" text names
+    # without numbers; values_of renders one segment per process, in process order
+    segs=[seg for seg in str(r['PROCESS_INFO']).split('@') if seg.split(':')[0].strip().isdigit()]
+    vals=values_of(r['PROCESS_INFO']).split('；')
+    pnames=[str(PM.get(int(seg.split(':')[0]),{}).get('NAME','')) for seg in segs]
+    auto=[{'process':n[3:],'values':v} for n,v in zip(pnames,vals) if len(segs)==len(vals) and n.startswith('PB_オート')]
     PC[pid]={'id':pid,'name':clean(r['NAME']),'nameS':t2s(clean(r['NAME'])),'sc':r['COST'],'ap':r['NEED_AP'],'text':txt,'textS':t2s(txt),
       'explainLong':clean(pxl.get(pid,'')),'steps':lab,'values':values_of(r['PROCESS_INFO']),'scope':scope(r['PROCESS_INFO']),'timing':tm,
-      'relicLearnable':pid in relicPassives,'processInfo':r['PROCESS_INFO']}
+      'relicLearnable':pid in relicPassives,'processInfo':r['PROCESS_INFO'],**({'autoStates':auto} if auto else {})}
     return pid
 ETYPE={10:'剑',11:'刀',12:'斧',13:'锤',14:'枪',15:'弓',16:'机械',17:'杖',20:'铠甲',21:'衣服',22:'长袍',30:'饰品',40:'其他'}
 pieces=collections.defaultdict(list)
@@ -71,8 +69,10 @@ for u in UD:
     equipment=[]
     for e in eqByUnit.get(uid,[]):
         pids=[int(x) for x in str(e['PASSIVE_SKILL_INFO']).replace('@',':').split(':') if x.strip().isdigit() and passive(int(x))]
+        # maxPassives: the same passives at the gear's highest enhancement (神装) stage — see gametext.max_enhanced
+        maxp=[m for m in (max_enhanced(p,psByName,psName) for p in pids) if passive(m)]
         equipment.append({'id':e['ITEM_EQUIP_ID'],'name':clean(e['NAME']),'nameS':t2s(clean(e['NAME'])),'type':ETYPE.get(e['EQUIP_TYPE'],str(e['EQUIP_TYPE'])),'element':e['ELEM'],
-          'stats':e['PARAMETER_INFO'],'maxStats':e['PARAMETER_MAX_INFO'],'maxLv':e['MAX_LV'],'passives':pids})
+          'stats':e['PARAMETER_INFO'],'maxStats':e['PARAMETER_MAX_INFO'],'maxLv':e['MAX_LV'],'passives':pids,'maxPassives':maxp})
     mg=A.get('magic',[]) or []
     chars.append({'unitDressId':uid,'unitId':u['UNIT_ID'],'name':clean(u['NAME']),'nameS':t2s(clean(u['NAME'])),'fullName':clean(u['NAME_FULL']),'fullNameS':t2s(clean(u['NAME_FULL'])),
       'dress':clean(u['DRESS_NAME']),'dressS':t2s(clean(u['DRESS_NAME'])),'characterType':u['CHARACTER_TYPE'],'equipTypes':[ETYPE.get(int(x),x) for x in str(u['EQUIP_TYPE_INFO']).split(',') if x.strip().isdigit()],

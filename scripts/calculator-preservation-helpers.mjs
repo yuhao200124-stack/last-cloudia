@@ -37,10 +37,16 @@ const specialWeapon=JSON.parse(fs.readFileSync(new URL('../docs/special-weapon-p
 const critImportBreakdown=JSON.parse(fs.readFileSync(new URL('../docs/crit-import-breakdown-preservation-2026-09-28.json',import.meta.url)));
 const gameNames=JSON.parse(fs.readFileSync(new URL('../docs/game-names-preservation-2026-09-28.json',import.meta.url)));
 const stateNotes=JSON.parse(fs.readFileSync(new URL('../docs/state-notes-preservation-2026-09-28.json',import.meta.url)));
+const autoFill=JSON.parse(fs.readFileSync(new URL('../docs/auto-fill-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const autoFillLayer=autoFill.files[path];
+ if(autoFillLayer){
+  if(hash(text)!==autoFillLayer.afterHash||hash(autoFillLayer.beforeText)!==autoFillLayer.beforeHash)throw Error(`Auto-fill preservation drift: ${path}`);
+  text=autoFillLayer.beforeText;
+ }
  const stateLayer=stateNotes.files[path];
  if(stateLayer){
   if(hash(text)!==stateLayer.afterHash||hash(stateLayer.beforeText)!==stateLayer.beforeHash)throw Error(`State-notes preservation drift: ${path}`);
