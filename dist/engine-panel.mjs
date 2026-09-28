@@ -61,7 +61,6 @@ function keepLoadout(report) {
   try { localStorage.setItem(LOADOUT_KEY, JSON.stringify(slim)); } catch {}
 }
 async function ensureSwitches() { if (!switches) switches = await fetch(new URL('./game-data/engine/switch.json', import.meta.url)).then(r => r.json()); return switches; }
-const loadoutNote = () => loadoutReport ? `已导入配装报告：${loadoutReport.units.length} 个角色${loadoutReport.capturedAt ? ` · ${loadoutReport.capturedAt}` : ''}` : '未导入配装报告（读取器 v0.9+ 在游戏角色页面运行生成的 LoadoutReport.json）';
 // The site's own panel preview (old rules), shown beside the game-data panel as a comparison.
 function websitePanel() {
   const p = latest?.panels || {};
@@ -76,10 +75,15 @@ const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-cands{
 function siteHits() { const n = Number($('hits')?.value); return Number.isFinite(n) && n > 0 ? n : null; }
 function currentHits() { const n = siteHits(); return n ? { hits: n, source: '基础命中段数' } : { hits: 1, source: '未填（按 1 段）' }; }
 function mountPrimary() {
-  const main = document.querySelector('#unifiedResults .result-main'); if (!main || $('enginePrimary')) return;
-  const values = $('resultValues'); if (!values) return;
+  const panel = $('enginePanel'); if (!panel || $('enginePrimary')) return;
+  const heading = panel.querySelector('.section-heading'); if (!heading) return;
+  const oldMain = document.querySelector('#unifiedResults .result-main'); // the old standalone card, captured before the new one below exists
+  // Carries the same "result-main" class as the old standalone card so it keeps the dark result-card styling
+  // (the light text colors in primary-result/total-result/etc. are designed against that dark background).
+  const wrap = document.createElement('div'); wrap.className = 'result-main';
   const block = document.createElement('div'); block.id = 'enginePrimary';
-  block.innerHTML = `<article class="primary-result"><span>普通每段伤害</span><strong id="ep-normal">—</strong><small id="ep-normalNote">游戏脚本结算 · 含随机波动与每段上限</small></article>
+  block.innerHTML = `<div class="result-top"><h2>计算结果</h2><span id="ep-state" class="help">等待招式</span></div>
+    <article class="primary-result"><span>普通每段伤害</span><strong id="ep-normal">—</strong><small id="ep-normalNote">游戏脚本结算 · 含随机波动与每段上限</small></article>
     <section class="damage-gauges" aria-label="伤害与上限">
       <div class="damage-gauge"><div class="gauge-label"><span>普通每段 <b id="ep-normalGauge">—</b></span><span>上限 <b id="ep-normalCap">—</b></span></div><div class="gauge-track" role="progressbar" aria-label="普通每段伤害占上限"><span id="ep-normalBar"></span></div></div>
       <div class="damage-gauge"><div class="gauge-label"><span>暴击每段 <b id="ep-critGauge">—</b></span><span>上限 <b id="ep-critCap">—</b></span></div><div class="gauge-track critical" role="progressbar" aria-label="暴击每段伤害占上限"><span id="ep-critBar"></span></div></div>
@@ -92,9 +96,11 @@ function mountPrimary() {
       <div><dt>全为普通命中时</dt><dd id="ep-normalTotal">—</dd></div><div><dt>本段结算攻击力</dt><dd id="ep-attack">—</dd></div><div><dt>本段结算防御力</dt><dd id="ep-defense">—</dd></div><div><dt>特攻匹配</dt><dd id="ep-killer">—</dd></div>
     </dl><p id="ep-note" class="result-cap-note"></p>`;
   const legacy = document.createElement('details'); legacy.id = 'legacyResults'; legacy.innerHTML = '<summary>网页旧规则（对照，不参与上方结果）</summary>';
-  main.insertBefore(block, values); main.append(legacy);
+  wrap.append(block, legacy);
+  heading.after(wrap);
   for (const id of ['error', 'resolveReview', 'resultValues']) if ($(id)) legacy.append($(id));
-  const state = document.createElement('span'); state.id = 'ep-state'; state.textContent = '等待招式'; $('resultState')?.after(state);
+  // its old home is now empty (everything useful moved in here) — hide it instead of leaving a bare heading
+  if (oldMain) oldMain.hidden = true;
   $('engineHits').addEventListener('change', e => { const h = $('hits'); if (!h) return; h.value = e.target.value; h.dispatchEvent(new Event('input', { bubbles: true })); h.dispatchEvent(new Event('change', { bubbles: true })); run(); });
 }
 let lastCtx = null;
@@ -137,15 +143,11 @@ function renderPrimary(out, ctx) {
 
 function mount() {
   const aside = $('unifiedResults'); if (!aside || $('enginePanel')) return;
-  mountPrimary();
   if (!$('enginePanelStyle')) { const st = document.createElement('style'); st.id = 'enginePanelStyle'; st.textContent = STYLE; document.head.append(st); }
   const card = document.createElement('section');
   card.id = 'enginePanel'; card.className = 'card engine-panel'; card.setAttribute('aria-labelledby', 'enginePanelTitle');
   card.innerHTML = `<div class="section-heading"><h3 id="enginePanelTitle">游戏脚本结算（沙盒引擎）</h3><span id="engineState" class="help">未开始</span></div>
-    <p class="help">用读取器捕获的游戏 Lua 脚本和主数据逐段结算：每个被动、Buff、弹道按游戏自己的触发时机与顺序计算。下方「计算结果」卡即由这里驱动；网页旧规则的数值收在卡片底部的对照区。</p>
     <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
-    <p class="help" id="engineLoadoutNote"></p>
-    <p class="help" id="enginePanelNote">未导入读取报告时，局外面板直接按游戏数据计算：等级成长 + 觉醒 + 全开能力盘 + 专属武器／防具满强化，再过一遍状态计算被动（与游戏面板一致），全部按最大计算。导入报告后自动改用报告里的入场面板与实际配置。当前 HP／MP 按下方通用伤害改变里的「满血／濒死／MP≤20」开关判断。</p>
     <details id="engineBuild"><summary>配装模式：自带被动基线 → 逐个加被动看收益</summary>
       <p class="help">基线只装角色不花 SC 的自带被动（个性、固有被动、超越）＋本账号加护，等级／觉醒／能力盘／强化全按最大，专武可开关。启用后主结果卡按这里的配装结算；每加一个被动（本角色能力盘上要花 SC 的，或任意通用被动），就重新结算并给出它对当前配装的收益（去掉它伤害会少多少）。</p>
       <div class="inline-options"><label><input id="engineBuildOn" type="checkbox">启用配装模式</label><label><input id="engineBuildExclusive" type="checkbox" checked>有专武（专属武器＋防具）</label><label><input id="engineBuildOwnPersonality" type="checkbox" checked>个性</label><label><input id="engineBuildOwnPassives" type="checkbox" checked>固有免费被动</label><label><input id="engineBuildOwnTranscend" type="checkbox" checked>超越</label><label><input id="engineBuildOwnBlessings" type="checkbox" checked>加护</label></div>
@@ -162,6 +164,10 @@ function mount() {
   // legacy-comparison one) instead of after it.
   const resultMain = aside.querySelector('.result-main');
   if (resultMain) aside.insertBefore(card, resultMain); else aside.insertBefore(card, aside.firstChild);
+  // The plain "计算结果" display (big number/gauges/total) is folded into this card, right under its own
+  // heading, instead of living in a separate card below — mountPrimary() moves it (and the legacy-rule
+  // comparison) in here and hides the now-empty old .result-main container.
+  mountPrimary();
   // 目标：从游戏怪物表选择 lives with the rest of the Boss/target fields (Boss 与战斗条件 section) instead of in
   // this card; fall back to appending here if that section's slot isn't on the page.
   const targetHtml = `<details id="engineTarget"><summary>目标：从游戏怪物表选择</summary><p class="help">直接用游戏 MonsterMst 的数值（HP、防御、魔抗、种族、属性抗性、Boss 自带被动），与读取报告里的 Boss 完全一致。不选时按上方的目标栏位或读取报告的 Boss。</p>
@@ -172,18 +178,17 @@ function mount() {
   $('engineRun').addEventListener('click', () => run(true));
   $('engineProbability').addEventListener('change', e => { probabilityMode = e.target.checked ? 'assume' : 'skip'; run(); });
   $('engineAccountBlessings').addEventListener('change', e => { growthChoice.accountBlessings = e.target.checked; run(); });
-  $('engineLoadoutNote').textContent = loadoutNote();
   $('engineLoadoutFile').addEventListener('change', async e => {
     const f = e.target.files?.[0]; if (!f) return;
-    try { const j = JSON.parse(await f.text()); const M = await ensureEngine(null); if (!M.isLoadoutReport(j)) throw new Error('不是读取器的配装报告（LoadoutReport.json）'); keepLoadout(j); $('engineLoadoutNote').textContent = loadoutNote(); run(); }
-    catch (err) { $('engineLoadoutNote').textContent = `配装报告未导入：${err.message}`; }
+    try { const j = JSON.parse(await f.text()); const M = await ensureEngine(null); if (!M.isLoadoutReport(j)) throw new Error('不是读取器的配装报告（LoadoutReport.json）'); keepLoadout(j); run(); }
+    catch (err) { setState(`配装报告未导入：${err.message}`); }
     e.target.value = '';
   });
   $('engineMonsterName').addEventListener('input', () => fillMonsterVariants($('engineMonsterName').value));
   $('engineMonsterName').addEventListener('focus', () => ensureMonsters().then(() => fillMonsterVariants($('engineMonsterName').value)));
   $('engineMonsterVariant').addEventListener('change', e => { monsterChoice = Number(e.target.value) || null; try { if (monsterChoice) localStorage.setItem(MONSTER_KEY, String(monsterChoice)); else localStorage.removeItem(MONSTER_KEY); } catch {} run(); });
   $('engineMonsterClear').addEventListener('click', () => { monsterChoice = null; try { localStorage.removeItem(MONSTER_KEY); } catch {} $('engineMonsterName').value = ''; $('engineMonsterVariant').innerHTML = '<option value="">先输入名称</option>'; $('engineMonsterNote').textContent = '未选择怪物表目标。'; run(); });
-  $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} $('engineLoadoutNote').textContent = loadoutNote(); run(); });
+  $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} run(); });
   $('engineResult').addEventListener('change', e => { const key = e.target.dataset.assume; if (!key) return; if (e.target.checked) assumed.add(key); else assumed.delete(key); run(); });
   // loadout builder controls
   $('engineBuildOn').addEventListener('change', e => { build.on = e.target.checked; saveBuild(); buildGains.clear(); if (build.on) ensurePassiveIndex().then(renderCandidates); run(); });
@@ -481,18 +486,28 @@ async function run(force = false) {
 function render(out, ctx) {
   const st = out.stats;
   const statLine = ['str', 'def', 'int', 'mnd', 'crt'].filter(k => st[k].panel || st[k].real).map(k => `${{ str: 'STR', def: 'DEF', int: 'INT', mnd: 'MND', crt: 'CRT' }[k]} ${fmt(st[k].panel)}→${fmt(st[k].real)}`).join(' · ');
-  // identical bullets (e.g. single-target / area variants of one move) collapse into one row
+  // Rows with identical damage numbers collapse into one displayed row — same bullet at a different 段 (e.g. a
+  // dual-wield weapon calling the same core calc twice) as well as different bullets that land on the same 段
+  // (single-target / area variants). The per-cast total below still sums every individual call, uncollapsed.
+  const rawHits = out.hits.filter(h => !h.cancelled);
   const hits = [];
-  for (const h of out.hits.filter(h => !h.cancelled)) {
-    const key = JSON.stringify([h.hitIndex, h.dmgRatio, h.normal, h.critical, h.cap, h.attack]);
+  for (const h of rawHits) {
+    const key = JSON.stringify([h.dmgRatio, h.normal, h.critical, h.cap, h.attack]);
     const same = hits.find(x => x.key === key);
-    if (same) same.bullets.push(h.bulletName || String(h.bulletId)); else hits.push({ ...h, key, bullets: [h.bulletName || String(h.bulletId)] });
+    if (same) { same.bulletSet.add(h.bulletName || String(h.bulletId)); same.hitIndexes.add(h.hitIndex); same.calls++; }
+    else hits.push({ ...h, key, bulletSet: new Set([h.bulletName || String(h.bulletId)]), hitIndexes: new Set([h.hitIndex]), calls: 1 });
   }
   const critRate = Math.min(100, Math.max(0, st.crt.real || 0)) / 100;
   const hitCount = Number($('hits')?.value) || 0;
   const expect = h => h.normal ? (h.normal.mean * (1 - critRate) + (h.critical ? h.critical.mean : h.normal.mean) * critRate) : null;
-  const hitRows = hits.map(h => `<tr><td>第${h.hitIndex}击 ×${(h.dmgRatio / 10000).toLocaleString('zh-CN')}${h.bullets.length > 1 ? ` <small>${h.bullets.length} 条弹道相同</small>` : ''}</td><td>${h.normal ? `${fmt(h.normal.min)}–${fmt(h.normal.max)}` : '—'}</td><td>${h.critical ? `${fmt(h.critical.min)}–${fmt(h.critical.max)}` : '—'}</td><td>${fmt(expect(h))}</td><td>${fmt(h.cap)}</td><td>${fmt(h.attack)} / ${fmt(h.defense)}</td><td>${h.killer ? `×${h.killerFactor.toFixed(2)}` : '—'}</td></tr>`).join('');
-  const perCast = hits.reduce((sum, h) => sum + (expect(h) || 0), 0);
+  const hitRows = hits.map(h => {
+    const idx = [...h.hitIndexes].sort((a, b) => a - b);
+    const idxLabel = idx.length > 1 ? `第${idx[0]}–${idx[idx.length - 1]}击` : `第${idx[0]}击`;
+    const callNote = h.calls > 1 ? ` <small>×${h.calls} 次调用</small>` : '';
+    const bulletNote = h.bulletSet.size > 1 ? ` <small>${h.bulletSet.size} 条弹道相同</small>` : '';
+    return `<tr><td>${idxLabel} ×${(h.dmgRatio / 10000).toLocaleString('zh-CN')}${callNote}${bulletNote}</td><td>${h.normal ? `${fmt(h.normal.min)}–${fmt(h.normal.max)}` : '—'}</td><td>${h.critical ? `${fmt(h.critical.min)}–${fmt(h.critical.max)}` : '—'}</td><td>${fmt(expect(h))}</td><td>${fmt(h.cap)}</td><td>${fmt(h.attack)} / ${fmt(h.defense)}</td><td>${h.killer ? `×${h.killerFactor.toFixed(2)}` : '—'}</td></tr>`;
+  }).join('');
+  const perCast = rawHits.reduce((sum, h) => sum + (expect(h) || 0), 0);
   const first = hits[0];
   const chain = first ? first.edits.map(e => `<li><span>${esc(e.passiveName || e.name)}</span><b>${fmt(e.value)}</b></li>`).join('') : '';
   const groups = new Map();
