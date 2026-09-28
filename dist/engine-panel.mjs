@@ -108,6 +108,7 @@ function renderPrimary(out, ctx) {
   const otherBullets = new Set(all.filter(h => h.bulletId !== all[0]?.bulletId).map(h => h.bulletId)).size;
   const first = live[0]; const st = out.stats; const critRate = Math.min(100, Math.max(0, st.crt.real || 0)) / 100;
   const { hits } = currentHits();
+  if (dualLocked && $('dualWield')) { $('dualWield').checked = true; $('dualWield').disabled = true; }
   if (document.activeElement !== $('engineHits')) $('engineHits').value = siteHits() || '';
   if (!first) { for (const id of ['ep-normal', 'ep-critical', 'ep-total', 'ep-normalTotal', 'ep-killer', 'ep-weak', 'ep-normalGauge', 'ep-normalCap', 'ep-critGauge', 'ep-critCap']) $(id).textContent = '—'; $('ep-note').textContent = out.errors.length ? `脚本错误：${out.errors[0].name}` : '这个招式没有伤害段。'; return; }
   const range = (a, b) => `${fmt(a)} – ${fmt(b)}`;
@@ -129,6 +130,7 @@ function renderPrimary(out, ctx) {
   const weakFactor = 1 - Math.min(1, Math.max(-9.99, (first.resist || 0) / 100));
   $('ep-weak').textContent = !first.element ? '无属性' : first.resist < 0 ? `触发 · ×${weakFactor.toFixed(2)}` : first.resist > 0 ? `未触发 · 耐性 ×${weakFactor.toFixed(2)}` : '未触发';
   const notes = [...(ctx.gearNotes || [])];
+  if (dualLocked) notes.push('双刀：这个招式已由技能／装备每段打两次，计算器的双刀不再叠加');
   if (dualOn()) notes.push(`双刀：命中数 ×${mult}、单段伤害 ×${scale ? scale.ratio : 1}（${DUAL_STAGE_LABELS[scale?.stage] || '核心系数中'}）`);
   if (first.normal.max >= first.cap) notes.push('普通伤害触及上限');
   if (otherBullets) notes.push(`另有 ${otherBullets} 条弹道未计入整次期望，见下方明细`);
@@ -400,7 +402,32 @@ function maximizeExclusive(spec, c) {
 }
 // 双刀: the calculator's 双刀信息 fields, exactly as the old rules use them and only when the switch is on —
 // 命中数倍率 multiplies the hit count, 单段伤害倍率 each hit at 修正试算位置. Gear and skills are not checked.
-function dualOn() { return !!(latest?.selection?.dualWield ?? $('dualWield')?.checked); }
+// When the move itself already hits twice per 段 through the character's own skills or gear (the game script
+// makes the two calls, e.g. 洛琪希's ice magic, or 梅莉 with both exclusive weapons and 二刀流), the 双刀 button is
+// shown on and locked, and the calculator's own 双刀 is not stacked on top. Unlocking restores the user's choice.
+let dualLocked = false;
+function setDualLock(locked) {
+  const box = $('dualWield'); if (!box || locked === dualLocked) return false;
+  dualLocked = locked;
+  const label = box.closest('label');
+  if (locked) { box.checked = true; box.disabled = true; label?.setAttribute('title', '这个招式的双刀效果已由技能／装备生效，计算器不再叠加'); }
+  else { box.disabled = false; box.checked = !!(latest?.selection?.dualWield ?? false); label?.removeAttribute('title'); }
+  return true;
+}
+function dualOn() { return !dualLocked && !!(latest?.selection?.dualWield ?? $('dualWield')?.checked); }
+// A character with two exclusive weapons (梅莉): choosing both in 专武 turns 双刀 on, anything else turns it off.
+let lastWeaponChoice = null;
+function linkDualToWeapons(c, master) {
+  const choice = $('specialWeapon')?.value ?? null;
+  if (choice === lastWeaponChoice) return;
+  lastWeaponChoice = choice;
+  const weapons = exclusiveTiers(c).filter(e => isWeapon(master.itemEquip.get(e.id)?.EQUIP_TYPE ?? 0));
+  const box = $('dualWield'); if (weapons.length < 2 || !box) return;
+  const want = choice === 'both';
+  if (!!latest?.selection?.dualWield === want && box.checked === want) return;
+  const disabled = box.disabled; box.disabled = false; box.checked = want; box.dispatchEvent(new Event('change', { bubbles: true })); box.disabled = disabled;
+  if (dualLocked) box.checked = true;
+}
 function dualScale() { if (!dualOn()) return null; const ratio = Number($('hitDamageRatio')?.value); return Number.isFinite(ratio) ? { ratio, stage: $('hitScaleStage')?.value || 'core' } : null; }
 function dualHitMultiplier() { if (!dualOn()) return 1; const n = Number($('hitMultiplier')?.value); return Number.isInteger(n) && n >= 1 ? n : 1; }
 const DUAL_STAGE_LABELS = { core: '核心系数中', beforeCap: '伤害上限前', afterCap: '伤害上限后' };
@@ -448,6 +475,7 @@ async function run(force = false) {
     const dress = report?.units?.[0]?.unitId || Number(latest.unitDressId) || await siteDress();
     if (!dress) { setState('先导入读取报告或选择游戏角色'); running = false; return; }
     const M = await ensureEngine(dress);
+    linkDualToWeapons(await gameCharacter(dress), battle.master);
     setState('结算中…');
     battle.reset();
     let attackerSpec;
@@ -520,6 +548,9 @@ async function run(force = false) {
     battle.reset();
     const attacker2 = M.addAttacker(battle, attackerSpec), target2 = M.addTarget(battle, targetSpec);
     const out = M.runScenario({ battle, attacker: attacker2, target: target2, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...new Set([...assumed, ...autoAssume])] } });
+    // the move already hits twice per 段 by itself → lock 双刀 (and run again if the lock changes what was applied)
+    const damaging = out.hits.filter(h => !h.cancelled && h.normal);
+    if (setDualLock(damaging.filter(h => h.bulletId === damaging[0]?.bulletId).length > 1)) pending = true;
     render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), attacker: attacker2, out, dress });
     renderPrimary(out, { move, dress, gearNotes });
     setState(`已结算 · ${new Date().toLocaleTimeString('zh-CN')}`); setPrimaryState(`游戏脚本 · ${new Date().toLocaleTimeString('zh-CN')}`);

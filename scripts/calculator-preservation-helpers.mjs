@@ -40,10 +40,16 @@ const stateNotes=JSON.parse(fs.readFileSync(new URL('../docs/state-notes-preserv
 const autoFill=JSON.parse(fs.readFileSync(new URL('../docs/auto-fill-preservation-2026-09-28.json',import.meta.url)));
 const bossRace=JSON.parse(fs.readFileSync(new URL('../docs/boss-race-preservation-2026-09-28.json',import.meta.url)));
 const switchesLayer=JSON.parse(fs.readFileSync(new URL('../docs/switches-preservation-2026-09-28.json',import.meta.url)));
+const dualLock=JSON.parse(fs.readFileSync(new URL('../docs/dual-lock-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const dualLockLayer=dualLock.files[path];
+ if(dualLockLayer){
+  if(hash(text)!==dualLockLayer.afterHash||hash(dualLockLayer.beforeText)!==dualLockLayer.beforeHash)throw Error(`Dual-lock preservation drift: ${path}`);
+  text=dualLockLayer.beforeText;
+ }
  const switchLayer=switchesLayer.files[path];
  if(switchLayer){
   if(hash(text)!==switchLayer.afterHash||hash(switchLayer.beforeText)!==switchLayer.beforeHash)throw Error(`Switches preservation drift: ${path}`);
