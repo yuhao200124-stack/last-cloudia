@@ -19,11 +19,11 @@ const RACE_CODES = { 战士: 1001, 狙击手: 1002, 骑士: 1003, 魔法师: 100
 const SWITCH_LABELS = { conditionBuffActive: '条件BUFF', reviveBuffActive: '复活后', guardBuffActive: '自身格挡', selfStateActive: '自身状态', partyConditionActive: '队伍', openingBuffActive: '开局BUFF' };
 
 let engineModules = null, battle = null, loadedDress = null, loading = null;
-let latest = null, report = null, assumed = new Set(), probabilityMode = 'assume', hpPercent = null, mpPercent = null, running = false, pending = false;
+let latest = null, report = null, assumed = new Set(), probabilityMode = 'assume', running = false, pending = false;
 // No-report path: the out-of-battle panel is computed from master data (level growth + awakening + board +
-// exclusive gear + trigger-1 passives); these fields only override it.
-const manualPanel = { engineStr: null, engineInt: null };
-const growthChoice = { level: null, awake: null, accountBlessings: true };
+// exclusive gear + trigger-1 passives), always at maximum — character level, awakening, ability board and
+// equipment/crest enhancement are never modeled below max (user's rule), so there is no manual override for them.
+const growthChoice = { accountBlessings: true };
 // Reader loadout report (LoadoutReport.json): the account's real growth and loadout for every owned character.
 const LOADOUT_KEY = 'lc-engine-loadout-report';
 let loadoutReport = null, switches = null;
@@ -142,12 +142,10 @@ function mount() {
   const card = document.createElement('section');
   card.id = 'enginePanel'; card.className = 'card engine-panel'; card.setAttribute('aria-labelledby', 'enginePanelTitle');
   card.innerHTML = `<div class="section-heading"><h3 id="enginePanelTitle">游戏脚本结算（沙盒引擎）</h3><span id="engineState" class="help">未开始</span></div>
-    <p class="help">用读取器捕获的游戏 Lua 脚本和主数据逐段结算：每个被动、Buff、弹道按游戏自己的触发时机与顺序计算。上方「计算结果」卡即由这里驱动；网页旧规则的数值收在卡片底部的对照区。</p>
-    <div class="fields two engine-fields"><label>当前 HP %<input id="engineHp" type="number" min="1" max="100" step="1" placeholder="满血100／濒死25／否则99"></label><label>当前 MP %<input id="engineMp" type="number" min="0" max="100" step="1" placeholder="按开关"></label></div>
-    <div class="fields two engine-fields" id="enginePanelStats"><label>角色等级<select id="engineLevel"><option value="">最大</option></select></label><label>觉醒<select id="engineAwake"><option value="">最大</option></select></label><label>手填局外攻击力<input id="engineStr" type="number" min="0" step="1" placeholder="按游戏数据"></label><label>手填局外法强<input id="engineInt" type="number" min="0" step="1" placeholder="按游戏数据"></label></div>
+    <p class="help">用读取器捕获的游戏 Lua 脚本和主数据逐段结算：每个被动、Buff、弹道按游戏自己的触发时机与顺序计算。下方「计算结果」卡即由这里驱动；网页旧规则的数值收在卡片底部的对照区。</p>
     <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
     <p class="help" id="engineLoadoutNote"></p>
-    <p class="help" id="enginePanelNote">未导入读取报告时，局外面板直接按游戏数据计算：等级成长 + 觉醒 + 全开能力盘 + 专属武器／防具满强化，再过一遍状态计算被动（与游戏面板一致）；手填只用于覆盖。导入报告后自动改用报告里的入场面板与实际配置。</p>
+    <p class="help" id="enginePanelNote">未导入读取报告时，局外面板直接按游戏数据计算：等级成长 + 觉醒 + 全开能力盘 + 专属武器／防具满强化，再过一遍状态计算被动（与游戏面板一致），全部按最大计算。导入报告后自动改用报告里的入场面板与实际配置。当前 HP／MP 按下方通用伤害改变里的「满血／濒死／MP≤20」开关判断。</p>
     <details id="engineBuild"><summary>配装模式：自带被动基线 → 逐个加被动看收益</summary>
       <p class="help">基线只装角色不花 SC 的自带被动（个性、固有被动、超越）＋本账号加护，等级／觉醒／能力盘／强化全按最大，专武可开关。启用后主结果卡按这里的配装结算；每加一个被动（本角色能力盘上要花 SC 的，或任意通用被动），就重新结算并给出它对当前配装的收益（去掉它伤害会少多少）。</p>
       <div class="inline-options"><label><input id="engineBuildOn" type="checkbox">启用配装模式</label><label><input id="engineBuildExclusive" type="checkbox" checked>有专武（专属武器＋防具）</label><label><input id="engineBuildOwnPersonality" type="checkbox" checked>个性</label><label><input id="engineBuildOwnPassives" type="checkbox" checked>固有免费被动</label><label><input id="engineBuildOwnTranscend" type="checkbox" checked>超越</label><label><input id="engineBuildOwnBlessings" type="checkbox" checked>加护</label></div>
@@ -157,19 +155,22 @@ function mount() {
       <div class="fields two engine-fields"><label>添加被动（名称，简体或繁体）<input id="engineBuildSearch" type="search" placeholder="例如 光魔法 / 月光 / 贯导"></label></div>
       <div id="engineBuildCandidates" class="help"></div>
     </details>
-    <details id="engineTarget"><summary>目标：从游戏怪物表选择</summary><p class="help">直接用游戏 MonsterMst 的数值（HP、防御、魔抗、种族、属性抗性、Boss 自带被动），与读取报告里的 Boss 完全一致。不选时按上方计算器的目标栏位或读取报告的 Boss。</p>
-      <div class="fields two engine-fields"><label>Boss 名称<input id="engineMonsterName" list="engineMonsterNames" placeholder="输入名称筛选"><datalist id="engineMonsterNames"></datalist></label><label>版本（等级 / HP / 防御 / 魔抗）<select id="engineMonsterVariant"><option value="">先输入名称</option></select></label></div>
-      <p class="help" id="engineMonsterNote">未选择怪物表目标。</p><button type="button" id="engineMonsterClear" class="secondary">改回计算器目标</button></details>
     <details id="enginePreCasts"><summary>施放前已用过的技能（累计次数类被动、自我 Buff 魔法）</summary><p class="help">按这场战斗里在本招之前已经用过的顺序填次数：例如先放神託的誓言再打必杀，必杀上限就会多 100,000；累计类被动（超必殺技階段增幅等）也按次数累加。默认全为 0。</p><div id="enginePreCastList" class="fields two engine-fields"></div></details>
     <div class="inline-options"><label><input id="engineProbability" type="checkbox" checked>概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
     <div id="engineResult"></div>`;
-  const anchor = $('unifiedSummary') || aside.querySelector('.result-notes');
-  if (anchor) aside.insertBefore(card, anchor); else aside.append(card);
+  // The sandbox card is the main card now: it sits above the plain "计算结果" card (which becomes the auxiliary,
+  // legacy-comparison one) instead of after it.
+  const resultMain = aside.querySelector('.result-main');
+  if (resultMain) aside.insertBefore(card, resultMain); else aside.insertBefore(card, aside.firstChild);
+  // 目标：从游戏怪物表选择 lives with the rest of the Boss/target fields (Boss 与战斗条件 section) instead of in
+  // this card; fall back to appending here if that section's slot isn't on the page.
+  const targetHtml = `<details id="engineTarget"><summary>目标：从游戏怪物表选择</summary><p class="help">直接用游戏 MonsterMst 的数值（HP、防御、魔抗、种族、属性抗性、Boss 自带被动），与读取报告里的 Boss 完全一致。不选时按上方的目标栏位或读取报告的 Boss。</p>
+      <div class="fields two engine-fields"><label>Boss 名称<input id="engineMonsterName" list="engineMonsterNames" placeholder="输入名称筛选"><datalist id="engineMonsterNames"></datalist></label><label>版本（等级 / HP / 防御 / 魔抗）<select id="engineMonsterVariant"><option value="">先输入名称</option></select></label></div>
+      <p class="help" id="engineMonsterNote">未选择怪物表目标。</p><button type="button" id="engineMonsterClear" class="secondary">改回计算器目标</button></details>`;
+  const targetSlot = $('engineTargetSlot');
+  if (targetSlot) targetSlot.innerHTML = targetHtml; else card.insertAdjacentHTML('beforeend', targetHtml);
   $('engineRun').addEventListener('click', () => run(true));
   $('engineProbability').addEventListener('change', e => { probabilityMode = e.target.checked ? 'assume' : 'skip'; run(); });
-  $('engineHp').addEventListener('change', e => { hpPercent = e.target.value === '' ? null : Number(e.target.value); run(); });
-  $('engineMp').addEventListener('change', e => { mpPercent = e.target.value === '' ? null : Number(e.target.value); run(); });
-  for (const id of ['engineStr', 'engineInt']) $(id).addEventListener('change', () => { manualPanel[id] = $(id).value === '' ? null : Number($(id).value); run(); });
   $('engineAccountBlessings').addEventListener('change', e => { growthChoice.accountBlessings = e.target.checked; run(); });
   $('engineLoadoutNote').textContent = loadoutNote();
   $('engineLoadoutFile').addEventListener('change', async e => {
@@ -183,8 +184,6 @@ function mount() {
   $('engineMonsterVariant').addEventListener('change', e => { monsterChoice = Number(e.target.value) || null; try { if (monsterChoice) localStorage.setItem(MONSTER_KEY, String(monsterChoice)); else localStorage.removeItem(MONSTER_KEY); } catch {} run(); });
   $('engineMonsterClear').addEventListener('click', () => { monsterChoice = null; try { localStorage.removeItem(MONSTER_KEY); } catch {} $('engineMonsterName').value = ''; $('engineMonsterVariant').innerHTML = '<option value="">先输入名称</option>'; $('engineMonsterNote').textContent = '未选择怪物表目标。'; run(); });
   $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} $('engineLoadoutNote').textContent = loadoutNote(); run(); });
-  $('engineLevel').addEventListener('change', e => { growthChoice.level = e.target.value === '' ? null : Number(e.target.value); run(); });
-  $('engineAwake').addEventListener('change', e => { growthChoice.awake = e.target.value === '' ? null : Number(e.target.value); run(); });
   $('engineResult').addEventListener('change', e => { const key = e.target.dataset.assume; if (!key) return; if (e.target.checked) assumed.add(key); else assumed.delete(key); run(); });
   // loadout builder controls
   $('engineBuildOn').addEventListener('change', e => { build.on = e.target.checked; saveBuild(); buildGains.clear(); if (build.on) ensurePassiveIndex().then(renderCandidates); run(); });
@@ -361,8 +360,8 @@ function targetFromFields(detail) {
 function stateFromSwitches(detail) {
   const sel = detail.selection || {};
   const full = sel.fullHp || $('fullHp')?.checked, low = sel.lowHp || $('lowHp')?.checked;
-  const hp = hpPercent ?? (low ? 25 : full ? 100 : 99);
-  const mp = mpPercent ?? (sel.mpLow || $('mpLow')?.checked ? 20 : 100);
+  const hp = low ? 25 : full ? 100 : 99;
+  const mp = (sel.mpLow || $('mpLow')?.checked) ? 20 : 100;
   return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: preCastList() };
 }
 
@@ -400,17 +399,14 @@ async function run(force = false) {
     let attackerSpec;
     if (report && M.isBattleReport(report) && report.units?.[0]?.unitId === dress) { attackerSpec = M.attackerFromReport(report, battle.master); await M.loadPassives(battle.master, attackerSpec.passives.map(p => p.id)); const extra = attackerSpec.passives.filter(p => p.processes).length; if (extra) attackerSpec.statsSource = `${attackerSpec.statsSource}（含徽章／支援等 ${extra} 项非被动来源）`; }
     else {
-      // no report: the game character at the chosen growth (default max) with every own passive and its exclusive gear;
-      // the out-of-battle panel comes from master data (scenario.mjs panelGiven:false), manual fields override it
+      // no report: the game character at its maximum growth with every own passive and its exclusive gear;
+      // the out-of-battle panel comes entirely from master data (scenario.mjs panelGiven:false)
       const c = await gameCharacter(dress);
-      fillGrowthChoices(M, dress);
       const ids = latest.ownPassives?.length ? latest.ownPassives : c ? [...(c.personality || []).map(p => p.passive), ...(c.ownPassives || []).map(p => p.passive), ...(c.transcend || []).map(p => p.passive), ...(c.blessings || [])] : [];
-      const override = {}; if (manualPanel.engineStr != null) override.str = manualPanel.engineStr; if (manualPanel.engineInt != null) override.int = manualPanel.engineInt;
       const blessings = growthChoice.accountBlessings ? [...ACCOUNT_BLESSINGS].filter(([id]) => battle.master.passive.has(id)).map(([id, params]) => ({ id, params })) : [];
       const fromLoadout = loadoutReport ? M.attackerFromLoadout(loadoutReport, battle.master, await ensureSwitches(), dress, { extraPassives: blessings }) : null;
       // passives learned from other characters live outside the character bundle: fetch their id buckets first
       const unresolved = fromLoadout ? await M.loadPassives(battle.master, fromLoadout.passives.map(p => p.id)) : [];
-      for (const id of ['engineLevel', 'engineAwake']) if ($(id)) $(id).disabled = !!fromLoadout;
       if (fromLoadout) {
         // the account's real loadout: its level / awakening / opened board, equipped passives, gear, magic and crest
         const lo = fromLoadout.loadout;
@@ -424,11 +420,11 @@ async function run(force = false) {
         const gearNote = lo.equips.map(e => battle.master.itemEquip.get(e.id)?.NAME || e.id).join('、') || '无装备';
         const unknown = lo.missingPassives + unresolved.length;
         // the user's rule: the report decides what is equipped; everything upgradable is taken at its maximum
-        attackerSpec = { ...fromLoadout, name: c?.nameS || fromLoadout.name, stats: override, statsSource: `配装报告（${lo.passives.length} 个被动 · ${gearNote}${crestNote}${growthChoice.accountBlessings ? ' ＋本账号加护' : ''}；等级／觉醒／能力盘／强化／徽章等级按最大${unknown ? `；${unknown} 个被动未在主数据中找到` : ''}）` };
+        attackerSpec = { ...fromLoadout, name: c?.nameS || fromLoadout.name, statsSource: `配装报告（${lo.passives.length} 个被动 · ${gearNote}${crestNote}${growthChoice.accountBlessings ? ' ＋本账号加护' : ''}；等级／觉醒／能力盘／强化／徽章等级按最大${unknown ? `；${unknown} 个被动未在主数据中找到` : ''}）` };
       } else {
         const equips = M.exclusiveEquipment(battle.master, dress);
         const passives = [...ids.map(id => ({ id })), ...blessings.filter(b => !ids.includes(b.id))];
-        attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, level: growthChoice.level, awake: growthChoice.awake, stats: override, passives, personality: c?.personality || [], equips, statsSource: `游戏数据计算（${loadoutReport ? '配装报告里没有这个角色；' : ''}${equips.length ? equips.map(e => battle.master.itemEquip.get(e.id)?.NAME).join('、') + ' 满强化' : '无专属装备'}；被动按全部自带技能${growthChoice.accountBlessings ? '＋本账号加护' : ''}${Object.keys(override).length ? '；' + Object.keys(override).map(k => ({ str: '攻击力', int: '法强' }[k]) + '按手填').join('、') : ''}）` };
+        attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, passives, personality: c?.personality || [], equips, statsSource: `游戏数据计算（${loadoutReport ? '配装报告里没有这个角色；' : ''}${equips.length ? equips.map(e => battle.master.itemEquip.get(e.id)?.NAME).join('、') + ' 满强化' : '无专属装备'}；被动按全部自带技能${growthChoice.accountBlessings ? '＋本账号加护' : ''}；等级／觉醒／能力盘按最大）` };
       }
       // 配装模式 replaces both: own passives (by group) + the picked common passives, exclusive gear on / off
       loadBuildFor(dress);
@@ -443,7 +439,7 @@ async function run(force = false) {
         const buildOwn = [...own.map(id => ({ id })), ...bless];
         const buildPassives = [...buildOwn, ...picked.map(id => ({ id }))];
         const crest = fromLoadout?.crest || null;
-        attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, level: growthChoice.level, awake: growthChoice.awake, stats: override, passives: buildPassives, personality: build.own.personality ? c?.personality || [] : [], equips, crest,
+        attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, passives: buildPassives, personality: build.own.personality ? c?.personality || [] : [], equips, crest,
           statsSource: `配装模式（自带免费被动 ${own.length} 个${bless.length ? '＋加护' : ''}＋所选 ${picked.length} 个被动 · ${equips.length ? '有专武' : '无专武'}${crest ? ' · 徽章按配装报告' : ''}；全部按最大）` };
         attackerSpec.buildOwn = buildOwn; attackerSpec.buildPassives = buildPassives; attackerSpec.buildNote = crest ? '徽章按配装报告' : '';
       } else renderBuild(null);
@@ -482,15 +478,6 @@ async function run(force = false) {
   }
 }
 
-// Level / awakening choices for the character (limit-break MAX_LV steps and awakening levels from master data).
-function fillGrowthChoices(M, dress) {
-  const levels = [...new Set((battle.master.limitBreak.get(Number(dress)) || []).map(r => r.MAX_LV))].filter(v => v >= 100).sort((a, b) => b - a);
-  const awakes = [...new Set((battle.master.awake.get(Number(dress)) || []).map(r => r.AWAKE_LV))].sort((a, b) => b - a);
-  const fill = (el, values, chosen, label) => { if (!el || el.dataset.dress === String(dress)) return; el.dataset.dress = String(dress); el.innerHTML = `<option value="">最大（${values[0] ?? '—'}）</option>` + values.slice(1).map(v => `<option value="${v}" ${chosen === v ? 'selected' : ''}>${label(v)}</option>`).join(''); };
-  fill($('engineLevel'), levels, growthChoice.level, v => `Lv${v}${M.KNOWN_GROWTH_RATE[v] == null && !battle.master.growth.size ? '（估算，待成长表）' : ''}`);
-  fill($('engineAwake'), awakes, growthChoice.awake, v => `觉醒${v}`);
-}
-
 function render(out, ctx) {
   const st = out.stats;
   const statLine = ['str', 'def', 'int', 'mnd', 'crt'].filter(k => st[k].panel || st[k].real).map(k => `${{ str: 'STR', def: 'DEF', int: 'INT', mnd: 'MND', crt: 'CRT' }[k]} ${fmt(st[k].panel)}→${fmt(st[k].real)}`).join(' · ');
@@ -515,7 +502,7 @@ function render(out, ctx) {
   const buffs = out.buffs.filter(b => b.remain !== 0).map(b => `<li>${esc(b.name)}${b.from ? ` <small>来自 ${esc(b.from)}</small>` : ''}${b.remain > 0 ? ` <small>${Math.round(b.remain / 60)} 秒</small>` : ''}</li>`).join('');
   const issues = [...out.errors.map(e => `脚本 ${esc(e.name)} (${e.id})：${esc(e.error)}`), ...out.unsupported.map(n => `未实现的原生函数：${esc(n)}`), ...(out.assumptions || []).map(a => `简化假定：${esc(a)}`)];
   $('engineResult').innerHTML = `
-    <p class="help">招式 <b>${esc(ctx.move.name || ctx.move.id)}</b>（${ctx.move.id}）· 攻击方 ${esc(ctx.attackerSpec.name || ctx.attackerSpec.unitDressId)} · 面板来源：${esc(ctx.attackerSpec.statsSource || '读取报告')} · 目标 ${esc(ctx.targetSpec.name)}${ctx.targetSpec.source ? `（${esc(ctx.targetSpec.source)}）` : ''} · HP ${ctx.state.hpPercent}%${hpPercent == null ? ctx.state.hpPercent === 100 ? '（满血开关）' : ctx.state.hpPercent === 25 ? '（濒死开关）' : '（未勾选满血：满HP条件不触发）' : ''} · MP ${ctx.state.mpPercent}%${ctx.state.preCasts?.length ? ` · 施放前已用：${esc([...new Map(ctx.state.preCasts.map(id => [id, ctx.state.preCasts.filter(x => x === id).length])).entries()].map(([id, n]) => `${battle.master.skill.get(id)?.NAME || id}×${n}`).join('、'))}` : ''}</p>
+    <p class="help">招式 <b>${esc(ctx.move.name || ctx.move.id)}</b>（${ctx.move.id}）· 攻击方 ${esc(ctx.attackerSpec.name || ctx.attackerSpec.unitDressId)} · 面板来源：${esc(ctx.attackerSpec.statsSource || '读取报告')} · 目标 ${esc(ctx.targetSpec.name)}${ctx.targetSpec.source ? `（${esc(ctx.targetSpec.source)}）` : ''} · HP ${ctx.state.hpPercent}%${ctx.state.hpPercent === 100 ? '（满血开关）' : ctx.state.hpPercent === 25 ? '（濒死开关）' : '（未勾选满血：满HP条件不触发）'} · MP ${ctx.state.mpPercent}%${ctx.state.preCasts?.length ? ` · 施放前已用：${esc([...new Map(ctx.state.preCasts.map(id => [id, ctx.state.preCasts.filter(x => x === id).length])).entries()].map(([id, n]) => `${battle.master.skill.get(id)?.NAME || id}×${n}`).join('、'))}` : ''}</p>
     <p class="help">面板→局内：${statLine}</p>${panelLine(ctx)}
     <div class="entry-table-wrap"><table class="entry-table engine-hits"><thead><tr><th>段</th><th>普通每段</th><th>暴击每段</th><th>期望（暴击率 ${Math.round(critRate * 100)}%）</th><th>每段上限</th><th>A / F</th><th>特攻</th></tr></thead><tbody>${hitRows || '<tr><td colspan="7">没有伤害段</td></tr>'}</tbody></table></div>
     <p class="help">每次命中（含双刀／多段魔法的追加击）期望 <b>${fmt(perCast)}</b>${hitCount ? `；按计算器填写的 ${hitCount} 段命中，整次期望 <b>${fmt(perCast * hitCount)}</b>` : '；段数取自计算器的“基础命中段数”'}。暴击率用局内 CRT 面板值。</p>
@@ -537,6 +524,6 @@ function panelLine(ctx) {
 }
 
 document.addEventListener('lc:calculator-update', e => { latest = e.detail || {}; if (latest.battle) report = latest.battle; mount();
-  if ($('enginePanelStats')) { const hide = !!(report && report.units?.length); $('enginePanelStats').hidden = hide; $('engineAccountRow').hidden = hide; } run(); });
+  if ($('engineAccountRow')) $('engineAccountRow').hidden = !!(report && report.units?.length); run(); });
 $('entryReportFile')?.addEventListener('change', e => { const f = e.target.files?.[0]; if (!f) return; f.text().then(t => { try { const j = JSON.parse(t); if (j && j.kind === 'last-cloudia-battle-entry') report = j; } catch {} }); });
 mount();

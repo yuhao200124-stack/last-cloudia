@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>配装与伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="输入战斗攻击力、技能参数、各种增伤和 Boss 防御，计算每段与整次技能伤害。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260927-game-conditions">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260928-layout">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="./index.html?v=20260926-mayly">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a href="./skill-labeling.html?v=20260926-mayly">技能列表打标签用的</a><a id="calculatorCharacterBack" href="./characters.html?v=20260926-mayly">角色列表</a><a href="./index.html?v=20260926-mayly">技能表</a></nav></header>
@@ -75,6 +75,7 @@
     </section>
     <section class="card"><div class="section-heading reference-section-heading"><h2><span>04</span>Boss 与战斗条件</h2></div>
       <label class="wide">目标预设<select id="bossPreset"><option value="bird">轟鳥龍恩德爾羅納</option><option value="beast">神獸帕帕拉納</option><option value="custom">自定义目标</option></select></label>
+      <div id="engineTargetSlot"></div>
       <p id="bossIdentity" class="help">种族：未读取</p>
       <details><summary>核对目标种族</summary><p class="help">预设或读取报告会自动填写；自定义目标请按实际种族勾选。多个种族命中同一技能时只计一次。</p><div id="bossRaceChoices" class="inline-options"></div></details>
       <label><input id="stunned" type="checkbox">目标气绝（用于气绝／Break增伤条件，不自动应用Break降防）</label>
@@ -162,6 +163,6 @@
 <details><summary>已采用的属性、上限与特殊效果</summary><div id="importReferences"></div></details><div id="importWarnings" class="help"></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260927-game-data"></script>
-<script type="module" src="./engine-panel.mjs?v=20260927-engine"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260928-layout"></script>
+<script type="module" src="./engine-panel.mjs?v=20260928-layout"></script>
 </body></html>
