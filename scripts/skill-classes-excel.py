@@ -25,7 +25,7 @@ DESC = {
     '受到伤害': '自己受到的伤害减少（护盾、屏障、壁、格挡等）；也包括“受到伤害增加”的代价',
     '异常': '异常耐性、异常付与、异常恢复、裂伤',
     'Break值': '破防值（对敌人的眩晕值、自己不易眩晕）',
-    '魔法·咏唱': '咏唱速度、咏唱不被打断、咏唱时减伤、魔法耗 MP',
+    '魔法·咏唱': '咏唱速度、咏唱不被打断、魔法耗 MP',
     '特技充能·必杀': '特技充能、特技次数、超必杀技槽',
     '回复': '体力／法力恢复、复活、吸收',
     '移动与行动': '移动速度、被敌人瞄准的程度、距离',
@@ -133,11 +133,11 @@ def export_by_category(out):
     ws.title = '按分类'
     thin = Side(style='thin', color='BFBFBF')
     bd = Border(left=thin, right=thin, top=thin, bottom=thin)
-    cols = ['游戏编号', '名称', 'SC', '效果说明', '也在这些分类', '条件标签', '计算器']
-    note = ws.cell(row=1, column=1, value='条件标签：从游戏的条件数据读出（不是看说明文字）。“受·”开头＝受到这种攻击时（防御类），例如冰壁在游戏数据里减少火属性伤害，所以是“受·火属性”。没有标签＝没有条件（常驻或开局就生效）。')
+    cols = ['游戏编号', '名称', 'SC', '效果说明', '也在这些分类', '条件标签', '计算器', '减伤（以后算）']
+    note = ws.cell(row=1, column=1, value='大类和条件标签都只从游戏数据读出（效果种类、操作类型、效果参数、所加的增益、条件数据），不看说明文字；“效果说明”一列只是给你对照。“受·”开头＝受到这种攻击时（防御类），例如冰壁在游戏数据里减少火属性伤害，所以是“受·火属性”。没有标签＝没有条件。“减伤”一列是以后算受到伤害时用的，现在先准备好。')
     note.font = F(size=10, color='595959')
     ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(cols))
-    for j, (h, w) in enumerate(zip(cols, [10, 20, 5, 60, 22, 26, 14]), 1):
+    for j, (h, w) in enumerate(zip(cols, [10, 20, 5, 60, 22, 26, 14, 14]), 1):
         c = ws.cell(row=2, column=j, value=h)
         c.font = F(bold=True)
         c.fill = PatternFill('solid', fgColor='D9D9D9')
@@ -159,14 +159,14 @@ def export_by_category(out):
         r += 1
         for _, s, cats in rows:
             others = [c for c in cats if c != cat]
-            vals = [s['id'], s['name'], game[s['id']]['sc'], game[s['id']]['effectS'], '、'.join(others), '、'.join(s['tags']), s['calc']]
+            vals = [s['id'], s['name'], game[s['id']]['sc'], game[s['id']]['effectS'], '、'.join(others), '、'.join(s['tags']), s['calc'], (s.get('defense') or {}).get('calc', '')]
             for j, v in enumerate(vals, 1):
                 c = ws.cell(row=r, column=j, value=v if v != '' else None)
                 c.font = F()
                 c.border = bd
-                c.alignment = Alignment(vertical='center', wrap_text=j in (4, 5, 6), horizontal='center' if j in (1, 3, 7) else 'left')
-                if j == 7:
-                    c.fill = PatternFill('solid', fgColor=FILLS.get(s['calc'], 'FFFFFF'))
+                c.alignment = Alignment(vertical='center', wrap_text=j in (4, 5, 6), horizontal='center' if j in (1, 3, 7, 8) else 'left')
+                if j in (7, 8) and v:
+                    c.fill = PatternFill('solid', fgColor=FILLS.get(v, 'FFFFFF'))
             r += 1
         r += 1
     wb.save(out)

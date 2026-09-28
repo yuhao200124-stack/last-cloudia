@@ -26,6 +26,15 @@ test('every table skill is classified, and the user\'s decisions are applied', (
   assert.deepEqual(tags(55567).filter(t => t.startsWith('对')).sort(), ['对兽', '对植物', '对昆虫', '对鸟', '对魔法生物', '对鱼'].sort()); // packed race bits
   assert.deepEqual(tags(15300), ['受·火属性']);                            // 冰壁 reduces fire damage (属性ID 1)
   assert.deepEqual(tags(16010), ['物理', '装备机械']);
+  // 大类 only from the game data: never from the description
+  for (const s of draft.skills) for (const r of Object.values(s.reasons)) assert(!r.includes('说明文字'), `${s.id} uses the description`);
+  const cats = id => byId.get(id).cats;
+  assert(cats(11500).includes('特技充能·必杀') && !cats(11500).includes('异常'));   // 特定状態異常中SCT回復量増減: charge while under an ailment
+  assert(cats(7300).includes('造成伤害') && !cats(7300).includes('异常'));           // 对异常状态的敌人 is a condition
+  assert(cats(10900).includes('魔法·咏唱'));                                         // 不动之阵: casting is not interrupted
+  assert(cats(18100).includes('受到伤害'));                                          // 光照明: its buff (504) works on damage taken
+  assert(cats(55591).includes('暴击') && cats(55591).includes('基础属性'));           // 极速战士: three processes
+  assert.deepEqual(byId.get(23300).defense, { calc: '能算', tags: ['受·树属性'] });  // prepared for 减伤 later
   // 爆裂者 / 驱动: “物理攻击・超必杀技” is not a stat list
   assert(!byId.get(26872).cats.includes('基础属性') && !byId.get(25710).cats.includes('基础属性'));
 });
