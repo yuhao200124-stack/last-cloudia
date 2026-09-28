@@ -1,4 +1,4 @@
-import {characterMoveDefaults,characterDefinition} from './character-template.mjs?v=20260926-mayly';
+import {characterMoveDefaults,characterDefinition} from './character-template.mjs?v=20260928-special-weapon';
 import {STAT_CONDITION_FIELDS,SWITCH_GROUPS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260926-skill-coverage';
@@ -74,19 +74,28 @@ export function retargetReport(report,selection) {
   if(selection.lowHp===true&&selection.fullHp!==true)context.fullHp=false;
  if(typeof selection.criticalEnabled==='boolean'){context.criticalEnabled=selection.criticalEnabled;context.critical=selection.criticalEnabled;}
  // Damage-page dual wield is a manual hit-calculation option.
- // The damage page's 专武 switch equips every exclusive item of the character
- // (weapon and armor); it does not follow the basic calculator's checkboxes.
- if(typeof selection.specialWeapon==='boolean'){
-  const gear=characterDefinition(report.characterId).gear||{},ids=Object.keys(gear);
-  const equipped=new Set((context.equipmentIds||[]).filter(id=>!ids.includes(id)));
-  for(const [id,g] of Object.entries(gear)){
-   if(selection.specialWeapon)equipped.add(id);
-   context[g.field]=selection.specialWeapon;
-   if(g.iceStaff)context.iceStaff=selection.specialWeapon;
+ // The damage page's 专武 selector picks one specific exclusive-gear item (by
+ // its gear-map id), 'both' (every exclusive item, the old switch's on state),
+ // or 'none' (the old switch's off state) -- generic across every character's
+ // gear map, whatever its shape (one weapon, one weapon + one armor, two
+ // weapons, ...). Older saved selections may still carry the original boolean
+ // (true/false); those map onto 'both'/'none'. 'other' is reserved and left
+ // inert until a follow-up request defines it.
+ const specialWeaponMode=selection.specialWeapon===true?'both':selection.specialWeapon===false?'none':selection.specialWeapon;
+ if(['both','none','other'].includes(specialWeaponMode)||typeof specialWeaponMode==='string'&&Object.hasOwn(characterDefinition(report.characterId).gear||{},specialWeaponMode)){
+  if(specialWeaponMode!=='other'){
+   const gear=characterDefinition(report.characterId).gear||{},ids=Object.keys(gear);
+   const equipped=new Set((context.equipmentIds||[]).filter(id=>!ids.includes(id)));
+   for(const [id,g] of Object.entries(gear)){
+    const on=specialWeaponMode==='both'||specialWeaponMode===id;
+    if(on)equipped.add(id);
+    context[g.field]=on;
+    if(g.iceStaff)context.iceStaff=on;
+   }
+   context.equipmentIds=[...equipped];
+   const equippedWeapons=Object.entries(gear).filter(([id,g])=>!g.armor&&(specialWeaponMode==='both'||specialWeaponMode===id)).length;
+   if(equippedWeapons)context.weaponCount=Math.max(1,Math.min(2,equippedWeapons));
   }
-  context.equipmentIds=[...equipped];
-  const weapons=Object.values(gear).filter(g=>!g.armor).length;
-  if(selection.specialWeapon&&weapons)context.weaponCount=Math.max(1,Math.min(2,weapons));
  }
  const sources=[...grouped.values()].map(s=>s.rules.some(r=>overrides[r.id]?.disabled)?s:upgradeCommonSource(s));
  const evaluated=evaluateCatalog(sources,context,overrides);

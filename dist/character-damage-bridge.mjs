@@ -1,6 +1,6 @@
 import {characterReportFromDocument} from './character-report-loader.mjs?v=20260926-mayly';
 import {reportStorageKey} from './damage-import.mjs?v=20260926-mayly';
-import {readCharacterProfile} from './entry-preparation.mjs?v=20260926-mayly';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260928-special-weapon';
 import {unifiedPageUrl} from './calculator-navigation.mjs?v=20260926-mayly';
 const panel=document.getElementById('damageSimulator');
 const frame=document.getElementById('damageCalculatorFrame');

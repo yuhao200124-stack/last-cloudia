@@ -90,3 +90,31 @@ test('damage page 专武 switch equips every exclusive item even when the report
  const off=retargetReport(on,{attack:'magic',type:'magical',element:'冰',specialWeapon:false});
  assert(!off.rows.some(r=>r.group==='equipment'&&r.status==='active'));
 });
+test('damage page 专武 selector drives one specific exclusive-gear item, both, or neither -- generically, by gear-map id',()=>{
+ const s={attack:'magic',type:'magical',element:'冰'};
+ const base={...initial(),context:{...initial().context,equipmentIds:[],staff:false,robe:false,iceStaff:false}};
+ const staffOnly=retargetReport(base,{...s,specialWeapon:'roxy-staff'});
+ assert.equal(staffOnly.context.staff,true);assert.equal(staffOnly.context.iceStaff,true);assert.equal(staffOnly.context.robe,false);
+ assert(staffOnly.context.equipmentIds.includes('roxy-staff'));assert(!staffOnly.context.equipmentIds.includes('roxy-robe'));
+ assert.equal(staffOnly.context.weaponCount,1);
+ const robeOnly=retargetReport(base,{...s,specialWeapon:'roxy-robe'});
+ assert.equal(robeOnly.context.robe,true);assert.equal(robeOnly.context.staff,false);assert.equal(robeOnly.context.iceStaff,false);
+ assert(robeOnly.context.equipmentIds.includes('roxy-robe'));assert(!robeOnly.context.equipmentIds.includes('roxy-staff'));
+ // No weapon slot was selected, so weaponCount is left exactly as the base report had it (it is never zeroed out here).
+ assert.equal(robeOnly.context.weaponCount,base.context.weaponCount);
+ const both=retargetReport(base,{...s,specialWeapon:'both'}),boolBoth=retargetReport(base,{...s,specialWeapon:true});
+ assert.deepEqual(both,boolBoth);assert.equal(both.context.staff,true);assert.equal(both.context.robe,true);
+ const none=retargetReport(base,{...s,specialWeapon:'none'}),boolNone=retargetReport(base,{...s,specialWeapon:false});
+ assert.deepEqual(none,boolNone);
+ // 'other' is reserved and inert: it must not touch equipment at all, same as no selection made.
+ const other=retargetReport(base,{...s,specialWeapon:'other'}),unset=retargetReport(base,s);
+ assert.deepEqual(other,unset);
+});
+test('damage page 专武 selector generalizes to a character with two exclusive weapons and no exclusive armor (Mayly)',()=>{
+ const mayly={kind:'last-cloudia-effect-report',characterId:'182',context:{weaponCount:0,axe:false,sword:false,equipmentIds:[]},rows:[]};
+ const s={attack:'s1',type:'physical',element:'光'};
+ const first=retargetReport(mayly,{...s,specialWeapon:'182-equipment-1693'});
+ assert.equal(first.context.axe,true);assert.equal(first.context.sword,false);assert.equal(first.context.weaponCount,1);
+ const both=retargetReport(mayly,{...s,specialWeapon:'both'});
+ assert.equal(both.context.axe,true);assert.equal(both.context.sword,true);assert.equal(both.context.weaponCount,2);
+});

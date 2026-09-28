@@ -13,7 +13,8 @@ import {mountUnifiedCalculator,renderDamageGauges} from './unified-calculator.mj
 import {loadCharacterReport} from './character-report-loader.mjs?v=20260926-mayly';
 import {GENERAL_CONDITIONS,activeConditionSources,weakElementFromBoss} from './damage-condition-display.mjs?v=20260926-mayly';
 import {loadGameIndex,loadGameCharacter,loadGameMagic,gameMoveParameters} from './game-data.mjs?v=20260927-game-data';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-mayly';
+import {retargetReport} from './entry-preparation.mjs?v=20260928-special-weapon';
+import {characterDefinition} from './character-template.mjs?v=20260928-special-weapon';
 import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-skill-coverage';
 import {gameTimingLabel,gameTimingLabelByName} from './game-skill-timing.mjs?v=20260927-game-timing';
 import {scenarioBonuses} from './scenario-bonus-summary.mjs?v=20260926-character-template';
@@ -29,6 +30,16 @@ let effects=[],nextId=0,timer;
 const params=new URLSearchParams(location.search);
 const characterId=params.get('character');
 if(characterId&&/^\d+$/.test(characterId)){$('calculatorCharacterBack').href=`./character-${characterId}.html`;$('calculatorCharacterBack').textContent='返回角色';}
+// 专武 lists this character's own exclusive-gear items by their real names (character-template.mjs's
+// gear map), plus 都装备/其他; falls back to the generic 未装备/全部装备 pair when there is no gear
+// data for this page (no character, or a character not yet wired with exclusive gear).
+(function setupSpecialWeaponOptions(){
+ const select=$('specialWeapon'),entries=Object.entries((characterId&&characterDefinition(characterId).gear)||{});
+ if(!entries.length)return;
+ const current=select.value;
+ select.innerHTML=['<option value="none">未装备</option>',...entries.map(([id,g])=>`<option value="${esc(id)}">${esc(g.name||id)}</option>`),`<option value="both">${esc(entries.map(([,g])=>g.name).filter(Boolean).join('＋')||'都装备')}</option>`,'<option value="other">其他</option>'].join('');
+ select.value=['none','both','other',...entries.map(([id])=>id)].includes(current)?current:'none';
+})();
 const bonusStorageKey=`lc-confirmed-bonuses:${characterId||'generic'}:v1`;
 let savedBonuses=null,bonusStoreReady=false,disabledCommonIds=new Set();
 let nativeDetailsMode=0,commonDetailsMode=0;
@@ -800,9 +811,11 @@ unified=mountUnifiedCalculator({
   manualDefenseRatio:defenseRatioTouched||imported&&$('defenseRatio').valueAsNumber!==imported.defenseRatio?$('defenseRatio').valueAsNumber:null,
   criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),
  onChange:update,
- onWeaponChange:enabled=>{$('specialWeapon').checked=enabled;workflow?.setSpecialWeapon?.(enabled);}
+ // The unified-loadout iframe's own 专武 toggle is all-or-nothing (unified-calculator.mjs/
+ // loadout-preview.mjs, left as-is); reflect it as 都装备/未装备 on this richer selector.
+ onWeaponChange:enabled=>{$('specialWeapon').value=enabled?'both':'none';workflow?.setSpecialWeapon?.($('specialWeapon').value);}
 });
-$('specialWeapon').addEventListener('change',()=>unified.setExclusiveWeapon($('specialWeapon').checked));
+$('specialWeapon').addEventListener('change',()=>unified.setExclusiveWeapon($('specialWeapon').value==='both'));
 unified.refreshSources();update();
 if(characterId&&!latestReport)loadCharacterReport(characterId).then(report=>{if(!latestReport){receiveReport(report);unified.refreshSources();}}).catch(e=>unified.error(e.message));
 if(params.get('unified')==='1')unified.open();

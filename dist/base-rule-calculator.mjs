@@ -1,6 +1,6 @@
 import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
-import {characterDefinition,characterContext,collectCharacterSources} from './character-template.mjs?v=20260926-mayly';
-import {readCharacterProfile} from './entry-preparation.mjs?v=20260926-mayly';
+import {characterDefinition,characterContext,collectCharacterSources} from './character-template.mjs?v=20260928-special-weapon';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260928-special-weapon';
 import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260926-mayly';
 import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260926-mayly';
 import { summarizeEffects } from './effect-totals.mjs';

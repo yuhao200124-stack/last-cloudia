@@ -1,5 +1,5 @@
 import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-mayly';
-import {retargetReport} from './entry-preparation.mjs?v=20260926-mayly';
+import {retargetReport} from './entry-preparation.mjs?v=20260928-special-weapon';
 import {buildDamageImport} from './damage-import.mjs?v=20260926-mayly';
 import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260926-skill-coverage';
 import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';

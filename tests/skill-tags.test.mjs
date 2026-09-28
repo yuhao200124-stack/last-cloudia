@@ -34,7 +34,7 @@ test('low HP scaling and shared-skill counts are not reduced to fixed near-death
 test('special damage switches are separate from general conditions',()=>{
  const html=fs.readFileSync(new URL('../dist/damage-calculator.html',import.meta.url),'utf8');
  const row=html.match(/<div class="inline-options attack-options">([\s\S]*?)<\/div>/)[1];
- assert.deepEqual([...row.matchAll(/id="([^"]+)"/g)].map(m=>m[1]),['dualWield','specialAttack','break','criticalEnabled','boss','weakness','specialWeapon']);
+ assert.deepEqual([...row.matchAll(/id="([^"]+)"/g)].map(m=>m[1]),['dualWield','specialAttack','break','criticalEnabled','boss','weakness']);
  assert.match(html,/<h3>魔法<\/h3>/);assert.match(html,/<h3 id="generalDamageTitle">通用伤害改变<\/h3>/);
  assert.match(html,/id="conditionBuffActive"/);assert.doesNotMatch(html,/现实时间为周日/);
  for(const field of ['ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','realSunday','ultimateGaugeFull'])assert.equal(STAT_CONDITIONS[field].deferred,true);
