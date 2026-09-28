@@ -36,10 +36,16 @@ const inlineIcon=JSON.parse(fs.readFileSync(new URL('../docs/inline-icon-preserv
 const specialWeapon=JSON.parse(fs.readFileSync(new URL('../docs/special-weapon-preservation-2026-09-28.json',import.meta.url)));
 const critImportBreakdown=JSON.parse(fs.readFileSync(new URL('../docs/crit-import-breakdown-preservation-2026-09-28.json',import.meta.url)));
 const gameNames=JSON.parse(fs.readFileSync(new URL('../docs/game-names-preservation-2026-09-28.json',import.meta.url)));
+const stateNotes=JSON.parse(fs.readFileSync(new URL('../docs/state-notes-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const stateLayer=stateNotes.files[path];
+ if(stateLayer){
+  if(hash(text)!==stateLayer.afterHash||hash(stateLayer.beforeText)!==stateLayer.beforeHash)throw Error(`State-notes preservation drift: ${path}`);
+  text=stateLayer.beforeText;
+ }
  const namesLayer=gameNames.files[path];
  if(namesLayer){
   if(hash(text)!==namesLayer.afterHash||hash(namesLayer.beforeText)!==namesLayer.beforeHash)throw Error(`Game-names preservation drift: ${path}`);

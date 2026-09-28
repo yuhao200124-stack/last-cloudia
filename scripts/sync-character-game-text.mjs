@@ -40,7 +40,41 @@ const textOf=html=>unesc(String(html).replace(/<[^>]+>/g,'')).trim();
 const attr=(attrs,name)=>attrs.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
 const withAttr=(attrs,name,value)=>attr(attrs,name)!==undefined?attrs:`${attrs} ${name}="${escAttr(value)}"`;
 
-export function gameDescription(id,raw,problems,label){
+// "始终保持「速充」效果"-style text names an always-on state without its numbers; the reader's decoded
+// values carry them (state segments: those with 演出等级/演出编号, or an 自动… process). Each known
+// kind is written in the game's own wording right after that clause; an unknown kind must be
+// registered as stateNote in docs/game-text-fills.json.
+const STATE_CLAUSE=/((?:始终|始終|常时|常時|永久|一直)[^。]*?(?:保持|保有)[^。]*?效果)/;
+const nonZero=v=>v&&!/^[+-]?0(\.0+)?%?$/.test(v);
+const STATE_PHRASES={
+ '攻击/魔力(战斗中)':p=>[nonZero(p['STR倍率'])&&`攻击${p['STR倍率']}`,nonZero(p['INT倍率'])&&`魔力${p['INT倍率']}`],
+ '防御/精神':p=>[nonZero(p['DEF倍率'])&&`防御${p['DEF倍率']}`,nonZero(p['MND倍率'])&&`精神${p['MND倍率']}`],
+ '暴击率':p=>[nonZero(p['CRT加算值'])&&`暴击发生率+${p['CRT加算值']}%`],
+ '自动SCT恢复量增减':p=>[nonZero(p['特技槽自动恢复倍率'])&&`充能恢复速度${p['特技槽自动恢复倍率']}`],
+ '自动咏唱速度增减':p=>[nonZero(p['咏唱时间增减值'])&&`魔法咏唱时间${p['咏唱时间增减值']}`],
+ '自动MP持续恢复':p=>[`法力持续恢复：恢复值${p['MP恢复值']}、恢复倍率${p['MP恢复倍率']}`],
+ '自动移动速度增减':p=>[`移动速度+${p['移动速度加算值']}`],
+};
+const valueSegments=values=>String(values||'').split('；').map(seg=>{
+ const m=seg.match(/^【([^】]*)】(.*)$/);if(!m)return null;
+ const params={};for(const kv of m[2].split('，')){const i=kv.indexOf('=');if(i>0)params[kv.slice(0,i)]=kv.slice(i+1);}
+ return {head:m[1],params,raw:m[2]};
+}).filter(Boolean);
+function stateNote(text,values,f,problems,label,id){
+ const clause=text.match(STATE_CLAUSE)?.[1];if(!clause||values==null)return text;
+ let note=f.stateNote;
+ if(note==null){
+  const segs=valueSegments(values).filter(s=>/演出(等级|编号)/.test(s.raw)||s.head.startsWith('自动'));
+  const unknown=segs.filter(s=>!STATE_PHRASES[s.head]).map(s=>s.head);
+  if(!segs.length||unknown.length){problems.push(`${label}：“${clause}”的数值无法从读取器数据自动写出（${unknown.join('、')||'未找到对应效果'}），需在 docs/game-text-fills.json 登记 stateNote（游戏编号 ${id}）`);return text;}
+  const phrases=segs.flatMap(s=>STATE_PHRASES[s.head](s.params)).filter(Boolean);
+  if(!phrases.length||(phrases.join('').match(/\d+(\.\d+)?/g)||[]).every(n=>clause.includes(n)))return text;
+  note=`（${phrases.join(phrases.some(x=>x.includes('、'))?'；':'、')}）`;
+ }
+ return text.replace(clause,clause+note);
+}
+
+export function gameDescription(id,raw,problems,label,values=null){
  const f=fills[String(id)]||{};let used=0;
  let text=String(raw||'');
  for(const [from,to] of f.replace||[]){
@@ -55,11 +89,12 @@ export function gameDescription(id,raw,problems,label){
  if(f.fills&&used!==f.fills.length)problems.push(`${label}：登记的补值数量与原文“?”数量不符（游戏编号 ${id}）`);
  text=text.replace(/\s+/g,' ').trim();
  if(!text)problems.push(`${label}：游戏数据里没有说明原文（游戏编号 ${id}）`);
+ text=stateNote(text,values,f,problems,label,id);
  return text+(f.append||'');
 }
 
 export function syncCharacterPage(siteId,html,game,problems=[]){
- const passive=id=>game.passives[String(id)]&&{name:game.passives[String(id)].nameS,text:game.passives[String(id)].textS};
+ const passive=id=>game.passives[String(id)]&&{name:game.passives[String(id)].nameS,text:game.passives[String(id)].textS,values:game.passives[String(id)].values};
  const moves=[...(game.normal||[]),...(game.specials||[]),game.ultimate,...(game.form2||[]),...(game.magic?.normal||[]),...(game.magic?.heavy||[])].filter(Boolean);
  const move=id=>{const m=moves.find(x=>String(x.id)===String(id));return m&&{name:m.nameS,text:m.explainS??m.explain};};
  const equipment=id=>{
@@ -69,12 +104,12 @@ export function syncCharacterPage(siteId,html,game,problems=[]){
    const enhanced=sameNamePassives(p);
    if(enhanced.length&&!enhanced.includes(fills[String(p)]?.enhanced))problems.push(`装备「${e.nameS}」：有神装强化后的同名被动（${enhanced.join('、')}），需在 docs/game-text-fills.json 登记强化后的数值`);
   }
-  return {name:e.nameS,text:e.passives.map(p=>game.passives[String(p)]?.textS||'').join('\n'),passiveId:e.passives[0]};
+  return {name:e.nameS,text:e.passives.map(p=>game.passives[String(p)]?.textS||'').join('\n'),values:e.passives.map(p=>game.passives[String(p)]?.values||'').join('；'),passiveId:e.passives[0]};
  };
  const lookup={traits:passive,'exclusive-skills':passive,'common-skills':passive,transcend:passive,specials:move,magic:move};
  const legacy=legacyIds[siteId]||{};
  const idFor=(section,attrs,name)=>attr(attrs,'data-game-id')??legacy[section]?.[name];
- const describe=(id,entry,label)=>gameDescription(entry.passiveId??id,entry.text,problems,label);
+ const describe=(id,entry,label)=>gameDescription(entry.passiveId??id,entry.text,problems,label,entry.values??null);
 
  // 个性
  html=html.replace(/<article class="trait"([^>]*)><h4>([\s\S]*?)<\/h4><p([^>]*)>([\s\S]*?)<\/p>/g,(all,attrs,name,pAttrs,text)=>{
