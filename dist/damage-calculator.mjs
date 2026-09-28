@@ -396,6 +396,15 @@ function labels() {
   const mode=referenceMode(),magic=mode==='int';
   $('attackLabel').textContent=mode==='mixed'?'已确认的混合结算攻击值':magic?'当前面板法强':'当前面板攻击力';
   $('mixedReferenceNote').hidden=mode!=='mixed';$('mixedDefenseControl').hidden=mode!=='mixed';
+  if(mode==='mixed'){
+    // Reference only: a hint toward the physical/magic damage-weight split the game data
+    // reports for this move, so the user can compute their own confirmed mixed-settlement
+    // value more accurately. It never fills #attack automatically -- the note below it still
+    // says so, and this only adds a data-backed ratio when one is available for this move.
+    const picked=gameMoves[Number($('gameMove')?.value)]?.move;
+    const gp=workflow?.gameMove?.()||(picked?gameMoveParameters(picked):null);
+    $('mixedReferenceNote').textContent=`混合参照不自动按50/50分配。请填写已确认的混合结算攻击值与对应结算防御值，再进行试算。${gp?.mixedRatio?`游戏数据参考比例（物理／魔力，按每段伤害权重四舍五入）：${gp.mixedRatio.physical}／${gp.mixedRatio.magic}（约 ${gp.mixedRatio.physicalPercent}% ／ ${gp.mixedRatio.magicPercent}%）。`:''}`;
+  }
   $('defenseLabel').textContent=mode==='mixed'?'混合结算防御值':magic?'当前魔抗 MND':'当前防御力 DEF';
   const neutral=$('element').value==='无';$('resistance').disabled=neutral;
   syncBossReference();
