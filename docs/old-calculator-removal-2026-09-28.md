@@ -49,7 +49,7 @@
 - 伤害倍率：技能系数、属性耐性、特攻、核心前三项倍率、核心伤害，以及结算后修正（按执行顺序）。
 
 ## 入口
-用户要求：只从各角色页进入计算器（角色页里的“伤害计算器”按钮）。各页面顶部不带角色的“伤害计算器”链接（首页、角色列表、游戏技能页、打标签页、角色页顶部导航、角色页模板）已删除（保存层 calculator-link，基线 0988749）。首页配装面板里的“配装与伤害”按钮属于首页，未改。
+用户要求：只从各角色页进入计算器（角色页里的“伤害计算器”按钮）。各页面顶部不带角色的“伤害计算器”链接（首页、角色列表、游戏技能页、打标签页、角色页顶部导航、角色页模板）已删除。首页配装面板里的“配装与伤害”按钮属于首页，未改。
 
 ## 角色页
 - 删掉“基础计算器”“基础伤害上限”“最终伤害上限”三个按钮和面板（`base-rule-calculator`、`character-calculator.js`、`characterCapProfile`、`data.js` 引用）。模板和生成器同步修改。
@@ -68,7 +68,7 @@
   - 首页技能表的数据管线生成的 basic-stat-catalog、game-skill-names.mjs、skill-tag-catalog、attack-tag-catalog；
   - 账户加护面板（account-blessings-panel → effect-rule-engine、stat-mechanics、stat-condition-fields）；
   - export-old-site.js（本地数据页）。
-- **保存层**：`engine-only`（基线 fc7ee3c）。删除的文件记为 `deleted: true`，分类测试通过 `readProtected()` 把它读成空文本后再还原。
+- 保存层：当时做了 `engine-only` 层；次日打标签页删除后，整个保存层流程也按用户要求撤掉（见下）。
 
 ## 新版不受影响的核对
 - 删除前后，在浏览器里对 4 个角色的全部 23 个招式各跑了默认条件、Break、满血、特攻切换、每个辅助魔法这些情况，共 123 组。
@@ -76,3 +76,12 @@
 - “整次期望”因为命中段数默认改成 10，按用户要求变化。
 
 测试：`tests/calculator-page.test.mjs`（新）、`tests/engine-*.test.mjs`、`tests/boss-presets.test.mjs`、`tests/character-game-text.test.mjs`。
+
+## 2026-09-29：删除打标签页和保存层
+用户确认：打标签页（技能列表打标签用的）与游戏数据、新版计算器都没有关系，它是给首页技能表的 935 个技能分类贴标签、为旧版规则计算器准备的，删除。
+- 删掉的内容：
+  - 页面与代码：`skill-labeling.html`、`skill-labeling*.mjs/css`、`skill-classification-catalog`、`classification-review*`、`attack-tag-catalog`、`skill-tag-catalog`；
+  - 标签的生成、校验脚本和测试，以及标签记录（各类 tag-registry、tag-audit、tag-pass 等文档）；
+  - 首页、角色列表页和计算器页头部的链接。
+- 撤掉“保存层”：它只是打标签测试要求的。`scripts/build-*-preservation.mjs`、`calculator-preservation-helpers` 及其记录（`docs/*-preservation-*.json`，约 18MB）一并删除；以后改受保护文件不再需要新增保护层。
+- 首页技能表（`data.js`、`app.js`）和技能审计测试不受影响。
