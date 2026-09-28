@@ -6,6 +6,17 @@
   let active = data.sheetOrder.includes(store.get('lc-game-table:sheet')) ? store.get('lc-game-table:sheet') : data.sheetOrder[0];
   let script = store.get('lc-game-table:script', 't') === 's' ? 's' : 't';
   let query = '';
+  // Inside the damage calculator's 配装 (index.html?embedded=1): a “+” on every row adds the skill to the loadout (the
+  // calculator computes it); “✓” marks the picked ones, with the gain the calculator found. The home page has no “+”.
+  const embedded = new URLSearchParams(location.search).get('embedded') === '1' && window.parent !== window;
+  let picked = new Set(), gains = {};
+  const gainText = g => `${g >= 0 ? '+' : ''}${(g * 100).toFixed(1)}%`;
+  function addButton(id) {
+    const on = picked.has(id), g = gains[id];
+    return `<button class="add-skill-button${on ? ' is-added' : ''}" type="button" data-add-skill="${id}" aria-label="${on ? '从配装取消' : '加入配装'}" title="${on ? `已加入配装${g != null ? ` · 收益 ${gainText(g)}` : ''}；再点一次取消` : '加入配装'}"><span aria-hidden="true">${on ? '✓' : '+'}</span></button>${on && g != null ? `<small class="build-gain">${gainText(g)}</small>` : ''}`;
+  }
+  const actionTd = s => embedded ? `<td class="action-cell" data-action-for="${s.gameId}">${addButton(s.gameId)}</td>` : '';
+  const extra = embedded ? 1 : 0;
   const skill = ref => data.skills[ref];
   const txt = (s, f) => script === 's' ? s[f + 'S'] : s[f];
   const hay = s => [s.name, s.nameS, s.effect, s.effectS, ...s.sources, ...s.sourcesS].join('\n').toLocaleLowerCase('zh-CN');
@@ -26,10 +37,11 @@
     return lines + (io ? `<div class="io-line">${io}</div>` : '') + vals;
   }
   const sourcesCell = s => `<div class="source-list">${(script === 's' ? s.sourcesS : s.sources).map(x => `<div>${hl(x)}</div>`).join('')}</div>`;
-  const tr = (s, typeTd = '') => `<tr data-game-id="${s.gameId}">${typeTd}<td class="skill-name">${cell(nameCell(s), 'cell-center')}</td><td class="sc-cell">${cell(scCell(s), 'cell-center')}</td><td>${cell(effectCell(s))}</td><td class="sources-cell">${cell(sourcesCell(s))}</td><td class="rating-cell">${cell(esc(s.mark), 'cell-center')}</td></tr>`;
-  const head = (cols, withType) => `<thead><tr class="book-title"><th colspan="${cols}">一、被动技能（游戏数据）</th></tr><tr class="column-title">${withType ? '<th>技能类型</th>' : ''}<th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th></tr></thead>`;
+  const tr = (s, typeTd = '') => `<tr data-game-id="${s.gameId}">${typeTd}<td class="skill-name">${cell(nameCell(s), 'cell-center')}</td><td class="sc-cell">${cell(scCell(s), 'cell-center')}</td><td>${cell(effectCell(s))}</td><td class="sources-cell">${cell(sourcesCell(s))}</td><td class="rating-cell">${cell(esc(s.mark), 'cell-center')}</td>${actionTd(s)}</tr>`;
+  const head = (cols, withType) => `<thead><tr class="book-title"><th colspan="${cols + extra}">一、被动技能（游戏数据）</th></tr><tr class="column-title">${withType ? '<th>技能类型</th>' : ''}<th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th>${embedded ? '<th>添加</th>' : ''}</tr></thead>`;
+  const actionCol = embedded ? '<col class="action">' : '';
   function allTable(rows, label) {
-    return `<div class="table-scroll"><table class="excel-table skill-list-table all-skills game-table" aria-label="${esc(label)}"><colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"></colgroup>${head(5, false)}<tbody>${rows.map(r => tr(skill(r.ref))).join('')}</tbody></table></div>`;
+    return `<div class="table-scroll"><table class="excel-table skill-list-table all-skills game-table" aria-label="${esc(label)}"><colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating">${actionCol}</colgroup>${head(5, false)}<tbody>${rows.map(r => tr(skill(r.ref))).join('')}</tbody></table></div>`;
   }
   function splitTable(rows, label) {
     const groups = [];
@@ -39,9 +51,9 @@
       else if (last && !last.separator && last.type === row.type) last.rows.push(row);
       else groups.push({ type: row.type || '未分类', rows: [row] });
     }
-    const body = groups.map(g => g.separator ? '<tr class="separator-row" aria-hidden="true"><td colspan="6"></td></tr>'
+    const body = groups.map(g => g.separator ? `<tr class="separator-row" aria-hidden="true"><td colspan="${6 + extra}"></td></tr>`
       : g.rows.map((r, i) => tr(skill(r.ref), i === 0 ? `<td class="type-cell" rowspan="${g.rows.length}">${cell(hl(g.type), 'cell-center')}</td>` : '')).join('')).join('');
-    return `<div class="table-scroll"><table class="excel-table skill-list-table game-table" aria-label="${esc(label)}"><colgroup><col class="type"><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating"></colgroup>${head(6, true)}<tbody>${body}</tbody></table></div>`;
+    return `<div class="table-scroll"><table class="excel-table skill-list-table game-table" aria-label="${esc(label)}"><colgroup><col class="type"><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating">${actionCol}</colgroup>${head(6, true)}<tbody>${body}</tbody></table></div>`;
   }
   const uniq = rows => new Set(rows.filter(r => !r.separator).map(r => r.ref)).size;
   function render() {
@@ -75,4 +87,13 @@
   $('clearSearch').addEventListener('click', () => { $('searchInput').value = ''; query = ''; render(); });
   $('backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   render();
+  if (embedded) {
+    $('tableArea').addEventListener('click', e => { const b = e.target.closest('[data-add-skill]'); if (b) window.parent.postMessage({ type: 'lc-build-toggle', id: Number(b.dataset.addSkill) }, location.origin); });
+    window.addEventListener('message', e => {
+      if (e.origin !== location.origin || e.source !== window.parent || e.data?.type !== 'lc-build-state') return;
+      picked = new Set((e.data.selected || []).map(Number)); gains = e.data.gains || {};
+      document.querySelectorAll('[data-action-for]').forEach(td => { td.innerHTML = addButton(Number(td.dataset.actionFor)); });
+    });
+    window.parent.postMessage({ type: 'lc-table-ready' }, location.origin);
+  }
 })();

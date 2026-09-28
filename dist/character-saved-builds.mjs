@@ -1,11 +1,25 @@
 // 已保存配装 on a character page: the loadouts saved in the damage calculator's 配装 (localStorage
-// lc-engine-plans:v1, per character, this browser) with the common skills each one picked; 在计算器中打开 starts
+// lc-engine-plans:v1, per character, this browser) with the skills each one picked; 在计算器中打开 starts
 // the calculator with that loadout. (The old skill-table loadouts are no longer listed — the user's decision.)
+// SC as in the calculator (build-sc.mjs): 能力盘突破 free one skill each; the character's own SC skills that are
+// not on the skill table are always there at 0 SC.
+import { breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260929-build';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const characterId = document.body.dataset.characterId;
 const PLANS_KEY = 'lc-engine-plans:v1';
 const FREE_COST = 99;
+const json = path => fetch(new URL(path, import.meta.url)).then(r => r.json());
+let ownSkills = null;
+// the character's own SC skills that are not on the skill table (0 SC in every loadout)
+async function ownOffTable(index) {
+  if (!ownSkills) ownSkills = Promise.all([json('./game-data/index.json'), json('./game-data/engine/table-passives.json')]).then(async ([site, table]) => {
+    const dress = site.site?.[characterId]; if (!dress) return [];
+    const c = await json(`./game-data/c/${dress}.json`), onTable = new Set(table.ids);
+    return (c.ownPassives || []).map(p => p.passive).filter(id => { const cost = index.get(id)?.cost; return cost > 0 && cost < FREE_COST && !onTable.has(id); });
+  }).catch(() => []);
+  return ownSkills;
+}
 function plans() {
   try { const list = JSON.parse(localStorage.getItem(PLANS_KEY) || '[]'); return Array.isArray(list) ? list.filter(p => String(p.siteId) === String(characterId)).sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt))) : []; } catch { return []; }
 }
@@ -22,13 +36,16 @@ async function render() {
   if (list.some(p => p.id === current)) select.value = current;
   const plan = list.find(p => p.id === select.value);
   $('savedBuildOpen').disabled = !plan;
-  if (!plan) { $('savedBuildSkills').innerHTML = '<p class="saved-build-empty">在伤害计算器里打开“配装”，选好通用技能后点“保存配装”，就会列在这里。</p>'; $('savedBuildTotal').textContent = '0 SC'; return; }
-  const index = await passives();
-  const rows = (plan.build?.selected || []).map(id => ({ id, ...(index.get(id) || { nameS: `编号 ${id}`, cost: null }) }));
-  const sc = rows.reduce((sum, r) => sum + (r.cost && r.cost < FREE_COST ? r.cost : 0), 0);
-  $('savedBuildSkills').innerHTML = `<p class="saved-build-note">${esc(String(plan.updatedAt || '').slice(0, 10))} 保存 · ${rows.length} 个通用技能${plan.build?.exclusive === false ? ' · 无专武' : ''}</p>` +
-    (rows.length ? rows.map(r => `<div class="saved-build-skill saved-build-row"><span class="saved-build-skill-name">${esc(r.nameS)}${r.name && r.name !== r.nameS ? ` <small>${esc(r.name)}</small>` : ''}</span><span class="saved-build-skill-sc">${r.cost != null && r.cost < FREE_COST ? `${r.cost} SC` : '—'}</span></div>`).join('') : '<p class="saved-build-empty">这套配装没有选通用技能。</p>');
-  $('savedBuildTotal').textContent = `${sc} SC`;
+  if (!plan) { $('savedBuildSkills').innerHTML = '<p class="saved-build-empty">在伤害计算器里打开“配装”，在技能表点“+”选好技能后点“保存配装”，就会列在这里。</p>'; $('savedBuildTotal').textContent = '0 SC'; return; }
+  const index = await passives(), auto = await ownOffTable(index), autoSet = new Set(auto);
+  const info = id => index.get(id) || { nameS: `编号 ${id}`, cost: null };
+  const sc = scTotal((plan.build?.selected || []).filter(id => !autoSet.has(id)).map(id => ({ id, sc: info(id).cost })), cleanBreaks(plan.build?.breaks));
+  const name = r => `<span class="saved-build-skill-name">${esc(r.nameS)}${r.name && r.name !== r.nameS ? ` <small>${esc(r.name)}</small>` : ''}</span>`;
+  const picked = [...sc.items].sort((a, b) => b.sc - a.sc).map(i => `<div class="saved-build-skill saved-build-row">${name(info(i.id))}<span class="saved-build-skill-sc">${i.freeBy ? `0 SC <small>${breakName(i.freeBy)}（原 ${i.sc}）</small>` : i.sc ? `${i.sc} SC` : '—'}</span></div>`);
+  const own = auto.map(id => `<div class="saved-build-skill saved-build-row">${name(info(id))}<span class="saved-build-skill-sc">0 SC <small>角色专属（原 ${info(id).cost}）</small></span></div>`);
+  $('savedBuildSkills').innerHTML = `<p class="saved-build-note">${esc(String(plan.updatedAt || '').slice(0, 10))} 保存 · ${sc.items.length} 个技能${plan.build?.exclusive === false ? ' · 无专武' : ''}</p>` +
+    (sc.items.length ? picked.join('') : '<p class="saved-build-empty">这套配装没有选技能。</p>') + own.join('');
+  $('savedBuildTotal').textContent = `${sc.total} SC`;
 }
 function show() { viewer.hidden = false; overlay.hidden = false; opener?.setAttribute('aria-expanded', 'true'); render(); $('savedBuildViewerClose').focus(); }
 function hide() { viewer.hidden = true; overlay.hidden = true; opener?.setAttribute('aria-expanded', 'false'); opener?.focus(); }

@@ -4,6 +4,7 @@
 import { K } from './engine/battle.mjs';
 import { RAW_BLESSING_RECORDS, USER_CONFIRMED_BLESSING_RECORDS } from './account-blessings.mjs';
 import { characterGear } from './character-gear.mjs?v=20260928-engine-only';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260929-build';
 
 // This account's blessings (加护) with the runtime values the reader captured (blessing levels scale the
 // master value, e.g. 100 → 406), keyed by passive id and process segment; used when no report is imported.
@@ -29,21 +30,23 @@ const growthChoice = { accountBlessings: true };
 const LOADOUT_KEY = 'lc-engine-loadout-report';
 let loadoutReport = null, switches = null;
 try { const saved = localStorage.getItem(LOADOUT_KEY); if (saved) loadoutReport = JSON.parse(saved); } catch {}
-// Loadout builder (配装模式): baseline = the character's own passives (个性 / 自带 / 超越) + account blessings, with or
-// without the exclusive gear, everything upgradable at its maximum; the user then adds common passives one by one
-// and sees what each one adds to the current build. Per character, kept in the browser.
+// Loadout builder (配装): start = the character's free own passives (个性 / 固有 / 超越) + account blessings + its own
+// SC skills that are not on the skill table (always added, 0 SC — the user's rule), with or without the exclusive
+// gear, everything upgradable at its maximum; the user adds skills from the game-data skill table with “+” and sees
+// what each one brings to the current build. 能力盘突破 (一破 / 二破 / 三破) free one skill each (build-sc.mjs).
+// Per character, kept in the browser.
 const BUILD_KEY = dress => `lc-engine-build:${dress}`;
-const defaultBuild = () => ({ on: false, exclusive: true, own: { personality: true, ownPassives: true, transcend: true, blessings: true }, selected: [] });
+const defaultBuild = () => ({ on: false, exclusive: true, own: { personality: true, ownPassives: true, transcend: true, blessings: true }, selected: [], breaks: cleanBreaks() });
 let build = defaultBuild(), buildDress = null, passiveIndex = null, buildCtx = null, buildGen = 0;
 const buildGains = new Map(); // passive id → { gain, perCall } relative to the current build (removed) or candidate (added)
-let buildCurrent = null, buildBaseline = null, buildQuery = '', lastBuildKey = '', buildOwnPaid = [];
+let buildCurrent = null, buildBaseline = null, lastBuildKey = '', buildOwnPaid = [], buildAuto = [], lastAdded = null;
 function loadBuildFor(dress) {
   if (buildDress === dress) return;
   buildDress = dress; buildGains.clear(); buildCurrent = buildBaseline = null;
-  try { const saved = JSON.parse(localStorage.getItem(BUILD_KEY(dress)) || 'null'); build = saved ? { ...defaultBuild(), ...saved, own: { ...defaultBuild().own, ...(saved.own || {}) } } : defaultBuild(); } catch { build = defaultBuild(); }
+  try { const saved = JSON.parse(localStorage.getItem(BUILD_KEY(dress)) || 'null'); build = saved ? { ...defaultBuild(), ...saved, own: { ...defaultBuild().own, ...(saved.own || {}) }, breaks: cleanBreaks(saved.breaks) } : defaultBuild(); } catch { build = defaultBuild(); }
   // opened from a character page's 已保存配装 (…&plan=<id>): that saved loadout, once
   const planId = new URLSearchParams(location.search).get('plan');
-  if (planId && !urlPlanUsed) { urlPlanUsed = true; const plan = loadPlans().find(p => p.id === planId && p.dress === dress); if (plan) { applyPlan(plan); return; } }
+  if (planId && !urlPlanUsed) { urlPlanUsed = true; const plan = loadPlans().find(p => p.id === planId && p.dress === dress); if (plan) { applyPlan(plan); showBuild(true); return; } }
   syncBuildControls();
 }
 // ---- saved loadouts (保存配装): the chosen common skills of the 配装 panel, per character, in this browser;
@@ -54,13 +57,57 @@ function loadPlans() { try { const l = JSON.parse(localStorage.getItem(PLANS_KEY
 function storePlans(list) { try { localStorage.setItem(PLANS_KEY, JSON.stringify(list)); return true; } catch { return false; } }
 const siteCharacterId = () => new URLSearchParams(location.search).get('character') || null;
 const planStatus = text => { if ($('enginePlanStatus')) $('enginePlanStatus').textContent = text; };
+// ---- 配装 workspace: the game-data skill table (index.html?embedded=1, “+” on every row) beside the results and the
+// 配装 panel, like the old loadout workspace; on a narrow screen one of them at a time (技能表 / 战斗设置 / 结果与配装) ----
+let workspaceOpen = false, leftView = 'table', phoneView = 'left', resultsCollapsed = false, tableReady = false;
+function layoutWorkspace() {
+  const cls = document.body.classList;
+  cls.toggle('build-mode', workspaceOpen);
+  cls.toggle('build-settings', workspaceOpen && leftView === 'settings');
+  cls.toggle('build-view-results', workspaceOpen && phoneView === 'results');
+  cls.toggle('build-results-collapsed', workspaceOpen && resultsCollapsed);
+  if ($('buildWorkspace')) $('buildWorkspace').hidden = !workspaceOpen;
+  if ($('engineBuild')) $('engineBuild').hidden = !workspaceOpen;
+  $('engineBuildToggle')?.setAttribute('aria-expanded', String(workspaceOpen));
+  document.querySelectorAll('[data-build-view]').forEach(b => { const v = b.dataset.buildView; b.setAttribute('aria-pressed', String(v === 'results' ? phoneView === 'results' : phoneView === 'left' && leftView === v)); });
+  if ($('buildResultsToggle')) { $('buildResultsToggle').textContent = resultsCollapsed ? '显示结果' : '收起结果'; $('buildResultsToggle').setAttribute('aria-expanded', String(!resultsCollapsed)); }
+}
 function showBuild(open) {
-  const section = $('engineBuild'); if (!section) return;
-  section.hidden = !open; $('engineBuildToggle')?.setAttribute('aria-expanded', String(open));
-  if (open) ensurePassiveIndex().then(renderCandidates);
+  workspaceOpen = open;
+  if (open) {
+    const frame = $('buildTableFrame');
+    if (frame && !frame.getAttribute('src')) frame.src = new URL('./index.html?embedded=1&v=20260929-build', import.meta.url).href;
+    if (!build.on) { build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); run(); }
+  }
+  layoutWorkspace();
+  if (open) window.scrollTo({ top: 0 });
+}
+function setBuildView(view) {
+  if (view === 'results') phoneView = 'results';
+  else { leftView = view; phoneView = 'left'; }
+  layoutWorkspace();
+}
+// the table tells us when it is ready and when a “+” / “✓” is clicked; we send it what is picked and each one's gain
+function sendTableState() {
+  const frame = $('buildTableFrame'); if (!frame?.contentWindow || !tableReady) return;
+  const gains = {};
+  for (const id of build.selected) { const g = buildGains.get(id); if (g?.removed && g.gain != null) gains[id] = g.gain; }
+  frame.contentWindow.postMessage({ type: 'lc-build-state', selected: [...build.selected], gains }, location.origin);
+}
+window.addEventListener('message', e => {
+  const frame = $('buildTableFrame');
+  if (e.origin !== location.origin || !frame || e.source !== frame.contentWindow) return;
+  if (e.data?.type === 'lc-table-ready') { tableReady = true; sendTableState(); }
+  else if (e.data?.type === 'lc-build-toggle') toggleSkill(Number(e.data.id));
+});
+function toggleSkill(id) {
+  if (!Number.isFinite(id) || buildAuto.includes(id)) return;
+  if (build.selected.includes(id)) { build.selected = build.selected.filter(x => x !== id); if (lastAdded === id) lastAdded = null; }
+  else { build.selected.push(id); lastAdded = id; }
+  build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); renderBuild(buildCtx); sendTableState(); run();
 }
 function applyPlan(plan) {
-  build = { ...defaultBuild(), ...(plan.build || {}), own: { ...defaultBuild().own, ...(plan.build?.own || {}) }, selected: [...(plan.build?.selected || [])], on: true, planId: plan.id };
+  build = { ...defaultBuild(), ...(plan.build || {}), own: { ...defaultBuild().own, ...(plan.build?.own || {}) }, selected: [...(plan.build?.selected || [])], breaks: cleanBreaks(plan.build?.breaks), on: true, planId: plan.id };
   saveBuild(); buildGains.clear(); syncBuildControls();
   if ($('enginePlanName')) $('enginePlanName').value = plan.name || '';
   planStatus(`已载入「${plan.name}」。`);
@@ -69,13 +116,13 @@ function savePlan(asNew) {
   if (!buildDress) { planStatus('先选择招式，等角色读取完。'); return; }
   const list = loadPlans(), now = new Date().toISOString();
   const name = ($('enginePlanName')?.value || '').trim() || `配装方案 ${list.filter(p => p.dress === buildDress).length + 1}`;
-  const data = { exclusive: build.exclusive, own: { ...build.own }, selected: [...build.selected] };
+  const data = { exclusive: build.exclusive, own: { ...build.own }, selected: [...build.selected], breaks: [...build.breaks] };
   let plan = !asNew && build.planId ? list.find(p => p.id === build.planId && p.dress === buildDress) : null;
   if (plan) Object.assign(plan, { name, build: data, updatedAt: now });
   else { plan = { id: `plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, name, siteId: siteCharacterId(), dress: buildDress, build: data, createdAt: now, updatedAt: now }; list.push(plan); }
   if (!storePlans(list)) { planStatus('保存失败：这个浏览器不允许保存。'); return; }
   build.planId = plan.id; saveBuild(); if ($('enginePlanName')) $('enginePlanName').value = name;
-  planStatus(`已保存「${name}」（${data.selected.length} 个通用技能）。`); renderPlans();
+  planStatus(`已保存「${name}」（${data.selected.length} 个技能 · ${buildSc().total} SC）。`); renderPlans();
 }
 function planAction(action, id, button) {
   const list = loadPlans(), plan = list.find(p => p.id === id); if (!plan) { renderPlans(); return; }
@@ -94,7 +141,7 @@ function renderPlans() {
   const box = $('enginePlanList'); if (!box) return;
   const plans = loadPlans().filter(p => p.dress === buildDress).sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
   $('enginePlanCount').textContent = String(plans.length);
-  box.innerHTML = plans.length ? plans.map(p => `<li${p.id === build.planId ? ' class="is-current"' : ''}><b>${esc(p.name)}</b> <small>${(p.build?.selected || []).length} 个通用技能 · ${esc(String(p.updatedAt || '').slice(0, 10))}${p.id === build.planId ? ' · 当前' : ''}</small><span class="inline-options"><button type="button" class="secondary" data-plan-action="load" data-plan="${esc(p.id)}">载入</button><button type="button" class="secondary" data-plan-action="rename" data-plan="${esc(p.id)}" title="用上面“配装名称”里的名字">改名</button><button type="button" class="secondary" data-plan-action="delete" data-plan="${esc(p.id)}">删除</button></span></li>`).join('') : '<li class="help">还没有保存的配装。</li>';
+  box.innerHTML = plans.length ? plans.map(p => `<li${p.id === build.planId ? ' class="is-current"' : ''}><b>${esc(p.name)}</b> <small>${(p.build?.selected || []).length} 个技能 · ${esc(String(p.updatedAt || '').slice(0, 10))}${p.id === build.planId ? ' · 当前' : ''}</small><span class="inline-options"><button type="button" class="secondary" data-plan-action="load" data-plan="${esc(p.id)}">载入</button><button type="button" class="secondary" data-plan-action="rename" data-plan="${esc(p.id)}" title="用上面“配装名称”里的名字">改名</button><button type="button" class="secondary" data-plan-action="delete" data-plan="${esc(p.id)}">删除</button></span></li>`).join('') : '<li class="help">还没有保存的配装。</li>';
 }
 // ---- 恢复角色推荐配装 / 按每 SC 收益推荐: data from the old loadout (game-data/engine/loadout-data.json, fixed since the
 // original skill table was removed on 2026-09-29; which skills 按每 SC 收益推荐 tries is to be decided later) ----
@@ -106,8 +153,9 @@ async function restoreRecommended() {
   if (!site && buildDress) { if (!siteIndex) siteIndex = await fetch(new URL('./game-data/index.json', import.meta.url)).then(r => r.json()).catch(() => ({})); site = Object.entries(siteIndex?.site || {}).find(([, d]) => d === buildDress)?.[0] || null; }
   const rec = site && data.recommended?.[site];
   if (!rec?.passives?.length) { planStatus('这个角色没有推荐配装。'); return; }
-  const c = await gameCharacter(buildDress); const own = new Set(ownPassiveIds(c, true).filter(isFreePassive));
-  build.selected = rec.passives.filter(id => !own.has(id)); build.on = true; build.planId = null; saveBuild(); buildGains.clear(); syncBuildControls();
+  const c = await gameCharacter(buildDress); await ensureTablePassives();
+  const own = new Set([...ownPassiveIds(c, true).filter(isFreePassive), ...autoPaidIds(c)]);
+  build.selected = rec.passives.filter(id => !own.has(id)); build.on = true; build.planId = null; saveBuild(); buildGains.clear(); syncBuildControls(); sendTableState();
   planStatus(`已恢复推荐配装（${build.selected.length} 个被动）；需要的话再保存。`); run();
 }
 const recommendState = { running: false, gen: 0, rows: [] };
@@ -128,10 +176,7 @@ async function startRecommend() {
   $('engineRecommendStatus').textContent = '准备候选被动…';
   const data = await ensureLoadoutData(); await ensurePassiveIndex();
   const taken = new Set([...build.selected, ...ctx.buildOwn.map(p => p.id ?? p)]);
-  const q = $('engineRecommendSearchOnly').checked ? buildQuery.toLowerCase() : '';
-  const byId = new Map(passiveIndex.map(r => [r.id, r]));
   let ids = [...new Set([...buildOwnPaid, ...(data.commonPassives || [])])].filter(id => !taken.has(id)).filter(id => { const c = passiveCost(id); return c > 0 && c < FREE_COST; });
-  if (q) ids = ids.filter(id => { const r = byId.get(id); return r && (r.nameS.toLowerCase().includes(q) || r.name.toLowerCase().includes(q)); });
   await engineModules.loadPassives(battle.master, ids);
   if (gen !== recommendState.gen) return;
   ids = ids.filter(id => battle.master.passive.has(id));
@@ -166,7 +211,7 @@ function keepLoadout(report) {
 }
 async function ensureSwitches() { if (!switches) switches = await fetch(new URL('./game-data/engine/switch.json', import.meta.url)).then(r => r.json()); return switches; }
 
-const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-cands{display:flex;flex-wrap:wrap;gap:6px}.engine-build-cand{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid #bdccdf;border-radius:6px;background:#f2f6fb;color:#172d49}#engineBuild{margin-top:12px}#engineBuildWrap{margin-top:14px}.engine-plan-list{list-style:none;padding:0;margin:.4rem 0}.engine-plan-list li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 0;border-bottom:1px solid #dbe4ef}.engine-plan-list li.is-current b{color:#1f5ea8}.engine-plan-actions{align-self:end}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}.engine-build-cand button{min-height:26px;padding:2px 8px;font-size:.8rem}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
+const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-table{min-width:0!important}.engine-build-table td,.engine-build-table th{padding:7px 8px}.engine-build-table small{min-width:0!important}#engineBuild{margin-top:18px;padding-top:4px}#engineBuild .section-heading{margin-bottom:6px}#engineBuild .section-heading h3{margin:0;font-size:1rem}.engine-build-on{flex-direction:row!important;align-items:center;gap:6px;font-weight:500!important}#engineBuildWrap{margin-top:14px}#engineBuildStatus{margin:6px 2px 0}.engine-build-sc{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid #cfdfef;border-radius:6px;background:#edf4fb}.engine-build-sc span{font-size:.85rem;color:#445c79;font-weight:600}.engine-build-sc strong{font-size:1.45rem;margin-left:8px;font-variant-numeric:tabular-nums;color:#172d49}.engine-build-breaks{display:inline-flex;gap:6px}.engine-build-breaks button{min-height:32px;padding:4px 10px}.engine-build-breaks button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-build-changes{font-size:.8rem;color:#445c79;margin-top:3px;line-height:1.55}.engine-build-sccell{text-align:center!important}.engine-build-sccell b{display:block}.engine-build-sccell small{font-size:.75rem}.engine-build-auto td{background:#f7f9fc}.engine-build-auto td:last-child{white-space:nowrap;text-align:center}.engine-build-tag{display:inline!important;font-size:.72rem!important;background:#e3ebf5;border-radius:3px;padding:1px 5px;color:#35577d}.engine-build-table td button{min-height:28px;padding:2px 10px}.engine-build-picked{table-layout:fixed}.engine-build-picked td{overflow-wrap:anywhere}.engine-plan-list{list-style:none;padding:0;margin:.4rem 0}.engine-plan-list li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 0;border-bottom:1px solid #dbe4ef}.engine-plan-list li.is-current b{color:#1f5ea8}.engine-plan-actions{align-self:end}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
 // ---- the main result card ----
 // 命中段数 is only the user's own count (default 10), kept per move by the page (damage-calculator.mjs); the card
 // edits it through the page.
@@ -430,29 +475,36 @@ function mount() {
     <div class="inline-options"><label><input id="engineProbability" type="checkbox" checked>概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
     <div id="engineResult"></div>`;
   aside.insertBefore(card, aside.firstChild);
-  // 配装 sits where the old calculator's 配装 button was: right under this card, opening its panel below
+  // 配装 sits where the old calculator's 配装 button was, right under this card; it opens the 配装 workspace: the
+  // game-data skill table (with “+”) in the main column, the results and the 配装 panel in this column
   const buildWrap = document.createElement('div'); buildWrap.id = 'engineBuildWrap';
-  buildWrap.innerHTML = `<button id="engineBuildToggle" class="primary unified-start" type="button" aria-expanded="false" aria-controls="engineBuild">配装</button>
-    <section id="engineBuild" class="card engine-build" hidden aria-labelledby="engineBuildTitle">
-      <div class="section-heading"><h3 id="engineBuildTitle">配装</h3></div>
-      <p class="help">基线只装角色不花 SC 的自带被动（个性、固有被动、超越）＋本账号加护，等级／觉醒／能力盘／强化全按最大，专武可开关。启用后主结果卡按这里的配装结算；每加一个被动（本角色能力盘上要花 SC 的，或任意通用被动），就重新结算并给出它对当前配装的收益（去掉它伤害会少多少）。</p>
-      <div class="inline-options"><label><input id="engineBuildOn" type="checkbox">启用配装模式</label><label><input id="engineBuildExclusive" type="checkbox" checked>有专武（专属武器＋防具）</label><label><input id="engineBuildOwnPersonality" type="checkbox" checked>个性</label><label><input id="engineBuildOwnPassives" type="checkbox" checked>固有免费被动</label><label><input id="engineBuildOwnTranscend" type="checkbox" checked>超越</label><label><input id="engineBuildOwnBlessings" type="checkbox" checked>加护</label></div>
+  buildWrap.innerHTML = `<button id="engineBuildToggle" class="primary unified-start" type="button" aria-expanded="false" aria-controls="buildWorkspace">配装</button><p class="help" id="engineBuildStatus"></p>`;
+  card.after(buildWrap);
+  const buildPanel = document.createElement('section'); buildPanel.id = 'engineBuild'; buildPanel.className = 'engine-build'; buildPanel.hidden = true; buildPanel.setAttribute('aria-labelledby', 'engineBuildTitle');
+  buildPanel.innerHTML = `<div class="section-heading"><h3 id="engineBuildTitle">配装</h3><label class="engine-build-on"><input id="engineBuildOn" type="checkbox">主结果按配装计算</label></div>
+      <p class="help">在左边的技能表点“+”加入技能（再点一次取消）。每加一个就重新计算，并给出每个技能对当前配装的收益：去掉它伤害会少多少，以及它具体改变了什么。</p>
+      <div class="inline-options"><label><input id="engineBuildExclusive" type="checkbox" checked>有专武（专属武器＋防具）</label><label><input id="engineBuildOwnPersonality" type="checkbox" checked>个性</label><label><input id="engineBuildOwnPassives" type="checkbox" checked>固有免费被动</label><label><input id="engineBuildOwnTranscend" type="checkbox" checked>超越</label><label><input id="engineBuildOwnBlessings" type="checkbox" checked>加护</label></div>
+      <div class="engine-build-sc"><div><span>SC 合计</span><strong id="engineBuildScTotal">0</strong></div><div class="engine-build-breaks" role="group" aria-label="能力盘突破">${BREAKS.map(([sc, name]) => `<button type="button" data-build-break="${sc}" aria-pressed="true" title="${name}：SC ≤ ${sc} 的一个技能免费">${name}</button>`).join('')}</div></div>
+      <p class="help" id="engineBuildSummary">未启用。</p>
+      <div class="entry-table-wrap"><table class="entry-table engine-build-table engine-build-picked"><colgroup><col style="width:27%"><col style="width:15%"><col><col style="width:44px"></colgroup><thead><tr><th>技能</th><th>SC</th><th>对当前配装的收益</th><th></th></tr></thead><tbody id="engineBuildRows"><tr><td colspan="4" class="help">还没有加技能。</td></tr></tbody></table></div>
+      <div class="inline-options"><button type="button" id="engineBuildRecommended" class="secondary">恢复角色推荐配装</button><button type="button" id="engineBuildFromReport" class="secondary">从配装报告载入已装被动</button><button type="button" id="engineBuildRecalc" class="secondary">重算全部收益</button><button type="button" id="engineBuildClear" class="secondary">清空所选</button></div>
       <div class="fields two engine-fields"><label>配装名称<input id="enginePlanName" maxlength="40" placeholder="配装方案"></label><div class="inline-options engine-plan-actions"><button type="button" id="enginePlanSave" class="primary">保存配装</button><button type="button" id="enginePlanSaveNew" class="secondary">另存为新配装</button></div></div>
       <p class="help" id="enginePlanStatus" role="status"></p>
       <details id="enginePlans"><summary>已保存配装（<span id="enginePlanCount">0</span>）</summary><ul id="enginePlanList" class="engine-plan-list"></ul></details>
-      <div class="inline-options"><button type="button" id="engineBuildRecommended" class="secondary">恢复角色推荐配装</button><button type="button" id="engineBuildFromReport" class="secondary">从配装报告载入已装被动</button><button type="button" id="engineBuildRecalc" class="secondary">重算全部收益</button><button type="button" id="engineBuildClear" class="secondary">清空所选</button></div>
-      <p class="help" id="engineBuildSummary">未启用。</p>
-      <div class="entry-table-wrap"><table class="entry-table engine-build-table"><thead><tr><th>已选被动</th><th>SC</th><th>对当前配装的收益</th><th></th></tr></thead><tbody id="engineBuildRows"><tr><td colspan="4" class="help">还没有加被动。</td></tr></tbody></table></div>
-      <div class="fields two engine-fields"><label>添加被动（名称，简体或繁体）<input id="engineBuildSearch" type="search" placeholder="例如 光魔法 / 月光 / 贯导"></label></div>
-      <div id="engineBuildCandidates" class="help"></div>
-      <details id="engineRecommend"><summary>按每 SC 收益推荐</summary><p class="help">把技能表里的每个通用被动（以及本角色能力盘上要花 SC 的被动）逐个加进当前配装试算，按“收益 ÷ SC”排序。逐个计算，较慢；可随时停止。换招式、条件或配装后会停止，需要重新开始。</p>
-        <div class="inline-options"><button type="button" id="engineRecommendStart" class="primary">开始计算</button><button type="button" id="engineRecommendStop" class="secondary" disabled>停止</button><label><input id="engineRecommendSearchOnly" type="checkbox">只算上面搜索到的被动</label></div>
+      <details id="engineRecommend"><summary>按每 SC 收益推荐</summary><p class="help">把原技能表里的每个通用被动（以及本角色能力盘上、技能表里有的要花 SC 的被动）逐个加进当前配装试算，按“收益 ÷ SC”排序。逐个计算，较慢；可随时停止。换招式、条件或配装后会停止，需要重新开始。</p>
+        <div class="inline-options"><button type="button" id="engineRecommendStart" class="primary">开始计算</button><button type="button" id="engineRecommendStop" class="secondary" disabled>停止</button></div>
         <p class="help" id="engineRecommendStatus" role="status"></p>
-        <div class="entry-table-wrap"><table class="entry-table engine-build-table"><thead><tr><th>被动</th><th>SC</th><th>收益</th><th>每 SC</th><th></th></tr></thead><tbody id="engineRecommendRows"></tbody></table></div></details>
-    </section>`;
-  card.after(buildWrap);
-  // the result display (big number / gauges / total) sits right under this card's heading
+        <div class="entry-table-wrap"><table class="entry-table engine-build-table"><thead><tr><th>被动</th><th>SC</th><th>收益</th><th>每 SC</th><th></th></tr></thead><tbody id="engineRecommendRows"></tbody></table></div></details>`;
+  card.append(buildPanel);
+  const workspace = document.createElement('section'); workspace.id = 'buildWorkspace'; workspace.className = 'build-workspace'; workspace.hidden = true; workspace.setAttribute('aria-label', '配装');
+  workspace.innerHTML = `<div class="build-toolbar"><strong>配装</strong><span id="buildToolbarStatus"></span>
+      <div class="build-views" role="group" aria-label="显示"><button type="button" data-build-view="table" aria-pressed="true">技能表</button><button type="button" data-build-view="settings" aria-pressed="false">战斗设置</button><button type="button" data-build-view="results" class="build-phone-only" aria-pressed="false">结果与配装</button></div>
+      <button type="button" id="buildResultsToggle" class="build-desktop-only" aria-expanded="true" aria-controls="unifiedResults">收起结果</button><button type="button" id="buildExit">退出配装</button></div>
+    <iframe id="buildTableFrame" title="游戏数据技能表（点 + 加入配装）"></iframe>`;
+  const layoutBox = $('calculationPage'); if (layoutBox) layoutBox.prepend(workspace);
+  // the result display (big number / gauges / total) sits right under this card's heading, the 配装 panel under it
   mountPrimary();
+  card.querySelector('.result-main')?.after(buildPanel);
   // 目标：从游戏怪物表选择 lives with the rest of the Boss/target fields (Boss 与战斗条件 section) instead of in
   // this card; fall back to appending here if that section's slot isn't on the page.
   const targetHtml = `<details id="engineTarget"><summary>目标：从游戏怪物表选择</summary><p class="help">直接用游戏 MonsterMst 的数值（HP、防御、魔抗、种族、属性抗性、Boss 自带被动），与读取报告里的 Boss 完全一致。不选时按上方的目标栏位或读取报告的 Boss。</p>
@@ -476,45 +528,62 @@ function mount() {
   $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} run(); });
   $('engineResult').addEventListener('change', e => { const key = e.target.dataset.assume; if (!key) return; if (e.target.checked) assumed.add(key); else assumed.delete(key); run(); });
   // loadout builder controls
-  $('engineBuildToggle').addEventListener('click', () => showBuild($('engineBuild').hidden));
+  $('engineBuildToggle').addEventListener('click', () => showBuild(!workspaceOpen));
+  $('buildExit').addEventListener('click', () => showBuild(false));
+  $('buildResultsToggle').addEventListener('click', () => { resultsCollapsed = !resultsCollapsed; layoutWorkspace(); });
+  workspace.querySelector('.build-views').addEventListener('click', e => { const b = e.target.closest('[data-build-view]'); if (b) setBuildView(b.dataset.buildView); });
   $('enginePlanSave').addEventListener('click', () => savePlan(false));
   $('enginePlanSaveNew').addEventListener('click', () => savePlan(true));
   $('enginePlanList').addEventListener('click', e => { const b = e.target.closest('[data-plan-action]'); if (b) planAction(b.dataset.planAction, b.dataset.plan, b); });
   $('engineBuildRecommended').addEventListener('click', () => restoreRecommended());
   $('engineRecommendStart').addEventListener('click', () => startRecommend());
   $('engineRecommendStop').addEventListener('click', () => stopRecommend('已停止。'));
-  $('engineRecommendRows').addEventListener('click', e => { const add = e.target.closest('[data-build-add]'); if (!add) return; const id = Number(add.dataset.buildAdd); if (!build.selected.includes(id)) build.selected.push(id); build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); stopRecommend('已加入，配装改变后需要重新计算推荐。'); run(); });
-  $('engineBuildOn').addEventListener('change', e => { build.on = e.target.checked; saveBuild(); buildGains.clear(); if (build.on) ensurePassiveIndex().then(renderCandidates); run(); });
+  $('engineRecommendRows').addEventListener('click', e => { const add = e.target.closest('[data-build-add]'); if (!add) return; stopRecommend('已加入，配装改变后需要重新计算推荐。'); const id = Number(add.dataset.buildAdd); if (!build.selected.includes(id)) toggleSkill(id); });
+  $('engineBuildOn').addEventListener('change', e => { build.on = e.target.checked; saveBuild(); buildGains.clear(); run(); });
   $('engineBuildExclusive').addEventListener('change', e => { build.exclusive = e.target.checked; saveBuild(); buildGains.clear(); run(); });
   for (const [id, key] of [['engineBuildOwnPersonality', 'personality'], ['engineBuildOwnPassives', 'ownPassives'], ['engineBuildOwnTranscend', 'transcend'], ['engineBuildOwnBlessings', 'blessings']]) $(id).addEventListener('change', e => { build.own[key] = e.target.checked; saveBuild(); buildGains.clear(); run(); });
-  $('engineBuildClear').addEventListener('click', () => { build.selected = []; saveBuild(); buildGains.clear(); run(); });
+  buildPanel.querySelector('.engine-build-breaks').addEventListener('click', e => {
+    const b = e.target.closest('[data-build-break]'); if (!b) return;
+    const sc = Number(b.dataset.buildBreak);
+    build.breaks = build.breaks.includes(sc) ? build.breaks.filter(x => x !== sc) : cleanBreaks([...build.breaks, sc]);
+    saveBuild(); syncBuildControls(); renderBuild(buildCtx);   // SC only: the damage does not change
+  });
+  $('engineBuildClear').addEventListener('click', () => { build.selected = []; lastAdded = null; saveBuild(); buildGains.clear(); sendTableState(); run(); });
   $('engineBuildRecalc').addEventListener('click', () => { buildGains.clear(); if (buildCtx) computeGains(buildCtx); });
   $('engineBuildFromReport').addEventListener('click', async () => {
     if (!loadoutReport || !buildDress) { $('engineBuildSummary').textContent = '先导入配装报告（上方文件框）。'; return; }
     const M = await ensureEngine(buildDress);
     const lo = M.unitLoadout(loadoutReport, battle.master, await ensureSwitches(), buildDress);
     if (!lo) { $('engineBuildSummary').textContent = '配装报告里没有这个角色。'; return; }
-    const c = await gameCharacter(buildDress); const own = new Set(ownPassiveIds(c, true));
-    build.selected = lo.passives.filter(id => !own.has(id)); build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); run();
+    const c = await gameCharacter(buildDress); await ensureTablePassives();
+    const own = new Set([...ownPassiveIds(c, true), ...autoPaidIds(c)]);
+    build.selected = lo.passives.filter(id => !own.has(id)); build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); sendTableState(); run();
   });
-  $('engineBuildSearch').addEventListener('input', e => { buildQuery = e.target.value.trim(); ensurePassiveIndex().then(renderCandidates); });
-  $('engineBuildCandidates').addEventListener('click', async e => {
-    const add = e.target.closest('[data-build-add]'), probe = e.target.closest('[data-build-probe]');
-    if (add) { const id = Number(add.dataset.buildAdd); if (!build.selected.includes(id)) build.selected.push(id); build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); run(); }
-    else if (probe) { const id = Number(probe.dataset.buildProbe); probe.disabled = true; probe.textContent = '…'; const r = await probeCandidate(id); probe.disabled = false; probe.textContent = r == null ? '试算' : `${r >= 0 ? '+' : ''}${(r * 100).toFixed(1)}%`; }
-  });
-  $('engineBuildRows').addEventListener('click', e => { const rm = e.target.closest('[data-build-remove]'); if (!rm) return; build.selected = build.selected.filter(id => id !== Number(rm.dataset.buildRemove)); saveBuild(); buildGains.clear(); run(); });
+  $('engineBuildRows').addEventListener('click', e => { const rm = e.target.closest('[data-build-remove]'); if (rm) toggleSkill(Number(rm.dataset.buildRemove)); });
 }
 function syncBuildControls() {
   if (!$('engineBuildOn')) return;
   $('engineBuildOn').checked = build.on; $('engineBuildExclusive').checked = build.exclusive;
   $('engineBuildOwnPersonality').checked = build.own.personality; $('engineBuildOwnPassives').checked = build.own.ownPassives; $('engineBuildOwnTranscend').checked = build.own.transcend; $('engineBuildOwnBlessings').checked = build.own.blessings;
-  if (build.on) showBuild(true);
+  document.querySelectorAll('[data-build-break]').forEach(b => b.setAttribute('aria-pressed', String(build.breaks.includes(Number(b.dataset.buildBreak)))));
+  renderBuildStatus();
   renderPlans();
 }
+// SC of the picked skills (the character's own skills off the table are not in it: 0 SC)
+function buildSc() { return scTotal(build.selected.map(id => ({ id, sc: passiveCost(id) })), build.breaks); }
+// one line under the 配装 button and in the workspace toolbar
+function renderBuildStatus() {
+  const { total } = buildSc(), n = build.selected.length;
+  const cur = buildCurrent && build.on ? ` · 当前配装每次 ${fmt(buildCurrent.perCall)}` : '';
+  const g = lastAdded != null ? buildGains.get(lastAdded) : null;
+  const last = lastAdded != null && build.selected.includes(lastAdded) ? ` · 刚加入 ${passiveText(lastAdded)} ${g?.removed ? pct(g.gain) : '计算中…'}` : '';
+  if ($('engineBuildStatus')) $('engineBuildStatus').textContent = build.on ? `主结果按配装计算：已选 ${n} 个技能 · SC 合计 ${total}${cur}` : (n ? `配装未启用（已选 ${n} 个技能 · SC 合计 ${total}）` : '');
+  if ($('buildToolbarStatus')) $('buildToolbarStatus').textContent = `已选 ${n} 个 · SC ${total}${cur}${last}`;
+}
 // The character's own passives (game-data/c/<dress>.json) split by SC: COST 99 marks the free ones (unique
-// passives such as 赤裸之力II / 救世的聖劍, 【超越】, 迷宮踏破) that are always on; the rest cost SC like any common
-// passive and are offered as candidates. `all` ignores the group toggles.
+// passives such as 赤裸之力II / 救世的聖劍, 【超越】, 迷宮踏破) that are always on; the rest cost SC. Those that are on
+// the game-data skill table are picked with “+” like any skill; those that are not (the character's own, e.g.
+// 月光II / 贯导) are always added at 0 SC (the user's rule). `all` ignores the group toggles.
 const FREE_COST = 99;
 const isFreePassive = id => { const c = battle?.master.passive.get(id)?.COST; return c == null || c >= FREE_COST; };
 function ownPassiveIds(c, all = false) {
@@ -523,12 +592,47 @@ function ownPassiveIds(c, all = false) {
   return [...(g.personality ? (c.personality || []).map(p => p.passive) : []), ...(g.ownPassives ? (c.ownPassives || []).map(p => p.passive).filter(isFreePassive) : []), ...(g.transcend ? (c.transcend || []).map(p => p.passive) : []), ...(g.blessings ? (c.blessings || []) : [])];
 }
 const ownPaidIds = c => (c?.ownPassives || []).map(p => p.passive).filter(id => !isFreePassive(id));
-// Expected damage per call of the move (the main card's metric) from one scenario run.
+let tablePassives = null;
+async function ensureTablePassives() {
+  if (!tablePassives) tablePassives = new Set(await fetch(new URL('./game-data/engine/table-passives.json?v=20260929-build', import.meta.url)).then(r => r.json()).then(t => t.ids).catch(() => []));
+  return tablePassives;
+}
+const autoPaidIds = c => tablePassives ? ownPaidIds(c).filter(id => !tablePassives.has(id)) : [];
+// Expected damage per call of the move (the main card's metric) from one scenario run, and what its first hit
+// received (the numbers a skill can change).
 function metricOf(out) {
   const all = out.hits.filter(h => !h.cancelled && h.normal), live = all.filter(h => h.bulletId === all[0]?.bulletId);
   const rateOf = h => Math.min(100, Math.max(0, h?.crt ?? out.stats.crt.real ?? 0)) / 100;
   const perCall = live.reduce((sum, h) => sum + h.normal.mean * (1 - rateOf(h)) + (h.critical ? h.critical.mean : h.normal.mean) * rateOf(h), 0);
-  return { perCall, cap: live[0]?.cap ?? null, errors: out.errors.length };
+  const h = live[0];
+  const detail = h ? { magical: h.breakdown?.attack?.stat === K.STAT.INT, attack: h.attack, crt: h.crt ?? out.stats.crt.real, cap: h.capComputed ?? h.cap, killer: h.killerFactor, offense: h.offense, received: h.received, reduction: h.reduction, resist: h.resist,
+    post: h.core ? h.afterPassives / h.core : null, crit: h.critical && h.normal?.mean ? h.critical.mean / h.normal.mean : null } : null;
+  return { perCall, cap: h?.cap ?? null, errors: out.errors.length, detail };
+}
+// What a skill changes: the metric with it against the metric without it (same wording as the result card).
+const num2 = n => Number(n).toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+const mul = n => `×${Number(n).toLocaleString('zh-CN', { minimumFractionDigits: 3, maximumFractionDigits: 3 })}`;
+const CHANGES = [
+  ['attack', d => d.magical ? '法强' : '攻击力', (a, b) => signed(a - b)],
+  ['crt', () => '暴击率', (a, b) => signed(a - b, '%')],
+  ['cap', () => '伤害上限', (a, b) => signed(a - b)],
+  ['killer', () => '特攻倍率', (a, b) => `${mul(b)} → ${mul(a)}`],
+  ['offense', () => '核心前倍率·攻', (a, b) => `${mul(b)} → ${mul(a)}`],
+  ['received', () => '核心前倍率·受', (a, b) => `${mul(b)} → ${mul(a)}`],
+  ['reduction', () => '核心前倍率·减伤', (a, b) => `${mul(b)} → ${mul(a)}`],
+  ['resist', () => '属性抗性', (a, b) => `${num2(b)} → ${num2(a)}`],
+  ['post', () => '核心后修正', (a, b) => `${mul(b)} → ${mul(a)}`],
+  ['crit', () => '暴击伤害倍率', (a, b) => `${mul(b)} → ${mul(a)}`],
+];
+function changesOf(withIt, without) {
+  const a = withIt?.detail, b = without?.detail; if (!a || !b) return [];
+  const out = [];
+  for (const [key, label, show] of CHANGES) {
+    const x = a[key], y = b[key]; if (x == null || y == null) continue;
+    const tiny = ['attack', 'cap'].includes(key) ? 0.5 : key === 'crt' || key === 'resist' ? 0.005 : 0.0005;
+    if (Math.abs(x - y) >= tiny) out.push(`${label(a)} ${show(x, y)}`);
+  }
+  return out;
 }
 // One evaluation of a passive set with the current move / target / state (single random 0.95: relative gains only).
 function evalBuild(ctx, passiveIds) {
@@ -539,54 +643,47 @@ function evalBuild(ctx, passiveIds) {
   return metricOf(M.runScenario({ battle, attacker: a, target: t, skill: { id: ctx.move.id, ...(ctx.firstBullet ? { bulletId: ctx.firstBullet } : {}) }, state: ctx.state, assume: { probability: probabilityMode, instances: [...ctx.assumeSet] }, randoms: [0.95] }));
 }
 const yieldUi = () => new Promise(r => setTimeout(r, 0));
-// Baseline (own only) and the marginal of every selected passive, computed one run at a time so the page stays live;
-// a new main run cancels the loop and reschedules it.
+// The current build, the start (配装前: no picked skill) and the marginal of every picked and automatic skill,
+// computed one run at a time so the page stays live — the skill added last first; a new main run cancels the loop.
 async function computeGains(ctx) {
   const gen = ++buildGen;
   const rows = $('engineBuildRows'); if (!rows) return;
   try {
     if (!buildCurrent) { buildCurrent = evalBuild(ctx, ctx.buildPassives); renderBuild(ctx); await yieldUi(); if (gen !== buildGen) return; }
-    if (!buildBaseline) { buildBaseline = evalBuild(ctx, ctx.buildOwn); renderBuild(ctx); await yieldUi(); if (gen !== buildGen) return; }
-    for (const id of build.selected) {
+    const order = [...(lastAdded != null && build.selected.includes(lastAdded) ? [lastAdded] : []), ...[...build.selected].reverse().filter(id => id !== lastAdded), ...ctx.autoIds];
+    for (const id of order) {
       if (buildGains.has(id)) continue;
       const without = evalBuild(ctx, ctx.buildPassives.filter(p => (p.id ?? p) !== id));
-      buildGains.set(id, { removed: true, perCall: without.perCall, gain: without.perCall > 0 ? buildCurrent.perCall / without.perCall - 1 : null });
+      buildGains.set(id, { removed: true, perCall: without.perCall, gain: without.perCall > 0 ? buildCurrent.perCall / without.perCall - 1 : null, changes: changesOf(buildCurrent, without) });
       renderBuild(ctx); await yieldUi(); if (gen !== buildGen || running) return;
     }
+    if (!buildBaseline) { buildBaseline = evalBuild(ctx, ctx.buildOwn); renderBuild(ctx); }
   } catch (err) { console.error(err); $('engineBuildSummary').textContent = `收益计算失败：${err.message}`; }
 }
-async function probeCandidate(id) {
-  if (!buildCtx || !buildCurrent) return null;
-  await engineModules.loadPassives(battle.master, [id]);
-  if (!battle.master.passive.has(id)) return null;
-  const withIt = evalBuild(buildCtx, [...buildCtx.buildPassives, { id }]);
-  buildGains.set(id, { removed: false, perCall: withIt.perCall, gain: buildCurrent.perCall > 0 ? withIt.perCall / buildCurrent.perCall - 1 : null });
-  return buildGains.get(id).gain;
-}
 const pct = g => g == null ? '—' : `${g >= 0 ? '+' : ''}${(g * 100).toFixed(1)}%`;
+const passiveText = id => { const row = passiveIndex?.find(r => r.id === id); return row?.nameS || battle?.master.passive.get(id)?.NAME || `编号 ${id}`; };
+function gainCell(id) {
+  const g = buildGains.get(id);
+  if (!g || !g.removed) return '<small>计算中…</small>';
+  const changes = g.changes?.length ? g.changes.map(esc).join(' · ') : '本招式没有变化（本招不吃这个技能的效果，或条件没有触发）';
+  return `<b>${pct(g.gain)}</b> <small>去掉它每次 ${fmt(g.perCall)}</small><div class="engine-build-changes">${changes}</div>`;
+}
 function renderBuild(ctx) {
   const rows = $('engineBuildRows'), summary = $('engineBuildSummary'); if (!rows) return;
-  if (!build.on) { summary.textContent = '未启用。启用后基线按自带被动结算，加的每个被动都单独给出收益。'; rows.innerHTML = '<tr><td colspan="4" class="help">还没有加被动。</td></tr>'; return; }
-  const sc = build.selected.reduce((s, id) => { const c = passiveCost(id); return s + (c && c < 99 ? c : 0); }, 0);
+  const sc = buildSc();
+  if ($('engineBuildScTotal')) $('engineBuildScTotal').textContent = String(sc.total);
+  renderBuildStatus(); sendTableState();
+  if (!build.on) { summary.textContent = '主结果没有按配装计算（上面的勾没打）。在技能表点“+”或打勾就会启用。'; rows.innerHTML = '<tr><td colspan="4" class="help">还没有加技能。</td></tr>'; return; }
   const hits = currentHits().hits;
-  const cur = buildCurrent ? `当前配装每次 <b>${fmt(buildCurrent.perCall)}</b>（${hits} 段 ≈ ${fmt(buildCurrent.perCall * hits)}）` : '当前配装：结算中…';
-  const base = buildBaseline ? ` · 自带基线每次 ${fmt(buildBaseline.perCall)}${buildCurrent && buildBaseline.perCall > 0 ? `（当前比基线 ${pct(buildCurrent.perCall / buildBaseline.perCall - 1)}）` : ''}` : '';
-  summary.innerHTML = `${cur}${base} · 已选 ${build.selected.length} 个被动 · SC 合计 ${sc}${build.exclusive ? ' · 有专武' : ' · 无专武'}${ctx?.buildNote ? ` · ${esc(ctx.buildNote)}` : ''}<br><small>收益按随机 0.95 单点比较；上限附近的被动收益会随段数上限变化。</small>`;
-  rows.innerHTML = build.selected.length ? build.selected.map(id => { const g = buildGains.get(id); const missing = !battle?.master.passive.has(id); return `<tr><td>${passiveLabel(id)}${missing ? ' <small>（主数据缺失）</small>' : ''}</td><td>${passiveCost(id) ?? '—'}</td><td>${g ? (g.removed ? `<b>${pct(g.gain)}</b> <small>去掉它每次 ${fmt(g.perCall)}</small>` : pct(g.gain)) : '<small>计算中…</small>'}</td><td><button type="button" class="secondary" data-build-remove="${id}">移除</button></td></tr>`; }).join('') : '<tr><td colspan="4" class="help">还没有加被动：在下面搜索并点「加入」。</td></tr>';
-}
-function candidateChip(id, nameS, name, cost) {
-  const g = buildGains.get(id);
-  return `<span class="engine-build-cand"><b>${esc(nameS)}</b>${name && name !== nameS ? ` <small>${esc(name)}</small>` : ''} <small>SC ${cost == null ? '—' : cost >= FREE_COST ? '免' : cost}</small> <button type="button" class="secondary" data-build-probe="${id}" title="加进当前配装的收益">${g && !g.removed ? pct(g.gain) : '试算'}</button><button type="button" class="primary" data-build-add="${id}">加入</button></span>`;
-}
-function renderCandidates() {
-  const box = $('engineBuildCandidates'); if (!box || !passiveIndex) return;
-  const q = buildQuery.toLowerCase(), taken = new Set(build.selected);
-  const byId = new Map(passiveIndex.map(r => [r.id, r]));
-  const own = buildOwnPaid.filter(id => !taken.has(id)).map(id => { const r = byId.get(id), m = battle?.master.passive.get(id); return candidateChip(id, r?.nameS || m?.NAME || String(id), r?.name, r?.cost ?? m?.COST); });
-  const ownBlock = own.length ? `<p class="help">本角色能力盘上要花 SC 的被动：</p><div class="engine-build-cands">${own.join('')}</div>` : '';
-  if (!q) { box.innerHTML = `${ownBlock}<p class="help">或输入名称筛选任意通用被动（例如 光魔法、暴击、上限、月光）。</p>`; return; }
-  const list = passiveIndex.filter(r => !taken.has(r.id) && (r.nameS.toLowerCase().includes(q) || r.name.toLowerCase().includes(q))).sort((a, b) => a.order - b.order || a.id - b.id).slice(0, 40);
-  box.innerHTML = `${ownBlock}${list.length ? `<p class="help">搜索结果：</p><div class="engine-build-cands">${list.map(r => candidateChip(r.id, r.nameS, r.name, r.cost)).join('')}</div>` : '<p class="help">没有匹配的被动。</p>'}`;
+  const cur = buildCurrent ? `当前配装每次 <b>${fmt(buildCurrent.perCall)}</b>（${hits} 段 ≈ ${fmt(buildCurrent.perCall * hits)}）` : '当前配装：计算中…';
+  const base = buildBaseline ? ` · 配装前（只有自带）每次 ${fmt(buildBaseline.perCall)}${buildCurrent && buildBaseline.perCall > 0 ? `，当前比它 ${pct(buildCurrent.perCall / buildBaseline.perCall - 1)}` : ''}` : '';
+  const freed = sc.items.filter(i => i.freeBy);
+  summary.innerHTML = `${cur}${base}<br>已选 ${build.selected.length} 个技能 · SC 合计 ${sc.total}${freed.length ? `（${freed.map(i => `${breakName(i.freeBy)}免 ${esc(passiveText(i.id))}`).join('、')}）` : ''}${ctx?.autoIds?.length ? ` · 角色专属 ${ctx.autoIds.length} 个（0 SC）` : ''}${build.exclusive ? ' · 有专武' : ' · 无专武'}${ctx?.buildNote ? ` · ${esc(ctx.buildNote)}` : ''}<br><small>收益＝去掉这个技能伤害会少多少（按随机 0.95 单点比较，只比第一条伤害弹道）；上限附近的技能收益会随别的技能变化。</small>`;
+  const picked = [...sc.items].sort((a, b) => b.sc - a.sc);
+  const nameTd = id => { const row = passiveIndex?.find(r => r.id === id); return `<span title="${esc(row?.name || '')}">${esc(passiveText(id))}</span>`; };
+  const pickedRows = picked.map(i => `<tr><td>${nameTd(i.id)}${battle && !battle.master.passive.has(i.id) ? ' <small>（主数据缺失）</small>' : ''}</td><td class="engine-build-sccell">${i.freeBy ? `<b>0</b><small>${breakName(i.freeBy)}（原 ${i.sc}）</small>` : i.sc || '—'}</td><td>${gainCell(i.id)}</td><td><button type="button" class="secondary" data-build-remove="${i.id}" aria-label="移除">×</button></td></tr>`);
+  const autoRows = (ctx?.autoIds || []).map(id => `<tr class="engine-build-auto"><td>${nameTd(id)}<br><small class="engine-build-tag">角色专属</small></td><td class="engine-build-sccell"><b>0</b><small>原 ${passiveCost(id) ?? '—'}</small></td><td>${gainCell(id)}</td><td><small>固定</small></td></tr>`);
+  rows.innerHTML = [...pickedRows, ...autoRows].join('') || '<tr><td colspan="4" class="help">还没有加技能：在左边的技能表点“+”。</td></tr>';
 }
 
 let siteIndex = null, characterCache = new Map();
@@ -799,19 +896,21 @@ async function run(force = false) {
       // 配装模式 replaces both: own passives (by group) + the picked common passives, exclusive gear on / off
       loadBuildFor(dress);
       if (build.on) {
-        await ensurePassiveIndex();
-        await M.loadPassives(battle.master, [...ownPassiveIds(c, true), ...build.selected]);
+        await ensurePassiveIndex(); await ensureTablePassives();
+        await M.loadPassives(battle.master, [...ownPassiveIds(c, true), ...(c?.ownPassives || []).map(p => p.passive), ...build.selected]);
         const own = ownPassiveIds(c), ownSet = new Set(own);
-        const picked = build.selected.filter(id => !ownSet.has(id));
-        buildOwnPaid = ownPaidIds(c);
+        // the character's own SC skills that are not on the skill table: always added, 0 SC
+        const auto = autoPaidIds(c).filter(id => !ownSet.has(id)), autoSet = new Set(auto);
+        const picked = build.selected.filter(id => !ownSet.has(id) && !autoSet.has(id));
+        buildOwnPaid = ownPaidIds(c).filter(id => !autoSet.has(id)); buildAuto = auto;
         const equips = build.exclusive ? exclusiveEquips(exclusiveTiers(c), battle.master) : [];
         const bless = build.own.blessings ? blessings.filter(b => !ownSet.has(b.id)) : [];
-        const buildOwn = [...own.map(id => ({ id })), ...bless];
+        const buildOwn = [...own.map(id => ({ id })), ...bless, ...auto.map(id => ({ id }))];
         const buildPassives = [...buildOwn, ...picked.map(id => ({ id }))];
         const crest = fromLoadout?.crest || null;
         attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, passives: buildPassives, personality: build.own.personality ? c?.personality || [] : [], equips, crest,
-          statsSource: `配装模式（自带免费被动 ${own.length} 个${bless.length ? '＋加护' : ''}＋所选 ${picked.length} 个被动 · ${equips.length ? '有专武' : '无专武'}${crest ? ' · 徽章按配装报告' : ''}；全部按最大）` };
-        attackerSpec.buildOwn = buildOwn; attackerSpec.buildPassives = buildPassives; attackerSpec.buildNote = crest ? '徽章按配装报告' : '';
+          statsSource: `配装（自带免费被动 ${own.length} 个${bless.length ? '＋加护' : ''}＋角色专属 ${auto.length} 个＋所选 ${picked.length} 个技能 · ${equips.length ? '有专武' : '无专武'}${crest ? ' · 徽章按配装报告' : ''}；全部按最大）` };
+        attackerSpec.buildOwn = buildOwn; attackerSpec.buildPassives = buildPassives; attackerSpec.buildAuto = auto; attackerSpec.buildNote = crest ? '徽章按配装报告' : '';
       } else renderBuild(null);
     }
     // 专武 at its maximum (not for a captured battle, which records what was really equipped)
@@ -852,13 +951,13 @@ async function run(force = false) {
     try { await measureSupportMagic(M, attackerSpec, targetSpec, state, dress); } catch (err) { console.error(err); }
     setState(`已结算 · ${new Date().toLocaleTimeString('zh-CN')}`); setPrimaryState(`游戏脚本 · ${new Date().toLocaleTimeString('zh-CN')}`);
     if (attackerSpec.buildPassives) {
-      const { buildOwn, buildPassives, buildNote, ...rest } = attackerSpec;
+      const { buildOwn, buildPassives, buildAuto: autoIds, buildNote, ...rest } = attackerSpec;
       // gains only compare the move's first damaging bullet (as the main card's per-call metric does)
-      buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), buildOwn, buildPassives, buildNote, firstBullet: damaging[0]?.bulletId ?? null };
+      buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), buildOwn, buildPassives, autoIds, buildNote, firstBullet: damaging[0]?.bulletId ?? null };
       const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], probabilityMode, buildPassives.map(p => p.id), buildOwn.map(p => p.id), currentHits().hits]);
       if (key !== lastBuildKey) { buildGains.clear(); buildCurrent = buildBaseline = null; }
       lastBuildKey = key; buildCtx.key = key;
-      renderBuild(buildCtx); renderCandidates();
+      renderBuild(buildCtx);
       computeGains(buildCtx); // continues between main runs; a new run cancels it
     } else buildCtx = null;
   } catch (err) {
