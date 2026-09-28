@@ -61,12 +61,6 @@ function keepLoadout(report) {
   try { localStorage.setItem(LOADOUT_KEY, JSON.stringify(slim)); } catch {}
 }
 async function ensureSwitches() { if (!switches) switches = await fetch(new URL('./game-data/engine/switch.json', import.meta.url)).then(r => r.json()); return switches; }
-// The site's own panel preview (old rules), shown beside the game-data panel as a comparison.
-function websitePanel() {
-  const p = latest?.panels || {};
-  const base = Number.isFinite(latest?.attackBase) ? latest.attackBase : null;
-  return { str: Number.isFinite(p.attack) ? p.attack : latest?.referenceMode === 'str' ? base : null, int: Number.isFinite(p.intelligence) ? p.intelligence : latest?.referenceMode === 'int' ? base : null };
-}
 
 const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-cands{display:flex;flex-wrap:wrap;gap:6px}.engine-build-cand{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid #3a526f;border-radius:6px;background:#1c2f45}.engine-build-cand button{min-height:26px;padding:2px 8px;font-size:.8rem}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
 // ---- the main result card: driven by the sandbox; the old rules move under 网页旧规则（对照） ----
@@ -484,31 +478,8 @@ async function run(force = false) {
 }
 
 function render(out, ctx) {
-  const st = out.stats;
-  const statLine = ['str', 'def', 'int', 'mnd', 'crt'].filter(k => st[k].panel || st[k].real).map(k => `${{ str: 'STR', def: 'DEF', int: 'INT', mnd: 'MND', crt: 'CRT' }[k]} ${fmt(st[k].panel)}→${fmt(st[k].real)}`).join(' · ');
-  // Rows with identical damage numbers collapse into one displayed row — same bullet at a different 段 (e.g. a
-  // dual-wield weapon calling the same core calc twice) as well as different bullets that land on the same 段
-  // (single-target / area variants). The per-cast total below still sums every individual call, uncollapsed.
   const rawHits = out.hits.filter(h => !h.cancelled);
-  const hits = [];
-  for (const h of rawHits) {
-    const key = JSON.stringify([h.dmgRatio, h.normal, h.critical, h.cap, h.attack]);
-    const same = hits.find(x => x.key === key);
-    if (same) { same.bulletSet.add(h.bulletName || String(h.bulletId)); same.hitIndexes.add(h.hitIndex); same.calls++; }
-    else hits.push({ ...h, key, bulletSet: new Set([h.bulletName || String(h.bulletId)]), hitIndexes: new Set([h.hitIndex]), calls: 1 });
-  }
-  const critRate = Math.min(100, Math.max(0, st.crt.real || 0)) / 100;
-  const hitCount = Number($('hits')?.value) || 0;
-  const expect = h => h.normal ? (h.normal.mean * (1 - critRate) + (h.critical ? h.critical.mean : h.normal.mean) * critRate) : null;
-  const hitRows = hits.map(h => {
-    const idx = [...h.hitIndexes].sort((a, b) => a - b);
-    const idxLabel = idx.length > 1 ? `第${idx[0]}–${idx[idx.length - 1]}击` : `第${idx[0]}击`;
-    const callNote = h.calls > 1 ? ` <small>×${h.calls} 次调用</small>` : '';
-    const bulletNote = h.bulletSet.size > 1 ? ` <small>${h.bulletSet.size} 条弹道相同</small>` : '';
-    return `<tr><td>${idxLabel} ×${(h.dmgRatio / 10000).toLocaleString('zh-CN')}${callNote}${bulletNote}</td><td>${h.normal ? `${fmt(h.normal.min)}–${fmt(h.normal.max)}` : '—'}</td><td>${h.critical ? `${fmt(h.critical.min)}–${fmt(h.critical.max)}` : '—'}</td><td>${fmt(expect(h))}</td><td>${fmt(h.cap)}</td><td>${fmt(h.attack)} / ${fmt(h.defense)}</td><td>${h.killer ? `×${h.killerFactor.toFixed(2)}` : '—'}</td></tr>`;
-  }).join('');
-  const perCast = rawHits.reduce((sum, h) => sum + (expect(h) || 0), 0);
-  const first = hits[0];
+  const first = rawHits[0];
   const chain = first ? first.edits.map(e => `<li><span>${esc(e.passiveName || e.name)}</span><b>${fmt(e.value)}</b></li>`).join('') : '';
   const groups = new Map();
   for (const c of out.conditionals) { const g = SWITCH_LABELS[c.switchGroup] || '条件BUFF'; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(c); }
@@ -517,25 +488,11 @@ function render(out, ctx) {
   const buffs = out.buffs.filter(b => b.remain !== 0).map(b => `<li>${esc(b.name)}${b.from ? ` <small>来自 ${esc(b.from)}</small>` : ''}${b.remain > 0 ? ` <small>${Math.round(b.remain / 60)} 秒</small>` : ''}</li>`).join('');
   const issues = [...out.errors.map(e => `脚本 ${esc(e.name)} (${e.id})：${esc(e.error)}`), ...out.unsupported.map(n => `未实现的原生函数：${esc(n)}`), ...(out.assumptions || []).map(a => `简化假定：${esc(a)}`)];
   $('engineResult').innerHTML = `
-    <p class="help">招式 <b>${esc(ctx.move.name || ctx.move.id)}</b>（${ctx.move.id}）· 攻击方 ${esc(ctx.attackerSpec.name || ctx.attackerSpec.unitDressId)} · 面板来源：${esc(ctx.attackerSpec.statsSource || '读取报告')} · 目标 ${esc(ctx.targetSpec.name)}${ctx.targetSpec.source ? `（${esc(ctx.targetSpec.source)}）` : ''} · HP ${ctx.state.hpPercent}%${ctx.state.hpPercent === 100 ? '（满血开关）' : ctx.state.hpPercent === 25 ? '（濒死开关）' : '（未勾选满血：满HP条件不触发）'} · MP ${ctx.state.mpPercent}%${ctx.state.preCasts?.length ? ` · 施放前已用：${esc([...new Map(ctx.state.preCasts.map(id => [id, ctx.state.preCasts.filter(x => x === id).length])).entries()].map(([id, n]) => `${battle.master.skill.get(id)?.NAME || id}×${n}`).join('、'))}` : ''}</p>
-    <p class="help">面板→局内：${statLine}</p>${panelLine(ctx)}
-    <div class="entry-table-wrap"><table class="entry-table engine-hits"><thead><tr><th>段</th><th>普通每段</th><th>暴击每段</th><th>期望（暴击率 ${Math.round(critRate * 100)}%）</th><th>每段上限</th><th>A / F</th><th>特攻</th></tr></thead><tbody>${hitRows || '<tr><td colspan="7">没有伤害段</td></tr>'}</tbody></table></div>
-    <p class="help">每次命中（含双刀／多段魔法的追加击）期望 <b>${fmt(perCast)}</b>${hitCount ? `；按计算器填写的 ${hitCount} 段命中，整次期望 <b>${fmt(perCast * hitCount)}</b>` : '；段数取自计算器的“基础命中段数”'}。暴击率用局内 CRT 面板值。</p>
     ${first ? `<details class="engine-chain"><summary>第1击结算链（随机 0.95）：核心 ${fmt(first.core)} → 修正后 ${fmt(first.afterPassives)}${first.edits.length ? `（${first.edits.length} 项）` : ''}</summary><p class="help">系数 ${first.coefficient} · 属性 ${['无', '火', '冰', '树', '雷', '光', '暗'][first.element] || first.element}（抗性 ${first.resist}）· 核心前倍率 攻 ×${first.offense.toFixed(3)} 受 ×${first.received.toFixed(3)} 减伤 ×${first.reduction.toFixed(3)} · 上限 9,999 + ${fmt(first.capVal)}${first.capPer ? ` ×(1+${first.capPer / 100}%)` : ''}${first.capAdd ? ` + ${fmt(first.capAdd)}` : ''}</p><ol class="engine-edits">${chain}</ol></details>` : ''}
     <details class="engine-buffs"><summary>局内 Buff（${out.buffs.length}）</summary><ul>${buffs || '<li>无</li>'}</ul></details>
     ${conditionals ? `<details class="engine-conditionals" open><summary>可假定触发的条件效果（${out.conditionals.length}）</summary><p class="help">勾选后按已触发计算；对应局内开关打开时同组自动勾选。</p>${conditionals}</details>` : ''}
     ${prob ? `<details class="engine-prob"><summary>概率效果（${out.probabilistic.length}，${probabilityMode === 'assume' ? '按已触发计算' : '按未触发计算'}）</summary><ul>${prob}</ul></details>` : ''}
     ${issues.length ? `<details class="engine-issues" open><summary>未能完整模拟（${issues.length}）</summary><ul>${issues.map(i => `<li>${i}</li>`).join('')}</ul></details>` : ''}`;
-}
-
-// The computed out-of-battle panel (no-report path): its parts, the gear it assumed and the site's own preview beside it.
-function panelLine(ctx) {
-  const u = ctx.attacker; if (!u || u.panelGiven || !u.panelParts) return '';
-  const p = u.panelParts, site = websitePanel(), pct = st => ctx.out.stats[st].panel;
-  const parts = ['hp', 'mp', 'str', 'def', 'int', 'mnd'].map(k => `${{ hp: 'HP', mp: 'MP', str: 'STR', def: 'DEF', int: 'INT', mnd: 'MND' }[k]} ${fmt(p.stats[k])}`).join(' · ');
-  const gear = u.equips.map(e => `${esc(e.name)}${e.estimated ? '（强化估算）' : ''}`).join('、') || '无装备';
-  const compare = [site.str != null ? `攻击力 ${fmt(site.str)}` : '', site.int != null ? `法强 ${fmt(site.int)}` : ''].filter(Boolean).join('、');
-  return `<p class="help">局外面板（游戏数据 Lv${p.level}${p.estimated ? '·成长率估算' : ''} · 觉醒${p.awake} · 能力盘 ${p.pieceCount} 格）：裸属性 ${parts} · CRT ${p.stats.crt}；装备 ${gear}；经状态计算被动后 HP ${fmt(pct('hp'))} · STR ${fmt(pct('str'))} · DEF ${fmt(pct('def'))} · INT ${fmt(pct('int'))} · MND ${fmt(pct('mnd'))} · CRT ${fmt(pct('crt'))}${compare ? `（网站旧规则面板：${compare}）` : ''}</p>`;
 }
 
 document.addEventListener('lc:calculator-update', e => { latest = e.detail || {}; if (latest.battle) report = latest.battle; mount();
