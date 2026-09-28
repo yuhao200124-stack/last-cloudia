@@ -97,6 +97,168 @@ function mountPrimary() {
   if (oldMain) oldMain.hidden = true;
   $('engineHits').addEventListener('change', e => { const h = $('hits'); if (!h) return; h.value = e.target.value; h.dispatchEvent(new Event('input', { bubbles: true })); h.dispatchEvent(new Event('change', { bubbles: true })); run(); });
 }
+// ---- 法强／攻击力、最终暴击率、伤害上限：the selected move's own values and how the game data gets there ----
+// Every number is what this move's first damaging hit actually receives (its own bonuses included), computed
+// by the game scripts; the three fields are read-only and their 👁 open and close together.
+const BASIC_FIELDS = [['attack', 'attackBreakdownToggle', 'attackBreakdown', 'attackBreakdownSteps'], ['critRate', 'critBreakdownToggle', 'critBreakdown', 'critBreakdownSteps'], ['damageCapInput', 'damageCapBreakdownToggle', 'damageCapBreakdown', 'damageCapBreakdownSteps']];
+let basicOpen = false, passiveNames = null;
+function syncBasicPanels() {
+  for (const [, t, p] of BASIC_FIELDS) { const tog = $(t), pan = $(p); if (!tog || !pan) continue; pan.hidden = tog.hidden || !basicOpen; tog.setAttribute('aria-expanded', String(!pan.hidden)); }
+}
+function wireBasicFields() {
+  for (const [, t] of BASIC_FIELDS) { const tog = $(t); if (!tog || tog.dataset.basicWired) continue; tog.dataset.basicWired = '1'; tog.addEventListener('click', e => { e.preventDefault(); basicOpen = !basicOpen; syncBasicPanels(); }); }
+}
+async function ensurePassiveNames() { await ensurePassiveIndex(); if (!passiveNames) passiveNames = new Map(passiveIndex.map(r => [r.id, r.nameS || r.name])); }
+const pctPer = per => `${(per / 100).toLocaleString('zh-CN', { maximumFractionDigits: 2 })}%`;
+function sourceName(src, ctx) {
+  const master = battle.master;
+  if (!src || src.kind === 'none') return '未识别来源';
+  if (src.kind === 'bullet') return `招式自带（${ctx.moveName}）`;
+  if (src.kind === 'unknown') return `未识别来源（${src.uid}）`;
+  const gear = ctx.gearNames.get(Number(src.localId));
+  const name = passiveNames?.get(src.passiveId) || (gear ?? passiveNames?.get(src.localId)) || master.passive.get(src.passiveId || src.localId)?.NAME || master.itemEquip.get(src.localId)?.NAME || `编号 ${src.localId}`;
+  return src.kind === 'buff' ? `${name}（增益）` : name;
+}
+// "月光II +30%、自动充能 +15" — one entry per source, the move's own (this call / this bullet) marked
+function listParts(parts, ctx, unit = '', tagMove = true) {
+  const by = new Map();
+  for (const p of parts) {
+    const key = `${sourceName(p.source, ctx)}${tagMove && p.source?.kind !== 'bullet' && (p.layer === 'work' || p.layer === 'bullet') ? '（本招式）' : ''}`;
+    const g = by.get(key) || { val: 0, per: 0, add: 0 }; g.val += p.val; g.per += p.per; g.add += p.add; by.set(key, g);
+  }
+  return [...by].map(([name, g]) => `${name} ${[g.val && `${g.val > 0 ? '+' : ''}${fmt(g.val)}${unit}`, g.per && `${g.per > 0 ? '+' : ''}${pctPer(g.per)}`, g.add && `${g.add > 0 ? '+' : ''}${fmt(g.add)}${unit}`].filter(Boolean).join(' ')}`).join('、');
+}
+const sum = parts => parts.reduce((a, p) => ({ val: a.val + p.val, per: a.per + p.per, add: a.add + p.add }), { val: 0, per: 0, add: 0 });
+function statSteps(parts, ctx, { baseLabel, unit = '' }) {
+  const lines = [];
+  if (parts.panelGiven) lines.push(`面板（${parts.panelOverride != null ? '配装报告' : '已给定'}）${fmt(parts.panel)}${unit}`);
+  else {
+    lines.push(`${baseLabel} ${fmt(parts.pure)}${unit}`);
+    if (parts.crest) lines.push(`徽章 +${fmt(parts.crest)}`);
+    for (const e of parts.equips) lines.push(e.per ? `${ctx.gearNames.get(Number(e.id)) || battle.master.itemEquip.get(e.id)?.NAME || e.id}：${fmt(e.raw)} × (1 + ${pctPer(e.per)}) → ${fmt(e.value)}` : `${ctx.gearNames.get(Number(e.id)) || battle.master.itemEquip.get(e.id)?.NAME || e.id}：+${fmt(e.raw)}`);
+    const eq = parts.crest + parts.equips.reduce((a, e) => a + e.value, 0), st = sum(parts.status);
+    if (parts.status.length) lines.push(`面板加成（${listParts(parts.status, ctx, unit)}）：(${fmt(parts.pure)}${eq ? ` + 装备 ${fmt(eq)}` : ''}${st.val ? ` + ${fmt(st.val)}` : ''})${st.per ? ` × (1 + ${pctPer(st.per)})` : ''}${st.add ? ` + ${fmt(st.add)}` : ''} → ${fmt(parts.panel)}${unit}`);
+    else if (eq) lines.push(`${fmt(parts.pure)} + 装备 ${fmt(eq)} → ${fmt(parts.panel)}${unit}`);
+  }
+  if (parts.runtime.length) { const r = sum(parts.runtime); lines.push(`战斗中与本招式（${listParts(parts.runtime, ctx, unit)}）：(${fmt(parts.panel)}${r.val ? ` + ${fmt(r.val)}` : ''})${r.per ? ` × (1 + ${pctPer(r.per)})` : ''}${r.add ? ` + ${fmt(r.add)}` : ''} → ${fmt(parts.final)}${unit}`); }
+  if (!parts.runtime.length && !parts.status.length && !parts.equips.length && !parts.crest && !parts.panelGiven) lines.push(`没有其他加成 → ${fmt(parts.final)}${unit}`);
+  return lines;
+}
+function capSteps(first, ctx) {
+  const b = first.breakdown, parts = b.cap, s = sum(parts), lines = ['基础上限 9,999'];
+  if (b.capOff) lines.push(`上限改写为 ${fmt(b.capOff.value)}（${sourceName(b.capOff.source, ctx)}）`);
+  else {
+    if (parts.length) lines.push(`上限加成：${listParts(parts, ctx, '', false)}`);
+    lines.push(`(9,999${s.val ? ` + ${fmt(s.val)}` : ''})${s.per ? ` × (1 + ${pctPer(s.per)})` : ''}${s.add ? ` + ${fmt(s.add)}` : ''} → ${fmt(first.capComputed)}`);
+  }
+  if (first.critCap != null && first.critCap !== first.cap) {
+    const extra = (first.critBreakdown?.cap || []).filter(p => !parts.some(q => q.source && p.source && JSON.stringify(q.source) === JSON.stringify(p.source) && q.val === p.val && q.per === p.per && q.add === p.add));
+    lines.push(`暴击时上限 ${fmt(first.critCap)}${extra.length ? `（另加：${listParts(extra, ctx, '', false)}）` : ''}`);
+  }
+  const order = [...new Set((ctx.hits || []).map(h => h.bulletId))];
+  const others = [...new Map((ctx.hits || []).filter(h => h.bulletId !== first.bulletId && h.capComputed != null && h.capComputed !== first.capComputed).map(h => [h.bulletId, h])).values()];
+  for (const h of others) lines.push(`第 ${order.indexOf(h.bulletId) + 1} 条弹道的计算上限为 ${fmt(h.capComputed)}（上面是第 1 条）`);
+  return lines;
+}
+function renderBasicFields(first, ctx) {
+  wireBasicFields();
+  const show = (id, lines) => { const [field, t, , list] = BASIC_FIELDS.find(f => f[0] === id); if (!$(t)) return; $(t).hidden = !lines.length; if ($(list)) $(list).innerHTML = lines.map(l => `<li>${esc(l)}</li>`).join(''); };
+  if (!first?.breakdown) { for (const [id] of BASIC_FIELDS) show(id, []); syncBasicPanels(); return; }
+  const b = first.breakdown, magical = b.attack.stat === K.STAT.INT;
+  if ($('attack')) { $('attack').value = String(first.attack); $('attack').readOnly = true; $('attack').title = '所选招式实际吃到的数值（游戏数据计算）'; }
+  if ($('critRate')) { $('critRate').value = String(first.crt); $('critRate').readOnly = true; $('critRate').title = '所选招式实际吃到的暴击率（游戏数据计算）'; }
+  if ($('damageCapInput')) { $('damageCapInput').value = String(first.capComputed); $('damageCapInput').readOnly = true; }
+  show('attack', statSteps(b.attack, ctx, { baseLabel: magical ? '基础法强（等级·觉醒·能力盘）' : '基础攻击力（等级·觉醒·能力盘）' }));
+  show('critRate', statSteps(b.crit, ctx, { baseLabel: '角色基础暴击率', unit: '%' }));
+  show('damageCapInput', capSteps(first, ctx));
+  syncBasicPanels();
+}
+// ---- 辅助魔法 (support magic without damage): the calculator's 魔法 checkboxes ----
+// A checked one is cast before the evaluated move, so the game scripts apply it (a debuff lands on the target,
+// a buff on the attacker). The label next to each box is what casting it does, measured from the game scripts:
+// the buff/debuff it adds, its duration and the values it applies; anything that cannot be read as a number yet
+// is shown with its raw game parameters and marked.
+const ELEM_NAMES = ['无', '火', '冰', '树', '雷', '光', '暗'];
+const STAT_OP_NAMES = { 300: '攻击力', 301: '防御力', 302: '法强', 303: '魔抗', 304: '暴击率', 305: 'HP', 310: '速度', 318: 'MP' };
+const RAW_OP_NAMES = { 306: '异常耐性', 308: '特攻', 502: '物理伤害减轻', 503: '魔法伤害减轻', 504: '伤害增幅', 505: '伤害无效', 507: '属性改变', 509: '特攻增幅', 824: '伤害上限改写' };
+const signed = (n, unit = '') => `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(n).toLocaleString('zh-CN', { maximumFractionDigits: 2 })}${unit}`;
+function describeEntries(entries) {
+  const out = [], resist = new Map();
+  for (const e of entries) {
+    const [a = 0, b = 0, c = 0] = e.params;
+    if (e.op === K.OP.ELEM_RESIST) { for (const el of a === -1 ? [1, 2, 3, 4, 5, 6] : [a]) resist.set(el, (resist.get(el) || 0) + b); continue; }
+    if (STAT_OP_NAMES[e.op]) { const unit = e.op === K.OP.CRT ? '%' : ''; out.push(`${STAT_OP_NAMES[e.op]} ${[a && signed(a, unit), b && signed(b / 100, '%'), c && signed(c, unit)].filter(Boolean).join(' ')}`); continue; }
+    if (e.op === K.OP.DMG_LIMIT_UP) { out.push(`伤害上限 ${[a && signed(a), b && signed(b / 100, '%'), c && signed(c)].filter(Boolean).join(' ')}`); continue; }
+    out.push(`${RAW_OP_NAMES[e.op] || `游戏效果 ${e.op}`}（参数 ${e.params.join(', ')}，数值含义未解读）`);
+  }
+  if (resist.size) {
+    const vals = [...resist.values()];
+    if (resist.size === 6 && vals.every(v => v === vals[0])) out.unshift(`全属性耐性 ${signed(vals[0])}`);
+    else out.unshift(...[...resist].map(([el, v]) => `${ELEM_NAMES[el] || el}耐性 ${signed(v)}`));
+  }
+  return out;
+}
+function describeSupport(m) {
+  if (!m) return '读取中…';
+  if (m.error) return `游戏脚本出错（${m.error}）`;
+  if (!m.effects.length) return '游戏脚本没有加上可显示的效果（可能对这个目标无效）';
+  // the game's own hidden control buffs (非表示バフ) carry no value of their own: shown only when they apply one
+  const shown = m.effects.filter(e => e.entries.length || !String(e.name).startsWith('非表示'));
+  if (!shown.length) return '游戏脚本没有加上可显示的效果（可能对这个目标无效）';
+  return shown.map(e => {
+    const who = e.side === 'target' ? '目标' : '自身';
+    const time = e.duration > 0 ? `，${Math.round(e.duration / 60 * 10) / 10} 秒` : e.duration === -1 ? '，一直有效' : '';
+    const vals = describeEntries(e.entries);
+    const body = vals.length ? vals.join('、') : `${e.name}（原始参数 ${e.params.filter(v => v !== 0).join(', ') || '无'}，造成伤害时才生效，含义未逐项核对）`;
+    return `${who} ${body}${time}`;
+  }).join('；');
+}
+let supportCache = { key: null, map: new Map() }, supportDress = null, supportChecked = new Set(), supportList = [], supportActive = [];
+const supportOf = c => [...(c?.magic?.normal || []), ...(c?.magic?.heavy || [])].filter(m => m.parts?.length && m.parts.every(p => p.kind == null));
+// the old rules' own checkbox for the same spell (魔术指导) is kept in step, so the collapsed comparison agrees
+const legacyMagicBox = name => [...document.querySelectorAll('#magicBuffChoices input[data-magic-buff]')].find(i => i.closest('label')?.textContent.trim().startsWith(`${name}：`));
+function renderSupportMagic(c, dress) {
+  const host = $('magicBuffOptions'); supportList = supportOf(c);
+  if (!host || !supportList.length) { supportActive = []; if ($('engineSupportMagic')) $('engineSupportMagic').innerHTML = ''; if ($('magicBuffChoices')) $('magicBuffChoices').hidden = false; return; }
+  let box = $('engineSupportMagic');
+  if (!box) {
+    box = document.createElement('div'); box.id = 'engineSupportMagic'; ($('magicBuffChoices') || host.lastElementChild).after(box);
+    box.addEventListener('change', e => {
+      const id = Number(e.target.dataset.supportMagic); if (!id) return;
+      if (e.target.checked) supportChecked.add(id); else supportChecked.delete(id);
+      try { localStorage.setItem(`lc-support-magic:${supportDress}`, JSON.stringify([...supportChecked])); } catch {}
+      const m = supportList.find(x => x.id === id), legacy = m && legacyMagicBox(m.nameS);
+      if (legacy && legacy.checked !== e.target.checked) { legacy.checked = e.target.checked; legacy.dispatchEvent(new Event('change', { bubbles: true })); }
+      run();
+    });
+  }
+  if (supportDress !== dress) {
+    supportDress = dress; supportChecked = new Set();
+    let saved = null; try { saved = JSON.parse(localStorage.getItem(`lc-support-magic:${dress}`)); } catch {}
+    for (const m of supportList) if (Array.isArray(saved) ? saved.includes(m.id) : legacyMagicBox(m.nameS)?.checked) supportChecked.add(m.id);
+  }
+  const key = JSON.stringify([dress, supportList.map(m => m.id)]);
+  if (box.dataset.key !== key) { box.dataset.key = key; box.innerHTML = supportList.map(m => `<label class="magic-buff-check" title="${esc(m.explainS || '')}"><input type="checkbox" data-support-magic="${m.id}"${supportChecked.has(m.id) ? ' checked' : ''}><span>${esc(m.nameS)}<span data-support-effect="${m.id}">：读取中…</span></span></label>`).join(''); supportCache.key = null; }
+  for (const i of box.querySelectorAll('[data-support-magic]')) i.checked = supportChecked.has(Number(i.dataset.supportMagic));
+  if ($('magicBuffChoices')) $('magicBuffChoices').hidden = true;
+  host.hidden = false;
+  supportActive = supportList.filter(m => supportChecked.has(m.id)).map(m => m.id);
+}
+function renderSupportEffects(map) {
+  for (const el of document.querySelectorAll('[data-support-effect]')) el.textContent = `：${describeSupport(map.get(Number(el.dataset.supportEffect)))}`;
+}
+async function measureSupportMagic(M, attackerSpec, targetSpec, state, dress) {
+  const ids = [...document.querySelectorAll('[data-support-effect]')].map(el => Number(el.dataset.supportEffect)).filter(Boolean);
+  if (!ids.length) return;
+  const key = JSON.stringify([dress, ids, targetSpec, state.hpPercent, state.killer, state.targetBreak]);
+  if (supportCache.key !== key) {
+    battle.reset();
+    const a = M.addAttacker(battle, attackerSpec), t = M.addTarget(battle, targetSpec);
+    supportCache = { key, map: M.measureSupport(battle, a, t, ids, state) };
+  }
+  renderSupportEffects(supportCache.map);
+}
+
 let lastCtx = null;
 const setPrimaryState = text => { const el = $('ep-state'); if (el) el.textContent = text; };
 function renderPrimary(out, ctx) {
@@ -106,13 +268,14 @@ function renderPrimary(out, ctx) {
   const all = out.hits.filter(h => !h.cancelled && h.normal);
   const live = all.filter(h => h.bulletId === all[0]?.bulletId);
   const otherBullets = new Set(all.filter(h => h.bulletId !== all[0]?.bulletId).map(h => h.bulletId)).size;
-  const first = live[0]; const st = out.stats; const critRate = Math.min(100, Math.max(0, st.crt.real || 0)) / 100;
+  // each hit's own critical rate (the move's own crit bonuses included), not the unit's general one
+  const first = live[0]; const st = out.stats; const rateOf = h => Math.min(100, Math.max(0, h?.crt ?? st.crt.real ?? 0)) / 100; const critRate = rateOf(first);
   const { hits } = currentHits();
   if (dualLocked && $('dualWield')) { $('dualWield').checked = true; $('dualWield').disabled = true; }
   if (document.activeElement !== $('engineHits')) $('engineHits').value = siteHits() || '';
   if (!first) { for (const id of ['ep-normal', 'ep-critical', 'ep-total', 'ep-normalTotal', 'ep-killer', 'ep-weak', 'ep-normalGauge', 'ep-normalCap', 'ep-critGauge', 'ep-critCap']) $(id).textContent = '—'; $('ep-note').textContent = out.errors.length ? `脚本错误：${out.errors[0].name}` : '这个招式没有伤害段。'; return; }
   const range = (a, b) => `${fmt(a)} – ${fmt(b)}`;
-  const expect = h => h.normal.mean * (1 - critRate) + (h.critical ? h.critical.mean : h.normal.mean) * critRate;
+  const expect = h => h.normal.mean * (1 - rateOf(h)) + (h.critical ? h.critical.mean : h.normal.mean) * rateOf(h);
   const perCall = live.reduce((sum, h) => sum + expect(h), 0);
   $('ep-normal').textContent = range(first.normal.min, first.normal.max);
   $('ep-normalNote').textContent = `游戏脚本结算 · ${live.length > 1 ? `第1击（×${(first.dmgRatio / 10000).toLocaleString('zh-CN')}）；` : ''}含随机波动与每段上限`;
@@ -123,7 +286,7 @@ function renderPrimary(out, ctx) {
   $('ep-critBar').style.width = `${Math.min(100, (first.critCap ?? first.cap) && first.critical ? first.critical.max / (first.critCap ?? first.cap) * 100 : 0)}%`;
   const mult = dualHitMultiplier(), scale = dualScale();
   $('ep-total').textContent = `≈ ${fmt(perCall * hits * mult)}`;
-  $('ep-totalNote').textContent = `${hits} 段${live.length > 1 ? ` × ${live.length} 次调用` : ''}${mult > 1 ? ` × 双刀 ${mult}` : ''} · 暴击率 ${Math.round(critRate * 100)}%（局内 CRT ${st.crt.real}）· 含逐段上限`;
+  $('ep-totalNote').textContent = `${hits} 段${live.length > 1 ? ` × ${live.length} 次调用` : ''}${mult > 1 ? ` × 双刀 ${mult}` : ''} · 暴击率 ${Math.round(critRate * 100)}%（本招式）· 含逐段上限`;
   $('ep-normalTotal').textContent = range(live.reduce((a, h) => a + h.normal.min, 0) * hits * mult, live.reduce((a, h) => a + h.normal.max, 0) * hits * mult);
   $('ep-killer').textContent = first.killer ? `触发 · ×${first.killerFactor.toFixed(2)}` : '未触发';
   // Weakness: the target's resistance to the hit's element (negative = weak), the game's factor 1 − resistance/100
@@ -230,8 +393,8 @@ const ownPaidIds = c => (c?.ownPassives || []).map(p => p.passive).filter(id => 
 // Expected damage per call of the move (the main card's metric) from one scenario run.
 function metricOf(out) {
   const all = out.hits.filter(h => !h.cancelled && h.normal), live = all.filter(h => h.bulletId === all[0]?.bulletId);
-  const critRate = Math.min(100, Math.max(0, out.stats.crt.real || 0)) / 100;
-  const perCall = live.reduce((sum, h) => sum + h.normal.mean * (1 - critRate) + (h.critical ? h.critical.mean : h.normal.mean) * critRate, 0);
+  const rateOf = h => Math.min(100, Math.max(0, h?.crt ?? out.stats.crt.real ?? 0)) / 100;
+  const perCall = live.reduce((sum, h) => sum + h.normal.mean * (1 - rateOf(h)) + (h.critical ? h.critical.mean : h.normal.mean) * rateOf(h), 0);
   return { perCall, cap: live[0]?.cap ?? null, errors: out.errors.length };
 }
 // One evaluation of a passive set with the current move / target / state (single random 0.95: relative gains only).
@@ -428,7 +591,7 @@ function stateFromSwitches(detail) {
   const mp = (sel.mpLow || $('mpLow')?.checked) ? 20 : 100;
   // 特攻 / Break: the switch alone decides (bonuses tied to them still come from the skills)
   const targetBreak = sel.break ?? $('break')?.checked ?? false, ratio = Number($('breakDefenseRatio')?.value);
-  return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: preCastList(),
+  return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: [...supportActive, ...preCastList()],
     killer: (sel.specialAttack ?? $('specialAttack')?.checked) ? 'on' : 'off', targetBreak: !!targetBreak, breakDefenseRatio: Number.isFinite(ratio) ? ratio : null,
     hitScale: dualScale() };
 }
@@ -526,6 +689,7 @@ async function run(force = false) {
     if (monsterChoice) { await ensureMonsters(); await ensureMonsterPassives(); targetSpec = M.targetFromMonster(battle.master, monsterChoice); if (targetSpec) { targetSpec.source = '游戏怪物表'; $('engineMonsterNote').textContent = monsterNote(targetSpec); if ($('engineMonsterName') && !$('engineMonsterName').value) { $('engineMonsterName').value = targetSpec.name; fillMonsterVariants(targetSpec.name); } } }
     if (!targetSpec) targetSpec = report && $('bossPreset')?.value?.startsWith('reader-') ? M.targetFromReport(report, { bossIndex: Number($('bossPreset').value.slice(7)) || 0 }) : targetFromFields(latest);
     const target = M.addTarget(battle, targetSpec);
+    renderSupportMagic(gameChar, dress);
     const state = stateFromSwitches(latest);
     // switches assume every conditional instance in their group
     const groups = new Set(activeSwitchGroups());
@@ -539,6 +703,11 @@ async function run(force = false) {
     if (setDualLock(damaging.filter(h => h.bulletId === damaging[0]?.bulletId).length > 1)) pending = true;
     render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), attacker: attacker2, out, dress });
     renderPrimary(out, { move, dress, gearNotes });
+    await ensurePassiveNames();
+    const firstHit = damaging.filter(h => h.bulletId === damaging[0]?.bulletId)[0];
+    const moveName = gameChar ? [...(gameChar.specials || []), gameChar.ultimate, ...(gameChar.magic?.normal || []), ...(gameChar.magic?.heavy || [])].filter(Boolean).find(m => m.id === move.id)?.nameS : null;
+    renderBasicFields(firstHit, { hits: damaging, gearNames: new Map((gameChar?.exclusiveEquipment || []).map(e => [e.id, e.nameS])), moveName: moveName || move.name || '本招式' });
+    try { await measureSupportMagic(M, attackerSpec, targetSpec, state, dress); } catch (err) { console.error(err); }
     setState(`已结算 · ${new Date().toLocaleTimeString('zh-CN')}`); setPrimaryState(`游戏脚本 · ${new Date().toLocaleTimeString('zh-CN')}`);
     if (attackerSpec.buildPassives) {
       const { buildOwn, buildPassives, buildNote, ...rest } = attackerSpec;

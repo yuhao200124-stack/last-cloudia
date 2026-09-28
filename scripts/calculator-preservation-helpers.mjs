@@ -43,10 +43,16 @@ const switchesLayer=JSON.parse(fs.readFileSync(new URL('../docs/switches-preserv
 const dualLock=JSON.parse(fs.readFileSync(new URL('../docs/dual-lock-preservation-2026-09-28.json',import.meta.url)));
 const weaponOwn=JSON.parse(fs.readFileSync(new URL('../docs/weapon-own-preservation-2026-09-28.json',import.meta.url)));
 const noNotes=JSON.parse(fs.readFileSync(new URL('../docs/no-notes-preservation-2026-09-28.json',import.meta.url)));
+const basicSteps=JSON.parse(fs.readFileSync(new URL('../docs/basic-steps-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const basicStepsLayer=basicSteps.files[path];
+ if(basicStepsLayer){
+  if(hash(text)!==basicStepsLayer.afterHash||hash(basicStepsLayer.beforeText)!==basicStepsLayer.beforeHash)throw Error(`Basic-steps preservation drift: ${path}`);
+  text=basicStepsLayer.beforeText;
+ }
  const noNotesLayer=noNotes.files[path];
  if(noNotesLayer){
   if(hash(text)!==noNotesLayer.afterHash||hash(noNotesLayer.beforeText)!==noNotesLayer.beforeHash)throw Error(`No-notes preservation drift: ${path}`);

@@ -170,6 +170,31 @@ export function preCast(battle, attacker, target, skillIds, level = 9) {
   }
 }
 
+// What casting one support magic does, read from the game scripts themselves: cast it once on a clean battle
+// and list the buffs / debuffs it puts on the attacker (self / ally side) or the target (enemy side), each with
+// its duration (frames) and the control entries it already applies (op + params). A buff whose effect only
+// fires later (for example when damage is dealt) has no entries yet; its own parameters are reported instead.
+export function measureSupport(battle, attacker, target, skillIds, state = {}, level = 9) {
+  setupBattle(battle, attacker, target, { ...state, preCasts: [] });
+  const base = battle.snapshot();
+  const out = new Map();
+  for (const id of skillIds || []) {
+    battle.restore(base);
+    const A = battle.unit(attacker.id ?? attacker), T = battle.unit(target.id ?? target);
+    const before = new Set([...A.buffs, ...T.buffs].map(b => b.uid));
+    try { preCast(battle, A, T, [id], level); } catch (err) { out.set(Number(id), { error: err.message, effects: [] }); continue; }
+    const effects = [];
+    for (const [side, u] of [['self', A], ['target', T]]) for (const b of u.buffs) {
+      if (before.has(b.uid)) continue;
+      const entries = [...u.status, ...u.real, ...u.work].filter(e => e.source === b.uid).map(e => ({ op: e.op, params: [...e.params] }));
+      effects.push({ side, buffId: b.buffId, name: b.mst?.NAME || String(b.buffId), duration: b.duration, params: [...b.params], isDebuff: !!b.isDebuff, entries });
+    }
+    out.set(Number(id), { effects });
+  }
+  battle.restore(base);
+  return out;
+}
+
 // Full scenario: returns hits (per bullet pass) with normal/critical ranges, plus what fired and what could be assumed.
 export function runScenario({ battle, attacker, target, skill, state = {}, assume = {}, randoms = [0.9, 0.925, 0.95, 0.975, 1.0] }) {
   battle.options.probability = assume.probability || 'assume';
@@ -199,6 +224,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
     for (const p of passes.values()) {
       const s = p.sample;
       hits.push({ bulletId: p.bulletId, bulletName: battle.master.bullet.get(p.bulletId)?.NAME || '', hitIndex: p.hitIndex, cancelled: p.cancelled, dmgRatio: s?.dmgRatio ?? null, normal: p.normal.length ? summarize(p.normal) : null, critical: p.critical.length ? summarize(p.critical) : null, core: s?.coreDamage ?? null, afterPassives: s?.afterPassives ?? null,
+        crt: s?.crt ?? null, capComputed: s?.capComputed ?? null, breakdown: s?.breakdown ?? null, critBreakdown: p.critSample?.breakdown ?? null,
         attack: s?.attack ?? null, defense: s?.defense ?? null, element: s?.element ?? null, resist: s?.resist ?? null, killer: s?.killer ?? false, killerFactor: s?.killerFactor ?? 1, offense: s?.offense ?? 1, received: s?.received ?? 1, reduction: s?.reduction ?? 1, coefficient: s ? s.per / 10000 : null, cap: s?.cap ?? null, critCap: p.critSample?.cap ?? null, capVal: s?.capVal ?? 0, capPer: s?.capPer ?? 0, capAdd: s?.capAdd ?? 0,
         edits: (s?.edits || []).map(e => ({ name: zhName(e.by), id: e.id, localId: e.localId, value: e.value, passiveName: clean(battle.master.passive.get(e.localId)?.NAME || battle.master.itemEquip.get(e.localId)?.NAME || '') })) });
     }

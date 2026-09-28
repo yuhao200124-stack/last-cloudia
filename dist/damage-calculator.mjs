@@ -176,8 +176,8 @@ function wireFieldIconToggle(toggleId,panelId) {
     const open=$(panelId).hidden;$(panelId).hidden=!open;$(toggleId).setAttribute('aria-expanded',String(open));
   });
 }
-wireFieldIconToggle('attackBreakdownToggle','attackBreakdown');
-wireFieldIconToggle('critBreakdownToggle','critBreakdown');
+// 法强／攻击力、最终暴击率与伤害上限的 👁 are one group, opened and closed together (engine-panel.mjs, which
+// fills them with the selected move's values and their calculation from the game data).
 wireFieldIconToggle('baseCritBreakdownToggle','baseCritBreakdown');
 // Reference-only disclosure: never fills #attack, only explains how the website's own
 // panel arithmetic reaches its number -- the pre-buff baseline, then any named real-time
@@ -188,6 +188,7 @@ wireFieldIconToggle('baseCritBreakdownToggle','baseCritBreakdown');
 // "开局BUFF" switch covers 自动X/EX灵气-style permanent buffs, others cover their own
 // condition) -- this box only explains the arithmetic, it never adds a control of its own.
 function renderAttackBreakdown(stat) {
+  return; // engine-panel.mjs now shows the selected move's own calculation here
   const lines=[...(stat?.steps||[]),...(stat?.issues||[]).map(text=>`⚠ ${text}`)];
   $('attackBreakdownToggle').hidden=!lines.length;
   if(!lines.length){$('attackBreakdown').hidden=true;$('attackBreakdownToggle').setAttribute('aria-expanded','false');return;}
@@ -198,6 +199,7 @@ function renderAttackBreakdown(stat) {
 // Same idea for 最终暴击率: reference-only note on where the reader-observed value came
 // from. Hidden whenever #critRate was not actually filled from a reader observation.
 function renderCritBreakdown(observedCrit) {
+  return; // engine-panel.mjs now shows the selected move's own calculation here
   // the reader-observation note was removed at the user's request, which leaves this box empty: the 👁 stays hidden
   const has=false;
   $('critBreakdownToggle').hidden=!has;

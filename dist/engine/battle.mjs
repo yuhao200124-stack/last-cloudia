@@ -270,6 +270,38 @@ export class Battle {
     const r = sum(runtime);
     return Math.floor((panel + r.val) * (1 + r.per * 0.0001)) + r.add;
   }
+  // Where a control entry came from (for showing a stat's calculation step by step): the process instance, buff
+  // or bullet process whose run pushed it (procControl records its uid as `source`).
+  sourceOf(uid) {
+    if (!uid) return { kind: 'none' };
+    const bullet = this.current?.bullet;
+    const bi = bullet?.instances?.find(i => i.uid === uid);
+    if (bi) return { kind: 'bullet', bulletId: bullet.bulletId, skillId: bullet.skillId };
+    for (const u of this.units.values()) {
+      const inst = u.instances.find(i => i.uid === uid);
+      if (inst) return { kind: 'process', localId: inst.localId, passiveId: inst.passiveId, affiliation: inst.affiliation, processId: inst.processId };
+      const b = u.buffs.find(x => x.uid === uid);
+      if (b) return { kind: 'buff', buffId: b.buffId, buffName: b.mst?.NAME || '', localId: b.localId, affiliation: b.affiliation };
+    }
+    return { kind: 'unknown', uid };
+  }
+  // The parts of finalStat(): the bare value, each equipment piece (with its EquipParam raise), the status
+  // (panel) entries and the runtime entries (buffs, this call's work, this bullet) — with their sources.
+  statParts(u, statType, { work = false, bullet = null } = {}) {
+    const op = Number(Object.keys(STAT_OF_OP).find(k => STAT_OF_OP[k] === statType));
+    const entry = (e, layer) => ({ layer, val: e.params[0] || 0, per: e.params[1] || 0, add: e.params[2] || 0, source: this.sourceOf(e.source) });
+    const equips = u.panelGiven ? [] : u.equips.map(e => {
+      const v = e.stats?.[statType] || 0; if (!v) return null;
+      let per = 0; for (const c of [...u.status, ...u.real]) if (c.op === K.OP.EQUIP_PARAM && c.params[0] === e.type && c.params[1] === statType) per += c.params[2] || 0;
+      return { id: e.id, raw: v, per, value: per ? Math.floor(v * (1 + per * 0.0001) + 0.5) : v };
+    }).filter(Boolean);
+    return {
+      stat: statType, pure: u.pure[statType] ?? 0, crest: u.panelGiven ? 0 : (u.crest?.stats?.[statType] || 0), equips, panelGiven: !!u.panelGiven, panelOverride: u.panelOverride?.[statType] ?? null,
+      status: u.panelGiven ? [] : u.status.filter(e => e.op === op).map(e => entry(e, 'status')),
+      runtime: [...u.real.filter(e => e.op === op).map(e => entry(e, 'real')), ...(work ? u.work.filter(e => e.op === op).map(e => entry(e, 'work')) : []), ...(bullet ? bullet.work.filter(e => e.op === op).map(e => entry(e, 'bullet')) : [])],
+      panel: this.finalStat(u, statType, { layer: 'status' }), final: this.finalStat(u, statType, { work, bullet }),
+    };
+  }
   // Equipment parameters enter the panel before the percentage layer (the crest's own parameters join them
   // unedited, UnitUtil.AddCrestParameter); EquipParam (319: equip type, stat,
   // per) from 特定装備時装備パラメータ増減 passives raises the piece's own value, percentages adding up
@@ -309,6 +341,18 @@ export class Battle {
     buff.remain = buff.duration;
     // Same buff group replaces an existing one (a stronger value wins is handled by the scripts; keep the latest).
     if (buff.group) { const old = u.buffs.find(b => b.group === buff.group && b.buffId === buffId); if (old) this.removeBuff(u, old.uid); }
+    // Buffs of one category (BUFF_CATEGORY, 0 = none) do not stack: only the strongest applies (the user's rule,
+    // 2026-09-28 — 魔术指导 法强+65% and EX灵气 法强+50% are both 「魔力提升」 category 300 → +65% only). Two buffs of a
+    // category with the same operation type are compared by their first differing parameter (by size); a weaker new
+    // one is not applied, an equal or stronger one replaces the old. Different operation types are kept (logged).
+    if (buff.category) {
+      for (const old of u.buffs.filter(b => b.category === buff.category)) {
+        if (old.mst.PROCESS_OPE_TYPE !== mst.PROCESS_OPE_TYPE) { this.log('buff-category-uncompared', u.name, old.buffId, buffId); continue; }
+        let diff = 0; for (let i = 0; i < Math.max(old.params.length, p.length) && !diff; i++) diff = Math.abs(p[i] || 0) - Math.abs(old.params[i] || 0);
+        if (diff < 0) { this.log('buff-category-weaker', u.name, buffId, mst.NAME, 'kept', old.buffId); return false; }
+        this.log('buff-category-replace', u.name, old.buffId, '→', buffId); this.removeBuff(u, old.uid);
+      }
+    }
     u.buffs.push(buff);
     this.log('buff-add', u.name, buffId, mst.NAME, p);
     // "While this buff is on" (trigger 60) effects apply immediately and last until removal.
@@ -531,6 +575,9 @@ export class Battle {
     let damage = elementFactor <= 0 || invalid ? 0 : Math.trunc(f32(f32(base * q) * f32(bullet.random)));
     bullet.orgDamage = damage; bullet.damage = damage; bullet.killer = killer;
     const core = { attack, defense, element, resist, elementFactor, killer, killerFactor, offense, received, reduction, per, dmgRatio: bullet.dmgRatio, critical, random: bullet.random, base, q, coreDamage: damage };
+    // what this very hit gets (the move's own bonuses included): its critical rate and the parts of its attack stat
+    const crt = this.finalStat(owner, K.STAT.CRT, { work: true, bullet });
+    const breakdown = { attack: this.statParts(owner, atkStat, { work: true, bullet }), crit: this.statParts(owner, K.STAT.CRT, { work: true, bullet }), cap: [] };
     // After-calc triggers 27 (attacker) / 28 (defender): scripts call ProcEditProcDamage with rounded values.
     this.dispatch(K.TRIG.AFTER_CALC_ATTACK, owner, target, bullet);
     this.dispatch(K.TRIG.AFTER_CALC_DAMAGE, target, owner, bullet);
@@ -538,15 +585,17 @@ export class Battle {
     if (hitScale?.stage === 'beforeCap' && hitScale.ratio !== 1 && damage > 0) damage = Math.trunc(damage * hitScale.ratio);
     // Damage limit: 9999 base, DmgLimitUp {val, per, add} on the bullet work, DmgLimitOff replaces it.
     let cap = 9999, capVal = 0, capPer = 0, capAdd = 0, capOff = null;
-    for (const e of bullet.work) { if (e.op === K.OP.DMG_LIMIT_UP) { capVal += e.params[0] || 0; capPer += e.params[1] || 0; capAdd += e.params[2] || 0; } if (e.op === K.OP.DMG_LIMIT_OFF) capOff = e.params[0]; }
-    for (const e of [...owner.status, ...owner.real, ...owner.work]) { if (e.op === K.OP.DMG_LIMIT_UP) { capVal += e.params[0] || 0; capPer += e.params[1] || 0; capAdd += e.params[2] || 0; } }
+    const capPart = (e, layer) => breakdown.cap.push({ layer, val: e.params[0] || 0, per: e.params[1] || 0, add: e.params[2] || 0, source: this.sourceOf(e.source) });
+    for (const e of bullet.work) { if (e.op === K.OP.DMG_LIMIT_UP) { capVal += e.params[0] || 0; capPer += e.params[1] || 0; capAdd += e.params[2] || 0; capPart(e, 'bullet'); } if (e.op === K.OP.DMG_LIMIT_OFF) { capOff = e.params[0]; breakdown.capOff = { value: capOff, source: this.sourceOf(e.source) }; } }
+    for (const [layer, list] of [['status', owner.status], ['real', owner.real], ['work', owner.work]]) for (const e of list) { if (e.op === K.OP.DMG_LIMIT_UP) { capVal += e.params[0] || 0; capPer += e.params[1] || 0; capAdd += e.params[2] || 0; capPart(e, layer); } }
     cap = capOff != null ? capOff : Math.floor((9999 + capVal) * (1 + capPer * 0.0001)) + capAdd;
+    const capComputed = cap;
     const uncapped = Math.max(damage, 1);
     let finalDamage = damage <= 0 ? 0 : clamp(uncapped, 1, cap);
     if (hitScale?.stage === 'afterCap' && hitScale.ratio !== 1 && finalDamage > 0) finalDamage = Math.max(1, Math.trunc(finalDamage * hitScale.ratio));
     bullet.lastDamage = finalDamage;
     target.hp = Math.max(0, target.hp - finalDamage);
-    const result = { ...core, hitIndex: bullet.hitIndex, afterPassives: damage, cap, capVal, capPer, capAdd, uncapped, damage: finalDamage, edits: bullet.edits.slice() };
+    const result = { ...core, hitIndex: bullet.hitIndex, afterPassives: damage, cap, capComputed, capVal, capPer, capAdd, uncapped, damage: finalDamage, edits: bullet.edits.slice(), crt, breakdown };
     bullet.edits = [];
     bullet.results.push(result);
     this.log('damage', result);
