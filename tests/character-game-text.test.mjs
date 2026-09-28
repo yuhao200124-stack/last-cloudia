@@ -2,19 +2,28 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {syncCharacterPage} from '../scripts/sync-character-game-text.mjs';
+import {buildCharacterPage,characterPageData,serializeRegistry} from '../scripts/character-page-builder.mjs';
 
 // Every character page (every character mapped to game data, including ones added later) shows the
 // game's own skill names and descriptions: the page must be exactly what the generator writes from
 // dist/game-data, and every skill row, trait and exclusive-gear card must carry its game id.
 const read=p=>fs.readFileSync(new URL(`../${p}`,import.meta.url),'utf8');
 const index=JSON.parse(read('dist/game-data/index.json'));
+const registry=JSON.parse(read('docs/site-characters.json'));
+const relics=JSON.parse(read('dist/game-data/relics.json'));
 
 for(const [siteId,unitDressId] of Object.entries(index.site)){
  test(`character-${siteId}: skill names and descriptions are the game's own text`,()=>{
   const html=read(`dist/character-${siteId}.html`),game=JSON.parse(read(`dist/game-data/c/${unitDressId}.json`)),problems=[];
-  const synced=syncCharacterPage(siteId,html,game,problems);
+  const entry=registry.characters[siteId];
+  const synced=entry?.generated?buildCharacterPage(siteId,entry,game,relics,problems):syncCharacterPage(siteId,html,game,problems);
   assert.deepEqual(problems,[]);
   assert.equal(synced,html,'运行 node scripts/sync-character-game-text.mjs 后提交');
+ });
+ test(`character-${siteId}: max stats are the ones recorded in docs/site-characters.json`,()=>{
+  const html=read(`dist/character-${siteId}.html`),stats=registry.characters[siteId].maxStats;
+  const shown=[...html.matchAll(/<div class="stat-box"><span>([^<]+)<\/span><strong[^>]*>([\d,]+)<\/strong>/g)].map(m=>[m[1],Number(m[2].replaceAll(',',''))]);
+  assert.deepEqual(shown,[['HP',stats.hp],['MP',stats.mp],['攻击力',stats.attack],['防御力',stats.defense],['法强',stats.intelligence],['魔抗',stats.mind]]);
  });
  test(`character-${siteId}: every skill row, trait and exclusive-gear card has a game id`,()=>{
   const html=read(`dist/character-${siteId}.html`);
@@ -105,4 +114,39 @@ test('a chance the text leaves out is written after it when the reader data is u
  assert.match(out,/一定机率（50%）免疫暴击 特技･超必杀技的攻击时，一定机率（特技0.25%、超必杀0.8%）使敌方即死/);
  assert.match(out,/>一定机率A，一定机率B</,'an ambiguous match is left as the game wrote it');
  assert.equal(notices.length,1);assert.match(notices[0],/对不上.*无法一一对应/);
+});
+
+test('the site character list in the game-data index is the registry (docs/site-characters.json)',()=>{
+ assert.deepEqual(index.site,Object.fromEntries(Object.entries(registry.characters).map(([id,c])=>[id,c.unitDressId])));
+ assert.equal(serializeRegistry(registry),read('docs/site-characters.json'),'docs/site-characters.json keeps one character per line');
+ for(const [id,c] of Object.entries(registry.characters)){
+  // the recorded Lv1 stats are the game data's, which is how new characters are matched
+  const game=JSON.parse(read(`dist/game-data/c/${c.unitDressId}.json`));
+  assert.deepEqual(String(game.parameters).split(',').filter(Boolean).map(x=>Number(x.split('-')[0])),c.lv1,id);
+ }
+});
+
+test('a whole character page is built from the game data (checked on characters not yet on the site)',()=>{
+ const entry={maxStats:{hp:1,mp:2,attack:3,defense:4,intelligence:5,mind:6},statsChecked:'test'};
+ // 鲁迪乌斯 (magic incl. non-stacking, two gear) and 梅莉 (two gear tiers per item)
+ for(const unitDressId of [502210,100642]){
+  const game=JSON.parse(read(`dist/game-data/c/${unitDressId}.json`)),problems=[];
+  const html=buildCharacterPage('999',entry,game,relics,problems);
+  assert.deepEqual(problems,[]);
+  assert.match(html,/<body data-character-id="999">/);
+  assert.match(html,/<strong>1<\/strong>[\s\S]*<strong>6<\/strong>/);
+  const d=characterPageData(game,relics);
+  const ids=[...html.matchAll(/data-game-id="(\d+)"/g)].map(m=>Number(m[1]));
+  for(const id of [...d.traits,...d.exclusive,...d.common.map(c=>c.id),...d.transcend,...d.equipment.map(e=>e.id),...d.magic.map(m=>m.id),...d.specials])assert(ids.includes(id),`${unitDressId}: ${id}`);
+  assert.doesNotMatch(html,/<span class="skill-name[^"]*"><\/span>|<td><\/td>|<dd><\/dd>|<h4><\/h4>/,'every name and description is filled in');
+  const profile=JSON.parse(html.match(/<script type="application\/json" id="characterCapProfile">([\s\S]*?)<\/script>/)[1]);
+  assert(profile.attacks.length>=4);
+ }
+ const mayly=buildCharacterPage('999',entry,JSON.parse(read('dist/game-data/c/100642.json')),relics);
+ const cards=[...mayly.matchAll(/<article class="equipment-card" data-game-id="(\d+)"><h4>([^<]*)<\/h4>/g)].map(m=>[Number(m[1]),m[2]]);
+ assert.deepEqual(cards.map(c=>c[0]).sort(),[101278,102048],'only the upgraded tier of each gear');
+ assert.match(mayly,/<h4>崇神狂翼基格罗亚<\/h4><dl><dt>类型<\/dt><dd>斧｜光属性<\/dd><dt>最高属性<\/dt><dd>HP\+500 \/ 攻击力\+379<\/dd>/);
+ const rudeus=buildCharacterPage('999',entry,JSON.parse(read('dist/game-data/c/502210.json')),relics);
+ assert.match(rudeus,/<tr data-non-stacking="true" data-game-id="291010"><td><span class="skill-name exclusive">豪雷积雨云<\/span><\/td><td class="sc">— \/ 68<\/td>/);
+ assert.match(rudeus,/<tr data-game-id="160010"><td><span class="skill-name common">神之治愈<\/span><\/td><td class="sc">8 \/ 21<\/td>/);
 });

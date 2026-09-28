@@ -36,7 +36,9 @@ def passive(pid):
       'explainLong':clean(pxl.get(pid,'')),'steps':lab,'values':values_of(r['PROCESS_INFO']),'scope':scope(r['PROCESS_INFO']),'timing':tm,
       'relicLearnable':pid in relicPassives,'processInfo':r['PROCESS_INFO'],**({'autoStates':auto} if auto else {})}
     return pid
-ETYPE={10:'剑',11:'刀',12:'斧',13:'锤',14:'枪',15:'弓',16:'机械',17:'杖',20:'铠甲',21:'衣服',22:'长袍',30:'饰品',40:'其他'}
+# EQUIP_TYPE, checked against the item names of every type in ItemEquipMst (11 斧: 31 axes; 12 枪;
+# 13 锤; 14 弓; 15 机械: guns/cannons; 16 爪: claws/gauntlets; 40: appearance items)
+ETYPE={10:'剑',11:'斧',12:'枪',13:'锤',14:'弓',15:'机械',16:'爪',17:'杖',20:'铠甲',21:'衣服',22:'长袍',30:'饰品',40:'外观'}
 pieces=collections.defaultdict(list)
 for r in AP: pieces[r['UNIT_DRESS_ID']].append(r)
 eqByUnit=collections.defaultdict(list)
@@ -72,7 +74,9 @@ for u in UD:
         # maxPassives: the same passives at the gear's highest enhancement (神装) stage — see gametext.max_enhanced
         maxp=[m for m in (max_enhanced(p,psByName,psName) for p in pids) if passive(m)]
         equipment.append({'id':e['ITEM_EQUIP_ID'],'name':clean(e['NAME']),'nameS':t2s(clean(e['NAME'])),'type':ETYPE.get(e['EQUIP_TYPE'],str(e['EQUIP_TYPE'])),'element':e['ELEM'],
-          'stats':e['PARAMETER_INFO'],'maxStats':e['PARAMETER_MAX_INFO'],'maxLv':e['MAX_LV'],'passives':pids,'maxPassives':maxp})
+          'stats':e['PARAMETER_INFO'],'maxStats':e['PARAMETER_MAX_INFO'],'maxLv':e['MAX_LV'],'passives':pids,'maxPassives':maxp,
+          # tiers of one exclusive gear (e.g. 魔祸翼 → 魔祸呪翼) share SERIAL_NUM; the higher RARE is the upgrade
+          'serial':e['SERIAL_NUM'],'rare':e['RARE']})
     mg=A.get('magic',[]) or []
     chars.append({'unitDressId':uid,'unitId':u['UNIT_ID'],'name':clean(u['NAME']),'nameS':t2s(clean(u['NAME'])),'fullName':clean(u['NAME_FULL']),'fullNameS':t2s(clean(u['NAME_FULL'])),
       'dress':clean(u['DRESS_NAME']),'dressS':t2s(clean(u['DRESS_NAME'])),'characterType':u['CHARACTER_TYPE'],'equipTypes':[ETYPE.get(int(x),x) for x in str(u['EQUIP_TYPE_INFO']).split(',') if x.strip().isdigit()],

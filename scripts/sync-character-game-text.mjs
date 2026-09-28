@@ -41,7 +41,7 @@ const withAttr=(attrs,name,value)=>attr(attrs,name)!==undefined?attrs:`${attrs} 
 // passive's next unused always-on process of that kind (autoStates, in process order); a name the table
 // does not know takes the next process no other name claims. Names that already carry numbers
 // ("常时保有精神+35%的增益以及…") are described by the text itself.
-const STATE_CLAUSE=/((?:始终|始終|常时|常時|永久|一直)[^。]*?(?:保持|保有)[^。]*?效果)/g;
+const STATE_CLAUSE=/((?:始终|始終|常时|常時|永久|一直)[^。]*?(?:保持|保有|处于|處於)[^。]*?效果)/g;
 const ELEMENT={炎:'炎',冰:'冰',樹:'树',树:'树',雷:'雷',光:'光',暗:'暗',無:'无',无:'无'};
 const nonZero=v=>v&&!/^[+-]?0(\.0+)?%?$/.test(v);
 const STATE_KINDS=[
@@ -84,7 +84,7 @@ function stateNotes(text,states,values,notices,label){
  // The same effect given by a conditional process (e.g. 自愈 only below 50% HP, or only in water) when
  // the passive has no always-on process of that kind: used when exactly one segment carries it.
  const conditional=(values==null?[]:String(values).split('；')).map(seg=>({seg,used:false}));
- const namesOf=clause=>clause.replace(/^[\s\S]*?(?:保持|保有)/,'').replace(/的?(?:增益)?效果$/,'').split(/[「」『』･・、，,\s]+|与|以及|和/).map(n=>n.trim()).filter(n=>n&&!/\d/.test(n));
+ const namesOf=clause=>clause.replace(/^[\s\S]*?(?:保持|保有|处于|處於)/,'').replace(/的?(?:增益)?效果$/,'').split(/[「」『』･・、，,\s]+|与|以及|和/).map(n=>n.trim()).filter(n=>n&&!/\d/.test(n));
  const kindsOf=name=>STATE_KINDS.filter(k=>k[1].test(name));
  const claimed=new Set(clauses.flatMap(c=>namesOf(c[1])).flatMap(n=>kindsOf(n).map(k=>k[0])));
  let out='',at=0;
@@ -198,7 +198,7 @@ export function syncCharacterPage(siteId,html,game,problems=[],notices=null){
    const name=textOf(nameMatch[1]),id=idFor(section,attrs,name),entry=id&&lookup[section](id);
    if(!entry){problems.push(`${section}「${name}」：未标记游戏编号或编号不存在`);return all;}
    const migrated=attr(attrs,'data-game-id')!==undefined;
-   let row=inner.replace(nameMatch[0],nameMatch[0].replace(nameMatch[1],esc(entry.name)));
+   let row=inner.replace(nameMatch[0],nameMatch[0].replace(/>[\s\S]*?<\/span>$/,()=>`>${esc(entry.name)}</span>`));
    const cells=[...row.matchAll(/<td([^>]*)>([\s\S]*?)<\/td>/g)],last=cells[cells.length-1];
    const tdAttrs=migrated?last[1]:withAttr(last[1],'data-rule-text',textOf(last[2]));
    row=row.slice(0,last.index)+`<td${tdAttrs}>${esc(describe(id,entry,`「${entry.name}」`))}</td>`+row.slice(last.index+last[0].length);
@@ -223,12 +223,19 @@ export function syncCharacterPage(siteId,html,game,problems=[],notices=null){
  return html;
 }
 
-if(import.meta.url===`file://${process.argv[1]}`){
+// (An async function rather than top-level await: the builder imports this module, so this module
+// has to finish loading before the builder can.)
+if(import.meta.url===`file://${process.argv[1]}`)(async()=>{
+ // Pages generated from the game data (docs/site-characters.json "generated") are rebuilt whole, so a
+ // re-exported game database also brings in skills added to the character later.
+ const {buildCharacterPage}=await import('./character-page-builder.mjs');
+ const registry=JSON.parse(read('docs/site-characters.json')).characters;
+ const relics=JSON.parse(read('dist/game-data/relics.json'));
  const problems=[],notices=[],changed=[];
  for(const [siteId,unitDressId] of Object.entries(index.site)){
   const path=`dist/character-${siteId}.html`,before=read(path);
   const game=JSON.parse(read(`dist/game-data/c/${unitDressId}.json`));
-  const local=[],info=[];const after=syncCharacterPage(siteId,before,game,local,info);
+  const local=[],info=[];const after=registry[siteId]?.generated?buildCharacterPage(siteId,registry[siteId],game,relics,local,info):syncCharacterPage(siteId,before,game,local,info);
   problems.push(...local.map(p=>`character-${siteId}：${p}`));notices.push(...info.map(p=>`character-${siteId}：${p}`));
   if(after!==before){changed.push(path);if(!check)fs.writeFileSync(new URL(path,root),after);}
  }
@@ -236,4 +243,4 @@ if(import.meta.url===`file://${process.argv[1]}`){
  if(problems.length){console.error(problems.join('\n'));process.exit(1);}
  if(check&&changed.length){console.error(`以下角色页的技能名称／说明与游戏数据不一致，请运行 node scripts/sync-character-game-text.mjs：\n${changed.join('\n')}`);process.exit(1);}
  console.log(check?'角色页技能名称与说明均与游戏数据一致。':`已按游戏数据更新：${changed.join('、')||'无变化'}`);
-}
+})();

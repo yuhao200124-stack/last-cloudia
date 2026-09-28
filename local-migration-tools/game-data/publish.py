@@ -48,7 +48,7 @@ for r in d['relics']:
 json.dump({'relics':d['relics'],'partyTraits':d['partyTraits'],'passives':relicP},open(f'{OUT}/relics.json','w'),ensure_ascii=False,separators=(',',':'))
 json.dump(magic,open(f'{OUT}/magic.json','w'),ensure_ascii=False,separators=(',',':'))
 json.dump({'generated':d['generated'],'source':d['source'],'characters':index,
-  'site':{'182':100642,'245':101011,'259':502230,'260':502220},
+  'site':{k:v['unitDressId'] for k,v in json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','docs','site-characters.json'),encoding='utf-8'))['characters'].items()},
   'magicAlias':{'260':{'泽诺克莱昂':'异度克里昂','暴雪':'暴风雪','究极虚弱':'亿万虚弱'},'245':{'龙王巨型领袖魅力':'龙王的超阶魅力','龙之爆发':'龙化爆裂'}}},
   open(f'{OUT}/index.json','w'),ensure_ascii=False,separators=(',',':'))
 print(len(index),len(magic['normal']),len(magic['heavy']))

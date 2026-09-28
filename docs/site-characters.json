@@ -1,0 +1,9 @@
+{
+ "note": "网站角色编号（＝Altema 角色编号，角色页 character-<编号>.html、头像 img.altema.jp/lastcloudia/chara/banner/<编号>.jpg）→ 游戏数据 unitDressId。unitDressId 由 scripts/new-character.mjs 按 Altema 的 Lv1 六项属性与游戏数据的 Lv1 属性自动匹配；maxStats 为 Altema 属性表“合计”一行（Lv120＋限界突破＋潜在觉醒＋神域开眼）。generated=true 的角色页由 scripts/character-page-builder.mjs 从游戏数据整页生成；false 为早先手工整理的页面，只同步技能名称与说明。publish.py 导出时从本文件写入 dist/game-data/index.json 的 site。",
+ "characters": {
+  "182": {"unitDressId":100642,"name":"魔神梅莉","generated":false,"lv1":[378,13,48,31,13,30],"maxStats":{"hp":11628,"mp":281,"attack":2073,"defense":1642,"intelligence":880,"mind":1527},"statsChecked":"页面原有数值（2026-09-28 Altema 页面过长，读取时未含属性表，未复核）"},
+  "245": {"unitDressId":101011,"name":"龙王阿尔克","generated":false,"lv1":[432,14,56,36,14,31],"maxStats":{"hp":14494,"mp":262,"attack":2499,"defense":1781,"intelligence":971,"mind":1622},"statsChecked":"Altema 2026-09-28"},
+  "259": {"unitDressId":502230,"name":"艾莉丝·格雷拉特","generated":false,"lv1":[461,13,33,44,16,21],"maxStats":{"hp":13057,"mp":241,"attack":2437,"defense":2005,"intelligence":945,"mind":1584},"statsChecked":"Altema 2026-09-28"},
+  "260": {"unitDressId":502220,"name":"洛琪希·米格路迪亚·格雷拉特","generated":false,"lv1":[321,33,20,28,57,23],"maxStats":{"hp":10702,"mp":459,"attack":1222,"defense":1407,"intelligence":2512,"mind":1619},"statsChecked":"Altema 2026-09-28"}
+ }
+}
