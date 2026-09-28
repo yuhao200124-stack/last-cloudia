@@ -1,7 +1,8 @@
 """The skill classification draft (docs/skill-classes-draft.json) as an Excel for the user to review.
 
   node scripts/build-skill-classes.mjs
-  python3 scripts/skill-classes-excel.py export <out.xlsx>
+  python3 scripts/skill-classes-excel.py export <out.xlsx>        # one row per skill, sorted by main category
+  python3 scripts/skill-classes-excel.py by-category <out.xlsx>   # a heading per category, every skill in it listed under it
 
 One sheet, one skill per row, sorted by its main category (the first of its categories in CAT order).
 """
@@ -112,9 +113,66 @@ def export(out):
     print(f'exported {len(rows)} skills to {out}', dict(main_cnt), dict(calc_cnt))
 
 
+def export_by_category(out):
+    """One sheet: a heading row per category, then every skill in it (a skill in several categories is listed under each)."""
+    draft = json.loads((ROOT / 'docs/skill-classes-draft.json').read_text(encoding='utf-8'))
+    game = {g['gameId']: g for g in json.loads((ROOT / 'docs/game-relic-passives.json').read_text(encoding='utf-8'))}
+    layout = json.loads((ROOT / 'docs/game-skill-layout.json').read_text(encoding='utf-8'))
+    order = {r['id']: i for i, r in enumerate(r for r in layout['sheets']['全部技能']['rows'] if not r.get('separator'))}
+    desc = {**DESC, **draft.get('categories', {})}
+    norm = lambda c: '待确认' if c in ('其他', '待确认（脚本数值）') else c
+    members = collections.defaultdict(list)
+    for s in draft['skills']:
+        cats = [c for c in CAT if c in {norm(x) for x in s['cats']}] or ['待确认']
+        for c in cats:
+            members[c].append((order.get(s['id'], 9999), s, cats))
+    wb = Workbook()
+    ws = wb.active
+    ws.title = '按分类'
+    thin = Side(style='thin', color='BFBFBF')
+    bd = Border(left=thin, right=thin, top=thin, bottom=thin)
+    cols = ['游戏编号', '名称', 'SC', '效果说明', '也在这些分类', '条件标签', '计算器']
+    for j, (h, w) in enumerate(zip(cols, [10, 20, 5, 60, 22, 22, 14]), 1):
+        c = ws.cell(row=1, column=j, value=h)
+        c.font = F(bold=True)
+        c.fill = PatternFill('solid', fgColor='D9D9D9')
+        c.border = bd
+        c.alignment = Alignment(horizontal='center', vertical='center')
+        ws.column_dimensions[c.column_letter].width = w
+    ws.freeze_panes = 'A2'
+    r = 2
+    for cat in CAT:
+        rows = sorted(members.get(cat, []), key=lambda x: x[0])
+        if not rows:
+            continue
+        head = ws.cell(row=r, column=1, value=f'【{cat}】 {len(rows)} 个技能 — {desc.get(cat, "")}')
+        head.font = F(bold=True, size=11, color='FFFFFF')
+        for j in range(1, len(cols) + 1):
+            ws.cell(row=r, column=j).fill = PatternFill('solid', fgColor='2F5597')
+        ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=len(cols))
+        ws.row_dimensions[r].height = 22
+        r += 1
+        for _, s, cats in rows:
+            others = [c for c in cats if c != cat]
+            vals = [s['id'], s['name'], game[s['id']]['sc'], game[s['id']]['effectS'], '、'.join(others), '、'.join(s['tags']), s['calc']]
+            for j, v in enumerate(vals, 1):
+                c = ws.cell(row=r, column=j, value=v if v != '' else None)
+                c.font = F()
+                c.border = bd
+                c.alignment = Alignment(vertical='center', wrap_text=j in (4, 5, 6), horizontal='center' if j in (1, 3, 7) else 'left')
+                if j == 7:
+                    c.fill = PatternFill('solid', fgColor=FILLS.get(s['calc'], 'FFFFFF'))
+            r += 1
+        r += 1
+    wb.save(out)
+    print(f'exported by category to {out}', {c: len(members.get(c, [])) for c in CAT})
+
+
 if __name__ == '__main__':
     if len(sys.argv) >= 3 and sys.argv[1] == 'export':
         export(sys.argv[2])
+    elif len(sys.argv) >= 3 and sys.argv[1] == 'by-category':
+        export_by_category(sys.argv[2])
     else:
         print(__doc__)
         sys.exit(2)
