@@ -11,6 +11,7 @@ const luaRound = v => Math.floor(v + 0.5);
 
 // ---- constants shared with the scripts (luaCommon.lua / procCondCommon.lua) ----
 export const K = {
+  UNKNOWN_RACE: 9999, // stand-in race of a target given none (see Battle.charTypesOf)
   STAT: { HP: 64, MP: 1, STR: 2, DEF: 3, INT: 4, MND: 5, SPD: 6, VIT: 7, CRT: 8, SUPER_ARMOR: 9, MAX_HP: 96, TOTAL_MAX_HP: 32, MAX_MP: 33, MAX_VIT: 39 },
   TS: { SUBJECT_WORK: 1, UNIT_WORK: 2, BULLET_WORK: 3, BUFF_WORK: 4, BUFF_OWNER_WORK: 5, SUBJECT_REAL: 9, UNIT_REAL: 10, BULLET_SAMPLE: 11, BUFF_SAMPLE: 12, BUFF_OWNER_SAMPLE: 13, SUBJECT_LOCAL: 17, UNIT_LOCAL: 18, BULLET_LOCAL: 19, BUFF_LOCAL: 20, BUFF_OWNER_LOCAL: 21 },
   LIFE: { NORMAL: 0, TRANSIENT: 2, CONTINUOUS: 3 },
@@ -500,7 +501,10 @@ export class Battle {
     this.dispatch(K.TRIG.ON_CALC_ATTACK, owner, target, bullet);
     this.dispatch(K.TRIG.ON_CALC_DAMAGE, target, owner, bullet);
     const attack = this.finalStat(owner, atkStat, { work: true, bullet });
-    const defense = this.finalStat(target, defStat, { work: true });
+    let defense = this.finalStat(target, defStat, { work: true });
+    // The break state's own defense change is not in the game scripts: options.breakDefenseRatio is the
+    // calculator's Break 时防御倍率 setting, applied only while the target is in break (and reported as an assumption).
+    if (target.breakRemain > 0 && this.options.breakDefenseRatio != null) defense = f32(defense * this.options.breakDefenseRatio);
     const element = this.bulletElement(bullet);
     const resist = element === 0 ? 0 : this.elemResist(target, element);
     const elementFactor = f32(1 - clamp(f32(resist / 100), -9.99, 1));
@@ -550,16 +554,25 @@ export class Battle {
     return bullet.element;
   }
   // Character types the bullet has a killer against: the skill's KILLER_INFO plus Killer (308) controls.
+  // options.killer (the calculator's 特攻 switch) overrides the skills: 'on' = every attack is a killer
+  // against the target (so killer-bound bonuses of the skills apply), 'off' = never; unset = by the skills.
   killerTypes(bullet) {
+    if (this.options.killer === 'off') return [];
     const owner = this.unit(bullet.owner);
     const out = new Set();
     if (bullet.skill.killer) out.add(bullet.skill.killer);
     for (const e of [...owner.status, ...owner.real, ...owner.work, ...bullet.work]) if (e.op === K.OP.KILLER && e.params[0]) out.add(e.params[0]);
+    if (this.options.killer === 'on') for (const t of this.charTypesOf(this.unit(bullet.target))) out.add(t);
     return [...out];
   }
+  // A target the user gave no race still has one in the game; with the killer forced on it stands in as
+  // UNKNOWN_RACE so the scripts' "for each race of the target" loops have something to match.
+  charTypesOf(u) { if (!u) return []; return u.charTypes.length || this.options.killer !== 'on' || u.side !== K.SIDE.OPPONENT ? u.charTypes.slice() : [K.UNKNOWN_RACE]; }
   isKiller(bullet, owner, target) {
+    if (this.options.killer === 'on') return true;
+    if (this.options.killer === 'off') return false;
     if (bullet.forceKiller) return true;
-    const types = new Set(target.charTypes);
+    const types = new Set(this.charTypesOf(target));
     return this.killerTypes(bullet).some(t => types.has(t));
   }
 
@@ -627,7 +640,7 @@ export class Battle {
       UnitGetMonsterID(t) { const u = B.unit(t); return multi(u?.monsterId ?? 0, 0); },
       UnitGetCharacterID(t) { return B.unit(t)?.unitDressId ?? 0; },
       UnitGetLevel(t) { return B.unit(t)?.level ?? 1; },
-      UnitGetCharType(t) { const u = B.unit(t); return u ? u.charTypes.slice() : []; },
+      UnitGetCharType(t) { return B.charTypesOf(B.unit(t)); },
       UnitGetGender(t) { return B.unit(t)?.gender ?? 0; },
       UnitGetBossFlg(t) { return !!B.unit(t)?.isBoss; },
       UnitGetState(t) { return 0; },
@@ -637,7 +650,8 @@ export class Battle {
       UnitGetSkillUsed(t) { return B.unit(t)?.skillUsed ?? 0; },
       UnitGetCastLevel(t) { return B.unit(t)?.castLevel ?? 0; },
       UnitGetSp(t) { return B.unit(t)?.ether ?? 0; },
-      UnitGetBreakRemain() { return 0; }, UnitGetBreakCount() { return 0; }, UnitGetBreakTime() { return 0; },
+      // Break: the calculator's Break switch puts the target in the break state (setupBattle sets breakRemain)
+      UnitGetBreakRemain(t) { return B.unit(t)?.breakRemain || 0; }, UnitGetBreakCount() { return 0; }, UnitGetBreakTime() { return 0; },
       UnitHaveCounter() { return false; }, UnitGetAimedCount() { return 0; }, UnitGetAimedList() { return []; },
       UnitGetSelectWeight() { return 100; }, UnitTotalSelectWeight() { return 100; },
       UnitGetBadStatus(t) { return []; },

@@ -3,6 +3,7 @@
 // 网页旧规则的结果保持不变，这里只是并列的对照。
 import { K } from './engine/battle.mjs';
 import { RAW_BLESSING_RECORDS, USER_CONFIRMED_BLESSING_RECORDS } from './account-blessings.mjs';
+import { characterDefinition } from './character-template.mjs?v=20260928-game-names';
 
 // This account's blessings (加护) with the runtime values the reader captured (blessing levels scale the
 // master value, e.g. 100 → 406), keyed by passive id and process segment; used when no report is imported.
@@ -85,9 +86,8 @@ function mountPrimary() {
     <article class="critical-result"><span title="触发暴击时的伤害；整次期望按局内暴击率计算">暴击每段伤害</span><strong id="ep-critical">—</strong></article>
     <div class="total-result"><span>整次技能期望伤害</span><strong id="ep-total">—</strong><small id="ep-totalNote"></small></div>
     <dl class="result-details">
-      <div class="result-cap"><dt>每段伤害上限</dt><dd id="ep-cap">—</dd></div><div class="result-cap"><dt>暴击每段上限</dt><dd id="ep-capCrit">—</dd></div>
-      <div><dt>命中段数</dt><dd class="ep-hits"><input id="engineHits" type="number" min="1" max="999" step="1" placeholder="网站"><small id="ep-hitsNote"></small></dd></div>
-      <div><dt>全为普通命中时</dt><dd id="ep-normalTotal">—</dd></div><div><dt>本段结算攻击力</dt><dd id="ep-attack">—</dd></div><div><dt>本段结算防御力</dt><dd id="ep-defense">—</dd></div><div><dt>特攻匹配</dt><dd id="ep-killer">—</dd></div>
+      <div><dt>命中段数</dt><dd class="ep-hits"><input id="engineHits" type="number" min="1" max="999" step="1" placeholder="网站"></dd></div>
+      <div><dt>全为普通命中时</dt><dd id="ep-normalTotal">—</dd></div><div><dt>特攻匹配</dt><dd id="ep-killer">—</dd></div><div><dt>弱属匹配</dt><dd id="ep-weak">—</dd></div>
     </dl><p id="ep-note" class="result-cap-note"></p>`;
   const legacy = document.createElement('details'); legacy.id = 'legacyResults'; legacy.innerHTML = '<summary>网页旧规则（对照，不参与上方结果）</summary>';
   wrap.append(block, legacy);
@@ -107,10 +107,9 @@ function renderPrimary(out, ctx) {
   const live = all.filter(h => h.bulletId === all[0]?.bulletId);
   const otherBullets = new Set(all.filter(h => h.bulletId !== all[0]?.bulletId).map(h => h.bulletId)).size;
   const first = live[0]; const st = out.stats; const critRate = Math.min(100, Math.max(0, st.crt.real || 0)) / 100;
-  const { hits, source } = currentHits();
+  const { hits } = currentHits();
   if (document.activeElement !== $('engineHits')) $('engineHits').value = siteHits() || '';
-  $('ep-hitsNote').textContent = `${source}${live.length > 1 ? ` · 每段 ${live.length} 次调用` : ''}`;
-  if (!first) { for (const id of ['ep-normal', 'ep-critical', 'ep-total', 'ep-cap', 'ep-capCrit', 'ep-normalTotal', 'ep-attack', 'ep-defense', 'ep-killer', 'ep-normalGauge', 'ep-normalCap', 'ep-critGauge', 'ep-critCap']) $(id).textContent = '—'; $('ep-note').textContent = out.errors.length ? `脚本错误：${out.errors[0].name}` : '这个招式没有伤害段。'; return; }
+  if (!first) { for (const id of ['ep-normal', 'ep-critical', 'ep-total', 'ep-normalTotal', 'ep-killer', 'ep-weak', 'ep-normalGauge', 'ep-normalCap', 'ep-critGauge', 'ep-critCap']) $(id).textContent = '—'; $('ep-note').textContent = out.errors.length ? `脚本错误：${out.errors[0].name}` : '这个招式没有伤害段。'; return; }
   const range = (a, b) => `${fmt(a)} – ${fmt(b)}`;
   const expect = h => h.normal.mean * (1 - critRate) + (h.critical ? h.critical.mean : h.normal.mean) * critRate;
   const perCall = live.reduce((sum, h) => sum + expect(h), 0);
@@ -123,11 +122,12 @@ function renderPrimary(out, ctx) {
   $('ep-critBar').style.width = `${Math.min(100, (first.critCap ?? first.cap) && first.critical ? first.critical.max / (first.critCap ?? first.cap) * 100 : 0)}%`;
   $('ep-total').textContent = `≈ ${fmt(perCall * hits)}`;
   $('ep-totalNote').textContent = `${hits} 段${live.length > 1 ? ` × ${live.length} 次调用` : ''} · 暴击率 ${Math.round(critRate * 100)}%（局内 CRT ${st.crt.real}）· 含逐段上限`;
-  $('ep-cap').textContent = fmt(first.cap); $('ep-capCrit').textContent = fmt(first.critCap ?? first.cap);
   $('ep-normalTotal').textContent = range(live.reduce((a, h) => a + h.normal.min, 0) * hits, live.reduce((a, h) => a + h.normal.max, 0) * hits);
-  $('ep-attack').textContent = fmt(first.attack); $('ep-defense').textContent = fmt(first.defense);
   $('ep-killer').textContent = first.killer ? `触发 · ×${first.killerFactor.toFixed(2)}` : '未触发';
-  const notes = [];
+  // Weakness: the target's resistance to the hit's element (negative = weak), the game's factor 1 − resistance/100
+  const weakFactor = 1 - Math.min(1, Math.max(-9.99, (first.resist || 0) / 100));
+  $('ep-weak').textContent = !first.element ? '无属性' : first.resist < 0 ? `触发 · ×${weakFactor.toFixed(2)}` : first.resist > 0 ? `未触发 · 耐性 ×${weakFactor.toFixed(2)}` : '未触发';
+  const notes = [...(ctx.gearNotes || [])];
   if (first.normal.max >= first.cap) notes.push('普通伤害触及上限');
   if (otherBullets) notes.push(`另有 ${otherBullets} 条弹道未计入整次期望，见下方明细`);
   if (out.assumptions?.length) notes.push(out.assumptions.join('；'));
@@ -354,6 +354,79 @@ function targetFromFields(detail) {
   return { name: $('bossPreset')?.selectedOptions[0]?.textContent || '目标', isBoss: $('boss')?.checked !== false, charTypes: races, stats: { hp: 99999999, mp: 100, def: Number($('bossDefense')?.value) || 0, mnd: Number($('bossMind')?.value) || 0, str: 0, int: 0 }, elemResist: { 1: res[0] || 0, 2: res[1] || 0, 3: res[2] || 0, 4: res[3] || 0, 5: res[4] || 0, 6: res[5] || 0 } };
 }
 
+// ---- 专武（按最大）与双刀 ----
+// Exclusive gear is taken at its maximum (the user's rule): each item at its highest tier (tiers of one item share
+// SERIAL_NUM; the higher RARE is the upgrade, e.g. 魔祸翼 → 魔祸呪翼) with the passives of its highest enhancement
+// stage (game-data c/<dress>.json: serial, rare, maxPassives). ItemEquipMst only points to the base stage.
+function exclusiveTiers(c) {
+  const best = new Map();
+  for (const e of c?.exclusiveEquipment || []) { const k = e.serial ?? e.id, b = best.get(k); if (!b || (e.rare ?? 0) > (b.rare ?? 0) || ((e.rare ?? 0) === (b.rare ?? 0) && e.id > b.id)) best.set(k, e); }
+  return [...best.values()];
+}
+const tierOf = c => { const m = new Map(); for (const top of exclusiveTiers(c)) for (const e of c.exclusiveEquipment) if ((e.serial ?? e.id) === (top.serial ?? top.id)) m.set(e.id, top); return m; };
+const isWeapon = t => t >= 10 && t < 20;
+let gearNames = new Map(); // simplified names of the current character's exclusive gear (game-data nameS)
+const itemName = (master, id) => gearNames.get(Number(id)) || master.itemEquip.get(Number(id))?.NAME || String(id);
+// The calculator's 专武 selector: 未装备／其他 → none, 全部装备 → every item, one item → that item (matched by name).
+function chosenExclusive(c, master) {
+  const choice = $('specialWeapon')?.value || 'both';
+  const tiers = exclusiveTiers(c);
+  const gear = characterDefinition(new URLSearchParams(location.search).get('character') || '').gear || {};
+  const order = Object.values(gear).map(g => g.name);
+  const rank = e => { const i = order.indexOf(e.nameS); return i < 0 ? order.length : i; };
+  const sorted = tiers.map((e, i) => ({ e, i })).sort((a, b) => rank(a.e) - rank(b.e) || a.i - b.i).map(x => x.e);
+  if (choice === 'none' || choice === 'other') return [];
+  if (choice === 'both') return sorted;
+  const name = gear[choice]?.name;
+  return sorted.filter(e => e.nameS === name);
+}
+// Slots: weapon 1, armour 2 (a second weapon goes there only when dual wielding), accessories 3–4.
+function exclusiveEquips(items, master) {
+  const typed = items.map(e => ({ e, type: master.itemEquip.get(e.id)?.EQUIP_TYPE ?? 0 }));
+  const weapons = typed.filter(x => isWeapon(x.type)), armours = typed.filter(x => x.type >= 20 && x.type < 30), others = typed.filter(x => x.type >= 30 && x.type < 40);
+  const equips = [];
+  if (weapons[0]) equips.push({ pos: 1, id: weapons[0].e.id });
+  if (armours[0]) equips.push({ pos: 2, id: armours[0].e.id });
+  else if (weapons[1]) equips.push({ pos: 2, id: weapons[1].e.id });
+  others.slice(0, 2).forEach((x, i) => equips.push({ pos: 3 + i, id: x.e.id }));
+  return equips;
+}
+// Every exclusive item on the attacker at its top tier and top stage (also for a report's gear).
+function maximizeExclusive(spec, c) {
+  const tiers = tierOf(c); if (!tiers.size || !spec.equips) return;
+  spec.equips = spec.equips.map(e => { const top = tiers.get(Number(e.id)); return top ? { ...e, id: top.id } : e; });
+  spec.equipPassiveIds = { ...(spec.equipPassiveIds || {}) };
+  for (const e of spec.equips) { const top = [...tiers.values()].find(t => t.id === e.id); if (top?.maxPassives?.length) spec.equipPassiveIds[top.id] = top.maxPassives; }
+}
+// The 双刀 switch decides dual wield, whatever the skills: on → a weapon in the armour slot (the other exclusive
+// weapon, else a stand-in of the main weapon's type and element without its stats or passives) and, without a
+// dual-wield passive, the game's 二刀流 ratio; off → no second weapon (a weapon in the armour slot is dropped).
+function applyDualSwitch(spec, c, master, dual, notes) {
+  gearNames = new Map((c?.exclusiveEquipment || []).map(e => [e.id, e.nameS]));
+  const equips = (spec.equips || []).slice();
+  const main = equips.find(e => e.pos === 1), slot2 = equips.find(e => e.pos === 2);
+  const slot2Weapon = slot2 && isWeapon(master.itemEquip.get(Number(slot2.id))?.EQUIP_TYPE ?? slot2.type ?? 0);
+  if (!dual) {
+    if (slot2Weapon) {
+      spec.equips = equips.filter(e => e !== slot2);
+      spec.passives = (spec.passives || []).filter(p => !(p.affiliation === K.AFF.WEAPON && Number(p.localId ?? p.id) === Number(slot2.id)));
+      notes.push(`未开双刀：副武器「${itemName(master, slot2.id)}」不计入`);
+    }
+    return;
+  }
+  if (!main) { notes.push('双刀：没有主武器，无法按双刀结算'); return; }
+  if (!slot2Weapon) {
+    const spare = exclusiveTiers(c).find(t => t.id !== Number(main.id) && isWeapon(master.itemEquip.get(t.id)?.EQUIP_TYPE ?? 0));
+    const kept = equips.filter(e => e !== slot2);
+    if (slot2) notes.push(`双刀：防具「${itemName(master, slot2.id)}」让出位置给副武器，不计入`);
+    if (spare) { kept.push({ pos: 2, id: spare.id }); spec.equipPassiveIds = { ...(spec.equipPassiveIds || {}), ...(spare.maxPassives?.length ? { [spare.id]: spare.maxPassives } : {}) }; notes.push(`双刀：副武器为「${spare.nameS}」`); }
+    else { kept.push({ pos: 2, id: main.id, copy: true }); notes.push(`双刀：没有第二把专武，副武器按主武器「${itemName(master, main.id)}」同类型、同属性计算（不计副武器的数值和词条）`); }
+    spec.passives = (spec.passives || []).filter(p => !(slot2 && [K.AFF.ARMOR, K.AFF.WEAPON].includes(p.affiliation) && Number(p.localId ?? p.id) === Number(slot2.id)));
+    spec.equips = kept;
+  }
+  spec.dualWieldRatio = 6000;
+}
+
 // HP follows the calculator's two switches exactly like the old rules: 满血 → 100% (full-HP effects such as
 // 月光II fire), 濒死 → 25%, neither → 99% (alive and healthy, but nothing that needs full HP fires).
 function stateFromSwitches(detail) {
@@ -361,7 +434,10 @@ function stateFromSwitches(detail) {
   const full = sel.fullHp || $('fullHp')?.checked, low = sel.lowHp || $('lowHp')?.checked;
   const hp = low ? 25 : full ? 100 : 99;
   const mp = (sel.mpLow || $('mpLow')?.checked) ? 20 : 100;
-  return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: preCastList() };
+  // 特攻 / Break: the switch alone decides (bonuses tied to them still come from the skills)
+  const targetBreak = sel.break ?? $('break')?.checked ?? false, ratio = Number($('breakDefenseRatio')?.value);
+  return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: preCastList(),
+    killer: (sel.specialAttack ?? $('specialAttack')?.checked) ? 'on' : 'off', targetBreak: !!targetBreak, breakDefenseRatio: Number.isFinite(ratio) ? ratio : null };
 }
 
 // Skills used earlier in the battle (per character): id → count; the list is rebuilt for the attacker's own skills.
@@ -421,7 +497,7 @@ async function run(force = false) {
         // the user's rule: the report decides what is equipped; everything upgradable is taken at its maximum
         attackerSpec = { ...fromLoadout, name: c?.nameS || fromLoadout.name, statsSource: `配装报告（${lo.passives.length} 个被动 · ${gearNote}${crestNote}${growthChoice.accountBlessings ? ' ＋本账号加护' : ''}；等级／觉醒／能力盘／强化／徽章等级按最大${unknown ? `；${unknown} 个被动未在主数据中找到` : ''}）` };
       } else {
-        const equips = M.exclusiveEquipment(battle.master, dress);
+        const equips = exclusiveEquips(chosenExclusive(c, battle.master), battle.master);
         const passives = [...ids.map(id => ({ id })), ...blessings.filter(b => !ids.includes(b.id))];
         attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, passives, personality: c?.personality || [], equips, statsSource: `游戏数据计算（${loadoutReport ? '配装报告里没有这个角色；' : ''}${equips.length ? equips.map(e => battle.master.itemEquip.get(e.id)?.NAME).join('、') + ' 满强化' : '无专属装备'}；被动按全部自带技能${growthChoice.accountBlessings ? '＋本账号加护' : ''}；等级／觉醒／能力盘按最大）` };
       }
@@ -433,7 +509,7 @@ async function run(force = false) {
         const own = ownPassiveIds(c), ownSet = new Set(own);
         const picked = build.selected.filter(id => !ownSet.has(id));
         buildOwnPaid = ownPaidIds(c);
-        const equips = build.exclusive ? M.exclusiveEquipment(battle.master, dress) : [];
+        const equips = build.exclusive ? exclusiveEquips(exclusiveTiers(c), battle.master) : [];
         const bless = build.own.blessings ? blessings.filter(b => !ownSet.has(b.id)) : [];
         const buildOwn = [...own.map(id => ({ id })), ...bless];
         const buildPassives = [...buildOwn, ...picked.map(id => ({ id }))];
@@ -443,6 +519,15 @@ async function run(force = false) {
         attackerSpec.buildOwn = buildOwn; attackerSpec.buildPassives = buildPassives; attackerSpec.buildNote = crest ? '徽章按配装报告' : '';
       } else renderBuild(null);
     }
+    // 专武 at its maximum (not for a captured battle, which records what was really equipped) and the 双刀 switch
+    const gearNotes = [];
+    const gameChar = await gameCharacter(dress);
+    if (!(report && M.isBattleReport(report) && report.units?.[0]?.unitId === dress)) maximizeExclusive(attackerSpec, gameChar);
+    applyDualSwitch(attackerSpec, gameChar, battle.master, !!(latest.selection?.dualWield ?? $('dualWield')?.checked), gearNotes);
+    // the top enhancement stages live in the passive id buckets, not in the character bundle
+    const stageMissing = await M.loadPassives(battle.master, Object.values(attackerSpec.equipPassiveIds || {}).flat());
+    if (stageMissing.length) gearNotes.push(`专武最高强化阶段的被动 ${stageMissing.join('、')} 在游戏数据里没找到，按基础阶段计算`);
+    if (stageMissing.length) for (const [id, list] of Object.entries(attackerSpec.equipPassiveIds)) if (list.some(p => stageMissing.includes(p))) delete attackerSpec.equipPassiveIds[id];
     const attacker = M.addAttacker(battle, attackerSpec);
     renderPreCasts(attacker, battle.master, move.id);
     let targetSpec = null;
@@ -458,7 +543,7 @@ async function run(force = false) {
     const attacker2 = M.addAttacker(battle, attackerSpec), target2 = M.addTarget(battle, targetSpec);
     const out = M.runScenario({ battle, attacker: attacker2, target: target2, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...new Set([...assumed, ...autoAssume])] } });
     render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), attacker: attacker2, out, dress });
-    renderPrimary(out, { move, dress });
+    renderPrimary(out, { move, dress, gearNotes });
     setState(`已结算 · ${new Date().toLocaleTimeString('zh-CN')}`); setPrimaryState(`游戏脚本 · ${new Date().toLocaleTimeString('zh-CN')}`);
     if (attackerSpec.buildPassives) {
       const { buildOwn, buildPassives, buildNote, ...rest } = attackerSpec;

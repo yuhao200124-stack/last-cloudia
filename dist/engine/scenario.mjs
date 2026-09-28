@@ -14,12 +14,14 @@ export const AUTOMATIC_TRIGGERS = new Set([1, 10, 12, 16, 18, 19, 20, 21, 22, 23
 export const SWITCH_OF_TRIGGER = { 17: 'conditionBuffActive', 25: 'conditionBuffActive', 26: 'conditionBuffActive', 29: 'conditionBuffActive', 30: 'conditionBuffActive', 35: 'conditionBuffActive', 36: 'conditionBuffActive', 37: 'conditionBuffActive', 50: 'selfStateActive', 52: 'selfStateActive', 61: 'conditionBuffActive', 62: 'conditionBuffActive', 68: 'conditionBuffActive', 70: 'conditionBuffActive', 71: 'conditionBuffActive', 72: 'conditionBuffActive', 73: 'conditionBuffActive', 74: 'conditionBuffActive', 75: 'conditionBuffActive', 76: 'conditionBuffActive', 77: 'conditionBuffActive', 78: 'conditionBuffActive', 79: 'conditionBuffActive', 80: 'conditionBuffActive', 81: 'conditionBuffActive', 92: 'conditionBuffActive', 93: 'conditionBuffActive', 94: 'openingBuffActive', 96: 'reviveBuffActive', 97: 'reviveBuffActive', 98: 'partyConditionActive' };
 
 const WEAPON_TYPES = new Set([10, 11, 12, 13, 14, 15, 16, 17]);
+export const DUAL_WIELD_PROCESS = 1080800; // P_二刀流 (ProcessMst OPE_INFO 808)
 const STAT_KEYS = { hp: K.STAT.MAX_HP, mp: K.STAT.MAX_MP, str: K.STAT.STR, def: K.STAT.DEF, int: K.STAT.INT, mnd: K.STAT.MND, spd: K.STAT.SPD, crt: K.STAT.CRT };
 const toStats = stats => { const out = {}; for (const [k, code] of Object.entries(STAT_KEYS)) if (stats && stats[k] != null) out[code] = Number(stats[k]); return out; };
 
 function equipSpec(master, e) {
   const row = master.itemEquip.get(Number(e.id));
-  return { pos: e.pos, id: Number(e.id) || 0, type: e.type ?? row?.EQUIP_TYPE ?? 0, elem: e.elem ?? row?.ELEM ?? 0, level: e.level ?? null };
+  // copy: a stand-in sub weapon for the calculator's 双刀 switch (same type / element as the main weapon, no stats or passives)
+  return { pos: e.pos, id: Number(e.id) || 0, type: e.type ?? row?.EQUIP_TYPE ?? 0, elem: e.elem ?? row?.ELEM ?? 0, level: e.level ?? null, ...(e.copy ? { copy: true } : {}) };
 }
 
 // Builds a unit from a calculator-side description. With `panelGiven: false` the out-of-battle panel is not
@@ -34,6 +36,7 @@ export function addAttacker(battle, spec) {
     panel = bareStats(master, spec.unitDressId, { level: spec.level, awake: spec.awake, pieces: spec.pieces, limitBreak: spec.limitBreak });
     if (panel) { level = panel.level; panelOverride = stats; stats = statCodes(panel.stats); elemResist = { ...panel.elemResist, ...(spec.elemResist || {}) }; }
     for (const e of equips) {
+      if (e.copy) continue;
       const es = equipmentStats(master, e.id, e.level); if (!es) continue;
       e.stats = statCodes(es.stats); e.name = es.name; e.estimated = es.estimated; e.level = es.level;
       for (const [k, v] of Object.entries(es.elemResist)) elemResist[k] = (elemResist[k] || 0) + v;
@@ -63,14 +66,20 @@ export function addAttacker(battle, spec) {
   // crest traits (徽章词条): passives of the trait pool, registered under affiliation 18 like the game does
   if (crest) for (const t of crest.traits) { const pid = typeof t === 'object' ? t.passive : t; if (pid && master.passive.has(pid)) battle.addPassive(unit, pid, K.AFF.CREST, (typeof t === 'object' && t.localId) || pid); else if (pid) battle.log('missing-crest-trait', pid); }
   for (const p of spec.passives || []) if (p.affiliation && p.affiliation !== K.AFF.AUTOSKILL) { if (p.processes) battle.addProcesses(unit, p); else battle.addPassive(unit, p.id, p.affiliation, p.localId ?? p.id, p.level ?? 1, p.params); }
-  // equipment passives (weapon 6 / armour 7 / accessories 8) come from ItemEquipMst unless the caller listed them
+  // equipment passives (weapon 6 / armour 7 / accessories 8) come from ItemEquipMst unless the caller listed them;
+  // spec.equipPassiveIds {equipId: [passive ids]} replaces an item's ItemEquipMst passives (e.g. its highest
+  // enhancement stage, which ItemEquipMst does not point to)
   const listed = new Set((spec.passives || []).filter(p => p.affiliation && p.affiliation !== K.AFF.AUTOSKILL).map(p => `${p.affiliation}:${p.localId ?? p.id}`));
   if (spec.equipPassives !== false) for (const e of equips) {
+    if (e.copy) continue;
     const row = master.itemEquip.get(e.id); if (!row) continue;
     if ([K.AFF.WEAPON, K.AFF.ARMOR, K.AFF.ACCESSORY].some(aff => listed.has(`${aff}:${e.id}`))) continue;
     const aff = e.pos === 1 || (e.pos === 2 && WEAPON_TYPES.has(e.type)) ? K.AFF.WEAPON : e.pos === 2 ? K.AFF.ARMOR : K.AFF.ACCESSORY;
-    for (const pid of parseInts(row.PASSIVE_SKILL_INFO).filter(Boolean)) battle.addPassive(unit, pid, aff, e.id);
+    for (const pid of (spec.equipPassiveIds?.[e.id] ?? parseInts(row.PASSIVE_SKILL_INFO)).filter(Boolean)) battle.addPassive(unit, pid, aff, e.id);
   }
+  // The calculator's 双刀 switch without a dual-wield passive: the game's 二刀流 process (1080800, control 808) at the
+  // ratio every dual-wield passive in the game data uses (6000 = 60% per call), so the attack is calculated as dual wield.
+  if (spec.dualWieldRatio && !unit.instances.some(i => i.processId === DUAL_WIELD_PROCESS)) battle.addProcesses(unit, { processes: [{ processId: DUAL_WIELD_PROCESS, params: [spec.dualWieldRatio] }], affiliation: K.AFF.AUTOSKILL, localId: DUAL_WIELD_PROCESS });
   return unit;
 }
 
@@ -93,6 +102,14 @@ export function addTarget(battle, spec) {
 
 // Replays the battle start: status calc, wave start, survivors, then the HP/MP/ether state the user chose.
 export function setupBattle(battle, attacker, target, state = {}) {
+  // The calculator's 特攻 / Break switches decide the state itself; the bonuses bound to it come from the skills.
+  //   state.killer 'on' | 'off' (unset: by the skills and the target's race)
+  //   state.targetBreak: the target is in the break state; state.breakDefenseRatio: its defense factor while broken
+  battle.options.killer = state.killer ?? null;
+  battle.options.breakDefenseRatio = state.targetBreak && Number.isFinite(state.breakDefenseRatio) ? state.breakDefenseRatio : null;
+  target.breakRemain = state.targetBreak ? 600 : 0;
+  if (state.killer === 'on' && !target.charTypes.length) battle.assumptions.add('特攻：目标没选种族，按“种族未知”结算（针对具体种族的加成不计入，“对非某种族”的加成会计入）');
+  if (battle.options.breakDefenseRatio != null && battle.options.breakDefenseRatio !== 1) battle.assumptions.add(`Break：目标防御按 ×${battle.options.breakDefenseRatio}（计算器“Break 时防御倍率”，游戏脚本里没有这一步）`);
   battle.wave = state.wave ?? 1;
   battle.frame = Math.round((state.elapsedSeconds ?? 0) * 60);
   if (state.dateTime) battle.options.dateTime = state.dateTime;

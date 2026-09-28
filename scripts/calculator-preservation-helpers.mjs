@@ -39,10 +39,16 @@ const gameNames=JSON.parse(fs.readFileSync(new URL('../docs/game-names-preservat
 const stateNotes=JSON.parse(fs.readFileSync(new URL('../docs/state-notes-preservation-2026-09-28.json',import.meta.url)));
 const autoFill=JSON.parse(fs.readFileSync(new URL('../docs/auto-fill-preservation-2026-09-28.json',import.meta.url)));
 const bossRace=JSON.parse(fs.readFileSync(new URL('../docs/boss-race-preservation-2026-09-28.json',import.meta.url)));
+const switchesLayer=JSON.parse(fs.readFileSync(new URL('../docs/switches-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const switchLayer=switchesLayer.files[path];
+ if(switchLayer){
+  if(hash(text)!==switchLayer.afterHash||hash(switchLayer.beforeText)!==switchLayer.beforeHash)throw Error(`Switches preservation drift: ${path}`);
+  text=switchLayer.beforeText;
+ }
  const bossRaceLayer=bossRace.files[path];
  if(bossRaceLayer){
   if(hash(text)!==bossRaceLayer.afterHash||hash(bossRaceLayer.beforeText)!==bossRaceLayer.beforeHash)throw Error(`Boss-race preservation drift: ${path}`);
