@@ -55,3 +55,9 @@ test('01 角色基础资料 shows each site character\'s Altema maximum stats', 
   const registry = JSON.parse(read('docs/site-characters.json')).characters;
   for (const site of Object.keys(index.site)) assert.deepEqual(index.siteStats[site], registry[site].maxStats, site);
 });
+
+test('the calculator is opened only from a character page (no header link without a character)', () => {
+  for (const f of fs.readdirSync(new URL('../dist/', import.meta.url)).filter(f => f.endsWith('.html'))) assert.doesNotMatch(read(`dist/${f}`), /<a[^>]*href="\.\/damage-calculator\.html(?:\?v=[^"&]*)?"/, f);
+  assert.doesNotMatch(read('scripts/templates/character-page.html'), /damage-calculator\.html/);
+  assert.match(read('dist/character-page.mjs'), /damageSimulatorOpen/, 'the character page keeps its own 伤害计算器 button');
+});

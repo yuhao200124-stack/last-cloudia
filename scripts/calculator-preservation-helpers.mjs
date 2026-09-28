@@ -45,6 +45,7 @@ const weaponOwn=JSON.parse(fs.readFileSync(new URL('../docs/weapon-own-preservat
 const noNotes=JSON.parse(fs.readFileSync(new URL('../docs/no-notes-preservation-2026-09-28.json',import.meta.url)));
 const basicSteps=JSON.parse(fs.readFileSync(new URL('../docs/basic-steps-preservation-2026-09-28.json',import.meta.url)));
 const engineOnly=JSON.parse(fs.readFileSync(new URL('../docs/engine-only-preservation-2026-09-28.json',import.meta.url)));
+const calculatorLink=JSON.parse(fs.readFileSync(new URL('../docs/calculator-link-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
@@ -55,6 +56,11 @@ export function readProtected(path){
  return fs.readFileSync(url,'utf8');
 }
 export function textBeforeCommonCalculator(path,text){
+ const calculatorLinkLayer=calculatorLink.files[path];
+ if(calculatorLinkLayer){
+  if(hash(text)!==calculatorLinkLayer.afterHash||hash(calculatorLinkLayer.beforeText)!==calculatorLinkLayer.beforeHash)throw Error(`Calculator-link preservation drift: ${path}`);
+  text=calculatorLinkLayer.beforeText;
+ }
  const engineOnlyLayer=engineOnly.files[path];
  if(engineOnlyLayer){
   if(hash(text)!==engineOnlyLayer.afterHash||hash(engineOnlyLayer.beforeText)!==engineOnlyLayer.beforeHash)throw Error(`Engine-only preservation drift: ${path}`);
