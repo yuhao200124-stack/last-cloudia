@@ -41,10 +41,16 @@ const autoFill=JSON.parse(fs.readFileSync(new URL('../docs/auto-fill-preservatio
 const bossRace=JSON.parse(fs.readFileSync(new URL('../docs/boss-race-preservation-2026-09-28.json',import.meta.url)));
 const switchesLayer=JSON.parse(fs.readFileSync(new URL('../docs/switches-preservation-2026-09-28.json',import.meta.url)));
 const dualLock=JSON.parse(fs.readFileSync(new URL('../docs/dual-lock-preservation-2026-09-28.json',import.meta.url)));
+const weaponOwn=JSON.parse(fs.readFileSync(new URL('../docs/weapon-own-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const weaponOwnLayer=weaponOwn.files[path];
+ if(weaponOwnLayer){
+  if(hash(text)!==weaponOwnLayer.afterHash||hash(weaponOwnLayer.beforeText)!==weaponOwnLayer.beforeHash)throw Error(`Weapon-own preservation drift: ${path}`);
+  text=weaponOwnLayer.beforeText;
+ }
  const dualLockLayer=dualLock.files[path];
  if(dualLockLayer){
   if(hash(text)!==dualLockLayer.afterHash||hash(dualLockLayer.beforeText)!==dualLockLayer.beforeHash)throw Error(`Dual-lock preservation drift: ${path}`);

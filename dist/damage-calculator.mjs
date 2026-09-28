@@ -833,11 +833,8 @@ unified=mountUnifiedCalculator({
   manualDefenseRatio:defenseRatioTouched||imported&&$('defenseRatio').valueAsNumber!==imported.defenseRatio?$('defenseRatio').valueAsNumber:null,
   criticalObservation:imported&&workflow?.isConfirmed()&&$('critBasis').value==='reader'&&$('criticalEnabled').checked?$('critRate').valueAsNumber:null}),
  onChange:update,
- // The unified-loadout iframe's own 专武 toggle is all-or-nothing (unified-calculator.mjs/
- // loadout-preview.mjs, left as-is); reflect it as 都装备/未装备 on this richer selector.
- onWeaponChange:enabled=>{$('specialWeapon').value=enabled?'both':'none';workflow?.setSpecialWeapon?.($('specialWeapon').value);}
+ // 专武 here is the calculator's own choice: it is not synced with the loadout page's 专武 toggle (user's rule).
 });
-$('specialWeapon').addEventListener('change',()=>unified.setExclusiveWeapon($('specialWeapon').value==='both'));
 unified.refreshSources();update();
 if(characterId&&!latestReport)loadCharacterReport(characterId).then(report=>{if(!latestReport){receiveReport(report);unified.refreshSources();}}).catch(e=>unified.error(e.message));
 if(params.get('unified')==='1')unified.open();

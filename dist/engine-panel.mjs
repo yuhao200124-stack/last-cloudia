@@ -415,19 +415,6 @@ function setDualLock(locked) {
   return true;
 }
 function dualOn() { return !dualLocked && !!(latest?.selection?.dualWield ?? $('dualWield')?.checked); }
-// A character with two exclusive weapons (梅莉): choosing both in 专武 turns 双刀 on, anything else turns it off.
-let lastWeaponChoice = null;
-function linkDualToWeapons(c, master) {
-  const choice = $('specialWeapon')?.value ?? null;
-  if (choice === lastWeaponChoice) return;
-  lastWeaponChoice = choice;
-  const weapons = exclusiveTiers(c).filter(e => isWeapon(master.itemEquip.get(e.id)?.EQUIP_TYPE ?? 0));
-  const box = $('dualWield'); if (weapons.length < 2 || !box) return;
-  const want = choice === 'both';
-  if (!!latest?.selection?.dualWield === want && box.checked === want) return;
-  const disabled = box.disabled; box.disabled = false; box.checked = want; box.dispatchEvent(new Event('change', { bubbles: true })); box.disabled = disabled;
-  if (dualLocked) box.checked = true;
-}
 function dualScale() { if (!dualOn()) return null; const ratio = Number($('hitDamageRatio')?.value); return Number.isFinite(ratio) ? { ratio, stage: $('hitScaleStage')?.value || 'core' } : null; }
 function dualHitMultiplier() { if (!dualOn()) return 1; const n = Number($('hitMultiplier')?.value); return Number.isInteger(n) && n >= 1 ? n : 1; }
 const DUAL_STAGE_LABELS = { core: '核心系数中', beforeCap: '伤害上限前', afterCap: '伤害上限后' };
@@ -475,7 +462,6 @@ async function run(force = false) {
     const dress = report?.units?.[0]?.unitId || Number(latest.unitDressId) || await siteDress();
     if (!dress) { setState('先导入读取报告或选择游戏角色'); running = false; return; }
     const M = await ensureEngine(dress);
-    linkDualToWeapons(await gameCharacter(dress), battle.master);
     setState('结算中…');
     battle.reset();
     let attackerSpec;
