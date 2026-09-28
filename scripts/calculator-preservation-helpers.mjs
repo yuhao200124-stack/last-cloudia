@@ -27,10 +27,16 @@ const independentGear=JSON.parse(fs.readFileSync(new URL('../docs/independent-ge
 const hitCore=JSON.parse(fs.readFileSync(new URL('../docs/hit-core-preservation-2026-09-27.json',import.meta.url)));
 const twoColumn=JSON.parse(fs.readFileSync(new URL('../docs/two-column-preservation-2026-09-27.json',import.meta.url)));
 const layoutSwap=JSON.parse(fs.readFileSync(new URL('../docs/layout-swap-preservation-2026-09-28.json',import.meta.url)));
+const attackPanelSimplify=JSON.parse(fs.readFileSync(new URL('../docs/attack-panel-simplify-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const simplifyLayer=attackPanelSimplify.files[path];
+ if(simplifyLayer){
+  if(hash(text)!==simplifyLayer.afterHash||hash(simplifyLayer.beforeText)!==simplifyLayer.beforeHash)throw Error(`Attack-panel-simplify preservation drift: ${path}`);
+  text=simplifyLayer.beforeText;
+ }
  const layoutLayer=layoutSwap.files[path];
  if(layoutLayer){
   if(hash(text)!==layoutLayer.afterHash||hash(layoutLayer.beforeText)!==layoutLayer.beforeHash)throw Error(`Layout-swap preservation drift: ${path}`);

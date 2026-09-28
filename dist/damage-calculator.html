@@ -60,7 +60,7 @@
       <details id="skillDetails"><summary>技能参数</summary><label id="readerSkillControl" hidden>对应读取器招式<select id="readerSkillPick"></select></label>
         <p id="parameterReadNote" class="help" hidden></p>
         <div class="fields two">
-          <label id="baseHitsControl"><span id="hitsLabel">基础命中段数（手动填写）</span><input id="hits" type="number" min="1" max="1000" step="1" required></label>
+          <label id="baseHitsControl" hidden><span id="hitsLabel">基础命中段数（请在结果卡片的"命中段数"处填写）</span><input id="hits" type="number" min="1" max="1000" step="1" required></label>
           <label>每段基础系数 ×<input id="coefficient" type="number" min="0" max="10000" step="any" value="0.334" required></label>
           <label>技能内攻击修正 %<input id="skillPercent" type="number" min="-100" max="100000" step="any" value="51.8" required></label>
           <label>技能内攻击前加算<input id="skillAdd" type="number" min="-100000000" max="100000000" step="any" required></label>

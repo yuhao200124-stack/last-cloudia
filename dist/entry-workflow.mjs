@@ -42,7 +42,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  state.hitMechanicsRevision=2;
  let report=null,profile=null,candidate=null,compared=[],battle=null,unit=null,signature='',initialized=false;
  let game=null;
- gameCharacterForSite(characterId).then(g=>{game=g;if(initialized&&g){promoteNonStacking();fillFromGame();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();updateCandidate();}}).catch(()=>{});
+ gameCharacterForSite(characterId).then(g=>{game=g;if(initialized&&g){promoteNonStacking();fillFromGame();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';updateAutoFieldVisibility();setParameters();updateCandidate();}}).catch(()=>{});
  let confirmed=false,reviewedReport=null,bonusGroups=[],readerBonuses=[],modeCatalog={},potentialModeGroups=[];
  let reportFingerprint=null,storageSaveFailed=false,importGeneration=0;
  state.readerDrafts=saved.readerDrafts||{};
@@ -121,12 +121,27 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   for(const id of parameterIds)$(id).value=p?.[id]!==''&&p?.[id]!=null?p[id]:id==='hits'?'':read.parameters[id]??'';
   $('parameterReadNote').textContent=read.source;
  }
- function renderPresets(reset=false) {
-  const magic=['magic','heavy_magic'].includes(state.selection.attack);
-  const list=magic?(profile?.magic||[]):(profile?.moves||[]).filter(m=>m.kind===state.selection.attack);
-  if(reset||!list.some(m=>m.id===state.selection.preset))state.selection.preset=magic?'':list[0]?.id||'';
-  $('preset').innerHTML=option('','请选择具体招式',state.selection.preset)+list.map(m=>option(m.id,`${m.name}${m.purpose==='support'?'（辅助，不计算攻击伤害）':''}`,state.selection.preset)).join('');
+ function renderPresets() {
+  // 具体招式改为跨攻击方式的合并下拉（按分类分组），攻击方式本身由所选招式反推，
+  // 不再需要单独选择；魔法分类仍可能有多个招式，无法确定就保留留空。
+  const all=[...(profile?.moves||[]),...(profile?.magic||[])];
+  const groups=ATTACK_CHOICES.filter(([v])=>v!=='heavy_magic').map(([v,label])=>({kind:v,label,items:all.filter(m=>m.kind===v)})).filter(g=>g.items.length);
+  if(!all.some(m=>m.id===state.selection.preset)){
+   const preferred=groups.find(g=>g.kind===state.selection.attack)||groups[0];
+   const magic=preferred?.kind==='magic';
+   state.selection.preset=magic?'':preferred?.items[0]?.id||'';
+   state.selection.attack=preferred?.kind||state.selection.attack||'normal';
+  }
+  $('preset').innerHTML=option('','请选择具体招式',state.selection.preset)+groups.map(g=>`<optgroup label="${esc(g.label)}">${g.items.map(m=>option(m.id,`${m.name}${m.purpose==='support'?'（辅助，不计算攻击伤害）':''}`,state.selection.preset)).join('')}</optgroup>`).join('');
   $('preset').disabled=false;
+ }
+ // 攻击方式一旦确定具体招式即可反推，不再需要单独选择；伤害分类/伤害参照/攻击属性能
+ // 从角色页面或游戏数据确定时也一并隐藏，留空（无法确定，例如攻击属性为“混合”）时继续显示手动选择。
+ function updateAutoFieldVisibility() {
+  $('attackChoice').closest('label').hidden=true;
+  $('type').closest('label').hidden=!!state.selection.type;
+  $('element').closest('label').hidden=!!state.selection.element;
+  $('statReference').closest('label').hidden=!!state.selection.statReference;
  }
  // A non-stackable spell (game SkillMst SKILL_PARAM x:1, e.g. 泽诺克莱昂) is always cast as 重魔法.
  // Parameters saved under 魔法 move with it, so nothing entered is lost.
@@ -147,6 +162,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   else state.selection.type=move?.damageType||'';
   fillFromGame(move);
   for(const key of ['element','statReference','type'])$(key).value=state.selection[key];
+  updateAutoFieldVisibility();
   setParameters();
  }
  // Game data fills what the character page leaves open: 伤害分类、伤害参照、攻击属性.
@@ -334,7 +350,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   $('conditionBuffActive').checked=buffOn;
   for(const [key,fields] of Object.entries(SWITCH_GROUPS))if(key!=='conditionBuffActive')for(const field of fields)state.selection[field]=state.selection[key]===true;
   for(const id of ['dualWield','specialAttack','break','boss','weakness','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id]===true;
-  $('characterPanel').hidden=false;$('entryPreparation').hidden=false;$('entryReview').hidden=false;$('attackChoice').closest('label').hidden=false;$('statReference').closest('label').hidden=false;
+  $('characterPanel').hidden=false;$('entryPreparation').hidden=false;$('entryReview').hidden=false;
   $('skillType').closest('label').hidden=true;
   $('attackChoice').innerHTML=ATTACK_CHOICES.map(([v,l])=>option(v,l,state.selection.attack)).join('');
   if(!$('element').querySelector('option[value=""]'))$('element').insertAdjacentHTML('afterbegin','<option value="">待确认</option>');
@@ -344,6 +360,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   const defaults=selectedMove();
   if(defaults?.damageType){for(const key of ['element','statReference'])if(!state.selection[key])state.selection[key]=defaults[key]||'';if(!state.selection.type)state.selection.type=defaults.damageType;}
   for(const key of ['element','statReference','type']){$(key).value=state.selection[key]||'';$(key).disabled=false;}
+  updateAutoFieldVisibility();
   setParameters();$('skillDetails').open=true;$('hitDetails').open=true;
  }
  function receive(next) {
@@ -390,8 +407,15 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(['fullHp','lowHp'].includes(id)&&state.selection[id]){const other=id==='fullHp'?'lowHp':'fullHp';state.selection[other]=false;$(other).checked=false;for(const f of SWITCH_GROUPS[other]||[]){state.selection[f]=false;if($(f))$(f).checked=false;}}
   updateCandidate();
  });
- $('attackChoice').addEventListener('change',()=>{state.selection.attack=$('attackChoice').value;renderPresets(true);applyMove();invalidate('攻击方式已改变，请核对这次攻击对应的加成。');updateCandidate();});
- $('preset').addEventListener('change',()=>{if(!initialized)return;state.selection.preset=$('preset').value;applyMove();invalidate('具体招式已改变，倍率与命中数按该招式单独保留。');updateCandidate();});
+ // 攻击方式下拉已不再展示，具体招式改变时按所选招式自身的分类反推攻击方式。
+ $('preset').addEventListener('change',()=>{
+  if(!initialized)return;
+  state.selection.preset=$('preset').value;
+  state.selection.attack=selectedMove()?.kind||state.selection.attack;
+  applyMove();
+  invalidate('具体招式已改变，倍率与命中数按该招式单独保留。');
+  updateCandidate();
+ });
  for(const id of ['element','statReference','type'])$(id).addEventListener('change',()=>{if(!initialized)return;state.selection[id]=$(id).value;invalidate();updateCandidate();});
  for(const id of parameterIds)$(id).addEventListener('change',()=>{if(initialized)saveParameter(id);});
  for(const id of ['hitMultiplier','hitDamageRatio','hitScaleStage'])$(id).addEventListener('change',()=>{
@@ -532,6 +556,6 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
  return {gameMove:()=>gameMoveParameters(findGameMove(game,selectedMove())),setSpecialWeapon:enabled=>{if(state.selection.specialWeapon===enabled)return;state.selection.specialWeapon=enabled;updateCandidate();},setDerivedConditions:values=>{Object.assign(state.selection,values);},setDerivedAttackElement:element=>{state.selection.element=element;},receive,selection,panelsPreview,planningBase,exportSession,restoreSession,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
   state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};groupReaderChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
-  if(initialized){for(const [field] of characterConditions){state.selection[field]=report.context[field]===true;if($(field))$(field).checked=state.selection[field];}state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),specialAttack:report.context.killer===true,break:false,boss:report.context.boss!==false,weakness:false,realSunday:false};for(const id of ['dualWield','specialAttack','break','boss','weakness','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id];$('conditionBuffActive').checked=CONDITION_BUFF_FIELDS.some(field=>state.selection[field]);renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';setParameters();invalidate();updateCandidate();}save();
+  if(initialized){for(const [field] of characterConditions){state.selection[field]=report.context[field]===true;if($(field))$(field).checked=state.selection[field];}state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),specialAttack:report.context.killer===true,break:false,boss:report.context.boss!==false,weakness:false,realSunday:false};for(const id of ['dualWield','specialAttack','break','boss','weakness','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id];$('conditionBuffActive').checked=CONDITION_BUFF_FIELDS.some(field=>state.selection[field]);renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';updateAutoFieldVisibility();setParameters();invalidate();updateCandidate();}save();
  }};
 }
