@@ -228,6 +228,14 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   const computed=websitePanel(),blessed=withAccountBlessings({...profile.baseStats,...state.base},currentPanelReport());
   return Object.fromEntries(Object.keys(SIX_STATS).map(k=>{const d=state.statDecisions[k]||{};return [k,d.choice==='reader'?readStat(k):d.choice==='website'?computed.values[k]:d.choice==='manual'?d.value:d.choice==='blessed'?blessed[k]:d.choice==='base'?state.base[k]??profile.baseStats[k]:null];}));
  }
+ // Reference-only breakdown of the website's own panel arithmetic (base/equipment/percent
+ // baseline, then any real-time buff layer such as 常驻 EX 灵气) for the "面板计算明细"
+ // disclosure next to the attack/panel input. Never changes what panelsPreview() fills in;
+ // purely explanatory, so it is exposed unconditionally regardless of each stat's chosen source.
+ function panelBreakdown(){
+  if(!profile||!candidate)return {};
+  return websitePanel().stats;
+ }
  function currentPanelReport(source=candidate||report) {
   const rows=source?.rows||[],selected=decisions(),excludedEquipmentStats=[];
   // Candidate observations need the reader evaluated in that candidate's
@@ -553,7 +561,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   if(battle){$('entryUnit').innerHTML=option('','请选择本次测试角色','')+battle.units.map((u,i)=>option(String(i),`${u.name||'未命名'} · Unit ${u.unitId}`,unit?String(data.unitIndex):'')).join('');$('entryFileNote').textContent=data.fileNote||'';onRead({battle,unit:selectedUnit()});}
   updateCandidate();return true;
  }
- return {gameMove:()=>gameMoveParameters(findGameMove(game,selectedMove())),setSpecialWeapon:enabled=>{if(state.selection.specialWeapon===enabled)return;state.selection.specialWeapon=enabled;updateCandidate();},setDerivedConditions:values=>{Object.assign(state.selection,values);},setDerivedAttackElement:element=>{state.selection.element=element;},receive,selection,panelsPreview,planningBase,exportSession,restoreSession,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
+ return {gameMove:()=>gameMoveParameters(findGameMove(game,selectedMove())),setSpecialWeapon:enabled=>{if(state.selection.specialWeapon===enabled)return;state.selection.specialWeapon=enabled;updateCandidate();},setDerivedConditions:values=>{Object.assign(state.selection,values);},setDerivedAttackElement:element=>{state.selection.element=element;},receive,selection,panelsPreview,panelBreakdown,planningBase,exportSession,restoreSession,adoptAttackObservation,setManualPanel,applySelection:syncSelection,saveAndReturn,hasReport:()=>!!report,isConfirmed:()=>confirmed,importFile,reset:()=>{
   state.parameters={};state.hitParameters={};state.decisions={};state.statDecisions={};state.removedEffects={};supplementChoices={};groupReaderChoices={};
   for(const key of ['hitMultiplier','hitDamageRatio','hitScaleStage'])delete state.selection[key];
   if(initialized){for(const [field] of characterConditions){state.selection[field]=report.context[field]===true;if($(field))$(field).checked=state.selection[field];}state.selection={...state.selection,dualWield:false,criticalEnabled:report.context.attack!=='magic',fullHp:report.context.fullHp===true,lowHp:report.context.lowHp===true,...pickStatConditions(report.context),specialAttack:report.context.killer===true,break:false,boss:report.context.boss!==false,weakness:false,realSunday:false};for(const id of ['dualWield','specialAttack','break','boss','weakness','fullHp','lowHp',...STAT_CONDITION_FIELDS,'criticalEnabled'])$(id).checked=state.selection[id];$('conditionBuffActive').checked=CONDITION_BUFF_FIELDS.some(field=>state.selection[field]);renderPresets();for(const key of ['element','statReference','type'])$(key).value=state.selection[key]||'';updateAutoFieldVisibility();setParameters();invalidate();updateCandidate();}save();

@@ -36,6 +36,7 @@
         <label><span id="attackLabel">战斗攻击力</span><input id="attack" type="number" min="0" max="100000000" step="1" value="3805" required></label>
         <label>最终暴击率 %<input id="critRate" type="number" min="0" max="100" step="any" value="20" required></label>
       </div>
+      <details id="attackBreakdown" hidden><summary>👁 面板计算明细</summary><p id="attackBreakdownSummary" class="help"></p><ul id="attackBreakdownSteps" class="entry-source-list"></ul></details>
       <section class="damage-condition-group" aria-labelledby="specialDamageTitle"><h3 id="specialDamageTitle">特殊伤害改变</h3><h4>基础改变伤害方式</h4><div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">Break</label><label><input id="criticalEnabled" type="checkbox">暴击</label><label><input id="boss" type="checkbox" checked>BOSS</label><label><input id="weakness" type="checkbox">弱属</label><label><input id="specialWeapon" type="checkbox">专武</label></div></section>
       <div id="magicBuffOptions" class="magic-buff-options" hidden><h3>魔法</h3><div id="magicBuffChoices"></div></div>
       <section class="damage-condition-group" aria-labelledby="generalDamageTitle"><h3 id="generalDamageTitle">通用伤害改变</h3>

@@ -150,6 +150,19 @@ function fillReaderPreview() {
   $('attack').value=key?workflow?.panelsPreview()?.[key]??'':$('attack').value;
   const crit=observedCritical(readUnit).value;
   $('critRate').value=typeof crit==='number'&&Number.isFinite(crit)?crit:'';
+  renderAttackBreakdown(key?workflow?.panelBreakdown?.()?.[key]:null);
+}
+// Reference-only disclosure: never fills #attack, only explains how the website's own
+// panel arithmetic reaches its number -- the pre-buff baseline, then any named real-time
+// buff layer (常驻 EX 灵气 and the like) added on top, exactly as calculateWebsitePanel()
+// computed it. Hidden whenever there is nothing to explain (mixed reference, no game
+// data, or the field's value came from another source such as the reader).
+function renderAttackBreakdown(stat) {
+  const lines=[...(stat?.steps||[]),...(stat?.issues||[]).map(text=>`⚠ ${text}`)];
+  $('attackBreakdown').hidden=!lines.length;
+  if(!lines.length)return;
+  $('attackBreakdownSummary').textContent=stat.value!=null?`正常面板（不含常驻／局内实时加成）${fmt(stat.beforeBuff)} → 当前面板 ${fmt(stat.value)}`:'';
+  $('attackBreakdownSteps').innerHTML=lines.map(text=>`<li>${esc(text)}</li>`).join('');
 }
 function syncHitControls(force=false){
   const s=workflow?.selection();if(!s)return;
