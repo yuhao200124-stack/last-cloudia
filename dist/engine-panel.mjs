@@ -120,14 +120,16 @@ function renderPrimary(out, ctx) {
   $('ep-critGauge').textContent = first.critical ? fmt(first.critical.max) : '—'; $('ep-critCap').textContent = fmt(first.critCap ?? first.cap);
   $('ep-normalBar').style.width = `${Math.min(100, first.cap ? first.normal.max / first.cap * 100 : 0)}%`;
   $('ep-critBar').style.width = `${Math.min(100, (first.critCap ?? first.cap) && first.critical ? first.critical.max / (first.critCap ?? first.cap) * 100 : 0)}%`;
-  $('ep-total').textContent = `≈ ${fmt(perCall * hits)}`;
-  $('ep-totalNote').textContent = `${hits} 段${live.length > 1 ? ` × ${live.length} 次调用` : ''} · 暴击率 ${Math.round(critRate * 100)}%（局内 CRT ${st.crt.real}）· 含逐段上限`;
-  $('ep-normalTotal').textContent = range(live.reduce((a, h) => a + h.normal.min, 0) * hits, live.reduce((a, h) => a + h.normal.max, 0) * hits);
+  const mult = dualHitMultiplier(), scale = dualScale();
+  $('ep-total').textContent = `≈ ${fmt(perCall * hits * mult)}`;
+  $('ep-totalNote').textContent = `${hits} 段${live.length > 1 ? ` × ${live.length} 次调用` : ''}${mult > 1 ? ` × 双刀 ${mult}` : ''} · 暴击率 ${Math.round(critRate * 100)}%（局内 CRT ${st.crt.real}）· 含逐段上限`;
+  $('ep-normalTotal').textContent = range(live.reduce((a, h) => a + h.normal.min, 0) * hits * mult, live.reduce((a, h) => a + h.normal.max, 0) * hits * mult);
   $('ep-killer').textContent = first.killer ? `触发 · ×${first.killerFactor.toFixed(2)}` : '未触发';
   // Weakness: the target's resistance to the hit's element (negative = weak), the game's factor 1 − resistance/100
   const weakFactor = 1 - Math.min(1, Math.max(-9.99, (first.resist || 0) / 100));
   $('ep-weak').textContent = !first.element ? '无属性' : first.resist < 0 ? `触发 · ×${weakFactor.toFixed(2)}` : first.resist > 0 ? `未触发 · 耐性 ×${weakFactor.toFixed(2)}` : '未触发';
   const notes = [...(ctx.gearNotes || [])];
+  if (dualOn()) notes.push(`双刀：命中数 ×${mult}、单段伤害 ×${scale ? scale.ratio : 1}（${DUAL_STAGE_LABELS[scale?.stage] || '核心系数中'}）`);
   if (first.normal.max >= first.cap) notes.push('普通伤害触及上限');
   if (otherBullets) notes.push(`另有 ${otherBullets} 条弹道未计入整次期望，见下方明细`);
   if (out.assumptions?.length) notes.push(out.assumptions.join('；'));
@@ -396,6 +398,13 @@ function maximizeExclusive(spec, c) {
   spec.equipPassiveIds = { ...(spec.equipPassiveIds || {}) };
   for (const e of spec.equips) { const top = [...tiers.values()].find(t => t.id === e.id); if (top?.maxPassives?.length) spec.equipPassiveIds[top.id] = top.maxPassives; }
 }
+// 双刀: the calculator's 双刀信息 fields, exactly as the old rules use them and only when the switch is on —
+// 命中数倍率 multiplies the hit count, 单段伤害倍率 each hit at 修正试算位置. Gear and skills are not checked.
+function dualOn() { return !!(latest?.selection?.dualWield ?? $('dualWield')?.checked); }
+function dualScale() { if (!dualOn()) return null; const ratio = Number($('hitDamageRatio')?.value); return Number.isFinite(ratio) ? { ratio, stage: $('hitScaleStage')?.value || 'core' } : null; }
+function dualHitMultiplier() { if (!dualOn()) return 1; const n = Number($('hitMultiplier')?.value); return Number.isInteger(n) && n >= 1 ? n : 1; }
+const DUAL_STAGE_LABELS = { core: '核心系数中', beforeCap: '伤害上限前', afterCap: '伤害上限后' };
+
 // HP follows the calculator's two switches exactly like the old rules: 满血 → 100% (full-HP effects such as
 // 月光II fire), 濒死 → 25%, neither → 99% (alive and healthy, but nothing that needs full HP fires).
 function stateFromSwitches(detail) {
@@ -406,7 +415,8 @@ function stateFromSwitches(detail) {
   // 特攻 / Break: the switch alone decides (bonuses tied to them still come from the skills)
   const targetBreak = sel.break ?? $('break')?.checked ?? false, ratio = Number($('breakDefenseRatio')?.value);
   return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: preCastList(),
-    killer: (sel.specialAttack ?? $('specialAttack')?.checked) ? 'on' : 'off', targetBreak: !!targetBreak, breakDefenseRatio: Number.isFinite(ratio) ? ratio : null };
+    killer: (sel.specialAttack ?? $('specialAttack')?.checked) ? 'on' : 'off', targetBreak: !!targetBreak, breakDefenseRatio: Number.isFinite(ratio) ? ratio : null,
+    hitScale: dualScale() };
 }
 
 // Skills used earlier in the battle (per character): id → count; the list is rebuilt for the attacker's own skills.

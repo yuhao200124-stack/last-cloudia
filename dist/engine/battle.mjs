@@ -520,6 +520,10 @@ export class Battle {
     // 5200 → 0.51999998 × 6000 → 0.59999996 = 0.311999977 (洛琪希) and 3410 × 6000 → 0.204599977 (亞克), the
     // base_ratio the damage reader captures; dividing by 10000 in double lands one ulp off for 3410.
     let q = f32(f32(per * f32(0.0001)) * f32(bullet.dmgRatio * f32(0.0001)));
+    // The calculator's 双刀 switch (双刀信息: 单段伤害倍率 at 修正试算位置), applied as the old rules do, with no
+    // check of gear or skills: 'core' multiplies the core coefficient here; 'beforeCap' / 'afterCap' below.
+    const hitScale = this.options.hitScale;
+    if (hitScale?.stage === 'core') q = f32(q * f32(hitScale.ratio));
     q = f32(q * elementFactor); q = f32(q * killerFactor); q = f32(q * f32(offense * received)); q = f32(q * reduction);
     const critical = bullet.critical;
     const exponent = attack > 0 ? f32(f32(defense / attack) * (critical ? 6 : 10)) : 0;
@@ -531,13 +535,15 @@ export class Battle {
     this.dispatch(K.TRIG.AFTER_CALC_ATTACK, owner, target, bullet);
     this.dispatch(K.TRIG.AFTER_CALC_DAMAGE, target, owner, bullet);
     damage = bullet.damage;
+    if (hitScale?.stage === 'beforeCap' && hitScale.ratio !== 1 && damage > 0) damage = Math.trunc(damage * hitScale.ratio);
     // Damage limit: 9999 base, DmgLimitUp {val, per, add} on the bullet work, DmgLimitOff replaces it.
     let cap = 9999, capVal = 0, capPer = 0, capAdd = 0, capOff = null;
     for (const e of bullet.work) { if (e.op === K.OP.DMG_LIMIT_UP) { capVal += e.params[0] || 0; capPer += e.params[1] || 0; capAdd += e.params[2] || 0; } if (e.op === K.OP.DMG_LIMIT_OFF) capOff = e.params[0]; }
     for (const e of [...owner.status, ...owner.real, ...owner.work]) { if (e.op === K.OP.DMG_LIMIT_UP) { capVal += e.params[0] || 0; capPer += e.params[1] || 0; capAdd += e.params[2] || 0; } }
     cap = capOff != null ? capOff : Math.floor((9999 + capVal) * (1 + capPer * 0.0001)) + capAdd;
     const uncapped = Math.max(damage, 1);
-    const finalDamage = damage <= 0 ? 0 : clamp(uncapped, 1, cap);
+    let finalDamage = damage <= 0 ? 0 : clamp(uncapped, 1, cap);
+    if (hitScale?.stage === 'afterCap' && hitScale.ratio !== 1 && finalDamage > 0) finalDamage = Math.max(1, Math.trunc(finalDamage * hitScale.ratio));
     bullet.lastDamage = finalDamage;
     target.hp = Math.max(0, target.hp - finalDamage);
     const result = { ...core, hitIndex: bullet.hitIndex, afterPassives: damage, cap, capVal, capPer, capAdd, uncapped, damage: finalDamage, edits: bullet.edits.slice() };

@@ -1,4 +1,4 @@
-// The damage calculator's 特攻 / Break switches decide the state themselves (the bonuses bound to that
+// The damage calculator's 特攻 / Break / 双刀 switches decide the state themselves (the bonuses bound to that
 // state still come from the skills), and exclusive gear is taken at its highest enhancement stage.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -46,6 +46,21 @@ test('Break switch: the target is in break, so break-bound bonuses of the skills
   const halved = await run(101011, 1010113, { state: { targetBreak: true, breakDefenseRatio: 0.5 } });
   assert.equal(halved.first.defense, off.first.defense * 0.5);
   assert(halved.out.assumptions.some(a => a.includes('Break')));
+});
+
+test('双刀 switch: the 双刀信息 per-hit ratio at the chosen stage, with no check of gear or skills', async () => {
+  const gear = { equips: [{ pos: 1, id: 101311 }, { pos: 2, id: 202220 }] };
+  const plain = await run(502230, 5022303, { spec: gear });
+  const core = await run(502230, 5022303, { spec: gear, state: { hitScale: { ratio: 0.6, stage: 'core' } } });
+  const after = await run(502230, 5022303, { spec: gear, state: { hitScale: { ratio: 0.6, stage: 'afterCap' } } });
+  assert(Math.abs(core.first.normal.mean / plain.first.normal.mean - 0.6) < 0.01, `${core.first.normal.mean} / ${plain.first.normal.mean}`);
+  assert.equal(after.first.normal.max, Math.max(1, Math.trunc(plain.first.normal.max * 0.6)));
+  assert.deepEqual(core.attacker.equips.map(e => [e.pos, e.id]), [[1, 101311], [2, 202220]], 'gear untouched');
+  assert.equal(core.out.hits.filter(h => !h.cancelled && h.normal && h.bulletId === core.first.bulletId).length, 1, 'the hit count multiplier is applied by the result card, not by extra calls');
+  // magic too: nothing is checked
+  const magic = await run(502220, 230020, { state: { hitScale: { ratio: 0.6, stage: 'core' } } });
+  const magicPlain = await run(502220, 230020);
+  assert(Math.abs(magic.first.normal.mean / magicPlain.first.normal.mean - 0.6) < 0.01);
 });
 
 test('exclusive gear passives can be replaced by the highest enhancement stage (ItemEquipMst points to the base stage)', async () => {

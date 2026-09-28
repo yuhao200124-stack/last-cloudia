@@ -95,10 +95,12 @@ export function addTarget(battle, spec) {
 
 // Replays the battle start: status calc, wave start, survivors, then the HP/MP/ether state the user chose.
 export function setupBattle(battle, attacker, target, state = {}) {
-  // The calculator's 特攻 / Break switches decide the state itself; the bonuses bound to it come from the skills.
+  // The calculator's 特攻 / Break / 双刀 switches decide the state itself; the bonuses bound to it come from the skills.
   //   state.killer 'on' | 'off' (unset: by the skills and the target's race)
   //   state.targetBreak: the target is in the break state; state.breakDefenseRatio: its defense factor while broken
+  //   state.hitScale {ratio, stage}: the 双刀 switch's 单段伤害倍率 and 修正试算位置 (the hit count multiplier is the caller's)
   battle.options.killer = state.killer ?? null;
+  battle.options.hitScale = state.hitScale && Number.isFinite(state.hitScale.ratio) ? { ratio: state.hitScale.ratio, stage: state.hitScale.stage || 'core' } : null;
   battle.options.breakDefenseRatio = state.targetBreak && Number.isFinite(state.breakDefenseRatio) ? state.breakDefenseRatio : null;
   target.breakRemain = state.targetBreak ? 600 : 0;
   if (state.killer === 'on' && !target.charTypes.length) battle.assumptions.add('特攻：目标没选种族，按“种族未知”结算（针对具体种族的加成不计入，“对非某种族”的加成会计入）');
