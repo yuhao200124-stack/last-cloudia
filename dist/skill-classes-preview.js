@@ -12,11 +12,11 @@
   const hl = t => { const raw = String(t), q = query.trim(); if (!q) return esc(raw); const i = raw.toLowerCase().indexOf(q.toLowerCase()); return i < 0 ? esc(raw) : `${esc(raw.slice(0, i))}<mark>${esc(raw.slice(i, i + q.length))}</mark>${esc(raw.slice(i + q.length))}`; };
   function table(rows) {
     if (!rows.length) return '<p class="preview-empty">没有技能。</p>';
-    return `<div class="preview-scroll"><table class="preview-table"><colgroup><col class="name"><col class="sc"><col class="bonus"><col class="cond"><col class="effect"></colgroup>
-      <thead><tr><th>技能名称</th><th>SC</th><th>加成</th><th>条件</th><th>技能效果</th></tr></thead><tbody>${rows.map(r => {
+    return `<div class="preview-scroll"><table class="preview-table"><colgroup><col class="name"><col class="sc"><col class="effect"><col class="bonus"><col class="cond"></colgroup>
+      <thead><tr><th>技能名称</th><th>SC</th><th>技能效果</th><th>加成</th><th>条件</th></tr></thead><tbody>${rows.map(r => {
         const cond = r.tags.length ? r.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('') : '<span class="none">—</span>';
         const meta = `${r.others.length ? `也在：${esc(r.others.join('、'))} · ` : ''}计算器：${esc(r.calc)} · 编号 ${r.id}`;
-        return `<tr><td class="name">${hl(name(r.id))}</td><td class="sc">${esc(skills[r.id].sc)}</td><td class="bonus${/^−|由其他/.test(r.bonus) ? ' minus' : ''}">${esc(r.bonus)}</td><td class="cond">${cond}</td><td class="effect">${esc(effect(r.id)).replace(/\n/g, '<br>')}<div class="meta">${meta}</div></td></tr>`;
+        return `<tr><td class="name">${hl(name(r.id))}</td><td class="sc">${esc(skills[r.id].sc)}</td><td class="effect">${esc(effect(r.id)).replace(/\n/g, '<br>')}<div class="meta">${meta}</div></td><td class="bonus${/^−|由其他/.test(r.bonus) ? ' minus' : ''}">${esc(r.bonus)}</td><td class="cond">${cond}</td></tr>`;
       }).join('')}</tbody></table></div>`;
   }
   function render() {
