@@ -7,7 +7,9 @@
 import fs from 'node:fs';
 import { zhName } from '../dist/engine/gloss.mjs';
 import { decodeProcess, tagsOf } from './skill-conditions.mjs';
-import { categoriesOf, raisesAttack } from './skill-categories.mjs';
+import { categoriesOf, raisesAttack, statEntries } from './skill-categories.mjs';
+import { luaDocs } from './skill-conditions.mjs';
+const procDocs = luaDocs('process.lua');
 const R = p => JSON.parse(fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8'));
 const core = R('dist/game-data/engine/core.json');
 const P = core.ProcessMst, pc = Object.fromEntries(P.cols.map((c, i) => [c, i]));
@@ -32,7 +34,7 @@ for (const [id, g] of game) {
 const DAMAGE = new Set(['伤害上限', '特攻', '暴击', '造成伤害']);
 // conditions that need a switch or are not simulated by the calculator (the target is always a boss and the battle
 // start is simulated, so BOSS / 开局 need nothing; element / move / weapon / race are checked by the game scripts)
-const SWITCHED = /^HP|满血|Break|队伍|异常状态|复活时|死亡时|未装备武器|现实时间|击杀时|致命伤害|定时发动|移动中|咏唱中|空中|连击数|距离|特殊计数|MP条件|需要装备特定技能|援护|超必杀槽|连续发动|增益／减益|朝向|以太|受击次数|特技次数|第几击|种类数|属性比较|角色类别|目标属性耐性|敌人类型条件|战斗结束时|受到致命/;
+const SWITCHED = /^HP|满血|受到攻击时|Break|队伍|异常状态|复活时|死亡时|未装备武器|现实时间|击杀时|致命伤害|定时发动|移动中|咏唱中|空中|连击数|距离|特殊计数|MP条件|需要装备特定技能|援护|超必杀槽|连续发动|增益／减益|朝向|以太|受击次数|特技次数|第几击|种类数|属性比较|角色类别|目标属性耐性|敌人类型条件|战斗结束时|受到致命/;
 // a process only defends when it changes the damage the character takes (or its resistances)
 const DEFENSIVE = p => /被ダメージ|被命中|被弾|ガード|バリア|耐性/.test(p.kind) || /被ダメージ|を受けた/.test(p.trigger);
 const out = [];
@@ -41,7 +43,8 @@ for (const s of skills) {
   const cats = categoriesOf(s.procs, DEFENSIVE);
   // 条件标签 from the game's condition data (scripts/skill-conditions.mjs), not from the description
   const conds = s.procs.map(p => { const d = decodeProcess(p.pid, p.params); return { kind: p.kind, defensive: DEFENSIVE(p), d, tags: tagsOf(d, DEFENSIVE(p)) }; });
-  const tags = [...new Set(conds.flatMap(c => c.tags))];
+  let tags = [...new Set(conds.flatMap(c => c.tags))];
+  if (tags.some(t => /^HP\d|满血|HP越|HP降到|HP回到/.test(t))) tags = tags.filter(t => t !== 'HP条件');
   const undecoded = [...new Set(conds.flatMap(c => c.d.undecoded || []))];
   const conditional = tags.some(t => SWITCHED.test(t));
   const dmg = [...cats.keys()].some(c => DAMAGE.has(c)) || (cats.has('基础属性') && raisesAttack(s.procs));
@@ -52,7 +55,25 @@ for (const s of skills) {
   const defense = guard.length ? { calc: guard.some(c => c.tags.some(t => SWITCHED.test(t))) ? '看条件' : '能算', tags: [...new Set(guard.flatMap(c => c.tags))] } : null;
   // the decoded conditions per process, for the 配装's “只看本招式吃得到的” filter later
   const conditions = conds.map(({ kind, defensive, d }) => ({ kind, defensive, ...Object.fromEntries(Object.entries(d).filter(([k, v]) => Array.isArray(v) ? v.length : v).map(([k, v]) => [k, Array.isArray(v) && typeof v[0] !== 'object' ? [...new Set(v)] : v])) }));
-  out.push({ ...s, cats: [...cats.keys()], reasons: Object.fromEntries([...cats].map(([c, r]) => [c, [...r]])), tags, undecoded, conditions, calc, defense, triggers: [...new Set(s.procs.map(p => p.triggerZh || p.trigger))] });
+  // 小类 of 基础属性: each stat it changes (a skill changing several is in each), with the value and that process's
+  // own conditions (+ probability, and a duration after the battle start / the trigger)
+  let sub = null;
+  if (cats.has('基础属性')) {
+    const byStat = new Map();
+    for (const e of statEntries(s.procs)) {
+      const p = s.procs[e.proc], names = procDocs.get(`process${p.pid}`)?.params || [], vals = String(p.params ?? '').split(':').map(Number);
+      const tags = conds[e.proc].tags.filter(t => !/^追加|^可装备|^受·/.test(t));
+      if (p.prob < 10000) tags.push(`概率发动（${p.prob / 100}%）`);
+      const d = vals[names.indexOf('継続時間')];
+      if (names.includes('継続時間') && d > 0) tags.push(/Wave開始/.test(p.trigger) ? `开局${Math.round(d / 60)}秒内` : `${Math.round(d / 60)}秒内（触发后）`);
+      const entry = { stat: e.stat, rate: e.rate, add: e.add, basis: e.basis, ...(e.max ? { max: true } : {}), cond: tags.length > 0, tags: [...new Set(tags)] };
+      const old = byStat.get(e.stat);
+      const better = !old || (old.cond && !entry.cond) || (old.cond === entry.cond && (Math.abs(entry.rate) > Math.abs(old.rate) || (entry.rate === old.rate && Math.abs(entry.add) > Math.abs(old.add))));
+      if (better) byStat.set(e.stat, entry);
+    }
+    sub = { 基础属性: ['HP', 'MP', '攻击力', '法强', '防御力', '魔抗', '属性耐性'].filter(x => byStat.has(x)).map(x => byStat.get(x)) };
+  }
+  out.push({ ...s, cats: [...cats.keys()], reasons: Object.fromEntries([...cats].map(([c, r]) => [c, [...r]])), tags, undecoded, conditions, calc, defense, sub, triggers: [...new Set(s.procs.map(p => p.triggerZh || p.trigger))] });
 }
 // the user's decisions (docs/skill-classes-user.json) win over the automatic classes
 const user = JSON.parse(fs.readFileSync(new URL('../docs/skill-classes-user.json', import.meta.url), 'utf8'));
@@ -63,7 +84,7 @@ for (const s of out) {
   if (u.calc) s.calc = u.calc;
   if (u.note) s.userNote = u.note;
 }
-fs.writeFileSync(new URL('../docs/skill-classes-draft.json', import.meta.url), JSON.stringify({ note: '技能分类初稿（自动）：每个技能的大类（效果种类＋游戏效果说明）、条件标签、计算器能否算；等用户核对后替换技能表分页', categories: user.categories, skills: out.map(s => ({ id: s.id, name: s.name, cats: s.cats, tags: s.tags, calc: s.calc, reasons: s.reasons, ...(s.undecoded.length ? { undecoded: s.undecoded } : {}), ...(s.defense ? { defense: s.defense } : {}), conditions: s.conditions, ...(s.userNote ? { userNote: s.userNote } : {}), kinds: s.procs.map(p => p.kind), triggers: s.triggers })) }) + '\n');
+fs.writeFileSync(new URL('../docs/skill-classes-draft.json', import.meta.url), JSON.stringify({ note: '技能分类初稿（自动）：每个技能的大类（效果种类＋游戏效果说明）、条件标签、计算器能否算；等用户核对后替换技能表分页', categories: user.categories, skills: out.map(s => ({ id: s.id, name: s.name, cats: s.cats, tags: s.tags, calc: s.calc, reasons: s.reasons, ...(s.undecoded.length ? { undecoded: s.undecoded } : {}), ...(s.defense ? { defense: s.defense } : {}), ...(s.sub ? { sub: s.sub } : {}), conditions: s.conditions, ...(s.userNote ? { userNote: s.userNote } : {}), kinds: s.procs.map(p => p.kind), triggers: s.triggers })) }) + '\n');
 const count = new Map(); for (const s of out) for (const c of s.cats) count.set(c, (count.get(c) || 0) + 1);
 console.log([...count].sort((a, b) => b[1] - a[1]).map(([c, n]) => `${c} ${n}`).join(' · '));
 const calc = new Map(); for (const s of out) calc.set(s.calc, (calc.get(s.calc) || 0) + 1); console.log([...calc].map(([c, n]) => `${c} ${n}`).join(' · '));

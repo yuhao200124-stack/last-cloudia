@@ -105,3 +105,91 @@ export function raisesAttack(procs) {
     return buffsOf(p.pid).some(b => [300, 302].includes(b.ope));
   });
 }
+
+// ---- 基础属性 小类: which stats a skill's stat processes change (a skill changing several is in each) ----
+// From the game data only: the stat named at the end of the process name (P_HP条件STR増減 = 攻击力, the HP part is
+// a condition); the value parameters with a non-zero value (STR倍率 / DEF加算値 …); 全ステ = STR, DEF, INT, MND (the
+// game's all-stat processes list exactly these four); 対象ステータスタイプ / ステータス変換先 = STATUS_TYPE codes of
+// luaCommon.lua; built-in operations 300–305 / 318; the buffs a script applies.
+export const STATS = ['HP', 'MP', '攻击力', '法强', '防御力', '魔抗', '属性耐性'];
+const STAT_TOKEN = [['攻击力', /STR/], ['法强', /INT|MAG/], ['防御力', /DEF/], ['魔抗', /MND|MDEF/], ['HP', /最大HP|HP(?=増減|$)/], ['MP', /最大MP|MP(?=増減|$)/], ['属性耐性', /属性耐性/], ['全ステ', /全ステ/]];
+const STATUS_TYPE = { 2: '攻击力', 3: '防御力', 4: '法强', 5: '魔抗', 96: 'HP', 32: 'HP', 64: 'HP', 33: 'MP', 1: 'MP' };
+const OPE_STAT = { 300: '攻击力', 301: '防御力', 302: '法强', 303: '魔抗', 305: 'HP', 318: 'MP' };
+const ALL_STATS = ['攻击力', '防御力', '法强', '魔抗'];
+// each stat a skill's stat processes change, with the value: PARAM_BEHAVIOR 4 = 加算值, 5 = 倍率 (1/100 %); a process
+// that names its stat wins over its script's parameter comments (PB_被ダメージ時MND増減's comments say INT); an
+// equipment-parameter process (対象ステータスタイプ + ステータス倍率) raises the equipment's own value (basis 装备);
+// a conversion (…変換) lowers its source and adds to its targets (basis 转换, no fixed value)
+const STAT_NAME = { STR: '攻击力', INT: '法强', DEF: '防御力', MND: '魔抗', MDEF: '魔抗', HP: 'HP', MP: 'MP', 全ステ: '全ステ' };
+function kindStat(kind) {
+  let best = null;
+  for (const [stat, re] of STAT_TOKEN) for (const m of kind.matchAll(new RegExp(re.source, 'g'))) {
+    const end = m.index + m[0].length;
+    if (!best || end > best.end) best = { stat, end };
+  }
+  return best && /^(増減|増加|変換|デバフ耐性|貫通耐性|$)/.test(kind.slice(best.end)) ? best.stat : null;
+}
+export function statEntries(procs) {
+  const out = [];
+  procs.forEach((p, i) => {
+    const r = row.get(p.pid); if (!r) return;
+    const k = kindCategory(p.kind);
+    if (k && k !== '基础属性') return;                 // a heal scaled by 魔抗 etc. is not a stat change
+    const names = docs.get(`process${p.pid}`)?.params || [];
+    const beh = String(r[pc.PARAM_BEHAVIOR] ?? '').split(':').map(Number);
+    const vals = String(p.params ?? '').split(':').map(v => (v === '' ? 0 : Number(v)));
+    const ks = kindStat(p.kind);
+    const got = new Map();
+    const bump = (stat, field, v, basis = '角色', max = false) => {
+      for (const st of stat === '全ステ' ? ALL_STATS : [stat]) {
+        const e = got.get(st) || { stat: st, rate: 0, add: 0, basis, proc: i, max: false };
+        if (field && Math.abs(v) > Math.abs(e[field])) { e[field] = v; e.max = e.max || max; }
+        got.set(st, e);
+      }
+    };
+    const typeAt = names.indexOf('対象ステータスタイプ');
+    if (typeAt >= 0 && STATUS_TYPE[vals[typeAt]]) bump(STATUS_TYPE[vals[typeAt]], 'rate', vals[names.indexOf('ステータス倍率')] || 0, '装备');
+    else beh.forEach((b, j) => {
+      if (b !== 4 && b !== 5) return;
+      const m = (names[j] || '').match(/^(STR|INT|DEF|MND|MDEF|HP|MP|全ステ)/);
+      const stat = ks && ks !== '全ステ' ? ks : m ? STAT_NAME[m[1]] : ks;
+      if (stat && vals[j]) bump(stat, b === 4 ? 'add' : 'rate', vals[j], '角色', /最大/.test(names[j] || ''));
+    });
+    // conversions: the targets get part of the source (no fixed value)
+    names.forEach((n, j) => { if (/^ステータス変換先\d$/.test(n) && STATUS_TYPE[vals[j]]) bump(STATUS_TYPE[vals[j]], null, 0, '转换'); });
+    if (!got.size && ks) bump(ks, null, 0);                       // named, value not readable (e.g. 属性耐性 as a code)
+    if (!got.size && r[pc.USE_SCRIPT] !== 1 && OPE_STAT[r[pc.OPE_INFO]]) bump(OPE_STAT[r[pc.OPE_INFO]], null, 0);
+    if (!got.size) for (const b of buffsOf(p.pid)) if (OPE_STAT[b.ope]) bump(OPE_STAT[b.ope], null, 0);
+    // 属性耐性: the resist value is the process's value parameter
+    for (const e of got.values()) out.push(e);
+  });
+  return out;
+}
+export function statsOf(procs) {
+  const out = new Set();
+  const add = s => (s === '全ステ' ? ALL_STATS : [s]).forEach(x => out.add(x));
+  for (const p of procs) {
+    const r = row.get(p.pid); if (!r) continue;
+    const k = kindCategory(p.kind);
+    if (k && k !== '基础属性') continue;                 // a heal scaled by 魔抗 etc. is not a stat change
+    // the stat at the end of the name, when the name ends with it (…STR増減 / …DEFデバフ耐性 / …最大HP増減)
+    let best = null;
+    for (const [stat, re] of STAT_TOKEN) for (const m of p.kind.matchAll(new RegExp(re.source, 'g'))) {
+      const end = m.index + m[0].length;
+      if (!best || end > best.end) best = { stat, end };
+    }
+    const tail = best ? p.kind.slice(best.end) : '';
+    if (best && /^(増減|増加|変換|デバフ耐性|貫通耐性|$)/.test(tail)) add(best.stat);
+    // the value parameters with a value, the status codes, the conversion targets
+    const values = String(p.params ?? '').split(':');
+    (docs.get(`process${p.pid}`)?.params || []).forEach((name, i) => {
+      const v = Number(values[i]);
+      const m = name?.match(/^(STR|INT|DEF|MND|MDEF|HP|MP|全ステ)(加算値|倍率|最大倍率|加算最大値|倍率最大値)$/);
+      if (m && v) add({ STR: '攻击力', INT: '法强', DEF: '防御力', MND: '魔抗', MDEF: '魔抗', HP: 'HP', MP: 'MP', 全ステ: '全ステ' }[m[1]]);
+      if (/^対象ステータスタイプ$|^ステータス変換先\d$/.test(name || '') && STATUS_TYPE[v]) add(STATUS_TYPE[v]);
+    });
+    if (r[pc.USE_SCRIPT] !== 1 && OPE_STAT[r[pc.OPE_INFO]]) add(OPE_STAT[r[pc.OPE_INFO]]);
+    for (const b of buffsOf(p.pid)) if (OPE_STAT[b.ope]) add(OPE_STAT[b.ope]);
+  }
+  return STATS.filter(s => out.has(s));
+}

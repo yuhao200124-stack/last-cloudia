@@ -3,6 +3,7 @@
   node scripts/build-skill-classes.mjs
   python3 scripts/skill-classes-excel.py export <out.xlsx>        # one row per skill, sorted by main category
   python3 scripts/skill-classes-excel.py by-category <out.xlsx>   # a heading per category, every skill in it listed under it
+  python3 scripts/skill-classes-excel.py base-stats <out.xlsx>    # 基础属性 by stat, without / with conditions, by bonus
 
 One sheet, one skill per row, sorted by its main category (the first of its categories in CAT order).
 """
@@ -173,11 +174,103 @@ def export_by_category(out):
     print(f'exported by category to {out}', {c: len(members.get(c, [])) for c in CAT})
 
 
+STATS = ['HP', 'MP', '攻击力', '法强', '防御力', '魔抗', '属性耐性']
+
+
+def bonus_text(e):
+    if e['basis'] == '转换':
+        return '由其他属性转换'
+    parts = []
+    if e['rate']:
+        parts.append(f"{'+' if e['rate'] > 0 else '−'}{abs(e['rate']) / 100:g}%")
+    if e['add']:
+        parts.append(f"{'+' if e['add'] > 0 else '−'}{abs(e['add']):g}")
+    text = '、'.join(parts) or '（数值读不出）'
+    if e['basis'] == '装备':
+        text = f'装备的{text}'
+    return ('最多' + text) if e.get('max') else text
+
+
+def order_key(e):
+    # 角色 values first, then the equipment's own value, then conversions; each from the biggest bonus down
+    basis = {'角色': 0, '装备': 1, '转换': 2}.get(e['basis'], 3)
+    return (basis, -(e['rate'] or 0), -(e['add'] or 0))
+
+
+def export_base_stats(out):
+    """基础属性 by stat: a heading per stat, then the skills without conditions and the ones with conditions, each from
+    the biggest bonus down (a skill changing several stats is under each)."""
+    draft = json.loads((ROOT / 'docs/skill-classes-draft.json').read_text(encoding='utf-8'))
+    game = {g['gameId']: g for g in json.loads((ROOT / 'docs/game-relic-passives.json').read_text(encoding='utf-8'))}
+    groups = {st: [] for st in STATS}
+    for s in draft['skills']:
+        for e in (s.get('sub') or {}).get('基础属性', []):
+            groups[e['stat']].append((s, e))
+    wb = Workbook()
+    ws = wb.active
+    ws.title = '基础属性'
+    thin = Side(style='thin', color='BFBFBF')
+    bd = Border(left=thin, right=thin, top=thin, bottom=thin)
+    cols = ['游戏编号', '名称', 'SC', '效果说明', '加成', '条件（这一项加成的）', '也在这些小类', '计算器']
+    note = ws.cell(row=1, column=1, value='按改的是哪项属性分小类，一个技能改几项就放进几个小类。每个小类先放“没有条件”的，再放“有条件”的，各自按加成从大到小。'
+                   '加成：%＝按比例，数字＝固定值，“装备的”＝提高装备本身的数值（排在按比例的后面），“由其他属性转换”＝把别的属性转过来（排最后），“最多”＝满足条件时的最大值。'
+                   '条件只看这一项属性加成本身的条件（包括概率和持续时间），全部从游戏数据读出。')
+    note.font = F(size=10, color='595959')
+    note.alignment = Alignment(wrap_text=True, vertical='top')
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(cols))
+    ws.row_dimensions[1].height = 48
+    for j, (h, w) in enumerate(zip(cols, [10, 20, 5, 56, 16, 30, 18, 14]), 1):
+        c = ws.cell(row=2, column=j, value=h)
+        c.font = F(bold=True)
+        c.fill = PatternFill('solid', fgColor='D9D9D9')
+        c.border = bd
+        c.alignment = Alignment(horizontal='center', vertical='center')
+        ws.column_dimensions[c.column_letter].width = w
+    ws.freeze_panes = 'A3'
+    r = 3
+    counts = {}
+    for st in STATS:
+        rows = groups[st]
+        if not rows:
+            continue
+        counts[st] = len(rows)
+        head = ws.cell(row=r, column=1, value=f'【{st}】 {len(rows)} 个技能')
+        head.font = F(bold=True, size=11, color='FFFFFF')
+        for j in range(1, len(cols) + 1):
+            ws.cell(row=r, column=j).fill = PatternFill('solid', fgColor='2F5597')
+        ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=len(cols))
+        r += 1
+        for label, cond in (('没有条件', False), ('有条件', True)):
+            block = sorted([x for x in rows if x[1]['cond'] == cond], key=lambda x: order_key(x[1]))
+            sub = ws.cell(row=r, column=1, value=f'{label}（{len(block)}）')
+            sub.font = F(bold=True, color='2F5597')
+            for j in range(1, len(cols) + 1):
+                ws.cell(row=r, column=j).fill = PatternFill('solid', fgColor='DDEBF7')
+            ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=len(cols))
+            r += 1
+            for s, e in block:
+                others = [x['stat'] for x in s['sub']['基础属性'] if x['stat'] != st]
+                vals = [s['id'], s['name'], game[s['id']]['sc'], game[s['id']]['effectS'], bonus_text(e), '、'.join(e['tags']), '、'.join(others), s['calc']]
+                for j, v in enumerate(vals, 1):
+                    c = ws.cell(row=r, column=j, value=v if v != '' else None)
+                    c.font = F()
+                    c.border = bd
+                    c.alignment = Alignment(vertical='center', wrap_text=j in (4, 6, 7), horizontal='center' if j in (1, 3, 5, 8) else 'left')
+                    if j == 8:
+                        c.fill = PatternFill('solid', fgColor=FILLS.get(v, 'FFFFFF'))
+                r += 1
+        r += 1
+    wb.save(out)
+    print(f'exported 基础属性 to {out}', counts)
+
+
 if __name__ == '__main__':
     if len(sys.argv) >= 3 and sys.argv[1] == 'export':
         export(sys.argv[2])
     elif len(sys.argv) >= 3 and sys.argv[1] == 'by-category':
         export_by_category(sys.argv[2])
+    elif len(sys.argv) >= 3 and sys.argv[1] == 'base-stats':
+        export_base_stats(sys.argv[2])
     else:
         print(__doc__)
         sys.exit(2)

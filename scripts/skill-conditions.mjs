@@ -84,6 +84,8 @@ const NOT_CONDITION = /最小|最大|MIN|MAX|変換|率$|表示|死亡するか|
 // a parameter name → which dimension it constrains
 function dimOf(name) {
   if (!name) return null;
+  if (/^効果(最小|最大)HP割合$/.test(name)) return 'hpScale';
+  if (/^(STR|INT|DEF|MND|MDEF|HP|MP|全ステ)(加算|倍率|最大)|回復|消費/.test(name)) return null;   // values, not conditions
   if (/^効果発生/.test(name)) return /超必殺/.test(name) ? 'ultimate' : /ヒット/.test(name) ? 'hits' : /HP/.test(name) ? 'hp' : /距離/.test(name) ? 'distance' : /人数/.test(name) ? 'party' : 'other';
   if (/パラメータタイプ|演出|継続時間|倍率|加算|補正|最大値|最小値|確率|回数|間隔|フレーム|オプション|効率|変換先|WAVE|秒|距離|ヒット数|割合$|値$/.test(name) && !/HP|閾値|条件/.test(name)) return null;
   if (/敵・味方|敵味方|バレットオーナー|発動者/.test(name)) return 'side';
@@ -103,7 +105,7 @@ function dimOf(name) {
   if (/装備|装備種/.test(name)) return 'equip';
   if (/性別/.test(name)) return 'gender';
   if (/状態異常/.test(name) && !/継続時間/.test(name)) return 'ailment';
-  if (/HP/.test(name)) return 'hp';
+  if (/HP/.test(name) && /閾値|条件|割合/.test(name)) return 'hp';
   if (/方向/.test(name)) return 'direction';
   if (/汎用数値|汎用情報|スキル発動毎情報|発動毎情報|汎用トリガ/.test(name)) return 'scriptValue';
   if (/人数|生存/.test(name)) return 'party';
@@ -111,9 +113,9 @@ function dimOf(name) {
   return 'other';
 }
 // the trigger's own name says when it works
-const TRIGGER_TAGS = [[/Wave終了|バトル終了/, '战斗结束时'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル/, '暴击时'], [/気絶・ブレイク|ブレイク状態/, 'Break／眩晕'], [/空中/, '空中'], [/トドメ|撃破/, '击杀时'], [/致死ダメージ/, '受到致命伤害时'], [/生存人数/, '队伍／人数条件'], [/移動中/, '移动中'], [/フレーム間隔/, '定时发动'], [/キラー発生/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/ヒット数|ヒット中/, '连击数条件'], [/距離/, '距离条件'], [/HP/, 'HP条件'], [/MP値/, 'MP条件']];
+const TRIGGER_TAGS = [[/Wave終了|バトル終了/, '战斗结束时'], [/被ダメージ時|被ダメージ計算|バレットを受けた|被弾/, '受到攻击时'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル/, '暴击时'], [/気絶・ブレイク|ブレイク状態/, 'Break／眩晕'], [/空中/, '空中'], [/トドメ|撃破/, '击杀时'], [/致死ダメージ/, '受到致命伤害时'], [/生存人数|生存数/, '队伍／人数条件'], [/ステ比較/, '属性比较条件'], [/移動中/, '移动中'], [/フレーム間隔/, '定时发动'], [/キラー発生/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/ヒット数|ヒット中/, '连击数条件'], [/距離/, '距离条件'], [/HP/, 'HP条件'], [/MP値/, 'MP条件']];
 // conditions written into the process itself show in its name (the part before what it changes)
-const KIND_TAGS = [[/対状態異常|状態異常中の相手|異常状態の相手/, '对异常状态的敌人'], [/特定状態異常中|状態異常中(?!の相手)|状態異常時/, '自身异常状态时'], [/対気絶・ブレイク中|気絶・ブレイク中/, 'Break／眩晕'], [/距離状況|距離条件/, '距离条件'], [/HP状況|HP条件/, 'HP条件'], [/超必殺ゲージ(状況|条件)/, '超必杀槽条件'], [/MP状況|MP値条件/, 'MP条件'], [/ヒット数(状況|条件)/, '连击数条件'], [/生存人数|人数状況/, '队伍／人数条件'], [/一刀時|一刀で/, '只装一件武器'], [/二刀時/, '装两件武器'], [/武器未装備時/, '未装备武器'], [/空中/, '空中'], [/復活時/, '复活时'], [/死亡時/, '死亡时'], [/キル時|撃破時|トドメ/, '击杀时'], [/移動中/, '移动中'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル時/, '暴击时'], [/キラー発生時|キラー時/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/対BOSS|ボス/, '对BOSS']];
+const KIND_TAGS = [[/対状態異常|状態異常中の相手|異常状態の相手/, '对异常状态的敌人'], [/特定状態異常中|状態異常中(?!の相手)|状態異常時/, '自身异常状态时'], [/対気絶・ブレイク中|気絶・ブレイク中/, 'Break／眩晕'], [/距離状況|距離条件/, '距离条件'], [/HP状況|HP条件/, 'HP条件'], [/超必殺ゲージ(状況|条件)/, '超必杀槽条件'], [/MP状況|MP値条件/, 'MP条件'], [/ヒット数(状況|条件)/, '连击数条件'], [/生存人数|生存数|人数状況/, '队伍／人数条件'], [/ステ比較/, '属性比较条件'], [/一刀時|一刀で/, '只装一件武器'], [/二刀時/, '装两件武器'], [/武器未装備時/, '未装备武器'], [/空中/, '空中'], [/復活時/, '复活时'], [/死亡時/, '死亡时'], [/キル時|撃破時|トドメ/, '击杀时'], [/移動中/, '移动中'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル時/, '暴击时'], [/キラー発生時|キラー時/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/対BOSS|ボス/, '对BOSS']];
 const nibbles = n => { const out = []; for (let i = 0; i < 6 && n > 0; i++) { out.push(n & 15); n >>= 4; } return out; };
 
 export function decodeProcess(pid, paramStr) {
@@ -121,7 +123,7 @@ export function decodeProcess(pid, paramStr) {
   const params = String(paramStr ?? '').split(':').map(v => v === '' ? null : Number(v));
   // a process that only sets a counter is not a condition; one that reads it (…状況 / …条件) is
   let scriptCond = /汎用(数値)?情報(状況|条件)|状況|条件/.test(row[pc.NAME]);
-  const out = { elements: [], skillTypes: [], roles: [], equips: [], races: [], notRaces: [], ownRaces: [], addRaces: [], canEquip: [], enemy: [], gender: [], ailments: [], hp: [], gearState: [], weaponElement: [], aboutElements: [], script: false, other: [], undecoded: [], anyElement: false, anyType: false };
+  const out = { hpScale: {}, elements: [], skillTypes: [], roles: [], equips: [], races: [], notRaces: [], ownRaces: [], addRaces: [], canEquip: [], enemy: [], gender: [], ailments: [], hp: [], gearState: [], weaponElement: [], aboutElements: [], script: false, other: [], undecoded: [], anyElement: false, anyType: false };
   const own = /特定キャラ専用/.test(row[pc.NAME]);
   const add = (dim, raw, name) => {
     if (raw == null || Number.isNaN(raw)) return;
@@ -141,6 +143,7 @@ export function decodeProcess(pid, paramStr) {
       case 'gender': if (GENDER[raw]) out.gender.push(raw); break;
       case 'ailment': if (AILMENT[raw] != null) out.ailments.push(raw); break;
       case 'hp': out.hp.push({ name, value: raw }); break;
+      case 'hpScale': out.hpScale[/最小/.test(name) ? 'min' : 'max'] = raw; break;
       case 'direction': out.hp.push({ name, dir: raw }); break;
       case 'gearState': out.gearState.push(`${name}=${raw}`); break;
       case 'scriptValue': if (scriptCond) out.script = true; break;
@@ -164,14 +167,28 @@ export function decodeProcess(pid, paramStr) {
   const cparams = String(row[pc.PROCESS_COND_PARAM] ?? '').split(':').map(v => v === '' ? 0 : Number(v));
   for (const [re, tag] of KIND_TAGS) if (re.test(row[pc.NAME])) out.other.push(tag);
   const trig = cond?.[1] || '';
-  for (const [re, tag] of TRIGGER_TAGS) if (re.test(trig) && !(tag === '队伍／人数条件' && /オート/.test(row[pc.NAME]))) out.other.push(tag);
+  for (const [re, tag] of TRIGGER_TAGS) {
+    if (!re.test(trig)) continue;
+    if (tag === '队伍／人数条件' && /オート/.test(row[pc.NAME])) continue;          // auto buffs re-apply, not a condition
+    if (tag === '受到攻击时' && /被ダメージ(増減|軽減|増加)|被命中|ガード|バリア/.test(row[pc.NAME])) continue; // a damage-taken effect works when hit by nature
+    out.other.push(tag);
+  }
   if (fn) {
     scriptCond = true;
     const cdoc = condDocs.get(fn), gate = gating.get(fn) || { bits: [], direct: [] };
     if (fn === 'IsCritical') out.other.push('暴击时');
     if (fn === 'IsBossWave' || /Boss/.test(fn)) out.enemy.push(2);
     if (/Break/.test(fn)) out.other.push('Break／眩晕');
-    if (/Hp/.test(fn) && !cdoc?.params?.length) out.hp.push({ name: fn });
+    // HP conditions without documented parameters, read from their code (condition.lua):
+    // HpTrigger(limit INDEX, direction INDEX 0 = drops to / 1 = rises to, threshold INDEX); HpCond(direction 1 = ≥ / 0 = <, threshold)
+    const P = n => (n ? params[n - 1] : null);
+    if (/^HpTrigger|HpTrigger$/.test(fn) && P(cparams[2])) {
+      const lim = P(cparams[0]), dir = P(cparams[1]), thr = P(cparams[2]);
+      out.other.push(`HP${dir === 1 ? '回到' : '降到'}${thr / 100}%${dir === 1 ? '以上' : '以下'}时${lim > 0 ? `（仅${lim}次）` : ''}`);
+    } else if (fn === 'HpCond' && P(cparams[1]) != null) {
+      const dir = P(cparams[0]), thr = P(cparams[1]);
+      out.other.push(thr >= 9999 && dir === 1 ? '满血' : `HP${thr / 100}%${dir === 1 ? '以上' : '以下'}`);
+    } else if (/Hp/.test(fn) && !cdoc?.params?.length) out.hp.push({ name: fn });
     if (/Mp/.test(fn) && !cdoc?.params?.length) out.other.push('MP条件');
     if (/FrameInterval/.test(fn)) out.other.push('定时发动');
     if (/SingleWeapon/.test(fn)) out.gearState.push('只装一件武器');
@@ -213,13 +230,16 @@ export function tagsOf(d, defensive) {
   for (const e of new Set(d.aboutElements)) t.push(`${pre}${ELEM[e]}属性`);
   for (const w of new Set(d.weaponElement)) t.push(`武器属性:${w}`);
   const hpv = d.hp.filter(h => h.value != null && h.value >= 100).map(h => h.value), dir = d.hp.find(h => h.dir != null)?.dir;
-  if (hpv.length || d.hp.some(h => !h.value && !h.dir && h.name)) {
+  // a bare HP condition only from an HP condition function without documented parameters (a direction alone is not one)
+  if (hpv.length || d.hp.some(h => h.value == null && !('dir' in h) && /Hp/.test(h.name || ''))) {
     const v = Math.max(0, ...hpv);
     t.push(v >= 9999 ? '满血' : v > 0 && v <= 3000 && dir !== 1 ? `HP${v / 100}%以下` : v > 0 ? `HP${v / 100}%${dir === 1 ? '以上' : dir === 0 ? '以下' : ''}` : 'HP条件');
   }
+  if (d.hpScale && d.hpScale.min != null && d.hpScale.max != null) t.push(d.hpScale.min > d.hpScale.max ? 'HP越低越强' : 'HP越高越强');
   for (const g of new Set(d.gearState)) t.push(g === '只装一件武器' ? g : '装备状况条件');
   for (const o of new Set(d.other)) t.push(o);
   if (d.script) t.push('特殊计数条件');
-  const out = [...new Set(t)];
-  return out.some(x => /^HP\d|满血/.test(x)) ? out.filter(x => x !== 'HP条件') : out;
+  let out = [...new Set(t)];
+  if (out.includes('复活时')) out = out.filter(x => x !== '队伍／人数条件');
+  return out.some(x => /^HP\d|满血|HP越|HP降到|HP回到/.test(x)) ? out.filter(x => x !== 'HP条件') : out;
 }
