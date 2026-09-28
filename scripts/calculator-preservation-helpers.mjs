@@ -42,10 +42,16 @@ const bossRace=JSON.parse(fs.readFileSync(new URL('../docs/boss-race-preservatio
 const switchesLayer=JSON.parse(fs.readFileSync(new URL('../docs/switches-preservation-2026-09-28.json',import.meta.url)));
 const dualLock=JSON.parse(fs.readFileSync(new URL('../docs/dual-lock-preservation-2026-09-28.json',import.meta.url)));
 const weaponOwn=JSON.parse(fs.readFileSync(new URL('../docs/weapon-own-preservation-2026-09-28.json',import.meta.url)));
+const noNotes=JSON.parse(fs.readFileSync(new URL('../docs/no-notes-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const noNotesLayer=noNotes.files[path];
+ if(noNotesLayer){
+  if(hash(text)!==noNotesLayer.afterHash||hash(noNotesLayer.beforeText)!==noNotesLayer.beforeHash)throw Error(`No-notes preservation drift: ${path}`);
+  text=noNotesLayer.beforeText;
+ }
  const weaponOwnLayer=weaponOwn.files[path];
  if(weaponOwnLayer){
   if(hash(text)!==weaponOwnLayer.afterHash||hash(weaponOwnLayer.beforeText)!==weaponOwnLayer.beforeHash)throw Error(`Weapon-own preservation drift: ${path}`);

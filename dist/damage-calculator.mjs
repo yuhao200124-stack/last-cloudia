@@ -191,13 +191,15 @@ function renderAttackBreakdown(stat) {
   const lines=[...(stat?.steps||[]),...(stat?.issues||[]).map(text=>`⚠ ${text}`)];
   $('attackBreakdownToggle').hidden=!lines.length;
   if(!lines.length){$('attackBreakdown').hidden=true;$('attackBreakdownToggle').setAttribute('aria-expanded','false');return;}
-  $('attackBreakdownSummary').textContent=stat.value!=null?`正常面板（不含常驻／局内实时加成）${fmt(stat.beforeBuff)} → 当前面板 ${fmt(stat.value)}。是否计入以上实时加成，由下方对应的战斗条件开关决定（如"开局BUFF"覆盖了自动X、EX灵气这类常驻BUFF）。`:'';
+  // the explanatory sentence above the steps was removed at the user's request; only the steps are listed
+  $('attackBreakdownSummary').textContent='';$('attackBreakdownSummary').hidden=true;
   $('attackBreakdownSteps').innerHTML=lines.map(text=>`<li>${esc(text)}</li>`).join('');
 }
 // Same idea for 最终暴击率: reference-only note on where the reader-observed value came
 // from. Hidden whenever #critRate was not actually filled from a reader observation.
 function renderCritBreakdown(observedCrit) {
-  const has=typeof observedCrit?.value==='number'&&Number.isFinite(observedCrit.value);
+  // the reader-observation note was removed at the user's request, which leaves this box empty: the 👁 stays hidden
+  const has=false;
   $('critBreakdownToggle').hidden=!has;
   if(!has){$('critBreakdown').hidden=true;$('critBreakdownToggle').setAttribute('aria-expanded','false');return;}
   $('critBreakdownNote').textContent=observedCrit.note;
