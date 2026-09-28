@@ -3,45 +3,46 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="最后的克劳迪娅被动技能分类表，按 Excel 工作表结构查询技能、SC、效果和可学习圣物。" />
-    <title>最后的克劳迪娅技能分类表</title>
+    <meta name="description" content="最后的克劳迪娅可从圣物学习的被动技能（游戏数据版）：游戏内名称、SC、效果和可学习圣物。" />
+    <title>最后的克劳迪娅技能表</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <script>if(new URLSearchParams(location.search).get('embeddedLoadout')==='1'&&window.parent!==window)document.documentElement.classList.add('lc-embedded');</script>
-    <link rel="stylesheet" href="./styles.css?v=20260927-excel-two-column" />
+    <link rel="stylesheet" href="./styles.css?v=20260929-home" />
+    <link rel="stylesheet" href="./game-skills.css?v=20260929-home" />
   </head>
   <body>
     <header class="site-header">
       <div class="brand-mark" aria-hidden="true">LC</div>
       <div class="brand-copy">
-        <h1>最后的克劳迪娅技能分类表</h1>
-        <p>被动技能</p>
+        <h1>最后的克劳迪娅技能分类表（游戏数据版）</h1>
+        <p>可从圣物学习的被动技能 · 名称、SC、效果、圣物均取自游戏主数据</p>
       </div>
-      <nav class="header-actions" aria-label="页面导航"><a class="header-nav-link" href="./game-skills.html?v=20260927-game-table">游戏数据技能表</a><a class="header-nav-link" href="./characters.html?v=20260926-mayly">角色列表</a></nav>
+      <nav class="header-actions" aria-label="页面导航"><a class="header-nav-link" href="./characters.html?v=20260926-mayly">角色列表</a></nav>
     </header>
-
     <main>
-      <section class="workspace" aria-label="技能分类表">
+      <section class="workspace" aria-label="游戏数据技能表">
         <div class="toolbar">
           <label class="search-box">
             <span class="search-icon" aria-hidden="true">⌕</span>
-            <input id="searchInput" type="search" autocomplete="off" placeholder="搜索技能名称或效果" />
+            <input id="searchInput" type="search" autocomplete="off" placeholder="搜索技能名称、效果或圣物（繁简均可）" />
             <button id="clearSearch" type="button" aria-label="清空搜索" hidden>清空</button>
           </label>
-          <div class="result-summary" id="resultSummary" aria-live="polite"></div>
+          <div class="game-toolbar-right">
+            <div class="script-toggle" role="group" aria-label="文字">
+              <button type="button" data-script="t" aria-pressed="true">游戏原文（繁）</button>
+              <button type="button" data-script="s" aria-pressed="false">简体</button>
+            </div>
+            <div class="result-summary" id="resultSummary" aria-live="polite"></div>
+          </div>
         </div>
-
-        <nav class="sheet-tabs" id="sheetTabs" aria-label="Excel 工作表分类"></nav>
-
+        <nav class="sheet-tabs" id="sheetTabs" aria-label="工作表分类"></nav>
         <div class="sheet-heading">
           <div>
             <span class="sheet-kicker">当前工作表</span>
             <h2 id="sheetTitle"></h2>
-            <span class="edit-hint">双击技能名称、SC、效果、圣物或评价可编辑</span>
+            <span class="edit-hint" id="sheetHint"></span>
           </div>
           <button class="back-top" id="backTop" type="button">回到顶部</button>
         </div>
-
-        <details id="unifiedCharacterPicker" hidden><summary>角色与配装来源</summary><div id="unifiedCharacterSkills"></div></details>
         <div id="tableArea" class="table-area"></div>
         <div id="emptyState" class="empty-state" hidden>
           <strong>没有找到符合条件的技能</strong>
@@ -49,71 +50,7 @@
         </div>
       </section>
     </main>
-
-    <aside id="scCalculator" class="sc-calculator" hidden aria-label="SC计算器">
-      <section id="loadoutRecommendations" class="loadout-recommendations" hidden aria-label="加成收益推荐"></section>
-      <div class="calculator-header">
-        <div class="calculator-sort-actions">
-          <button id="calculatorRatingSort" class="calculator-sort" type="button" aria-label="按评分排序" aria-pressed="false"><span id="calculatorRatingSortIcon" aria-hidden="true">评分▽</span></button>
-          <button id="calculatorSort" class="calculator-sort is-active" type="button" aria-label="按SC从大到小排序" aria-pressed="true" title="按SC从大到小排序"><span id="calculatorSortIcon" aria-hidden="true">SC▽</span></button>
-        </div>
-        <select id="calculatorCharacterSelect" class="calculator-character-select" aria-label="选择角色"></select>
-        <button id="calculatorClose" class="calculator-close" type="button" aria-label="收起计算器">×</button>
-      </div>
-      <div class="calculator-plan-actions">
-        <button id="saveLoadout" type="button">保存方案</button>
-        <button id="openSavedLoadouts" type="button">已保存方案 <span id="savedLoadoutCount">0</span></button>
-      </div>
-      <div class="break-buttons" aria-label="突破等级">
-        <button type="button" data-break-level="7">一破</button>
-        <button type="button" data-break-level="12">二破</button>
-        <button type="button" data-break-level="20">三破</button>
-        <button id="calculatorEffects" class="calculator-mode-button" type="button" aria-pressed="false">看效果</button>
-        <button id="calculatorDetails" class="calculator-details" type="button" aria-pressed="false">详细</button>
-      </div>
-      <div id="calculatorSkills" class="calculator-skills"></div>
-      <div class="calculator-total">
-        <button id="calculatorClear" class="calculator-clear" type="button">清空</button>
-        <button id="calculatorRestore" class="calculator-restore" type="button" title="重新装备当前角色全部自带技能">还原</button>
-        <span>合计</span>
-        <strong id="calculatorTotal">0 SC</strong>
-      </div>
-    </aside>
-
-    <button id="calculatorLauncher" class="calculator-launcher" type="button" aria-label="打开配装与伤害计算器">
-      <strong id="calculatorBadge">配装与伤害</strong>
-    </button>
-
-    <dialog id="saveLoadoutDialog" class="loadout-dialog" aria-labelledby="saveLoadoutTitle">
-      <form method="dialog">
-        <div class="loadout-dialog-header">
-          <strong id="saveLoadoutTitle">保存配装方案</strong>
-          <button type="submit" value="cancel" aria-label="关闭">×</button>
-        </div>
-        <div class="loadout-form">
-          <label>方案名称<input id="loadoutName" type="text" maxlength="40" required /></label>
-          <label>备注<textarea id="loadoutNote" maxlength="300" rows="4" placeholder="例如：单武器、BOSS战、冰魔法配装"></textarea></label>
-          <p>方案保存在当前浏览器中。</p>
-        </div>
-        <div class="loadout-dialog-actions">
-          <button type="submit" value="cancel">取消</button>
-          <button id="saveAsNewLoadout" type="button" hidden>另存为新方案</button>
-          <button id="confirmSaveLoadout" class="primary" type="button">保存</button>
-        </div>
-      </form>
-    </dialog>
-
-    <dialog id="savedLoadoutsDialog" class="loadout-dialog saved-loadouts-dialog" aria-labelledby="savedLoadoutsTitle">
-      <div class="loadout-dialog-header">
-        <strong id="savedLoadoutsTitle">已保存方案</strong>
-        <button id="closeSavedLoadouts" type="button" aria-label="关闭">×</button>
-      </div>
-      <div id="savedLoadoutsList" class="saved-loadouts-list"></div>
-    </dialog>
-
-    <script src="./data.js?v=20260924-judgment-column"></script>
-    <script src="./game-skill-names.js?v=20260928-game-names"></script>
-    <script src="./app.js?v=20260928-game-names"></script>
-    <script type="module" src="./loadout-frame.mjs?v=20260926-scenario-summary"></script>
+    <script src="./game-skill-data.js?v=20260929-home"></script>
+    <script src="./game-skills.js?v=20260929-home"></script>
   </body>
 </html>

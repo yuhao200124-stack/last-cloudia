@@ -5,11 +5,10 @@
   const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
   let active = data.sheetOrder.includes(store.get('lc-game-table:sheet')) ? store.get('lc-game-table:sheet') : data.sheetOrder[0];
   let script = store.get('lc-game-table:script', 't') === 's' ? 's' : 't';
-  let showSite = store.get('lc-game-table:site', '1') === '1';
   let query = '';
   const skill = ref => data.skills[ref];
   const txt = (s, f) => script === 's' ? s[f + 'S'] : s[f];
-  const hay = s => [s.name, s.nameS, s.effect, s.effectS, s.siteName, ...s.sources, ...s.sourcesS].join('\n').toLocaleLowerCase('zh-CN');
+  const hay = s => [s.name, s.nameS, s.effect, s.effectS, ...s.sources, ...s.sourcesS].join('\n').toLocaleLowerCase('zh-CN');
   const matches = row => row.separator || !query || hay(skill(row.ref)).includes(query.toLocaleLowerCase('zh-CN'));
   function hl(value) {
     const raw = String(value ?? ''), q = query.trim();
@@ -17,18 +16,9 @@
     const i = raw.toLocaleLowerCase('zh-CN').indexOf(q.toLocaleLowerCase('zh-CN'));
     return i < 0 ? esc(raw) : `${esc(raw.slice(0, i))}<mark>${esc(raw.slice(i, i + q.length))}</mark>${esc(raw.slice(i + q.length))}`;
   }
-  const ROM = [['VIII','8'],['VII','7'],['VI','6'],['IV','4'],['IX','9'],['III','3'],['II','2'],['V','5']];
-  const norm = n => { let t = String(n || '').replace(/Ⅱ/g,'II').replace(/Ⅲ/g,'III').replace(/Ⅳ/g,'IV'); for (const [a, b] of ROM) t = t.replace(new RegExp(a + '(?![A-Za-z])', 'g'), b); return t.replace(/[\s・･·]/g, ''); };
   const cell = (c, cls = '') => `<div class="cell-content ${cls}">${c}</div>`;
-  function nameCell(s) {
-    const label = hl(txt(s, 'name'));
-    const link = s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noreferrer">${label}</a>` : label;
-    const site = !showSite ? '' : s.siteName ? (norm(s.siteName) !== norm(s.nameS) ? `<small class="site-name">原表：${hl(s.siteName)}</small>` : '') : '<small class="site-name missing">原表未收录</small>';
-    return `<div class="name-stack">${link}${site}</div>`;
-  }
-  function scCell(s) {
-    return hl(s.sc) + (s.siteSc && s.siteSc !== s.sc ? `<small class="sc-diff" title="原表SC与游戏数据不同">原表 ${esc(s.siteSc)}</small>` : '');
-  }
+  const nameCell = s => `<div class="name-stack">${hl(txt(s, 'name'))}</div>`;
+  const scCell = s => hl(s.sc);
   function effectCell(s) {
     const lines = String(txt(s, 'effect')).split('\n').map(hl).join('<br>');
     const io = s.io ? `<span class="io-tag">${esc(s.io)}</span>` : '';
@@ -57,7 +47,7 @@
   function render() {
     const sheet = data.sheets[active];
     $('sheetTitle').textContent = active;
-    $('sheetHint').textContent = active === '杂项' ? '名称、SC、效果、圣物为游戏数据；最后一组“原表未收录”是原技能表还没有的圣物被动' : '名称、SC、效果、圣物为游戏数据；分类、排序和评价沿用原技能表';
+    $('sheetHint').textContent = '名称、SC、效果、圣物取自游戏数据；分类、排序和评价按技能表排版';
     let visible = 0, html = '';
     if (sheet.kind === 'all') {
       const rows = sheet.rows.filter(matches); visible = uniq(rows);
@@ -74,15 +64,13 @@
     $('tableArea').innerHTML = html;
     $('emptyState').hidden = visible !== 0;
     const total = sheet.kind === 'all' ? uniq(sheet.rows) : uniq(sheet.lanes.flatMap(l => l.rows));
-    $('resultSummary').textContent = query ? `找到 ${visible} 个技能（本页共 ${total} 个）` : `本页 ${visible} 个技能 · 游戏可从圣物学习 ${data.total} 个（原表对应 ${data.siteMatched} 个）`;
+    $('resultSummary').textContent = query ? `找到 ${visible} 个技能（本页共 ${total} 个）` : `本页 ${visible} 个技能 · 游戏可从圣物学习 ${data.total} 个`;
     $('clearSearch').hidden = !query;
     $('sheetTabs').innerHTML = data.sheetOrder.map(n => `<button class="sheet-tab" type="button" data-sheet="${esc(n)}" role="tab" aria-selected="${n === active}">${esc(n)}</button>`).join('');
     document.querySelectorAll('[data-script]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.script === script)));
-    $('showSiteName').checked = showSite;
   }
   $('sheetTabs').addEventListener('click', e => { const b = e.target.closest('[data-sheet]'); if (!b) return; active = b.dataset.sheet; store.set('lc-game-table:sheet', active); render(); });
   document.querySelectorAll('[data-script]').forEach(b => b.addEventListener('click', () => { script = b.dataset.script; store.set('lc-game-table:script', script); render(); }));
-  $('showSiteName').addEventListener('change', e => { showSite = e.target.checked; store.set('lc-game-table:site', showSite ? '1' : '0'); render(); });
   let t; $('searchInput').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { query = e.target.value.trim(); render(); }, 120); });
   $('clearSearch').addEventListener('click', () => { $('searchInput').value = ''; query = ''; render(); });
   $('backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));

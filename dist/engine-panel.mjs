@@ -96,7 +96,8 @@ function renderPlans() {
   $('enginePlanCount').textContent = String(plans.length);
   box.innerHTML = plans.length ? plans.map(p => `<li${p.id === build.planId ? ' class="is-current"' : ''}><b>${esc(p.name)}</b> <small>${(p.build?.selected || []).length} 个通用技能 · ${esc(String(p.updatedAt || '').slice(0, 10))}${p.id === build.planId ? ' · 当前' : ''}</small><span class="inline-options"><button type="button" class="secondary" data-plan-action="load" data-plan="${esc(p.id)}">载入</button><button type="button" class="secondary" data-plan-action="rename" data-plan="${esc(p.id)}" title="用上面“配装名称”里的名字">改名</button><button type="button" class="secondary" data-plan-action="delete" data-plan="${esc(p.id)}">删除</button></span></li>`).join('') : '<li class="help">还没有保存的配装。</li>';
 }
-// ---- 恢复角色推荐配装 / 按每 SC 收益推荐: data from the old loadout (game-data/engine/loadout-data.json) ----
+// ---- 恢复角色推荐配装 / 按每 SC 收益推荐: data from the old loadout (game-data/engine/loadout-data.json, fixed since the
+// original skill table was removed on 2026-09-29; which skills 按每 SC 收益推荐 tries is to be decided later) ----
 let loadoutData = null;
 async function ensureLoadoutData() { if (!loadoutData) loadoutData = await fetch(new URL('./game-data/engine/loadout-data.json', import.meta.url)).then(r => r.json()).catch(() => ({ commonPassives: [], recommended: {} })); return loadoutData; }
 async function restoreRecommended() {

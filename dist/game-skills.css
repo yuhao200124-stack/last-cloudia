@@ -2,12 +2,12 @@
 .script-toggle{display:inline-flex;border:1px solid #9fb3c8;border-radius:6px;overflow:hidden}
 .script-toggle button{border:0;background:#fff;padding:6px 12px;font:inherit;font-size:.86rem;color:#28415f;cursor:pointer}
 .script-toggle button[aria-pressed="true"]{background:#1d4e6e;color:#fff}
-.site-name-toggle{display:inline-flex;align-items:center;gap:5px;font-size:.86rem;color:#415b78}
-.game-table .site-name{display:block;margin-top:3px;font-size:.76rem;color:#6b7f95}
-.game-table .site-name.missing{color:#b0482b;font-weight:600}
-.game-table .sc-diff{display:block;margin-top:2px;font-size:.72rem;color:#b0482b}
+
+
+
+
 .game-table .io-line{margin-top:6px}
 .io-tag{display:inline-block;padding:1px 7px;border-radius:9px;background:#e7f0fb;color:#35577f;font-size:.74rem}
-.sheet-tab.is-new{color:#b0482b}
+
 @media (max-width:720px){.game-toolbar-right{justify-content:flex-start}}
 .game-table .name-stack{display:flex;flex-direction:column;align-items:center;text-align:center}

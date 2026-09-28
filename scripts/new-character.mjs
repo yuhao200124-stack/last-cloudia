@@ -8,7 +8,7 @@
 //      characters share them), and records the character in docs/site-characters.json;
 //   2. adds it to dist/game-data/index.json (site), so the damage calculator uses its game data;
 //   3. writes dist/character-<altemaId>.html from the game data (scripts/character-page-builder.mjs);
-//   4. adds its card to dist/characters.html and its entry to the loadout list in dist/app.js.
+//   4. adds its card to dist/characters.html.
 // Running it again for the same character updates everything in place. Pages made by hand before
 // this script ("generated": false) are never overwritten.
 import fs from 'node:fs';
@@ -75,15 +75,6 @@ else{
  list=`${list.slice(0,end)}${card}\n        ${list.slice(end)}`;
 }
 write('dist/characters.html',list);
-let app=read('dist/app.js');
-const start=app.indexOf('const characterLoadouts = {');
-const close=app.indexOf('\n  };',start);
-if(start<0||close<0)fail('app.js 里找不到 characterLoadouts');
-const block=app.slice(start,close);
-const line=`    '${siteId}': { name: ${JSON.stringify(game.fullNameS)}, page: './character-${siteId}.html?v=${version}', skillIds: [] },`;
-const current=new RegExp(`\\n    '${siteId}': \\{ name: [^\\n]*`);
-app=current.test(block)?app.slice(0,start)+block.replace(current,`\n${line}`)+app.slice(close):`${app.slice(0,close)}\n${line}${app.slice(close)}`;
-write('dist/app.js',app);
 
 console.log(`已加入 ${game.fullNameS}（网站编号 ${siteId}，unitDressId ${game.unitDressId}）：dist/character-${siteId}.html`);
 if(notices.length)console.warn(`提示（不影响生成）：\n${notices.join('\n')}`);
