@@ -1,13 +1,13 @@
-import {buildCatalog} from './effect-rule-learning.mjs?v=20260926-mayly';
-import {retargetReport} from './entry-preparation.mjs?v=20260928-special-weapon';
+import {buildCatalog} from './effect-rule-learning.mjs?v=20260928-game-names';
+import {retargetReport} from './entry-preparation.mjs?v=20260928-game-names';
 import {buildDamageImport} from './damage-import.mjs?v=20260926-mayly';
 import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260926-skill-coverage';
 import {normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
 import {combineRuntimeBuffs} from './runtime-buff-engine.mjs?v=20260924-condition-tags';
-import {magicBuffCap} from './magic-buffs.mjs?v=20260926-mayly';
+import {magicBuffCap} from './magic-buffs.mjs?v=20260928-game-names';
 import {basicStatIdentity,basicStatNameIdentity} from './basic-stat-rules.mjs?v=20260924-condition-tags';
-import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260926-skill-coverage';
-import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-mayly';
+import {commonSkillIdentity} from './common-skill-rules.mjs?v=20260928-game-names';
+import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260928-game-names';
 import {EFFECTS} from './damage-engine.mjs?v=20260927-hit-core';
 
 const eq=(field,value)=>({field,op:'eq',value});

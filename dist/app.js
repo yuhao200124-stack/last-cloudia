@@ -135,8 +135,15 @@
       const candidates = [...skillIndex.values()].filter(row => !row.unifiedCharacter);
       // Keep existing character/source IDs stable across translated-name corrections.
       const skillSource = !source.group || ['common','exclusive','transcend'].includes(source.group);
-      let matches = skillSource ? candidates.filter(row => sourceNameKey(row.bindingName || row.name) === sourceNameKey(source.name)) : [];
-      if (skillSource && !matches.length) matches = candidates.filter(row => [row.name, ...(row.aliases || [])].some(name => sourceNameKey(name) === sourceNameKey(source.name)));
+      // Character pages name skills as the game does. Characters that existed before that change
+      // bind exactly as they did under their earlier names (CHARACTER_SKILL_LEGACY_NAMES); a new
+      // character's skills bind to the table row with the same game name (GAME_SKILL_NAMES).
+      const legacyNames = (window.CHARACTER_SKILL_LEGACY_NAMES || {})[id];
+      const bindName = legacyNames?.[source.name] || source.name;
+      const gameNames = window.GAME_SKILL_NAMES || {};
+      let matches = skillSource && !legacyNames ? candidates.filter(row => gameNames[row.id] && gameNames[row.id] === source.name) : [];
+      if (skillSource && matches.length !== 1) matches = candidates.filter(row => sourceNameKey(row.bindingName || row.name) === sourceNameKey(bindName));
+      if (skillSource && !matches.length) matches = candidates.filter(row => [row.name, ...(row.aliases || [])].some(name => sourceNameKey(name) === sourceNameKey(bindName)));
       const row = matches.length === 1 ? matches[0] : { id: `character:${id}:${source.sourceId}`, name: source.name, effect: source.text, sc: '0', sources: [], type: '角色技能', unifiedCharacter: id };
       skillIndex.set(String(row.id), row);
       (bindings[row.id] ||= []).push(source.sourceId);

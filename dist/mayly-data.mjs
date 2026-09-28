@@ -11,7 +11,7 @@ export const SOURCES=[
   },
   {
     "id": "182-common-29",
-    "name": "骄傲之力",
+    "name": "荣耀之力",
     "text": "发生暴击时，恢复HP。",
     "group": "common",
     "sc": "4",
@@ -20,7 +20,7 @@ export const SOURCES=[
   },
   {
     "id": "182-common-112",
-    "name": "自动加速",
+    "name": "自动充能",
     "text": "常驻“加速”效果：SCT恢复速度+25%。",
     "group": "common",
     "sc": "11",
@@ -38,7 +38,7 @@ export const SOURCES=[
   },
   {
     "id": "182-common-151",
-    "name": "麻痹研究",
+    "name": "麻痺研究",
     "text": "普通攻击时，有概率使敌人麻痹。",
     "group": "common",
     "sc": "10",
@@ -92,7 +92,7 @@ export const SOURCES=[
   },
   {
     "id": "182-common-331",
-    "name": "异常痛击2",
+    "name": "异常痛击II",
     "text": "对带有异常状态的敌人造成额外30%伤害",
     "group": "common",
     "sc": "6",
@@ -101,7 +101,7 @@ export const SOURCES=[
   },
   {
     "id": "182-common-761",
-    "name": "异常痛击3",
+    "name": "异常痛击III",
     "text": "对处于异常状态的敌人，伤害+30%，伤害上限+2,000。",
     "group": "common",
     "sc": "9",
@@ -110,7 +110,7 @@ export const SOURCES=[
   },
   {
     "id": "182-common-969",
-    "name": "自动大鼓舞",
+    "name": "自动大型鼓舞",
     "text": "永久获得「大勇敢」效果：攻击力+35%。",
     "group": "common",
     "sc": "14",
@@ -119,7 +119,7 @@ export const SOURCES=[
   },
   {
     "id": "182-common-1034",
-    "name": "剑极阶增幅",
+    "name": "剑神阶增幅",
     "text": "装备剑时，物理攻击伤害+30%，物理攻击伤害上限+5,000。",
     "group": "common",
     "sc": "15",
@@ -128,7 +128,7 @@ export const SOURCES=[
   },
   {
     "id": "182-common-1304",
-    "name": "斧极阶增幅",
+    "name": "斧神阶增幅",
     "text": "装备斧时，物理攻击伤害+25%，物理攻击伤害上限+5,000，Break值+20%。",
     "group": "common",
     "sc": "15",
@@ -137,7 +137,7 @@ export const SOURCES=[
   },
   {
     "id": "182-traits-1",
-    "name": "魔性祝福",
+    "name": "魔性的祝福",
     "text": "对处于基本异常状态的敌人，伤害上限+20,000；受到这些敌人的伤害-30%。装备光属性武器时，光属性伤害+30%、上限+20,000，发动特技时有概率降低目标的疾病耐性。装备暗属性武器时，暗属性伤害+30%、上限+20,000，发动特技时有概率降低目标的暗闇耐性。",
     "group": "traits",
     "sc": "—",
@@ -145,7 +145,7 @@ export const SOURCES=[
   },
   {
     "id": "182-traits-2",
-    "name": "邪恶症候群",
+    "name": "悪行症候群",
     "text": "战斗开始时及其后每20秒，降低全体敌人的基本异常状态耐性。特技攻击处于出血状态的敌人时，有概率赋予暗闇、沉默、诅咒、疾病中的一种。自身施加的基本异常及主动减益持续时间+50%。自身倒下时，对击倒自己的敌人赋予两种随机基本异常状态。",
     "group": "traits",
     "sc": "—",
@@ -153,7 +153,7 @@ export const SOURCES=[
   },
   {
     "id": "182-exclusive-1297",
-    "name": "圣邪泛滥",
+    "name": "圣邪之泛滥",
     "text": "将自身特技与超必杀技的攻击属性改为暗属性。",
     "group": "exclusive",
     "sc": "—",
@@ -193,7 +193,7 @@ export const SOURCES=[
   },
   {
     "id": "182-exclusive-1299",
-    "name": "无限极限驱动",
+    "name": "无限超阶驱动",
     "text": "光、暗属性的物理攻击及超必杀技伤害+30%，伤害上限+2,000。",
     "group": "exclusive",
     "sc": "—",
@@ -201,7 +201,7 @@ export const SOURCES=[
   },
   {
     "id": "182-exclusive-1308",
-    "name": "艳美血妆",
+    "name": "美艶的带血妆",
     "text": "特技攻击处于出血状态的敌人时，有概率吸收所造成伤害的7%回复HP。",
     "group": "exclusive",
     "sc": "—",
@@ -209,7 +209,7 @@ export const SOURCES=[
   },
   {
     "id": "182-exclusive-1300",
-    "name": "噩梦三重奏",
+    "name": "恶梦三重奏",
     "text": "每次使敌人新进入毒、暗闇、沉默、诅咒、麻痹、疾病状态，弱点属性伤害、暴击伤害、特攻伤害各+6%，各最多+36%。",
     "group": "exclusive",
     "sc": "—",
@@ -217,7 +217,7 @@ export const SOURCES=[
   },
   {
     "id": "182-exclusive-882",
-    "name": "觉醒2",
+    "name": "觉醒II",
     "text": "濒死时大量回复HP，攻击力、防御力、魔抗+65%，移动速度提升；每Wave限一次。",
     "group": "exclusive",
     "sc": "—",
@@ -225,7 +225,7 @@ export const SOURCES=[
   },
   {
     "id": "182-exclusive-1301",
-    "name": "启明星",
+    "name": "曙光之星",
     "text": "超必杀技可以暴击。对光属性为弱点的敌人，伤害+20%、伤害上限+4,000；对暗属性为弱点的敌人，伤害+20%、伤害上限+4,000。",
     "group": "exclusive",
     "sc": "—",
@@ -273,7 +273,7 @@ export const SOURCES=[
   },
   {
     "id": "182-exclusive-908",
-    "name": "人类破坏者",
+    "name": "人类爆裂者",
     "text": "物理攻击、超必杀技及反击对人类系（战士、骑士、狙击手、魔法师）触发特攻。",
     "group": "exclusive",
     "sc": "—",
@@ -281,7 +281,7 @@ export const SOURCES=[
   },
   {
     "id": "182-transcend-skill-cap",
-    "name": "超越·特技上限",
+    "name": "【超越】特技界限突破+1500",
     "text": "特技伤害上限+1,500；未装备两把武器时，效果变为+3,000。",
     "group": "transcend",
     "sc": "—",
@@ -289,7 +289,7 @@ export const SOURCES=[
   },
   {
     "id": "182-transcend-ultimate-cap",
-    "name": "超越·超必杀技上限",
+    "name": "【超越】超必杀技界限突破+5000",
     "text": "超必杀技伤害上限+5,000。",
     "group": "transcend",
     "sc": "—",
@@ -297,7 +297,7 @@ export const SOURCES=[
   },
   {
     "id": "182-transcend-reduction",
-    "name": "超越·受到伤害减轻",
+    "name": "【超越】受到的魔法伤害减轻-10%",
     "text": "来源标题为“物理被伤害减轻-10%”，正文却写“受到敌人的魔法伤害-10%”；适用类型待核对。",
     "group": "transcend",
     "sc": "—",
@@ -305,14 +305,14 @@ export const SOURCES=[
   },
   {
     "id": "182-equipment-1693",
-    "name": "祟神狂翼·基加罗亚",
+    "name": "崇神狂翼基格罗亚",
     "text": "最高属性：HP+500 / 攻击力+379；最高效果：对处于基本异常状态的敌人，伤害+40%、伤害上限+6,000；攻击力+15%；普通攻击有概率使敌人出血；物理攻击有概率使敌人沉默",
     "group": "equipment",
     "url": "https://altema.jp/lastcloudia/soubi/1693"
   },
   {
     "id": "182-equipment-1694",
-    "name": "魔祸咒翼·加基尔斯",
+    "name": "魔祸呪翼格吉尔斯",
     "text": "最高属性：攻击力+361 / 魔抗+68；最高效果：光、暗属性伤害+35%、伤害上限+5,000；暴击率+7%；使敌人新进入基本异常状态时，随机一个特技SCT恢复5秒",
     "group": "equipment",
     "url": "https://altema.jp/lastcloudia/soubi/1694"

@@ -1,5 +1,5 @@
 // Every character page loads this entry. Change shared UI here, never copy it.
-import './base-rule-calculator.mjs?v=20260926-mayly';
+import './base-rule-calculator.mjs?v=20260928-game-names';
 const hero=document.querySelector('.hero-meta');
 if(hero){
  let open=document.getElementById('damageSimulatorOpen');
@@ -11,5 +11,5 @@ if(hero){
   document.body.append(template.content);
   document.getElementById('damageCharacterName').textContent=document.querySelector('.hero h2')?.textContent.trim()||'当前角色';
  }
- await import('./character-damage-bridge.mjs?v=20260926-mayly');
+ await import('./character-damage-bridge.mjs?v=20260928-game-names');
 }

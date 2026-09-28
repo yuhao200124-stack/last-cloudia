@@ -1,5 +1,5 @@
 import {PROCESS_SIGNATURES,PROCESS_DOCUMENTATION} from './reader-process-evidence.mjs';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-mayly';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260928-game-names';
 import {READ_ID_TO_SOURCE_ID,decodeKnownBlessingEntry} from './account-blessings.mjs?v=20260924-fullpage';
 const eq=(field,value)=>({field,op:'eq',value}), inside=(field,value)=>({field,op:'in',value});
 const finite=v=>typeof v==='number'&&Number.isFinite(v);
@@ -9,7 +9,7 @@ const EQUIP={10:['sword','剑'],11:['axe','斧'],12:['spear','枪'],13:['hammer'
 const KIND={1:['skill','特技'],2:['magic','魔法'],5:['ultimate','超必杀技'],9:['normal','普通攻击'],10:[null,'物理']};
 const AUDIT={1050513:'装备条件下受伤修正',1050406:'指定敌类型减伤',1050402:'指定属性／攻击方式减伤',1050415:'指定属性减伤',1050200:'装备条件下物理减伤',1050411:'指定攻击方式减伤',1051208:'被动恢复量上限，不是伤害上限',1020122:'低HP时消耗MP治疗',1020000:'暴击时恢复HP',1020054:'施放指定攻击时治疗队友',2021202:'自动MP持续恢复',2031201:'自动咏唱时间修正',1031206:'条件计数对应咏唱时间',1081631:'单武器条件计数',1081641:'无武器条件计数',1081645:'武器属性／类型条件计数',1081624:'触发用计数设置'};
 // Source identity is separate from value decoding. No website values are used here.
-const SOURCES={70001409:['trans-life-magic','命导提升'],50222014:['water-king','水王级魔术师'],50222022:['mentor','指导者'],24450:['magic-guide-max','魔导提升极'],28176:['magic-steady-max','魔常提升极'],28180:['killer-cap-v','特攻界限突破V'],28607:['knowledge-wall-ii','知识之壁II'],25400:['auto-recast','自动再咏唱'],27830:['auto-heal-ii','自动治疗II'],26505:['moonlight-ii','月光II'],27552:['ice-ultimate-boost','冰系究极增幅'],26634:['ice-critical-revised','冰属性暴击·改'],27183:['mage-mindset-ii','魔导士心得II'],27362:['staff-ultimate-boost','法杖究极增幅'],27365:['robe-ultimate-boost','长袍究极增幅'],28608:['giant-purge-v','巨型净化V'],26421:['penetration','贯导'],55782:['magic-resonance','魔术共鸣'],55783:['short-incantation','缩短咏唱'],55784:['extraordinary-magician','超规格的魔术师'],180:['mp-up-max','MP提升极'],620:['critical-up-iii','暴击提升III'],800:['proud-force','骄傲之力'],14500:['special-boost','特攻增幅'],27414:['killer-cap-iii','特攻界限突破III'],17000:['ardor','锐气'],24810:['ice-high-boost','冰系超级增幅'],26466:['ice-attack-iii','冰属性攻击提升III'],19100:['ice-critical-boost','冰属性暴击提升'],26100:['spell-link','法术联结'],28333:['giant-purge-iii','巨型净化III'],27460:['giant-shield-ii','巨型护盾II'],70001276:['trans-ultimate-ii','超必杀技增幅II'],70001419:['trans-reduction','受到伤害减轻-20%'],70001312:['trans-robe-ii','长袍精通II'],70001418:['trans-giant-shield','巨型护盾'],70001399:['trans-killer-cap','特攻界限突破'],70001467:['trans-magic-weakness','魔法弱点增幅'],108119:['roxy-staff','洛琪希之杖'],203110:['roxy-robe','洛琪希的衣服']};
+const SOURCES={70001409:['trans-life-magic','【超越】命导提升'],50222014:['water-king','水王级魔术师'],50222022:['mentor','指导者'],24450:['magic-guide-max','魔导提升极'],28176:['magic-steady-max','魔常提升极'],28180:['killer-cap-v','特攻界限突破V'],28607:['knowledge-wall-ii','知识的防壁II'],25400:['auto-recast','自动速咏'],27830:['auto-heal-ii','自动治愈Ⅱ'],26505:['moonlight-ii','月光II'],27552:['ice-ultimate-boost','冰系亿万增幅'],26634:['ice-critical-revised','冰魔法暴击・改'],27183:['mage-mindset-ii','魔导士的心得II'],27362:['staff-ultimate-boost','杖神阶增幅'],27365:['robe-ultimate-boost','法袍神阶增幅'],28608:['giant-purge-v','巨型净化V'],26421:['penetration','贯导'],55782:['magic-resonance','魔术共鸣'],55783:['short-incantation','缩短咏唱'],55784:['extraordinary-magician','超规格的魔术师'],180:['mp-up-max','法力提升极'],620:['critical-up-iii','暴击提升III'],800:['proud-force','荣耀之力'],14500:['special-boost','特攻增幅'],27414:['killer-cap-iii','特攻界限突破III'],17000:['ardor','锐气'],24810:['ice-high-boost','冰魔法超阶增幅'],26466:['ice-attack-iii','冰攻击提升III'],19100:['ice-critical-boost','冰暴击提升'],26100:['spell-link','魔法连锁'],28333:['giant-purge-iii','巨型净化III'],27460:['giant-shield-ii','巨型护盾II'],70001276:['trans-ultimate-ii','【超越】超必杀技增幅II'],70001419:['trans-reduction','【超越】受到的伤害减轻-20%'],70001312:['trans-robe-ii','【超越】法袍精通II'],70001418:['trans-giant-shield','【超越】巨型护盾'],70001399:['trans-killer-cap','【超越】特攻界限突破'],70001467:['trans-magic-weakness','【超越】魔法弱点增幅'],108119:['roxy-staff','洛琪希之魔杖'],203110:['roxy-robe','洛琪希的衣服']};
 
 function decode(entry) {
  if(READ_ID_TO_SOURCE_ID[entry.raw?.localId]&&!entry.decoded?.accountBlessing){
@@ -64,7 +64,7 @@ function decode(entry) {
    clean(7);element(p[3]);attack(p[4]);conditions.push(eq('killer',true));
    cap('特攻',p[5],p[6]);extra.dynamic={kind:'generalCount',index:p[0],min:p[1],max:p[2]};break;
   case 1050443:
-   clean(4);attack(p[2]);emit('damage',`${KIND[p[2]]?.[1]||'指定攻击'}伤害`,null);extra.dynamic={kind:'chain',min:p[0],max:p[1],maximum:p[3]};extra.note='依当前法术联结次数计算；最大值不会直接当作当前加成。';stage='trigger-definition';break;
+   clean(4);attack(p[2]);emit('damage',`${KIND[p[2]]?.[1]||'指定攻击'}伤害`,null);extra.dynamic={kind:'chain',min:p[0],max:p[1],maximum:p[3]};extra.note='依当前魔法连锁次数计算；最大值不会直接当作当前加成。';stage='trigger-definition';break;
   case 1082627:
    clean(6);cap(element(p[2])+attack(p[3]),p[4],p[5]);extra.dynamic={kind:'targetHits',min:p[0],max:p[1],maximum:p[4],maximumPercent:p[5]};extra.note=`按目标累计命中数变化，${p[1]}次达到配置最大值；未填命中数时不计入。`;break;
   case 1082459:
@@ -133,7 +133,7 @@ export function evaluateReaderBonuses(bonuses,context){
   if(d.kind==='chain'){
    const n=context.chainStacks;
    const value=finite(n)&&d.max>d.min?Math.round(d.maximum*Math.max(0,Math.min(1,(n-d.min)/(d.max-d.min))))/100:null;
-   return {...b,value,decoded:{...b.decoded,note:`法术联结${n??'未知'}次：按读取的上限和次数区间计算。`}};
+   return {...b,value,decoded:{...b.decoded,note:`魔法连锁${n??'未知'}次：按读取的上限和次数区间计算。`}};
   }
   if(d.kind==='generalCount'){
    if(d.index===0&&d.min===0&&d.max===0)return b;

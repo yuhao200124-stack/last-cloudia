@@ -14,16 +14,20 @@ test('catalog preserves every included source and exact page descriptions', () =
   const html = fs.readFileSync(new URL('../dist/character-260.html', import.meta.url), 'utf8');
   const section = (id) => html.match(new RegExp(`<section id="${id}"[\\s\\S]*?</section>`))[0];
   const text = (value) => value.replace(/<[^>]+>/g, '').trim();
+  // The page shows the game's own description; the rule catalog is matched by the wording kept in
+  // data-rule-text (the description the rules were split from).
+  const unescape = (value) => value.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  const ruleText = (attrs, inner) => { const kept = attrs.match(/data-rule-text="([^"]*)"/); return kept ? unescape(kept[1]) : text(inner); };
   const expected = [];
-  for (const match of section('traits').matchAll(/<article class="trait"><h4>(.*?)<\/h4><p>(.*?)<\/p><\/article>/g)) expected.push({ name: text(match[1]), description: text(match[2]) });
+  for (const match of section('traits').matchAll(/<article class="trait"[^>]*><h4>(.*?)<\/h4><p([^>]*)>(.*?)<\/p><\/article>/g)) expected.push({ name: text(match[1]), description: ruleText(match[2], match[3]) });
   for (const id of ['exclusive-skills', 'common-skills']) {
-    for (const match of section(id).matchAll(/<tr>(.*?)<\/tr>/g)) {
-      const cells = [...match[1].matchAll(/<td[^>]*>(.*?)<\/td>/g)];
-      if (cells.length) expected.push({ name: text(cells[0][1]), description: text(cells.at(-1)[1]) });
+    for (const match of section(id).matchAll(/<tr[^>]*>(.*?)<\/tr>/g)) {
+      const cells = [...match[1].matchAll(/<td([^>]*)>(.*?)<\/td>/g)];
+      if (cells.length) expected.push({ name: text(cells[0][2]), description: ruleText(cells.at(-1)[1], cells.at(-1)[2]) });
     }
   }
-  for (const match of section('equipment').matchAll(/<article class="equipment-card"><h4>(.*?)<\/h4>(.*?)<\/article>/g)) {
-    const attrs = [...match[2].matchAll(/<dd>(.*?)<\/dd>/g)].map((m) => text(m[1]));
+  for (const match of section('equipment').matchAll(/<article class="equipment-card"[^>]*><h4>(.*?)<\/h4>(.*?)<\/article>/g)) {
+    const attrs = [...match[2].matchAll(/<dd([^>]*)>(.*?)<\/dd>/g)].map((m) => ruleText(m[1], m[2]));
     expected.push({ name: text(match[1]), description: `最高属性：${attrs[1]}；最高效果：${attrs[2]}` });
   }
   assert.equal(expected.length, CATALOG.length);

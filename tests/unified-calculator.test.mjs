@@ -10,7 +10,7 @@ import {ACCOUNT_BLESSING_CATALOG} from '../dist/account-blessings.mjs';
 import {evaluateCatalog} from '../dist/effect-rule-engine.mjs';
 import {SUPPORT_BUFFS} from '../dist/runtime-buff-definitions.mjs';
 const context={accountBlessings:true,weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],chainStacks:1,fullHp:false};
-const baseReport={kind:'last-cloudia-effect-report',characterId:'260',profile:{baseStats:{hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619},equipment:[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}]},...evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG],context)};
+const baseReport={kind:'last-cloudia-effect-report',characterId:'260',profile:{baseStats:{hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619},equipment:[{name:'洛琪希之魔杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}]},...evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG],context)};
 const sources=loadoutSources(baseReport),snapshot={characterId:'260',sourceIds:sources.map(s=>s.sourceId),items:sources.map(s=>({...s,id:s.sourceId,sourceIds:[s.sourceId]}))};
 const selection={attack:'magic',type:'magical',element:'冰',statReference:'int',criticalEnabled:false,specialAttack:true,fullHp:false,dualWield:true};
 const input={...defaultInput(),type:'magical',skillType:'magic',element:'冰',defense:8000,resistance:50,coefficient:.52,skillPercent:67,hits:35,hitMultiplier:2,hitDamageRatio:.6,hitScaleStage:'core',effects:[]};
@@ -18,11 +18,11 @@ const preview=(options={})=>prepareLoadoutPreview({baseReport,snapshot,selection
 test('live loadout recomputes real stat layers without doubling blessings or selected original skills',()=>{
  const p=preview();assert.equal(p.input.attackBase,6741);assert.equal(p.input.runtimeStatPercent,50);assert.equal(p.input.attack,10111);
  assert.equal(calculate(p.input).context.attack,14627);
- assert.equal(p.imported.effects.filter(e=>e.name.startsWith('冰属性攻击提升III')).length,1);
+ assert.equal(p.imported.effects.filter(e=>e.name.startsWith('冰攻击提升III')).length,1);
  const more=preview({snapshot:{...snapshot,items:[...snapshot.items,{id:'int10',name:'法强测试',text:'法强+10%。'}]}});
  assert.equal(more.input.attackBase,7100);assert.equal(calculate(more.input).context.attack,15407);
  const removed=preview({snapshot:{...snapshot,items:snapshot.items.filter(s=>s.sourceId!=='ice-attack-iii')}});
- assert.equal(removed.input.cap,p.input.cap-2000);assert(!removed.imported.effects.some(e=>e.name.startsWith('冰属性攻击提升III')));
+ assert.equal(removed.input.cap,p.input.cap-2000);assert(!removed.imported.effects.some(e=>e.name.startsWith('冰攻击提升III')));
  assert.equal(preview().input.cap,p.input.cap);
 });
 test('guidance replaces EX 50 with 65 while Moonlight independently adds and removes 30',()=>{

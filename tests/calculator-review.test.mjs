@@ -13,7 +13,7 @@ import {resolveAttackLayers,needsAttributeLayers} from '../dist/attack-layers.mj
 import {buildDamageImport} from '../dist/damage-import.mjs';
 import {defaultInput,calculate} from '../dist/damage-engine.mjs';
 const context={attack:'magic',damageType:'magical',element:'ice',weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],fullHp:true,chainStacks:1,accountBlessings:true};
-const profile={baseStats:{hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619},equipment:[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],magic:[{name:'魔术指导',description:'为一名我方单位赋予INT+65%、魔法伤害上限+30,000的增益'}]};
+const profile={baseStats:{hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619},equipment:[{name:'洛琪希之魔杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],magic:[{name:'魔术指导',description:'为一名我方单位赋予INT+65%、魔法伤害上限+30,000的增益'}]};
 test('user-confirmed 1% migrates old reports, maps to its source, and is counted exactly once',()=>{
  const old={kind:'last-cloudia-effect-report',characterId:'260',...evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG.filter(b=>b.localId!==60002460)],context)};
  const r=retargetReport(old,{attack:'magic',type:'magical',element:'冰'});

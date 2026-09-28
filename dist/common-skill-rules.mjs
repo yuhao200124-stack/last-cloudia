@@ -1,9 +1,12 @@
 import {COMMON_SKILL_CATALOG,COMMON_SKILL_ALIASES} from './common-skill-catalog.mjs?v=20260926-skill-coverage';
 import {basicStatRules} from './basic-stat-rules.mjs?v=20260924-condition-tags';
 import {applyGameTiming} from './game-skill-timing.mjs?v=20260927-game-timing';
+import {GAME_SKILL_NAMES} from './game-skill-names.mjs?v=20260928-game-names';
 const clean=t=>String(t||'').replace(/＋/g,'+').replace(/％/g,'%').replace(/\s+/g,' ').trim();
 const names=new Map();
-for(const entry of Object.values(COMMON_SKILL_CATALOG)){const list=names.get(entry.name)||[];list.push(entry);names.set(entry.name,list);}
+// Character pages name common skills as the game database does; index each entry under that name
+// too (GAME_SKILL_NAMES, by skill-table id), alongside the skill table's own name.
+for(const entry of Object.values(COMMON_SKILL_CATALOG))for(const name of new Set([entry.name,GAME_SKILL_NAMES[entry.id]].filter(Boolean))){const list=names.get(name)||[];list.push(entry);names.set(name,list);}
 export function commonSkillIdentity(source){
  if(source?.edited)return null;
  const raw=source?.catalogId||String(source?.id||'').replace(/^loadout:/,'');

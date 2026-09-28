@@ -16,7 +16,9 @@ function page(id){
  const html=fs.readFileSync(new URL(`../dist/character-${id}.html`,import.meta.url),'utf8');
  const text=s=>s.replace(/<[^>]*>/g,'').trim();
  const nodes=(s,tag)=>[...s.matchAll(new RegExp(`<${tag}\\b[^>]*>[\\s\\S]*?</${tag}>`,'g'))].map(m=>node(m[0]));
- function node(s){return {textContent:text(s),dataset:{},classList:{contains:k=>new RegExp(`class="[^"]*\\b${k}\\b`).test(s)},querySelectorAll:q=>nodes(s,q),querySelector:q=>{
+ // data-* attributes, as the browser exposes them (data-rule-text carries the matching wording).
+ const dataset=s=>Object.fromEntries([...(s.match(/^<[^>]*>/)?.[0]||'').matchAll(/\sdata-([\w-]+)="([^"]*)"/g)].map(([,k,v])=>[k.replace(/-(\w)/g,(_,c)=>c.toUpperCase()),v.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')]));
+ function node(s){return {textContent:text(s),dataset:dataset(s),classList:{contains:k=>new RegExp(`class="[^"]*\\b${k}\\b`).test(s)},querySelectorAll:q=>nodes(s,q),querySelector:q=>{
   if(q==='td:last-child')return nodes(s,'td').at(-1)||null;
   const tag=q.startsWith('.')?'span':q;
   return nodes(s,tag).find(n=>q!=='.skill-name'||/class="[^"]*skill-name/.test(s))||null;
@@ -47,7 +49,7 @@ test('all pages use one shared calculator entry and Eris retains the original 43
   if(index<43)assert.equal(source.id,`259-${source.group}-${index+1}`);
   assert.doesNotThrow(()=>makeTemplate(seed,seed.rules));
  }
- assert.deepEqual(ERIS_PENDING.map(s=>s.name),['你要干什么！','自动EX勇气','沉睡的狮子']);
+ assert.deepEqual(ERIS_PENDING.map(s=>s.name),['你在做什么！','自动EX鼓舞','沉睡的狮子']);
 });
 
 test('Eris and Roxy load their own attack, equipment, stats and exact rule catalogs',()=>{
@@ -81,7 +83,7 @@ test('exclusive gear switch equips every exclusive item (weapon and armor) with 
  assert.equal(yes.input.cap-no.input.cap,134000); // sword +7k, sword style +100k, mastery +15k and two-handed sword +12k
  assert.equal(yes.input.hitMultiplier,1);assert.equal(yes.input.hitDamageRatio,1);
  assert(Number.isFinite(calculate(yes.input).mean));assert(Number.isFinite(calculate(no.input).mean));
- const armor=sources.find(s=>s.name==='艾莉丝的服装');
+ const armor=sources.find(s=>s.name==='艾莉丝的衣服');
  assert(on.items.some(i=>i.sourceId===armor.sourceId),'专武 equips the exclusive armor too');
  assert(!off.items.some(i=>i.sourceId===armor.sourceId),'switching 专武 off removes every exclusive item');
 });
@@ -92,7 +94,7 @@ test('removing the base blade skill also removes its mastery bonus, with no chan
  const removed={...snapshot,items:snapshot.items.filter(i=>i.sourceId!=='259-exclusive-11')};
  const after=preview({report,snapshot:removed});
  assert.equal(before.input.cap-after.input.cap,45000);
- const mastery=after.report.rows.filter(r=>r.sourceName==='一天真刃之极意');
+ const mastery=after.report.rows.filter(r=>r.sourceName==='极意・一天真刃');
  assert(!mastery.some(r=>r.status==='active'));
 });
 
@@ -111,12 +113,12 @@ test('move bonuses stay scoped: first skill crit and ultimate cap do not leak to
  const report=makeReport();
  const skill=retargetReport(report,{...selection,criticalEnabled:true});
  const second=retargetReport(report,{...selection,attack:'s2',criticalEnabled:true});
- assert.equal(sourceRow(skill,'波瑞阿斯拳').status,'active');assert.equal(sourceRow(second,'波瑞阿斯拳').status,'inactive');
+ assert.equal(sourceRow(skill,'伯雷亚斯拳').status,'active');assert.equal(sourceRow(second,'伯雷亚斯拳').status,'inactive');
  const ultimate=retargetReport(report,{...selection,attack:'ultimate'});
- assert.equal(sourceRow(ultimate,'无声之太刀').status,'active');assert.equal(sourceRow(skill,'无声之太刀').status,'inactive');
- assert(!ultimate.rows.some(r=>r.sourceName==='一天真刃·二之型'&&r.status==='active'));
- assert(scenarioBonuses(ultimate,{group:'native'}).some(m=>m.sources.some(s=>s.name==='无声之太刀'&&s.value===300000)));
+ assert.equal(sourceRow(ultimate,'无音之太刀').status,'active');assert.equal(sourceRow(skill,'无音之太刀').status,'inactive');
+ assert(!ultimate.rows.some(r=>r.sourceName==='一天真刃･弐式'&&r.status==='active'));
+ assert(scenarioBonuses(ultimate,{group:'native'}).some(m=>m.sources.some(s=>s.name==='无音之太刀'&&s.value===300000)));
  const dual=characterReportFromDocument(page('259'),{context:{weaponCount:2,sword:true,equipmentIds:['259-equipment-42']}});
  assert.equal(sourceRow(dual,'我会保护你').status,'inactive');
- assert.equal(sourceRow(dual,'一天真刃·二之型').status,'inactive');
+ assert.equal(sourceRow(dual,'一天真刃･弐式').status,'inactive');
 });

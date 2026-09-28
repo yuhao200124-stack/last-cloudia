@@ -1399,9 +1399,9 @@
 "rarity": "R"
 }
 ],
-"siteId": "e012b3fe60fe4932",
-"matchScore": 0.527,
-"matchedBy": "auto"
+"siteId": null,
+"matchScore": null,
+"matchedBy": "manual"
 },
 {
 "gameId": 1900,

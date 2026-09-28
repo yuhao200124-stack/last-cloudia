@@ -26,7 +26,7 @@ export const CONDITION_FIELDS = {
   nearestEnemy:{label:'攻击最近的敌人',options:yesNo},
   partyAllAlive:{label:'我方至少2人且全员存活',options:yesNo},
   enemyAttacking:{label:'敌人正在进行攻击动作',options:yesNo},
-  erisBladeEquipped:{label:'已装备一天真刃·二之型',options:yesNo},
+  erisBladeEquipped:{label:'已装备一天真刃･弐式',options:yesNo},
   comboHits:{label:'当前连续Hit数',numeric:true,options:[]},
   selfHpPercent:{label:'自身当前HP百分比',numeric:true,options:[]},
   enemyHpPercent:{label:'敌人当前HP百分比',numeric:true,options:[]},
@@ -65,7 +65,7 @@ export const CONDITION_FIELDS = {
   boss: { label: '目标是 Boss', options: yesNo },
   fullHp: { label: '自身满生命', options: yesNo }, critical: { label: '本次暴击', options: yesNo },
   weakness: { label: '命中弱点属性', options: yesNo }, resonance: { label: '我方正在发动不可叠加魔法', options: yesNo },
-  chainStacks: { label: '法术联结状态', options: options([[0, '不叠加 +0%'], [1, '第1次 +4%'], [2, '第2次 +8%'], [3, '第3次 +12%'], [4, '第4次 +16%'], [5, '第5次及以后 +20%']]) },
+  chainStacks: { label: '魔法连锁状态', options: options([[0, '不叠加 +0%'], [1, '第1次 +4%'], [2, '第2次 +8%'], [3, '第3次 +12%'], [4, '第4次 +16%'], [5, '第5次及以后 +20%']]) },
   alive: { label: '自身存活', options: yesNo }, killerBuff: { label: '指导者特攻上限增益存在', options: yesNo },
   break: { label: 'Boss 正在 Break', options: yesNo },
   bossWaveBuff: { label: '指导者 Boss Wave 增益存在', options: yesNo },
@@ -213,7 +213,7 @@ export function evaluateCatalog(catalog, input = {}, overrides = {}) {
   const sources = Array.isArray(catalog) ? catalog.map(s=>({...s,rules:(s.rules||[]).map(rule=>upgradeStatRule(rule,s.text))})) : [];
   // The mastery augments its equipped base skill; removing the latter must
   // also remove this dependent bonus, including in a loadout preview.
-  context.erisBladeEquipped=sources.some(s=>s.name==='一天真刃·二之型'&&!overrides[`source:${s.id}`]?.disabled&&s.rules.some(r=>r.review==='ready'&&!r.disabled&&!overrides[r.id]?.disabled));
+  context.erisBladeEquipped=sources.some(s=>s.name==='一天真刃･弐式'&&!overrides[`source:${s.id}`]?.disabled&&s.rules.some(r=>r.review==='ready'&&!r.disabled&&!overrides[r.id]?.disabled));
   // Resolve an equipped move-property override before element-scoped bonuses.
   // Each evaluation starts from the native element, so removing the source restores it.
   if(context.nativeElementAttacks?.includes(context.attack)&&weaponElements.some(([e])=>e===context.nativeAttackElement))context.element=context.nativeAttackElement;

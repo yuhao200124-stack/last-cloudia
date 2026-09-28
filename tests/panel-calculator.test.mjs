@@ -5,7 +5,7 @@ import {evaluateCatalog} from '../dist/effect-rule-engine.mjs';
 import {CATALOG} from '../dist/roxy-rules.mjs';
 import {ACCOUNT_BLESSING_CATALOG} from '../dist/account-blessings.mjs';
 const base={hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619};
-const gear=[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}];
+const gear=[{name:'洛琪希之魔杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}];
 const report=(context={},overrides={})=>evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG],{accountBlessings:true,weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],fullHp:false,...context},overrides);
 const result=(context={},overrides={})=>calculateWebsitePanel(base,report(context,overrides),{equipment:gear});
 test('Roxy six-stat control follows equipment, pure and runtime stages without fitted offsets',()=>{

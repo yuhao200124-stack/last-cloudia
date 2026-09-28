@@ -9,7 +9,7 @@ import {CATALOG} from '../dist/roxy-rules.mjs';
 import {ACCOUNT_BLESSING_CATALOG} from '../dist/account-blessings.mjs';
 import {parseDamageFormulaCsv} from '../dist/formula-csv-parser.mjs';
 const base={hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619};
-const equipment=[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}];
+const equipment=[{name:'洛琪希之魔杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}];
 function panel(fullHp=true){
  const r=evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG],{accountBlessings:true,weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],fullHp});
  return calculateWebsitePanel(base,r,{equipment}).stats.intelligence;

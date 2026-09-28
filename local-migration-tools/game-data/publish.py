@@ -1,4 +1,5 @@
 import json,os,shutil
+from cc import t2s
 d=json.load(open('/tmp/claude-0/fulldata.json'))
 OUT='/home/claude/v160/LastCloudia-Local-v160/project/dist/game-data'
 shutil.rmtree(OUT,ignore_errors=True);os.makedirs(OUT+'/c')
@@ -14,7 +15,7 @@ def move(s):
             if k in seen: continue
             seen.add(k);parts.append(p)
     return {'id':s['id'],'name':s['name'],'nameS':s['nameS'],'type':s['type'],'element':s['element'],'inheritWeaponElement':s['inheritWeaponElement'],
-            'nonStackable':s['nonStackable'],'mpCost':s['mpCost'],'sc':s['sc'],'explain':s['explain'],'parts':parts}
+            'nonStackable':s['nonStackable'],'mpCost':s['mpCost'],'sc':s['sc'],'explain':s['explain'],'explainS':t2s(s['explain']),'parts':parts}
 P=d['passives']
 def pas(pid):
     x=P[str(pid)] if str(pid) in P else P.get(pid)

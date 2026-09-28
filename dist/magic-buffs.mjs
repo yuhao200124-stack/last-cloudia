@@ -1,4 +1,4 @@
-import {MAGIC as MAYLY_MAGIC} from './mayly-data.mjs?v=20260926-mayly';
+import {MAGIC as MAYLY_MAGIC} from './mayly-data.mjs?v=20260928-game-names';
 import {projectAttackLayers} from './attack-layers.mjs?v=20260924-condition-tags';
 import {SUPPORT_BUFFS,normalizeRuntimeBuff} from './runtime-buff-definitions.mjs?v=20260924-condition-tags';
 const normalized=s=>String(s||'').replace(/\s|[,，。、]/g,'').replaceAll('＋','+');

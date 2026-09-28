@@ -1,11 +1,11 @@
-import {characterMoveDefaults,characterDefinition} from './character-template.mjs?v=20260928-special-weapon';
+import {characterMoveDefaults,characterDefinition} from './character-template.mjs?v=20260928-game-names';
 import {STAT_CONDITION_FIELDS,SWITCH_GROUPS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {decodeHpStatEntry} from './stat-mechanics.mjs?v=20260924-fullpage';
 import {applyCriticalOption,criticalEffect} from './critical-options.mjs?v=20260926-skill-coverage';
 import {effectCombatModes} from './combat-modes.mjs?v=20260926-skill-coverage';
-import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-mayly';
-import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260926-mayly';
-import {upgradeCommonSource} from './common-skill-rules.mjs?v=20260926-skill-coverage';
+import {decodeReaderBonuses} from './reader-bonus-decoder.mjs?v=20260928-game-names';
+import {evaluateCatalog} from './effect-rule-engine.mjs?v=20260928-game-names';
+import {upgradeCommonSource} from './common-skill-rules.mjs?v=20260928-game-names';
 import {decodeKnownBlessingEntry,ACCOUNT_BLESSING_CATALOG} from './account-blessings.mjs?v=20260924-fullpage';
 export const SIX_STATS={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
 export const ATTACK_CHOICES=[['normal','普通攻击'],['s1','特技1'],['s2','特技2'],['s3','特技3'],['ultimate','超必杀技'],['magic','魔法'],['heavy_magic','重魔法']];
@@ -23,7 +23,10 @@ export function readCharacterProfile(doc) {
   if(key&&raw&&Number.isFinite(value))baseStats[key]=value;
  }
  function move(el,kind,id) {
-  const name=clean(el.querySelector('.skill-name')?.textContent||el.querySelector('td')?.textContent),text=clean(el.querySelector('td:last-child')?.textContent);
+  // data-rule-text: the earlier description this move's parsing rules were written against (the
+  // page itself now shows the game's own text); pages without it are parsed as shown.
+  const td=el.querySelector('td:last-child');
+  const name=clean(el.querySelector('.skill-name')?.textContent||el.querySelector('td')?.textContent),text=clean(td?.dataset?.ruleText??td?.textContent);
   const attackText=text.match(/对[^。；]*?(?:发动|进行)[^。；]*?攻击/)?.[0]||'';
   const es=[...attackText.matchAll(/([火冰树雷光暗无])属性/g)].map(m=>m[1]);
   const hit=text.match(/(?:命中数|Hit数|基础段数)\s*[：:=]\s*(\d+)/i);

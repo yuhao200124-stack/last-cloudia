@@ -27,7 +27,7 @@ test('reader-matched Moonlight preserves the 12133 observation and computes ever
  const ui=controls();
  ui.data.set('lc-entry-review:260:v1',JSON.stringify({selection:{attack:'heavy_magic',preset:'magic-2',type:'magical',element:'冰',statReference:'int',fullHp:true,openingBuffActive:false,dualWield:true,specialAttack:true,criticalEnabled:true}}));
  const base={hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619};
- const profile={characterId:'260',name:'洛琪希',baseStats:base,equipment:[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],moves:[],magic:[{id:'magic-2',kind:'magic',name:'泽诺克莱昂',element:'冰',statReference:'int',purpose:'attack'}]};
+ const profile={characterId:'260',name:'洛琪希',baseStats:base,equipment:[{name:'洛琪希之魔杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],moves:[],magic:[{id:'magic-2',kind:'magic',name:'异度克里昂',element:'冰',statReference:'int',purpose:'attack'}]};
  const seeds=[...CATALOG,...ACCOUNT_BLESSING_CATALOG];
  const catalog=buildCatalog(seeds.map(({id,name,text,group})=>({id,name,text,group})),seeds);
  const context={attack:'magic',damageType:'magical',element:'ice',weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],fullHp:true,accountBlessings:true};
@@ -119,7 +119,7 @@ test('review UI events preserve manual panel, save from both sections, keep remi
  const ui=controls();
  ui.data.set('lc-entry-review:260:v1',JSON.stringify({selection:{attack:'magic',preset:'magic-1',type:'magical',element:'冰',statReference:'int',dualWield:true,specialAttack:true,openingBuffActive:true},hitParameters:{'magic:magic-1:dual':{hitMultiplier:'2',hitDamageRatio:'0.6',hitScaleStage:'beforeCap'}}}));
  const context={attack:'magic',damageType:'magical',element:'ice',weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],fullHp:true,chainStacks:1,accountBlessings:true};
- const profile={characterId:'260',name:'洛琪希',baseStats:{hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619},equipment:[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],moves:[],magic:[{id:'magic-1',kind:'magic',name:'测试冰魔法',element:'冰',statReference:'int',purpose:'attack'}]};
+ const profile={characterId:'260',name:'洛琪希',baseStats:{hp:10702,mp:459,attack:1222,defense:1407,intelligence:2512,mind:1619},equipment:[{name:'洛琪希之魔杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],moves:[],magic:[{id:'magic-1',kind:'magic',name:'测试冰魔法',element:'冰',statReference:'int',purpose:'attack'}]};
  const report={kind:'last-cloudia-effect-report',characterId:'260',profile,...evaluateCatalog([...CATALOG,...ACCOUNT_BLESSING_CATALOG],context)};
  const unit={unitId:502220,name:'洛琪希',capturedAt:'entry',stats:{hp:13591,mp:1018,attack:1270,defense:1621,intelligence:6741,mind:2808},bonuses:[]};
  let last=null;
@@ -149,7 +149,7 @@ test('review UI events preserve manual panel, save from both sections, keep remi
  assert(!ui.get('entryBonusReview').innerHTML.includes('冰属性暴击伤害'));
  ui.get('criticalEnabled').checked=true;ui.get('criticalEnabled').fire('change');
  assert(workflow.isConfirmed());assert.equal(buildDamageImport(last.r).capAdded,capOff+2000);
- const capRow=ui.get('entryEffectsReview').innerHTML.split('</tr>').find(r=>r.includes('冰属性暴击·改'));
+ const capRow=ui.get('entryEffectsReview').innerHTML.split('</tr>').find(r=>r.includes('冰魔法暴击・改'));
  const capIndex=capRow.match(/data-entry-choice="(\d+)"/)[1];
  ui.get('entryEffectsReview').fire('change',{dataset:{entryChoice:capIndex},value:'exclude'});
  ui.get('criticalEnabled').checked=false;ui.get('criticalEnabled').fire('change');
@@ -258,7 +258,7 @@ test('reader groups preserve raw totals and add configured mode effects, with pe
  const fixture=JSON.parse(readFileSync(new URL('./fixtures/roxy-reader-bonuses.json',import.meta.url)));
  const raw=fixture.bonuses.filter(b=>b.raw.localId!==26634);
  const file=(full=false)=>({name:'same.json',size:100,text:async()=>JSON.stringify({kind:'last-cloudia-battle-entry',schemaVersion:1,battleId:full?'new-battle':'partial',units:[{unitId:502220,stats:base,bonuses:full?fixture.bonuses:raw}]})});
- const report={kind:'last-cloudia-effect-report',characterId:'260',profile:{characterId:'260',baseStats:base,equipment:[{name:'洛琪希之杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],moves:[],magic:[{id:'m',kind:'magic',name:'测试',purpose:'attack',element:'冰',statReference:'int'}]},...evaluateCatalog(CATALOG,{attack:'magic',damageType:'magical',element:'ice',weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],fullHp:true,chainStacks:1})};
+ const report={kind:'last-cloudia-effect-report',characterId:'260',profile:{characterId:'260',baseStats:base,equipment:[{name:'洛琪希之魔杖',type:'法杖'},{name:'洛琪希的衣服',type:'长袍'}],moves:[],magic:[{id:'m',kind:'magic',name:'测试',purpose:'attack',element:'冰',statReference:'int'}]},...evaluateCatalog(CATALOG,{attack:'magic',damageType:'magical',element:'ice',weaponCount:1,staff:true,robe:true,equipmentIds:['roxy-staff','roxy-robe'],fullHp:true,chainStacks:1})};
  const make=()=>initEntryWorkflow({characterId:'260',onConfirm:(r,review)=>{last={r,review};},onInvalidate:()=>{},onSelection:()=>{}});
  const capRow=()=>ui.get('entryBonusReview').innerHTML.split('</tr>').find(r=>r.includes('<b>冰属性魔法伤害上限</b>'));
  const choose=choice=>ui.get('entryBonusReview').fire('change',{dataset:{entryBonusChoice:capRow().match(/data-entry-bonus-choice="(\d+)"/)[1]},value:choice});

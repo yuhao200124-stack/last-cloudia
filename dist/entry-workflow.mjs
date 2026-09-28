@@ -1,18 +1,18 @@
 import {gameCharacterForSite,findGameMove,gameMoveParameters} from './game-data.mjs?v=20260927-game-data';
-import {characterDefinition} from './character-template.mjs?v=20260928-special-weapon';
+import {characterDefinition} from './character-template.mjs?v=20260928-game-names';
 import {STAT_CONDITION_FIELDS,STAT_CONDITION_ACTIVE,pickStatConditions,CONDITION_BUFF_FIELDS,SWITCH_GROUPS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
 import {selectReaderCriticalBonuses} from './critical-options.mjs?v=20260926-skill-coverage';
 import {migrateCharacterHitDrafts} from './character-combat-rules.mjs?v=20260924-fullpage';
-import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260926-mayly';
+import {buildBonusComparison,effectSelectionKey} from './bonus-comparison.mjs?v=20260928-game-names';
 import {STAT_MECHANICS_REVISION} from './stat-mechanics.mjs?v=20260924-fullpage';
-import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260928-special-weapon';
-import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260926-mayly';
-import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs?v=20260926-mayly';
+import {SIX_STATS,ATTACK_CHOICES,retargetReport,websiteCandidates,validateBattleEntry,compareCandidates,decisionKey,resolveReview} from './entry-preparation.mjs?v=20260928-game-names';
+import {formatEffect,describeCondition} from './effect-rule-engine.mjs?v=20260928-game-names';
+import {withAccountBlessings,blessingPercentages} from './account-blessings-panel.mjs?v=20260928-game-names';
 import {calculateWebsitePanel} from './panel-calculator.mjs?v=20260926-skill-coverage';
 import {readMoveParameters,panelObservation,capturePanelObservation,readerPanelSnapshots,defaultReaderSnapshot,observedReaderUnit} from './battle-entry-data.mjs?v=20260924-fullpage';
-import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260926-mayly';
-import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260926-mayly';
-import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260926-mayly';
+import {readerBonusState,observedCritical,evaluateReaderBonuses} from './reader-bonus-decoder.mjs?v=20260928-game-names';
+import {readerSupplementCandidates,appendReaderSupplements,supplementKey,includeSupplementGroups} from './reader-supplements.mjs?v=20260928-game-names';
+import {withReaderGroupChoices,readerGroupChoice,upgradeReaderGroupChoice,readerGroupDecisions,adoptedGroupReaderIds,appendReaderGroups,modeGroupCatalog} from './reader-group-review.mjs?v=20260928-game-names';
 import {MODE_LABELS} from './combat-modes.mjs?v=20260926-skill-coverage';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
@@ -143,7 +143,7 @@ export function initEntryWorkflow({characterId,onConfirm,onInvalidate,onSelectio
   $('element').closest('label').hidden=!!state.selection.element;
   $('statReference').closest('label').hidden=!!state.selection.statReference;
  }
- // A non-stackable spell (game SkillMst SKILL_PARAM x:1, e.g. 泽诺克莱昂) is always cast as 重魔法.
+ // A non-stackable spell (game SkillMst SKILL_PARAM x:1, e.g. 异度克里昂) is always cast as 重魔法.
  // Parameters saved under 魔法 move with it, so nothing entered is lost.
  function promoteNonStacking(move=selectedMove()) {
   if(!(move?.nonStacking||gameMoveParameters(findGameMove(game,move))?.heavy)||state.selection.attack!=='magic')return;

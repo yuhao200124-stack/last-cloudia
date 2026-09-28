@@ -1,11 +1,11 @@
 import {STAT_CONDITIONS} from './stat-condition-fields.mjs?v=20260926-skill-coverage';
-import {characterDefinition,characterContext,collectCharacterSources} from './character-template.mjs?v=20260928-special-weapon';
-import {readCharacterProfile} from './entry-preparation.mjs?v=20260928-special-weapon';
-import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260926-mayly';
-import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260926-mayly';
+import {characterDefinition,characterContext,collectCharacterSources} from './character-template.mjs?v=20260928-game-names';
+import {readCharacterProfile} from './entry-preparation.mjs?v=20260928-game-names';
+import { DEFAULT_CONTEXT, ATTACKS, CONDITION_FIELDS, evaluateCatalog, formatEffect, describeCondition } from './effect-rule-engine.mjs?v=20260928-game-names';
+import { buildCatalog, makeTemplate, sourceKey, validateTemplates, LEARNING_STORAGE_KEY } from './effect-rule-learning.mjs?v=20260928-game-names';
 import { summarizeEffects } from './effect-totals.mjs';
 import { ACCOUNT_BLESSING_CATALOG, ACCOUNT_BLESSING_META } from './account-blessings.mjs?v=20260924-fullpage';
-import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260926-mayly';
+import { mountAccountBlessings } from './account-blessings-panel.mjs?v=20260928-game-names';
 
 mountAccountBlessings();
 
@@ -272,8 +272,10 @@ function mount() {
     });
     return `<div class="br-source-adjustment">${select('chainStacks', '连续使用相同攻击魔法', tiers)}</div>`;
   }
+  // Show the description as the character page shows it (the game's own text); s.text may be the
+  // earlier wording the rules are matched by.
   function sourceDescription(s) {
-    return `<p class="br-full-effect">${esc(s.text)}</p>`;
+    return `<p class="br-full-effect">${esc(s.displayText || s.text)}</p>`;
   }
   function renderResults() {
     calculate();

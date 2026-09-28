@@ -16,7 +16,9 @@ function page(id){
  const html=fs.readFileSync(new URL(`../dist/character-${id}.html`,import.meta.url),'utf8');
  const text=s=>s.replace(/<[^>]*>/g,'').trim();
  const nodes=(s,tag)=>[...s.matchAll(new RegExp(`<${tag}\\b[^>]*>[\\s\\S]*?</${tag}>`,'g'))].map(m=>node(m[0]));
- function node(s){return {textContent:text(s),dataset:{},classList:{contains:k=>new RegExp(`class="[^"]*\\b${k}\\b`).test(s)},querySelectorAll:q=>nodes(s,q),querySelector:q=>{
+ // data-* attributes, as the browser exposes them (data-rule-text carries the matching wording).
+ const dataset=s=>Object.fromEntries([...(s.match(/^<[^>]*>/)?.[0]||'').matchAll(/\sdata-([\w-]+)="([^"]*)"/g)].map(([,k,v])=>[k.replace(/-(\w)/g,(_,c)=>c.toUpperCase()),v.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')]));
+ function node(s){return {textContent:text(s),dataset:dataset(s),classList:{contains:k=>new RegExp(`class="[^"]*\\b${k}\\b`).test(s)},querySelectorAll:q=>nodes(s,q),querySelector:q=>{
   if(q==='td:last-child')return nodes(s,'td').at(-1)||null;
   const tag=q.startsWith('.')?'span':q;
   return nodes(s,tag).find(n=>q!=='.skill-name'||/class="[^"]*skill-name/.test(s))||null;
@@ -68,22 +70,22 @@ test('both divine weapons supply fixed stats, attribute matching and caps; off r
  const yes=preview({report,snapshot:on}),no=preview({report,snapshot:toggleExclusiveWeapon(on,loadoutSources(report),false)});
  assert.equal(yes.report.context.weaponCount,2);assert.equal(no.report.context.weaponCount,0);
  assert.deepEqual(new Set(yes.report.context.weaponSignatures),new Set(['axe:light','sword:dark']));
- assert.equal(total(yes.report,'魔性祝福','damage'),30);
- assert.equal(total(yes.report,'超越·特技上限','cap'),1500);assert.equal(total(no.report,'超越·特技上限','cap'),3000);
+ assert.equal(total(yes.report,'魔性的祝福','damage'),30);
+ assert.equal(total(yes.report,'【超越】特技界限突破+1500','cap'),1500);assert.equal(total(no.report,'【超越】特技界限突破+1500','cap'),3000);
  assert(yes.input.attackBase>no.input.attackBase+740); // fixed STR740 plus axe passive15%
- assert.equal(total(yes.report,'魔祸咒翼·加基尔斯','equipmentStat'),429);
- assert(!no.report.rows.some(r=>r.group==='equipment'));assert.equal(total(no.report,'魔性祝福','damage'),0);
+ assert.equal(total(yes.report,'魔祸呪翼格吉尔斯','equipmentStat'),429);
+ assert(!no.report.rows.some(r=>r.group==='equipment'));assert.equal(total(no.report,'魔性的祝福','damage'),0);
  const single={...on,items:on.items.filter(s=>s.sourceId!=='182-equipment-1694')};
- const axe=preview({report,snapshot:single});assert.equal(axe.report.context.weaponCount,1);assert.equal(total(axe.report,'魔性祝福','damage'),0);
- const light={...single,items:single.items.filter(s=>s.sourceId!=='182-exclusive-1297')};assert.equal(total(preview({report,snapshot:light}).report,'魔性祝福','damage'),30);
+ const axe=preview({report,snapshot:single});assert.equal(axe.report.context.weaponCount,1);assert.equal(total(axe.report,'魔性的祝福','damage'),0);
+ const light={...single,items:single.items.filter(s=>s.sourceId!=='182-exclusive-1297')};assert.equal(total(preview({report,snapshot:light}).report,'魔性的祝福','damage'),30);
 });
 
 test('bleed and basic ailments are independent; defense penetration and ailment caps never leak',()=>{
  const base=preview();
  const ailment=preview({attackInput:{...input,ailment:true}});
- assert.equal(total(ailment.report,'魔性祝福','cap'),20000);assert.equal(ailment.input.defenseRatio,1);
+ assert.equal(total(ailment.report,'魔性的祝福','cap'),20000);assert.equal(ailment.input.defenseRatio,1);
  const bleed=preview({selected:{...selection,bleeding:true,criticalEnabled:true}});
- assert.equal(bleed.input.defenseRatio,.85);assert.equal(bleed.input.critRate,5); // 双龙 follows the 开局BUFF switch (2026-09-27 switch plan)assert.equal(total(bleed.report,'魔性祝福','cap'),0);
+ assert.equal(bleed.input.defenseRatio,.85);assert.equal(bleed.input.critRate,5); // 双龙 follows the 开局BUFF switch (2026-09-27 switch plan)assert.equal(total(bleed.report,'魔性的祝福','cap'),0);
  assert.equal(base.input.defenseRatio,1);
 });
 
@@ -91,21 +93,21 @@ test('full HP, opening and conditional buffs remain independent and all combinat
  for(const fullHp of [false,true])for(const openingBuffActive of [false,true])for(const conditionBuffActive of [false,true]){
   const result=preview({selected:{...selection,criticalEnabled:true,fullHp,openingBuffActive,conditionBuffActive}});
   assert.equal(result.input.critRate,(fullHp?10:0)+(openingBuffActive?15:0)); // 双龙 follows the 开局BUFF switch
-  assert.equal(total(result.report,'噩梦三重奏','damage'),conditionBuffActive?36:0);
+  assert.equal(total(result.report,'恶梦三重奏','damage'),conditionBuffActive?36:0);
   assert(Number.isFinite(calculate(result.input).mean));
  }
  const on=preview({selected:{...selection,conditionBuffActive:true,specialAttack:true,criticalEnabled:true},attackInput:{...input,weakness:true}});
- assert.equal(total(on.report,'噩梦三重奏','damage'),108); // three independently scoped 36% entries, never one unconditional 108%
+ assert.equal(total(on.report,'恶梦三重奏','damage'),108); // three independently scoped 36% entries, never one unconditional 108%
  assert.equal(on.imported.killerCorrection,50); // only the established killer-power boost
 });
 
 test('nongod killer and separate light/dark weaknesses follow their own conditions',()=>{
  const yes=preview({selected:{...selection,specialAttack:true,enemyLightWeak:true,enemyDarkWeak:true}});
- assert.equal(total(yes.report,'魔神化','damage'),30);assert.equal(total(yes.report,'启明星','cap'),8000);
+ assert.equal(total(yes.report,'魔神化','damage'),30);assert.equal(total(yes.report,'曙光之星','cap'),8000);
  const god=preview({selected:{...selection,specialAttack:true},attackInput:{...input,races:['神','龙']}});
  assert.equal(total(god.report,'魔神化','damage'),0);
  const unknown=preview({selected:{...selection,specialAttack:true},attackInput:{...input,races:[]}});assert.equal(total(unknown.report,'魔神化','damage'),0);
- const off=preview();assert.equal(total(off.report,'启明星','cap'),0);
+ const off=preview();assert.equal(total(off.report,'曙光之星','cap'),0);
 });
 
 test('Anima is an exact-description support magic and resistance updates are reversible, without NaN caps',()=>{
@@ -119,8 +121,8 @@ test('Anima is an exact-description support magic and resistance updates are rev
 });
 
 test('known partial equipment proves positive attribute match but cannot prove a missing match',()=>{
- const s=CATALOG.find(s=>s.name==='魔性祝福');
+ const s=CATALOG.find(s=>s.name==='魔性的祝福');
  const r=evaluateCatalog([s],{attack:'s1',damageType:'physical',element:'light',weaponCount:2,weaponDetails:[{type:'axe',element:'light'}],ailment:false});
- assert.equal(total(r,'魔性祝福','damage'),30);
+ assert.equal(total(r,'魔性的祝福','damage'),30);
  const incomplete=evaluateCatalog([s],{...r.context,element:'dark'});assert(incomplete.rows.some(row=>row.status==='pending'));
 });
