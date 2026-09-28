@@ -32,7 +32,7 @@ for (const [id, g] of game) {
 const DAMAGE = new Set(['伤害上限', '特攻', '暴击', '造成伤害']);
 // conditions that need a switch or are not simulated by the calculator (the target is always a boss and the battle
 // start is simulated, so BOSS / 开局 need nothing; element / move / weapon / race are checked by the game scripts)
-const SWITCHED = /^HP|满血|Break|队伍|现实时间|击杀时|致命伤害|定时发动|移动中|咏唱中|空中|连击数|距离|特殊计数|MP条件|需要装备特定技能|援护|超必杀槽|连续发动|增益／减益|朝向|以太|受击次数|特技次数|第几击|种类数|属性比较|角色类别|目标属性耐性|敌人类型条件|战斗结束时|受到致命/;
+const SWITCHED = /^HP|满血|Break|队伍|异常状态|复活时|死亡时|未装备武器|现实时间|击杀时|致命伤害|定时发动|移动中|咏唱中|空中|连击数|距离|特殊计数|MP条件|需要装备特定技能|援护|超必杀槽|连续发动|增益／减益|朝向|以太|受击次数|特技次数|第几击|种类数|属性比较|角色类别|目标属性耐性|敌人类型条件|战斗结束时|受到致命/;
 // a process only defends when it changes the damage the character takes (or its resistances)
 const DEFENSIVE = p => /被ダメージ|被命中|被弾|ガード|バリア|耐性/.test(p.kind) || /被ダメージ|を受けた/.test(p.trigger);
 const out = [];

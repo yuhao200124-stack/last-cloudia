@@ -112,6 +112,8 @@ function dimOf(name) {
 }
 // the trigger's own name says when it works
 const TRIGGER_TAGS = [[/Wave終了|バトル終了/, '战斗结束时'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル/, '暴击时'], [/気絶・ブレイク|ブレイク状態/, 'Break／眩晕'], [/空中/, '空中'], [/トドメ|撃破/, '击杀时'], [/致死ダメージ/, '受到致命伤害时'], [/生存人数/, '队伍／人数条件'], [/移動中/, '移动中'], [/フレーム間隔/, '定时发动'], [/キラー発生/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/ヒット数|ヒット中/, '连击数条件'], [/距離/, '距离条件'], [/HP/, 'HP条件'], [/MP値/, 'MP条件']];
+// conditions written into the process itself show in its name (the part before what it changes)
+const KIND_TAGS = [[/対状態異常|状態異常中の相手|異常状態の相手/, '对异常状态的敌人'], [/特定状態異常中|状態異常中(?!の相手)|状態異常時/, '自身异常状态时'], [/対気絶・ブレイク中|気絶・ブレイク中/, 'Break／眩晕'], [/距離状況|距離条件/, '距离条件'], [/HP状況|HP条件/, 'HP条件'], [/超必殺ゲージ(状況|条件)/, '超必杀槽条件'], [/MP状況|MP値条件/, 'MP条件'], [/ヒット数(状況|条件)/, '连击数条件'], [/生存人数|人数状況/, '队伍／人数条件'], [/一刀時|一刀で/, '只装一件武器'], [/二刀時/, '装两件武器'], [/武器未装備時/, '未装备武器'], [/空中/, '空中'], [/復活時/, '复活时'], [/死亡時/, '死亡时'], [/キル時|撃破時|トドメ/, '击杀时'], [/移動中/, '移动中'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル時/, '暴击时'], [/キラー発生時|キラー時/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/対BOSS|ボス/, '对BOSS']];
 const nibbles = n => { const out = []; for (let i = 0; i < 6 && n > 0; i++) { out.push(n & 15); n >>= 4; } return out; };
 
 export function decodeProcess(pid, paramStr) {
@@ -160,6 +162,7 @@ export function decodeProcess(pid, paramStr) {
   // 2) its trigger condition
   const cond = condRow.get(row[pc.PROCESS_COND]), fn = cond?.[3];
   const cparams = String(row[pc.PROCESS_COND_PARAM] ?? '').split(':').map(v => v === '' ? 0 : Number(v));
+  for (const [re, tag] of KIND_TAGS) if (re.test(row[pc.NAME])) out.other.push(tag);
   const trig = cond?.[1] || '';
   for (const [re, tag] of TRIGGER_TAGS) if (re.test(trig) && !(tag === '队伍／人数条件' && /オート/.test(row[pc.NAME]))) out.other.push(tag);
   if (fn) {
