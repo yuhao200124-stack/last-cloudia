@@ -8,19 +8,19 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="stylesheet" href="./styles.css?v=20260929-home" />
     <link rel="stylesheet" href="./game-skills.css?v=20260929-build" />
-    <link rel="stylesheet" href="./skill-classes-preview.css?v=20260929-preview" />
+    <link rel="stylesheet" href="./skill-classes-preview.css?v=20260929-preview2" />
   </head>
   <body>
     <header class="site-header">
       <div class="brand-mark" aria-hidden="true">LC</div>
       <div class="brand-copy">
-        <h1>技能分类预览 · 基础属性</h1>
+        <h1>技能分类预览</h1>
         <p>从游戏数据自动分类 · 还没有替换技能表的分页</p>
       </div>
       <nav class="header-actions" aria-label="页面导航"><a class="header-nav-link" href="./index.html">技能表</a><a class="header-nav-link" href="./characters.html?v=20260926-mayly">角色列表</a></nav>
     </header>
     <main>
-      <section class="workspace" aria-label="基础属性分类预览">
+      <section class="workspace" aria-label="技能分类预览">
         <div class="toolbar">
           <label class="search-box">
             <span class="search-icon" aria-hidden="true">⌕</span>
@@ -35,13 +35,14 @@
             <div class="result-summary" id="resultSummary" aria-live="polite"></div>
           </div>
         </div>
-        <nav class="sheet-tabs" id="statTabs" aria-label="属性"></nav>
-        <p class="preview-hint">每个属性先放<b>没有条件</b>的，再放<b>有条件</b>的，各自按加成从大到小。一个技能改几项属性，就会出现在几个页签里。</p>
+        <nav class="sheet-tabs" id="catTabs" aria-label="大类"></nav>
+        <nav class="sub-tabs" id="subTabs" aria-label="小类"></nav>
+        <p class="preview-hint">每个小类先放<b>没有条件</b>的，再放<b>有条件</b>的，各自按加成从大到小。一个技能属于几个分类，就会出现在几个页签里；效果下面的“也在”列出它的其他分类。</p>
         <div id="previewArea" class="table-area"></div>
       </section>
     </main>
     <script src="./game-skill-data.js?v=20260929-home"></script>
-    <script src="./skill-classes-preview-data.js?v=20260929-preview"></script>
-    <script src="./skill-classes-preview.js?v=20260929-preview"></script>
+    <script src="./skill-classes-preview-data.js?v=20260929-preview2"></script>
+    <script src="./skill-classes-preview.js?v=20260929-preview2"></script>
   </body>
 </html>

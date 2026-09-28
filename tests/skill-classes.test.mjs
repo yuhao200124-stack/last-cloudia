@@ -35,6 +35,22 @@ test('every table skill is classified, and the user\'s decisions are applied', (
   assert(cats(18100).includes('受到伤害'));                                          // 光照明: its buff (504) works on damage taken
   assert(cats(55591).includes('暴击') && cats(55591).includes('基础属性'));           // 极速战士: three processes
   assert.deepEqual(byId.get(23300).defense, { calc: '能算', tags: ['受·树属性'] });  // prepared for 减伤 later
+  // damage the character takes, by the process name: 被追加ダメージ (追击护盾), 貫通耐性 (石之世界), 相手…与ダメージ減少 (爱的监狱)
+  for (const id of [26862, 52500, 27695]) assert(cats(id).includes('受到伤害') && !cats(id).includes('造成伤害'), `${id} is damage taken`);
   // 爆裂者 / 驱动: “物理攻击・超必杀技” is not a stat list
   assert(!byId.get(26872).cats.includes('基础属性') && !byId.get(25710).cats.includes('基础属性'));
+});
+
+test('the classification preview lists every skill of each previewed 大类, with all its other classes', async () => {
+  const draft = read('docs/skill-classes-draft.json'), byId = new Map(draft.skills.map(s => [s.id, s]));
+  const src = fs.readFileSync(new URL('../dist/skill-classes-preview-data.js', import.meta.url), 'utf8');
+  const { pages } = JSON.parse(src.slice(src.indexOf('=') + 1).trim().replace(/;$/, ''));
+  for (const pg of pages) {
+    const rows = pg.subs.flatMap(x => x.blocks.flat());
+    const ids = new Set(rows.map(r => r.id));
+    assert.equal(ids.size, draft.skills.filter(s => s.cats.includes(pg.cat)).length, pg.cat);
+    assert.equal(pg.total, ids.size);
+    for (const r of rows) for (const c of byId.get(r.id).cats) if (c !== pg.cat) assert(r.also.some(a => a === c || a.startsWith(`${c}（`)), `${r.id} also in ${c}`);
+    for (const x of pg.subs) for (const [i, block] of x.blocks.entries()) for (const r of block) assert.equal(r.tags.length > 0, i === 1, `${r.id} ${x.name}`);
+  }
 });
