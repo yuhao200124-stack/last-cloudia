@@ -394,7 +394,7 @@ function labels() {
   $('critRate').closest('label').hidden=criticalDisabled();
   $('hitDetails').hidden=!$('dualWield').checked;
   const mode=referenceMode(),magic=mode==='int';
-  $('attackLabel').textContent=mode==='mixed'?'已确认的混合结算攻击值':magic?'当前战斗法强':'当前战斗攻击力';
+  $('attackLabel').textContent=mode==='mixed'?'已确认的混合结算攻击值':magic?'当前面板法强':'当前面板攻击力';
   $('mixedReferenceNote').hidden=mode!=='mixed';$('mixedDefenseControl').hidden=mode!=='mixed';
   $('defenseLabel').textContent=mode==='mixed'?'混合结算防御值':magic?'当前魔抗 MND':'当前防御力 DEF';
   const neutral=$('element').value==='无';$('resistance').disabled=neutral;
