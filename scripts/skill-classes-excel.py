@@ -86,7 +86,9 @@ def export(out):
              ('计算一律按游戏编号；这里只决定网页上分在哪一页、配装时怎么筛。你已经决定的写在“依据”里（用户：…）。', False, 10), ('', False, 10),
              ('怎么改（“全部技能”这一页）', True, 10),
              ('· “大类”：可以增删，多个用“、”隔开；排在第一个的是主要大类（表按它排序）', False, 10),
-             ('· “条件标签”：属性、招式、武器、对哪个种族、满血／濒死等，网页上用来分组和按招式筛选；可以改', False, 10),
+             ('· “条件标签”：从游戏的条件数据读出（不是看说明文字）：属性、物理／魔法／特技／超必杀、装备什么武器、对哪个种族、对 BOSS、HP、暴击时、击杀时等；可以改', False, 10),
+             ('　“受·”开头＝受到这种攻击时（防御类），例如“受·火属性”＝受到火属性攻击时；冰壁在游戏数据里就是减少火属性伤害，所以是“受·火属性”', False, 10),
+             ('　没有标签＝没有条件（常驻、开局就生效）', False, 10),
              ('· “计算器”：能算＝改变每段伤害；看条件＝要满足满血／濒死／Break 等才有伤害收益；不影响每段伤害＝咏唱速度、防御等，配装里照样列出但不算收益；待确认＝看不准', False, 10),
              ('· “依据”只是给你看为什么这样分，不用改', False, 10), ('', False, 10), ('大类', True, 10)]
     for i, (t, b, sz) in enumerate(lines, 1):
@@ -132,15 +134,18 @@ def export_by_category(out):
     thin = Side(style='thin', color='BFBFBF')
     bd = Border(left=thin, right=thin, top=thin, bottom=thin)
     cols = ['游戏编号', '名称', 'SC', '效果说明', '也在这些分类', '条件标签', '计算器']
-    for j, (h, w) in enumerate(zip(cols, [10, 20, 5, 60, 22, 22, 14]), 1):
-        c = ws.cell(row=1, column=j, value=h)
+    note = ws.cell(row=1, column=1, value='条件标签：从游戏的条件数据读出（不是看说明文字）。“受·”开头＝受到这种攻击时（防御类），例如冰壁在游戏数据里减少火属性伤害，所以是“受·火属性”。没有标签＝没有条件（常驻或开局就生效）。')
+    note.font = F(size=10, color='595959')
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(cols))
+    for j, (h, w) in enumerate(zip(cols, [10, 20, 5, 60, 22, 26, 14]), 1):
+        c = ws.cell(row=2, column=j, value=h)
         c.font = F(bold=True)
         c.fill = PatternFill('solid', fgColor='D9D9D9')
         c.border = bd
         c.alignment = Alignment(horizontal='center', vertical='center')
         ws.column_dimensions[c.column_letter].width = w
-    ws.freeze_panes = 'A2'
-    r = 2
+    ws.freeze_panes = 'A3'
+    r = 3
     for cat in CAT:
         rows = sorted(members.get(cat, []), key=lambda x: x[0])
         if not rows:
