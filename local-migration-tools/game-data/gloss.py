@@ -64,6 +64,18 @@ G.update({
 KEYS[:] = sorted(G, key=len, reverse=True)
 G.update({'全ステータス':'全属性','修正下限の上限':'修正下限的上限','シンプル':'简易','が貫通するか':'是否穿透','を含まない':'不包含','消費予定のHPを':'预定消耗HP','に乗算するか':'是否乘入','当前は':'当前','によって':'因'})
 KEYS[:] = sorted(G, key=len, reverse=True)
+# Extra vocabulary found while translating raw ProcessMst/ProcessCondMst/BuffMst internal names
+# (engine sandbox condition/process labels) that the parameter-name glossary above didn't cover.
+# Kept to unambiguous kanji compounds only (no bare hiragana particles) so this stays safe for the
+# existing parameter-name callers too.
+G.update({'対':'对','経験':'经验','重複':'重复','継続':'持续','種別':'种别','貫通':'穿透','お金':'金钱','全滅':'全灭',
+'閾値を跨いだ':'跨过阈值','を跨いだ':'跨过','絶対装備':'绝对装备','絶対':'绝对','発揮前':'发挥前','発揮':'发挥',
+'生存中':'存活中','フレーム間隔':'帧间隔','発動前':'发动前','発動後':'发动后','計算後':'计算后','計算時':'计算时','計算前':'计算前',
+'ターゲット制御':'目标控制','マーカー':'标记','パーティ':'队伍','が全滅している':'已全灭','制御':'控制',
+'状況':'状况','経過':'经过','複':'复','変動':'变动','を当てた':'命中','当てた':'命中',
+'抽選':'抽选','初期化':'初始化','を受けた':'受到','受けた':'受到','が変化した':'变化','変化した':'变化',
+})
+KEYS[:] = sorted(G, key=len, reverse=True)
 POST=[('この伤害因','因此伤害'),('を不包含','不包含'),('当前は','当前'),('予定のHPを通用数值に是否乘算','预定消耗HP是否乘入通用数值'),('が穿透か','是否穿透'),('の上限','的上限')]
 _tr=tr
 def tr(s):
