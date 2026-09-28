@@ -1,11 +1,11 @@
-// The damage calculator's 特攻 / Break / 双刀 switches decide the state themselves (the bonuses bound to that
+// The damage calculator's 特攻 / Break switches decide the state themselves (the bonuses bound to that
 // state still come from the skills), and exclusive gear is taken at its highest enhancement stage.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { Battle, K } from '../dist/engine/battle.mjs';
 import { loadEngineData, loadPassives } from '../dist/engine/engine-data.mjs';
-import { addAttacker, addTarget, runScenario, DUAL_WIELD_PROCESS } from '../dist/engine/scenario.mjs';
+import { addAttacker, addTarget, runScenario } from '../dist/engine/scenario.mjs';
 
 const read = async (path, asText) => { const text = fs.readFileSync(new URL(`../dist/game-data/${path}`, import.meta.url), 'utf8'); return asText ? text : JSON.parse(text); };
 const dataPromise = loadEngineData({ unitDressIds: [502220, 101011, 502230, 100642], read });
@@ -46,18 +46,6 @@ test('Break switch: the target is in break, so break-bound bonuses of the skills
   const halved = await run(101011, 1010113, { state: { targetBreak: true, breakDefenseRatio: 0.5 } });
   assert.equal(halved.first.defense, off.first.defense * 0.5);
   assert(halved.out.assumptions.some(a => a.includes('Break')));
-});
-
-test('双刀 switch: a stand-in sub weapon and the 二刀流 ratio make every physical hit two calls at 60%, without doubling the gear', async () => {
-  const { master } = await dataPromise;
-  const single = await run(502230, 5022303, { spec: { equips: [{ pos: 1, id: 101311 }] } });
-  const dual = await run(502230, 5022303, { spec: { equips: [{ pos: 1, id: 101311 }, { pos: 2, id: 101311, copy: true }], dualWieldRatio: 6000 } });
-  assert.equal(single.out.hits.filter(h => !h.cancelled && h.normal && h.bulletId === single.first.bulletId).length, 1);
-  const calls = dual.out.hits.filter(h => !h.cancelled && h.normal && h.bulletId === dual.first.bulletId);
-  assert.equal(calls.length, 2); assert.deepEqual(calls.map(h => h.dmgRatio), [6000, 6000]);
-  assert(dual.attacker.instances.some(i => i.processId === DUAL_WIELD_PROCESS));
-  assert.equal(dual.out.stats.str.panel, single.out.stats.str.panel, 'the stand-in adds no weapon stats');
-  assert.equal(master.itemEquip.get(101311).EQUIP_TYPE, 10);
 });
 
 test('exclusive gear passives can be replaced by the highest enhancement stage (ItemEquipMst points to the base stage)', async () => {

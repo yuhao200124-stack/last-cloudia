@@ -354,7 +354,7 @@ function targetFromFields(detail) {
   return { name: $('bossPreset')?.selectedOptions[0]?.textContent || '目标', isBoss: $('boss')?.checked !== false, charTypes: races, stats: { hp: 99999999, mp: 100, def: Number($('bossDefense')?.value) || 0, mnd: Number($('bossMind')?.value) || 0, str: 0, int: 0 }, elemResist: { 1: res[0] || 0, 2: res[1] || 0, 3: res[2] || 0, 4: res[3] || 0, 5: res[4] || 0, 6: res[5] || 0 } };
 }
 
-// ---- 专武（按最大）与双刀 ----
+// ---- 专武（按最大） ----
 // Exclusive gear is taken at its maximum (the user's rule): each item at its highest tier (tiers of one item share
 // SERIAL_NUM; the higher RARE is the upgrade, e.g. 魔祸翼 → 魔祸呪翼) with the passives of its highest enhancement
 // stage (game-data c/<dress>.json: serial, rare, maxPassives). ItemEquipMst only points to the base stage.
@@ -365,8 +365,6 @@ function exclusiveTiers(c) {
 }
 const tierOf = c => { const m = new Map(); for (const top of exclusiveTiers(c)) for (const e of c.exclusiveEquipment) if ((e.serial ?? e.id) === (top.serial ?? top.id)) m.set(e.id, top); return m; };
 const isWeapon = t => t >= 10 && t < 20;
-let gearNames = new Map(); // simplified names of the current character's exclusive gear (game-data nameS)
-const itemName = (master, id) => gearNames.get(Number(id)) || master.itemEquip.get(Number(id))?.NAME || String(id);
 // The calculator's 专武 selector: 未装备／其他 → none, 全部装备 → every item, one item → that item (matched by name).
 function chosenExclusive(c, master) {
   const choice = $('specialWeapon')?.value || 'both';
@@ -380,7 +378,7 @@ function chosenExclusive(c, master) {
   const name = gear[choice]?.name;
   return sorted.filter(e => e.nameS === name);
 }
-// Slots: weapon 1, armour 2 (a second weapon goes there only when dual wielding), accessories 3–4.
+// Slots: weapon 1, armour 2 (a second exclusive weapon takes it when there is no exclusive armour), accessories 3–4.
 function exclusiveEquips(items, master) {
   const typed = items.map(e => ({ e, type: master.itemEquip.get(e.id)?.EQUIP_TYPE ?? 0 }));
   const weapons = typed.filter(x => isWeapon(x.type)), armours = typed.filter(x => x.type >= 20 && x.type < 30), others = typed.filter(x => x.type >= 30 && x.type < 40);
@@ -398,35 +396,6 @@ function maximizeExclusive(spec, c) {
   spec.equipPassiveIds = { ...(spec.equipPassiveIds || {}) };
   for (const e of spec.equips) { const top = [...tiers.values()].find(t => t.id === e.id); if (top?.maxPassives?.length) spec.equipPassiveIds[top.id] = top.maxPassives; }
 }
-// The 双刀 switch decides dual wield, whatever the skills: on → a weapon in the armour slot (the other exclusive
-// weapon, else a stand-in of the main weapon's type and element without its stats or passives) and, without a
-// dual-wield passive, the game's 二刀流 ratio; off → no second weapon (a weapon in the armour slot is dropped).
-function applyDualSwitch(spec, c, master, dual, notes) {
-  gearNames = new Map((c?.exclusiveEquipment || []).map(e => [e.id, e.nameS]));
-  const equips = (spec.equips || []).slice();
-  const main = equips.find(e => e.pos === 1), slot2 = equips.find(e => e.pos === 2);
-  const slot2Weapon = slot2 && isWeapon(master.itemEquip.get(Number(slot2.id))?.EQUIP_TYPE ?? slot2.type ?? 0);
-  if (!dual) {
-    if (slot2Weapon) {
-      spec.equips = equips.filter(e => e !== slot2);
-      spec.passives = (spec.passives || []).filter(p => !(p.affiliation === K.AFF.WEAPON && Number(p.localId ?? p.id) === Number(slot2.id)));
-      notes.push(`未开双刀：副武器「${itemName(master, slot2.id)}」不计入`);
-    }
-    return;
-  }
-  if (!main) { notes.push('双刀：没有主武器，无法按双刀结算'); return; }
-  if (!slot2Weapon) {
-    const spare = exclusiveTiers(c).find(t => t.id !== Number(main.id) && isWeapon(master.itemEquip.get(t.id)?.EQUIP_TYPE ?? 0));
-    const kept = equips.filter(e => e !== slot2);
-    if (slot2) notes.push(`双刀：防具「${itemName(master, slot2.id)}」让出位置给副武器，不计入`);
-    if (spare) { kept.push({ pos: 2, id: spare.id }); spec.equipPassiveIds = { ...(spec.equipPassiveIds || {}), ...(spare.maxPassives?.length ? { [spare.id]: spare.maxPassives } : {}) }; notes.push(`双刀：副武器为「${spare.nameS}」`); }
-    else { kept.push({ pos: 2, id: main.id, copy: true }); notes.push(`双刀：没有第二把专武，副武器按主武器「${itemName(master, main.id)}」同类型、同属性计算（不计副武器的数值和词条）`); }
-    spec.passives = (spec.passives || []).filter(p => !(slot2 && [K.AFF.ARMOR, K.AFF.WEAPON].includes(p.affiliation) && Number(p.localId ?? p.id) === Number(slot2.id)));
-    spec.equips = kept;
-  }
-  spec.dualWieldRatio = 6000;
-}
-
 // HP follows the calculator's two switches exactly like the old rules: 满血 → 100% (full-HP effects such as
 // 月光II fire), 濒死 → 25%, neither → 99% (alive and healthy, but nothing that needs full HP fires).
 function stateFromSwitches(detail) {
@@ -519,11 +488,10 @@ async function run(force = false) {
         attackerSpec.buildOwn = buildOwn; attackerSpec.buildPassives = buildPassives; attackerSpec.buildNote = crest ? '徽章按配装报告' : '';
       } else renderBuild(null);
     }
-    // 专武 at its maximum (not for a captured battle, which records what was really equipped) and the 双刀 switch
+    // 专武 at its maximum (not for a captured battle, which records what was really equipped)
     const gearNotes = [];
     const gameChar = await gameCharacter(dress);
     if (!(report && M.isBattleReport(report) && report.units?.[0]?.unitId === dress)) maximizeExclusive(attackerSpec, gameChar);
-    applyDualSwitch(attackerSpec, gameChar, battle.master, !!(latest.selection?.dualWield ?? $('dualWield')?.checked), gearNotes);
     // the top enhancement stages live in the passive id buckets, not in the character bundle
     const stageMissing = await M.loadPassives(battle.master, Object.values(attackerSpec.equipPassiveIds || {}).flat());
     if (stageMissing.length) gearNotes.push(`专武最高强化阶段的被动 ${stageMissing.join('、')} 在游戏数据里没找到，按基础阶段计算`);
