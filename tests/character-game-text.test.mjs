@@ -139,8 +139,9 @@ test('a whole character page is built from the game data (checked on characters 
   const ids=[...html.matchAll(/data-game-id="(\d+)"/g)].map(m=>Number(m[1]));
   for(const id of [...d.traits,...d.exclusive,...d.common.map(c=>c.id),...d.transcend,...d.equipment.map(e=>e.id),...d.magic.map(m=>m.id),...d.specials])assert(ids.includes(id),`${unitDressId}: ${id}`);
   assert.doesNotMatch(html,/<span class="skill-name[^"]*"><\/span>|<td><\/td>|<dd><\/dd>|<h4><\/h4>/,'every name and description is filled in');
-  const profile=JSON.parse(html.match(/<script type="application\/json" id="characterCapProfile">([\s\S]*?)<\/script>/)[1]);
-  assert(profile.attacks.length>=4);
+  // the old 基础计算器／基础伤害上限／最终伤害上限 are gone; 已保存配装 is the only panel of the page
+  assert.doesNotMatch(html,/characterCapProfile|bonusCalculatorOpen|capCalculatorOpen|finalDamageCalculatorOpen|character-calculator\.js/);
+  assert.match(html,/<button id="savedBuildViewerOpen"[^>]*>已保存配装<\/button>/);
  }
  const mayly=buildCharacterPage('999',entry,JSON.parse(read('dist/game-data/c/100642.json')),relics);
  const cards=[...mayly.matchAll(/<article class="equipment-card" data-game-id="(\d+)"><h4>([^<]*)<\/h4>/g)].map(m=>[Number(m[1]),m[2]]);

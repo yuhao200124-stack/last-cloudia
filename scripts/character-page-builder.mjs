@@ -58,7 +58,7 @@ export function buildCharacterPage(siteId,entry,game,relics,problems=[],notices=
  const sections=[];let n=0;
  const section=(id,title,note,body,numbered=true)=>{sections.push(`          <section id="${id}" class="data-section"><h3 class="section-title">${numbered?`<span class="number">${String(++n).padStart(2,'0')}</span>`:''}${title}</h3>${note?`<p class="section-note">${note}</p>`:''}${body}</section>`);return id;};
  const nav=[['max-stats','属性']];
- sections.push(`          <section id="max-stats" class="data-section"><h3 class="section-title with-action"><span>最大阶段属性</span><span class="section-actions"><button id="bonusCalculatorOpen" class="section-action" type="button">基础计算器</button><button id="capCalculatorOpen" class="section-action" type="button">基础伤害上限</button><button id="finalDamageCalculatorOpen" class="section-action" type="button">最终伤害上限</button><button id="savedBuildViewerOpen" class="section-action" type="button">已保存配装</button></span></h3><p class="section-note">Lv120、限界突破、潜在觉醒、神域开眼合计（Altema）；不含装备及战斗增益。</p><div class="stat-grid" aria-label="最大阶段属性">${STAT_LABELS.map(([key,label])=>`<div class="stat-box"><span>${label}</span><strong>${Number.isFinite(stats[key])?num(stats[key]):'—'}</strong></div>`).join('')}</div></section>`);
+ sections.push(`          <section id="max-stats" class="data-section"><h3 class="section-title with-action"><span>最大阶段属性</span><span class="section-actions"><button id="savedBuildViewerOpen" class="section-action" type="button">已保存配装</button></span></h3><p class="section-note">Lv120、限界突破、潜在觉醒、神域开眼合计（Altema）；不含装备及战斗增益。</p><div class="stat-grid" aria-label="最大阶段属性">${STAT_LABELS.map(([key,label])=>`<div class="stat-box"><span>${label}</span><strong>${Number.isFinite(stats[key])?num(stats[key]):'—'}</strong></div>`).join('')}</div></section>`);
  nav.push([section('traits','个性','仅记录最终阶段效果。',`<div class="trait-list">${d.traits.map(id=>`<article class="trait" data-game-id="${id}"><h4></h4><p></p></article>`).join('')}</div>`),'个性']);
  nav.push([section('exclusive-skills','专属技能','红色技能在能力盘中SC为“—”，无法通过圣物学习。',`<table class="data-table"><thead><tr><th>技能</th><th>最终效果</th></tr></thead><tbody>${d.exclusive.map(id=>row(id,'exclusive')).join('')}</tbody></table>`),'专属技能']);
  if(d.equipment.length)nav.push([section('equipment','专属装备','数值为强化后最高状态。',`<div class="equipment-grid">${d.equipment.map(e=>`<article class="equipment-card" data-game-id="${e.id}"><h4></h4><dl><dt>类型</dt><dd>${esc(e.type)}｜${ELEMENT[e.element]??e.element}属性</dd><dt>最高属性</dt><dd>${gearStats(e.maxStats)||'—'}</dd><dt>最高效果</dt><dd></dd></dl></article>`).join('')}</div>`),'专属装备']);
@@ -73,22 +73,8 @@ export function buildCharacterPage(siteId,entry,game,relics,problems=[],notices=
   .replace('{{TITLE}}',`${esc(d.shortName)}角色资料｜最后的克劳迪娅`)
   .replace('{{DESCRIPTION}}',`${esc(d.name)}角色资料：个性、专属技能、专属装备、通用技能、魔法、特技及超越效果。`)
   .replace('{{SITE_ID}}',siteId).replace('{{HERO}}',hero).replace('{{NAV}}',navHtml).replace('{{SECTIONS}}',sections.join('\n'))
-  .replace('{{CAP_PROFILE}}',`<script type="application/json" id="characterCapProfile">${JSON.stringify(capProfile(siteId,game)).replace(/</g,'\\u003c')}</script>`);
+  ;
  return syncCharacterPage(siteId,skeleton,game,problems,notices);
-}
-
-// The 基础伤害上限／最终伤害上限 panels (character-calculator.js) list the character's attacks from this
-// profile. Only the attacks come from the game data; which skills raise which cap (capTypes, sources)
-// is calculator rule work, so a generated page starts with none and the panels show the base cap.
-function capProfile(siteId,game){
- const kindTag=m=>m.parts.some(p=>p.kind==='魔法')&&!m.parts.some(p=>p.kind==='物理')?'magic':'physical';
- const capNote=m=>{const cap=Math.max(0,...m.parts.map(p=>Number(p.cap)||0));return cap?`固有上限+${num(cap)}。`:'';};
- const attacks=[
-  ...game.specials.filter(Boolean).map((m,i)=>({id:`s${i+1}`,label:`${m.nameS}（特技${i+1}）`,baseCap:9999,tags:[kindTag(m),'skill'],note:capNote(m)})),
-  ...(game.ultimate?[{id:'ultimate',label:`${game.ultimate.nameS}（超必杀技）`,baseCap:9999,tags:[kindTag(game.ultimate),'ultimate'],note:capNote(game.ultimate)}]:[]),
-  ...[...game.magic.normal,...game.magic.heavy].filter(m=>m.parts.some(p=>p.coef!=null)).map(m=>({id:`magic-${m.id}`,label:`${m.nameS}（魔法）`,baseCap:9999,tags:['magic'],note:capNote(m)})),
- ];
- return {id:String(siteId),attackPickerLabel:'选择攻击方式',attacks,capTypes:[],sources:[]};
 }
 
 // The card on the character list page and the entry the loadout page keeps for each character.

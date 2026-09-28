@@ -1,4 +1,4 @@
-import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
+import {textBeforeCommonCalculator,readProtected} from '../scripts/calculator-preservation-helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -26,7 +26,7 @@ test('the public page completes the named examples and analogous details while k
 });
 
 test('source text, actual effects, qualifiers, strict numeric review and calculator files are preserved',()=>{
- for(const[path,digest]of Object.entries({...audit.protectedFiles,...audit.unchangedFiles}))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(path,read(path))).digest('hex'),digest,path);
+ for(const[path,digest]of Object.entries({...audit.protectedFiles,...audit.unchangedFiles}))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(path,readProtected(path))).digest('hex'),digest,path);
  for(const previous of raw.entries){const now=catalog.entries.find(e=>e.id===previous.id);for(const key of Object.keys(previous).filter(k=>!['judgment','remainingEffects','remainingConditions'].includes(k)))assert.deepEqual(now[key],previous[key],previous.name+'/'+key);}
  assert.equal(raw.views.all.counts.ready,787);assert.equal(raw.views.all.counts.partial,148);
  assert.equal(entry(267).tagDetails['濒死'].condition.curveStatus,'unconfirmed');

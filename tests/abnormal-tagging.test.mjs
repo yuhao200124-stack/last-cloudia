@@ -1,4 +1,4 @@
-import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
+import {textBeforeCommonCalculator,readProtected} from '../scripts/calculator-preservation-helpers.mjs';
 import {passBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import {registryBeforeCombat} from '../scripts/combat-preservation-helpers.mjs';
 import {tagDetailsBeforeBreak} from './break-preservation-helpers.mjs';
@@ -19,7 +19,7 @@ test('all 866 prior records, 69 passes, identities, source text, bindings and ca
  assert.equal(preserved.entries.length,866);assert.equal(preserved.tagPassHashes.length,69);
  for(const old of preserved.entries){const e=r.entries.find(e=>e.id===old.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeAbnormal(e)]),old.sourceAndPartsHash,e.name);assert.equal(hash(Object.fromEntries(Object.entries(tagDetailsBeforeBreak(e)).filter(([tag])=>tag!=='异常'))),old.tagDetailsHash,e.name);}
  for(const p of preserved.tagPassHashes)assert.equal(hash(passBeforeRemaining(r.tagPasses.find(x=>x.tag===p.tag))),p.hash,p.tag);
- for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,read(p))).digest('hex'),h,p);
+ for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,readProtected(p))).digest('hex'),h,p);
  assert.deepEqual(r.views.all.displayOrder.slice(0,866),preserved.previousDisplayOrder);assert.equal(catalog.numericEffectInjection,false);
  const before={...r,entries:r.entries.filter(e=>preserved.entries.some(p=>p.id===e.id)).map(e=>({...e,parts:partsBeforeAbnormal(e)})),tagPasses:r.tagPasses.filter(p=>!['异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能'].includes(p.tag)).map(passBeforeRemaining)};const prior=resolveSkillLabels(before);assert.equal(prior.filter(e=>e.judgment==='ready').length,571);
  const currentBeforeBreak=resolveSkillLabels({...registryBeforeCombat(r),tagPasses:registryBeforeCombat(r).tagPasses.filter(p=>p.tag!=='Break')});const promoted=prior.filter(e=>e.judgment==='partial'&&currentBeforeBreak.find(x=>x.id===e.id).judgment==='ready').map(e=>+e.url.split('/').pop()).sort((a,b)=>a-b);assert.deepEqual(promoted,[173,324,717,902,924,940,1026,1045,1227,1463,1517,1667,1729,1990,2017]);for(const e of prior.filter(e=>e.judgment==='ready'))assert.equal(entry(+e.url.split('/').pop()).judgment,'ready');

@@ -4,7 +4,6 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {SKILL_TAG_CATALOG as tags} from '../dist/skill-tag-catalog.mjs';
 import {STAT_CONDITIONS} from '../dist/stat-condition-fields.mjs';
-import {nonDamageMagic,supportMagicRule} from '../dist/magic-buffs.mjs';
 const box={window:{}};vm.runInNewContext(fs.readFileSync(new URL('../dist/data.js',import.meta.url),'utf8'),box);
 const data=box.window.SKILL_DATA,entry=name=>Object.values(tags).find(e=>e.name===name);
 test('partial tags retain canonical identities across categories without changing skill counts',()=>{
@@ -34,15 +33,8 @@ test('low HP scaling and shared-skill counts are not reduced to fixed near-death
 test('special damage switches are separate from general conditions',()=>{
  const html=fs.readFileSync(new URL('../dist/damage-calculator.html',import.meta.url),'utf8');
  const row=html.match(/<div class="inline-options attack-options">([\s\S]*?)<\/div>/)[1];
- assert.deepEqual([...row.matchAll(/id="([^"]+)"/g)].map(m=>m[1]),['dualWield','specialAttack','break','criticalEnabled','boss','weakness']);
+ assert.deepEqual([...row.matchAll(/id="([^"]+)"/g)].map(m=>m[1]),['dualWield','specialAttack','break','boss']);
  assert.match(html,/<h3>魔法<\/h3>/);assert.match(html,/<h3 id="generalDamageTitle">通用伤害改变<\/h3>/);
  assert.match(html,/id="conditionBuffActive"/);assert.doesNotMatch(html,/现实时间为周日/);
  for(const field of ['ultimateUsedBuffActive','damageTakenBuffActive','reviveBuffActive','realSunday','ultimateGaugeFull'])assert.equal(STAT_CONDITIONS[field].deferred,true);
-});
-test('magic area includes all non-damage spells and only applies recognized support formulas',()=>{
- const profile={magic:[{name:'火炎术',purpose:'attack'},{name:'魔术指导',purpose:'support',description:'已确认'}, {name:'守护祈祷',purpose:'unknown',description:'尚待核对'}]};
- const spells=nonDamageMagic(profile),known=[{name:'魔术指导',description:'已确认',id:'guidance'}];
- assert.deepEqual(spells.map(s=>s.name),['魔术指导','守护祈祷']);
- assert.equal(supportMagicRule(spells[0],known)?.id,'guidance');
- assert.equal(supportMagicRule(spells[1],known),undefined);
 });

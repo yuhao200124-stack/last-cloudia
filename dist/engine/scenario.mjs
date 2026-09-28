@@ -57,6 +57,8 @@ export function addAttacker(battle, spec) {
     passives: (spec.passives || []).filter(p => !p.affiliation || p.affiliation === K.AFF.AUTOSKILL),
   });
   unit.panelGiven = spec.panelGiven !== false;
+  // spec.finalAdd {hp, mp, str, def, int, mnd}: flat amounts on the final stats (the calculator's 圣物属性)
+  if (spec.finalAdd) unit.finalAdd = statCodes(spec.finalAdd);
   unit.panelOverride = panelOverride && Object.keys(panelOverride).length ? panelOverride : null;
   unit.panelParts = panel;
   unit.crest = crest;
@@ -206,6 +208,8 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   const bullets = skill.bulletId ? [skill.bulletId] : damageBullets(battle.master, skill.id, level);
   const stats = code => ({ panel: battle.finalStat(attacker, code, { layer: 'status' }), real: battle.finalStat(attacker, code) });
   const base = battle.snapshot();
+  // each stat's parts before the evaluated cast (panel + in-battle layers), for the calculator's 面板与加成核对
+  const statParts = Object.fromEntries([['hp', K.STAT.MAX_HP], ['mp', K.STAT.MAX_MP], ['str', K.STAT.STR], ['def', K.STAT.DEF], ['int', K.STAT.INT], ['mnd', K.STAT.MND], ['crt', K.STAT.CRT], ['spd', K.STAT.SPD]].map(([k, code]) => [k, battle.statParts(attacker, code)]));
   const hits = [];
   for (const bulletId of bullets) {
     const passes = new Map();
@@ -235,6 +239,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   const fired = battle.trace.filter(t => t.fired && t.owner === attacker.name);
   const probabilistic = [...new Map(battle.trace.filter(t => t.fired && t.prob < 10000).map(t => [`${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.localId}:${t.index}`, passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), prob: t.prob / 100, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
   return {
+    statParts,
     stats: { str: stats(K.STAT.STR), def: stats(K.STAT.DEF), int: stats(K.STAT.INT), mnd: stats(K.STAT.MND), crt: stats(K.STAT.CRT), hp: { panel: battle.finalStat(attacker, K.STAT.MAX_HP, { layer: 'status' }), real: battle.finalStat(attacker, K.STAT.MAX_HP), current: attacker.hp } },
     buffs: attacker.buffs.map(b => ({ uid: b.uid, buffId: b.buffId, name: clean(zhName(b.mst.NAME)), params: b.params, remain: b.remain, from: clean(battle.master.passive.get(b.related?.localId)?.NAME || battle.master.itemEquip.get(b.related?.localId)?.NAME || '') })),
     hits, conditionals, probabilistic,

@@ -20,7 +20,11 @@ test('every boss preset carries the race and stats of its monster in the game da
   assert.deepEqual(preset.races.map(r=>RACE_CODES[r]),[row[col('CHARACTER_TYPE')]],key);
   assert.equal(preset.def,row[col('DEF')],key);assert.equal(preset.mnd,row[col('MDEF')],key);
  }
- // the checkbox names the calculator offers are the ones the engine maps to game races
- const races=Function(`return ${read('dist/damage-engine.mjs').match(/export const RACES = (\[[^\]]*\]);/)[1]}`)();
+ // the race checkboxes the calculator offers are the ones the engine maps to game races
+ const races=Function(`return ${read('dist/damage-calculator.mjs').match(/const RACES=(\[[^\]]*\]);/)[1]}`)();
  for(const preset of Object.values(bosses))for(const r of preset.races)assert(races.includes(r),r);
+});
+test('the race checkboxes of the calculator are exactly the races the engine maps',()=>{
+ const races=Function(`return ${read('dist/damage-calculator.mjs').match(/const RACES=(\[[^\]]*\]);/)[1]}`)();
+ for(const r of races)assert(RACE_CODES[r],r);
 });

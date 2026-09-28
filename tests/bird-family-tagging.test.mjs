@@ -1,4 +1,4 @@
-import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
+import {textBeforeCommonCalculator,readProtected} from '../scripts/calculator-preservation-helpers.mjs';
 import {entryBeforeClassificationSupplements} from '../scripts/classification-supplement-preservation-helpers.mjs';
 import {passBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import {ADDITIONAL_RACE_TAGS,partsBeforeRaces,textBeforeBoss} from './race-preservation-helpers.mjs';
@@ -26,7 +26,7 @@ test('bird preserves old source, 45 tag passes and bindings; only previously unc
   if(split){assert.equal(split.wasExisting,true);assert.deepEqual(e.parts.filter(p=>split.replacementParts.some(x=>x.id===p.id)),split.replacementParts);for(const t of r.tagPasses.filter(t=>t.tag!=='鸟'&&!['Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(t.tag)))assert(!t.assignments.some(a=>a.skillId===e.id&&a.partIds.includes(split.originalPart.id)));parts=parts.flatMap(p=>p.id===split.originalPart.id?[split.originalPart]:split.replacementParts.some(x=>x.id===p.id)?[]:[p]);}
   assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,parts]),old.sourceAndPartsHash,e.name);assert.equal(hash(Object.entries(entryBeforeClassificationSupplements(e).tagDetails).filter(([t,d])=>!['鸟','Boss','铠甲','衣服','法袍','防御','魔抗','伤害减少','异常','Break','格挡','反击','普通攻击','追击','HP回复','吸血','杂项','属性弱点','连击','击败敌人','战斗结束','空中','背后攻击','队伍联动','战斗时间','距离','HP持续消耗','致命伤害存活','通用伤害上限','触发次数与重置','装备自身数值强化','地面状态','自身倒下／战斗不能',...ADDITIONAL_RACE_TAGS].includes(t)&&d.bindings).map(([t,d])=>[t,d.bindings])),old.bindingsHash,e.name);
  }
- for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeBoss(p,textBeforeCommonCalculator(p,read('../'+p)))).digest('hex'),h,p);
+ for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeBoss(p,textBeforeCommonCalculator(p,readProtected(p)))).digest('hex'),h,p);
  assert.equal(catalog.entries.length,935);assert.equal(catalog.views.all.counts.ready,787);assert.equal(catalog.views.all.counts.partial,148);assert.equal(catalog.numericEffectInjection,false);
  for(const[n,key,tag]of [[48,'physical','物理'],[918,'magic-damage','魔法'],[1971,'ultimate','必杀相关']]){assert.strictEqual(labelingView(catalog,key).entries.find(e=>e.id===entry(n).id),entry(n));assert.equal(entry(n).judgment,'ready');for(const b of entry(n).tagDetails[tag].bindings)assert(bs(n).some(x=>x.effectIdentity===b.effectIdentity));}
 });

@@ -268,7 +268,8 @@ export class Battle {
     if (layer === 'status') return panel;
     const runtime = [...u.real.filter(e => e.op === Number(op)), ...(work ? u.work.filter(e => e.op === Number(op)) : []), ...(bullet ? bullet.work.filter(e => e.op === Number(op)) : [])];
     const r = sum(runtime);
-    return Math.floor((panel + r.val) * (1 + r.per * 0.0001)) + r.add;
+    // 圣物属性 from the calculator: flat, on the final value (最终攻击力 100 + 圣物 10 → 110; the user's rule)
+    return Math.floor((panel + r.val) * (1 + r.per * 0.0001)) + r.add + (u.finalAdd?.[statType] || 0);
   }
   // Where a control entry came from (for showing a stat's calculation step by step): the process instance, buff
   // or bullet process whose run pushed it (procControl records its uid as `source`).
@@ -299,7 +300,7 @@ export class Battle {
       stat: statType, pure: u.pure[statType] ?? 0, crest: u.panelGiven ? 0 : (u.crest?.stats?.[statType] || 0), equips, panelGiven: !!u.panelGiven, panelOverride: u.panelOverride?.[statType] ?? null,
       status: u.panelGiven ? [] : u.status.filter(e => e.op === op).map(e => entry(e, 'status')),
       runtime: [...u.real.filter(e => e.op === op).map(e => entry(e, 'real')), ...(work ? u.work.filter(e => e.op === op).map(e => entry(e, 'work')) : []), ...(bullet ? bullet.work.filter(e => e.op === op).map(e => entry(e, 'bullet')) : [])],
-      panel: this.finalStat(u, statType, { layer: 'status' }), final: this.finalStat(u, statType, { work, bullet }),
+      panel: this.finalStat(u, statType, { layer: 'status' }), final: this.finalStat(u, statType, { work, bullet }), finalAdd: u.finalAdd?.[statType] || 0,
     };
   }
   // Equipment parameters enter the panel before the percentage layer (the crest's own parameters join them

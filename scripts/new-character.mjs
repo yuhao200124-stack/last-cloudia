@@ -59,7 +59,8 @@ registry.characters[siteId]=entry;
 write('docs/site-characters.json',serializeRegistry(registry));
 // Only the "site" map is rewritten (the rest keeps publish.py's byte layout; e.g. magicAlias key order).
 const indexText=read('dist/game-data/index.json'),site={...JSON.parse(indexText).site,[siteId]:game.unitDressId};
-write('dist/game-data/index.json',indexText.replace(/"site":\{[^}]*\}/,`"site":${JSON.stringify(site)}`));
+const siteStats={...(JSON.parse(indexText).siteStats||{}),[siteId]:registry.characters[siteId]?.maxStats};
+write('dist/game-data/index.json',indexText.replace(/"site":\{[^}]*\}/,`"site":${JSON.stringify(site)}`).replace(/"siteStats":\{(?:[^{}]|\{[^{}]*\})*\}/,`"siteStats":${JSON.stringify(siteStats)}`));
 write(`dist/character-${siteId}.html`,html);
 
 // 4. character list card and loadout entry

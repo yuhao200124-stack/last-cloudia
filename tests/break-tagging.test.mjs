@@ -1,4 +1,4 @@
-import {textBeforeCommonCalculator} from '../scripts/calculator-preservation-helpers.mjs';
+import {textBeforeCommonCalculator,readProtected} from '../scripts/calculator-preservation-helpers.mjs';
 import {passBeforeRemaining} from '../scripts/remaining-preservation-helpers.mjs';
 import {partsBeforeCombat,registryBeforeCombat} from '../scripts/combat-preservation-helpers.mjs';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';import{createHash}from'node:crypto';
@@ -16,7 +16,7 @@ test('Break audits all 935 canonical records with exact scope and offensive stun
 test('Break retains all 898 previous sources and fragments, 70 assignments, original bindings, order and protected files',()=>{
  assert.equal(preserved.entries.length,898);assert.equal(preserved.tagPassHashes.length,70);assert.equal(preserved.noteUpdates.length,11);
  for(const old of preserved.entries){const e=r.entries.find(e=>e.id===old.id);assert.equal(hash([e.id,e.url,e.name,e.text,e.notes,partsBeforeCombat(e)]),old.sourceAndPartsHash,e.name);assert.equal(hash(tagDetailsBeforeBreak(e)),old.tagDetailsHash,e.name);}
- for(const p of preserved.tagPassHashes)assert.equal(hash(passBeforeRemaining(r.tagPasses.find(x=>x.tag===p.tag))),p.hash,p.tag);for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,read(p))).digest('hex'),h,p);
+ for(const p of preserved.tagPassHashes)assert.equal(hash(passBeforeRemaining(r.tagPasses.find(x=>x.tag===p.tag))),p.hash,p.tag);for(const[p,h]of Object.entries(preserved.protectedFiles))assert.equal(createHash('sha256').update(textBeforeCommonCalculator(p,readProtected(p))).digest('hex'),h,p);
  assert.deepEqual(r.views.all.displayOrder.slice(0,898),preserved.previousDisplayOrder);assert.equal(catalog.numericEffectInjection,false);
  const preCombat=registryBeforeCombat(r),currentBeforeCombat=resolveSkillLabels(preCombat),before={...preCombat,entries:preCombat.entries.filter(e=>preserved.entries.some(p=>p.id===e.id)),tagPasses:preCombat.tagPasses.filter(p=>p.tag!=='Break')},prior=resolveSkillLabels(before);assert.equal(prior.filter(e=>e.judgment==='ready').length,605);
  assert.deepEqual(nums(prior.filter(e=>e.judgment==='partial'&&currentBeforeCombat.find(x=>x.id===e.id).judgment==='ready')),[163,295,840,1008,1009,1065,1085,1142,1280,1304,1458,1546,1665,1675,1728]);for(const e of prior.filter(e=>e.judgment==='ready'))assert.equal(entry(+e.url.split('/').pop()).judgment,'ready');

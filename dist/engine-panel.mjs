@@ -1,9 +1,9 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
-// 输入来自计算器已有的状态（`lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位。
+// 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
 import { K } from './engine/battle.mjs';
 import { RAW_BLESSING_RECORDS, USER_CONFIRMED_BLESSING_RECORDS } from './account-blessings.mjs';
-import { characterDefinition } from './character-template.mjs?v=20260928-game-names';
+import { characterGear } from './character-gear.mjs?v=20260928-engine-only';
 
 // This account's blessings (加护) with the runtime values the reader captured (blessing levels scale the
 // master value, e.g. 100 → 406), keyed by passive id and process segment; used when no report is imported.
@@ -41,7 +41,109 @@ function loadBuildFor(dress) {
   if (buildDress === dress) return;
   buildDress = dress; buildGains.clear(); buildCurrent = buildBaseline = null;
   try { const saved = JSON.parse(localStorage.getItem(BUILD_KEY(dress)) || 'null'); build = saved ? { ...defaultBuild(), ...saved, own: { ...defaultBuild().own, ...(saved.own || {}) } } : defaultBuild(); } catch { build = defaultBuild(); }
+  // opened from a character page's 已保存配装 (…&plan=<id>): that saved loadout, once
+  const planId = new URLSearchParams(location.search).get('plan');
+  if (planId && !urlPlanUsed) { urlPlanUsed = true; const plan = loadPlans().find(p => p.id === planId && p.dress === dress); if (plan) { applyPlan(plan); return; } }
   syncBuildControls();
+}
+// ---- saved loadouts (保存配装): the chosen common skills of the 配装 panel, per character, in this browser;
+// the character pages' 已保存配装 list them (lc-engine-plans:v1) ----
+const PLANS_KEY = 'lc-engine-plans:v1';
+let urlPlanUsed = false;
+function loadPlans() { try { const l = JSON.parse(localStorage.getItem(PLANS_KEY) || '[]'); return Array.isArray(l) ? l : []; } catch { return []; } }
+function storePlans(list) { try { localStorage.setItem(PLANS_KEY, JSON.stringify(list)); return true; } catch { return false; } }
+const siteCharacterId = () => new URLSearchParams(location.search).get('character') || null;
+const planStatus = text => { if ($('enginePlanStatus')) $('enginePlanStatus').textContent = text; };
+function showBuild(open) {
+  const section = $('engineBuild'); if (!section) return;
+  section.hidden = !open; $('engineBuildToggle')?.setAttribute('aria-expanded', String(open));
+  if (open) ensurePassiveIndex().then(renderCandidates);
+}
+function applyPlan(plan) {
+  build = { ...defaultBuild(), ...(plan.build || {}), own: { ...defaultBuild().own, ...(plan.build?.own || {}) }, selected: [...(plan.build?.selected || [])], on: true, planId: plan.id };
+  saveBuild(); buildGains.clear(); syncBuildControls();
+  if ($('enginePlanName')) $('enginePlanName').value = plan.name || '';
+  planStatus(`已载入「${plan.name}」。`);
+}
+function savePlan(asNew) {
+  if (!buildDress) { planStatus('先选择招式，等角色读取完。'); return; }
+  const list = loadPlans(), now = new Date().toISOString();
+  const name = ($('enginePlanName')?.value || '').trim() || `配装方案 ${list.filter(p => p.dress === buildDress).length + 1}`;
+  const data = { exclusive: build.exclusive, own: { ...build.own }, selected: [...build.selected] };
+  let plan = !asNew && build.planId ? list.find(p => p.id === build.planId && p.dress === buildDress) : null;
+  if (plan) Object.assign(plan, { name, build: data, updatedAt: now });
+  else { plan = { id: `plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, name, siteId: siteCharacterId(), dress: buildDress, build: data, createdAt: now, updatedAt: now }; list.push(plan); }
+  if (!storePlans(list)) { planStatus('保存失败：这个浏览器不允许保存。'); return; }
+  build.planId = plan.id; saveBuild(); if ($('enginePlanName')) $('enginePlanName').value = name;
+  planStatus(`已保存「${name}」（${data.selected.length} 个通用技能）。`); renderPlans();
+}
+function planAction(action, id, button) {
+  const list = loadPlans(), plan = list.find(p => p.id === id); if (!plan) { renderPlans(); return; }
+  if (action === 'load') { applyPlan(plan); run(); }
+  else if (action === 'rename') {
+    const name = ($('enginePlanName')?.value || '').trim();
+    if (!name) { planStatus('先在“配装名称”里填新名字，再点改名。'); return; }
+    plan.name = name; plan.updatedAt = new Date().toISOString(); storePlans(list); planStatus(`已改名为「${name}」。`); renderPlans();
+  } else if (action === 'delete') {
+    if (button.dataset.confirm !== '1') { button.dataset.confirm = '1'; button.textContent = '确定删除？'; return; }
+    storePlans(list.filter(p => p.id !== id)); if (build.planId === id) { build.planId = null; saveBuild(); }
+    planStatus(`已删除「${plan.name}」。`); renderPlans();
+  }
+}
+function renderPlans() {
+  const box = $('enginePlanList'); if (!box) return;
+  const plans = loadPlans().filter(p => p.dress === buildDress).sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+  $('enginePlanCount').textContent = String(plans.length);
+  box.innerHTML = plans.length ? plans.map(p => `<li${p.id === build.planId ? ' class="is-current"' : ''}><b>${esc(p.name)}</b> <small>${(p.build?.selected || []).length} 个通用技能 · ${esc(String(p.updatedAt || '').slice(0, 10))}${p.id === build.planId ? ' · 当前' : ''}</small><span class="inline-options"><button type="button" class="secondary" data-plan-action="load" data-plan="${esc(p.id)}">载入</button><button type="button" class="secondary" data-plan-action="rename" data-plan="${esc(p.id)}" title="用上面“配装名称”里的名字">改名</button><button type="button" class="secondary" data-plan-action="delete" data-plan="${esc(p.id)}">删除</button></span></li>`).join('') : '<li class="help">还没有保存的配装。</li>';
+}
+// ---- 恢复角色推荐配装 / 按每 SC 收益推荐: data from the old loadout (game-data/engine/loadout-data.json) ----
+let loadoutData = null;
+async function ensureLoadoutData() { if (!loadoutData) loadoutData = await fetch(new URL('./game-data/engine/loadout-data.json', import.meta.url)).then(r => r.json()).catch(() => ({ commonPassives: [], recommended: {} })); return loadoutData; }
+async function restoreRecommended() {
+  const data = await ensureLoadoutData();
+  let site = siteCharacterId();
+  if (!site && buildDress) { if (!siteIndex) siteIndex = await fetch(new URL('./game-data/index.json', import.meta.url)).then(r => r.json()).catch(() => ({})); site = Object.entries(siteIndex?.site || {}).find(([, d]) => d === buildDress)?.[0] || null; }
+  const rec = site && data.recommended?.[site];
+  if (!rec?.passives?.length) { planStatus('这个角色没有推荐配装。'); return; }
+  const c = await gameCharacter(buildDress); const own = new Set(ownPassiveIds(c, true).filter(isFreePassive));
+  build.selected = rec.passives.filter(id => !own.has(id)); build.on = true; build.planId = null; saveBuild(); buildGains.clear(); syncBuildControls();
+  planStatus(`已恢复推荐配装（${build.selected.length} 个被动）；需要的话再保存。`); run();
+}
+const recommendState = { running: false, gen: 0, rows: [] };
+function stopRecommend(text) {
+  recommendState.gen++; recommendState.running = false;
+  if ($('engineRecommendStart')) { $('engineRecommendStart').disabled = false; $('engineRecommendStop').disabled = true; }
+  if (text && $('engineRecommendStatus')) $('engineRecommendStatus').textContent = text;
+}
+function renderRecommend(done, total) {
+  const rows = [...recommendState.rows].filter(r => r.gain != null).sort((a, b) => b.perSc - a.perSc || b.gain - a.gain).slice(0, 30);
+  $('engineRecommendRows').innerHTML = rows.map(r => `<tr><td>${passiveLabel(r.id)}</td><td>${r.cost}</td><td>${pct(r.gain)}</td><td>${pct(r.perSc)}</td><td><button type="button" class="primary" data-build-add="${r.id}">加入</button></td></tr>`).join('') || '<tr><td colspan="5" class="help">还没有结果。</td></tr>';
+  $('engineRecommendStatus').textContent = `${done < total ? '计算中' : '完成'}：${done} / ${total}；按每 SC 收益列出前 ${rows.length} 个（收益按随机 0.95 单点比较）。`;
+}
+async function startRecommend() {
+  if (!build.on || !buildCtx || !buildCurrent) { $('engineRecommendStatus').textContent = '先启用配装模式，等“当前配装”结算完再开始。'; return; }
+  stopRecommend(); const gen = recommendState.gen, ctx = buildCtx;
+  recommendState.running = true; $('engineRecommendStart').disabled = true; $('engineRecommendStop').disabled = false;
+  $('engineRecommendStatus').textContent = '准备候选被动…';
+  const data = await ensureLoadoutData(); await ensurePassiveIndex();
+  const taken = new Set([...build.selected, ...ctx.buildOwn.map(p => p.id ?? p)]);
+  const q = $('engineRecommendSearchOnly').checked ? buildQuery.toLowerCase() : '';
+  const byId = new Map(passiveIndex.map(r => [r.id, r]));
+  let ids = [...new Set([...buildOwnPaid, ...(data.commonPassives || [])])].filter(id => !taken.has(id)).filter(id => { const c = passiveCost(id); return c > 0 && c < FREE_COST; });
+  if (q) ids = ids.filter(id => { const r = byId.get(id); return r && (r.nameS.toLowerCase().includes(q) || r.name.toLowerCase().includes(q)); });
+  await engineModules.loadPassives(battle.master, ids);
+  if (gen !== recommendState.gen) return;
+  ids = ids.filter(id => battle.master.passive.has(id));
+  recommendState.rows = [];
+  for (let i = 0; i < ids.length; i++) {
+    if (gen !== recommendState.gen || ctx !== buildCtx || running) { if (gen === recommendState.gen) stopRecommend('配装、招式或条件已改变，已停止；可重新开始。'); return; }
+    const id = ids[i]; let g = buildGains.get(id);
+    if (!g || g.removed) { const withIt = evalBuild(ctx, [...ctx.buildPassives, { id }]); g = { removed: false, perCall: withIt.perCall, gain: buildCurrent.perCall > 0 ? withIt.perCall / buildCurrent.perCall - 1 : null }; buildGains.set(id, g); }
+    const cost = passiveCost(id);
+    recommendState.rows.push({ id, cost, gain: g.gain, perSc: g.gain != null ? g.gain / cost : null });
+    if (i % 4 === 3 || i === ids.length - 1) { renderRecommend(i + 1, ids.length); await yieldUi(); }
+  }
+  if (gen === recommendState.gen) { recommendState.running = false; $('engineRecommendStart').disabled = false; $('engineRecommendStop').disabled = true; renderRecommend(ids.length, ids.length); }
 }
 function saveBuild() { try { if (buildDress) localStorage.setItem(BUILD_KEY(buildDress), JSON.stringify(build)); } catch {} }
 async function ensurePassiveIndex() {
@@ -63,16 +165,15 @@ function keepLoadout(report) {
 }
 async function ensureSwitches() { if (!switches) switches = await fetch(new URL('./game-data/engine/switch.json', import.meta.url)).then(r => r.json()); return switches; }
 
-const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-cands{display:flex;flex-wrap:wrap;gap:6px}.engine-build-cand{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid #3a526f;border-radius:6px;background:#1c2f45}.engine-build-cand button{min-height:26px;padding:2px 8px;font-size:.8rem}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
-// ---- the main result card: driven by the sandbox; the old rules move under 网页旧规则（对照） ----
-// The hit count is the calculator's own 基础命中段数 field (the user's tested count, saved per move by the
-// workflow); the card edits that same field.
+const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-cands{display:flex;flex-wrap:wrap;gap:6px}.engine-build-cand{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid #bdccdf;border-radius:6px;background:#f2f6fb;color:#172d49}#engineBuild{margin-top:12px}#engineBuildWrap{margin-top:14px}.engine-plan-list{list-style:none;padding:0;margin:.4rem 0}.engine-plan-list li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 0;border-bottom:1px solid #dbe4ef}.engine-plan-list li.is-current b{color:#1f5ea8}.engine-plan-actions{align-self:end}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}.engine-build-cand button{min-height:26px;padding:2px 8px;font-size:.8rem}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
+// ---- the main result card ----
+// 命中段数 is only the user's own count (default 10), kept per move by the page (damage-calculator.mjs); the card
+// edits it through the page.
 function siteHits() { const n = Number($('hits')?.value); return Number.isFinite(n) && n > 0 ? n : null; }
-function currentHits() { const n = siteHits(); return n ? { hits: n, source: '基础命中段数' } : { hits: 1, source: '未填（按 1 段）' }; }
+function currentHits() { const n = siteHits(); return n ? { hits: n, source: '命中段数' } : { hits: 10, source: '默认 10 段' }; }
 function mountPrimary() {
   const panel = $('enginePanel'); if (!panel || $('enginePrimary')) return;
   const heading = panel.querySelector('.section-heading'); if (!heading) return;
-  const oldMain = document.querySelector('#unifiedResults .result-main'); // the old standalone card, captured before the new one below exists
   // Carries the same "result-main" class as the old standalone card so it keeps the dark result-card styling
   // (the light text colors in primary-result/total-result/etc. are designed against that dark background).
   const wrap = document.createElement('div'); wrap.className = 'result-main';
@@ -86,16 +187,12 @@ function mountPrimary() {
     <article class="critical-result"><span title="触发暴击时的伤害；整次期望按局内暴击率计算">暴击每段伤害</span><strong id="ep-critical">—</strong></article>
     <div class="total-result"><span>整次技能期望伤害</span><strong id="ep-total">—</strong><small id="ep-totalNote"></small></div>
     <dl class="result-details">
-      <div><dt>命中段数</dt><dd class="ep-hits"><input id="engineHits" type="number" min="1" max="999" step="1" placeholder="网站"></dd></div>
+      <div><dt>命中段数</dt><dd class="ep-hits"><input id="engineHits" type="number" min="1" max="999" step="1" placeholder="10"></dd></div>
       <div><dt>全为普通命中时</dt><dd id="ep-normalTotal">—</dd></div><div><dt>特攻匹配</dt><dd id="ep-killer">—</dd></div><div><dt>弱属匹配</dt><dd id="ep-weak">—</dd></div>
     </dl><p id="ep-note" class="result-cap-note"></p>`;
-  const legacy = document.createElement('details'); legacy.id = 'legacyResults'; legacy.innerHTML = '<summary>网页旧规则（对照，不参与上方结果）</summary>';
-  wrap.append(block, legacy);
+  wrap.append(block);
   heading.after(wrap);
-  for (const id of ['error', 'resolveReview', 'resultValues']) if ($(id)) legacy.append($(id));
-  // its old home is now empty (everything useful moved in here) — hide it instead of leaving a bare heading
-  if (oldMain) oldMain.hidden = true;
-  $('engineHits').addEventListener('change', e => { const h = $('hits'); if (!h) return; h.value = e.target.value; h.dispatchEvent(new Event('input', { bubbles: true })); h.dispatchEvent(new Event('change', { bubbles: true })); run(); });
+  $('engineHits').addEventListener('change', e => document.dispatchEvent(new CustomEvent('lc:hits-change', { detail: { hits: e.target.value } })));
 }
 // ---- 法强／攻击力、最终暴击率、伤害上限：the selected move's own values and how the game data gets there ----
 // Every number is what this move's first damaging hit actually receives (its own bonuses included), computed
@@ -140,8 +237,9 @@ function statSteps(parts, ctx, { baseLabel, unit = '' }) {
     if (parts.status.length) lines.push(`面板加成（${listParts(parts.status, ctx, unit)}）：(${fmt(parts.pure)}${eq ? ` + 装备 ${fmt(eq)}` : ''}${st.val ? ` + ${fmt(st.val)}` : ''})${st.per ? ` × (1 + ${pctPer(st.per)})` : ''}${st.add ? ` + ${fmt(st.add)}` : ''} → ${fmt(parts.panel)}${unit}`);
     else if (eq) lines.push(`${fmt(parts.pure)} + 装备 ${fmt(eq)} → ${fmt(parts.panel)}${unit}`);
   }
-  if (parts.runtime.length) { const r = sum(parts.runtime); lines.push(`战斗中与本招式（${listParts(parts.runtime, ctx, unit)}）：(${fmt(parts.panel)}${r.val ? ` + ${fmt(r.val)}` : ''})${r.per ? ` × (1 + ${pctPer(r.per)})` : ''}${r.add ? ` + ${fmt(r.add)}` : ''} → ${fmt(parts.final)}${unit}`); }
-  if (!parts.runtime.length && !parts.status.length && !parts.equips.length && !parts.crest && !parts.panelGiven) lines.push(`没有其他加成 → ${fmt(parts.final)}${unit}`);
+  if (parts.runtime.length) { const r = sum(parts.runtime); lines.push(`战斗中与本招式（${listParts(parts.runtime, ctx, unit)}）：(${fmt(parts.panel)}${r.val ? ` + ${fmt(r.val)}` : ''})${r.per ? ` × (1 + ${pctPer(r.per)})` : ''}${r.add ? ` + ${fmt(r.add)}` : ''} → ${fmt(parts.final - (parts.finalAdd || 0))}${unit}`); }
+  if (parts.finalAdd) lines.push(`圣物属性 +${fmt(parts.finalAdd)}${unit}（加在最终值上）→ ${fmt(parts.final)}${unit}`);
+  if (!parts.runtime.length && !parts.status.length && !parts.equips.length && !parts.crest && !parts.panelGiven && !parts.finalAdd) lines.push(`没有其他加成 → ${fmt(parts.final)}${unit}`);
   return lines;
 }
 function capSteps(first, ctx) {
@@ -166,6 +264,7 @@ function renderBasicFields(first, ctx) {
   if (!first?.breakdown) { for (const [id] of BASIC_FIELDS) show(id, []); syncBasicPanels(); return; }
   const b = first.breakdown, magical = b.attack.stat === K.STAT.INT;
   if ($('attack')) { $('attack').value = String(first.attack); $('attack').readOnly = true; $('attack').title = '所选招式实际吃到的数值（游戏数据计算）'; }
+  if ($('attackLabel')) $('attackLabel').textContent = magical ? '当前面板法强' : '当前面板攻击力';
   if ($('critRate')) { $('critRate').value = String(first.crt); $('critRate').readOnly = true; $('critRate').title = '所选招式实际吃到的暴击率（游戏数据计算）'; }
   if ($('damageCapInput')) { $('damageCapInput').value = String(first.capComputed); $('damageCapInput').readOnly = true; }
   show('attack', statSteps(b.attack, ctx, { baseLabel: magical ? '基础法强（等级·觉醒·能力盘）' : '基础攻击力（等级·觉醒·能力盘）' }));
@@ -215,32 +314,30 @@ function describeSupport(m) {
 }
 let supportCache = { key: null, map: new Map() }, supportDress = null, supportChecked = new Set(), supportList = [], supportActive = [];
 const supportOf = c => [...(c?.magic?.normal || []), ...(c?.magic?.heavy || [])].filter(m => m.parts?.length && m.parts.every(p => p.kind == null));
-// the old rules' own checkbox for the same spell (魔术指导) is kept in step, so the collapsed comparison agrees
-const legacyMagicBox = name => [...document.querySelectorAll('#magicBuffChoices input[data-magic-buff]')].find(i => i.closest('label')?.textContent.trim().startsWith(`${name}：`));
 function renderSupportMagic(c, dress) {
   const host = $('magicBuffOptions'); supportList = supportOf(c);
-  if (!host || !supportList.length) { supportActive = []; if ($('engineSupportMagic')) $('engineSupportMagic').innerHTML = ''; if ($('magicBuffChoices')) $('magicBuffChoices').hidden = false; return; }
+  if (!host || !supportList.length) { supportActive = []; if ($('engineSupportMagic')) $('engineSupportMagic').innerHTML = ''; if (host) host.hidden = true; return; }
   let box = $('engineSupportMagic');
   if (!box) {
-    box = document.createElement('div'); box.id = 'engineSupportMagic'; ($('magicBuffChoices') || host.lastElementChild).after(box);
+    box = document.createElement('div'); box.id = 'engineSupportMagic'; host.append(box);
     box.addEventListener('change', e => {
       const id = Number(e.target.dataset.supportMagic); if (!id) return;
       if (e.target.checked) supportChecked.add(id); else supportChecked.delete(id);
       try { localStorage.setItem(`lc-support-magic:${supportDress}`, JSON.stringify([...supportChecked])); } catch {}
-      const m = supportList.find(x => x.id === id), legacy = m && legacyMagicBox(m.nameS);
-      if (legacy && legacy.checked !== e.target.checked) { legacy.checked = e.target.checked; legacy.dispatchEvent(new Event('change', { bubbles: true })); }
       run();
     });
   }
   if (supportDress !== dress) {
     supportDress = dress; supportChecked = new Set();
     let saved = null; try { saved = JSON.parse(localStorage.getItem(`lc-support-magic:${dress}`)); } catch {}
-    for (const m of supportList) if (Array.isArray(saved) ? saved.includes(m.id) : legacyMagicBox(m.nameS)?.checked) supportChecked.add(m.id);
+    // first visit after the old calculator: its saved 魔法 choices (魔术指导 / 绝望之魂 by name)
+    const old = Array.isArray(saved) ? null : (() => { try { return JSON.parse(localStorage.getItem(`lc-magic-buffs:${new URLSearchParams(location.search).get('character')}`)) || {}; } catch { return {}; } })();
+    const OLD_IDS = { 'magic-guidance': '魔术指导', 'despair-anima': '绝望之魂' };
+    for (const m of supportList) if (Array.isArray(saved) ? saved.includes(m.id) : Object.entries(OLD_IDS).some(([k, n]) => old?.[k] === true && n === m.nameS)) supportChecked.add(m.id);
   }
   const key = JSON.stringify([dress, supportList.map(m => m.id)]);
   if (box.dataset.key !== key) { box.dataset.key = key; box.innerHTML = supportList.map(m => `<label class="magic-buff-check" title="${esc(m.explainS || '')}"><input type="checkbox" data-support-magic="${m.id}"${supportChecked.has(m.id) ? ' checked' : ''}><span>${esc(m.nameS)}<span data-support-effect="${m.id}">：读取中…</span></span></label>`).join(''); supportCache.key = null; }
   for (const i of box.querySelectorAll('[data-support-magic]')) i.checked = supportChecked.has(Number(i.dataset.supportMagic));
-  if ($('magicBuffChoices')) $('magicBuffChoices').hidden = true;
   host.hidden = false;
   supportActive = supportList.filter(m => supportChecked.has(m.id)).map(m => m.id);
 }
@@ -259,6 +356,25 @@ async function measureSupportMagic(M, attackerSpec, targetSpec, state, dress) {
   renderSupportEffects(supportCache.map);
 }
 
+// ---- 面板与加成核对: every value and bonus the selected move's first hit actually gets, with its sources ----
+const REVIEW_STATS = [['hp', 'HP'], ['mp', 'MP'], ['str', '攻击力'], ['def', '防御力'], ['int', '法强'], ['mnd', '魔抗'], ['crt', '暴击率', '%'], ['spd', '速度']];
+const stepList = lines => `<ul class="entry-source-list">${lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>`;
+function renderReview(out, first, ctx) {
+  const body = $('reviewBody'); if (!body) return;
+  if (!first?.breakdown) { body.innerHTML = '<p class="help">这个招式没有伤害段。</p>'; return; }
+  const statRows = REVIEW_STATS.map(([k, label, unit = '']) => { const parts = out.statParts?.[k]; if (!parts) return ''; return `<tr><th>${label}</th><td>${fmt(parts.panel)}${unit}</td><td>${fmt(parts.final)}${unit}</td><td>${stepList(statSteps(parts, ctx, { baseLabel: k === 'crt' ? '角色基础暴击率' : '基础值（等级·觉醒·能力盘）', unit }))}</td></tr>`; }).join('');
+  const b = first.breakdown, magical = b.attack.stat === K.STAT.INT;
+  const moveRows = [[magical ? '法强' : '攻击力', fmt(first.attack), statSteps(b.attack, ctx, { baseLabel: magical ? '基础法强（等级·觉醒·能力盘）' : '基础攻击力（等级·觉醒·能力盘）' })], ['暴击率', `${fmt(first.crt)}%`, statSteps(b.crit, ctx, { baseLabel: '角色基础暴击率', unit: '%' })], ['伤害上限', fmt(first.capComputed), capSteps(first, ctx)]]
+    .map(([label, value, lines]) => `<tr><th>${label}</th><td>${value}</td><td>${stepList(lines)}</td></tr>`).join('');
+  const resist = first.resist || 0, elem = ELEM_NAMES[first.element] || '无';
+  const factors = [['技能系数', `× ${first.coefficient}`], ['攻击属性', first.element ? `${elem}：目标耐性 ${resist} → × ${(1 - Math.min(1, Math.max(-9.99, resist / 100))).toFixed(2)}` : '无属性'], ['特攻', first.killer ? `触发 × ${first.killerFactor.toFixed(2)}` : '未触发'], ['目标防御（结算用）', fmt(first.defense)],
+    ['核心前：攻击侧增伤', `× ${first.offense.toFixed(3)}`], ['核心前：目标受伤修正', `× ${first.received.toFixed(3)}`], ['核心前：减伤', `× ${first.reduction.toFixed(3)}`], ['核心伤害（随机 0.95）', fmt(first.core)], ['结算后修正后', fmt(first.afterPassives)]];
+  const edits = first.edits.map(e => `<li><span>${esc(e.passiveName || e.name)}</span><b>${fmt(e.value)}</b></li>`).join('');
+  body.innerHTML = `<h3>面板（战斗开始后、施放本招式前）</h3><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>属性</th><th>面板</th><th>战斗中</th><th>计算过程</th></tr></thead><tbody>${statRows}</tbody></table></div>
+    <h3>本招式第 1 击：${esc(ctx.moveName)}</h3><div class="entry-table-wrap"><table class="entry-table"><thead><tr><th>项目</th><th>数值</th><th>计算过程</th></tr></thead><tbody>${moveRows}</tbody></table></div>
+    <h3>伤害倍率</h3><div class="entry-table-wrap"><table class="entry-table"><tbody>${factors.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</tbody></table></div>
+    <h3>结算后修正（按游戏脚本的执行顺序）</h3><ol class="engine-edits">${edits || '<li>无</li>'}</ol>`;
+}
 let lastCtx = null;
 const setPrimaryState = text => { const el = $('ep-state'); if (el) el.textContent = text; };
 function renderPrimary(out, ctx) {
@@ -309,25 +425,32 @@ function mount() {
   card.id = 'enginePanel'; card.className = 'card engine-panel'; card.setAttribute('aria-labelledby', 'enginePanelTitle');
   card.innerHTML = `<div class="section-heading"><h3 id="enginePanelTitle">游戏脚本结算（沙盒引擎）</h3><span id="engineState" class="help">未开始</span></div>
     <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
-    <details id="engineBuild"><summary>配装模式：自带被动基线 → 逐个加被动看收益</summary>
+    <details id="enginePreCasts"><summary>施放前已用过的技能（累计次数类被动、自我 Buff 魔法）</summary><p class="help">按这场战斗里在本招之前已经用过的顺序填次数：例如先放神託的誓言再打必杀，必杀上限就会多 100,000；累计类被动（超必殺技階段增幅等）也按次数累加。默认全为 0。</p><div id="enginePreCastList" class="fields two engine-fields"></div></details>
+    <div class="inline-options"><label><input id="engineProbability" type="checkbox" checked>概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
+    <div id="engineResult"></div>`;
+  aside.insertBefore(card, aside.firstChild);
+  // 配装 sits where the old calculator's 配装 button was: right under this card, opening its panel below
+  const buildWrap = document.createElement('div'); buildWrap.id = 'engineBuildWrap';
+  buildWrap.innerHTML = `<button id="engineBuildToggle" class="primary unified-start" type="button" aria-expanded="false" aria-controls="engineBuild">配装</button>
+    <section id="engineBuild" class="card engine-build" hidden aria-labelledby="engineBuildTitle">
+      <div class="section-heading"><h3 id="engineBuildTitle">配装</h3></div>
       <p class="help">基线只装角色不花 SC 的自带被动（个性、固有被动、超越）＋本账号加护，等级／觉醒／能力盘／强化全按最大，专武可开关。启用后主结果卡按这里的配装结算；每加一个被动（本角色能力盘上要花 SC 的，或任意通用被动），就重新结算并给出它对当前配装的收益（去掉它伤害会少多少）。</p>
       <div class="inline-options"><label><input id="engineBuildOn" type="checkbox">启用配装模式</label><label><input id="engineBuildExclusive" type="checkbox" checked>有专武（专属武器＋防具）</label><label><input id="engineBuildOwnPersonality" type="checkbox" checked>个性</label><label><input id="engineBuildOwnPassives" type="checkbox" checked>固有免费被动</label><label><input id="engineBuildOwnTranscend" type="checkbox" checked>超越</label><label><input id="engineBuildOwnBlessings" type="checkbox" checked>加护</label></div>
-      <div class="inline-options"><button type="button" id="engineBuildFromReport" class="secondary">从配装报告载入已装被动</button><button type="button" id="engineBuildRecalc" class="secondary">重算全部收益</button><button type="button" id="engineBuildClear" class="secondary">清空所选</button></div>
+      <div class="fields two engine-fields"><label>配装名称<input id="enginePlanName" maxlength="40" placeholder="配装方案"></label><div class="inline-options engine-plan-actions"><button type="button" id="enginePlanSave" class="primary">保存配装</button><button type="button" id="enginePlanSaveNew" class="secondary">另存为新配装</button></div></div>
+      <p class="help" id="enginePlanStatus" role="status"></p>
+      <details id="enginePlans"><summary>已保存配装（<span id="enginePlanCount">0</span>）</summary><ul id="enginePlanList" class="engine-plan-list"></ul></details>
+      <div class="inline-options"><button type="button" id="engineBuildRecommended" class="secondary">恢复角色推荐配装</button><button type="button" id="engineBuildFromReport" class="secondary">从配装报告载入已装被动</button><button type="button" id="engineBuildRecalc" class="secondary">重算全部收益</button><button type="button" id="engineBuildClear" class="secondary">清空所选</button></div>
       <p class="help" id="engineBuildSummary">未启用。</p>
       <div class="entry-table-wrap"><table class="entry-table engine-build-table"><thead><tr><th>已选被动</th><th>SC</th><th>对当前配装的收益</th><th></th></tr></thead><tbody id="engineBuildRows"><tr><td colspan="4" class="help">还没有加被动。</td></tr></tbody></table></div>
       <div class="fields two engine-fields"><label>添加被动（名称，简体或繁体）<input id="engineBuildSearch" type="search" placeholder="例如 光魔法 / 月光 / 贯导"></label></div>
       <div id="engineBuildCandidates" class="help"></div>
-    </details>
-    <details id="enginePreCasts"><summary>施放前已用过的技能（累计次数类被动、自我 Buff 魔法）</summary><p class="help">按这场战斗里在本招之前已经用过的顺序填次数：例如先放神託的誓言再打必杀，必杀上限就会多 100,000；累计类被动（超必殺技階段增幅等）也按次数累加。默认全为 0。</p><div id="enginePreCastList" class="fields two engine-fields"></div></details>
-    <div class="inline-options"><label><input id="engineProbability" type="checkbox" checked>概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
-    <div id="engineResult"></div>`;
-  // The sandbox card is the main card now: it sits above the plain "计算结果" card (which becomes the auxiliary,
-  // legacy-comparison one) instead of after it.
-  const resultMain = aside.querySelector('.result-main');
-  if (resultMain) aside.insertBefore(card, resultMain); else aside.insertBefore(card, aside.firstChild);
-  // The plain "计算结果" display (big number/gauges/total) is folded into this card, right under its own
-  // heading, instead of living in a separate card below — mountPrimary() moves it (and the legacy-rule
-  // comparison) in here and hides the now-empty old .result-main container.
+      <details id="engineRecommend"><summary>按每 SC 收益推荐</summary><p class="help">把技能表里的每个通用被动（以及本角色能力盘上要花 SC 的被动）逐个加进当前配装试算，按“收益 ÷ SC”排序。逐个计算，较慢；可随时停止。换招式、条件或配装后会停止，需要重新开始。</p>
+        <div class="inline-options"><button type="button" id="engineRecommendStart" class="primary">开始计算</button><button type="button" id="engineRecommendStop" class="secondary" disabled>停止</button><label><input id="engineRecommendSearchOnly" type="checkbox">只算上面搜索到的被动</label></div>
+        <p class="help" id="engineRecommendStatus" role="status"></p>
+        <div class="entry-table-wrap"><table class="entry-table engine-build-table"><thead><tr><th>被动</th><th>SC</th><th>收益</th><th>每 SC</th><th></th></tr></thead><tbody id="engineRecommendRows"></tbody></table></div></details>
+    </section>`;
+  card.after(buildWrap);
+  // the result display (big number / gauges / total) sits right under this card's heading
   mountPrimary();
   // 目标：从游戏怪物表选择 lives with the rest of the Boss/target fields (Boss 与战斗条件 section) instead of in
   // this card; fall back to appending here if that section's slot isn't on the page.
@@ -352,6 +475,14 @@ function mount() {
   $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} run(); });
   $('engineResult').addEventListener('change', e => { const key = e.target.dataset.assume; if (!key) return; if (e.target.checked) assumed.add(key); else assumed.delete(key); run(); });
   // loadout builder controls
+  $('engineBuildToggle').addEventListener('click', () => showBuild($('engineBuild').hidden));
+  $('enginePlanSave').addEventListener('click', () => savePlan(false));
+  $('enginePlanSaveNew').addEventListener('click', () => savePlan(true));
+  $('enginePlanList').addEventListener('click', e => { const b = e.target.closest('[data-plan-action]'); if (b) planAction(b.dataset.planAction, b.dataset.plan, b); });
+  $('engineBuildRecommended').addEventListener('click', () => restoreRecommended());
+  $('engineRecommendStart').addEventListener('click', () => startRecommend());
+  $('engineRecommendStop').addEventListener('click', () => stopRecommend('已停止。'));
+  $('engineRecommendRows').addEventListener('click', e => { const add = e.target.closest('[data-build-add]'); if (!add) return; const id = Number(add.dataset.buildAdd); if (!build.selected.includes(id)) build.selected.push(id); build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); stopRecommend('已加入，配装改变后需要重新计算推荐。'); run(); });
   $('engineBuildOn').addEventListener('change', e => { build.on = e.target.checked; saveBuild(); buildGains.clear(); if (build.on) ensurePassiveIndex().then(renderCandidates); run(); });
   $('engineBuildExclusive').addEventListener('change', e => { build.exclusive = e.target.checked; saveBuild(); buildGains.clear(); run(); });
   for (const [id, key] of [['engineBuildOwnPersonality', 'personality'], ['engineBuildOwnPassives', 'ownPassives'], ['engineBuildOwnTranscend', 'transcend'], ['engineBuildOwnBlessings', 'blessings']]) $(id).addEventListener('change', e => { build.own[key] = e.target.checked; saveBuild(); buildGains.clear(); run(); });
@@ -377,7 +508,8 @@ function syncBuildControls() {
   if (!$('engineBuildOn')) return;
   $('engineBuildOn').checked = build.on; $('engineBuildExclusive').checked = build.exclusive;
   $('engineBuildOwnPersonality').checked = build.own.personality; $('engineBuildOwnPassives').checked = build.own.ownPassives; $('engineBuildOwnTranscend').checked = build.own.transcend; $('engineBuildOwnBlessings').checked = build.own.blessings;
-  if (build.on) $('engineBuild').open = true;
+  if (build.on) showBuild(true);
+  renderPlans();
 }
 // The character's own passives (game-data/c/<dress>.json) split by SC: COST 99 marks the free ones (unique
 // passives such as 赤裸之力II / 救世的聖劍, 【超越】, 迷宮踏破) that are always on; the rest cost SC like any common
@@ -403,7 +535,7 @@ function evalBuild(ctx, passiveIds) {
   battle.reset();
   const spec = { ...ctx.attackerSpec, passives: passiveIds.map(id => (typeof id === 'object' ? id : { id })) };
   const a = M.addAttacker(battle, spec), t = M.addTarget(battle, ctx.targetSpec);
-  return metricOf(M.runScenario({ battle, attacker: a, target: t, skill: { id: ctx.move.id }, state: ctx.state, assume: { probability: probabilityMode, instances: [...ctx.assumeSet] }, randoms: [0.95] }));
+  return metricOf(M.runScenario({ battle, attacker: a, target: t, skill: { id: ctx.move.id, ...(ctx.firstBullet ? { bulletId: ctx.firstBullet } : {}) }, state: ctx.state, assume: { probability: probabilityMode, instances: [...ctx.assumeSet] }, randoms: [0.95] }));
 }
 const yieldUi = () => new Promise(r => setTimeout(r, 0));
 // Baseline (own only) and the marginal of every selected passive, computed one run at a time so the page stays live;
@@ -536,7 +668,7 @@ const isWeapon = t => t >= 10 && t < 20;
 function chosenExclusive(c, master) {
   const choice = $('specialWeapon')?.value || 'both';
   const tiers = exclusiveTiers(c);
-  const gear = characterDefinition(new URLSearchParams(location.search).get('character') || '').gear || {};
+  const gear = characterGear(new URLSearchParams(location.search).get('character') || '');
   const order = Object.values(gear).map(g => g.name);
   const rank = e => { const i = order.indexOf(e.nameS); return i < 0 ? order.length : i; };
   const sorted = tiers.map((e, i) => ({ e, i })).sort((a, b) => rank(a.e) - rank(b.e) || a.i - b.i).map(x => x.e);
@@ -575,6 +707,7 @@ function setDualLock(locked) {
   const label = box.closest('label');
   if (locked) { box.checked = true; box.disabled = true; label?.setAttribute('title', '这个招式的双刀效果已由技能／装备生效，计算器不再叠加'); }
   else { box.disabled = false; box.checked = !!(latest?.selection?.dualWield ?? false); label?.removeAttribute('title'); }
+  document.dispatchEvent(new CustomEvent('lc:dual-lock', { detail: { locked } }));
   return true;
 }
 function dualOn() { return !dualLocked && !!(latest?.selection?.dualWield ?? $('dualWield')?.checked); }
@@ -609,11 +742,16 @@ function renderPreCasts(attacker, master, currentMoveId) {
   box.onchange = e => { const id = e.target.dataset.precast; if (!id) return; const n = Math.max(0, Math.min(20, Number(e.target.value) || 0)); if (n) preCastCounts.set(id, n); else preCastCounts.delete(id); run(); };
 }
 
+// 圣物属性 (the page's 已确认的伤害加成): added to the final stats (最终攻击力 100 + 圣物 10 → 110, the user's rule)
+const ARK_KEYS = { hp: 'hp', mp: 'mp', attack: 'str', defense: 'def', intelligence: 'int', mind: 'mnd' };
+function arkFinalAdd(ark) { const out = {}; for (const [k, v] of Object.entries(ark || {})) if (ARK_KEYS[k] && Number(v)) out[ARK_KEYS[k]] = Number(v); return Object.keys(out).length ? out : null; }
+
 function activeSwitchGroups() {
   return Object.keys(SWITCH_LABELS).filter(id => id !== 'openingBuffActive' && $(id)?.checked);
 }
 
 async function run(force = false) {
+  if (recommendState.running) stopRecommend('配装、招式或条件已改变，已停止；可重新开始。');
   mount();
   if (!latest) { setState('等待计算器状态'); return; }
   if (running) { pending = true; return; }
@@ -690,6 +828,7 @@ async function run(force = false) {
     if (!targetSpec) targetSpec = report && $('bossPreset')?.value?.startsWith('reader-') ? M.targetFromReport(report, { bossIndex: Number($('bossPreset').value.slice(7)) || 0 }) : targetFromFields(latest);
     const target = M.addTarget(battle, targetSpec);
     renderSupportMagic(gameChar, dress);
+    attackerSpec.finalAdd = arkFinalAdd(latest.arkStats);
     const state = stateFromSwitches(latest);
     // switches assume every conditional instance in their group
     const groups = new Set(activeSwitchGroups());
@@ -706,12 +845,15 @@ async function run(force = false) {
     await ensurePassiveNames();
     const firstHit = damaging.filter(h => h.bulletId === damaging[0]?.bulletId)[0];
     const moveName = gameChar ? [...(gameChar.specials || []), gameChar.ultimate, ...(gameChar.magic?.normal || []), ...(gameChar.magic?.heavy || [])].filter(Boolean).find(m => m.id === move.id)?.nameS : null;
-    renderBasicFields(firstHit, { hits: damaging, gearNames: new Map((gameChar?.exclusiveEquipment || []).map(e => [e.id, e.nameS])), moveName: moveName || move.name || '本招式' });
+    const fieldCtx = { hits: damaging, gearNames: new Map((gameChar?.exclusiveEquipment || []).map(e => [e.id, e.nameS])), moveName: moveName || move.name || '本招式' };
+    renderBasicFields(firstHit, fieldCtx);
+    renderReview(out, firstHit, fieldCtx);
     try { await measureSupportMagic(M, attackerSpec, targetSpec, state, dress); } catch (err) { console.error(err); }
     setState(`已结算 · ${new Date().toLocaleTimeString('zh-CN')}`); setPrimaryState(`游戏脚本 · ${new Date().toLocaleTimeString('zh-CN')}`);
     if (attackerSpec.buildPassives) {
       const { buildOwn, buildPassives, buildNote, ...rest } = attackerSpec;
-      buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), buildOwn, buildPassives, buildNote };
+      // gains only compare the move's first damaging bullet (as the main card's per-call metric does)
+      buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), buildOwn, buildPassives, buildNote, firstBullet: damaging[0]?.bulletId ?? null };
       const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], probabilityMode, buildPassives.map(p => p.id), buildOwn.map(p => p.id), currentHits().hits]);
       if (key !== lastBuildKey) { buildGains.clear(); buildCurrent = buildBaseline = null; }
       lastBuildKey = key; buildCtx.key = key;
@@ -744,7 +886,10 @@ function render(out, ctx) {
     ${issues.length ? `<details class="engine-issues" open><summary>未能完整模拟（${issues.length}）</summary><ul>${issues.map(i => `<li>${i}</li>`).join('')}</ul></details>` : ''}`;
 }
 
-document.addEventListener('lc:calculator-update', e => { latest = e.detail || {}; if (latest.battle) report = latest.battle; mount();
-  if ($('engineAccountRow')) $('engineAccountRow').hidden = !!(report && report.units?.length); run(); });
-$('entryReportFile')?.addEventListener('change', e => { const f = e.target.files?.[0]; if (!f) return; f.text().then(t => { try { const j = JSON.parse(t); if (j && j.kind === 'last-cloudia-battle-entry') report = j; } catch {} }); });
+function receiveState(detail) { latest = detail || {}; report = latest.battle || null; mount();
+  if ($('engineAccountRow')) $('engineAccountRow').hidden = !!(report && report.units?.length); run(); }
+document.addEventListener('lc:calculator-update', e => receiveState(e.detail));
 mount();
+// the page may have handed its state over before this module finished loading
+if (window.LC_CALCULATOR_STATE && !latest) receiveState(window.LC_CALCULATOR_STATE);
+

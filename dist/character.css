@@ -411,3 +411,7 @@ main { padding: 18px clamp(10px, 2vw, 28px) 52px; }
 .damage-calculator-shell[hidden] { display: none; }
 .damage-calculator-shell .damage-simulator-header { flex: 0 0 auto; }
 .damage-calculator-frame { display: block; width: 100%; flex: 1 1 auto; min-height: 0; border: 0; background: #e8eef6; }
+/* 已保存配装: the calculator's saved loadouts (character-saved-builds.mjs) */
+.saved-build-row { grid-template-columns: minmax(0, 1fr) 72px; }
+.saved-build-row small { color: #63738a; font-weight: 400; }
+.saved-build-note { padding: 9px 13px; }

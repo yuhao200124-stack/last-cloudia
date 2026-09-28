@@ -33,113 +33,18 @@
     </main>
 
     <div id="bonusCalculatorOverlay" class="calculator-overlay" hidden></div>
-    <aside id="bonusCalculator" data-rule-calculator class="bonus-calculator" hidden aria-label="基础计算器">
-      <div class="bonus-calculator-header">
-        <strong>基础计算器</strong>
-        <button id="bonusCalculatorClose" type="button" aria-label="关闭计算器">×</button>
-      </div>
-      <div class="mobile-calculator-tabs" aria-label="切换计算器">
-        <button class="is-active" type="button" data-calculator-target="bonus">基础</button>
-        <button type="button" data-calculator-target="cap">上限</button>
-        <button type="button" data-calculator-target="final">最终上限</button>
-      </div>
-      <div class="calculator-tools">
-        <button id="bonusRestoreAll" type="button">恢复全部</button>
-      </div>
-      <div id="bonusSummary" class="bonus-summary"></div>
-    </aside>
-
-    <aside id="capCalculator" class="bonus-calculator cap-calculator" hidden aria-label="基础伤害上限">
-      <div class="bonus-calculator-header">
-        <strong>基础伤害上限</strong>
-        <button id="capCalculatorClose" type="button" aria-label="关闭基础伤害上限">×</button>
-      </div>
-      <div class="mobile-calculator-tabs" aria-label="切换计算器">
-        <button type="button" data-calculator-target="bonus">基础</button>
-        <button class="is-active" type="button" data-calculator-target="cap">上限</button>
-        <button type="button" data-calculator-target="final">最终上限</button>
-      </div>
-      <div class="cap-result" aria-live="polite">
-        <span>当前单次伤害上限</span>
-        <strong id="capTotal">9,999</strong>
-        <small id="capAdded">基础上限 9,999</small>
-      </div>
-      <div class="calculator-tools cap-tools">
-        <p>选择本次攻击适用的伤害上限；BOSS、暴击、特攻与单武器已经合并为对应上限类型。符合条件的常驻来源会自动列出，主动魔法增益默认不计入。</p>
-        <button id="capReset" type="button">清空</button>
-      </div>
-      <div id="capAttackHeading" class="cap-subheading">选择攻击方式</div>
-      <div id="capAttacks" class="cap-attacks" aria-label="选择攻击魔法"></div>
-      <div class="cap-subheading">选择伤害上限（可多选）</div>
-      <div id="capTypes" class="cap-types" aria-label="选择伤害上限分类"></div>
-      <div class="cap-subheading">选择技能、个性、装备或超越</div>
-      <div id="capSourcePicker" class="cap-source-picker" aria-label="选择伤害上限来源"></div>
-      <div class="cap-breakdown-heading">已计入的加成（双击可返回原文）</div>
-      <div id="capBreakdown" class="cap-breakdown"></div>
-    </aside>
-
-    <aside id="finalDamageCalculator" class="bonus-calculator final-damage-calculator" hidden aria-label="最终伤害上限计算器">
-      <div class="bonus-calculator-header">
-        <strong>最终伤害上限计算器</strong>
-        <button id="finalDamageCalculatorClose" type="button" aria-label="关闭最终伤害上限计算器">×</button>
-      </div>
-      <div class="mobile-calculator-tabs" aria-label="切换计算器">
-        <button type="button" data-calculator-target="bonus">基础</button>
-        <button type="button" data-calculator-target="cap">上限</button>
-        <button class="is-active" type="button" data-calculator-target="final">最终上限</button>
-      </div>
-      <div class="final-damage-picker">
-        <label for="finalDamagePlanSelect">选择配装方案</label>
-        <select id="finalDamagePlanSelect"></select>
-      </div>
-      <div id="finalDamagePlanNote" class="final-damage-note" hidden></div>
-      <div class="cap-result" aria-live="polite">
-        <span>当前最终伤害上限</span>
-        <strong id="finalDamageCapTotal">9,999</strong>
-        <small id="finalDamageCapAdded">基础上限 9,999</small>
-      </div>
-      <div class="calculator-tools final-damage-tools">
-        <p>选择本次攻击适用的上限类型，再勾选角色、装备、超越及配装技能中的伤害上限来源；角色自带技能不会重复计算。</p>
-        <button id="finalDamageCapReset" type="button">清空</button>
-      </div>
-      <div id="finalDamageAttackHeading" class="cap-subheading">选择攻击方式</div>
-      <div id="finalDamageAttacks" class="cap-attacks" aria-label="选择最终伤害的攻击方式"></div>
-      <div class="cap-subheading">选择伤害上限（可多选）</div>
-      <div id="finalDamageCapTypes" class="cap-types" aria-label="选择最终伤害上限分类"></div>
-      <div class="cap-subheading">选择计入的伤害上限来源</div>
-      <div id="finalDamageCapSources" class="cap-source-picker" aria-label="选择最终伤害上限来源"></div>
-      <div class="cap-breakdown-heading">已计入的伤害上限</div>
-      <div id="finalDamageSummary" class="cap-breakdown final-damage-summary"></div>
-    </aside>
     <aside id="savedBuildViewer" class="bonus-calculator saved-build-calculator" hidden aria-label="已保存配装">
       <div class="bonus-calculator-header">
         <strong>已保存配装</strong>
-        <div class="saved-build-header-actions">
-          <button id="savedBuildRatingSort" class="saved-build-sort" type="button" aria-label="按评分排序" aria-pressed="false">评分▽</button>
-          <button id="savedBuildSort" class="saved-build-sort is-active" type="button" aria-label="按SC排序" aria-pressed="true">SC▽</button>
-          <button id="savedBuildViewerClose" type="button" aria-label="关闭已保存配装">×</button>
-        </div>
-      </div>
-      <div class="saved-build-edit-actions">
-        <button id="savedBuildAddSkills" type="button">添加新技能</button>
-        <button id="savedBuildSaveChanges" class="primary" type="button" disabled>保存修改</button>
+        <button id="savedBuildViewerClose" type="button" aria-label="关闭已保存配装">×</button>
       </div>
       <div class="saved-build-picker">
-        <select id="savedBuildSelect" aria-label="选择已保存方案"></select>
-      </div>
-      <div id="savedBuildNote" class="saved-build-note" hidden></div>
-      <div class="saved-build-controls">
-        <div id="savedBuildBreaks" class="saved-build-breaks" aria-label="方案突破状态"></div>
-        <button id="savedBuildEffects" class="saved-build-details" type="button" aria-pressed="false">看效果</button>
-        <button id="savedBuildDetails" class="saved-build-details" type="button" aria-pressed="false">详细</button>
+        <select id="savedBuildSelect" aria-label="选择已保存配装"></select>
       </div>
       <div id="savedBuildSkills" class="saved-build-skills"></div>
-      <div class="saved-build-total"><span>合计</span><button id="savedBuildRestore" type="button" disabled>还原</button><strong id="savedBuildTotal">0 SC</strong></div>
+      <div class="saved-build-total"><span>合计</span><button id="savedBuildOpen" type="button" disabled>在计算器中打开</button><strong id="savedBuildTotal">0 SC</strong></div>
     </aside>
 
-{{CAP_PROFILE}}
-    <script src="./data.js?v=20260924-table-review"></script>
-    <script src="./character-calculator.js?v=20260928-game-names"></script>
-  <script type="module" src="./character-page.mjs?v=20260928-game-names"></script>
+  <script type="module" src="./character-page.mjs?v=20260928-engine-only"></script>
   </body>
 </html>

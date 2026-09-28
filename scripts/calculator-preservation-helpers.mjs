@@ -44,10 +44,22 @@ const dualLock=JSON.parse(fs.readFileSync(new URL('../docs/dual-lock-preservatio
 const weaponOwn=JSON.parse(fs.readFileSync(new URL('../docs/weapon-own-preservation-2026-09-28.json',import.meta.url)));
 const noNotes=JSON.parse(fs.readFileSync(new URL('../docs/no-notes-preservation-2026-09-28.json',import.meta.url)));
 const basicSteps=JSON.parse(fs.readFileSync(new URL('../docs/basic-steps-preservation-2026-09-28.json',import.meta.url)));
+const engineOnly=JSON.parse(fs.readFileSync(new URL('../docs/engine-only-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
+// A protected file's current text; a file deleted by an audited layer (engine-only: the old calculator) reads as ''.
+export function readProtected(path){
+ const url=new URL('../'+path,import.meta.url);
+ if(!fs.existsSync(url)&&engineOnly.files[path]?.deleted)return '';
+ return fs.readFileSync(url,'utf8');
+}
 export function textBeforeCommonCalculator(path,text){
+ const engineOnlyLayer=engineOnly.files[path];
+ if(engineOnlyLayer){
+  if(hash(text)!==engineOnlyLayer.afterHash||hash(engineOnlyLayer.beforeText)!==engineOnlyLayer.beforeHash)throw Error(`Engine-only preservation drift: ${path}`);
+  text=engineOnlyLayer.beforeText;
+ }
  const basicStepsLayer=basicSteps.files[path];
  if(basicStepsLayer){
   if(hash(text)!==basicStepsLayer.afterHash||hash(basicStepsLayer.beforeText)!==basicStepsLayer.beforeHash)throw Error(`Basic-steps preservation drift: ${path}`);
