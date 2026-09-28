@@ -31,10 +31,16 @@ const attackPanelSimplify=JSON.parse(fs.readFileSync(new URL('../docs/attack-pan
 const attackLabelPanel=JSON.parse(fs.readFileSync(new URL('../docs/attack-label-panel-preservation-2026-09-28.json',import.meta.url)));
 const mixedRatio=JSON.parse(fs.readFileSync(new URL('../docs/mixed-ratio-preservation-2026-09-28.json',import.meta.url)));
 const panelBreakdown=JSON.parse(fs.readFileSync(new URL('../docs/panel-breakdown-preservation-2026-09-28.json',import.meta.url)));
+const attackCritBreakdown=JSON.parse(fs.readFileSync(new URL('../docs/attack-crit-breakdown-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const critLayer=attackCritBreakdown.files[path];
+ if(critLayer){
+  if(hash(text)!==critLayer.afterHash||hash(critLayer.beforeText)!==critLayer.beforeHash)throw Error(`Attack/crit-breakdown preservation drift: ${path}`);
+  text=critLayer.beforeText;
+ }
  const breakdownLayer=panelBreakdown.files[path];
  if(breakdownLayer){
   if(hash(text)!==breakdownLayer.afterHash||hash(breakdownLayer.beforeText)!==breakdownLayer.beforeHash)throw Error(`Panel-breakdown preservation drift: ${path}`);

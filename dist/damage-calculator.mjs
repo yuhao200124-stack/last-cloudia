@@ -148,21 +148,32 @@ function fillReaderPreview() {
   if(workflow?.isConfirmed())return;
   const mode=referenceMode(),key=mode==='int'?'intelligence':mode==='str'?'attack':null;
   $('attack').value=key?workflow?.panelsPreview()?.[key]??'':$('attack').value;
-  const crit=observedCritical(readUnit).value;
-  $('critRate').value=typeof crit==='number'&&Number.isFinite(crit)?crit:'';
+  const observedCrit=observedCritical(readUnit);
+  $('critRate').value=typeof observedCrit.value==='number'&&Number.isFinite(observedCrit.value)?observedCrit.value:'';
   renderAttackBreakdown(key?workflow?.panelBreakdown?.()?.[key]:null);
+  renderCritBreakdown(observedCrit);
 }
 // Reference-only disclosure: never fills #attack, only explains how the website's own
 // panel arithmetic reaches its number -- the pre-buff baseline, then any named real-time
 // buff layer (常驻 EX 灵气 and the like) added on top, exactly as calculateWebsitePanel()
 // computed it. Hidden whenever there is nothing to explain (mixed reference, no game
-// data, or the field's value came from another source such as the reader).
+// data, or the field's value came from another source such as the reader). Whether each
+// real-time layer counts is controlled by the matching switch further down the page (the
+// "开局BUFF" switch covers 自动X/EX灵气-style permanent buffs, others cover their own
+// condition) -- this box only explains the arithmetic, it never adds a control of its own.
 function renderAttackBreakdown(stat) {
   const lines=[...(stat?.steps||[]),...(stat?.issues||[]).map(text=>`⚠ ${text}`)];
   $('attackBreakdown').hidden=!lines.length;
   if(!lines.length)return;
-  $('attackBreakdownSummary').textContent=stat.value!=null?`正常面板（不含常驻／局内实时加成）${fmt(stat.beforeBuff)} → 当前面板 ${fmt(stat.value)}`:'';
+  $('attackBreakdownSummary').textContent=stat.value!=null?`正常面板（不含常驻／局内实时加成）${fmt(stat.beforeBuff)} → 当前面板 ${fmt(stat.value)}。是否计入以上实时加成，由下方对应的战斗条件开关决定（如"开局BUFF"覆盖了自动X、EX灵气这类常驻BUFF）。`:'';
   $('attackBreakdownSteps').innerHTML=lines.map(text=>`<li>${esc(text)}</li>`).join('');
+}
+// Same idea for 最终暴击率: reference-only note on where the reader-observed value came
+// from. Hidden whenever #critRate was not actually filled from a reader observation.
+function renderCritBreakdown(observedCrit) {
+  const has=typeof observedCrit?.value==='number'&&Number.isFinite(observedCrit.value);
+  $('critBreakdown').hidden=!has;
+  if(has)$('critBreakdownNote').textContent=observedCrit.note;
 }
 function syncHitControls(force=false){
   const s=workflow?.selection();if(!s)return;
