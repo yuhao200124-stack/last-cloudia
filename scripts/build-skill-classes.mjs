@@ -52,7 +52,7 @@ const TEXT = [
   ['造成伤害', /(攻击|魔法|特技|超必杀技?|反击|普通攻击|属性)(的)?伤害\s*[+＋]|(?<!受(到的?)?|受到敌人的|来自敌人的)伤害\s*[+＋]|伤害越(高|大)|伤害提升|追加伤害|无视.{0,4}防御|防御.{0,2}贯通/],
   ['受到伤害', /受(到的?)?伤害\s*[-－]|受伤害\s*[-－]|减伤|格挡|屏障|护盾|壁/],
   ['异常', /异常|毒|麻痹|沉默|暗黑|诅咒|眩晕|冻结|睡眠|即死/],
-  ['基础属性', /(体力|法力|攻击力?|防御力?|魔力|精神|全属性|全能力|HP|MP)\s*[+＋-]|属性耐性|(攻击|防御|魔力|精神)(、|・|･)/],
+  ['基础属性', /(体力|法力|攻击力?|防御力?|魔力|精神|全属性|全能力|HP|MP)\s*[+＋-]|属性耐性|(攻击|防御|魔力|精神)(、|・|･)(攻击|防御|魔力|精神)/],
   ['特技充能·必杀', /充能|超必杀技槽|特技次数|特技的?使用次数/],
   ['Break值', /破防值|眩晕值|不容易发生眩晕/],
   ['回复', /恢复.{0,3}体力|体力.{0,3}恢复|复活|吸收|再生|自愈/],
@@ -91,7 +91,16 @@ for (const s of skills) {
   const calc = cats.has('待确认（脚本数值）') || cats.has('其他') ? '待确认' : dmg ? (conditional ? '看条件' : '能算') : '不影响每段伤害';
   out.push({ ...s, cats: [...cats.keys()], reasons: Object.fromEntries([...cats].map(([c, r]) => [c, [...r]])), tags: [...new Set(tags)], calc, triggers: [...new Set(s.procs.map(p => p.triggerZh || p.trigger))] });
 }
-fs.writeFileSync(new URL('../docs/skill-classes-draft.json', import.meta.url), JSON.stringify({ note: '技能分类初稿（自动）：每个技能的大类（效果种类＋游戏效果说明）、条件标签、计算器能否算；等用户核对后替换技能表分页', skills: out.map(s => ({ id: s.id, name: s.name, cats: s.cats, tags: s.tags, calc: s.calc, reasons: s.reasons, kinds: s.procs.map(p => p.kind), triggers: s.triggers })) }) + '\n');
+// the user's decisions (docs/skill-classes-user.json) win over the automatic classes
+const user = JSON.parse(fs.readFileSync(new URL('../docs/skill-classes-user.json', import.meta.url), 'utf8'));
+for (const s of out) {
+  const u = user.skills[s.id]; if (!u) continue;
+  if (u.cats) { s.cats = [...u.cats]; s.reasons = Object.fromEntries(u.cats.map(c => [c, ['用户决定']])); }
+  for (const c of u.addCats || []) if (!s.cats.includes(c)) { s.cats.push(c); s.reasons[c] = ['用户决定']; }
+  if (u.calc) s.calc = u.calc;
+  if (u.note) s.userNote = u.note;
+}
+fs.writeFileSync(new URL('../docs/skill-classes-draft.json', import.meta.url), JSON.stringify({ note: '技能分类初稿（自动）：每个技能的大类（效果种类＋游戏效果说明）、条件标签、计算器能否算；等用户核对后替换技能表分页', categories: user.categories, skills: out.map(s => ({ id: s.id, name: s.name, cats: s.cats, tags: s.tags, calc: s.calc, reasons: s.reasons, ...(s.userNote ? { userNote: s.userNote } : {}), kinds: s.procs.map(p => p.kind), triggers: s.triggers })) }) + '\n');
 const count = new Map(); for (const s of out) for (const c of s.cats) count.set(c, (count.get(c) || 0) + 1);
 console.log([...count].sort((a, b) => b[1] - a[1]).map(([c, n]) => `${c} ${n}`).join(' · '));
 const calc = new Map(); for (const s of out) calc.set(s.calc, (calc.get(s.calc) || 0) + 1); console.log([...calc].map(([c, n]) => `${c} ${n}`).join(' · '));
