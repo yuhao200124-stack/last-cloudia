@@ -4,22 +4,21 @@
 .preview-block h3 { display: flex; align-items: baseline; gap: .6rem; margin: 0 0 8px; font-size: 1.02rem; color: var(--blue-strong); }
 .preview-block h3 span { font-size: .85rem; font-weight: 400; color: #6a7a90; }
 .preview-table { width: 100%; border-collapse: collapse; table-layout: fixed; background: #fff; font-size: .92rem; }
-.preview-table col.name { width: 30%; } .preview-table col.sc { width: 7%; } .preview-table col.bonus { width: 17%; } .preview-table col.cond { width: 46%; }
+.preview-table col.name { width: 17%; } .preview-table col.sc { width: 5%; } .preview-table col.bonus { width: 11%; } .preview-table col.cond { width: 21%; } .preview-table col.effect { width: 46%; }
 .preview-table th { background: var(--blue); color: #fff; font-weight: 600; padding: 7px 8px; border: 1px solid #9fb4d8; text-align: center; }
 .preview-table td { padding: 7px 8px; border: 1px solid #c9d5e6; vertical-align: middle; }
-.preview-table tbody tr.row { cursor: pointer; }
-.preview-table tbody tr.row:hover td { background: #f3f7fc; }
-.preview-table tbody tr.row.is-open td { background: #edf4fb; }
+.preview-table tbody tr:hover td { background: #f3f7fc; }
+.preview-table td.effect { font-size: .86rem; line-height: 1.65; color: #33445a; }
+.preview-table td.effect .meta { margin-top: 3px; font-size: .78rem; color: #7a889c; }
 .preview-table td.sc, .preview-table td.bonus { text-align: center; font-variant-numeric: tabular-nums; }
 .preview-table td.bonus { font-weight: 700; color: #1f4f8f; }
 .preview-table td.bonus.minus { color: #a4402a; }
 .preview-table td.cond .chip { display: inline-block; margin: 2px 4px 2px 0; padding: 1px 7px; border-radius: 10px; background: #fff3d6; border: 1px solid #efd9a0; font-size: .8rem; color: #6b4e10; }
 .preview-table td.cond .none { color: #9aa6b6; }
-.preview-table tr.detail td { background: #fafcff; font-size: .86rem; line-height: 1.7; color: #33445a; }
-.preview-table tr.detail .meta { margin-top: 4px; color: #6a7a90; }
 .preview-empty { color: #8a96a8; padding: 8px 2px; }
 .preview-table mark { background: #ffe58a; padding: 0 1px; }
 @media (max-width: 640px) {
-  .preview-table { font-size: .84rem; }
-  .preview-table col.name { width: 34%; } .preview-table col.sc { width: 10%; } .preview-table col.bonus { width: 22%; } .preview-table col.cond { width: 34%; }
+  .preview-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .preview-table { min-width: 760px; font-size: .84rem; }
+  .preview-table td.name { position: sticky; left: 0; background: #fff; z-index: 1; }
 }
