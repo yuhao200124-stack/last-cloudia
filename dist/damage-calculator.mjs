@@ -153,6 +153,17 @@ function fillReaderPreview() {
   renderAttackBreakdown(key?workflow?.panelBreakdown?.()?.[key]:null);
   renderCritBreakdown(observedCrit);
 }
+// Small 👁 icon sitting inside the field's own box (right edge); clicking it toggles a
+// panel of explanatory content below the field, without a control of its own -- the icon
+// only appears once there is something to explain, and closes itself when there stops
+// being one.
+function wireFieldIconToggle(toggleId,panelId) {
+  $(toggleId).addEventListener('click',()=>{
+    const open=$(panelId).hidden;$(panelId).hidden=!open;$(toggleId).setAttribute('aria-expanded',String(open));
+  });
+}
+wireFieldIconToggle('attackBreakdownToggle','attackBreakdown');
+wireFieldIconToggle('critBreakdownToggle','critBreakdown');
 // Reference-only disclosure: never fills #attack, only explains how the website's own
 // panel arithmetic reaches its number -- the pre-buff baseline, then any named real-time
 // buff layer (常驻 EX 灵气 and the like) added on top, exactly as calculateWebsitePanel()
@@ -163,8 +174,8 @@ function fillReaderPreview() {
 // condition) -- this box only explains the arithmetic, it never adds a control of its own.
 function renderAttackBreakdown(stat) {
   const lines=[...(stat?.steps||[]),...(stat?.issues||[]).map(text=>`⚠ ${text}`)];
-  $('attackBreakdown').hidden=!lines.length;
-  if(!lines.length)return;
+  $('attackBreakdownToggle').hidden=!lines.length;
+  if(!lines.length){$('attackBreakdown').hidden=true;$('attackBreakdownToggle').setAttribute('aria-expanded','false');return;}
   $('attackBreakdownSummary').textContent=stat.value!=null?`正常面板（不含常驻／局内实时加成）${fmt(stat.beforeBuff)} → 当前面板 ${fmt(stat.value)}。是否计入以上实时加成，由下方对应的战斗条件开关决定（如"开局BUFF"覆盖了自动X、EX灵气这类常驻BUFF）。`:'';
   $('attackBreakdownSteps').innerHTML=lines.map(text=>`<li>${esc(text)}</li>`).join('');
 }
@@ -172,8 +183,9 @@ function renderAttackBreakdown(stat) {
 // from. Hidden whenever #critRate was not actually filled from a reader observation.
 function renderCritBreakdown(observedCrit) {
   const has=typeof observedCrit?.value==='number'&&Number.isFinite(observedCrit.value);
-  $('critBreakdown').hidden=!has;
-  if(has)$('critBreakdownNote').textContent=observedCrit.note;
+  $('critBreakdownToggle').hidden=!has;
+  if(!has){$('critBreakdown').hidden=true;$('critBreakdownToggle').setAttribute('aria-expanded','false');return;}
+  $('critBreakdownNote').textContent=observedCrit.note;
 }
 function syncHitControls(force=false){
   const s=workflow?.selection();if(!s)return;

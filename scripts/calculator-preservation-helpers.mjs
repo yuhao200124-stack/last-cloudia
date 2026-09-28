@@ -32,10 +32,16 @@ const attackLabelPanel=JSON.parse(fs.readFileSync(new URL('../docs/attack-label-
 const mixedRatio=JSON.parse(fs.readFileSync(new URL('../docs/mixed-ratio-preservation-2026-09-28.json',import.meta.url)));
 const panelBreakdown=JSON.parse(fs.readFileSync(new URL('../docs/panel-breakdown-preservation-2026-09-28.json',import.meta.url)));
 const attackCritBreakdown=JSON.parse(fs.readFileSync(new URL('../docs/attack-crit-breakdown-preservation-2026-09-28.json',import.meta.url)));
+const inlineIcon=JSON.parse(fs.readFileSync(new URL('../docs/inline-icon-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const iconLayer=inlineIcon.files[path];
+ if(iconLayer){
+  if(hash(text)!==iconLayer.afterHash||hash(iconLayer.beforeText)!==iconLayer.beforeHash)throw Error(`Inline-icon preservation drift: ${path}`);
+  text=iconLayer.beforeText;
+ }
  const critLayer=attackCritBreakdown.files[path];
  if(critLayer){
   if(hash(text)!==critLayer.afterHash||hash(critLayer.beforeText)!==critLayer.beforeHash)throw Error(`Attack/crit-breakdown preservation drift: ${path}`);
