@@ -25,7 +25,10 @@ const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const options=(values,current)=>values.map(v=>`<option value="${esc(v)}" ${v===current?'selected':''}>${esc(v)}</option>`).join('');
 const stages={post:'结算后逐条修正（常见增伤）',offense:'核心前：攻击侧增伤',received:'核心前：目标受伤修正',reduction:'核心前：原生物理 / 魔法减伤'};
-const bosses={bird:{def:4000,mnd:10000,debuff:2599,res:[25,-25,50,50,-25,25]},beast:{def:5500,mnd:8000,debuff:3574,res:[25,50,25,-25,50,-25]}};
+// Each preset is a boss in the game's MonsterMst; its race is that monster's CHARACTER_TYPE (tests check it
+// against dist/game-data/engine/monsters.json). Every enemy in the game has a race, and killers such as
+// "对BOSS特攻" are applied by the game script to the target's races, so the target must carry them.
+const bosses={bird:{monsterId:320401703,races:['龙'],def:4000,mnd:10000,debuff:2599,res:[25,-25,50,50,-25,25]},beast:{monsterId:320901401,races:['鱼'],def:5500,mnd:8000,debuff:3574,res:[25,50,25,-25,50,-25]}};
 let effects=[],nextId=0,timer;
 const params=new URLSearchParams(location.search);
 const characterId=params.get('character');
@@ -804,7 +807,10 @@ if(transferred?.workflow?.report){latestReport=transferred.workflow.report;rende
 else if(characterId){loadReport();if(embedded)window.parent.postMessage({type:'lc-damage-ready'},location.origin);}
 if(transferred?.calculator){
  ({effects,nextId,imported,readUnit,manualCriticalBase,retainedImportDraft,formulaCapture,captureOptions,captureApplication,panelLayers,layerSourceKey,attackBasisTouched,autoLayer,magicSelection,defenseRatioTouched,bossRaces,reviewBlocker,lastHitKey}=transferred.calculator);
- renderMagicBuffs(latestReport?.profile);renderEffects();renderCaptureOptions();restoreControls($('calculator'),transferred.controls);syncBossRaces();
+ renderMagicBuffs(latestReport?.profile);renderEffects();renderCaptureOptions();restoreControls($('calculator'),transferred.controls);
+ // sessions saved before the presets carried their race: take the preset monster's race
+ if(!bossRaces?.length&&bosses[$('bossPreset').value]?.races)bossRaces=[...bosses[$('bossPreset').value].races];
+ syncBossRaces();
  $('applyFormulaCapture').disabled=!selectedCapture();$('formulaCaptureNote').textContent=transferred.captureNote||'';labels();update();
  const restoredUrl=new URL(location.href);restoredUrl.searchParams.delete('session');history.replaceState(null,'',restoredUrl.href);
  removeCalculatorSession(params.get('session')).catch(()=>{});

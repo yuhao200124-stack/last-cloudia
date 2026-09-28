@@ -38,10 +38,16 @@ const critImportBreakdown=JSON.parse(fs.readFileSync(new URL('../docs/crit-impor
 const gameNames=JSON.parse(fs.readFileSync(new URL('../docs/game-names-preservation-2026-09-28.json',import.meta.url)));
 const stateNotes=JSON.parse(fs.readFileSync(new URL('../docs/state-notes-preservation-2026-09-28.json',import.meta.url)));
 const autoFill=JSON.parse(fs.readFileSync(new URL('../docs/auto-fill-preservation-2026-09-28.json',import.meta.url)));
+const bossRace=JSON.parse(fs.readFileSync(new URL('../docs/boss-race-preservation-2026-09-28.json',import.meta.url)));
 const hash=text=>createHash('sha256').update(text).digest('hex');
 // Historical classification assertions still compare against their original
 // bytes. Only an exact, separately audited calculator edit can be rolled back.
 export function textBeforeCommonCalculator(path,text){
+ const bossRaceLayer=bossRace.files[path];
+ if(bossRaceLayer){
+  if(hash(text)!==bossRaceLayer.afterHash||hash(bossRaceLayer.beforeText)!==bossRaceLayer.beforeHash)throw Error(`Boss-race preservation drift: ${path}`);
+  text=bossRaceLayer.beforeText;
+ }
  const autoFillLayer=autoFill.files[path];
  if(autoFillLayer){
   if(hash(text)!==autoFillLayer.afterHash||hash(autoFillLayer.beforeText)!==autoFillLayer.beforeHash)throw Error(`Auto-fill preservation drift: ${path}`);
