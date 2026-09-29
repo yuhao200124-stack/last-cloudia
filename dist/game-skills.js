@@ -75,7 +75,7 @@
   const head = (cols, withType) => `<thead><tr class="book-title"><th colspan="${cols + extra}">一、被动技能（游戏数据）</th></tr><tr class="column-title">${withType ? '<th>技能类型</th>' : ''}<th>技能名称</th><th>SC</th><th>技能效果／说明</th><th>可学习圣物</th><th>评价</th>${embedded ? '<th>添加</th>' : ''}</tr></thead>`;
   const actionCol = embedded ? '<col class="action">' : '';
   function allTable(rows, label) {
-    return `<div class="table-scroll"><table class="excel-table skill-list-table all-skills game-table" aria-label="${esc(label)}"><colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating">${actionCol}</colgroup>${head(5, false)}<tbody>${rows.map(r => tr(skill(r.ref))).join('')}</tbody></table></div>`;
+    return `<div class="table-scroll"><table class="excel-table skill-list-table all-skills game-table" aria-label="${esc(label)}"><colgroup><col class="name"><col class="sc"><col class="effect"><col class="sources"><col class="rating">${actionCol}</colgroup>${head(5, false)}<tbody>${rows.map(r => r.separator ? `<tr class="separator-row" aria-hidden="true"><td colspan="${5 + extra}"></td></tr>` : tr(skill(r.ref))).join('')}</tbody></table></div>`;
   }
   function splitTable(rows, label) {
     const groups = [];
@@ -96,12 +96,13 @@
     $('sheetHint').textContent = '名称、SC、效果、圣物取自游戏数据；分类、排序和评价按技能表排版';
     let visible = 0, hidden = 0, html = '';
     if (sheet.kind === 'all') {
-      const rows = sheet.rows.filter(matches); visible = uniq(rows); hidden = uniq(sheet.rows.filter(found)) - visible;
-      html = rows.length ? allTable(rows, active) : '';
+      // a separator row (blank line between groups) is drawn here too, like on the split sheets (2026-09-30)
+      const rows = tidy(sheet.rows.filter(matches)); visible = uniq(rows); hidden = uniq(sheet.rows.filter(found)) - visible;
+      html = visible ? allTable(rows, active) : '';
     } else if (sheet.kind === 'lanes') {
-      const lanes = sheet.lanes.map(l => ({ ...l, rows: l.rows.filter(matches) }));
+      const lanes = sheet.lanes.map(l => ({ ...l, rows: tidy(l.rows.filter(matches)) }));
       visible = uniq(lanes.flatMap(l => l.rows)); hidden = uniq(sheet.lanes.flatMap(l => l.rows.filter(found))) - visible;
-      html = lanes.filter(l => l.rows.length).map(l => `<section class="basic-stat-section"><h3>${esc(l.label || '')} <span>${uniq(l.rows)} 个技能</span></h3>${allTable(l.rows, l.label || active)}</section>`).join('');
+      html = lanes.filter(l => l.rows.some(r => !r.separator)).map(l => `<section class="basic-stat-section"><h3>${esc(l.label || '')} <span>${uniq(l.rows)} 个技能</span></h3>${allTable(l.rows, l.label || active)}</section>`).join('');
     } else {
       const lanes = sheet.lanes.map(l => ({ ...l, rows: tidy(l.rows.filter(matches)) }));
       visible = uniq(lanes.flatMap(l => l.rows)); hidden = uniq(sheet.lanes.flatMap(l => l.rows.filter(found))) - visible;
@@ -154,7 +155,7 @@
     $('buildToolbar').hidden = false;
     $('buildFilter').hidden = false;
     $('buildFilter').addEventListener('click', e => { const b = e.target.closest('[data-hide-mode]'); if (!b) return; hideMode = b.dataset.hideMode; store.set('lc-build-hide', hideMode); render(); });
-    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-planonce`;
+    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-allsep`;
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }
