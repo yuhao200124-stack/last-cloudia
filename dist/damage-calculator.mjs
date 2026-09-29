@@ -7,7 +7,7 @@
 import {characterGear} from './character-gear.mjs?v=20260928-engine-only';
 import {gameCharacterForSite,gameMoveParameters,loadGameIndex,loadGameCharacter} from './game-data.mjs?v=20260927-game-data';
 import {validateBattleEntry} from './battle-report.mjs?v=20260928-engine-only';
-import {STAT_BLESSINGS} from './account-blessings.mjs?v=20260924-fullpage';
+import {statBlessingPercents} from './account-blessing-store.mjs?v=20260930-blessings';
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -49,7 +49,7 @@ async function renderProfile(name){
  let stats=null;try{stats=(await loadGameIndex()).siteStats?.[characterId]||null;}catch{}
  $('characterPanel').hidden=false;
  $('entryProfileName').textContent=`${name||'角色'} · 最大成长基础资料`;
- $('entrySixStats').innerHTML=`<thead><tr>${Object.values(SIX).map(l=>`<th>${l}</th>`).join('')}</tr></thead><tbody><tr>${Object.keys(SIX).map(k=>{const v=stats?.[k],p=STAT_BLESSINGS[k]||0;return `<td><strong>${v!=null?v.toLocaleString('en-US'):'未提供'}</strong><small>加护 +${p}%<br>→ ${v!=null?Math.floor(v*(100+p)/100).toLocaleString('en-US'):'未提供'}</small></td>`;}).join('')}</tr></tbody>`;
+ $('entrySixStats').innerHTML=`<thead><tr>${Object.values(SIX).map(l=>`<th>${l}</th>`).join('')}</tr></thead><tbody><tr>${Object.keys(SIX).map(k=>{const v=stats?.[k],p=statBlessingPercents()[k]||0;return `<td><strong>${v!=null?v.toLocaleString('en-US'):'未提供'}</strong><small>加护 +${p}%<br>→ ${v!=null?Math.floor(v*(100+p)/100).toLocaleString('en-US'):'未提供'}</small></td>`;}).join('')}</tr></tbody>`;
 }
 
 // ---- 招式: every damaging move of the character from the game data ----
@@ -199,6 +199,8 @@ if(characterId){
  try{game=(await gameCharacterForSite(characterId))?.character||null;}catch{game=null;}
  moves=game?moveList(game):[];
  renderProfile(game?.fullNameS||game?.nameS);
+ // 更新加护 (engine panel): the six-stat line shows the account's current stat blessings
+ document.addEventListener('lc:blessings-updated',()=>renderProfile(game?.fullNameS||game?.nameS));
  renderMoves();syncHits();
 }else{
  $('gamePicker').hidden=false;

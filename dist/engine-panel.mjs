@@ -2,17 +2,11 @@
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
 import { K } from './engine/battle.mjs';
-import { RAW_BLESSING_RECORDS, USER_CONFIRMED_BLESSING_RECORDS } from './account-blessings.mjs';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-blessings';
 import { characterGear } from './character-gear.mjs?v=20260928-engine-only';
 import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260929-build';
 
-// This account's blessings (加护) with the runtime values the reader captured (blessing levels scale the
-// master value, e.g. 100 → 406), keyed by passive id and process segment; used when no report is imported.
-const ACCOUNT_BLESSINGS = (() => {
-  const m = new Map();
-  for (const r of [...RAW_BLESSING_RECORDS, ...USER_CONFIRMED_BLESSING_RECORDS]) { const raw = r.raw; if (!raw?.localId || !Array.isArray(raw.values)) continue; if (!m.has(raw.localId)) m.set(raw.localId, {}); m.get(raw.localId)[raw.operationIndex ?? 0] = raw.values; }
-  return m;
-})();
+// This account's blessings (加护): always counted, for every character (account-blessing-store.mjs; 更新加护 below).
 
 // On the home page's 配装 the 配装 panel is drawn into that page (right-hand column, in a shadow root so the two pages'
 // styles do not mix); its elements are looked up there too.
@@ -31,7 +25,10 @@ let latest = null, report = null, assumed = new Set(), probAssumed = new Set(), 
 // No-report path: the out-of-battle panel is computed from master data (level growth + awakening + board +
 // exclusive gear + trigger-1 passives), always at maximum — character level, awakening, ability board and
 // equipment/crest enhancement are never modeled below max (user's rule), so there is no manual override for them.
+// blessings are always counted (user 2026-09-30); the account's set is updated with 更新加护
 const growthChoice = { accountBlessings: true };
+const dateOf = t => String(t || '').slice(0, 10);
+function blessingNote() { const s = currentBlessingSet(); return `加护 ${Object.keys(s.blessings).length} 个 · ${dateOf(s.capturedAt)} ${s.unit ? `（${s.unit}的战斗报告）` : ''}`; }
 // Reader loadout report (LoadoutReport.json): the account's real growth and loadout for every owned character.
 const LOADOUT_KEY = 'lc-engine-loadout-report';
 let loadoutReport = null, switches = null;
@@ -485,7 +482,7 @@ function mount() {
   const card = document.createElement('section');
   card.id = 'enginePanel'; card.className = 'card engine-panel'; card.setAttribute('aria-labelledby', 'enginePanelTitle');
   card.innerHTML = `<div class="section-heading"><h3 id="enginePanelTitle">游戏脚本结算（沙盒引擎）</h3><span id="engineState" class="help">未开始</span></div>
-    <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
+    <div class="inline-options" id="engineAccountRow"><button type="button" id="engineBlessingUpdate" class="secondary">更新加护</button><input id="engineBlessingFile" type="file" accept=".json,application/json" hidden><small id="engineBlessingNote" class="help">${blessingNote()}</small><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
     <div class="inline-options"><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
     <div id="engineResult"></div>`;
   aside.insertBefore(card, aside.firstChild);
@@ -533,7 +530,17 @@ function mount() {
   const targetSlot = $('engineTargetSlot');
   if (targetSlot) targetSlot.innerHTML = targetHtml; else card.insertAdjacentHTML('beforeend', targetHtml);
   $('engineRun').addEventListener('click', () => run(true));
-  $('engineAccountBlessings').addEventListener('change', e => { growthChoice.accountBlessings = e.target.checked; run(); });
+  // 更新加护: a new battle report (any character) replaces the account's blessings when it is newer
+  $('engineBlessingUpdate').addEventListener('click', () => $('engineBlessingFile').click());
+  $('engineBlessingFile').addEventListener('change', async e => {
+    const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
+    let set = null; try { set = blessingsFromReport(JSON.parse(await file.text())); } catch {}
+    const note = $('engineBlessingNote');
+    if (!set) { note.textContent = '这个文件里没有读到加护（要用读取器导出的战斗报告）'; return; }
+    const now = currentBlessingSet();
+    if (String(set.capturedAt) <= String(now.capturedAt)) { note.textContent = `这份报告（${dateOf(set.capturedAt)}）不比现在用的新，没有更新 · ${blessingNote()}`; return; }
+    saveBlessingSet(set); note.textContent = `已更新 · ${blessingNote()}`; document.dispatchEvent(new CustomEvent('lc:blessings-updated')); run();
+  });
   $('engineLoadoutFile').addEventListener('change', async e => {
     const f = e.target.files?.[0]; if (!f) return;
     try { const j = JSON.parse(await f.text()); const M = await ensureEngine(null); if (!M.isLoadoutReport(j)) throw new Error('不是读取器的配装报告（LoadoutReport.json）'); keepLoadout(j); run(); }
@@ -915,7 +922,8 @@ async function run(force = false) {
       // the out-of-battle panel comes entirely from master data (scenario.mjs panelGiven:false)
       const c = await gameCharacter(dress);
       const ids = latest.ownPassives?.length ? latest.ownPassives : c ? [...(c.personality || []).map(p => p.passive), ...(c.ownPassives || []).map(p => p.passive), ...(c.transcend || []).map(p => p.passive)] : [];
-      const blessings = growthChoice.accountBlessings ? [...ACCOUNT_BLESSINGS].filter(([id]) => battle.master.passive.has(id)).map(([id, params]) => ({ id, params })) : [];
+      const accountSet = accountBlessings(); await M.loadPassives(battle.master, [...accountSet.keys()]);
+      const blessings = growthChoice.accountBlessings ? [...accountSet].filter(([id]) => battle.master.passive.has(id)).map(([id, params]) => ({ id, params })) : [];
       const fromLoadout = loadoutReport ? M.attackerFromLoadout(loadoutReport, battle.master, await ensureSwitches(), dress, { extraPassives: blessings }) : null;
       // passives learned from other characters live outside the character bundle: fetch their id buckets first
       const unresolved = fromLoadout ? await M.loadPassives(battle.master, fromLoadout.passives.map(p => p.id)) : [];
