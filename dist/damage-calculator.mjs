@@ -74,7 +74,9 @@ function syncHits(){const m=selectedMove();$('hits').value=String(m&&state.hits[
 // ---- 双刀信息: only while 双刀 is on (the calculator's own 双刀; the engine locks it when the move already hits twice) ----
 function syncDual(){
  const on=$('dualWield').checked&&!$('dualWield').disabled;
- $('hitDetails').hidden=!$('dualWield').checked;
+ // locked (the move already hits twice by the game's own 二刀流／多段魔法, each call at the ratio the game data gives):
+ // the calculator's own 双刀信息 is not used, so it is not shown (user 2026-09-30)
+ $('hitDetails').hidden=!$('dualWield').checked||$('dualWield').disabled;
  for(const id of ['hitMultiplier','hitDamageRatio'])$(id).disabled=!on;
  for(const id of ['hitMultiplier','hitDamageRatio','hitScaleStage'])$(id).value=on?(state.dual[id]??DUAL_DEFAULTS[id]):id==='hitScaleStage'?'core':'1';
  $('hitScaleControl').hidden=on&&$('hitDamageRatio').value!==''&&Number($('hitDamageRatio').value)===1;
