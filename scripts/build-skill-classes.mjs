@@ -39,6 +39,31 @@ const SWITCHED = /^HP|满血|随时间|受到攻击时|Break|队伍|异常状态
 // the element / attack-type tags: what a damage bonus applies to (the preview's filter rows), not a condition
 const APPLY = /^(火|冰|树|雷|光|暗|无)属性$|^(物理|魔法|普攻|特技|超必杀|反击)$/;
 const DEFENSIVE = p => /被ダメージ|被追加ダメージ|被命中|被弾|ガード|バリア|耐性|相手.*与ダメージ減少/.test(p.kind) || /被ダメージ|を受けた/.test(p.trigger);
+// entries that differ in one of element / attack type only are one entry (exact: the game applies each); then what
+// each entry applies to, as chips: 火属性… and 物理 (普攻＋特技) / 普攻 / 特技 / 魔法 / 超必杀 / 反击 …
+function finishEntries(list) {
+  const key = (e, skip) => JSON.stringify([e.way, e.rate, e.add, e.max, e.text, e.tags, skip === 'els' ? null : e.els, skip === 'types' ? null : e.types]);
+  for (let merged = true; merged;) {
+    merged = false;
+    for (const dim of ['els', 'types']) for (let a = 0; a < list.length && !merged; a++) for (let b = a + 1; b < list.length && !merged; b++) {
+      const x = list[a], y = list[b];
+      // identical entries are two bonuses that both apply: only entries differing in this one dimension merge
+      if (key(x, dim) !== key(y, dim) || !x[dim] || !y[dim] || JSON.stringify(x[dim]) === JSON.stringify(y[dim])) continue;
+      x[dim] = [...new Set([...x[dim], ...y[dim]])].sort((p, q) => p - q); list.splice(b, 1); merged = true;
+    }
+  }
+  for (const e of list) {
+    const t = new Set(e.types || []), names = [];
+    if (t.has(9) && t.has(1)) names.push('物理'); else { if (t.has(9)) names.push('普攻'); if (t.has(1)) names.push('特技'); }
+    for (const [c, n] of [[2, '魔法'], [5, '超必杀'], [15, '反击'], [3, '魔法阵'], [4, '召唤']]) if (t.has(c)) names.push(n);
+    e.apply = [...(e.els || []).map(x => `${{ 0: '无', 1: '火', 2: '冰', 3: '树', 4: '雷', 5: '光', 6: '暗' }[x]}属性`), ...names];
+  }
+  return list;
+}
+// no attack-type parameter (the buff processes PB_…, 指定特技…): the process name says it right before 与ダメージ /
+// ダメージ上限
+const NAMED_TYPE = /(物理|魔法|特技|超必殺技|通常攻撃)(与ダメージ|ダメージ上限)/;
+const TYPE_OF_NAME = { 物理: [1, 9], 魔法: [2], 特技: [1], 超必殺技: [5], 通常攻撃: [9] };
 const out = [];
 for (const s of skills) {
   // 大类 only from the game data (scripts/skill-categories.mjs): process names, operation codes, script parameters, buffs
@@ -100,8 +125,8 @@ for (const s of skills) {
       const pct = x => `${Number((x / 100).toFixed(2))}%`;
       if (/与ダメージ/.test(p.kind)) {
         // no attack-type parameter (the buff processes PB_…): the process name says it right before 与ダメージ
-        const named = p.kind.match(/(物理|魔法|特技|超必殺技|通常攻撃)与ダメージ/);
-        if (!e.types && named) e.types = { 物理: [1, 9], 魔法: [2], 特技: [1], 超必殺技: [5], 通常攻撃: [9] }[named[1]];
+        const named = p.kind.match(NAMED_TYPE);
+        if (!e.types && named) e.types = TYPE_OF_NAME[named[1]];
         const j = names.findIndex(n => /^ダメージ倍率(補正|最大補正)?$/.test(n || ''));
         if (j >= 0) { e.rate = vals[j]; if (/最大/.test(names[j]) || scales(i)) e.max = true; }
         e.text = j >= 0 ? `${e.max ? '最多' : ''}${e.rate < 0 ? '−' : '+'}${pct(Math.abs(e.rate))}` : '（数值读不出）';
@@ -114,24 +139,32 @@ for (const s of skills) {
       else throw new Error(`造成伤害: unknown ${p.kind} (${s.name})`);
       list.push(e);
     });
-    // entries that differ in one of element / attack type only are one entry (exact: the game applies each)
-    const key = (e, skip) => JSON.stringify([e.way, e.rate, e.max, e.text, e.tags, skip === 'els' ? null : e.els, skip === 'types' ? null : e.types]);
-    for (let merged = true; merged;) {
-      merged = false;
-      for (const dim of ['els', 'types']) for (let a = 0; a < list.length && !merged; a++) for (let b = a + 1; b < list.length && !merged; b++) {
-        const x = list[a], y = list[b];
-        if (key(x, dim) !== key(y, dim) || !x[dim] || !y[dim]) continue;
-        x[dim] = [...new Set([...x[dim], ...y[dim]])].sort((p, q) => p - q); list.splice(b, 1); merged = true;
-      }
-    }
-    // what each entry applies to, as chips: 火属性… and 物理 (普攻＋特技) / 普攻 / 特技 / 魔法 / 超必杀 / 反击 …
-    for (const e of list) {
-      const t = new Set(e.types || []), names = [];
-      if (t.has(9) && t.has(1)) names.push('物理'); else { if (t.has(9)) names.push('普攻'); if (t.has(1)) names.push('特技'); }
-      for (const [c, n] of [[2, '魔法'], [5, '超必杀'], [15, '反击'], [3, '魔法阵'], [4, '召唤']]) if (t.has(c)) names.push(n);
-      e.apply = [...(e.els || []).map(x => `${{ 0: '无', 1: '火', 2: '冰', 3: '树', 4: '雷', 5: '光', 6: '暗' }[x]}属性`), ...names];
-    }
+    finishEntries(list);
     if (list.length) (sub ||= {}).造成伤害 = list;
+  }
+  // 伤害上限 entries, one per cap process: element × attack type as for 造成伤害; the value is ダメージ上限加算(最大)値
+  // (flat) and ダメージ上限倍率(最大)補正 (1/100 %); a value kept in a counter (一天真刃) cannot be read
+  if (cats.has('伤害上限')) {
+    const list = [];
+    s.procs.forEach((p, i) => {
+      if (kindCategory(p.kind) !== '伤害上限') return;
+      const d = conds[i].d, names = procDocs.get(`process${p.pid}`)?.params || [], vals = String(p.params ?? '').split(':').map(v => (v === '' ? 0 : Number(v)));
+      const els = [...new Set([...(d.elements || []), ...(d.aboutElements || [])])].sort();
+      const tags = entryTags(i).filter(t => !APPLY.test(t));
+      const e = { way: '伤害上限', els: els.length ? els : null, types: d.skillTypes?.length ? [...new Set(d.skillTypes)].sort((a, b) => a - b) : null, add: 0, rate: 0, cond: tags.length > 0, tags };
+      const named = p.kind.match(NAMED_TYPE);
+      if (!e.types && named) e.types = TYPE_OF_NAME[named[1]];
+      const ja = names.findIndex(n => /^ダメージ上限加算(最大)?値$/.test(n || '')), jr = names.findIndex(n => /^ダメージ上限倍率(最大)?補正$/.test(n || ''));
+      if (ja >= 0) e.add = vals[ja];
+      if (jr >= 0) e.rate = vals[jr];
+      e.max = [ja, jr].some(j => j >= 0 && /最大/.test(names[j])) || scales(i);
+      const parts = [];
+      if (e.add) parts.push(`${e.add < 0 ? '−' : '+'}${Math.abs(e.add)}`);
+      if (e.rate) parts.push(`${e.rate < 0 ? '−' : '+'}${Number((Math.abs(e.rate) / 100).toFixed(2))}%`);
+      e.text = parts.length ? `${e.max ? '最多' : ''}${parts.join('、')}` : '（数值读不出）';
+      list.push(e);
+    });
+    if (list.length) (sub ||= {}).伤害上限 = finishEntries(list);
   }
   out.push({ ...s, cats: [...cats.keys()], reasons: Object.fromEntries([...cats].map(([c, r]) => [c, [...r]])), tags, undecoded, conditions, calc, defense, sub, triggers: [...new Set(s.procs.map(p => p.triggerZh || p.trigger))] });
 }
@@ -154,7 +187,7 @@ console.log('multi-category', out.filter(s => s.cats.length > 1).length, 'no con
 // every sub-tab lists the skills without conditions first, then those with conditions, each by bonus (user's rule).
 // “也在” lists every other place the skill is in: the other 小类 of the same 大类 and every other 大类 (done or not).
 {
-  const CAT_ORDER = ['基础属性', '造成伤害', '暴击', '特攻', '伤害上限', 'Break值', '受到伤害', '回复', '异常', '特技充能·必杀', '魔法·咏唱', '移动与行动', '装备·种族', '反击', '信仰', '金钱·经验', '待确认'];
+  const CAT_ORDER = ['基础属性', '造成伤害', '伤害上限', '特攻', '暴击', 'Break值', '反击', '受到伤害', '回复', '异常', '特技充能·必杀', '魔法·咏唱', '移动与行动', '装备·种族', '信仰', '金钱·经验', '待确认'];
   const STATS = ['HP', 'MP', '攻击力', '法强', '防御力', '魔抗', '属性耐性'];
   const bonusText = e => {
     if (e.basis === '转换') return '由其他属性转换';
@@ -189,8 +222,9 @@ console.log('multi-category', out.filter(s => s.cats.length > 1).length, 'no con
   }];
   // 造成伤害: 伤害加成 is filtered in the page by element × attack type (user's choice: two rows combined; an entry with
   // no element / attack-type restriction matches every button); 其他方式 = extra hits, extra-hit boost, DEF ignore, 魔转相
-  const dmg = out.filter(s => s.sub?.造成伤害);
-  const entry = e => ({ text: e.text, rate: e.rate, apply: e.apply, tags: e.tags, cond: e.cond, els: e.els, types: e.types });
+  const dmg = out.filter(s => s.cats.includes('造成伤害') && s.sub?.造成伤害);
+  // v = the sort value (造成伤害: the %, 伤害上限: the flat cap, then its %)
+  const entry = e => ({ text: e.text, v: e.way === '伤害上限' ? e.add * 100 + e.rate : e.rate, apply: e.apply, tags: e.tags, cond: e.cond, els: e.els, types: e.types });
   const otherBlocks = [false, true].map(c => dmg.map(s => ({ s, es: s.sub.造成伤害.filter(e => e.way !== '伤害加成' && e.cond === c) })).filter(x => x.es.length)
     .map(x => ({ x, es: x.es.sort((a, b) => OTHER_WAYS.indexOf(a.way) - OTHER_WAYS.indexOf(b.way) || b.rate - a.rate) }))
     .sort((a, b) => OTHER_WAYS.indexOf(a.es[0].way) - OTHER_WAYS.indexOf(b.es[0].way) || b.es[0].rate - a.es[0].rate || a.x.s.id - b.x.s.id)
@@ -201,6 +235,11 @@ console.log('multi-category', out.filter(s => s.cats.length > 1).length, 'no con
       { name: '伤害加成', filter: true, skills: dmg.filter(s => s.sub.造成伤害.some(e => e.way === '伤害加成')).map(s => ({ id: s.id, entries: s.sub.造成伤害.filter(e => e.way === '伤害加成').map(entry), also: also(s, '造成伤害', '伤害加成') })) },
       { name: '其他方式', blocks: otherBlocks },
     ],
+  });
+  // 伤害上限 (user: on its own): one list, filtered by element × attack type like 伤害加成
+  pages.push({
+    cat: '伤害上限', total: out.filter(s => s.cats.includes('伤害上限')).length,
+    subs: [{ name: '伤害上限', filter: true, skills: out.filter(s => s.cats.includes('伤害上限') && s.sub?.伤害上限).map(s => ({ id: s.id, entries: s.sub.伤害上限.map(entry), also: also(s, '伤害上限', '伤害上限') })) }],
   });
   // nothing left out: every skill of a previewed 大类 is in at least one of its 小类
   for (const pg of pages) {

@@ -23,11 +23,11 @@
   const effect = id => (script === 's' ? skills[id].effectS : skills[id].effect);
   const matches = id => !query || [skills[id].name, skills[id].nameS].join('\n').toLowerCase().includes(query.toLowerCase());
   const hl = t => { const raw = String(t), q = query.trim(); if (!q) return esc(raw); const i = raw.toLowerCase().indexOf(q.toLowerCase()); return i < 0 ? esc(raw) : `${esc(raw.slice(0, i))}<mark>${esc(raw.slice(i, i + q.length))}</mark>${esc(raw.slice(i + q.length))}`; };
-  // 伤害加成: the entries of a skill that apply to the chosen element and attack type
+  // 伤害加成 / 伤害上限: the entries of a skill that apply to the chosen element and attack type
   const fits = (e, x, t) => (x == null || !e.els || e.els.includes(x)) && (t == null || !e.types || (t === 10 ? e.types.includes(9) && e.types.includes(1) : e.types.includes(t)));
   function filterBlocks(s, x, t) {
-    return [false, true].map(c => s.skills.map(k => ({ ...k, entries: k.entries.filter(e => e.cond === c && fits(e, x, t)).sort((a, b) => b.rate - a.rate) }))
-      .filter(k => k.entries.length).sort((a, b) => b.entries[0].rate - a.entries[0].rate || a.id - b.id));
+    return [false, true].map(c => s.skills.map(k => ({ ...k, entries: k.entries.filter(e => e.cond === c && fits(e, x, t)).sort((a, b) => b.v - a.v) }))
+      .filter(k => k.entries.length).sort((a, b) => b.entries[0].v - a.entries[0].v || a.id - b.id));
   }
   const blocksOf = x => (x.filter ? filterBlocks(x, el, type) : x.blocks);
   const countOf = x => (x.filter ? x.skills.length : new Set(x.blocks.flat().map(r => r.id)).size);
@@ -53,6 +53,7 @@
   function render() {
     const [none, cond] = blocksOf(sub).map(rows => rows.filter(r => matches(r.id)));
     $('catTabs').innerHTML = pages.map(p => `<button class="sheet-tab" type="button" role="tab" data-cat="${esc(p.cat)}" aria-selected="${p === page}">${esc(p.cat)} <small>${p.total}</small></button>`).join('');
+    $('subTabs').hidden = page.subs.length < 2;
     $('subTabs').innerHTML = page.subs.map(x => `<button class="sub-tab" type="button" role="tab" data-sub="${esc(x.name)}" aria-selected="${x === sub}">${esc(x.name)} <small>${countOf(x)}</small></button>`).join('');
     $('filterRows').innerHTML = filterRows();
     $('filterRows').hidden = !sub.filter;

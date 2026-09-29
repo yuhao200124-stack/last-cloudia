@@ -91,6 +91,7 @@ function dimOf(name) {
   if (/^(STR|INT|DEF|MND|MDEF|HP|MP|全ステ)(加算|倍率|最大)|回復|消費/.test(name)) return null;   // values, not conditions
   if (/^効果発生/.test(name)) return /時刻/.test(name) ? 'time' : /超必殺/.test(name) ? 'ultimate' : /ヒット/.test(name) ? 'hits' : /HP/.test(name) ? 'hp' : /距離/.test(name) ? 'distance' : /人数/.test(name) ? 'party' : 'other';
   if (/パラメータタイプ|演出|継続時間|倍率|加算|補正|最大値|最小値|確率|回数|間隔|フレーム|オプション|効率|変換先|WAVE|秒|距離|ヒット数|割合$|値$/.test(name) && !/HP|閾値|条件/.test(name)) return null;
+  if (/重複可否/.test(name)) return 'multiCast';
   if (/敵・味方|敵味方|バレットオーナー|発動者/.test(name)) return 'side';
   if (/自分キャラ|自分キャラクター|特定キャラ条件/.test(name)) return 'ownRace';
   if (/キャラタイプ条件\(Not\)/.test(name)) return 'notRace';
@@ -126,7 +127,7 @@ export function decodeProcess(pid, paramStr) {
   const params = String(paramStr ?? '').split(':').map(v => v === '' ? null : Number(v));
   // a process that only sets a counter is not a condition; one that reads it (…状況 / …条件) is
   let scriptCond = /汎用(数値)?情報(状況|条件)|状況|条件/.test(row[pc.NAME]);
-  const out = { hpScale: {}, elements: [], skillTypes: [], roles: [], equips: [], races: [], notRaces: [], ownRaces: [], addRaces: [], canEquip: [], enemy: [], gender: [], ailments: [], hp: [], gearState: [], weaponElement: [], aboutElements: [], script: false, other: [], undecoded: [], anyElement: false, anyType: false };
+  const out = { hpScale: {}, elements: [], skillTypes: [], roles: [], equips: [], races: [], allyRaces: [], notRaces: [], ownRaces: [], addRaces: [], canEquip: [], enemy: [], gender: [], ailments: [], hp: [], gearState: [], weaponElement: [], aboutElements: [], script: false, other: [], undecoded: [], anyElement: false, anyType: false };
   const own = /特定キャラ専用/.test(row[pc.NAME]);
   const add = (dim, raw, name) => {
     if (raw == null || Number.isNaN(raw)) return;
@@ -155,7 +156,9 @@ export function decodeProcess(pid, paramStr) {
       case 'distance': out.other.push('距离条件'); break;
       case 'party': out.other.push('队伍／人数条件'); break;
       case 'break': out.other.push('Break／眩晕'); break;
-      case 'side': break;
+      // skl:MultiCast() (IsValidSkillMultiCast …): 1 = the game's “不可重复” skills (人工精灵: 不可重复魔法的伤害上限+5000)
+      case 'multiCast': if (raw === 1) out.other.push('不可重复的技能'); else if (raw) out.undecoded.push(`${name}=${raw}`); break;
+      case 'side': if (out.side == null) out.side = raw; break;   // TARGET_SIDE_* (1 opponent, 2 ally, 3 me): the process's own, read first
       default: { const l = OTHER_LABELS.find(([re]) => re.test(name)); if (l) out.other.push(l[1]); else if (!NOT_CONDITION.test(name)) out.undecoded.push(`${name}=${raw}`); }
     }
   };
@@ -209,6 +212,8 @@ export function decodeProcess(pid, paramStr) {
     // the process's own element parameter (read in step 1 too) is ELEMENT_NONE = any element with an element here
     if (noneAny) { out.elements = out.elements.filter(e => e !== 0); out.anyElement = true; }
   }
+  // a race counted on our own side (敵・味方 = TARGET_SIDE_ALLY, e.g. 剑阵: per ally of the 战士 type) is not the target's
+  if (out.side === 2 && out.races.length) { out.allyRaces.push(...out.races); out.races = []; }
   return out;
 }
 
@@ -226,6 +231,7 @@ export function tagsOf(d, defensive) {
   for (const r of new Set(d.roles)) if (r !== 1) t.push(ROLE[r]);
   for (const e of new Set(d.equips)) t.push(`装备${EQUIP[e]}`);
   for (const r of new Set(d.races)) t.push(defensive ? `受·${RACE[r]}` : `对${RACE[r]}`);
+  for (const r of new Set(d.allyRaces || [])) t.push(`我方${RACE[r]}类型`);
   for (const r of new Set(d.notRaces)) t.push(`不对${RACE[r]}`);
   for (const r of new Set(d.ownRaces)) t.push(`自身是${RACE[r]}`);
   for (const r of new Set(d.addRaces)) t.push(`追加${RACE[r]}类型`);
