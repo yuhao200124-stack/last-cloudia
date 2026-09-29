@@ -9,7 +9,11 @@ export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, ma
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
 // user can assume ("假定已触发") through `assume.instances`.
-export const AUTOMATIC_TRIGGERS = new Set([1, 10, 12, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 40, 42, 53, 54, 55, 59, 60, 65, 69]);
+// (53 魔法陣展開 and 69 生存状態変化 are not simulated, so they are offered to be assumed.)
+export const AUTOMATIC_TRIGGERS = new Set([1, 10, 12, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 40, 42, 54, 55, 59, 60, 65]);
+// Triggers that in a battle fire with the enemy as the process target (hitting it, knocking it down, putting an
+// ailment on it): an assumed one runs against the target, the others on the attacker itself.
+const OPPONENT_TRIGGERS = new Set([21, 23, 25, 27, 29, 35, 36, 78]);
 // The user's ten in-battle switches, by trigger.
 export const SWITCH_OF_TRIGGER = { 17: 'conditionBuffActive', 25: 'conditionBuffActive', 26: 'conditionBuffActive', 29: 'conditionBuffActive', 30: 'conditionBuffActive', 35: 'conditionBuffActive', 36: 'conditionBuffActive', 37: 'conditionBuffActive', 50: 'selfStateActive', 52: 'selfStateActive', 61: 'conditionBuffActive', 62: 'conditionBuffActive', 68: 'conditionBuffActive', 70: 'conditionBuffActive', 71: 'conditionBuffActive', 72: 'conditionBuffActive', 73: 'conditionBuffActive', 74: 'conditionBuffActive', 75: 'conditionBuffActive', 76: 'conditionBuffActive', 77: 'conditionBuffActive', 78: 'conditionBuffActive', 79: 'conditionBuffActive', 80: 'conditionBuffActive', 81: 'conditionBuffActive', 92: 'conditionBuffActive', 93: 'conditionBuffActive', 94: 'openingBuffActive', 96: 'reviveBuffActive', 97: 'reviveBuffActive', 98: 'partyConditionActive' };
 
@@ -99,14 +103,15 @@ export function addTarget(battle, spec) {
 export function setupBattle(battle, attacker, target, state = {}) {
   // The calculator's 特攻 / Break / 双刀 switches decide the state itself; the bonuses bound to it come from the skills.
   //   state.killer 'on' | 'off' (unset: by the skills and the target's race)
-  //   state.targetBreak: the target is in the break state; state.breakDefenseRatio: its defense factor while broken
+  //   state.targetBreak: the target is in the break state (its own Break passives fire, 52); state.breakDefenseRatio: an
+  //   extra defense factor on top while broken (the calculator's field, default 1)
   //   state.hitScale {ratio, stage}: the 双刀 switch's 单段伤害倍率 and 修正试算位置 (the hit count multiplier is the caller's)
   battle.options.killer = state.killer ?? null;
   battle.options.hitScale = state.hitScale && Number.isFinite(state.hitScale.ratio) ? { ratio: state.hitScale.ratio, stage: state.hitScale.stage || 'core' } : null;
   battle.options.breakDefenseRatio = state.targetBreak && Number.isFinite(state.breakDefenseRatio) ? state.breakDefenseRatio : null;
   target.breakRemain = state.targetBreak ? 600 : 0;
   if (state.killer === 'on' && !target.charTypes.length) battle.assumptions.add('特攻：目标没选种族，按“种族未知”结算（针对具体种族的加成不计入，“对非某种族”的加成会计入）');
-  if (battle.options.breakDefenseRatio != null && battle.options.breakDefenseRatio !== 1) battle.assumptions.add(`Break：目标防御按 ×${battle.options.breakDefenseRatio}（计算器“Break 时防御倍率”，游戏脚本里没有这一步）`);
+  if (battle.options.breakDefenseRatio != null && battle.options.breakDefenseRatio !== 1) battle.assumptions.add(`Break：在目标自己的破防效果之外，防御再按 ×${battle.options.breakDefenseRatio}（计算器“Break 时防御倍率”，游戏数据里没有这一步）`);
   battle.wave = state.wave ?? 1;
   battle.frame = Math.round((state.elapsedSeconds ?? 0) * 60);
   if (state.dateTime) battle.options.dateTime = state.dateTime;
@@ -114,6 +119,9 @@ export function setupBattle(battle, attacker, target, state = {}) {
   for (const u of all) battle.dispatch(K.TRIG.STATUS, u, u);
   for (const u of all) battle.dispatch(K.TRIG.WAVE_START, u, u);
   for (const u of all) battle.dispatch(K.TRIG.CHANGE_SURVIVORS, u, u);
+  // MP starts full (MP-threshold conditions record where it was), then drops to the chosen MP
+  attacker.mp = battle.finalStat(attacker, K.STAT.MAX_MP);
+  battle.dispatch(K.TRIG.CHANGE_MP, attacker, attacker);
   attacker.hp = Math.max(1, Math.round(battle.finalStat(attacker, K.STAT.MAX_HP) * (state.hpPercent ?? 100) / 100));
   attacker.mp = Math.round(battle.finalStat(attacker, K.STAT.MAX_MP) * (state.mpPercent ?? 100) / 100);
   attacker.ether = state.etherPercent ?? 0;
@@ -121,6 +129,8 @@ export function setupBattle(battle, attacker, target, state = {}) {
   battle.dispatch(K.TRIG.CHANGE_HP, attacker, attacker);
   battle.dispatch(K.TRIG.CHANGE_MP, attacker, attacker);
   battle.dispatch(55, attacker, attacker);
+  // Break on: the target's own Break passives (e.g. 恩德爾羅納 DEF/MND −25%, 属性耐性 −25) and the “boss broke” effects
+  if (state.targetBreak) { battle.dispatch(K.TRIG.BREAK_CHANGE, target, target); for (const u of all) if (u !== target) battle.dispatch(K.TRIG.BOSS_BREAK, u, u); }
   if (target.hp != null && state.targetHpPercent != null) target.hp = Math.max(1, Math.round(battle.finalStat(target, K.STAT.MAX_HP) * state.targetHpPercent / 100));
   // Time-limited opening buffs are dropped when the user says the opening window has passed.
   if (state.openingBuffActive === false) for (const b of attacker.buffs.slice()) if (b.remain > 0) battle.removeBuff(attacker, b.uid);
@@ -131,7 +141,7 @@ export const instanceKey = inst => `${inst.affiliation}:${inst.localId}:${inst.l
 // Passive instances the sandbox did not fire on its own: events the user may assume.
 // `keep`: keys the user assumed (force-run, so they fired) stay listed so their tick can be undone.
 export function conditionalInstances(battle, unit, keep = new Set()) {
-  const fired = new Set(battle.trace.filter(t => t.fired && t.owner === unit.name).map(t => `${t.localId}:${t.index}`));
+  const fired = new Set(battle.trace.filter(t => t.fired && t.ownerId === unit.id).map(t => `${t.localId}:${t.index}`));
   return unit.instances.filter(i => !AUTOMATIC_TRIGGERS.has(i.trigger) && (keep.has(instanceKey(i)) || !fired.has(`${i.localId}:${i.localIndex}`))).map(i => ({
     key: instanceKey(i), localId: i.localId, localIndex: i.localIndex, passiveId: i.passiveId || i.localId, passiveName: clean(battle.master.passive.get(i.passiveId || i.localId)?.NAME || battle.master.itemEquip.get(i.localId)?.NAME || ''), processId: i.processId, processName: zhName(i.mst.NAME),
     trigger: i.trigger, triggerLabel: TRIGGER_LABELS[i.trigger] || `触发${i.trigger}`, condition: zhCondition(i.cond.NAME) || '', luaCondition: i.cond.LUA_FUNC_NAME || '', switchGroup: SWITCH_OF_TRIGGER[i.trigger] || 'conditionBuffActive', prob: i.prob,
@@ -151,11 +161,14 @@ function unchangedInstances(battle, attackerId, targetId, setupSnap, candidates)
   const out = new Set(); if (!candidates.length) return out;
   const end = battle.snapshot(), trace = battle.trace.slice();
   const sig = key => stateSignature(battle, [battle.unit(attackerId), battle.unit(targetId)], key);
+  const unsupported = () => [...battle.unsupported.values()].reduce((a, b) => a + b, 0);
   for (const c of candidates) {
     battle.restore(setupSnap);
-    const A = battle.unit(attackerId), inst = A.instances.find(i => instanceKey(i) === c.key); if (!inst) continue;
-    const before = sig(c.key);
-    try { battle.runInstance(inst, A, A, null, inst.trigger, { force: true }); } catch { continue; }
+    const A = battle.unit(attackerId), T = battle.unit(targetId), inst = A.instances.find(i => instanceKey(i) === c.key); if (!inst) continue;
+    const before = sig(c.key), from = battle.trace.length, missing = unsupported();
+    try { battle.runInstance(inst, A, OPPONENT_TRIGGERS.has(inst.trigger) ? T : A, null, inst.trigger, { force: true }); } catch { continue; }
+    // a script error or an unimplemented native: the run tells nothing, so the effect stays offered
+    if (battle.trace.slice(from).some(t => t.error) || unsupported() !== missing) continue;
     if (sig(c.key) === before) out.add(c.key);
   }
   battle.restore(end); battle.trace.length = 0; for (const t of trace) battle.trace.push(t);
@@ -163,9 +176,9 @@ function unchangedInstances(battle, attackerId, targetId, setupSnap, candidates)
 }
 
 // Force-runs assumed instances (condition and probability skipped) after the normal setup.
-export function assumeInstances(battle, unit, keys) {
+export function assumeInstances(battle, unit, keys, opponent = null) {
   const wanted = new Set(keys || []);
-  for (const inst of unit.instances) if (wanted.has(instanceKey(inst))) battle.runInstance(inst, unit, unit, null, inst.trigger, { force: true });
+  for (const inst of unit.instances) if (wanted.has(instanceKey(inst))) battle.runInstance(inst, unit, opponent && OPPONENT_TRIGGERS.has(inst.trigger) ? opponent : unit, null, inst.trigger, { force: true });
 }
 
 function damageBullets(master, skillId, level) {
@@ -175,8 +188,9 @@ function damageBullets(master, skillId, level) {
 
 // One evaluation: cast the skill once and hit with the given bullet; returns the per-pass results.
 function evaluate(battle, attacker, target, skillId, bulletId, level, critical, random) {
-  battle.beginSkill(attacker, target, skillId);
-  const bullet = battle.createBullet(attacker, target, { skillId, bulletId, level, critical, random });
+  const A = battle.unit(attacker.id), T = battle.unit(target.id);
+  battle.beginSkill(A, T, skillId);
+  const bullet = battle.createBullet(A, T, { skillId, bulletId, level, critical, random });
   battle.hit(bullet);
   return bullet.results;
 }
@@ -194,6 +208,7 @@ export function preCast(battle, attacker, target, skillIds, level = 9) {
     battle.beginSkill(attacker, tgt, Number(id));
     for (const bulletId of parseInts(battle.master.skill.get(Number(id)).BULLET_INFO).filter(Boolean)) { const b = battle.createBullet(attacker, tgt, { skillId: Number(id), bulletId, level, random: 0.95 }); battle.hit(b); }
     battle.dispatch(17, attacker, attacker); // skill end
+    battle.setState(attacker, K.STATE.IDLE, { silent: true });
   }
 }
 
@@ -225,11 +240,12 @@ export function measureSupport(battle, attacker, target, skillIds, state = {}, l
 // Full scenario: returns hits (per bullet pass) with normal/critical ranges, plus what fired and what could be assumed.
 export function runScenario({ battle, attacker, target, skill, state = {}, assume = {}, randoms = [0.9, 0.925, 0.95, 0.975, 1.0] }) {
   battle.options.probability = assume.probability || 'assume';
-  // assume.forced: chance-based instances (`${localId}:${index}`) counted as triggered whatever the mode (the user's ticks)
+  // assume.forced: chance-based instances (`${unit id}:${localId}:${index}`, the probabilistic list's keys) counted as
+  // triggered whatever the mode (the user's ticks)
   battle.options.forced = new Set(assume.forced || []);
   setupBattle(battle, attacker, target, state);
   const setupSnap = battle.snapshot();
-  assumeInstances(battle, attacker, assume.instances);
+  assumeInstances(battle, attacker, assume.instances, target);
   preCast(battle, attacker, target, state.preCasts, skill.level ?? 9);
   const conditionals = conditionalInstances(battle, attacker, new Set(assume.instances || []));
   const level = skill.level ?? 9;
@@ -261,13 +277,21 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
         edits: (s?.edits || []).map(e => ({ name: zhName(e.by), id: e.id, localId: e.localId, value: e.value, passiveName: clean(battle.master.passive.get(e.localId)?.NAME || battle.master.itemEquip.get(e.localId)?.NAME || '') })) });
     }
   }
-  // a final representative cast keeps its trace so callers see what fired during the attack too
+  // representative casts (every bullet, normal and critical) keep their traces, so callers see what fired during
+  // the attack and every chance that came up — also the ones that only roll on a critical hit
+  const mid = randoms[Math.floor(randoms.length / 2)];
+  const trace = battle.trace.slice(0, base.traceLength);
+  for (const critical of [true, false]) for (const bulletId of bullets) { battle.restore(base); evaluate(battle, attacker, target, skill.id, bulletId, level, critical, mid); trace.push(...battle.trace.slice(base.traceLength)); }
   battle.restore(base);
-  if (bullets.length) evaluate(battle, attacker, target, skill.id, bullets[0], level, false, randoms[Math.floor(randoms.length / 2)]);
-  const fired = battle.trace.filter(t => t.fired && t.owner === attacker.name);
+  if (bullets.length) evaluate(battle, attacker, target, skill.id, bullets[0], level, false, mid);
+  const fired = trace.filter(t => t.fired && t.ownerId === attacker.id);
   const listed = new Set(conditionals.map(c => `${c.localId}:${c.localIndex}`)); // already offered as a conditional
-  // every chance-based instance that came up (fired, or its condition held and the roll failed); `on`: counted in the result
-  const probabilistic = [...new Map(battle.trace.filter(t => (t.fired || t.missed) && t.prob < 10000 && !listed.has(`${t.localId}:${t.index}`)).map(t => [`${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.localId}:${t.index}`, localId: t.localId, passiveId: t.passiveId || t.localId, on: !!t.fired, passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), prob: t.prob / 100, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
+  // the attacker's chance effects that came up: its own probability (fired, or the condition held and the roll
+  // failed) or a lottery inside its script; `on`: counted in the result
+  const chanceOf = t => t.prob < 10000 ? (t.fired || t.missed) : !!t.lottery;
+  // the move's own bullets (e.g. 剪刀尾巴's chance to blind): named after the move, not a passive
+  const moveBullets = new Set(parseInts(battle.master.skill.get(skill.id)?.BULLET_INFO).filter(Boolean)), moveName = clean(battle.master.skill.get(skill.id)?.NAME || '');
+  const probabilistic = [...new Map(trace.filter(t => t.ownerId === attacker.id && chanceOf(t) && !listed.has(`${t.localId}:${t.index}`)).map(t => [`${t.ownerId}:${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.ownerId}:${t.localId}:${t.index}`, localId: t.localId, passiveId: t.passiveId || t.localId, on: !!t.fired && t.lottery !== 'miss', ...(moveBullets.has(t.localId) && !t.passiveId ? { fromMove: true, skillId: skill.id } : {}), passiveName: moveBullets.has(t.localId) && !t.passiveId ? moveName : clean(battle.master.passive.get(t.passiveId || t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), prob: t.prob < 10000 ? t.prob / 100 : null, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
   // conditionals that would change nothing are not offered (an assumed one stays so its tick can be undone)
   const assumedKeys = new Set(assume.instances || []);
   const unchanged = unchangedInstances(battle, attacker.id, target.id, setupSnap, conditionals.filter(c => !assumedKeys.has(c.key)));
@@ -277,7 +301,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
     buffs: attacker.buffs.map(b => ({ uid: b.uid, buffId: b.buffId, name: clean(zhName(b.mst.NAME)), params: b.params, remain: b.remain, from: clean(battle.master.passive.get(b.related?.localId)?.NAME || battle.master.itemEquip.get(b.related?.localId)?.NAME || '') })),
     hits, conditionals: conditionals.filter(c => !unchanged.has(c.key)), unchangedConditionals: conditionals.filter(c => unchanged.has(c.key)), probabilistic,
     fired: fired.map(t => ({ trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '', passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), localId: t.localId, index: t.index })),
-    errors: battle.trace.filter(t => t.error).map(t => ({ name: t.name, id: t.id, error: t.error })),
+    errors: [...new Map(trace.filter(t => t.error).map(t => [`${t.id}:${t.error}`, { name: t.name, id: t.id, error: t.error }])).values()],
     unsupported: [...battle.unsupported.keys()],
     assumptions: [...battle.assumptions],
   };

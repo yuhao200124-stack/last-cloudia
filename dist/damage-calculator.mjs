@@ -147,7 +147,7 @@ function notify(){
  const m=selectedMove();
  $('entryMoveNote').textContent=m?'':'这个招式没有游戏数据。';
  // the latest state also stays on window: engine-panel.mjs may finish loading after the first hand-over
- const detail={battle,gameMove:m?gameMoveParameters(m):null,selection:{...Object.fromEntries(SWITCHES.map(k=>[k,$(k).checked])),dualWield:!!state.switches.dualWield},unitDressId:game?.unitDressId||null,arkStats:arkStats(),hits:Number($('hits').value)||10};
+ const detail={battle,gameMove:m?gameMoveParameters(m):null,selection:{...Object.fromEntries(SWITCHES.map(k=>[k,$(k).checked])),dualWield:!!state.switches.dualWield},unitDressId:game?.unitDressId||null,arkStats:arkStats(),hits:Number($('hits').value)||10,bossPreset:$('bossPreset').value,bossMonsterId:bosses[$('bossPreset').value]?.monsterId||null};
  window.LC_CALCULATOR_STATE=detail;
  document.dispatchEvent(new CustomEvent('lc:calculator-update',{detail}));
 }

@@ -543,7 +543,7 @@ function mount() {
   $('engineMonsterName').addEventListener('input', () => fillMonsterVariants($('engineMonsterName').value));
   $('engineMonsterName').addEventListener('focus', () => ensureMonsters().then(() => fillMonsterVariants($('engineMonsterName').value)));
   $('engineMonsterVariant').addEventListener('change', e => { monsterChoice = Number(e.target.value) || null; try { if (monsterChoice) localStorage.setItem(MONSTER_KEY, String(monsterChoice)); else localStorage.removeItem(MONSTER_KEY); } catch {} run(); });
-  $('engineMonsterClear').addEventListener('click', () => { monsterChoice = null; try { localStorage.removeItem(MONSTER_KEY); } catch {} $('engineMonsterName').value = ''; $('engineMonsterVariant').innerHTML = '<option value="">先输入名称</option>'; $('engineMonsterNote').textContent = '未选择怪物表目标。'; run(); });
+  $('engineMonsterClear').addEventListener('click', () => { clearMonster(); run(); });
   $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} run(); });
   $('engineResult').addEventListener('change', e => { const { assume: key, prob } = e.target.dataset; const set = key ? assumed : prob ? probAssumed : null; if (!set) return; for (const k of (key || prob).split(' ')) { if (e.target.checked) set.add(k); else set.delete(k); } run(); });
   // loadout builder controls
@@ -741,9 +741,18 @@ async function ensureCrests() {
 const setState = text => { const el = $('engineState'); if (el) el.textContent = text; };
 
 // Boss-class monsters from MonsterMst (engine/monsters.json, loaded on demand) for the target picker.
-const MONSTER_KEY = 'lc-engine-target-monster';
+// kept per character (it used to be one for all pages, so another page's monster silently replaced this page's target)
+const MONSTER_KEY = `lc-engine-target-monster:${new URLSearchParams(location.search).get('character') || ''}`;
 let monsterBundle = null, monsterPassiveBundle = null, monsterChoice = null;
-try { monsterChoice = Number(localStorage.getItem(MONSTER_KEY)) || null; } catch {}
+try { monsterChoice = Number(localStorage.getItem(MONSTER_KEY)) || null; localStorage.removeItem('lc-engine-target-monster'); } catch {}
+// back to the calculator's own target (the 改回 button, a change of the calculator's target preset, 重置)
+function clearMonster() {
+  monsterChoice = null; try { localStorage.removeItem(MONSTER_KEY); } catch {}
+  if ($('engineMonsterName')) $('engineMonsterName').value = '';
+  if ($('engineMonsterVariant')) $('engineMonsterVariant').innerHTML = '<option value="">先输入名称</option>';
+  if ($('engineMonsterNote')) $('engineMonsterNote').textContent = '未选择怪物表目标。';
+}
+document.addEventListener('lc:calculator-reset', () => { if (monsterChoice) clearMonster(); });
 async function ensureMonsters() {
   if (!monsterBundle) { monsterBundle = await fetch(new URL('./game-data/engine/monsters.json', import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(monsterBundle);
     const names = [...new Set(monsterBundle.MonsterMst.rows.map(r => r[1]))].sort((a, b) => a.localeCompare(b, 'zh'));
@@ -892,7 +901,8 @@ async function run(force = false) {
   setPrimaryState('计算中…');
   running = true;
   try {
-    const dress = report?.units?.[0]?.unitId || Number(latest.unitDressId) || await siteDress();
+    // this page's character (a report counts only when its first unit is that character; otherwise game data at max)
+    const dress = Number(latest.unitDressId) || await siteDress() || report?.units?.[0]?.unitId;
     if (!dress) { setState('先导入读取报告或选择游戏角色'); running = false; return; }
     const M = await ensureEngine(dress);
     setState('结算中…');
@@ -964,6 +974,9 @@ async function run(force = false) {
     let targetSpec = null;
     if (monsterChoice) { await ensureMonsters(); await ensureMonsterPassives(); targetSpec = M.targetFromMonster(battle.master, monsterChoice); if (targetSpec) { targetSpec.source = '游戏怪物表'; $('engineMonsterNote').textContent = monsterNote(targetSpec); if ($('engineMonsterName') && !$('engineMonsterName').value) { $('engineMonsterName').value = targetSpec.name; fillMonsterVariants(targetSpec.name); } } }
     if (!targetSpec) targetSpec = report && $('bossPreset')?.value?.startsWith('reader-') ? M.targetFromReport(report, { bossIndex: Number($('bossPreset').value.slice(7)) || 0 }) : targetFromFields(latest);
+    // a preset boss (轟鳥龍恩德爾羅納 / 神獸帕帕拉納) is that monster: its own passives come from the monster table
+    // (e.g. its Break passive: DEF/MND −25%, 属性耐性 −25); the fields keep deciding its stats, races and resistances
+    if (!monsterChoice && latest.bossMonsterId && !String(latest.bossPreset || '').startsWith('reader-') && !targetSpec.passives?.length) { await ensureMonsters(); await ensureMonsterPassives(); const m = M.targetFromMonster(battle.master, latest.bossMonsterId); if (m) targetSpec = { ...targetSpec, monsterId: m.monsterId, level: m.level, passives: m.passives }; }
     const target = M.addTarget(battle, targetSpec);
     renderSupportMagic(gameChar, dress);
     attackerSpec.finalAdd = arkFinalAdd(latest.arkStats);
@@ -994,7 +1007,7 @@ async function run(force = false) {
       const { buildOwn, buildPassives, buildAuto: autoIds, buildAutoInfo, buildNote, buildGear, ...rest } = attackerSpec;
       // gains only compare the move's first damaging bullet (as the main card's per-call metric does)
       buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), forced: new Set(probAssumed), buildOwn, buildPassives, autoIds, buildAutoInfo, buildNote, buildGear, firstBullet: damaging[0]?.bulletId ?? null };
-      const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], [...buildCtx.forced], buildPassives.map(p => p.id), buildOwn.map(p => p.id), (rest.equips || []).map(e => e.id), currentHits().hits]);
+      const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], [...buildCtx.forced], rest.finalAdd || null, rest.crest || null, buildPassives.map(p => p.id), buildOwn.map(p => p.id), (rest.equips || []).map(e => e.id), currentHits().hits]);
       if (key !== lastBuildKey) { buildGains.clear(); buildCurrent = buildBaseline = null; }
       lastBuildKey = key; buildCtx.key = key;
       renderBuild(buildCtx);
@@ -1035,6 +1048,12 @@ function effectSentence(text, trigger, processName) {
   return best || parts.join('。');
 }
 function effectLine(x, c) {
+  // a chance of the move itself (its bullets): the move's name and the line of its description that says it
+  if (x.fromMove) {
+    const mv = [c?.normal, ...(c?.specials || []), c?.ultimate, ...(c?.magic?.normal || []), ...(c?.magic?.heavy || [])].find(m => m?.id === x.skillId);
+    const lines = String(mv?.explainS || '').split('\n').map(t => t.trim()).filter(Boolean);
+    return `${mv?.nameS || x.passiveName || '本招式'}：${lines.find(t => /机率|几率|概率/.test(t)) || lines.join('') || String(x.processName || '').replace(/^[A-Z]+_/, '')}`;
+  }
   const r = passiveRecord(x.passiveId, c);
   const name = r?.nameS || passiveNames?.get(x.passiveId) || x.passiveName || '效果';
   return `${name}：${r?.textS ? effectSentence(r.textS, x.trigger, x.processName) : String(x.processName || '').replace(/^PB?_/, '')}`;
@@ -1054,8 +1073,13 @@ function render(out, ctx) {
     ${issues.length ? `<details class="engine-issues" open><summary>未能完整模拟（${issues.length}）</summary><ul>${issues.map(i => `<li>${i}</li>`).join('')}</ul></details>` : ''}`;
 }
 
+let lastPreset;
 function receiveState(detail) { latest = detail || {}; report = latest.battle || null; mount();
-  if ($('engineAccountRow')) $('engineAccountRow').hidden = !!(report && report.units?.length); run(); }
+  // the user picked another target in the calculator: that target counts, not an earlier monster-table choice
+  if (lastPreset !== undefined && latest.bossPreset !== lastPreset && monsterChoice) clearMonster();
+  lastPreset = latest.bossPreset;
+  // a report of this page's character brings its own blessings; another character's report is not used
+  const own = report?.units?.[0]?.unitId; if ($('engineAccountRow')) $('engineAccountRow').hidden = !!(own && (!latest.unitDressId || own === Number(latest.unitDressId))); run(); }
 document.addEventListener('lc:calculator-update', e => receiveState(e.detail));
 mount();
 // the page may have handed its state over before this module finished loading

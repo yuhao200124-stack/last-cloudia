@@ -33,7 +33,8 @@ async function replay(report, samples) {
     battle.beginSkill(attacker, target, skillId);
     const base = battle.snapshot();
     for (const s of list) {
-      battle.restore(base); battle.options.forced = new Set(s.forced || []);
+      // the fixture records `${localId}:${index}`; the engine keys a chance by its unit too (`${unit}:${localId}:${index}`)
+      battle.restore(base); battle.options.forced = new Set((s.forced || []).map(k => `${attacker.id}:${k}`));
       const bullet = battle.createBullet(attacker, target, { skillId, bulletId, level: 9, random: s.random, critical: s.critical }); bullet.singlePass = true; battle.hit(bullet);
       const r = bullet.results[0]; checked++;
       assert.equal(r.attack, s.settlementAtk, `${skillId} settlement attack`);

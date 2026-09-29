@@ -51,7 +51,7 @@
       <details><summary>核对目标种族</summary><p class="help">预设或读取报告会自动填写；自定义目标请按实际种族勾选。多个种族命中同一技能时只计一次。</p><div id="bossRaceChoices" class="inline-options"></div></details>
       <div class="fields two"><label>防御力 DEF<input id="bossDefense" type="number" min="0" max="100000000" step="1" value="4000"></label><label>魔抗 MND<input id="bossMind" type="number" min="0" max="100000000" step="1" value="10000"></label></div>
       <div id="bossResistances" class="fields three"></div>
-      <details><summary>其他战斗条件</summary><div class="fields two"><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="0.5"></label></div><p class="help">Break 时防御的变化不在游戏脚本里，按这里的倍率计算（默认 ×0.5，来自早期网页设定，未经游戏数据核实）。</p></details>
+      <details><summary>其他战斗条件</summary><div class="fields two"><label>Break 时防御倍率 ×<input id="breakDefenseRatio" type="number" min="0" max="1" step="any" value="1"></label></div><p class="help">Break 时 Boss 自己的破防效果按游戏数据计算（例如恩德爾羅納、帕帕拉納：防御与魔抗 −25%、属性耐性 −25）。这里是在它之外再乘的倍率，默认 ×1（不再额外降低）。</p></details>
     </section>
     <section id="confirmedEffectsSection" class="card" hidden aria-labelledby="confirmedEffectsTitle">
       <div class="section-heading reference-section-heading"><h2 id="confirmedEffectsTitle" tabindex="-1"><span>05</span>已确认的伤害加成</h2><button type="button" id="closeConfirmedEffects">返回伤害计算</button></div>
@@ -76,6 +76,6 @@
     <div id="reviewBody"><p class="help">选择招式后显示。</p></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260929-homebuild"></script>
-<script type="module" src="./engine-panel.mjs?v=20260929-norenew"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260930-auditfix"></script>
+<script type="module" src="./engine-panel.mjs?v=20260930-auditfix"></script>
 </body></html>

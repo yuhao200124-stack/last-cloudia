@@ -19,8 +19,10 @@ export const K = {
   TARGET_SIDE: { ALL: 0, OPPONENT: 1, ALLY: 2, ME: 3, NONE: 5 },
   TARGET_COND: { ALL: -1, BOTH: 0, ALIVE: 1, DEAD: 2, SECEDE: 3 },
   AFF: { NONE: 0, BUFF: 2, AUTOSKILL: 4, ARK: 5, WEAPON: 6, ARMOR: 7, ACCESSORY: 8, TERRAIN: 9, FORMATION: 12, SUPPORT: 15, CREST: 18, SUB_BUFF: 64 },
-  TRIG: { STATUS: 1, WAVE_START: 10, BEFORE_SKILL: 18, BEFORE_CREATE_BULLET: 19, BULLET_PROCESS: 20, BULLET_HIT: 21, BULLET_WAS_HIT: 22, ON_CALC_ATTACK: 23, ON_CALC_DAMAGE: 24, AFTER_ATTACK: 25, AFTER_DAMAGE: 26, AFTER_CALC_ATTACK: 27, AFTER_CALC_DAMAGE: 28, PRE_AFTER_ATTACK: 29, PRE_AFTER_DAMAGE: 30, CHANGE_HP: 40, CHANGE_BUFF: 54, ON_ADDED_BUFF: 60, CHANGE_SURVIVORS: 65 },
+  TRIG: { STATUS: 1, WAVE_START: 10, BEFORE_SKILL: 18, BEFORE_CREATE_BULLET: 19, BULLET_PROCESS: 20, BULLET_HIT: 21, BULLET_WAS_HIT: 22, ON_CALC_ATTACK: 23, ON_CALC_DAMAGE: 24, AFTER_ATTACK: 25, AFTER_DAMAGE: 26, AFTER_CALC_ATTACK: 27, AFTER_CALC_DAMAGE: 28, PRE_AFTER_ATTACK: 29, PRE_AFTER_DAMAGE: 30, BEFORE_CHANT: 16, CHANGE_MP: 42, BREAK_CHANGE: 52, UNIT_STATE: 59, BOSS_BREAK: 68, CHANGE_HP: 40, CHANGE_BUFF: 54, ON_ADDED_BUFF: 60, CHANGE_SURVIVORS: 65 },
   OP: { PHYS_DMG: 100, MAG_DMG: 101, STR: 300, DEF: 301, INT: 302, MND: 303, CRT: 304, MAX_HP: 305, STATUS_RESIST: 306, ELEM_RESIST: 307, KILLER: 308, SPD: 310, MAX_MP: 318, EQUIP_PARAM: 319, REDUCTION_PHYS: 502, REDUCTION_MAG: 503, DMG_POWER: 504, INVALID_DMG: 505, OVERRIDE_ELEMENT: 507, KILLER_POWER: 509, DMG_LIMIT_OFF: 824, MULTI_BULLET: 825, DMG_LIMIT_UP: 826, MAGIC_CRITICAL: 800, SPECIAL_CRITICAL: 829 },
+  // unit states (luaCommon.lua STATE_*): 59 (単位状態変化) fires on every change
+  STATE: { IDLE: 0, MOVE: 1, STANDBY: 2, MAIN: 3, DAMAGE: 4 },
   SKILL: { SKILL: 1, MAGIC: 2, PRECAST: 3, SUMMON: 4, SPECIAL: 5, PASSIVE: 6, ARK: 7, ATTACK: 9, PHYSIC: 10, COUNTER: 15 },
   ROLE: { ATTACK: 1, HEAL: 2, BUFF: 3, DEBUFF: 8, CAST: 16, RESURRECT: 32 },
   ELEM: { NONE: 0, FIRE: 1, ICE: 2, TREE: 3, THUNDER: 4, LIGHT: 5, DARK: 6 },
@@ -188,7 +190,7 @@ export class Battle {
       equips: spec.equips || [], elemResist: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, ...(spec.elemResist || {}) }, statResist: {},
       status: [], real: [], work: [], // control entries
       instances: [], buffs: [], values: {}, procValues: {}, personality: spec.personality || [], passiveIds: [], skills: spec.skills || [],
-      combo: 0, skillUsed: 0, castLevel: 0,
+      combo: 0, skillUsed: 0, castLevel: 0, state: 0,
     };
     u.hp = spec.hp ?? u.pure[96]; u.mp = spec.mp ?? u.pure[33];
     this.units.set(id, u);
@@ -410,7 +412,7 @@ export class Battle {
           else this.log('missing-script', fn);
         } else this.nativeOperation(inst, ctx, owner, target);
       }
-      this.trace.push({ trigger, owner: owner.name, target: target?.name, kind: inst.kind, id: inst.kind === 'buff' ? inst.buffId : inst.processId, name: inst.mst.NAME, localId: inst.localId, passiveId: inst.passiveId, index: inst.localIndex, prob: inst.kind === 'process' ? inst.prob : 10000, fired, missed, succeeded: ctx.succeeded });
+      this.trace.push({ trigger, owner: owner.name, target: target?.name, kind: inst.kind, id: inst.kind === 'buff' ? inst.buffId : inst.processId, name: inst.mst.NAME, ownerId: owner.id, localId: inst.localId, passiveId: inst.passiveId, index: inst.localIndex, prob: inst.kind === 'process' ? inst.prob : 10000, fired, missed, lottery: ctx.lottery || null, succeeded: ctx.succeeded });
     } catch (err) {
       this.log('script-error', inst.kind, inst.kind === 'buff' ? inst.buffId : inst.processId, err.message);
       this.trace.push({ trigger, owner: owner.name, kind: inst.kind, id: inst.kind === 'buff' ? inst.buffId : inst.processId, name: inst.mst.NAME, error: err.message });
@@ -420,14 +422,18 @@ export class Battle {
     }
     return fired && ctx.succeeded;
   }
-  roll(inst) {
+  // Chance rolls: the instance's own probability (roll) and the scripts' own lottery() calls (chance).
+  // A key is `${owner unit}:${localId}:${segment}` (the attacker's and the boss's passives share ids).
+  chance(inst, rate) {
+    const key = `${inst.owner}:${inst.localId}:${inst.localIndex}`;
+    if (this.options.forced?.has(key)) return true; // explicitly assumed (per instance)
+    if (this.options.skipped?.has(key)) return false;
     const mode = this.options.probability;
-    if (this.options.forced?.has(`${inst.localId}:${inst.localIndex}`)) return true; // explicitly assumed (per instance)
-    if (this.options.skipped?.has(`${inst.localId}:${inst.localIndex}`)) return false;
     if (mode === 'assume') return true;
     if (mode === 'skip') return false;
-    return Math.random() * 10000 < inst.prob;
+    return Math.random() * 10000 < rate;
   }
+  roll(inst) { return this.chance(inst, inst.prob); }
   // USE_SCRIPT=0 rows: OPE_INFO / PROCESS_OPE_TYPE is a ControlType applied through ProcControl2 with the
   // parameters picked out by PARAM_BEHAVIOR (process) or the buff's behaviours (VAL/PER/ADD → 0/1/2).
   nativeOperation(inst, ctx, owner, target) {
@@ -472,6 +478,11 @@ export class Battle {
     const p = listOf(params).map(x => (x == null ? 0 : x));
     if (op === K.OP.PHYS_DMG || op === K.OP.MAG_DMG) return this.damageOperation(op, p, srcType, srcUnit, dstUnit);
     if (op === 836) { const b = this.current?.bullet; if (b) b.cancelled = true; return !!b; } // CancelBullet
+    if (op === 801) { // 追加ダメージ: its amount is computed by the game's native code, not in the scripts
+      const cur = this.current, name = String(this.master.passive.get(cur?.inst?.passiveId || cur?.localId)?.NAME || this.master.itemEquip.get(cur?.localId)?.NAME || cur?.localId || '').replace(/<[^>]+>/g, '');
+      this.assumptions.add(`追加伤害：${name} 的追加伤害没有算进去（伤害量由游戏程序本体计算，不在游戏脚本里）`);
+      return false;
+    }
     const store = this.storeFor(dstType, dstUnit);
     if (!store) { this.log('control-no-store', dstType, dstUnit, op, p); return false; }
     const cur = this.current;
@@ -488,9 +499,16 @@ export class Battle {
     this.timeline = { owner: owner.id, target: target.id, skillId, skillType: type, skillIndex: index || 1, puid: this.nextUid++ };
     owner.activeSkill = { id: skillId, type, index: index || 1, target: target.id, puid: this.timeline.puid };
     owner.skillUsed++;
+    // a magic is chanted first: 16 (before the chant), then the standby state (59, 「特定スキルを詠唱した時」)
+    if (type === K.SKILL.MAGIC) { this.dispatch(K.TRIG.BEFORE_CHANT, owner, owner); this.setState(owner, K.STATE.STANDBY); }
     this.dispatch(K.TRIG.BEFORE_SKILL, owner, owner);
+    // activation: the main state (59, 「特定スキルを発動した時」 — e.g. 星眼, 全力以赴的一擊)
+    this.setState(owner, K.STATE.MAIN);
     return this.timeline;
   }
+  // A unit's state (UnitGetState); every change fires 59. Returning to idle after a cast is silent (idle-state
+  // effects such as a boss's 待機状態 checks are not part of one cast).
+  setState(u, state, { silent = false } = {}) { if (u.state === state) return; u.state = state; if (!silent) this.dispatch(K.TRIG.UNIT_STATE, u, u); }
 
   // ---- bullets & the damage pipeline ----
   // bulletSpec: {skillId, bulletId, level, dmgRatio, hitIndex, elementOverride}
@@ -502,6 +520,7 @@ export class Battle {
     const element = spec.elementOverride ?? (skill.weaponElem && skill.elem === 0 ? weaponElem : skill.elem);
     const b = { uid: this.nextUid++, owner: owner.id, target: target.id, skillId: spec.skillId, skill, bulletId: spec.bulletId, level: spec.level ?? 1, lvRow, segments, dmgRatio: spec.dmgRatio ?? 10000, hitIndex: spec.hitIndex ?? 0, element, work: [], values: {}, edits: [], damage: 0, orgDamage: 0, lastDamage: 0, critical: !!spec.critical, random: spec.random ?? 1, killer: false, puid: this.timeline && this.timeline.skillId === spec.skillId && this.timeline.owner === owner.id ? this.timeline.puid : this.nextUid++, instances: [], results: [] };
     b.instances = segments.map((seg, i) => this.makeInstance({ owner: owner.id, affiliation: K.AFF.NONE, localId: spec.bulletId, localIndex: i, processId: seg.processId, prob: seg.prob, params: seg.params })).filter(Boolean);
+    this.dispatch(K.TRIG.BEFORE_CREATE_BULLET, owner, target, b);
     return b;
   }
   // One bullet hit. 二刀流 (control 808 with a weapon in the armour slot, physical bullets) and 多段魔法
@@ -530,6 +549,8 @@ export class Battle {
       if (bullet.cancelled) { bullet.results.push({ hitIndex: pass.hitIndex, cancelled: true, damage: 0 }); continue; }
       const list = bullet.instances.filter(i => i.trigger === K.TRIG.BULLET_PROCESS).sort((a, b) => b.priority - a.priority);
       for (const inst of list) this.runInstance(inst, owner, target, bullet, K.TRIG.BULLET_PROCESS);
+      this.dispatch(K.TRIG.PRE_AFTER_ATTACK, owner, target, bullet);
+      this.dispatch(K.TRIG.PRE_AFTER_DAMAGE, target, owner, bullet);
       this.dispatch(K.TRIG.AFTER_ATTACK, owner, target, bullet);
       this.dispatch(K.TRIG.AFTER_DAMAGE, target, owner, bullet);
     }
@@ -549,8 +570,8 @@ export class Battle {
     this.dispatch(K.TRIG.ON_CALC_DAMAGE, target, owner, bullet);
     const attack = this.finalStat(owner, atkStat, { work: true, bullet });
     let defense = this.finalStat(target, defStat, { work: true });
-    // The break state's own defense change is not in the game scripts: options.breakDefenseRatio is the
-    // calculator's Break 时防御倍率 setting, applied only while the target is in break (and reported as an assumption).
+    // The break state's defense change comes from the target's own Break passives (fired by setupBattle);
+    // options.breakDefenseRatio is the calculator's extra Break 时防御倍率 (default 1), reported when it is not 1.
     if (target.breakRemain > 0 && this.options.breakDefenseRatio != null) defense = f32(defense * this.options.breakDefenseRatio);
     const element = this.bulletElement(bullet);
     const resist = element === 0 ? 0 : this.elemResist(target, element);
@@ -701,7 +722,16 @@ export class Battle {
       UnitGetCharType(t) { return B.charTypesOf(B.unit(t)); },
       UnitGetGender(t) { return B.unit(t)?.gender ?? 0; },
       UnitGetBossFlg(t) { return !!B.unit(t)?.isBoss; },
-      UnitGetState(t) { return 0; },
+      UnitGetState(t) { return B.unit(t)?.state ?? 0; },
+      // lottery() of the scripts (CONTEXT_STACK_LUA replaces it): a chance of the running instance, decided like
+      // its own probability (the user's per-effect tick, off by default) and recorded so the effect is listed
+      SandboxLottery(rate) {
+        const ctx = cur(), r = Number(rate) || 0;
+        if (r >= 10000) return true; if (r <= 0 || !ctx?.inst) return false;
+        const hit = B.chance(ctx.inst, r);
+        ctx.lottery = ctx.lottery === 'hit' || hit ? 'hit' : 'miss';
+        return hit;
+      },
       UnitGetList(side, cond) { return listUnits(side, cond); },
       GetUnits() { return [...B.units.keys()]; },
       UnitGetComboCount(t) { return B.unit(t)?.combo ?? 0; },
@@ -902,7 +932,8 @@ export class Battle {
       UnitGetSkillLevel() { return 1; }, GetSkillAbsLevel() { return 1; },
       UnitGetSkillKiller() { return 0; }, UnitGetSkillAvail() { return 0; }, UnitGetSkillMaxAvail() { return 0; },
       UnitGetActiveSkill(t) { const u = B.unit(t); const a = u?.activeSkill; if (a) return multi(0, a.type, a.index, a.target); const b = curBullet(); return b ? multi(0, b.skill.skillType, 1, b.target) : multi(0, 0, 0, 0); },
-      UnitGetSkillPlayInfo() { return null; },
+      // the plays of one skill still running: only the cast being evaluated ({elapsed, puid}, e.g. 星眼's per-cast list)
+      UnitGetSkillPlayInfo(t, type, index) { const a = B.unit(t)?.activeSkill; return a && a.type === type && a.index === index ? [{ elapsed: 0, puid: a.puid }] : []; },
       UnitIsSkillDisabled() { return false; },
       UnitControl(t, code, ...args) {
         if (code === 511) { const sub = args[2]; if (sub === 100) return 0; if (sub === 101) return [0, []]; if (sub === 102) return []; }
@@ -920,7 +951,7 @@ export class Battle {
       GetUserInfo() { return null; }, GetUiMsg() { return ''; }, CallQuestFunc() {}, InvokeQuestFunc() {}, BattleControl: (...a) => B.battleControl(...a), CalculateType() { return 0; },
       // The skill timeline being played (set by Battle.beginSkill); property ids from procCondCommon.lua.
       GetTimelineParameter(propId, puid) {
-        const tl = B.timeline; if (propId === 100) return Math.random();
+        const tl = B.timeline; if (propId === 100) return 0.5; // a random draw: the middle (see CONTEXT_STACK_LUA)
         if (!tl) return 0;
         switch (propId) { case 1: return tl.owner; case 2: case 3: return tl.target; case 10: case 11: return tl.puid; case 12: return 0; case 13: return 1; case 20: return tl.skillId; case 21: return tl.skillType; case 22: return tl.skillIndex; case 23: return tl.slot ?? 0; case 30: return false; case 50: return false; default: return 0; }
       },
@@ -942,6 +973,15 @@ function cloneState(state) {
 
 // Saves/restores the script-side context around nested dispatches (see Battle.saveGlobals).
 const CONTEXT_STACK_LUA = `
+-- Chance and randomness follow the calculator's rules: lottery() is a chance of the running effect that the user
+-- ticks (off by default; SandboxLottery), every other random draw (a value in a range, one of several skills or
+-- targets) takes the middle, so the same inputs always give the same numbers.
+function lottery(rate) return SandboxLottery(rate) end
+math.random = function(m, n)
+  if m == nil then return 0.5 end
+  if n == nil then m, n = 1, m end
+  return (m + n) // 2
+end
 -- fengari integers are 32-bit: 2^31 has no integer representation there, so the bit helpers of
 -- luaCommon.lua are re-expressed with shifts (same results for the 32-bit values the scripts use).
 function bitToBoolean(_val, _bit)
@@ -968,4 +1008,4 @@ end
 `;
 
 // Every raw native the captured scripts reference (derived from the scripts themselves).
-export const NATIVE_NAMES = ['SetBulletWork', 'SetBuffWork', 'BattleControl', 'BuffControl', 'BuffGetValue', 'BulletCanKB', 'BulletGetDeleteOnHit', 'BulletGetElement', 'BulletGetKiller', 'BulletGetKnockBack', 'BulletGetOwner', 'BulletGetProperty', 'BulletGetSkillID', 'BulletGetSkillKind', 'BulletGetSkillPUID', 'BulletGetSkillRange', 'BulletGetSkillRole', 'BulletGetSkillTarget', 'BulletGetSkillTotalDamage', 'BulletGetSkillType', 'BulletGetSp', 'BulletGetTarget', 'BulletGetValue', 'BulletMadeBreak', 'BulletSetProperty', 'BulletTargetUseCounter', 'BulletWasCritical', 'BulletWasGuarded', 'BulletWasLastAttack', 'CalculateType', 'CallQuestFunc', 'EFFECT_TIMELINE_SEGMENT_ELEMENT2', 'ExecSubProcess', 'GenerateBullet', 'GetBattleInfo', 'GetBgTerrainType', 'GetBuffInfo', 'GetBuffWork', 'GetBulletWork', 'GetCurrentBuffUID', 'GetCurrentBulletUID', 'GetDateTime', 'GetDistanceWall', 'GetDummyUnitID', 'GetMasterInfo', 'GetNearestUnit', 'GetNearestUnitForFirst', 'GetOperationUnit', 'GetRarityOfStolenItem', 'GetScriptStatus', 'GetSkillAbsLevel', 'GetTargProcAffiliation', 'GetTargProcBehaviours', 'GetTargProcBuffs', 'GetTargProcCategories', 'GetTargProcParameters', 'GetTargProcProbability', 'GetTerrain', 'GetTimelineParameter', 'GetTotalZel', 'GetUiMsg', 'GetUnits', 'GetUserInfo', 'GetWaveCount', 'GetWaveTimer', 'InsideArea', 'InvokeQuestFunc', 'IsDummyUnit', 'IsSkillActive', 'IsSucceeded', 'IsValidUnit', 'LoadStat2Work', 'NumWaves', 'PlayPassiveLine', 'PlayPassiveLine2', 'PlayProcTimeline', 'PreloadSkill', 'ProcControl2', 'ProcEditProcDamage', 'ProcEditProcHeal', 'ProcGetAddBadStatus', 'ProcGetAffiliation', 'ProcGetBuffUnit', 'ProcGetFlag', 'ProcGetLastDamage', 'ProcGetLastHeal', 'ProcGetOrgProcDamage', 'ProcGetOrgProcHeal', 'ProcGetOwner', 'ProcGetOwnerActiveSkill', 'ProcGetParam', 'ProcGetParameter', 'ProcGetProcDamage', 'ProcGetProcHeal', 'ProcGetProcessID', 'ProcGetProcessIndex', 'ProcGetSucceeded', 'ProcGetTarget', 'ProcGetUnitUID', 'ProcSetFlag', 'ProcSetParameter', 'ProcessControl', 'RaiseProcTrigger', 'SetCacheInfo', 'SetPendingJudge', 'UIControl', 'UnitCalcPos', 'UnitCanAction', 'UnitCanUseSpecial', 'UnitChangeBossFlag', 'UnitChangeBossGaugeOwner', 'UnitChangeCharacter', 'UnitControl', 'UnitFindInCircle', 'UnitGetAccessoryElem', 'UnitGetActionHistory', 'UnitGetActiveSkill', 'UnitGetAimedCount', 'UnitGetAimedList', 'UnitGetArenaInfo', 'UnitGetArmorType', 'UnitGetBadStatus', 'UnitGetBossFlg', 'UnitGetBossGaugeOwner', 'UnitGetBreakCount', 'UnitGetBreakRemain', 'UnitGetBreakTime', 'UnitGetBuffs', 'UnitGetCastLevel', 'UnitGetChangedAlives', 'UnitGetChangedBuffs', 'UnitGetCharType', 'UnitGetCharacterID', 'UnitGetComboCount', 'UnitGetDamageInfo', 'UnitGetDebuffs', 'UnitGetDir', 'UnitGetElemResists', 'UnitGetEquipElem', 'UnitGetEquipID', 'UnitGetEquipType', 'UnitGetGender', 'UnitGetIndex', 'UnitGetLevel', 'UnitGetList', 'UnitGetLuaValue', 'UnitGetMonsterID', 'UnitGetName', 'UnitGetOpacity', 'UnitGetOperationUnit', 'UnitGetPassiveList', 'UnitGetPos', 'UnitGetProperty', 'UnitGetRadius', 'UnitGetScale', 'UnitGetSelectWeight', 'UnitGetSide', 'UnitGetSkillAvail', 'UnitGetSkillCharge', 'UnitGetSkillCost', 'UnitGetSkillElement', 'UnitGetSkillID', 'UnitGetSkillIndex', 'UnitGetSkillKiller', 'UnitGetSkillKind', 'UnitGetSkillLevel', 'UnitGetSkillMaxAvail', 'UnitGetSkillName', 'UnitGetSkillPlayInfo', 'UnitGetSkillRoleDetail', 'UnitGetSkillSlots', 'UnitGetSkillTarget', 'UnitGetSkillTargetType', 'UnitGetSkillType', 'UnitGetSkillUsed', 'UnitGetSp', 'UnitGetStatResists', 'UnitGetState', 'UnitGetTriggers', 'UnitGetUnitID', 'UnitGetValue', 'UnitGetWeaponType', 'UnitHaveCounter', 'UnitIsAlive', 'UnitIsExcluded', 'UnitIsExiled', 'UnitIsSkillDisabled', 'UnitNumSkills', 'UnitPlaySkill', 'UnitPlaySkillDirect', 'UnitPosVector', 'UnitPrepareCharacter', 'UnitRemoveBuff', 'UnitSavedLife', 'UnitSelectTarget', 'UnitSetExclude', 'UnitSetLuaValue', 'UnitSetMissTypeMode', 'UnitSetName', 'UnitSetOpacity', 'UnitSetProperty', 'UnitSetScale', 'UnitShowTargetMarker', 'UnitSkillControl', 'UnitTotalSelectWeight'];
+export const NATIVE_NAMES = ['SetBulletWork', 'SetBuffWork', 'BattleControl', 'BuffControl', 'BuffGetValue', 'BulletCanKB', 'BulletGetDeleteOnHit', 'BulletGetElement', 'BulletGetKiller', 'BulletGetKnockBack', 'BulletGetOwner', 'BulletGetProperty', 'BulletGetSkillID', 'BulletGetSkillKind', 'BulletGetSkillPUID', 'BulletGetSkillRange', 'BulletGetSkillRole', 'BulletGetSkillTarget', 'BulletGetSkillTotalDamage', 'BulletGetSkillType', 'BulletGetSp', 'BulletGetTarget', 'BulletGetValue', 'BulletMadeBreak', 'BulletSetProperty', 'BulletTargetUseCounter', 'BulletWasCritical', 'BulletWasGuarded', 'BulletWasLastAttack', 'CalculateType', 'CallQuestFunc', 'EFFECT_TIMELINE_SEGMENT_ELEMENT2', 'ExecSubProcess', 'GenerateBullet', 'GetBattleInfo', 'GetBgTerrainType', 'GetBuffInfo', 'GetBuffWork', 'GetBulletWork', 'GetCurrentBuffUID', 'GetCurrentBulletUID', 'GetDateTime', 'GetDistanceWall', 'GetDummyUnitID', 'GetMasterInfo', 'GetNearestUnit', 'GetNearestUnitForFirst', 'GetOperationUnit', 'GetRarityOfStolenItem', 'GetScriptStatus', 'GetSkillAbsLevel', 'GetTargProcAffiliation', 'GetTargProcBehaviours', 'GetTargProcBuffs', 'GetTargProcCategories', 'GetTargProcParameters', 'GetTargProcProbability', 'GetTerrain', 'GetTimelineParameter', 'GetTotalZel', 'GetUiMsg', 'GetUnits', 'GetUserInfo', 'GetWaveCount', 'GetWaveTimer', 'InsideArea', 'InvokeQuestFunc', 'IsDummyUnit', 'IsSkillActive', 'IsSucceeded', 'IsValidUnit', 'LoadStat2Work', 'NumWaves', 'PlayPassiveLine', 'PlayPassiveLine2', 'PlayProcTimeline', 'PreloadSkill', 'ProcControl2', 'ProcEditProcDamage', 'ProcEditProcHeal', 'ProcGetAddBadStatus', 'ProcGetAffiliation', 'ProcGetBuffUnit', 'ProcGetFlag', 'ProcGetLastDamage', 'ProcGetLastHeal', 'ProcGetOrgProcDamage', 'ProcGetOrgProcHeal', 'ProcGetOwner', 'ProcGetOwnerActiveSkill', 'ProcGetParam', 'ProcGetParameter', 'ProcGetProcDamage', 'ProcGetProcHeal', 'ProcGetProcessID', 'ProcGetProcessIndex', 'ProcGetSucceeded', 'ProcGetTarget', 'ProcGetUnitUID', 'ProcSetFlag', 'ProcSetParameter', 'ProcessControl', 'RaiseProcTrigger', 'SetCacheInfo', 'SetPendingJudge', 'UIControl', 'UnitCalcPos', 'UnitCanAction', 'UnitCanUseSpecial', 'UnitChangeBossFlag', 'UnitChangeBossGaugeOwner', 'UnitChangeCharacter', 'UnitControl', 'UnitFindInCircle', 'UnitGetAccessoryElem', 'UnitGetActionHistory', 'UnitGetActiveSkill', 'UnitGetAimedCount', 'UnitGetAimedList', 'UnitGetArenaInfo', 'UnitGetArmorType', 'UnitGetBadStatus', 'UnitGetBossFlg', 'UnitGetBossGaugeOwner', 'UnitGetBreakCount', 'UnitGetBreakRemain', 'UnitGetBreakTime', 'UnitGetBuffs', 'UnitGetCastLevel', 'UnitGetChangedAlives', 'UnitGetChangedBuffs', 'UnitGetCharType', 'UnitGetCharacterID', 'UnitGetComboCount', 'UnitGetDamageInfo', 'UnitGetDebuffs', 'UnitGetDir', 'UnitGetElemResists', 'UnitGetEquipElem', 'UnitGetEquipID', 'UnitGetEquipType', 'UnitGetGender', 'UnitGetIndex', 'UnitGetLevel', 'UnitGetList', 'UnitGetLuaValue', 'UnitGetMonsterID', 'UnitGetName', 'UnitGetOpacity', 'UnitGetOperationUnit', 'UnitGetPassiveList', 'UnitGetPos', 'UnitGetProperty', 'UnitGetRadius', 'UnitGetScale', 'UnitGetSelectWeight', 'UnitGetSide', 'UnitGetSkillAvail', 'UnitGetSkillCharge', 'UnitGetSkillCost', 'UnitGetSkillElement', 'UnitGetSkillID', 'UnitGetSkillIndex', 'UnitGetSkillKiller', 'UnitGetSkillKind', 'UnitGetSkillLevel', 'UnitGetSkillMaxAvail', 'UnitGetSkillName', 'UnitGetSkillPlayInfo', 'UnitGetSkillRoleDetail', 'UnitGetSkillSlots', 'UnitGetSkillTarget', 'UnitGetSkillTargetType', 'UnitGetSkillType', 'UnitGetSkillUsed', 'UnitGetSp', 'UnitGetStatResists', 'UnitGetState', 'UnitGetTriggers', 'UnitGetUnitID', 'UnitGetValue', 'UnitGetWeaponType', 'UnitHaveCounter', 'UnitIsAlive', 'UnitIsExcluded', 'UnitIsExiled', 'UnitIsSkillDisabled', 'UnitNumSkills', 'UnitPlaySkill', 'UnitPlaySkillDirect', 'UnitPosVector', 'UnitPrepareCharacter', 'UnitRemoveBuff', 'UnitSavedLife', 'UnitSelectTarget', 'UnitSetExclude', 'UnitSetLuaValue', 'UnitSetMissTypeMode', 'UnitSetName', 'UnitSetOpacity', 'UnitSetProperty', 'UnitSetScale', 'UnitShowTargetMarker', 'UnitSkillControl', 'UnitTotalSelectWeight', 'SandboxLottery'];
