@@ -10,7 +10,8 @@ The workbook is the user's format (the table they have always kept), plus the ga
   游戏里的名字); row 1 is the title, row 2 the header (a sheet without the header row starts at row 2).
   技能类型 carries down to the rows below until the next one (the group); a blank row between skills is a separator.
 - sheets named 说明, 缺少的技能 (game skills the table does not have yet, for the user to place) or 复制用的… are skipped.
-Every row is identified by its 游戏编号. A row without one is looked up by its 技能名称 in docs/user-skill-names.json
+Every row is identified by its 游戏编号 (a row with a number and no name counts: the name comes from the game data and
+the row is reported). A row without a number is looked up by its 技能名称 in docs/user-skill-names.json
 (and reported); a row that cannot be found is a problem, with the likeliest skills listed. Taken from the workbook:
 the sheets and their order, the lanes, row order, groups, separators, and 评价 (from 全部技能 only — the other sheets
 use that column for notes). Names, SC, effects and relics always come from the game data. A sheet the site has but the
@@ -81,7 +82,7 @@ def read_workbook(path, game, names):
 
     def resolve(sheet, r, cells):
         raw, name = cells['id'], cells['name']
-        where = f'「{sheet}」第 {r} 行「{name}」'
+        where = f'「{sheet}」第 {r} 行' + (f'「{name}」' if name else '')
         if raw:
             try:
                 gid = int(raw)
@@ -91,6 +92,9 @@ def read_workbook(path, game, names):
             if gid not in game:
                 problems.append(f'{where}：游戏数据里没有编号 {gid}')
                 return None
+            if not name:
+                notes.append(f'{where}：技能名称是空的，按编号 {gid} 补上名字「{game[gid]["nameS"]}」')
+                return gid
             known = names.get(name)
             if known is not None and known != gid:
                 notes.append(f'{where}：编号是 {gid}（{game[gid]["nameS"]}），但这个名字以前对应 {known}（{game[known]["nameS"]}）。是不是只挪了某一格？')
@@ -116,7 +120,8 @@ def read_workbook(path, game, names):
             out = []
             for r in range(2, ws.max_row + 1):
                 cells = {k: text(ws.cell(r, c).value) for k, c in col.items()}
-                if not cells['name']:
+                # a row is a skill when it has a name or a game number (the number decides; user 2026-09-30)
+                if not cells['name'] and not cells['id']:
                     continue
                 gid = resolve(ws.title, r, cells)
                 if gid is not None:
@@ -133,7 +138,7 @@ def read_workbook(path, game, names):
                     cells = {k: text(ws.cell(r, start + i).value) for i, k in enumerate(keys)}
                     if cells['type']:
                         group = cells['type']
-                    if not cells['name']:
+                    if not cells['name'] and not cells['id']:
                         if out and not any(cells.values()):
                             pending = True
                         continue
@@ -224,7 +229,8 @@ def importing(path, dry):
         LAYOUT.write_text(json.dumps(out, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
         # remember the workbook's names for rows added later without a number
         for s, r, gid, c in rows:
-            names.setdefault(c['name'], gid)
+            if c['name']:
+                names.setdefault(c['name'], gid)
         NAMES.write_text(json.dumps({'note': json.loads(NAMES.read_text(encoding='utf-8'))['note'] if NAMES.exists() else '', 'names': dict(sorted(names.items()))}, ensure_ascii=False, indent=0) + '\n', encoding='utf-8')
         report['written'] = str(LAYOUT.relative_to(ROOT))
     print(json.dumps(report, ensure_ascii=False, indent=1))
