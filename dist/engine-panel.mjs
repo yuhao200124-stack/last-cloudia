@@ -91,6 +91,20 @@ function setBuildView(view) {
 if (buildEmbed) { document.body.classList.add('is-build-embedded'); setBuildView('results'); }
 // what the page shows: the picked skills, the character's own 0-SC ones, each one's gain, SC, the damage now and
 // before the loadout, and the move (its element and skill type set the page's filters)
+// What the character can wear, for the home page's 全输出 filter (user 2026-09-30): its own equipment types
+// (UnitDressMst EQUIP_TYPE_INFO), types its own or the picked skills add (P_装備可否変更 1100000, e.g. 机械装备), and
+// whether it can hold two weapons (P_二刀流 1080800 — its own, e.g. 梅莉 二刀流 / 阿尔克 真・二刀流, or a picked 二刀流).
+let gearInfo = null;
+function gearFor(master, dress, passiveIds) {
+  const row = master.unitDress.get(Number(dress));
+  const types = new Set(String(row?.EQUIP_TYPE_INFO || '').split(/[,:]/).map(Number).filter(Boolean));
+  let dual = false;
+  for (const id of passiveIds) {
+    const p = master.passive.get(Number(id)); if (!p) continue;
+    for (const seg of String(p.PROCESS_INFO || '').split('@')) { const [pid, , first] = seg.split(':').map(Number); if (pid === 1100000 && first) types.add(first); if (pid === 1080800) dual = true; }
+  }
+  return { weapons: [...types].filter(t => t >= 10 && t < 20).sort(), armors: [...types].filter(t => t >= 20 && t < 30).sort(), dual };
+}
 function sendState() {
   if (!buildEmbed) return;
   const gains = {};
@@ -98,7 +112,7 @@ function sendState() {
   const sc = buildSc();
   window.parent.postMessage({ type: 'lc-build-state', dress: buildDress, selected: pickedIds(), auto: [...buildAuto], gains,
     sc: { total: sc.total, freed: sc.items.filter(i => i.freeBy).map(i => ({ id: i.id, by: breakName(i.freeBy), sc: i.sc })) }, breaks: [...build.breaks],
-    perCall: buildCurrent?.perCall ?? null, baseline: buildBaseline?.perCall ?? null, hits: currentHits().hits, move: moveInfo, computing: running,
+    perCall: buildCurrent?.perCall ?? null, baseline: buildBaseline?.perCall ?? null, hits: currentHits().hits, move: moveInfo, gear: gearInfo, computing: running,
     lastAdded: lastAdded != null && build.selected.includes(lastAdded) ? { id: lastAdded, name: passiveText(lastAdded), gain: buildGains.get(lastAdded)?.removed ? buildGains.get(lastAdded).gain : null } : null }, location.origin);
 }
 window.addEventListener('message', e => {
@@ -973,6 +987,7 @@ async function run(force = false) {
         // a loadout saved before (or a report / recommendation) may list own board skills: they are in already
         if (build.selected.some(id => autoSet.has(id))) { build.selected = build.selected.filter(id => !autoSet.has(id)); saveBuild(); }
         const equips = exclusiveEquips(chosenExclusive(c, battle.master), battle.master);
+        gearInfo = gearFor(battle.master, dress, [...(c?.personality || []).map(p => p.passive), ...(c?.ownPassives || []).map(p => p.passive), ...(c?.transcend || []).map(p => p.passive), ...build.selected]);
         const bless = blessings.filter(b => !ownSet.has(b.id));
         const buildOwn = [...own.map(id => ({ id })), ...bless, ...auto.map(id => ({ id }))];
         const buildPassives = [...buildOwn, ...picked.map(id => ({ id }))];

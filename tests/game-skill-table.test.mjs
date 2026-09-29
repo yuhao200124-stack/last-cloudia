@@ -54,9 +54,11 @@ test('every row carries its game number and its classification (大类, 条件, 
     for (const cat of d.cats) assert(e.some(x => x[0] === cat), `${id} ${cat}`);
     for (const x of e) assert(x.length === 5 && d.cats.includes(x[0]), `${id} ${JSON.stringify(x)}`);
   }
-  // the page only uses the effects to hide rows in 配装 (全输出／半肉／全肉); 大类, 条件 and 能否算 are not shown
+  // the page only uses the effects (and, for 全输出's gear check, the 装备… tags) to hide rows in 配装; 大类, 条件 and
+  // 能否算 are not shown
   const js = read('dist/game-skills.js');
-  assert(js.includes('.cls?.e') && !/\.cls\??\.(cats|tags|calc)/.test(js), 'not shown on the page');
+  assert(js.includes('.cls?.e') && !/\.cls\??\.(cats|calc)/.test(js), 'not shown on the page');
+  assert(!/\$\{[^}]*cls\??\.tags/.test(js), 'tags are not written into the page');
 });
 
 test('配装 filter: 全输出 hides defense and offense the move cannot use, 半肉 only that offense, 全肉 all offense', () => {
@@ -68,4 +70,14 @@ test('配装 filter: 全输出 hides defense and offense the move cannot use, �
   assert.deepEqual(r(26466).map(x => x[2]), [[2], [2]]);
   assert.deepEqual(r(27654).find(x => x[0] === '造成伤害')[3], [1, 9]);
   assert.equal(r(27654).find(x => x[0] === '受到伤害')[4], 1);
+});
+
+// 2026-09-30 (user): MP and 咏唱 are magic's; 反击 is at most 半肉; 金钱·经验 hidden in every mode; 全输出 checks the gear
+// (weapon / armour types the character can wear, one or two weapons, what the picked skills add)
+test('配装 filter: MP／咏唱 only for magic, 反击 only in 半肉, 金钱·经验 never, gear in 全输出', () => {
+  const js = read('dist/game-skills.js');
+  for (const x of ["cat === '金钱·经验' ? 'never'", "cat === '反击' ? 'counter'", "cat === '魔法·咏唱' || stat === 'MP'", 'function wearable(ref)', "if (mode === 'out' && !wearable(ref)) return false;", "gear.dual ? '装两件武器' : '只装一件武器'"]) assert(js.includes(x), x);
+  assert.deepEqual(data.skills[9900].cls.e[0].slice(0, 2), ['回复', 'MP'], '荣誉的姿势 MP 回复');
+  const panel = read('dist/engine-panel.mjs');
+  for (const x of ['function gearFor(', 'pid === 1100000', 'pid === 1080800', 'gear: gearInfo']) assert(panel.includes(x), x);
 });
