@@ -43,3 +43,12 @@ test('name, SC, effect and relics come from the game data; only the layout\'s ow
     for (const k of ['siteName', 'siteSc', 'siteEffect', 'url']) assert(!(k in s), `${id} has no ${k} (the original table is gone)`);
   }
 });
+
+test('every row carries its game number and its classification (大类, 条件, 能否算), which the page does not show', () => {
+  const draft = new Map(JSON.parse(read('docs/skill-classes-draft.json')).skills.map(s => [s.id, s]));
+  for (const id of game.keys()) {
+    const s = data.skills[id], d = draft.get(id);
+    assert.deepEqual(s.cls, { cats: d.cats, tags: d.tags, calc: d.calc }, String(id));
+  }
+  assert(!read('dist/game-skills.js').includes('.cls'), 'not shown on the page');
+});

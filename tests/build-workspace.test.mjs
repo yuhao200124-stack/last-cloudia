@@ -1,4 +1,4 @@
-// 配装 (2026-09-29): skills are picked with “+” on the skill classification page (the calculator runs in its frame),
+// 配装 workspace (2026-09-29): skills are picked from the game-data skill table with “+” (only inside the calculator),
 // the SC total follows the old skill table's 能力盘突破 rule, and a character's own SC skills that are not on the table
 // are always added at 0 SC.
 import test from 'node:test';
@@ -32,20 +32,14 @@ test('the table lists every game passive number, so the calculator can tell a ch
   assert(!set.has(26505) && !set.has(24450)); assert(set.has(19100) && set.has(26466));
 });
 
-test('配装 is on the skill classification page: the calculator runs in its frame and has no workspace of its own', () => {
+test('the calculator\'s 配装 picks from the skill table with “+”: no search box, no 试算', () => {
   const panel = read('dist/engine-panel.mjs');
-  for (const s of ["get('embedded') === 'build'", 'lc-build-toggle', 'lc-build-state', 'lc-build-view', 'data-build-break', 'autoPaidIds', 'changesOf', 'skill-classes-preview.html?character='])
+  for (const s of ['buildTableFrame', 'lc-build-toggle', 'lc-build-state', 'lc-table-ready', 'data-build-break', 'autoPaidIds', 'changesOf'])
     assert(panel.includes(s), s);
-  for (const s of ['buildTableFrame', 'buildWorkspace', 'lc-table-ready', 'engineBuildSearch', 'engineBuildCandidates', 'data-build-probe', 'engineRecommendSearchOnly'])
+  for (const s of ['engineBuildSearch', 'engineBuildCandidates', 'data-build-probe', 'engineRecommendSearchOnly'])
     assert(!panel.includes(s), s);
-  // the loadout counts only inside the page's frame
-  assert.match(panel, /build\.on = buildEmbed;/);
-  assert.match(read('dist/damage-calculator.mjs'), /\['1','build'\]\.includes\(params\.get\('embedded'\)\)/);
-  const page = read('dist/skill-classes-preview.js');
-  for (const s of ['damage-calculator.html?character=', 'embedded=build', 'lc-build-toggle', 'lc-build-view', 'data-add-skill', 'followMove'])
-    assert(page.includes(s), s);
-  // the home table is for reading only; the character page opens a saved loadout on the 配装 page
-  assert(!read('dist/game-skills.js').includes('embedded'));
-  assert.match(read('dist/character-saved-builds.mjs'), /skill-classes-preview\.html\?character=/);
+  const table = read('dist/game-skills.js');
+  assert.match(table, /const embedded = new URLSearchParams\(location\.search\)\.get\('embedded'\) === '1' && window\.parent !== window;/, 'the “+” only inside the calculator');
+  assert.match(read('dist/index.html'), /lc-in-calculator/);
   assert.match(read('dist/character-saved-builds.mjs'), /scTotal\(/, 'the character page counts SC the same way');
 });

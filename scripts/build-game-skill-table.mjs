@@ -14,6 +14,11 @@ const read = p => fs.readFileSync(new URL(p, root), 'utf8');
 const game = JSON.parse(read('docs/game-relic-passives.json'));
 const layout = JSON.parse(read('docs/game-skill-layout.json'));
 const byId = new Map(game.map(g => [g.gameId, g]));
+// every row carries its game number (the key) and its classification from the game data (scripts/build-skill-classes.mjs →
+// docs/skill-classes-draft.json): 大类, 条件标签 and whether the calculator can compute it. Not shown on the page (user
+// 2026-09-29: “补上编号和条件…藏在后台”), for the calculation and filters to use.
+const classes = fs.existsSync(new URL('docs/skill-classes-draft.json', root))
+  ? new Map(JSON.parse(read('docs/skill-classes-draft.json')).skills.map(s => [s.id, { cats: s.cats, tags: s.tags, calc: s.calc }])) : new Map();
 
 const skills = {};
 for (const g of game) {
@@ -22,7 +27,7 @@ for (const g of game) {
     id: `g${g.gameId}`, gameId: g.gameId, name: g.name, nameS: own.name || g.nameS, sc: String(g.sc), ap: g.ap, effect: g.effect, effectS: own.effect || g.effectS,
     values: /\?/.test(g.effect) ? g.values : '', io: g.io || '',
     sources: g.relics.map(r => `${r.name}（${r.rarity}）`), sourcesS: g.relics.map(r => `${r.nameS}（${r.rarity}）`),
-    mark: own.mark || '',
+    mark: own.mark || '', cls: classes.get(g.gameId) || null,
     ...(own.name ? { renamed: true } : {}), ...(own.effect ? { rewritten: true } : {}),
   };
 }
