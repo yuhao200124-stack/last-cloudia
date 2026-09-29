@@ -9,6 +9,9 @@ Every row is identified by its 游戏编号 (the game's PassiveSkillMst id); the
   名称 / 效果说明 texts (these change only the 简体 display; the 繁体 game text never changes). A 名称 or 效果说明
   left empty goes back to the game's own text.
 - Always from the game data, whatever the workbook says: SC and 可学圣物 (changes there are only reported).
+- 大类 / 标签 / 计算器: the row's classification, the same one the site keeps hidden on every row (scripts/build-skill-classes.mjs
+  → docs/skill-classes-draft.json, by game number). View only: shown so the user can see them while moving rows; edits are
+  only reported.
 The import writes docs/game-skill-layout.json only when nothing is wrong; otherwise it lists the problems and stops.
 """
 import json
@@ -23,25 +26,34 @@ LAYOUT = ROOT / 'docs/game-skill-layout.json'
 GAME = ROOT / 'docs/game-relic-passives.json'
 SEPARATOR = '——分隔——'
 INFO_SHEET = '说明'
-COLS = {'all': ['游戏编号', '名称', 'SC', '效果说明', '可学圣物', '评价'],
-        'lanes': ['栏', '游戏编号', '名称', 'SC', '效果说明', '可学圣物', '评价'],
-        'split': ['栏', '分组', '游戏编号', '名称', 'SC', '效果说明', '可学圣物', '评价']}
-WIDTH = {'栏': 8, '分组': 14, '游戏编号': 11, '名称': 22, 'SC': 6, '效果说明': 60, '可学圣物': 30, '评价': 7}
-FIXED = {'游戏编号', 'SC', '可学圣物'}          # never taken from the workbook
+CLASS = ['大类', '标签', '计算器']              # view only, from the game data by game number
+COLS = {'all': ['游戏编号', '名称', 'SC', '效果说明', '可学圣物', '评价', *CLASS],
+        'lanes': ['栏', '游戏编号', '名称', 'SC', '效果说明', '可学圣物', '评价', *CLASS],
+        'split': ['栏', '分组', '游戏编号', '名称', 'SC', '效果说明', '可学圣物', '评价', *CLASS]}
+WIDTH = {'栏': 8, '分组': 14, '游戏编号': 11, '名称': 22, 'SC': 6, '效果说明': 60, '可学圣物': 30, '评价': 7,
+         '大类': 16, '标签': 28, '计算器': 14}
+FIXED = {'游戏编号', 'SC', '可学圣物', *CLASS}    # never taken from the workbook
+CLASSES = ROOT / 'docs/skill-classes-draft.json'
 FONT = 'Arial'
 
 
 def load():
     layout = json.loads(LAYOUT.read_text(encoding='utf-8'))
     game = {g['gameId']: g for g in json.loads(GAME.read_text(encoding='utf-8'))}
+    if CLASSES.exists():
+        for c in json.loads(CLASSES.read_text(encoding='utf-8'))['skills']:
+            if c['id'] in game:
+                game[c['id']]['cls'] = c
     return layout, game
 
 
 def shown(layout, game, gid):
     own = layout.get('skills', {}).get(str(gid), {})
     g = game[gid]
+    c = g.get('cls') or {}
     return {'名称': own.get('name') or g['nameS'], '效果说明': own.get('effect') or g['effectS'], '评价': own.get('mark', ''),
-            'SC': g['sc'], '可学圣物': '\n'.join(f"{r['nameS']}（{r['rarity']}）" for r in g['relics'])}
+            'SC': g['sc'], '可学圣物': '\n'.join(f"{r['nameS']}（{r['rarity']}）" for r in g['relics']),
+            '大类': '、'.join(c.get('cats', [])), '标签': '、'.join(c.get('tags', [])) or '—', '计算器': c.get('calc', '')}
 
 
 # ---------------------------------------------------------------- export
@@ -70,6 +82,11 @@ def export(out):
         ('', False),
         ('不会生效（表头灰色，永远按游戏数据）', True),
         ('· SC、可学圣物：改了也不会用，导入时会列出来告诉你', False),
+        ('· 大类、标签、计算器：网站后台给每个技能记的分类，按游戏编号从游戏数据自动生成，只供查看。移动整行时它们跟着走；改了不会生效，导入时会列出来', False),
+        ('· 标签“—”表示没有标签。计算器：能算 / 看条件（满足条件才吃得到）/ 不影响每段伤害 / 待确认', False),
+        ('', False),
+        ('移动技能', True),
+        ('· 请整行移动（选中行号剪切、插入），不要只挪某一格：网站按这一行的游戏编号认技能', False),
         ('', False),
         ('栏和分组', True),
         ('· 分两栏的页：栏写 1 或 2（左栏 / 右栏）；分组写在“分组”列，相邻同名的行合成一组', False),
@@ -83,10 +100,10 @@ def export(out):
         c = info.cell(row=i, column=1, value=text)
         c.font = Font(name=FONT, bold=bold, size=12 if i == 1 else 10)
     ex_row = len(lines) + 1
-    example = [['栏', '分组', '游戏编号', '名称', 'SC', '效果说明', '可学圣物', '评价'],
-               [1, '暴伤', 700, '暴击伤害提升', '（自动）', '（自动显示游戏数据）', '（自动）', 'A'],
-               [1, '', SEPARATOR, '', '', '', '', ''],
-               [2, '暴击相关', 20800, '', '（自动）', '', '（自动）', '']]
+    example = [['栏', '分组', '游戏编号', '名称', 'SC', '效果说明', '可学圣物', '评价', *CLASS],
+               [1, '暴伤', 700, '暴击伤害提升', '（自动）', '（自动显示游戏数据）', '（自动）', 'A', '（自动）', '（自动）', '（自动）'],
+               [1, '', SEPARATOR, '', '', '', '', '', '', '', ''],
+               [2, '暴击相关', 20800, '', '（自动）', '', '（自动）', '', '（自动）', '（自动）', '（自动）']]
     for r, row in enumerate(example):
         for col, v in enumerate(row, 1):
             c = info.cell(row=ex_row + r, column=col + 1, value=v)
@@ -96,7 +113,7 @@ def export(out):
                 c.fill = head_fixed if v in FIXED else head_edit
     info.cell(row=ex_row + 4, column=2, value='第 4 行名称空着：显示游戏原文。').font = Font(name=FONT, size=10, color='808080')
     info.column_dimensions['A'].width = 4
-    for col, w in zip('BCDEFGHI', [8, 12, 11, 18, 8, 22, 10, 7]):
+    for col, w in zip('BCDEFGHIJKL', [8, 12, 11, 18, 8, 22, 10, 7, 10, 10, 10]):
         info.column_dimensions[col].width = w
     # the long text sits in column A; let it overflow to the right
     for i in range(1, len(lines) + 1):
@@ -135,7 +152,7 @@ def export(out):
                     c = ws.cell(row=r, column=col, value=vals.get(h, '') if vals.get(h, '') != '' else None)
                     c.font = Font(name=FONT, size=10, color='595959' if h in FIXED else '000000')
                     c.border = border
-                    c.alignment = Alignment(vertical='center', wrap_text=h in ('效果说明', '可学圣物'),
+                    c.alignment = Alignment(vertical='center', wrap_text=h in ('效果说明', '可学圣物', '大类', '标签'),
                                             horizontal='center' if h in ('栏', 'SC', '评价', '游戏编号') else 'left')
                     if row.get('separator'):
                         c.fill = sep_fill
@@ -187,7 +204,7 @@ def read_workbook(path, game):
                 problems.append(f'「{ws.title}」第 {r} 行：游戏数据里没有编号 {gid}（{get("名称") or "无名称"}）')
                 continue
             rows.append({'r': r, 'id': gid, 'lane': lane, 'group': get('分组')})
-            seen.setdefault(gid, []).append((ws.title, r, {h: get(h) for h in ('名称', '效果说明', '评价', 'SC', '可学圣物')}))
+            seen.setdefault(gid, []).append((ws.title, r, {h: get(h) for h in ('名称', '效果说明', '评价', 'SC', '可学圣物', *CLASS)}))
         lanes_used = [x['lane'] for x in rows if x['lane']]
         groups_used = [x for x in rows if x.get('group')]
         if not lanes_used and not groups_used:
@@ -253,10 +270,10 @@ def importing(path, dry):
             else:
                 own[field_key[f]] = value
             changes[f].append(f'{gid} {before["名称"]}：{before[f] or "（空）"} → {value or "（空）"}')
-        for f in ('SC', '可学圣物'):
+        for f in ('SC', '可学圣物', *CLASS):
             for s, r, v in seen.get(gid, []):
                 if v[f] and v[f] != str(before[f]):
-                    notes.append(f'「{s}」第 {r} 行：{f}改成了“{v[f]}”，不会生效（按游戏数据：{before[f]}）')
+                    notes.append(f'「{s}」第 {r} 行：{f}改成了“{v[f]}”，不会生效（按游戏数据：{before[f] or "（空）"}）')
         own = {k: v for k, v in own.items() if v}
         if own:
             skills[str(gid)] = own
