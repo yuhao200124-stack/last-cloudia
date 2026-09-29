@@ -129,10 +129,11 @@ export function setupBattle(battle, attacker, target, state = {}) {
 export const instanceKey = inst => `${inst.affiliation}:${inst.localId}:${inst.localIndex}`;
 
 // Passive instances the sandbox did not fire on its own: events the user may assume.
-export function conditionalInstances(battle, unit) {
+// `keep`: keys the user assumed (force-run, so they fired) stay listed so their tick can be undone.
+export function conditionalInstances(battle, unit, keep = new Set()) {
   const fired = new Set(battle.trace.filter(t => t.fired && t.owner === unit.name).map(t => `${t.localId}:${t.index}`));
-  return unit.instances.filter(i => !AUTOMATIC_TRIGGERS.has(i.trigger) && !fired.has(`${i.localId}:${i.localIndex}`)).map(i => ({
-    key: instanceKey(i), passiveId: i.passiveId || i.localId, passiveName: clean(battle.master.passive.get(i.passiveId || i.localId)?.NAME || battle.master.itemEquip.get(i.localId)?.NAME || ''), processId: i.processId, processName: zhName(i.mst.NAME),
+  return unit.instances.filter(i => !AUTOMATIC_TRIGGERS.has(i.trigger) && (keep.has(instanceKey(i)) || !fired.has(`${i.localId}:${i.localIndex}`))).map(i => ({
+    key: instanceKey(i), localId: i.localId, localIndex: i.localIndex, passiveId: i.passiveId || i.localId, passiveName: clean(battle.master.passive.get(i.passiveId || i.localId)?.NAME || battle.master.itemEquip.get(i.localId)?.NAME || ''), processId: i.processId, processName: zhName(i.mst.NAME),
     trigger: i.trigger, triggerLabel: TRIGGER_LABELS[i.trigger] || `触发${i.trigger}`, condition: zhCondition(i.cond.NAME) || '', luaCondition: i.cond.LUA_FUNC_NAME || '', switchGroup: SWITCH_OF_TRIGGER[i.trigger] || 'conditionBuffActive', prob: i.prob,
   }));
 }
@@ -200,10 +201,12 @@ export function measureSupport(battle, attacker, target, skillIds, state = {}, l
 // Full scenario: returns hits (per bullet pass) with normal/critical ranges, plus what fired and what could be assumed.
 export function runScenario({ battle, attacker, target, skill, state = {}, assume = {}, randoms = [0.9, 0.925, 0.95, 0.975, 1.0] }) {
   battle.options.probability = assume.probability || 'assume';
+  // assume.forced: chance-based instances (`${localId}:${index}`) counted as triggered whatever the mode (the user's ticks)
+  battle.options.forced = new Set(assume.forced || []);
   setupBattle(battle, attacker, target, state);
   assumeInstances(battle, attacker, assume.instances);
   preCast(battle, attacker, target, state.preCasts, skill.level ?? 9);
-  const conditionals = conditionalInstances(battle, attacker);
+  const conditionals = conditionalInstances(battle, attacker, new Set(assume.instances || []));
   const level = skill.level ?? 9;
   const bullets = skill.bulletId ? [skill.bulletId] : damageBullets(battle.master, skill.id, level);
   const stats = code => ({ panel: battle.finalStat(attacker, code, { layer: 'status' }), real: battle.finalStat(attacker, code) });
@@ -237,7 +240,9 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   battle.restore(base);
   if (bullets.length) evaluate(battle, attacker, target, skill.id, bullets[0], level, false, randoms[Math.floor(randoms.length / 2)]);
   const fired = battle.trace.filter(t => t.fired && t.owner === attacker.name);
-  const probabilistic = [...new Map(battle.trace.filter(t => t.fired && t.prob < 10000).map(t => [`${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.localId}:${t.index}`, passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), prob: t.prob / 100, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
+  const listed = new Set(conditionals.map(c => `${c.localId}:${c.localIndex}`)); // already offered as a conditional
+  // every chance-based instance that came up (fired, or its condition held and the roll failed); `on`: counted in the result
+  const probabilistic = [...new Map(battle.trace.filter(t => (t.fired || t.missed) && t.prob < 10000 && !listed.has(`${t.localId}:${t.index}`)).map(t => [`${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.localId}:${t.index}`, localId: t.localId, passiveId: t.passiveId || t.localId, on: !!t.fired, passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), prob: t.prob / 100, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
   return {
     statParts,
     stats: { str: stats(K.STAT.STR), def: stats(K.STAT.DEF), int: stats(K.STAT.INT), mnd: stats(K.STAT.MND), crt: stats(K.STAT.CRT), hp: { panel: battle.finalStat(attacker, K.STAT.MAX_HP, { layer: 'status' }), real: battle.finalStat(attacker, K.STAT.MAX_HP), current: attacker.hp } },

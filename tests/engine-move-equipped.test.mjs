@@ -34,3 +34,20 @@ test('panel: the evaluated move is equipped before the attacker is built', () =>
   const i = src.indexOf('equipMove(attackerSpec, move.id');
   assert.ok(i > 0 && i < src.indexOf('const attacker = M.addAttacker(battle, attackerSpec)'));
 });
+
+// 概率效果 (user 2026-09-29): off by default and ticked one by one; one not rolled is still listed so it can be ticked.
+test('scenario: a chance effect that did not roll is listed (on: false); ticking it (assume.forced) counts it', async () => {
+  const { master, scripts } = await dataPromise;
+  const run = forced => {
+    const battle = new Battle(master, scripts, {});
+    const a = addAttacker(battle, { unitDressId: 502220, panelGiven: false, passives: [{ id: 26421 }], magic: [270090] });
+    const t = addTarget(battle, { name: '轟鳥龍恩德爾羅納', isBoss: true, charTypes: [2010], stats: { hp: 99999999, mp: 100, def: 4000, mnd: 10000, str: 0, int: 0 }, elemResist: {} });
+    return runScenario({ battle, attacker: a, target: t, skill: { id: 270090 }, state: { hpPercent: 100 }, assume: { probability: 'skip', forced } });
+  };
+  const off = run([]);
+  const item = off.probabilistic.find(x => x.passiveId === 26421);
+  assert.ok(item && item.on === false, '贯导 listed, not counted');
+  const on = run([item.key]);
+  assert.ok(on.probabilistic.find(x => x.passiveId === 26421).on);
+  assert.ok(on.hits.find(h => h.normal).normal.mean > off.hits.find(h => h.normal).normal.mean * 1.3);
+});

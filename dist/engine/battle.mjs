@@ -397,7 +397,9 @@ export class Battle {
         if (!this.host.hasFunction(funcName)) { this.log('missing-condition', funcName); ok = false; }
         else ok = !!this.host.call(funcName, [ctx.target, inst.condParams], 1)[0];
       }
-      if (ok && !force && inst.kind === 'process' && inst.prob < 10000) ok = this.roll(inst);
+      // a chance-based instance whose condition held but whose roll failed is still listed (missed), so the user can tick it
+      let missed = false;
+      if (ok && !force && inst.kind === 'process' && inst.prob < 10000) { ok = this.roll(inst); missed = !ok; }
       if (ok) {
         fired = true;
         if (inst.mst.USE_SCRIPT === 1) {
@@ -408,7 +410,7 @@ export class Battle {
           else this.log('missing-script', fn);
         } else this.nativeOperation(inst, ctx, owner, target);
       }
-      this.trace.push({ trigger, owner: owner.name, target: target?.name, kind: inst.kind, id: inst.kind === 'buff' ? inst.buffId : inst.processId, name: inst.mst.NAME, localId: inst.localId, index: inst.localIndex, prob: inst.kind === 'process' ? inst.prob : 10000, fired, succeeded: ctx.succeeded });
+      this.trace.push({ trigger, owner: owner.name, target: target?.name, kind: inst.kind, id: inst.kind === 'buff' ? inst.buffId : inst.processId, name: inst.mst.NAME, localId: inst.localId, passiveId: inst.passiveId, index: inst.localIndex, prob: inst.kind === 'process' ? inst.prob : 10000, fired, missed, succeeded: ctx.succeeded });
     } catch (err) {
       this.log('script-error', inst.kind, inst.kind === 'buff' ? inst.buffId : inst.processId, err.message);
       this.trace.push({ trigger, owner: owner.name, kind: inst.kind, id: inst.kind === 'buff' ? inst.buffId : inst.processId, name: inst.mst.NAME, error: err.message });

@@ -24,8 +24,10 @@ const RACE_CODES = { 战士: 1001, 狙击手: 1002, 骑士: 1003, 魔法师: 100
 const SWITCH_LABELS = { conditionBuffActive: '条件BUFF', reviveBuffActive: '复活后', guardBuffActive: '自身格挡', selfStateActive: '自身状态', partyConditionActive: '队伍', openingBuffActive: '开局BUFF' };
 
 let engineModules = null, battle = null, loadedDress = null, loading = null;
-// 概率效果 default to not triggered (user 2026-09-29: “概率效果按已触发给他改成默认不生效”); the checkbox turns them on.
-let latest = null, report = null, assumed = new Set(), probabilityMode = 'skip', running = false, pending = false;
+// 概率效果 default to not triggered (user 2026-09-29: “概率效果按已触发给他改成默认不生效”); each one is ticked on its own in the
+// result's one list of 触发效果 together with the conditional effects (“这俩可以合成一个直接让我自己打勾选”): `probAssumed`.
+const probabilityMode = 'skip';
+let latest = null, report = null, assumed = new Set(), probAssumed = new Set(), running = false, pending = false;
 // No-report path: the out-of-battle panel is computed from master data (level growth + awakening + board +
 // exclusive gear + trigger-1 passives), always at maximum — character level, awakening, ability board and
 // equipment/crest enhancement are never modeled below max (user's rule), so there is no manual override for them.
@@ -484,7 +486,7 @@ function mount() {
   card.id = 'enginePanel'; card.className = 'card engine-panel'; card.setAttribute('aria-labelledby', 'enginePanelTitle');
   card.innerHTML = `<div class="section-heading"><h3 id="enginePanelTitle">游戏脚本结算（沙盒引擎）</h3><span id="engineState" class="help">未开始</span></div>
     <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
-    <div class="inline-options"><label><input id="engineProbability" type="checkbox">概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
+    <div class="inline-options"><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
     <div id="engineResult"></div>`;
   aside.insertBefore(card, aside.firstChild);
   // 配装 is on the home page's skill table (with this character); inside that page's frame the button is not shown
@@ -531,7 +533,6 @@ function mount() {
   const targetSlot = $('engineTargetSlot');
   if (targetSlot) targetSlot.innerHTML = targetHtml; else card.insertAdjacentHTML('beforeend', targetHtml);
   $('engineRun').addEventListener('click', () => run(true));
-  $('engineProbability').addEventListener('change', e => { probabilityMode = e.target.checked ? 'assume' : 'skip'; run(); });
   $('engineAccountBlessings').addEventListener('change', e => { growthChoice.accountBlessings = e.target.checked; run(); });
   $('engineLoadoutFile').addEventListener('change', async e => {
     const f = e.target.files?.[0]; if (!f) return;
@@ -544,7 +545,7 @@ function mount() {
   $('engineMonsterVariant').addEventListener('change', e => { monsterChoice = Number(e.target.value) || null; try { if (monsterChoice) localStorage.setItem(MONSTER_KEY, String(monsterChoice)); else localStorage.removeItem(MONSTER_KEY); } catch {} run(); });
   $('engineMonsterClear').addEventListener('click', () => { monsterChoice = null; try { localStorage.removeItem(MONSTER_KEY); } catch {} $('engineMonsterName').value = ''; $('engineMonsterVariant').innerHTML = '<option value="">先输入名称</option>'; $('engineMonsterNote').textContent = '未选择怪物表目标。'; run(); });
   $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} run(); });
-  $('engineResult').addEventListener('change', e => { const key = e.target.dataset.assume; if (!key) return; if (e.target.checked) assumed.add(key); else assumed.delete(key); run(); });
+  $('engineResult').addEventListener('change', e => { const { assume: key, prob } = e.target.dataset; const set = key ? assumed : prob ? probAssumed : null; if (!set) return; for (const k of (key || prob).split(' ')) { if (e.target.checked) set.add(k); else set.delete(k); } run(); });
   // loadout builder controls
   // the calculator may sit in a character page's panel: the home page opens in the whole window
   $('engineBuildToggle').addEventListener('click', () => {
@@ -659,7 +660,7 @@ function evalBuild(ctx, passiveIds) {
   battle.reset();
   const spec = { ...ctx.attackerSpec, passives: passiveIds.map(id => (typeof id === 'object' ? id : { id })) };
   const a = M.addAttacker(battle, spec), t = M.addTarget(battle, ctx.targetSpec);
-  return metricOf(M.runScenario({ battle, attacker: a, target: t, skill: { id: ctx.move.id, ...(ctx.firstBullet ? { bulletId: ctx.firstBullet } : {}) }, state: ctx.state, assume: { probability: probabilityMode, instances: [...ctx.assumeSet] }, randoms: [0.95] }));
+  return metricOf(M.runScenario({ battle, attacker: a, target: t, skill: { id: ctx.move.id, ...(ctx.firstBullet ? { bulletId: ctx.firstBullet } : {}) }, state: ctx.state, assume: { probability: probabilityMode, instances: [...ctx.assumeSet], forced: [...(ctx.forced || [])] }, randoms: [0.95] }));
 }
 const yieldUi = () => new Promise(r => setTimeout(r, 0));
 // The current build, the start (配装前: no picked skill) and the marginal of every picked and automatic skill,
@@ -969,15 +970,16 @@ async function run(force = false) {
     const state = stateFromSwitches(latest);
     // switches assume every conditional instance in their group
     const groups = new Set(activeSwitchGroups());
-    const probe = M.runScenario({ battle, attacker, target, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...assumed] }, randoms: [0.95] });
+    const probe = M.runScenario({ battle, attacker, target, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...assumed], forced: [...probAssumed] }, randoms: [0.95] });
     const autoAssume = probe.conditionals.filter(c => groups.has(c.switchGroup)).map(c => c.key);
     battle.reset();
     const attacker2 = M.addAttacker(battle, attackerSpec), target2 = M.addTarget(battle, targetSpec);
-    const out = M.runScenario({ battle, attacker: attacker2, target: target2, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...new Set([...assumed, ...autoAssume])] } });
+    const out = M.runScenario({ battle, attacker: attacker2, target: target2, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...new Set([...assumed, ...autoAssume])], forced: [...probAssumed] } });
     // the move already hits twice per 段 by itself → lock 双刀 (and run again if the lock changes what was applied)
     const damaging = out.hits.filter(h => !h.cancelled && h.normal);
     if (setDualLock(damaging.filter(h => h.bulletId === damaging[0]?.bulletId).length > 1)) pending = true;
-    render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), attacker: attacker2, out, dress });
+    await ensureEffectTexts(out, gameChar);
+    render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), attacker: attacker2, out, dress, gameChar });
     renderPrimary(out, { move, dress, gearNotes });
     await ensurePassiveNames();
     const firstHit = damaging.filter(h => h.bulletId === damaging[0]?.bulletId)[0];
@@ -991,8 +993,8 @@ async function run(force = false) {
     if (attackerSpec.buildPassives) {
       const { buildOwn, buildPassives, buildAuto: autoIds, buildAutoInfo, buildNote, buildGear, ...rest } = attackerSpec;
       // gains only compare the move's first damaging bullet (as the main card's per-call metric does)
-      buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), buildOwn, buildPassives, autoIds, buildAutoInfo, buildNote, buildGear, firstBullet: damaging[0]?.bulletId ?? null };
-      const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], probabilityMode, buildPassives.map(p => p.id), buildOwn.map(p => p.id), (rest.equips || []).map(e => e.id), currentHits().hits]);
+      buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), forced: new Set(probAssumed), buildOwn, buildPassives, autoIds, buildAutoInfo, buildNote, buildGear, firstBullet: damaging[0]?.bulletId ?? null };
+      const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], [...buildCtx.forced], buildPassives.map(p => p.id), buildOwn.map(p => p.id), (rest.equips || []).map(e => e.id), currentHits().hits]);
       if (key !== lastBuildKey) { buildGains.clear(); buildCurrent = buildBaseline = null; }
       lastBuildKey = key; buildCtx.key = key;
       renderBuild(buildCtx);
@@ -1006,16 +1008,49 @@ async function run(force = false) {
   }
 }
 
+// ---- 触发效果 (user 2026-09-29): the conditional effects and the chance-based ones in one list the user ticks;
+// each line is the passive's name and the sentence of its own game description that this effect is
+// (“直接写内容不要写哪些没用的”). Descriptions: the character bundle (c/<dress>.json) and relics.json.
+let relicTexts = null;
+async function ensureEffectTexts(out, c) {
+  await ensurePassiveNames();
+  const ids = [...out.conditionals, ...out.probabilistic].map(x => x.passiveId);
+  if (!relicTexts && ids.some(id => !c?.passives?.[id])) relicTexts = await fetch(new URL('./game-data/relics.json', import.meta.url)).then(r => r.json()).then(r => new Map((r.passives || []).map(x => [x.id, x]))).catch(() => new Map());
+}
+const passiveRecord = (id, c) => c?.passives?.[id] || relicTexts?.get(id) || null;
+// which sentence of a multi-part description an effect is: its trigger's wording (每40秒, 濒死, 受到…) and the words
+// its effect shares with the sentence (伤害上限, 回复, 全体…); nothing fits → the whole description
+const TRIGGER_WORDS = [[[70, 71], /每\s*\d+(?:\.\d+)?\s*秒|每隔/], [[10], /战斗开始|开始时|入场/], [[11], /结束时/], [[40, 37], /体力|濒死|战斗不能/], [[42], /法力/],
+  [[17, 74], /发动后|使用后|结束/], [[16, 18, 72, 73], /发动|使用|咏唱/], [[21, 23, 25, 27, 29], /攻击时|命中|造成/], [[22, 24, 26, 28, 30], /受到|被/], [[35, 36], /击倒|击败|打倒/],
+  [[50, 78, 79], /异常|状态/], [[52, 68], /气绝|Break|破防|击破/], [[54, 60, 61, 62], /增益|减益|赋予/], [[65, 69], /存活|人数|战斗不能/], [[96, 97], /复活/], [[55], /必杀/], [[53], /咏唱/], [[66, 94], /地形|背景/], [[98], /领域/]];
+const EFFECT_WORDS = ['伤害上限', '回复上限', '上限', '回复', '伤害', '攻击力', '防御', '精神', '魔力', '暴击', '速度', '法力', '体力', '特攻', '必杀', '特技', '魔法', '属性', '异常', '护盾', '减轻', '减半', '全体', '自身', '增益', '减益', '冰', '火', '雷', '树', '光', '暗', '咏唱', '气绝', 'Break'];
+const effectNorm = t => String(t || '').replace(/恢复/g, '回复').replace(/MP/gi, '法力').replace(/HP/gi, '体力').replace(/法强|智力/g, '魔力');
+function effectSentence(text, trigger, processName) {
+  const parts = String(text || '').replace(/\s*\n\s*/g, '').split('。').map(x => x.trim()).filter(Boolean);
+  if (parts.length <= 1) return parts[0] || '';
+  const re = TRIGGER_WORDS.find(([ts]) => ts.includes(trigger))?.[1];
+  const words = EFFECT_WORDS.filter(w => effectNorm(processName).includes(w));
+  let best = null, bestScore = 0;
+  for (const part of parts) { const n = effectNorm(part); const score = (re && re.test(n) ? 3 : 0) + words.filter(w => n.includes(w)).length; if (score > bestScore) { best = part; bestScore = score; } }
+  return best || parts.join('。');
+}
+function effectLine(x, c) {
+  const r = passiveRecord(x.passiveId, c);
+  const name = r?.nameS || passiveNames?.get(x.passiveId) || x.passiveName || '效果';
+  return `${name}：${r?.textS ? effectSentence(r.textS, x.trigger, x.processName) : String(x.processName || '').replace(/^PB?_/, '')}`;
+}
+
 function render(out, ctx) {
-  const groups = new Map();
-  for (const c of out.conditionals) { const g = SWITCH_LABELS[c.switchGroup] || '条件BUFF'; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(c); }
-  const conditionals = [...groups.entries()].map(([g, list]) => `<p class="help"><b>${esc(g)}</b>${$(Object.keys(SWITCH_LABELS).find(k => SWITCH_LABELS[k] === g))?.checked ? '（开关已打开，同组默认勾选）' : ''}</p>` + list.map(c => `<label class="engine-conditional"><input type="checkbox" data-assume="${esc(c.key)}" ${assumed.has(c.key) || ctx.autoAssume.has(c.key) ? 'checked' : ''}>${esc(c.passiveName)} · ${esc(c.processName)} <small>${esc(c.triggerLabel)}${c.condition ? ` · ${esc(c.condition)}` : ''}</small></label>`).join('')).join('');
-  const prob = out.probabilistic.map(p => `<li>${esc(p.passiveName)} · ${esc(p.processName)} <small>${p.prob}% · ${esc(p.triggerLabel)}</small></li>`).join('');
+  // effects that read the same are one tick (their keys together)
+  const rows = new Map();
+  const add = (kind, key, line, on) => { const k = `${kind}|${line}`; if (!rows.has(k)) rows.set(k, { kind, keys: [], line, on: true }); const r = rows.get(k); r.keys.push(key); r.on = r.on && on; };
+  for (const c of out.conditionals) add('assume', c.key, effectLine(c, ctx.gameChar), assumed.has(c.key) || ctx.autoAssume.has(c.key));
+  for (const p of out.probabilistic) add('prob', p.key, effectLine(p, ctx.gameChar), probAssumed.has(p.key));
+  const effects = [...rows.values()].map(r => `<label class="engine-conditional"><input type="checkbox" data-${r.kind}="${esc(r.keys.join(' '))}" ${r.on ? 'checked' : ''}>${esc(r.line)}</label>`).join('');
   const issues = [...out.errors.map(e => `脚本 ${esc(e.name)} (${e.id})：${esc(e.error)}`), ...out.unsupported.map(n => `未实现的原生函数：${esc(n)}`), ...(out.assumptions || []).map(a => `简化假定：${esc(a)}`)];
   // 第1击结算链 and 局内 Buff removed (user 2026-09-29: “这个可以取消了”“局内buff也取消了”)
   $('engineResult').innerHTML = `
-    ${conditionals ? `<details class="engine-conditionals" open><summary>可假定触发的条件效果（${out.conditionals.length}）</summary><p class="help">勾选后按已触发计算；对应局内开关打开时同组自动勾选。</p>${conditionals}</details>` : ''}
-    ${prob ? `<details class="engine-prob"><summary>概率效果（${out.probabilistic.length}，${probabilityMode === 'assume' ? '按已触发计算' : '按未触发计算'}）</summary><ul>${prob}</ul></details>` : ''}
+    ${effects ? `<details class="engine-conditionals" open><summary>触发效果（${rows.size}，勾上＝按已触发计算）</summary>${effects}</details>` : ''}
     ${issues.length ? `<details class="engine-issues" open><summary>未能完整模拟（${issues.length}）</summary><ul>${issues.map(i => `<li>${i}</li>`).join('')}</ul></details>` : ''}`;
 }
 
