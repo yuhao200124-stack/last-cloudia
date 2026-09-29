@@ -39,7 +39,7 @@
 {
 "name": "心靈之刃",
 "nameS": "心灵之刃",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "樹精捕食者",
@@ -49,7 +49,7 @@
 {
 "name": "邁向新的世界",
 "nameS": "迈向新的世界",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "阿爾丹的戰士",
@@ -101,7 +101,7 @@
 {
 "name": "WORLD TOUR",
 "nameS": "WORLD TOUR",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "殺戮機器",
@@ -116,7 +116,7 @@
 {
 "name": "雲神瑪達・烏比斯",
 "nameS": "云神玛达・乌比斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:126",
@@ -137,7 +137,7 @@
 {
 "name": "維爾德拉日記",
 "nameS": "维尔德拉日记",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "阿爾丹的戰士",
@@ -189,7 +189,7 @@
 {
 "name": "炎熱天的波浪大戰",
 "nameS": "炎热天的波浪大战",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "蓋斯特修劍山",
@@ -220,7 +220,7 @@
 {
 "name": "VS. 蛋頭博士",
 "nameS": "VS. 蛋头博士",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "劍聖墓梅儂",
@@ -251,7 +251,7 @@
 {
 "name": "盟友（我的摯友）",
 "nameS": "盟友（我的挚友）",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "秘奧錄“灼鳳破”",
@@ -282,12 +282,12 @@
 {
 "name": "十賢臣",
 "nameS": "十贤臣",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "神隱之境",
 "nameS": "神隐之境",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "蓋斯特修劍山",
@@ -297,7 +297,7 @@
 {
 "name": "魔樹的決戰",
 "nameS": "魔树的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e73807e621f213b2",
@@ -318,7 +318,7 @@
 {
 "name": "WORLD TOUR",
 "nameS": "WORLD TOUR",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "機龍貝魯迪奧斯",
@@ -380,7 +380,7 @@
 {
 "name": "聖戰",
 "nameS": "圣战",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "藍冰守衛騎士",
@@ -406,7 +406,7 @@
 {
 "name": "NEO米克特蘭",
 "nameS": "NEO米克特兰",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "海岸線的破劍",
@@ -541,7 +541,7 @@
 {
 "name": "帝國四天",
 "nameS": "帝国四天",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "終末的命誓",
@@ -655,7 +655,7 @@
 {
 "name": "空中要塞索拉利斯",
 "nameS": "空中要塞索拉利斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "b68b7c256efa0467",
@@ -754,7 +754,7 @@
 {
 "name": "空中要塞索拉利斯",
 "nameS": "空中要塞索拉利斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "絕斷門貝甘達",
@@ -764,7 +764,7 @@
 {
 "name": "解放者",
 "nameS": "解放者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "9d98ba73d408aa05",
@@ -785,7 +785,7 @@
 {
 "name": "十賢臣",
 "nameS": "十贤臣",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "絕斷門貝甘達",
@@ -894,7 +894,7 @@
 {
 "name": "糟糕，下起雨來了",
 "nameS": "糟糕，下起雨来了",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "df6c512f0cfeb39c",
@@ -920,7 +920,7 @@
 {
 "name": "終極莉莉",
 "nameS": "终极莉莉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "a19aeaa315b422e8",
@@ -998,7 +998,7 @@
 {
 "name": "異界的晚餐",
 "nameS": "异界的晚餐",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔女之家",
@@ -1045,7 +1045,7 @@
 {
 "name": "十賢臣",
 "nameS": "十贤臣",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "沙漠樂隊",
@@ -1060,7 +1060,7 @@
 {
 "name": "灼熱陽光",
 "nameS": "灼热阳光",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a3f5014e9e2e4526",
@@ -1091,12 +1091,12 @@
 {
 "name": "百之夜與千之空",
 "nameS": "百之夜与千之空",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "萬聖節之夜遊行",
 "nameS": "万圣节之夜游行",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "da082e366781c43e",
@@ -1122,7 +1122,7 @@
 {
 "name": "父親大人和人造人們",
 "nameS": "父亲大人和人造人们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3ab5e4ec857b4879",
@@ -1169,7 +1169,7 @@
 {
 "name": "C的世界",
 "nameS": "C的世界",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "沙雲艦神聖玫瑰",
@@ -1241,7 +1241,7 @@
 {
 "name": "英靈戰士",
 "nameS": "英灵战士",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "霸龍加拉諾瓦",
@@ -1277,12 +1277,12 @@
 {
 "name": "百之夜與千之空",
 "nameS": "百之夜与千之空",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "靈子崩壞",
 "nameS": "灵子崩坏",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f4301787035b8551",
@@ -1303,7 +1303,7 @@
 {
 "name": "Let's Hit The Climax!",
 "nameS": "Let's Hit The Climax!",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "暴風龍維爾德拉",
@@ -1318,7 +1318,7 @@
 {
 "name": "聖誕女孩",
 "nameS": "圣诞女孩",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4db25889525ff54a",
@@ -1365,7 +1365,7 @@
 {
 "name": "父親大人和人造人們",
 "nameS": "父亲大人和人造人们",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "白色研究所",
@@ -1469,12 +1469,12 @@
 {
 "name": "盟友（我的摯友）",
 "nameS": "盟友（我的挚友）",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔界的反逆王Urizen",
 "nameS": "魔界的反逆王Urizen",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b840eb80f22ef78e",
@@ -1547,7 +1547,7 @@
 {
 "name": "艾爾德蘭特的決戰",
 "nameS": "艾尔德兰特的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:66",
@@ -1620,12 +1620,12 @@
 {
 "name": "武力帝國",
 "nameS": "武力帝国",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "破神羅格修斯（第2形態）",
 "nameS": "破神罗格修斯（第2形态）",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "魔獸獵人",
@@ -1651,7 +1651,7 @@
 {
 "name": "Royal",
 "nameS": "Royal",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "巨齒海獸",
@@ -1729,7 +1729,7 @@
 {
 "name": "神隱之境",
 "nameS": "神隐之境",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔獸獵人",
@@ -1781,12 +1781,12 @@
 {
 "name": "拉庫爾武具大會",
 "nameS": "拉库尔武具大会",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "機械生物",
 "nameS": "机械生物",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "白色巨石",
@@ -1796,7 +1796,7 @@
 {
 "name": "神隱之境",
 "nameS": "神隐之境",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "立於屍山的狂劍",
@@ -1889,7 +1889,7 @@
 {
 "name": "領戰王爭",
 "nameS": "领战王争",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b480695aa2840e5c",
@@ -1915,12 +1915,12 @@
 {
 "name": "芙拉米 & 布斯卡布",
 "nameS": "芙拉米 & 布斯卡布",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "萬聖南瓜燈",
 "nameS": "万圣南瓜灯",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e090015d178e09d2",
@@ -1941,7 +1941,7 @@
 {
 "name": "天照",
 "nameS": "天照",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "少女的祈禱",
@@ -1977,7 +1977,7 @@
 {
 "name": "幻英之塔",
 "nameS": "幻英之塔",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6daaeb2654b05955",
@@ -2003,7 +2003,7 @@
 {
 "name": "空中要塞索拉利斯",
 "nameS": "空中要塞索拉利斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "飛艇隆瓦裡歐號",
@@ -2029,12 +2029,12 @@
 {
 "name": "機械生物",
 "nameS": "机械生物",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "空中要塞索拉利斯",
 "nameS": "空中要塞索拉利斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:321",
@@ -2060,7 +2060,7 @@
 {
 "name": "空中要塞索拉利斯",
 "nameS": "空中要塞索拉利斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:322",
@@ -2081,7 +2081,7 @@
 {
 "name": "空中要塞索拉利斯",
 "nameS": "空中要塞索拉利斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:323",
@@ -2128,7 +2128,7 @@
 {
 "name": "Let's Hit The Climax!",
 "nameS": "Let's Hit The Climax!",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "星塵LIVE",
@@ -2169,7 +2169,7 @@
 {
 "name": "末日巨人",
 "nameS": "末日巨人",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "緋炎的英傑",
@@ -2179,7 +2179,7 @@
 {
 "name": "魔界的反逆王Urizen",
 "nameS": "魔界的反逆王Urizen",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "5881746a24e0069e",
@@ -2200,7 +2200,7 @@
 {
 "name": "神戒",
 "nameS": "神戒",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "緋炎的英傑",
@@ -2252,7 +2252,7 @@
 {
 "name": "糟糕，下起雨來了",
 "nameS": "糟糕，下起雨来了",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "緋炎的英傑",
@@ -2320,7 +2320,7 @@
 {
 "name": "下雪的元旦願望",
 "nameS": "下雪的元旦愿望",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "劍聖墓梅儂",
@@ -2330,7 +2330,7 @@
 {
 "name": "魔神瓦斯",
 "nameS": "魔神瓦斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "1a101f308e1eaae6",
@@ -2361,7 +2361,7 @@
 {
 "name": "露營一宿",
 "nameS": "露营一宿",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0267906ae6c02575",
@@ -2387,7 +2387,7 @@
 {
 "name": "情人節之夜",
 "nameS": "情人节之夜",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "暴食帝亞巴頓",
@@ -2423,12 +2423,12 @@
 {
 "name": "皇龍艾爾德・拉巴納",
 "nameS": "皇龙艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "魔神瓦斯",
 "nameS": "魔神瓦斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "df4a1ab1f77f9899",
@@ -2527,7 +2527,7 @@
 {
 "name": "幻英之塔",
 "nameS": "幻英之塔",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔鏡婆母拉姆",
@@ -2558,12 +2558,12 @@
 {
 "name": "機械鎧維修師",
 "nameS": "机械铠维修师",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "芙拉米 & 布斯卡布",
 "nameS": "芙拉米 & 布斯卡布",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "雷嵐之荒神",
@@ -2594,12 +2594,12 @@
 {
 "name": "從零開始",
 "nameS": "从零开始",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "灼熱陽光",
 "nameS": "灼热阳光",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f9f8ec965ab0a415",
@@ -2630,12 +2630,12 @@
 {
 "name": "艾米爾商店",
 "nameS": "艾米尔商店",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "那個夏日的回憶",
 "nameS": "那个夏日的回忆",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "034bfcf926753388",
@@ -2687,7 +2687,7 @@
 {
 "name": "卡伊洛斯・佐布拉",
 "nameS": "卡伊洛斯・佐布拉",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "紅月",
@@ -2723,7 +2723,7 @@
 {
 "name": "美麗的歌姬",
 "nameS": "美丽的歌姬",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "bf042a386e6e2017",
@@ -2765,17 +2765,17 @@
 {
 "name": "暗黑萬聖夜",
 "nameS": "暗黑万圣夜",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "梅莉・夢魘",
 "nameS": "梅莉・梦魇",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "父親大人和人造人們",
 "nameS": "父亲大人和人造人们",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "紅月",
@@ -2806,7 +2806,7 @@
 {
 "name": "終焉之獸",
 "nameS": "终焉之兽",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ccd9494e616a344d",
@@ -2848,7 +2848,7 @@
 {
 "name": "昴宿星團",
 "nameS": "昴宿星团",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "隱者的禁室",
@@ -2994,7 +2994,7 @@
 {
 "name": "情人節之夜",
 "nameS": "情人节之夜",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "戈爾德的奇跡",
@@ -3108,7 +3108,7 @@
 {
 "name": "情人節之夜",
 "nameS": "情人节之夜",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "聖旗諾爾雷安",
@@ -3123,7 +3123,7 @@
 {
 "name": "那個夏日的回憶",
 "nameS": "那个夏日的回忆",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2285673ba939a4cd",
@@ -3144,7 +3144,7 @@
 {
 "name": "番神加蘭德",
 "nameS": "番神加兰德",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "聖旗諾爾雷安",
@@ -3154,7 +3154,7 @@
 {
 "name": "艾連VS女巨人",
 "nameS": "艾连VS女巨人",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "fa9ff44cef19f2d5",
@@ -3180,7 +3180,7 @@
 {
 "name": "冰囚阿佩爾・尼克西斯",
 "nameS": "冰囚阿佩尔・尼克西斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "邪教神殿",
@@ -3279,7 +3279,7 @@
 {
 "name": "溫柔的世界",
 "nameS": "温柔的世界",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "艾米爾頭",
@@ -3289,7 +3289,7 @@
 {
 "name": "萬能事務所Devil May Cry",
 "nameS": "万能事务所Devil May Cry",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "89d77d4240c9f0f6",
@@ -3361,7 +3361,7 @@
 {
 "name": "艾米爾商店",
 "nameS": "艾米尔商店",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "70ba6508f2c7ff23",
@@ -3387,12 +3387,12 @@
 {
 "name": "英靈戰士",
 "nameS": "英灵战士",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "萬能事務所Devil May Cry",
 "nameS": "万能事务所Devil May Cry",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0bcbd8a4dc9889d5",
@@ -3413,7 +3413,7 @@
 {
 "name": "TRIALS of MANA",
 "nameS": "TRIALS of MANA",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "加利亞諾大瀑布",
@@ -3454,7 +3454,7 @@
 {
 "name": "終極莉莉",
 "nameS": "终极莉莉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "02ddf87727d6b287",
@@ -3584,12 +3584,12 @@
 {
 "name": "戰鬥的軌跡",
 "nameS": "战斗的轨迹",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "梅莉・夢魘",
 "nameS": "梅莉・梦魇",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "異國梅格羅納",
@@ -3620,7 +3620,7 @@
 {
 "name": "Devil May Cry 5",
 "nameS": "Devil May Cry 5",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "異界次元的夾縫",
@@ -3656,12 +3656,12 @@
 {
 "name": "下雪的元旦願望",
 "nameS": "下雪的元旦愿望",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "拉庫爾武具大會",
 "nameS": "拉库尔武具大会",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神獸獵人",
@@ -3687,7 +3687,7 @@
 {
 "name": "傳說的六英雄",
 "nameS": "传说的六英雄",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神獸獵人",
@@ -3718,7 +3718,7 @@
 {
 "name": "崩壞紋章",
 "nameS": "崩坏纹章",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "精神世界 -破神-",
@@ -3775,12 +3775,12 @@
 {
 "name": "One Of A Kind",
 "nameS": "One Of A Kind",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "破神大戰",
 "nameS": "破神大战",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "龍寶雷尼庫爾",
@@ -3962,7 +3962,7 @@
 {
 "name": "羅盤",
 "nameS": "罗盘",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ba24f4a2e20a74dc",
@@ -4035,12 +4035,12 @@
 {
 "name": "守衛者",
 "nameS": "守卫者",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "艾連VS女巨人",
 "nameS": "艾连VS女巨人",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔像之核",
@@ -4066,7 +4066,7 @@
 {
 "name": "芙拉米 & 布斯卡布",
 "nameS": "芙拉米 & 布斯卡布",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔像之核",
@@ -4097,7 +4097,7 @@
 {
 "name": "魔神米婭·盧梅爾",
 "nameS": "魔神米娅·卢梅尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:34",
@@ -4181,7 +4181,7 @@
 {
 "name": "反抗巨人的人們",
 "nameS": "反抗巨人的人们",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "天弓星爵",
@@ -4191,7 +4191,7 @@
 {
 "name": "神機梅塔特隆",
 "nameS": "神机梅塔特隆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "23dfdab660ed35dd",
@@ -4217,7 +4217,7 @@
 {
 "name": "最初的軌跡",
 "nameS": "最初的轨迹",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "f4bf8f6c759cece0",
@@ -4238,7 +4238,7 @@
 {
 "name": "武力帝國",
 "nameS": "武力帝国",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "立於屍山的狂劍",
@@ -4290,7 +4290,7 @@
 {
 "name": "利拉哈姆爾",
 "nameS": "利拉哈姆尔",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "飛艇隆瓦裡歐號",
@@ -4451,12 +4451,12 @@
 {
 "name": "溫柔的世界",
 "nameS": "温柔的世界",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "破神羅格修斯（第2形態）",
 "nameS": "破神罗格修斯（第2形态）",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "秘奧錄“灼鳳破”",
@@ -4565,7 +4565,7 @@
 {
 "name": "地堡",
 "nameS": "地堡",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "終末的命誓",
@@ -4575,7 +4575,7 @@
 {
 "name": "豐收的節日",
 "nameS": "丰收的节日",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9644f0427e3b56be",
@@ -4601,7 +4601,7 @@
 {
 "name": "魔神艾爾德・拉巴納",
 "nameS": "魔神艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:197",
@@ -4648,7 +4648,7 @@
 {
 "name": "精靈騎士與禁書庫的大精靈",
 "nameS": "精灵骑士与禁书库的大精灵",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "終末的命誓",
@@ -4674,7 +4674,7 @@
 {
 "name": "TRIALS of MANA",
 "nameS": "TRIALS of MANA",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "超沙獸的靈帝牙",
@@ -4700,7 +4700,7 @@
 {
 "name": "機械鎧維修師",
 "nameS": "机械铠维修师",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "超沙獸的靈帝牙",
@@ -4726,7 +4726,7 @@
 {
 "name": "凜凜的明星",
 "nameS": "凛凛的明星",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "超沙獸的靈帝牙",
@@ -4757,7 +4757,7 @@
 {
 "name": "糟糕，下起雨來了",
 "nameS": "糟糕，下起雨来了",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "聖夜的心願",
@@ -4783,7 +4783,7 @@
 {
 "name": "共鬥！",
 "nameS": "共斗！",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "天聖女的凱旋",
@@ -4814,7 +4814,7 @@
 {
 "name": "終極莉莉",
 "nameS": "终极莉莉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "12a14456c62e0bcf",
@@ -4840,7 +4840,7 @@
 {
 "name": "異界的晚餐",
 "nameS": "异界的晚餐",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神獸羅格美琪亞",
@@ -4876,7 +4876,7 @@
 {
 "name": "終極莉莉",
 "nameS": "终极莉莉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "1a1043cd31293850",
@@ -4902,7 +4902,7 @@
 {
 "name": "終焉之獸",
 "nameS": "终焉之兽",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "91eb7a5369b466e1",
@@ -4928,7 +4928,7 @@
 {
 "name": "破神羅格修斯",
 "nameS": "破神罗格修斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0f5accc66c3d4ea0",
@@ -5053,7 +5053,7 @@
 {
 "name": "聖夜的羅茲瓦爾宅邸",
 "nameS": "圣夜的罗兹瓦尔宅邸",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1f1e7d3449c0ce66",
@@ -5084,7 +5084,7 @@
 {
 "name": "神隸艾普羅波利卡",
 "nameS": "神隶艾普罗波利卡",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "bfa737afd0bafd62",
@@ -5110,7 +5110,7 @@
 {
 "name": "機械生物",
 "nameS": "机械生物",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "解放的獸王",
@@ -5157,7 +5157,7 @@
 {
 "name": "新春板羽球對決",
 "nameS": "新春板羽球对决",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "樹精的秘村",
@@ -5183,12 +5183,12 @@
 {
 "name": "One Of A Kind",
 "nameS": "One Of A Kind",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "守衛者",
 "nameS": "守卫者",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "最後的克勞迪亞",
@@ -5224,7 +5224,7 @@
 {
 "name": "反抗巨人的人們",
 "nameS": "反抗巨人的人们",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "異國梅格羅納",
@@ -5281,7 +5281,7 @@
 {
 "name": "魔銃乙太潛行者",
 "nameS": "魔铳乙太潜行者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "84d23b82f37b1490",
@@ -5312,12 +5312,12 @@
 {
 "name": "神戒",
 "nameS": "神戒",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "聖誕女孩",
 "nameS": "圣诞女孩",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "398ea3fcd696c86a",
@@ -5338,7 +5338,7 @@
 {
 "name": "海灘的夏日女孩們",
 "nameS": "海滩的夏日女孩们",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "深海廢都諾諾派克拉",
@@ -5364,12 +5364,12 @@
 {
 "name": "古蘭澤利亞甜蜜搖滾",
 "nameS": "古兰泽利亚甜蜜摇滚",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "傑布魯・法",
 "nameS": "杰布鲁・法",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "深海廢都諾諾派克拉",
@@ -5400,7 +5400,7 @@
 {
 "name": "約定的魯貝爾",
 "nameS": "约定的鲁贝尔",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d1bc7f72d978fe26",
@@ -5447,7 +5447,7 @@
 {
 "name": "破神大戰",
 "nameS": "破神大战",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "36c52eb155eecd1f",
@@ -5473,7 +5473,7 @@
 {
 "name": "魔界的反逆王Urizen",
 "nameS": "魔界的反逆王Urizen",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "30c471c824951c9c",
@@ -5504,7 +5504,7 @@
 {
 "name": "末日巨人",
 "nameS": "末日巨人",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1d471a5639a273bc",
@@ -5530,17 +5530,17 @@
 {
 "name": "解放者",
 "nameS": "解放者",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "靈子崩壞",
 "nameS": "灵子崩坏",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔神瓦斯",
 "nameS": "魔神瓦斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "9146eb2670c69122",
@@ -5592,7 +5592,7 @@
 {
 "name": "NEO米克特蘭",
 "nameS": "NEO米克特兰",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "立於屍山的狂劍",
@@ -5670,7 +5670,7 @@
 {
 "name": "NEO米克特蘭",
 "nameS": "NEO米克特兰",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "古代遺跡聖馬里烏斯",
@@ -5706,7 +5706,7 @@
 {
 "name": "黑色騎士團",
 "nameS": "黑色骑士团",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "56cc2ba3fab2065f",
@@ -5737,7 +5737,7 @@
 {
 "name": "艾爾德蘭特的決戰",
 "nameS": "艾尔德兰特的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:225",
@@ -5758,7 +5758,7 @@
 {
 "name": "One Of A Kind",
 "nameS": "One Of A Kind",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "古代兵器羅根",
@@ -5789,7 +5789,7 @@
 {
 "name": "克羅諾斯",
 "nameS": "克罗诺斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "古代兵器羅根",
@@ -5820,7 +5820,7 @@
 {
 "name": "番神加蘭德",
 "nameS": "番神加兰德",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "穿越災禍之人",
@@ -5991,7 +5991,7 @@
 {
 "name": "破神侵攻",
 "nameS": "破神侵攻",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "4f28c098f1f146e8",
@@ -6069,12 +6069,12 @@
 {
 "name": "武力帝國",
 "nameS": "武力帝国",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "萊莎的鍊金工房",
 "nameS": "莱莎的炼金工房",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "龍鱗蜥蜴人的誕生",
@@ -6105,7 +6105,7 @@
 {
 "name": "沙漠之王",
 "nameS": "沙漠之王",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "魔導神兵『加儂』",
@@ -6173,12 +6173,12 @@
 {
 "name": "三皇",
 "nameS": "三皇",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "從零開始",
 "nameS": "从零开始",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "指引之星鐘樓",
@@ -6188,7 +6188,7 @@
 {
 "name": "魔樹的決戰",
 "nameS": "魔树的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b8934861f6189f6e",
@@ -6251,12 +6251,12 @@
 {
 "name": "少女們的聖誕頌歌",
 "nameS": "少女们的圣诞颂歌",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神獸巴爾梅特",
 "nameS": "神兽巴尔梅特",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "神獸羅格美琪亞",
@@ -6292,7 +6292,7 @@
 {
 "name": "莉拉哈・耶姆傑爾",
 "nameS": "莉拉哈・耶姆杰尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ab0b9f05425aae49",
@@ -6318,7 +6318,7 @@
 {
 "name": "英靈戰士",
 "nameS": "英灵战士",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9fc2a2451521c398",
@@ -6344,7 +6344,7 @@
 {
 "name": "艾連VS女巨人",
 "nameS": "艾连VS女巨人",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f3ba0d8a036da02b",
@@ -6412,12 +6412,12 @@
 {
 "name": "利姆路vs日向",
 "nameS": "利姆路vs日向",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "火之迦具土",
 "nameS": "火之迦具土",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "銀灰劍聖傳",
@@ -6427,7 +6427,7 @@
 {
 "name": "魔神艾爾德・拉巴納",
 "nameS": "魔神艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "9933f7bea186f541",
@@ -6537,7 +6537,7 @@
 {
 "name": "Let's Hit The Climax!",
 "nameS": "Let's Hit The Climax!",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "佈雷茲花園",
@@ -6605,12 +6605,12 @@
 {
 "name": "C的世界",
 "nameS": "C的世界",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "皇龍艾爾德・拉巴納",
 "nameS": "皇龙艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "聖夜的心願",
@@ -6657,17 +6657,17 @@
 {
 "name": "利拉哈姆爾",
 "nameS": "利拉哈姆尔",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "吉祥寺",
 "nameS": "吉祥寺",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "少女們的戀宴",
 "nameS": "少女们的恋宴",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "沙漠樂隊",
@@ -6693,7 +6693,7 @@
 {
 "name": "TRIALS of MANA",
 "nameS": "TRIALS of MANA",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "沙漠樂隊",
@@ -6719,7 +6719,7 @@
 {
 "name": "反抗巨人的人們",
 "nameS": "反抗巨人的人们",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "沙漠樂隊",
@@ -6729,7 +6729,7 @@
 {
 "name": "神隸艾普羅波利卡",
 "nameS": "神隶艾普罗波利卡",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:294",
@@ -6807,7 +6807,7 @@
 {
 "name": "萬聖南瓜燈",
 "nameS": "万圣南瓜灯",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ea2269dc8dbcfa74",
@@ -6833,12 +6833,12 @@
 {
 "name": "羅格薩里姆",
 "nameS": "罗格萨里姆",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "豐收的節日",
 "nameS": "丰收的节日",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9eb48a851890bcdc",
@@ -6895,7 +6895,7 @@
 {
 "name": "皇龍艾爾德・拉巴納",
 "nameS": "皇龙艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "1ddd7414606b9de2",
@@ -6916,7 +6916,7 @@
 {
 "name": "皇龍艾爾德・拉巴納",
 "nameS": "皇龙艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:270",
@@ -6947,7 +6947,7 @@
 {
 "name": "皇龍艾爾德・拉巴納",
 "nameS": "皇龙艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "c18e2156cd295689",
@@ -6968,7 +6968,7 @@
 {
 "name": "皇龍艾爾德・拉巴納",
 "nameS": "皇龙艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "454a237836d960b0",
@@ -6994,12 +6994,12 @@
 {
 "name": "守衛者",
 "nameS": "守卫者",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "溫柔的世界",
 "nameS": "温柔的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "c2a5f212631ba8ff",
@@ -7025,7 +7025,7 @@
 {
 "name": "聖夜的羅茲瓦爾宅邸",
 "nameS": "圣夜的罗兹瓦尔宅邸",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "463ed2cf276c2462",
@@ -7051,7 +7051,7 @@
 {
 "name": "崩壞紋章",
 "nameS": "崩坏纹章",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1c52dcb1735c073a",
@@ -7119,7 +7119,7 @@
 {
 "name": "艾爾德蘭特的決戰",
 "nameS": "艾尔德兰特的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6bb2c943681bb3e7",
@@ -7171,12 +7171,12 @@
 {
 "name": "搗蛋之夜狂想曲",
 "nameS": "捣蛋之夜狂想曲",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "破神大戰",
 "nameS": "破神大战",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ce7eb01498391d2c",
@@ -7202,7 +7202,7 @@
 {
 "name": "搗蛋之夜狂想曲",
 "nameS": "捣蛋之夜狂想曲",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6227c8886b43ceb0",
@@ -7275,7 +7275,7 @@
 {
 "name": "魔王卡爾瑪・諾格",
 "nameS": "魔王卡尔玛・诺格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:288",
@@ -7416,7 +7416,7 @@
 {
 "name": "邁向新的世界",
 "nameS": "迈向新的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:317",
@@ -7468,7 +7468,7 @@
 {
 "name": "神機『阿斯拉特隆』",
 "nameS": "神机『阿斯拉特隆』",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "雷神天翔",
@@ -7515,7 +7515,7 @@
 {
 "name": "機械鎧維修師",
 "nameS": "机械铠维修师",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "殺戮機器",
@@ -7525,7 +7525,7 @@
 {
 "name": "萬能事務所Devil May Cry",
 "nameS": "万能事务所Devil May Cry",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a9beabdba2bb1ea3",
@@ -7546,7 +7546,7 @@
 {
 "name": "戰鬥的軌跡",
 "nameS": "战斗的轨迹",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "殺戮機器",
@@ -7577,7 +7577,7 @@
 {
 "name": "雷獸討伐奇譚",
 "nameS": "雷兽讨伐奇谭",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:306",
@@ -7598,17 +7598,17 @@
 {
 "name": "共鬥！",
 "nameS": "共斗！",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "幻英之塔",
 "nameS": "幻英之塔",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "豐收的節日",
 "nameS": "丰收的节日",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "fea184827daeaa39",
@@ -7629,12 +7629,12 @@
 {
 "name": "幻英之塔",
 "nameS": "幻英之塔",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "自由之翼",
 "nameS": "自由之翼",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "7bbf56fd7760a806",
@@ -7676,7 +7676,7 @@
 {
 "name": "Believe In Myself",
 "nameS": "Believe In Myself",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "遺留於樹海之物",
@@ -7796,7 +7796,7 @@
 {
 "name": "萬聖節之夜遊行",
 "nameS": "万圣节之夜游行",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "遙界的古代圖書館",
@@ -7843,7 +7843,7 @@
 {
 "name": "破神大戰",
 "nameS": "破神大战",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "遊戲大師",
@@ -7869,7 +7869,7 @@
 {
 "name": "破神大戰",
 "nameS": "破神大战",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e473e81b4b16e917",
@@ -7890,7 +7890,7 @@
 {
 "name": "破神大戰",
 "nameS": "破神大战",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:301",
@@ -7916,12 +7916,12 @@
 {
 "name": "少女們的聖誕頌歌",
 "nameS": "少女们的圣诞颂歌",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神都失落的瑪古奈斯",
 "nameS": "神都失落的玛古奈斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:307",
@@ -7968,7 +7968,7 @@
 {
 "name": "終極莉莉",
 "nameS": "终极莉莉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "6e424e4ea062edd4",
@@ -7989,7 +7989,7 @@
 {
 "name": "終極莉莉",
 "nameS": "终极莉莉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "eb948e43fefb658b",
@@ -8010,7 +8010,7 @@
 {
 "name": "異界的晚餐",
 "nameS": "异界的晚餐",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:324",
@@ -8036,7 +8036,7 @@
 {
 "name": "異界的晚餐",
 "nameS": "异界的晚餐",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b2e58697ea88e464",
@@ -8057,7 +8057,7 @@
 {
 "name": "異界的晚餐",
 "nameS": "异界的晚餐",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:326",
@@ -8078,12 +8078,12 @@
 {
 "name": "人體煉成",
 "nameS": "人体炼成",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "白色聖誕節",
 "nameS": "白色圣诞节",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:340",
@@ -8104,7 +8104,7 @@
 {
 "name": "少女們的戀宴",
 "nameS": "少女们的恋宴",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9af75e5034ae0811",
@@ -8130,7 +8130,7 @@
 {
 "name": "少女們的戀宴",
 "nameS": "少女们的恋宴",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "c4dcb02f9f9b0945",
@@ -8151,12 +8151,12 @@
 {
 "name": "少女們的戀宴",
 "nameS": "少女们的恋宴",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "從零開始",
 "nameS": "从零开始",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:256",
@@ -8198,7 +8198,7 @@
 {
 "name": "Royal",
 "nameS": "Royal",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "古代遺跡聖馬里烏斯",
@@ -8224,7 +8224,7 @@
 {
 "name": "神都失落的瑪古奈斯",
 "nameS": "神都失落的玛古奈斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "762fb2ff5d9381f0",
@@ -8276,7 +8276,7 @@
 {
 "name": "神獸巴爾梅特",
 "nameS": "神兽巴尔梅特",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "85e41007552fa429",
@@ -8318,12 +8318,12 @@
 {
 "name": "星之所在",
 "nameS": "星之所在",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "火之迦具土",
 "nameS": "火之迦具土",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:369",
@@ -8344,7 +8344,7 @@
 {
 "name": "火之迦具土",
 "nameS": "火之迦具土",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "109cb2b413148949",
@@ -8365,7 +8365,7 @@
 {
 "name": "火之迦具土",
 "nameS": "火之迦具土",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "2a62c41d8d3fb3d0",
@@ -8386,22 +8386,22 @@
 {
 "name": "Royal",
 "nameS": "Royal",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "VS. 蛋頭博士",
 "nameS": "VS. 蛋头博士",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "守衛者",
 "nameS": "守卫者",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "聖夜大滑行",
 "nameS": "圣夜大滑行",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:373",
@@ -8422,12 +8422,12 @@
 {
 "name": "吉祥寺",
 "nameS": "吉祥寺",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "守衛者",
 "nameS": "守卫者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "a1d3d2d5b491b676",
@@ -8448,7 +8448,7 @@
 {
 "name": "守衛者",
 "nameS": "守卫者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "edc04a2cb5cbc357",
@@ -8479,7 +8479,7 @@
 {
 "name": "萬福之晨曦",
 "nameS": "万福之晨曦",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b709d054e274c5ce",
@@ -8500,7 +8500,7 @@
 {
 "name": "主神奧丁",
 "nameS": "主神奥丁",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "天界",
@@ -8552,12 +8552,12 @@
 {
 "name": "屬於兩人的回家之路",
 "nameS": "属于两人的回家之路",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "破神羅格修斯",
 "nameS": "破神罗格修斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "魔導都市聖帕姆",
@@ -8583,7 +8583,7 @@
 {
 "name": "破神羅格修斯",
 "nameS": "破神罗格修斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "bf0d04fe54be3b33",
@@ -8604,7 +8604,7 @@
 {
 "name": "破神羅格修斯",
 "nameS": "破神罗格修斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "04b522e79ad2a5d2",
@@ -8646,7 +8646,7 @@
 {
 "name": "Believe In Myself",
 "nameS": "Believe In Myself",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "遊戲大師",
@@ -8693,7 +8693,7 @@
 {
 "name": "各自的決意",
 "nameS": "各自的决意",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "聖都亞丹",
@@ -8724,7 +8724,7 @@
 {
 "name": "魔神艾爾德・拉巴納",
 "nameS": "魔神艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:235",
@@ -8745,7 +8745,7 @@
 {
 "name": "地堡",
 "nameS": "地堡",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "艾爾瑪利亞・牧場",
@@ -8755,7 +8755,7 @@
 {
 "name": "魔神瓦斯",
 "nameS": "魔神瓦斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "6da309b5ff349e89",
@@ -8776,7 +8776,7 @@
 {
 "name": "魔神瓦斯",
 "nameS": "魔神瓦斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e9fbf5b56f0559bf",
@@ -8802,12 +8802,12 @@
 {
 "name": "約定的魯貝爾",
 "nameS": "约定的鲁贝尔",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "聖夜大滑行",
 "nameS": "圣夜大滑行",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "afadc468674e5da8",
@@ -8828,7 +8828,7 @@
 {
 "name": "約定的魯貝爾",
 "nameS": "约定的鲁贝尔",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "683858bd752288dd",
@@ -8849,7 +8849,7 @@
 {
 "name": "約定的魯貝爾",
 "nameS": "约定的鲁贝尔",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "484c7ab2b4b198dc",
@@ -8870,7 +8870,7 @@
 {
 "name": "約定的魯貝爾",
 "nameS": "约定的鲁贝尔",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "86ad4fdedf4c3869",
@@ -8933,7 +8933,7 @@
 {
 "name": "從零開始",
 "nameS": "从零开始",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "賽加的公會",
@@ -8959,7 +8959,7 @@
 {
 "name": "神隸艾普羅波利卡",
 "nameS": "神隶艾普罗波利卡",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "賽加的公會",
@@ -8985,7 +8985,7 @@
 {
 "name": "熾天使之門",
 "nameS": "炽天使之门",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "賽加的公會",
@@ -9011,7 +9011,7 @@
 {
 "name": "凜凜的明星",
 "nameS": "凛凛的明星",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神魔大戰",
@@ -9042,7 +9042,7 @@
 {
 "name": "海岸兜風",
 "nameS": "海岸兜风",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔導神兵『加儂』",
@@ -9068,7 +9068,7 @@
 {
 "name": "OVERLORD",
 "nameS": "OVERLORD",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔導神兵『加儂』",
@@ -9120,7 +9120,7 @@
 {
 "name": "情人節節奏",
 "nameS": "情人节节奏",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "星間船天弓號",
@@ -9130,7 +9130,7 @@
 {
 "name": "沙漠之王",
 "nameS": "沙漠之王",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "68d0f34cfdb9b61d",
@@ -9203,17 +9203,17 @@
 {
 "name": "十賢臣",
 "nameS": "十贤臣",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "拉庫爾武具大會",
 "nameS": "拉库尔武具大会",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "達摩克里斯之空",
 "nameS": "达摩克里斯之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "dece5d91ef6eddbb",
@@ -9234,7 +9234,7 @@
 {
 "name": "十賢臣",
 "nameS": "十贤臣",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "eb659c714ed39fd6",
@@ -9255,7 +9255,7 @@
 {
 "name": "十賢臣",
 "nameS": "十贤臣",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ecc2b890bdcd8258",
@@ -9276,12 +9276,12 @@
 {
 "name": "屬於兩人的回家之路",
 "nameS": "属于两人的回家之路",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "萬聖南瓜燈",
 "nameS": "万圣南瓜灯",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:442",
@@ -9302,7 +9302,7 @@
 {
 "name": "萬聖南瓜燈",
 "nameS": "万圣南瓜灯",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1c1fef3cdbb3164c",
@@ -9328,12 +9328,12 @@
 {
 "name": "凜凜的明星",
 "nameS": "凛凛的明星",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "暗黑萬聖夜",
 "nameS": "暗黑万圣夜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:439",
@@ -9427,7 +9427,7 @@
 {
 "name": "自由之翼",
 "nameS": "自由之翼",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b3ceb563be9052e5",
@@ -9474,7 +9474,7 @@
 {
 "name": "雲神瑪達・烏比斯",
 "nameS": "云神玛达・乌比斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e3d7bd6b053a45c9",
@@ -9495,7 +9495,7 @@
 {
 "name": "聖誕女孩",
 "nameS": "圣诞女孩",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "94c0f3f3d7cd060f",
@@ -9516,7 +9516,7 @@
 {
 "name": "聖誕女孩",
 "nameS": "圣诞女孩",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ec87e1562724f2ba",
@@ -9537,7 +9537,7 @@
 {
 "name": "聖誕女孩",
 "nameS": "圣诞女孩",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2901b40ce3f38847",
@@ -9558,7 +9558,7 @@
 {
 "name": "天照",
 "nameS": "天照",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:459",
@@ -9579,7 +9579,7 @@
 {
 "name": "天照",
 "nameS": "天照",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "7aa3dea4055222df",
@@ -9600,7 +9600,7 @@
 {
 "name": "天照",
 "nameS": "天照",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "182731824b8599ca",
@@ -9647,7 +9647,7 @@
 {
 "name": "黑色騎士團",
 "nameS": "黑色骑士团",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "bd3af6ef7a1da443",
@@ -9668,7 +9668,7 @@
 {
 "name": "埃修利昂的生命爐",
 "nameS": "埃修利昂的生命炉",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "沙雲艦神聖玫瑰",
@@ -9694,22 +9694,22 @@
 {
 "name": "炎熱天的波浪大戰",
 "nameS": "炎热天的波浪大战",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "盟友（我的摯友）",
 "nameS": "盟友（我的挚友）",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "碧山區域",
 "nameS": "碧山区域",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神隱之境",
 "nameS": "神隐之境",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:320",
@@ -9730,17 +9730,17 @@
 {
 "name": "古蘭澤利亞甜蜜搖滾",
 "nameS": "古兰泽利亚甜蜜摇滚",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神隱之境",
 "nameS": "神隐之境",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "糟糕，下起雨來了",
 "nameS": "糟糕，下起雨来了",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9dffb7f0d9297302",
@@ -9761,7 +9761,7 @@
 {
 "name": "神隱之境",
 "nameS": "神隐之境",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "c059571f370020f5",
@@ -9782,7 +9782,7 @@
 {
 "name": "情人節之夜",
 "nameS": "情人节之夜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "863142029c408b2a",
@@ -9803,7 +9803,7 @@
 {
 "name": "情人節之夜",
 "nameS": "情人节之夜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e97879470b786304",
@@ -9824,7 +9824,7 @@
 {
 "name": "情人節之夜",
 "nameS": "情人节之夜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:478",
@@ -9845,12 +9845,12 @@
 {
 "name": "WORLD TOUR",
 "nameS": "WORLD TOUR",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "梅莉・夢魘",
 "nameS": "梅莉・梦魇",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "a0e9ad8c974ebca1",
@@ -9871,7 +9871,7 @@
 {
 "name": "梅莉・夢魘",
 "nameS": "梅莉・梦魇",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "1545ff2f2bc10672",
@@ -9897,7 +9897,7 @@
 {
 "name": "魔神艾爾德・拉巴納",
 "nameS": "魔神艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:377",
@@ -9918,7 +9918,7 @@
 {
 "name": "魔神艾爾德・拉巴納",
 "nameS": "魔神艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "523a8585fc9c836c",
@@ -9939,12 +9939,12 @@
 {
 "name": "傳說的六英雄",
 "nameS": "传说的六英雄",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔神艾爾德・拉巴納",
 "nameS": "魔神艾尔德・拉巴纳",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "28ccf85b5f31c394",
@@ -9970,12 +9970,12 @@
 {
 "name": "魔神米婭·盧梅爾",
 "nameS": "魔神米娅·卢梅尔",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "鮮血之女武神",
 "nameS": "鲜血之女武神",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3cc8a829b724bfe7",
@@ -9996,7 +9996,7 @@
 {
 "name": "冰之魔帝賽諾巴斯",
 "nameS": "冰之魔帝赛诺巴斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "白色巨石",
@@ -10022,7 +10022,7 @@
 {
 "name": "帝國四天",
 "nameS": "帝国四天",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "白色巨石",
@@ -10048,12 +10048,12 @@
 {
 "name": "聖戰",
 "nameS": "圣战",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "萬福之晨曦",
 "nameS": "万福之晨曦",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "08fffb416a91dd55",
@@ -10074,17 +10074,17 @@
 {
 "name": "昴宿星團",
 "nameS": "昴宿星团",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "聖戰",
 "nameS": "圣战",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "迷宮最深部的死鬥",
 "nameS": "迷宫最深部的死斗",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3177d5a582d25cba",
@@ -10105,7 +10105,7 @@
 {
 "name": "聖戰",
 "nameS": "圣战",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "99a9a562aa4868a1",
@@ -10126,12 +10126,12 @@
 {
 "name": "羅盤",
 "nameS": "罗盘",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "聖戰",
 "nameS": "圣战",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "7ef2d01b96b2406e",
@@ -10152,17 +10152,17 @@
 {
 "name": "破神羅格修斯（第2形態）",
 "nameS": "破神罗格修斯（第2形态）",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "自由之翼",
 "nameS": "自由之翼",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "黑色騎士團",
 "nameS": "黑色骑士团",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "5b5e2095fcd10064",
@@ -10183,7 +10183,7 @@
 {
 "name": "破神羅格修斯（第2形態）",
 "nameS": "破神罗格修斯（第2形态）",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:511",
@@ -10204,7 +10204,7 @@
 {
 "name": "破神羅格修斯（第2形態）",
 "nameS": "破神罗格修斯（第2形态）",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "68c1f4b9c51cb15f",
@@ -10225,7 +10225,7 @@
 {
 "name": "破神羅格修斯（第2形態）",
 "nameS": "破神罗格修斯（第2形态）",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "f9c63a04f63f89ea",
@@ -10267,7 +10267,7 @@
 {
 "name": "建御雷",
 "nameS": "建御雷",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "霸龍加拉諾瓦",
@@ -10293,7 +10293,7 @@
 {
 "name": "破神封印",
 "nameS": "破神封印",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "霸龍加拉諾瓦",
@@ -10319,12 +10319,12 @@
 {
 "name": "冰囚阿佩爾・尼克西斯",
 "nameS": "冰囚阿佩尔・尼克西斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "炎熱天的波浪大戰",
 "nameS": "炎热天的波浪大战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e2376f83dc028e0f",
@@ -10345,12 +10345,12 @@
 {
 "name": "冰囚阿佩爾・尼克西斯",
 "nameS": "冰囚阿佩尔・尼克西斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "終焉之獸",
 "nameS": "终焉之兽",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:309",
@@ -10371,7 +10371,7 @@
 {
 "name": "冰囚阿佩爾・尼克西斯",
 "nameS": "冰囚阿佩尔・尼克西斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "420153e0bbd5a460",
@@ -10392,12 +10392,12 @@
 {
 "name": "冰囚阿佩爾・尼克西斯",
 "nameS": "冰囚阿佩尔・尼克西斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "迷宮最深部的死鬥",
 "nameS": "迷宫最深部的死斗",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "79a377bec526c2d4",
@@ -10418,7 +10418,7 @@
 {
 "name": "冰囚阿佩爾・尼克西斯",
 "nameS": "冰囚阿佩尔・尼克西斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "7699c0abda6d47a0",
@@ -10439,12 +10439,12 @@
 {
 "name": "沙漠之王",
 "nameS": "沙漠之王",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "神獸之塔",
 "nameS": "神兽之塔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ee7974e871d9836c",
@@ -10465,12 +10465,12 @@
 {
 "name": "沙漠之王",
 "nameS": "沙漠之王",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "達摩克里斯之空",
 "nameS": "达摩克里斯之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e14285f5ee6071bf",
@@ -10491,7 +10491,7 @@
 {
 "name": "沙漠之王",
 "nameS": "沙漠之王",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "d97a22bd801e515c",
@@ -10512,12 +10512,12 @@
 {
 "name": "最初的軌跡",
 "nameS": "最初的轨迹",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "沙漠之王",
 "nameS": "沙漠之王",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "b65bccc3a5431629",
@@ -10538,7 +10538,7 @@
 {
 "name": "灼熱陽光",
 "nameS": "灼热阳光",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a4f12207dfb9a3df",
@@ -10559,7 +10559,7 @@
 {
 "name": "灼熱陽光",
 "nameS": "灼热阳光",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9ec9d27fcaa3d0a4",
@@ -10580,7 +10580,7 @@
 {
 "name": "灼熱陽光",
 "nameS": "灼热阳光",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e60d08454c99c899",
@@ -10601,7 +10601,7 @@
 {
 "name": "各自的決意",
 "nameS": "各自的决意",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "幻影之鴉",
@@ -10632,7 +10632,7 @@
 {
 "name": "邁向新的世界",
 "nameS": "迈向新的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6952af1368802c34",
@@ -10674,7 +10674,7 @@
 {
 "name": "派托斯的鍛造工房",
 "nameS": "派托斯的锻造工房",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "潘特魯貝因",
@@ -10700,7 +10700,7 @@
 {
 "name": "女神四徒",
 "nameS": "女神四徒",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "潘特魯貝因",
@@ -10726,7 +10726,7 @@
 {
 "name": "主神奧丁",
 "nameS": "主神奥丁",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "古代精靈國『瑪瑪・納爾』",
@@ -10736,7 +10736,7 @@
 {
 "name": "莉拉哈・耶姆傑爾",
 "nameS": "莉拉哈・耶姆杰尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "5f13abe1484bc2c7",
@@ -10783,7 +10783,7 @@
 {
 "name": "屬於兩人的回家之路",
 "nameS": "属于两人的回家之路",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "756acbe5f4ea23ca",
@@ -10804,7 +10804,7 @@
 {
 "name": "神戒",
 "nameS": "神戒",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:545",
@@ -10825,7 +10825,7 @@
 {
 "name": "神戒",
 "nameS": "神戒",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ae4a9316a61a0384",
@@ -10846,7 +10846,7 @@
 {
 "name": "神戒",
 "nameS": "神戒",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "3d7e20ea487f3b19",
@@ -10867,7 +10867,7 @@
 {
 "name": "神戒",
 "nameS": "神戒",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "16398266d34af6ff",
@@ -10888,12 +10888,12 @@
 {
 "name": "Visions of Mana",
 "nameS": "Visions of Mana",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神獸巴爾梅特",
 "nameS": "神兽巴尔梅特",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "7d13ccbe8866b38d",
@@ -10914,7 +10914,7 @@
 {
 "name": "神獸巴爾梅特",
 "nameS": "神兽巴尔梅特",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "4c3d40e4148fa790",
@@ -10935,7 +10935,7 @@
 {
 "name": "神獸巴爾梅特",
 "nameS": "神兽巴尔梅特",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "d214a29ee3c4826e",
@@ -10956,7 +10956,7 @@
 {
 "name": "神獸巴爾梅特",
 "nameS": "神兽巴尔梅特",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "4e8a749504d3799f",
@@ -10977,7 +10977,7 @@
 {
 "name": "萬聖節之夜遊行",
 "nameS": "万圣节之夜游行",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "719b23004e804e89",
@@ -10998,7 +10998,7 @@
 {
 "name": "萬聖節之夜遊行",
 "nameS": "万圣节之夜游行",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1faea4cee43b7137",
@@ -11019,7 +11019,7 @@
 {
 "name": "萬聖節之夜遊行",
 "nameS": "万圣节之夜游行",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f851cc57b094612a",
@@ -11040,12 +11040,12 @@
 {
 "name": "主神奧丁",
 "nameS": "主神奥丁",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "少女們的聖誕頌歌",
 "nameS": "少女们的圣诞颂歌",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ea3ec6051efc1995",
@@ -11066,7 +11066,7 @@
 {
 "name": "少女們的聖誕頌歌",
 "nameS": "少女们的圣诞颂歌",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "c88348128726808e",
@@ -11087,7 +11087,7 @@
 {
 "name": "少女們的聖誕頌歌",
 "nameS": "少女们的圣诞颂歌",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "332d1d402c82343d",
@@ -11108,7 +11108,7 @@
 {
 "name": "少女們的聖誕頌歌",
 "nameS": "少女们的圣诞颂歌",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "41e5f848b9d300e9",
@@ -11129,7 +11129,7 @@
 {
 "name": "下雪的元旦願望",
 "nameS": "下雪的元旦愿望",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "98771021cfbaa2c3",
@@ -11150,7 +11150,7 @@
 {
 "name": "下雪的元旦願望",
 "nameS": "下雪的元旦愿望",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0a58a5155b05a1fa",
@@ -11171,7 +11171,7 @@
 {
 "name": "下雪的元旦願望",
 "nameS": "下雪的元旦愿望",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "cb8a66108ee1f3e0",
@@ -11255,7 +11255,7 @@
 {
 "name": "雲神瑪達・烏比斯",
 "nameS": "云神玛达・乌比斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "8c2b1825c169cf3b",
@@ -11276,12 +11276,12 @@
 {
 "name": "Visions of Mana",
 "nameS": "Visions of Mana",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "雲神瑪達・烏比斯",
 "nameS": "云神玛达・乌比斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e822e4450ab4dcad",
@@ -11302,7 +11302,7 @@
 {
 "name": "雲神瑪達・烏比斯",
 "nameS": "云神玛达・乌比斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "龍人村",
@@ -11328,7 +11328,7 @@
 {
 "name": "雲神瑪達・烏比斯",
 "nameS": "云神玛达・乌比斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "d1aa6e7dfcf2a189",
@@ -11354,7 +11354,7 @@
 {
 "name": "素戔嗚",
 "nameS": "素戋呜",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "fcf4e5ad6cd07998",
@@ -11375,7 +11375,7 @@
 {
 "name": "C的世界",
 "nameS": "C的世界",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "皇龍巴哈姆特",
@@ -11422,12 +11422,12 @@
 {
 "name": "共鬥！",
 "nameS": "共斗！",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔神米婭·盧梅爾",
 "nameS": "魔神米娅·卢梅尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ea81b15f2a9dc860",
@@ -11448,7 +11448,7 @@
 {
 "name": "魔神米婭·盧梅爾",
 "nameS": "魔神米娅·卢梅尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:389",
@@ -11469,7 +11469,7 @@
 {
 "name": "魔神米婭·盧梅爾",
 "nameS": "魔神米娅·卢梅尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "cae22c8f6e9a70ef",
@@ -11490,7 +11490,7 @@
 {
 "name": "魔神米婭·盧梅爾",
 "nameS": "魔神米娅·卢梅尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "4b11acd40f6ed44f",
@@ -11516,7 +11516,7 @@
 {
 "name": "碧山區域",
 "nameS": "碧山区域",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "eadf240a561579f3",
@@ -11542,7 +11542,7 @@
 {
 "name": "烏鴉們的聖誕",
 "nameS": "乌鸦们的圣诞",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f5a1761625b34037",
@@ -11610,17 +11610,17 @@
 {
 "name": "古蘭澤利亞甜蜜搖滾",
 "nameS": "古兰泽利亚甜蜜摇滚",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "海岸兜風",
 "nameS": "海岸兜风",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "烏鴉們的聖誕",
 "nameS": "乌鸦们的圣诞",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔眼城",
@@ -11646,7 +11646,7 @@
 {
 "name": "古蘭澤利亞甜蜜搖滾",
 "nameS": "古兰泽利亚甜蜜摇滚",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e27f6e2a867c1a2e",
@@ -11667,12 +11667,12 @@
 {
 "name": "古蘭澤利亞甜蜜搖滾",
 "nameS": "古兰泽利亚甜蜜摇滚",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "芙拉米 & 布斯卡布",
 "nameS": "芙拉米 & 布斯卡布",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2fe14ee0a98be7af",
@@ -11698,7 +11698,7 @@
 {
 "name": "精靈騎士與禁書庫的大精靈",
 "nameS": "精灵骑士与禁书库的大精灵",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "赫利烏斯神騎士團",
@@ -11766,7 +11766,7 @@
 {
 "name": "三皇",
 "nameS": "三皇",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "51a39cc1028dd0f7",
@@ -11787,7 +11787,7 @@
 {
 "name": "三皇",
 "nameS": "三皇",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "35faadc54c8092f6",
@@ -11808,17 +11808,17 @@
 {
 "name": "Devil May Cry 5",
 "nameS": "Devil May Cry 5",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "三皇",
 "nameS": "三皇",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "末日巨人",
 "nameS": "末日巨人",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ac7e651d686855cc",
@@ -11839,7 +11839,7 @@
 {
 "name": "三皇",
 "nameS": "三皇",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:598",
@@ -11860,7 +11860,7 @@
 {
 "name": "三皇",
 "nameS": "三皇",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "c14ec33793319bba",
@@ -11881,7 +11881,7 @@
 {
 "name": "Visions of Mana",
 "nameS": "Visions of Mana",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神律監奧爾雷吉斯",
@@ -11891,7 +11891,7 @@
 {
 "name": "神機梅塔特隆",
 "nameS": "神机梅塔特隆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "dd01efc0419e5a40",
@@ -11912,17 +11912,17 @@
 {
 "name": "NEO米克特蘭",
 "nameS": "NEO米克特兰",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "坦派斯特四天王",
 "nameS": "坦派斯特四天王",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神機梅塔特隆",
 "nameS": "神机梅塔特隆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "44ab9538d448c7c5",
@@ -11943,7 +11943,7 @@
 {
 "name": "神機梅塔特隆",
 "nameS": "神机梅塔特隆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "21cb7e642833caf7",
@@ -11964,7 +11964,7 @@
 {
 "name": "神機梅塔特隆",
 "nameS": "神机梅塔特隆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0d0b88d5b3be6bd3",
@@ -11985,12 +11985,12 @@
 {
 "name": "傑布魯・法",
 "nameS": "杰布鲁・法",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "英靈召喚",
 "nameS": "英灵召唤",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0d7aece94701db3d",
@@ -12011,7 +12011,7 @@
 {
 "name": "英靈召喚",
 "nameS": "英灵召唤",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e23ff7a9e123570f",
@@ -12032,7 +12032,7 @@
 {
 "name": "英靈召喚",
 "nameS": "英灵召唤",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "563cffc7c5fa9c59",
@@ -12053,7 +12053,7 @@
 {
 "name": "英靈召喚",
 "nameS": "英灵召唤",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "48d0bc39febccaaf",
@@ -12147,7 +12147,7 @@
 {
 "name": "鮮血之女武神",
 "nameS": "鲜血之女武神",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f177a34c939a2dfc",
@@ -12194,7 +12194,7 @@
 {
 "name": "祓獸的巫女",
 "nameS": "祓兽的巫女",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "faa4c35ca794565a",
@@ -12215,7 +12215,7 @@
 {
 "name": "神隸艾普羅波利卡",
 "nameS": "神隶艾普罗波利卡",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "448a81c14ac59549",
@@ -12236,7 +12236,7 @@
 {
 "name": "神隸艾普羅波利卡",
 "nameS": "神隶艾普罗波利卡",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "920fb55fe5cd8123",
@@ -12257,7 +12257,7 @@
 {
 "name": "那個夏日的回憶",
 "nameS": "那个夏日的回忆",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "20486fa2dfba235e",
@@ -12278,7 +12278,7 @@
 {
 "name": "那個夏日的回憶",
 "nameS": "那个夏日的回忆",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "7b7b9f7c806bbd9e",
@@ -12299,7 +12299,7 @@
 {
 "name": "炎熱天的波浪大戰",
 "nameS": "炎热天的波浪大战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9db66f54c49b4f7a",
@@ -12320,7 +12320,7 @@
 {
 "name": "炎熱天的波浪大戰",
 "nameS": "炎热天的波浪大战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "543736df65bd47f1",
@@ -12341,7 +12341,7 @@
 {
 "name": "炎熱天的波浪大戰",
 "nameS": "炎热天的波浪大战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "545567ba3bfb33f1",
@@ -12388,7 +12388,7 @@
 {
 "name": "魔界的反逆王Urizen",
 "nameS": "魔界的反逆王Urizen",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ba02b8e71faa334b",
@@ -12430,7 +12430,7 @@
 {
 "name": "利拉哈姆爾",
 "nameS": "利拉哈姆尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0e15301820186e27",
@@ -12451,12 +12451,12 @@
 {
 "name": "利拉哈姆爾",
 "nameS": "利拉哈姆尔",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "強欲的魔女艾姬多娜",
 "nameS": "强欲的魔女艾姬多娜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f62b7d309ec81f27",
@@ -12477,7 +12477,7 @@
 {
 "name": "利拉哈姆爾",
 "nameS": "利拉哈姆尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "da60418e1d1102bc",
@@ -12498,7 +12498,7 @@
 {
 "name": "解放者",
 "nameS": "解放者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "08ba2a63471cced7",
@@ -12519,12 +12519,12 @@
 {
 "name": "TRIALS of MANA",
 "nameS": "TRIALS of MANA",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "解放者",
 "nameS": "解放者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ebb2a2dba0e68b5f",
@@ -12545,12 +12545,12 @@
 {
 "name": "Royal",
 "nameS": "Royal",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "解放者",
 "nameS": "解放者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "22dcd2546156107b",
@@ -12571,7 +12571,7 @@
 {
 "name": "解放者",
 "nameS": "解放者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0f9fbe87a80cc013",
@@ -12592,17 +12592,17 @@
 {
 "name": "Let's Hit The Climax!",
 "nameS": "Let's Hit The Climax!",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "熾天使之門",
 "nameS": "炽天使之门",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "番神加蘭德",
 "nameS": "番神加兰德",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "be64f3014d49d50d",
@@ -12623,7 +12623,7 @@
 {
 "name": "番神加蘭德",
 "nameS": "番神加兰德",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "202ccad96f292698",
@@ -12644,7 +12644,7 @@
 {
 "name": "番神加蘭德",
 "nameS": "番神加兰德",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "448ba5ba48be6d12",
@@ -12665,7 +12665,7 @@
 {
 "name": "番神加蘭德",
 "nameS": "番神加兰德",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "4bdba285c5859d95",
@@ -12686,7 +12686,7 @@
 {
 "name": "搗蛋之夜狂想曲",
 "nameS": "捣蛋之夜狂想曲",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "181c27a332185ca2",
@@ -12707,7 +12707,7 @@
 {
 "name": "搗蛋之夜狂想曲",
 "nameS": "捣蛋之夜狂想曲",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9df5299c661312ec",
@@ -12728,7 +12728,7 @@
 {
 "name": "搗蛋之夜狂想曲",
 "nameS": "捣蛋之夜狂想曲",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "eca09257aafff0da",
@@ -12754,7 +12754,7 @@
 {
 "name": "聖夜大滑行",
 "nameS": "圣夜大滑行",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "eb60bf2d887d8202",
@@ -12775,7 +12775,7 @@
 {
 "name": "聖夜大滑行",
 "nameS": "圣夜大滑行",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f2f841598b8870ad",
@@ -12796,7 +12796,7 @@
 {
 "name": "聖夜大滑行",
 "nameS": "圣夜大滑行",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "619c3ef058c4b219",
@@ -12822,12 +12822,12 @@
 {
 "name": "海灘的夏日女孩們",
 "nameS": "海滩的夏日女孩们",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔王卡爾瑪・諾格",
 "nameS": "魔王卡尔玛・诺格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "723dc4cfe45b43e1",
@@ -12848,17 +12848,17 @@
 {
 "name": "反抗巨人的人們",
 "nameS": "反抗巨人的人们",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "地堡",
 "nameS": "地堡",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔王卡爾瑪・諾格",
 "nameS": "魔王卡尔玛・诺格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "386eb4063fb25415",
@@ -12879,7 +12879,7 @@
 {
 "name": "魔王卡爾瑪・諾格",
 "nameS": "魔王卡尔玛・诺格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e9a4eb9cb06ea2ad",
@@ -12900,7 +12900,7 @@
 {
 "name": "魔王卡爾瑪・諾格",
 "nameS": "魔王卡尔玛・诺格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "898133b240997611",
@@ -12921,7 +12921,7 @@
 {
 "name": "魔王卡爾瑪・諾格",
 "nameS": "魔王卡尔玛・诺格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "98c68a157e1b55ff",
@@ -12942,7 +12942,7 @@
 {
 "name": "萬福之晨曦",
 "nameS": "万福之晨曦",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "fd400293f61ca404",
@@ -12963,7 +12963,7 @@
 {
 "name": "萬福之晨曦",
 "nameS": "万福之晨曦",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "92f18d0720224b23",
@@ -12984,7 +12984,7 @@
 {
 "name": "萬福之晨曦",
 "nameS": "万福之晨曦",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "07280db1cb26a374",
@@ -13005,7 +13005,7 @@
 {
 "name": "萬福之晨曦",
 "nameS": "万福之晨曦",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "911c90d5593ecf69",
@@ -13026,12 +13026,12 @@
 {
 "name": "克羅諾斯",
 "nameS": "克罗诺斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "埃修利昂的生命爐",
 "nameS": "埃修利昂的生命炉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "b9086cf11c0cf674",
@@ -13052,12 +13052,12 @@
 {
 "name": "克羅諾斯",
 "nameS": "克罗诺斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "萊莎的鍊金工房",
 "nameS": "莱莎的炼金工房",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2945983140d158af",
@@ -13078,7 +13078,7 @@
 {
 "name": "克羅諾斯",
 "nameS": "克罗诺斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "8f742ab683b2018e",
@@ -13099,17 +13099,17 @@
 {
 "name": "心靈之刃",
 "nameS": "心灵之刃",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "情人節節奏",
 "nameS": "情人节节奏",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "溫柔的世界",
 "nameS": "温柔的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:318",
@@ -13130,7 +13130,7 @@
 {
 "name": "情人節節奏",
 "nameS": "情人节节奏",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d1a7d320c0eb0224",
@@ -13151,7 +13151,7 @@
 {
 "name": "情人節節奏",
 "nameS": "情人节节奏",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6958b9c4d7aad7cb",
@@ -13172,7 +13172,7 @@
 {
 "name": "情人節節奏",
 "nameS": "情人节节奏",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0257679d2708509b",
@@ -13193,7 +13193,7 @@
 {
 "name": "帝國四天",
 "nameS": "帝国四天",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e8339f4048e9810d",
@@ -13214,7 +13214,7 @@
 {
 "name": "帝國四天",
 "nameS": "帝国四天",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "39d40acb62cf41cb",
@@ -13235,7 +13235,7 @@
 {
 "name": "帝國四天",
 "nameS": "帝国四天",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "f0d4e2e81fd7c665",
@@ -13256,7 +13256,7 @@
 {
 "name": "帝國四天",
 "nameS": "帝国四天",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:428",
@@ -13319,7 +13319,7 @@
 {
 "name": "潘德莫尼姆",
 "nameS": "潘德莫尼姆",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "神環阿茲爾特",
@@ -13345,7 +13345,7 @@
 {
 "name": "心靈之刃",
 "nameS": "心灵之刃",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "01b4b9edd30c865e",
@@ -13366,7 +13366,7 @@
 {
 "name": "心靈之刃",
 "nameS": "心灵之刃",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "7b6e96149fd8ff79",
@@ -13387,7 +13387,7 @@
 {
 "name": "心靈之刃",
 "nameS": "心灵之刃",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "3f364d1ae44f839e",
@@ -13408,7 +13408,7 @@
 {
 "name": "心靈之刃",
 "nameS": "心灵之刃",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "3c949dcbeeaee844",
@@ -13497,7 +13497,7 @@
 {
 "name": "卡伊洛斯・佐布拉",
 "nameS": "卡伊洛斯・佐布拉",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "赫利烏斯神騎士團",
@@ -13523,7 +13523,7 @@
 {
 "name": "卡伊洛斯・佐布拉",
 "nameS": "卡伊洛斯・佐布拉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "8f928b05fc447ac9",
@@ -13544,12 +13544,12 @@
 {
 "name": "卡伊洛斯・佐布拉",
 "nameS": "卡伊洛斯・佐布拉",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "吉祥寺",
 "nameS": "吉祥寺",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "602202c6b41251cb",
@@ -13570,7 +13570,7 @@
 {
 "name": "卡伊洛斯・佐布拉",
 "nameS": "卡伊洛斯・佐布拉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:704",
@@ -13591,7 +13591,7 @@
 {
 "name": "卡伊洛斯・佐布拉",
 "nameS": "卡伊洛斯・佐布拉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "36e8b2a0f4ac2cef",
@@ -13612,7 +13612,7 @@
 {
 "name": "莉拉哈・耶姆傑爾",
 "nameS": "莉拉哈・耶姆杰尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "b5a0235fc70d847c",
@@ -13633,7 +13633,7 @@
 {
 "name": "莉拉哈・耶姆傑爾",
 "nameS": "莉拉哈・耶姆杰尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ef761252451c1b55",
@@ -13654,7 +13654,7 @@
 {
 "name": "莉拉哈・耶姆傑爾",
 "nameS": "莉拉哈・耶姆杰尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0a92e3a07ca76013",
@@ -13675,7 +13675,7 @@
 {
 "name": "莉拉哈・耶姆傑爾",
 "nameS": "莉拉哈・耶姆杰尔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "25b961ea21f3b629",
@@ -13696,7 +13696,7 @@
 {
 "name": "傳說的六英雄",
 "nameS": "传说的六英雄",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "雷嵐之荒神",
@@ -13706,7 +13706,7 @@
 {
 "name": "領戰王爭",
 "nameS": "领战王争",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0e3dba96957b5563",
@@ -13811,7 +13811,7 @@
 {
 "name": "精靈騎士與禁書庫的大精靈",
 "nameS": "精灵骑士与禁书库的大精灵",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "龍人村",
@@ -13837,7 +13837,7 @@
 {
 "name": "素戔嗚",
 "nameS": "素戋呜",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "龍人村",
@@ -13889,7 +13889,7 @@
 {
 "name": "百之夜與千之空",
 "nameS": "百之夜与千之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d17b229ba3d183d3",
@@ -13915,7 +13915,7 @@
 {
 "name": "達摩克里斯之空",
 "nameS": "达摩克里斯之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "25f4aebf13e4d5a1",
@@ -13962,7 +13962,7 @@
 {
 "name": "糟糕，下起雨來了",
 "nameS": "糟糕，下起雨来了",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "7030177b28467440",
@@ -14004,7 +14004,7 @@
 {
 "name": "英靈們的假期",
 "nameS": "英灵们的假期",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "7535b75bf589a4de",
@@ -14025,7 +14025,7 @@
 {
 "name": "英靈們的假期",
 "nameS": "英灵们的假期",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3698611e7487f0aa",
@@ -14046,12 +14046,12 @@
 {
 "name": "終焉之獸",
 "nameS": "终焉之兽",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "英靈們的假期",
 "nameS": "英灵们的假期",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "726408324afe28b6",
@@ -14072,7 +14072,7 @@
 {
 "name": "英靈們的假期",
 "nameS": "英灵们的假期",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f80a686243715fb5",
@@ -14093,7 +14093,7 @@
 {
 "name": "海岸兜風",
 "nameS": "海岸兜风",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "fe3ad93438c245be",
@@ -14114,7 +14114,7 @@
 {
 "name": "海岸兜風",
 "nameS": "海岸兜风",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "46213cf7e16bd862",
@@ -14135,12 +14135,12 @@
 {
 "name": "凜凜的明星",
 "nameS": "凛凛的明星",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "海岸兜風",
 "nameS": "海岸兜风",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b99c6446a5ae4735",
@@ -14161,7 +14161,7 @@
 {
 "name": "海岸兜風",
 "nameS": "海岸兜风",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a977358b6c4ff913",
@@ -14182,12 +14182,12 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "各自的決意",
 "nameS": "各自的决意",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "星詠之丘",
@@ -14213,7 +14213,7 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "星詠之丘",
@@ -14239,12 +14239,12 @@
 {
 "name": "Devil May Cry 5",
 "nameS": "Devil May Cry 5",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "星詠之丘",
@@ -14270,7 +14270,7 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "星詠之丘",
@@ -14280,7 +14280,7 @@
 {
 "name": "美麗的歌姬",
 "nameS": "美丽的歌姬",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "bde3ce8d694af2ab",
@@ -14301,7 +14301,7 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "星詠之丘",
@@ -14327,7 +14327,7 @@
 {
 "name": "阿克拉斯召喚院",
 "nameS": "阿克拉斯召唤院",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔導都市聖帕姆",
@@ -14374,7 +14374,7 @@
 {
 "name": "TRIALS of MANA",
 "nameS": "TRIALS of MANA",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔導都市聖帕姆",
@@ -14400,17 +14400,17 @@
 {
 "name": "坦派斯特四天王",
 "nameS": "坦派斯特四天王",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "末日巨人",
 "nameS": "末日巨人",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "破神封印",
 "nameS": "破神封印",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "5f4d9cbfb64a5e02",
@@ -14431,7 +14431,7 @@
 {
 "name": "破神封印",
 "nameS": "破神封印",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "c39ff53ef05006ec",
@@ -14452,7 +14452,7 @@
 {
 "name": "破神封印",
 "nameS": "破神封印",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "cf54afaf524eaef4",
@@ -14473,7 +14473,7 @@
 {
 "name": "破神封印",
 "nameS": "破神封印",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:746",
@@ -14494,7 +14494,7 @@
 {
 "name": "破神封印",
 "nameS": "破神封印",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ecf05abb4f8e4b10",
@@ -14515,7 +14515,7 @@
 {
 "name": "冰之魔帝賽諾巴斯",
 "nameS": "冰之魔帝赛诺巴斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "5b4ee2cab67374b7",
@@ -14536,12 +14536,12 @@
 {
 "name": "冰之魔帝賽諾巴斯",
 "nameS": "冰之魔帝赛诺巴斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "魔樹的決戰",
 "nameS": "魔树的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "23372f853389c00f",
@@ -14562,7 +14562,7 @@
 {
 "name": "冰之魔帝賽諾巴斯",
 "nameS": "冰之魔帝赛诺巴斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:750",
@@ -14583,7 +14583,7 @@
 {
 "name": "冰之魔帝賽諾巴斯",
 "nameS": "冰之魔帝赛诺巴斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "9d60989a10027525",
@@ -14604,7 +14604,7 @@
 {
 "name": "冰之魔帝賽諾巴斯",
 "nameS": "冰之魔帝赛诺巴斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "351f8b7c824ec758",
@@ -14625,7 +14625,7 @@
 {
 "name": "暗黑萬聖夜",
 "nameS": "暗黑万圣夜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b01d5a17adf13b59",
@@ -14646,7 +14646,7 @@
 {
 "name": "暗黑萬聖夜",
 "nameS": "暗黑万圣夜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d291d901e1625ee2",
@@ -14667,7 +14667,7 @@
 {
 "name": "暗黑萬聖夜",
 "nameS": "暗黑万圣夜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2d7be6839ef276d6",
@@ -14693,7 +14693,7 @@
 {
 "name": "崩壞紋章",
 "nameS": "崩坏纹章",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9807d98320c6a014",
@@ -14724,7 +14724,7 @@
 {
 "name": "萬能事務所Devil May Cry",
 "nameS": "万能事务所Devil May Cry",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:353",
@@ -14787,7 +14787,7 @@
 {
 "name": "烏鴉們的聖誕",
 "nameS": "乌鸦们的圣诞",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "eb83e614cc424c74",
@@ -14808,12 +14808,12 @@
 {
 "name": "Royal",
 "nameS": "Royal",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "烏鴉們的聖誕",
 "nameS": "乌鸦们的圣诞",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3aa15cb512c24b16",
@@ -14834,7 +14834,7 @@
 {
 "name": "烏鴉們的聖誕",
 "nameS": "乌鸦们的圣诞",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b684f06fad6f204e",
@@ -14855,7 +14855,7 @@
 {
 "name": "烏鴉們的聖誕",
 "nameS": "乌鸦们的圣诞",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4810345440e1ca42",
@@ -14876,12 +14876,12 @@
 {
 "name": "吉祥寺",
 "nameS": "吉祥寺",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "月讀",
 "nameS": "月读",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "fef501333a6f411a",
@@ -14902,7 +14902,7 @@
 {
 "name": "月讀",
 "nameS": "月读",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "340e241067686512",
@@ -14923,12 +14923,12 @@
 {
 "name": "坦派斯特四天王",
 "nameS": "坦派斯特四天王",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "月讀",
 "nameS": "月读",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "314745e663f4e29e",
@@ -14949,7 +14949,7 @@
 {
 "name": "月讀",
 "nameS": "月读",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "5dc1aeae525c240c",
@@ -14970,12 +14970,12 @@
 {
 "name": "月讀",
 "nameS": "月读",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "魔樹的決戰",
 "nameS": "魔树的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f351f266a85d8731",
@@ -14996,7 +14996,7 @@
 {
 "name": "月讀",
 "nameS": "月读",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "b59538669bf4ade7",
@@ -15017,7 +15017,7 @@
 {
 "name": "新春板羽球對決",
 "nameS": "新春板羽球对决",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "92c0f8785ea384d7",
@@ -15038,7 +15038,7 @@
 {
 "name": "新春板羽球對決",
 "nameS": "新春板羽球对决",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3323da6f1691908a",
@@ -15059,7 +15059,7 @@
 {
 "name": "新春板羽球對決",
 "nameS": "新春板羽球对决",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a5ace74d23269296",
@@ -15080,7 +15080,7 @@
 {
 "name": "新春板羽球對決",
 "nameS": "新春板羽球对决",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b3b20e5b26417ee0",
@@ -15101,7 +15101,7 @@
 {
 "name": "女神四徒",
 "nameS": "女神四徒",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "27978c00d7374193",
@@ -15122,7 +15122,7 @@
 {
 "name": "女神四徒",
 "nameS": "女神四徒",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "31b0f1c6d90ec0cf",
@@ -15143,12 +15143,12 @@
 {
 "name": "女神四徒",
 "nameS": "女神四徒",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "武力帝國",
 "nameS": "武力帝国",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4a2d48239d8500dd",
@@ -15169,7 +15169,7 @@
 {
 "name": "女神四徒",
 "nameS": "女神四徒",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "348f27fb6f68e198",
@@ -15190,7 +15190,7 @@
 {
 "name": "女神四徒",
 "nameS": "女神四徒",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "648c1a3414c1a27d",
@@ -15211,7 +15211,7 @@
 {
 "name": "崩壞紋章",
 "nameS": "崩坏纹章",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神魔大戰",
@@ -15237,12 +15237,12 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "神都瑪古奈斯",
 "nameS": "神都玛古奈斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "神魔大戰",
@@ -15268,7 +15268,7 @@
 {
 "name": "盟友（我的摯友）",
 "nameS": "盟友（我的挚友）",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "神魔大戰",
@@ -15299,7 +15299,7 @@
 {
 "name": "阿克拉斯召喚院",
 "nameS": "阿克拉斯召唤院",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:791",
@@ -15341,7 +15341,7 @@
 {
 "name": "神機『阿斯拉特隆』",
 "nameS": "神机『阿斯拉特隆』",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "492069f33fad559b",
@@ -15362,7 +15362,7 @@
 {
 "name": "神機『阿斯拉特隆』",
 "nameS": "神机『阿斯拉特隆』",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:684",
@@ -15383,7 +15383,7 @@
 {
 "name": "神機『阿斯拉特隆』",
 "nameS": "神机『阿斯拉特隆』",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ad3aebbcb3299841",
@@ -15404,7 +15404,7 @@
 {
 "name": "神機『阿斯拉特隆』",
 "nameS": "神机『阿斯拉特隆』",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e4676d68a23621cf",
@@ -15425,7 +15425,7 @@
 {
 "name": "神機『阿斯拉特隆』",
 "nameS": "神机『阿斯拉特隆』",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "5837c3c5bd19cc83",
@@ -15446,7 +15446,7 @@
 {
 "name": "利姆路vs日向",
 "nameS": "利姆路vs日向",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "奧爾達納帝國",
@@ -15472,7 +15472,7 @@
 {
 "name": "Believe In Myself",
 "nameS": "Believe In Myself",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "奧爾達納帝國",
@@ -15519,7 +15519,7 @@
 {
 "name": "潘德莫尼姆",
 "nameS": "潘德莫尼姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "4c25a005372c0d24",
@@ -15540,7 +15540,7 @@
 {
 "name": "潘德莫尼姆",
 "nameS": "潘德莫尼姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "83bcff2a02ab7801",
@@ -15561,12 +15561,12 @@
 {
 "name": "One Of A Kind",
 "nameS": "One Of A Kind",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "潘德莫尼姆",
 "nameS": "潘德莫尼姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "cb768af6b608c5b6",
@@ -15587,7 +15587,7 @@
 {
 "name": "潘德莫尼姆",
 "nameS": "潘德莫尼姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "8a5d23a0f83cd5f5",
@@ -15608,7 +15608,7 @@
 {
 "name": "潘德莫尼姆",
 "nameS": "潘德莫尼姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "9e2b88d1d3d0923f",
@@ -15629,12 +15629,12 @@
 {
 "name": "熾天使之門",
 "nameS": "炽天使之门",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "番神幽達・尼斯",
 "nameS": "番神幽达・尼斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "c499d85d6a7c0156",
@@ -15655,7 +15655,7 @@
 {
 "name": "番神幽達・尼斯",
 "nameS": "番神幽达・尼斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "daa5fb62f2887078",
@@ -15676,12 +15676,12 @@
 {
 "name": "Devil May Cry 5",
 "nameS": "Devil May Cry 5",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "番神幽達・尼斯",
 "nameS": "番神幽达・尼斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:538",
@@ -15702,7 +15702,7 @@
 {
 "name": "番神幽達・尼斯",
 "nameS": "番神幽达・尼斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "2da13319efa00435",
@@ -15723,7 +15723,7 @@
 {
 "name": "番神幽達・尼斯",
 "nameS": "番神幽达・尼斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "fc3ee7900740acc8",
@@ -15744,7 +15744,7 @@
 {
 "name": "祓獸的巫女",
 "nameS": "祓兽的巫女",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "58197bb69bad678a",
@@ -15765,7 +15765,7 @@
 {
 "name": "祓獸的巫女",
 "nameS": "祓兽的巫女",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:794",
@@ -15786,7 +15786,7 @@
 {
 "name": "祓獸的巫女",
 "nameS": "祓兽的巫女",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "5fae0db345fcff39",
@@ -15807,7 +15807,7 @@
 {
 "name": "祓獸的巫女",
 "nameS": "祓兽的巫女",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "96db78d77cedf5cf",
@@ -15833,7 +15833,7 @@
 {
 "name": "英靈戰士",
 "nameS": "英灵战士",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:628",
@@ -16006,7 +16006,7 @@
 {
 "name": "素戔嗚",
 "nameS": "素戋呜",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "d01dcb7af94bea8f",
@@ -16027,7 +16027,7 @@
 {
 "name": "素戔嗚",
 "nameS": "素戋呜",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "a97531c83b0073e7",
@@ -16048,7 +16048,7 @@
 {
 "name": "素戔嗚",
 "nameS": "素戋呜",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "d268368f04c8f840",
@@ -16069,7 +16069,7 @@
 {
 "name": "素戔嗚",
 "nameS": "素戋呜",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "12730aa5921baa23",
@@ -16116,7 +16116,7 @@
 {
 "name": "統御魔界的諸王",
 "nameS": "统御魔界的诸王",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "51a7c25fc592d19b",
@@ -16163,7 +16163,7 @@
 {
 "name": "維爾德拉日記",
 "nameS": "维尔德拉日记",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "40a41c3cc8543aa3",
@@ -16189,7 +16189,7 @@
 {
 "name": "邁向新的世界",
 "nameS": "迈向新的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "282565f2d071ec9c",
@@ -16210,12 +16210,12 @@
 {
 "name": "WORLD TOUR",
 "nameS": "WORLD TOUR",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "邪龍尼德霍格",
 "nameS": "邪龙尼德霍格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "f1b5060bde17e0e8",
@@ -16236,7 +16236,7 @@
 {
 "name": "邪龍尼德霍格",
 "nameS": "邪龙尼德霍格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ca339383e4f1f6f6",
@@ -16257,7 +16257,7 @@
 {
 "name": "邪龍尼德霍格",
 "nameS": "邪龙尼德霍格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "71f0c15272a753ba",
@@ -16278,7 +16278,7 @@
 {
 "name": "邪龍尼德霍格",
 "nameS": "邪龙尼德霍格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "75d1684f4522a2de",
@@ -16299,7 +16299,7 @@
 {
 "name": "邪龍尼德霍格",
 "nameS": "邪龙尼德霍格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "7f9e93aba0dee0db",
@@ -16320,7 +16320,7 @@
 {
 "name": "邪龍尼德霍格",
 "nameS": "邪龙尼德霍格",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ba33274d257a0877",
@@ -16341,7 +16341,7 @@
 {
 "name": "災厄海濱",
 "nameS": "灾厄海滨",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4139a26172e19019",
@@ -16362,7 +16362,7 @@
 {
 "name": "災厄海濱",
 "nameS": "灾厄海滨",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "aa48351ee0991a93",
@@ -16383,7 +16383,7 @@
 {
 "name": "災厄海濱",
 "nameS": "灾厄海滨",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ed00d6c7e726b8ce",
@@ -16404,12 +16404,12 @@
 {
 "name": "災厄海濱",
 "nameS": "灾厄海滨",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "豐收的節日",
 "nameS": "丰收的节日",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2d24508b309322f7",
@@ -16430,7 +16430,7 @@
 {
 "name": "災厄海濱",
 "nameS": "灾厄海滨",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ac908d277528e5bc",
@@ -16451,7 +16451,7 @@
 {
 "name": "建御雷",
 "nameS": "建御雷",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0599f84fed5320a1",
@@ -16472,7 +16472,7 @@
 {
 "name": "建御雷",
 "nameS": "建御雷",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "9dabf82a19744e2a",
@@ -16493,12 +16493,12 @@
 {
 "name": "建御雷",
 "nameS": "建御雷",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "艾連VS女巨人",
 "nameS": "艾连VS女巨人",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:473",
@@ -16519,7 +16519,7 @@
 {
 "name": "建御雷",
 "nameS": "建御雷",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "19e3a03542e896a2",
@@ -16540,7 +16540,7 @@
 {
 "name": "建御雷",
 "nameS": "建御雷",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "a92f6001f2419fda",
@@ -16624,7 +16624,7 @@
 {
 "name": "魔銃乙太潛行者",
 "nameS": "魔铳乙太潜行者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "74710ff77dbf0cb0",
@@ -16645,12 +16645,12 @@
 {
 "name": "人體煉成",
 "nameS": "人体炼成",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "魔銃乙太潛行者",
 "nameS": "魔铳乙太潜行者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "8ee1d245f7b403bc",
@@ -16671,7 +16671,7 @@
 {
 "name": "魔銃乙太潛行者",
 "nameS": "魔铳乙太潜行者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "2832becd6721150f",
@@ -16692,7 +16692,7 @@
 {
 "name": "魔銃乙太潛行者",
 "nameS": "魔铳乙太潜行者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": null,
@@ -16713,7 +16713,7 @@
 {
 "name": "魔銃乙太潛行者",
 "nameS": "魔铳乙太潜行者",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "b34a5ea033cff851",
@@ -16781,7 +16781,7 @@
 {
 "name": "邁向新的世界",
 "nameS": "迈向新的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:675",
@@ -16844,12 +16844,12 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "神都瑪古奈斯",
 "nameS": "神都玛古奈斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "7168ea516478d79a",
@@ -16870,17 +16870,17 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "破神侵攻",
 "nameS": "破神侵攻",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "神都瑪古奈斯",
 "nameS": "神都玛古奈斯",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "諸神的黃昏",
@@ -16906,12 +16906,12 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "神都瑪古奈斯",
 "nameS": "神都玛古奈斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "7611b3c1ae612f0e",
@@ -16932,12 +16932,12 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "神都瑪古奈斯",
 "nameS": "神都玛古奈斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "8c11c64768072670",
@@ -16958,12 +16958,12 @@
 {
 "name": "coming soon",
 "nameS": "coming soon",
-"rarity": "LR/SSR"
+"rarity": "UR/SSR"
 },
 {
 "name": "神都瑪古奈斯",
 "nameS": "神都玛古奈斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "5aab3402039886d1",
@@ -16984,12 +16984,12 @@
 {
 "name": "碧山區域",
 "nameS": "碧山区域",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "雷獸討伐奇譚",
 "nameS": "雷兽讨伐奇谭",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "9bba0f584207868a",
@@ -17010,7 +17010,7 @@
 {
 "name": "雷獸討伐奇譚",
 "nameS": "雷兽讨伐奇谭",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "52c559efb1ac16a7",
@@ -17031,7 +17031,7 @@
 {
 "name": "雷獸討伐奇譚",
 "nameS": "雷兽讨伐奇谭",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:876",
@@ -17057,7 +17057,7 @@
 {
 "name": "雷獸討伐奇譚",
 "nameS": "雷兽讨伐奇谭",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "fac8318ca53f2e7b",
@@ -17078,7 +17078,7 @@
 {
 "name": "雷獸討伐奇譚",
 "nameS": "雷兽讨伐奇谭",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "d2278025c02f3498",
@@ -17099,7 +17099,7 @@
 {
 "name": "埃修利昂的生命爐",
 "nameS": "埃修利昂的生命炉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "6c011f9fec60b9b2",
@@ -17120,7 +17120,7 @@
 {
 "name": "埃修利昂的生命爐",
 "nameS": "埃修利昂的生命炉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "44a3d9148279023c",
@@ -17141,7 +17141,7 @@
 {
 "name": "埃修利昂的生命爐",
 "nameS": "埃修利昂的生命炉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "4a53a2ac6b74cd04",
@@ -17162,7 +17162,7 @@
 {
 "name": "埃修利昂的生命爐",
 "nameS": "埃修利昂的生命炉",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "bc94425edcde5d97",
@@ -17183,7 +17183,7 @@
 {
 "name": "派托斯的鍛造工房",
 "nameS": "派托斯的锻造工房",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0cda12fbfe897946",
@@ -17204,12 +17204,12 @@
 {
 "name": "各自的決意",
 "nameS": "各自的决意",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "派托斯的鍛造工房",
 "nameS": "派托斯的锻造工房",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "1054c6df9acd81f8",
@@ -17230,7 +17230,7 @@
 {
 "name": "派托斯的鍛造工房",
 "nameS": "派托斯的锻造工房",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "5e9e49987bc80109",
@@ -17251,7 +17251,7 @@
 {
 "name": "派托斯的鍛造工房",
 "nameS": "派托斯的锻造工房",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "86363c375f9ea78e",
@@ -17272,7 +17272,7 @@
 {
 "name": "派托斯的鍛造工房",
 "nameS": "派托斯的锻造工房",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "5c16599b8947ce62",
@@ -17293,12 +17293,12 @@
 {
 "name": "昴宿星團",
 "nameS": "昴宿星团",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "羅格薩里姆",
 "nameS": "罗格萨里姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:761",
@@ -17319,7 +17319,7 @@
 {
 "name": "羅格薩里姆",
 "nameS": "罗格萨里姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "03a679c6deeb2898",
@@ -17340,7 +17340,7 @@
 {
 "name": "羅格薩里姆",
 "nameS": "罗格萨里姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "24ba29a7c86df4f3",
@@ -17361,7 +17361,7 @@
 {
 "name": "羅格薩里姆",
 "nameS": "罗格萨里姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "6df40a3227341ce3",
@@ -17382,7 +17382,7 @@
 {
 "name": "羅格薩里姆",
 "nameS": "罗格萨里姆",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "858365fd1fc6ea73",
@@ -17403,7 +17403,7 @@
 {
 "name": "OVERLORD",
 "nameS": "OVERLORD",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "生命律研究院",
@@ -17555,12 +17555,12 @@
 {
 "name": "地堡",
 "nameS": "地堡",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "龍魂",
 "nameS": "龙魂",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0b5a9905580d734c",
@@ -17581,12 +17581,12 @@
 {
 "name": "領戰王爭",
 "nameS": "领战王争",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "龍魂",
 "nameS": "龙魂",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:313",
@@ -17607,7 +17607,7 @@
 {
 "name": "龍魂",
 "nameS": "龙魂",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "3159ed767f08fdf1",
@@ -17628,7 +17628,7 @@
 {
 "name": "龍魂",
 "nameS": "龙魂",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "86c11809d76a7959",
@@ -17649,7 +17649,7 @@
 {
 "name": "龍魂",
 "nameS": "龙魂",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "bafb60af9aea2655",
@@ -17670,7 +17670,7 @@
 {
 "name": "龍魂",
 "nameS": "龙魂",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0d45e653455b29d1",
@@ -17691,7 +17691,7 @@
 {
 "name": "邪神拉普莉斯",
 "nameS": "邪神拉普莉斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "176f3ffc986701cc",
@@ -17712,7 +17712,7 @@
 {
 "name": "邪神拉普莉斯",
 "nameS": "邪神拉普莉斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "9bde00a6ca77b552",
@@ -17733,12 +17733,12 @@
 {
 "name": "主神奧丁",
 "nameS": "主神奥丁",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "邪神拉普莉斯",
 "nameS": "邪神拉普莉斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "12feb359b0670804",
@@ -17759,7 +17759,7 @@
 {
 "name": "邪神拉普莉斯",
 "nameS": "邪神拉普莉斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "f26238efd3af2674",
@@ -17780,7 +17780,7 @@
 {
 "name": "邪神拉普莉斯",
 "nameS": "邪神拉普莉斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "a4d841b7ab1590f8",
@@ -17801,7 +17801,7 @@
 {
 "name": "邪神拉普莉斯",
 "nameS": "邪神拉普莉斯",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "f49f17d3da2551a8",
@@ -17822,7 +17822,7 @@
 {
 "name": "統御魔界的諸王",
 "nameS": "统御魔界的诸王",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "c1b1fa0330ed3ca3",
@@ -17843,12 +17843,12 @@
 {
 "name": "VS. 蛋頭博士",
 "nameS": "VS. 蛋头博士",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "統御魔界的諸王",
 "nameS": "统御魔界的诸王",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "48ac370b49e1ba46",
@@ -17869,7 +17869,7 @@
 {
 "name": "統御魔界的諸王",
 "nameS": "统御魔界的诸王",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "1142a097127c9dee",
@@ -17890,7 +17890,7 @@
 {
 "name": "統御魔界的諸王",
 "nameS": "统御魔界的诸王",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "9efcdc31fa117787",
@@ -17911,7 +17911,7 @@
 {
 "name": "統御魔界的諸王",
 "nameS": "统御魔界的诸王",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e14f43b83a6fcb01",
@@ -17995,7 +17995,7 @@
 {
 "name": "最初的軌跡",
 "nameS": "最初的轨迹",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e64a85601b9b58cc",
@@ -18016,7 +18016,7 @@
 {
 "name": "最初的軌跡",
 "nameS": "最初的轨迹",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "cc874bcc3159e258",
@@ -18037,7 +18037,7 @@
 {
 "name": "最初的軌跡",
 "nameS": "最初的轨迹",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "07cab38a1e00eaa5",
@@ -18058,7 +18058,7 @@
 {
 "name": "最初的軌跡",
 "nameS": "最初的轨迹",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "088d62f108c82b62",
@@ -18163,7 +18163,7 @@
 {
 "name": "海灘的夏日女孩們",
 "nameS": "海滩的夏日女孩们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "8c5e1c15b2b1d28d",
@@ -18184,7 +18184,7 @@
 {
 "name": "海灘的夏日女孩們",
 "nameS": "海滩的夏日女孩们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:924",
@@ -18205,7 +18205,7 @@
 {
 "name": "海灘的夏日女孩們",
 "nameS": "海滩的夏日女孩们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ce7f716ec611a6d3",
@@ -18226,7 +18226,7 @@
 {
 "name": "海灘的夏日女孩們",
 "nameS": "海滩的夏日女孩们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1b43c763fc514311",
@@ -18247,7 +18247,7 @@
 {
 "name": "神獸之塔",
 "nameS": "神兽之塔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "c3b83f342aaa5c37",
@@ -18268,7 +18268,7 @@
 {
 "name": "神獸之塔",
 "nameS": "神兽之塔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:927",
@@ -18289,12 +18289,12 @@
 {
 "name": "神獸之塔",
 "nameS": "神兽之塔",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "自由之翼",
 "nameS": "自由之翼",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:603",
@@ -18315,7 +18315,7 @@
 {
 "name": "神獸之塔",
 "nameS": "神兽之塔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "c0fa524208139962",
@@ -18336,7 +18336,7 @@
 {
 "name": "神獸之塔",
 "nameS": "神兽之塔",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "8a9117fcd3961f99",
@@ -18357,7 +18357,7 @@
 {
 "name": "破神侵攻",
 "nameS": "破神侵攻",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "89a90b8df36a0475",
@@ -18378,7 +18378,7 @@
 {
 "name": "破神侵攻",
 "nameS": "破神侵攻",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "e6814f6fa095b711",
@@ -18399,7 +18399,7 @@
 {
 "name": "破神侵攻",
 "nameS": "破神侵攻",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "ca8779066b942675",
@@ -18420,7 +18420,7 @@
 {
 "name": "破神侵攻",
 "nameS": "破神侵攻",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "7bc369d4036dd098",
@@ -18441,12 +18441,12 @@
 {
 "name": "幻英之塔 修獄",
 "nameS": "幻英之塔 修狱",
-"rarity": "LR"
+"rarity": "UR"
 },
 {
 "name": "艾連VS女巨人",
 "nameS": "艾连VS女巨人",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "5950c82ca13345b0",
@@ -18467,7 +18467,7 @@
 {
 "name": "幻英之塔 修獄",
 "nameS": "幻英之塔 修狱",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "全部技能:all:929",
@@ -18488,7 +18488,7 @@
 {
 "name": "幻英之塔 修獄",
 "nameS": "幻英之塔 修狱",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "db1b48cd6af48689",
@@ -18509,12 +18509,12 @@
 {
 "name": "OVERLORD",
 "nameS": "OVERLORD",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "幻英之塔 修獄",
 "nameS": "幻英之塔 修狱",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "82bfa575b36bca5b",
@@ -18535,7 +18535,7 @@
 {
 "name": "幻英之塔 修獄",
 "nameS": "幻英之塔 修狱",
-"rarity": "LR"
+"rarity": "UR"
 }
 ],
 "siteId": "0725be276a780aef",
@@ -18997,7 +18997,7 @@
 {
 "name": "百之夜與千之空",
 "nameS": "百之夜与千之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "82914b5361062d3a",
@@ -19018,7 +19018,7 @@
 {
 "name": "百之夜與千之空",
 "nameS": "百之夜与千之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f541d26ea30ba20e",
@@ -19039,7 +19039,7 @@
 {
 "name": "百之夜與千之空",
 "nameS": "百之夜与千之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "387b6e052ad74bb1",
@@ -19060,7 +19060,7 @@
 {
 "name": "武力帝國",
 "nameS": "武力帝国",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f0a152f468c7e282",
@@ -19081,7 +19081,7 @@
 {
 "name": "武力帝國",
 "nameS": "武力帝国",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": null,
@@ -19144,7 +19144,7 @@
 {
 "name": "豐收的節日",
 "nameS": "丰收的节日",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "8400b28b0f6069d3",
@@ -19165,7 +19165,7 @@
 {
 "name": "盟友（我的摯友）",
 "nameS": "盟友（我的挚友）",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4170fcd45f772a61",
@@ -19186,7 +19186,7 @@
 {
 "name": "盟友（我的摯友）",
 "nameS": "盟友（我的挚友）",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9c0bd935e13111e8",
@@ -19207,17 +19207,17 @@
 {
 "name": "星之所在",
 "nameS": "星之所在",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "艾爾德蘭特的決戰",
 "nameS": "艾尔德兰特的决战",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "靈子崩壞",
 "nameS": "灵子崩坏",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "554267b802fb480e",
@@ -19238,7 +19238,7 @@
 {
 "name": "靈子崩壞",
 "nameS": "灵子崩坏",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "7498b3dbd8ba7e5d",
@@ -19259,7 +19259,7 @@
 {
 "name": "靈子崩壞",
 "nameS": "灵子崩坏",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:660",
@@ -19280,7 +19280,7 @@
 {
 "name": "靈子崩壞",
 "nameS": "灵子崩坏",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f16297127305bf04",
@@ -19301,7 +19301,7 @@
 {
 "name": "維爾德拉日記",
 "nameS": "维尔德拉日记",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e4d78aa3f37004bd",
@@ -19322,7 +19322,7 @@
 {
 "name": "維爾德拉日記",
 "nameS": "维尔德拉日记",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "298a75e27246a317",
@@ -19343,7 +19343,7 @@
 {
 "name": "利姆路vs日向",
 "nameS": "利姆路vs日向",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0aed639a3c185d89",
@@ -19364,7 +19364,7 @@
 {
 "name": "利姆路vs日向",
 "nameS": "利姆路vs日向",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d542c5868da412e7",
@@ -19385,7 +19385,7 @@
 {
 "name": "利姆路vs日向",
 "nameS": "利姆路vs日向",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "16e16b5e64f54f5c",
@@ -19406,7 +19406,7 @@
 {
 "name": "利姆路vs日向",
 "nameS": "利姆路vs日向",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "77ca049322fad0af",
@@ -19427,7 +19427,7 @@
 {
 "name": "坦派斯特四天王",
 "nameS": "坦派斯特四天王",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4fe9e0277ebd677a",
@@ -19448,7 +19448,7 @@
 {
 "name": "坦派斯特四天王",
 "nameS": "坦派斯特四天王",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1f04cd2da53994eb",
@@ -19469,7 +19469,7 @@
 {
 "name": "坦派斯特四天王",
 "nameS": "坦派斯特四天王",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2a1da0c826ca8526",
@@ -19490,7 +19490,7 @@
 {
 "name": "終焉之獸",
 "nameS": "终焉之兽",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1a004726593e801a",
@@ -19511,7 +19511,7 @@
 {
 "name": "終焉之獸",
 "nameS": "终焉之兽",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6133882f233d82ce",
@@ -19532,7 +19532,7 @@
 {
 "name": "從零開始",
 "nameS": "从零开始",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "29f04fa2a0ffb9fb",
@@ -19553,7 +19553,7 @@
 {
 "name": "從零開始",
 "nameS": "从零开始",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "81e5eed79e630a07",
@@ -19574,7 +19574,7 @@
 {
 "name": "聖夜的羅茲瓦爾宅邸",
 "nameS": "圣夜的罗兹瓦尔宅邸",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "92a57a934fb2eb2f",
@@ -19595,7 +19595,7 @@
 {
 "name": "聖夜的羅茲瓦爾宅邸",
 "nameS": "圣夜的罗兹瓦尔宅邸",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "658df1f2c3e3e424",
@@ -19616,7 +19616,7 @@
 {
 "name": "聖夜的羅茲瓦爾宅邸",
 "nameS": "圣夜的罗兹瓦尔宅邸",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "efc2aa7f65146e56",
@@ -19637,7 +19637,7 @@
 {
 "name": "聖夜的羅茲瓦爾宅邸",
 "nameS": "圣夜的罗兹瓦尔宅邸",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "869205f984d49c10",
@@ -19658,7 +19658,7 @@
 {
 "name": "精靈騎士與禁書庫的大精靈",
 "nameS": "精灵骑士与禁书库的大精灵",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "8545a75056e827a4",
@@ -19679,7 +19679,7 @@
 {
 "name": "精靈騎士與禁書庫的大精靈",
 "nameS": "精灵骑士与禁书库的大精灵",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "34045351ea740196",
@@ -19700,7 +19700,7 @@
 {
 "name": "精靈騎士與禁書庫的大精靈",
 "nameS": "精灵骑士与禁书库的大精灵",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "00001521ecae775f",
@@ -19721,7 +19721,7 @@
 {
 "name": "強欲的魔女艾姬多娜",
 "nameS": "强欲的魔女艾姬多娜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f774ee12bcd73741",
@@ -19742,7 +19742,7 @@
 {
 "name": "強欲的魔女艾姬多娜",
 "nameS": "强欲的魔女艾姬多娜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e2016a861d776638",
@@ -19763,7 +19763,7 @@
 {
 "name": "強欲的魔女艾姬多娜",
 "nameS": "强欲的魔女艾姬多娜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b6f1305e6f78634c",
@@ -19784,7 +19784,7 @@
 {
 "name": "強欲的魔女艾姬多娜",
 "nameS": "强欲的魔女艾姬多娜",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "42656c3afdc8103a",
@@ -19805,7 +19805,7 @@
 {
 "name": "萬能事務所Devil May Cry",
 "nameS": "万能事务所Devil May Cry",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3797f19e9c516ee7",
@@ -19826,7 +19826,7 @@
 {
 "name": "萬能事務所Devil May Cry",
 "nameS": "万能事务所Devil May Cry",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a24d9ff67f38ccf6",
@@ -19847,7 +19847,7 @@
 {
 "name": "魔界的反逆王Urizen",
 "nameS": "魔界的反逆王Urizen",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "c4cb3f5b1831b5f7",
@@ -19868,7 +19868,7 @@
 {
 "name": "魔界的反逆王Urizen",
 "nameS": "魔界的反逆王Urizen",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "43675d5d0ba943ae",
@@ -19889,7 +19889,7 @@
 {
 "name": "魔樹的決戰",
 "nameS": "魔树的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9e714945b3c31514",
@@ -19910,7 +19910,7 @@
 {
 "name": "Devil May Cry 5",
 "nameS": "Devil May Cry 5",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9808082700eee5b8",
@@ -19931,7 +19931,7 @@
 {
 "name": "機械鎧維修師",
 "nameS": "机械铠维修师",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ed504f94c8b57e47",
@@ -19952,7 +19952,7 @@
 {
 "name": "糟糕，下起雨來了",
 "nameS": "糟糕，下起雨来了",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "c68e5d899b2196da",
@@ -19973,7 +19973,7 @@
 {
 "name": "人體煉成",
 "nameS": "人体炼成",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "21895cf9028407dd",
@@ -19994,7 +19994,7 @@
 {
 "name": "人體煉成",
 "nameS": "人体炼成",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "865f4f238437b7a5",
@@ -20015,7 +20015,7 @@
 {
 "name": "父親大人和人造人們",
 "nameS": "父亲大人和人造人们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "71ac299474a52c86",
@@ -20036,7 +20036,7 @@
 {
 "name": "父親大人和人造人們",
 "nameS": "父亲大人和人造人们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1f5b1ff3daa03f19",
@@ -20057,7 +20057,7 @@
 {
 "name": "父親大人和人造人們",
 "nameS": "父亲大人和人造人们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "7aecbb8f146842de",
@@ -20078,7 +20078,7 @@
 {
 "name": "機械生物",
 "nameS": "机械生物",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "763e0e91176c648b",
@@ -20099,7 +20099,7 @@
 {
 "name": "機械生物",
 "nameS": "机械生物",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "8ba52a420286cb67",
@@ -20120,7 +20120,7 @@
 {
 "name": "機械生物",
 "nameS": "机械生物",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9dbce7c7fe7e59f0",
@@ -20141,7 +20141,7 @@
 {
 "name": "美麗的歌姬",
 "nameS": "美丽的歌姬",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e8426d9b49aaa341",
@@ -20162,7 +20162,7 @@
 {
 "name": "美麗的歌姬",
 "nameS": "美丽的歌姬",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b5afb5f0a6e375bb",
@@ -20183,7 +20183,7 @@
 {
 "name": "艾米爾商店",
 "nameS": "艾米尔商店",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4ab8df2c073b5bf0",
@@ -20246,7 +20246,7 @@
 {
 "name": "地堡",
 "nameS": "地堡",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "465c19e17eb0cb01",
@@ -20267,7 +20267,7 @@
 {
 "name": "地堡",
 "nameS": "地堡",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4aafd29a15ad98c4",
@@ -20288,7 +20288,7 @@
 {
 "name": "TRIALS of MANA",
 "nameS": "TRIALS of MANA",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b6f2ae8c19bf5c76",
@@ -20309,7 +20309,7 @@
 {
 "name": "芙拉米 & 布斯卡布",
 "nameS": "芙拉米 & 布斯卡布",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1773fd0e181f0d48",
@@ -20330,7 +20330,7 @@
 {
 "name": "芙拉米 & 布斯卡布",
 "nameS": "芙拉米 & 布斯卡布",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "cf6437fca36082d9",
@@ -20351,7 +20351,7 @@
 {
 "name": "反抗巨人的人們",
 "nameS": "反抗巨人的人们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d0f3dc6c3cee545e",
@@ -20372,7 +20372,7 @@
 {
 "name": "反抗巨人的人們",
 "nameS": "反抗巨人的人们",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a17f779989645fb0",
@@ -20393,7 +20393,7 @@
 {
 "name": "艾連VS女巨人",
 "nameS": "艾连VS女巨人",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ee8769b3f842d317",
@@ -20414,7 +20414,7 @@
 {
 "name": "末日巨人",
 "nameS": "末日巨人",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e3085e506db3fa44",
@@ -20435,7 +20435,7 @@
 {
 "name": "末日巨人",
 "nameS": "末日巨人",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ea3727ee373b623b",
@@ -20456,7 +20456,7 @@
 {
 "name": "自由之翼",
 "nameS": "自由之翼",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1519299bec222fca",
@@ -20477,7 +20477,7 @@
 {
 "name": "自由之翼",
 "nameS": "自由之翼",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "7791e2dcb32f7841",
@@ -20498,7 +20498,7 @@
 {
 "name": "Royal",
 "nameS": "Royal",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "c66066248ff15c7b",
@@ -20519,7 +20519,7 @@
 {
 "name": "吉祥寺",
 "nameS": "吉祥寺",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "285014848e2b2862",
@@ -20540,7 +20540,7 @@
 {
 "name": "NEO米克特蘭",
 "nameS": "NEO米克特兰",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d71dfc1292e7c678",
@@ -20561,7 +20561,7 @@
 {
 "name": "NEO米克特蘭",
 "nameS": "NEO米克特兰",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a1166f16d23a209d",
@@ -20582,7 +20582,7 @@
 {
 "name": "艾爾德蘭特的決戰",
 "nameS": "艾尔德兰特的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "296bb9556080c9c4",
@@ -20603,7 +20603,7 @@
 {
 "name": "艾爾德蘭特的決戰",
 "nameS": "艾尔德兰特的决战",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "32f98ad19af760dc",
@@ -20624,7 +20624,7 @@
 {
 "name": "凜凜的明星",
 "nameS": "凛凛的明星",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "57d0535b82a9b33c",
@@ -20645,7 +20645,7 @@
 {
 "name": "凜凜的明星",
 "nameS": "凛凛的明星",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "8cbe5117030485dc",
@@ -20666,12 +20666,12 @@
 {
 "name": "戰鬥的軌跡",
 "nameS": "战斗的轨迹",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "羅盤",
 "nameS": "罗盘",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "254ff4e20e2b8d20",
@@ -20692,7 +20692,7 @@
 {
 "name": "羅盤",
 "nameS": "罗盘",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "905d840fb88b54ae",
@@ -20713,7 +20713,7 @@
 {
 "name": "羅盤",
 "nameS": "罗盘",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "c8018a23d827d656",
@@ -20734,7 +20734,7 @@
 {
 "name": "領戰王爭",
 "nameS": "领战王争",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6e79eb857dac5a05",
@@ -20755,7 +20755,7 @@
 {
 "name": "領戰王爭",
 "nameS": "领战王争",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3f8ac48a18f25fa8",
@@ -20776,7 +20776,7 @@
 {
 "name": "領戰王爭",
 "nameS": "领战王争",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f6bc920aeccd81d4",
@@ -20797,7 +20797,7 @@
 {
 "name": "Let's Hit The Climax!",
 "nameS": "Let's Hit The Climax!",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "975fce45e6663534",
@@ -20818,7 +20818,7 @@
 {
 "name": "Let's Hit The Climax!",
 "nameS": "Let's Hit The Climax!",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2ad532afbdeb2594",
@@ -20839,7 +20839,7 @@
 {
 "name": "One Of A Kind",
 "nameS": "One Of A Kind",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6b8d9d40764f9b54",
@@ -20860,7 +20860,7 @@
 {
 "name": "One Of A Kind",
 "nameS": "One Of A Kind",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "536d92d7e2f25e26",
@@ -20881,12 +20881,12 @@
 {
 "name": "熾天使之門",
 "nameS": "炽天使之门",
-"rarity": "UR"
+"rarity": "LR"
 },
 {
 "name": "黑色騎士團",
 "nameS": "黑色骑士团",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9ec3cb9696053d8b",
@@ -20907,7 +20907,7 @@
 {
 "name": "黑色騎士團",
 "nameS": "黑色骑士团",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2d772214490c52ba",
@@ -20928,7 +20928,7 @@
 {
 "name": "黑色騎士團",
 "nameS": "黑色骑士团",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "31e0fc5aedd96ccb",
@@ -20949,7 +20949,7 @@
 {
 "name": "溫柔的世界",
 "nameS": "温柔的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a35775967283bc44",
@@ -20970,7 +20970,7 @@
 {
 "name": "溫柔的世界",
 "nameS": "温柔的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "5985cead77169d18",
@@ -20991,7 +20991,7 @@
 {
 "name": "達摩克里斯之空",
 "nameS": "达摩克里斯之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a7d34fea22ddeb15",
@@ -21012,7 +21012,7 @@
 {
 "name": "達摩克里斯之空",
 "nameS": "达摩克里斯之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "7fae80d83cb7551a",
@@ -21033,7 +21033,7 @@
 {
 "name": "達摩克里斯之空",
 "nameS": "达摩克里斯之空",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9e9ea3affb033550",
@@ -21054,7 +21054,7 @@
 {
 "name": "C的世界",
 "nameS": "C的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f2adf1f2ba4f5cb0",
@@ -21075,7 +21075,7 @@
 {
 "name": "C的世界",
 "nameS": "C的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "85715ffd27c809f3",
@@ -21096,7 +21096,7 @@
 {
 "name": "C的世界",
 "nameS": "C的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0cf4b314ecf1f25a",
@@ -21117,7 +21117,7 @@
 {
 "name": "英靈戰士",
 "nameS": "英灵战士",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:627",
@@ -21138,7 +21138,7 @@
 {
 "name": "英靈戰士",
 "nameS": "英灵战士",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "49f537942bfaa37d",
@@ -21159,7 +21159,7 @@
 {
 "name": "主神奧丁",
 "nameS": "主神奥丁",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:630",
@@ -21180,7 +21180,7 @@
 {
 "name": "主神奧丁",
 "nameS": "主神奥丁",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:302",
@@ -21201,7 +21201,7 @@
 {
 "name": "熾天使之門",
 "nameS": "炽天使之门",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:738",
@@ -21222,7 +21222,7 @@
 {
 "name": "熾天使之門",
 "nameS": "炽天使之门",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f28fd4eede5caea4",
@@ -21243,7 +21243,7 @@
 {
 "name": "拉庫爾武具大會",
 "nameS": "拉库尔武具大会",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6436af4db7e5b1b5",
@@ -21264,7 +21264,7 @@
 {
 "name": "拉庫爾武具大會",
 "nameS": "拉库尔武具大会",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a00efae59bd351ce",
@@ -21285,7 +21285,7 @@
 {
 "name": "拉庫爾武具大會",
 "nameS": "拉库尔武具大会",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:632",
@@ -21306,7 +21306,7 @@
 {
 "name": "崩壞紋章",
 "nameS": "崩坏纹章",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "209e4252243d4679",
@@ -21327,7 +21327,7 @@
 {
 "name": "崩壞紋章",
 "nameS": "崩坏纹章",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e26ae95f251c91e0",
@@ -21348,7 +21348,7 @@
 {
 "name": "共鬥！",
 "nameS": "共斗！",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "da17e674beb5ac5b",
@@ -21369,7 +21369,7 @@
 {
 "name": "共鬥！",
 "nameS": "共斗！",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:740",
@@ -21390,7 +21390,7 @@
 {
 "name": "共鬥！",
 "nameS": "共斗！",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ec6ac4c14fd61cfc",
@@ -21411,7 +21411,7 @@
 {
 "name": "邁向新的世界",
 "nameS": "迈向新的世界",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1f0a096307e7bc24",
@@ -21432,7 +21432,7 @@
 {
 "name": "WORLD TOUR",
 "nameS": "WORLD TOUR",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1da4935f9a387557",
@@ -21453,7 +21453,7 @@
 {
 "name": "WORLD TOUR",
 "nameS": "WORLD TOUR",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "7597b164f4387ec7",
@@ -21474,7 +21474,7 @@
 {
 "name": "各自的決意",
 "nameS": "各自的决意",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4d81b9b6cd7cb7fe",
@@ -21495,7 +21495,7 @@
 {
 "name": "各自的決意",
 "nameS": "各自的决意",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f5f9e17d5670e06a",
@@ -21516,7 +21516,7 @@
 {
 "name": "VS. 蛋頭博士",
 "nameS": "VS. 蛋头博士",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0d0bdf3f7c6e0b5a",
@@ -21537,7 +21537,7 @@
 {
 "name": "VS. 蛋頭博士",
 "nameS": "VS. 蛋头博士",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "1475f35e571d3e09",
@@ -21558,7 +21558,7 @@
 {
 "name": "VS. 蛋頭博士",
 "nameS": "VS. 蛋头博士",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "edaa295f9aa089b8",
@@ -21579,7 +21579,7 @@
 {
 "name": "Believe In Myself",
 "nameS": "Believe In Myself",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "763f4480345cdbb6",
@@ -21600,7 +21600,7 @@
 {
 "name": "Believe In Myself",
 "nameS": "Believe In Myself",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "403a540b2ffa9519",
@@ -21621,7 +21621,7 @@
 {
 "name": "碧山區域",
 "nameS": "碧山区域",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "ef62dd0cf4192724",
@@ -21642,7 +21642,7 @@
 {
 "name": "碧山區域",
 "nameS": "碧山区域",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "8486ea2eb21efd2c",
@@ -21663,7 +21663,7 @@
 {
 "name": "碧山區域",
 "nameS": "碧山区域",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a9028de3be35cf4b",
@@ -21684,7 +21684,7 @@
 {
 "name": "OVERLORD",
 "nameS": "OVERLORD",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2e619c768f1f382d",
@@ -21705,7 +21705,7 @@
 {
 "name": "OVERLORD",
 "nameS": "OVERLORD",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d451135c6dde31c4",
@@ -21726,7 +21726,7 @@
 {
 "name": "OVERLORD",
 "nameS": "OVERLORD",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "045d456028e01684",
@@ -21747,7 +21747,7 @@
 {
 "name": "昴宿星團",
 "nameS": "昴宿星团",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "90487d6c687abdbc",
@@ -21768,7 +21768,7 @@
 {
 "name": "昴宿星團",
 "nameS": "昴宿星团",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "8df3ecca35bfe8f8",
@@ -21789,7 +21789,7 @@
 {
 "name": "昴宿星團",
 "nameS": "昴宿星团",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "835e1d7e70f4a6d3",
@@ -21810,7 +21810,7 @@
 {
 "name": "鮮血之女武神",
 "nameS": "鲜血之女武神",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "5b601cf4a2c13841",
@@ -21831,7 +21831,7 @@
 {
 "name": "鮮血之女武神",
 "nameS": "鲜血之女武神",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:626",
@@ -21852,7 +21852,7 @@
 {
 "name": "鮮血之女武神",
 "nameS": "鲜血之女武神",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "dcf1d5d6f7d50959",
@@ -21873,7 +21873,7 @@
 {
 "name": "鮮血之女武神",
 "nameS": "鲜血之女武神",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0e47720e7aaba94f",
@@ -21894,7 +21894,7 @@
 {
 "name": "Visions of Mana",
 "nameS": "Visions of Mana",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "47ea988d3391dd7d",
@@ -21915,7 +21915,7 @@
 {
 "name": "Visions of Mana",
 "nameS": "Visions of Mana",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "fc654365c794bc7f",
@@ -21936,7 +21936,7 @@
 {
 "name": "Visions of Mana",
 "nameS": "Visions of Mana",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "810e5630e720f446",
@@ -21957,7 +21957,7 @@
 {
 "name": "傑布魯・法",
 "nameS": "杰布鲁・法",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "0909ef13d95c0497",
@@ -21978,7 +21978,7 @@
 {
 "name": "傑布魯・法",
 "nameS": "杰布鲁・法",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "88325a3c478ed329",
@@ -21999,7 +21999,7 @@
 {
 "name": "傑布魯・法",
 "nameS": "杰布鲁・法",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "efdc0583f2618634",
@@ -22020,7 +22020,7 @@
 {
 "name": "傑布魯・法",
 "nameS": "杰布鲁・法",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "2819da7f379bf6f3",
@@ -22041,7 +22041,7 @@
 {
 "name": "星之所在",
 "nameS": "星之所在",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "704d27924f2c43d1",
@@ -22062,7 +22062,7 @@
 {
 "name": "星之所在",
 "nameS": "星之所在",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "92cbaf3db3586d0d",
@@ -22083,7 +22083,7 @@
 {
 "name": "星之所在",
 "nameS": "星之所在",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3d51ab68dddbe948",
@@ -22104,7 +22104,7 @@
 {
 "name": "星之所在",
 "nameS": "星之所在",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d611639ee456760f",
@@ -22125,7 +22125,7 @@
 {
 "name": "戰鬥的軌跡",
 "nameS": "战斗的轨迹",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "4032cdf421f18002",
@@ -22146,7 +22146,7 @@
 {
 "name": "戰鬥的軌跡",
 "nameS": "战斗的轨迹",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9187edab58fd1e6b",
@@ -22167,7 +22167,7 @@
 {
 "name": "戰鬥的軌跡",
 "nameS": "战斗的轨迹",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "3651039f5585a575",
@@ -22188,7 +22188,7 @@
 {
 "name": "萊莎的鍊金工房",
 "nameS": "莱莎的炼金工房",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "73530ee6f38ccc34",
@@ -22209,7 +22209,7 @@
 {
 "name": "萊莎的鍊金工房",
 "nameS": "莱莎的炼金工房",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b782149b137d2614",
@@ -22230,7 +22230,7 @@
 {
 "name": "萊莎的鍊金工房",
 "nameS": "莱莎的炼金工房",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "a8ee2e010b6e5d6c",
@@ -22251,7 +22251,7 @@
 {
 "name": "萊莎的鍊金工房",
 "nameS": "莱莎的炼金工房",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "790933563ebc27aa",
@@ -22272,7 +22272,7 @@
 {
 "name": "露營一宿",
 "nameS": "露营一宿",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "f838f311a82579e0",
@@ -22293,7 +22293,7 @@
 {
 "name": "露營一宿",
 "nameS": "露营一宿",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "72987eef01fbda4b",
@@ -22314,7 +22314,7 @@
 {
 "name": "露營一宿",
 "nameS": "露营一宿",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "6bd2eb47018db33f",
@@ -22335,7 +22335,7 @@
 {
 "name": "露營一宿",
 "nameS": "露营一宿",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "b50f1be94e5ec002",
@@ -22356,7 +22356,7 @@
 {
 "name": "傳說的六英雄",
 "nameS": "传说的六英雄",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "d53c1518b71c0259",
@@ -22377,7 +22377,7 @@
 {
 "name": "傳說的六英雄",
 "nameS": "传说的六英雄",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "87bd554c95a1dcf1",
@@ -22398,7 +22398,7 @@
 {
 "name": "傳說的六英雄",
 "nameS": "传说的六英雄",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "899aa4edeab83540",
@@ -22419,7 +22419,7 @@
 {
 "name": "阿克拉斯召喚院",
 "nameS": "阿克拉斯召唤院",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "085a66c6930d7fa6",
@@ -22440,7 +22440,7 @@
 {
 "name": "阿克拉斯召喚院",
 "nameS": "阿克拉斯召唤院",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "全部技能:all:917",
@@ -22461,7 +22461,7 @@
 {
 "name": "阿克拉斯召喚院",
 "nameS": "阿克拉斯召唤院",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "e0f570e2539649eb",
@@ -22482,7 +22482,7 @@
 {
 "name": "阿克拉斯召喚院",
 "nameS": "阿克拉斯召唤院",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9a9df999dd518e22",
@@ -22503,7 +22503,7 @@
 {
 "name": "屬於兩人的回家之路",
 "nameS": "属于两人的回家之路",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "29da106c453e0234",
@@ -22524,7 +22524,7 @@
 {
 "name": "屬於兩人的回家之路",
 "nameS": "属于两人的回家之路",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "789bffd5f1b5782a",
@@ -22545,7 +22545,7 @@
 {
 "name": "屬於兩人的回家之路",
 "nameS": "属于两人的回家之路",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": "9a64344759c572ed",
@@ -22566,7 +22566,7 @@
 {
 "name": "迷宮最深部的死鬥",
 "nameS": "迷宫最深部的死斗",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": null,
@@ -22587,7 +22587,7 @@
 {
 "name": "迷宮最深部的死鬥",
 "nameS": "迷宫最深部的死斗",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": null,
@@ -22608,7 +22608,7 @@
 {
 "name": "迷宮最深部的死鬥",
 "nameS": "迷宫最深部的死斗",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": null,
@@ -22629,7 +22629,7 @@
 {
 "name": "迷宮最深部的死鬥",
 "nameS": "迷宫最深部的死斗",
-"rarity": "UR"
+"rarity": "LR"
 }
 ],
 "siteId": null,

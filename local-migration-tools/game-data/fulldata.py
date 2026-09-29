@@ -84,7 +84,8 @@ for u in UD:
       'normal':A.get('normal',[]),'specials':(A.get('skills') or [])[:3],'ultimate':(A.get('skills') or [None]*4)[3] if len(A.get('skills') or [])>3 else None,'form2':A.get('skills2',[]),
       'magic':{'normal':[m for m in mg if m and not m['nonStackable']],'heavy':[m for m in mg if m and m['nonStackable']]},
       'personality':personality,'ownPassives':own,'transcend':trans,'blessings':blessing,'exclusiveEquipment':equipment})
-RARE={1:'R',2:'SR',3:'SSR',4:'UR',5:'LR'}
+# ArkMst RARE 4 is LR and 5 is UR (checked against Altema's LR / UR ark lists, 2026-09-30: 96 LR, 58 UR + 3 unreleased)
+RARE={1:'R',2:'SR',3:'SSR',4:'LR',5:'UR'}
 asl=collections.defaultdict(list)
 for r in ASL: asl[r['ARK_ID']].append({'lv':r['LV'],'text':filled(r),'values':values_of(r['PROCESS_INFO'])})
 traits={r['ARK_PARTY_TRAIT_ID']:{'id':r['ARK_PARTY_TRAIT_ID'],'name':clean(r['NAME']),'group':r['ARK_PARTY_TRAIT_GROUP'],'text':filled(r),'values':values_of(r['PROCESS_INFO']),'scope':scope(r['PROCESS_INFO']),'steps':classify(r['PROCESS_INFO'])[0]} for r in PT}
