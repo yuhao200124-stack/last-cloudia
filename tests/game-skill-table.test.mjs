@@ -48,7 +48,24 @@ test('every row carries its game number and its classification (大类, 条件, 
   const draft = new Map(JSON.parse(read('docs/skill-classes-draft.json')).skills.map(s => [s.id, s]));
   for (const id of game.keys()) {
     const s = data.skills[id], d = draft.get(id);
-    assert.deepEqual(s.cls, { cats: d.cats, tags: d.tags, calc: d.calc }, String(id));
+    const { e, ...rest } = s.cls;
+    assert.deepEqual(rest, { cats: d.cats, tags: d.tags, calc: d.calc }, String(id));
+    // every effect as [大类, stat, elements, attack types, drawback] for the 配装 filter; every 大类 is there
+    for (const cat of d.cats) assert(e.some(x => x[0] === cat), `${id} ${cat}`);
+    for (const x of e) assert(x.length === 5 && d.cats.includes(x[0]), `${id} ${JSON.stringify(x)}`);
   }
-  assert(!read('dist/game-skills.js').includes('.cls'), 'not shown on the page');
+  // the page only uses the effects to hide rows in 配装 (全输出／半肉／全肉); 大类, 条件 and 能否算 are not shown
+  const js = read('dist/game-skills.js');
+  assert(js.includes('.cls?.e') && !/\.cls\??\.(cats|tags|calc)/.test(js), 'not shown on the page');
+});
+
+test('配装 filter: 全输出 hides defense and offense the move cannot use, 半肉 only that offense, 全肉 all offense', () => {
+  const js = read('dist/game-skills.js');
+  for (const s of ["['out', '全输出']", "['half', '半肉']", "['tank', '全肉']", "['none', '不隐藏']", "cat === '特攻'", "move.magical ? '法强' : '攻击力'"]) assert(js.includes(s), s);
+  assert.match(read('dist/index.html'), /id="buildFilter"[^>]*hidden/);
+  const r = s => data.skills[s].cls.e;
+  // 冰攻击提升III is for 冰, 勇者 for 物理 (普攻＋特技) and brings 受到伤害 +10% as a drawback
+  assert.deepEqual(r(26466).map(x => x[2]), [[2], [2]]);
+  assert.deepEqual(r(27654).find(x => x[0] === '造成伤害')[3], [1, 9]);
+  assert.equal(r(27654).find(x => x[0] === '受到伤害')[4], 1);
 });

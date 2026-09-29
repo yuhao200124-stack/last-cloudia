@@ -17,8 +17,17 @@ const byId = new Map(game.map(g => [g.gameId, g]));
 // every row carries its game number (the key) and its classification from the game data (scripts/build-skill-classes.mjs →
 // docs/skill-classes-draft.json): 大类, 条件标签 and whether the calculator can compute it. Not shown on the page (user
 // 2026-09-29: “补上编号和条件…藏在后台”), for the calculation and filters to use.
+// every effect of a skill as [大类, 基础属性 stat or null, elements or null, attack types or null, 1 when it is a
+// drawback (e.g. 受到伤害 +10%)] — what the 配装's 全输出／半肉／全肉 filter needs to tell offense from defense and what
+// applies to the current move
+function entriesOf(s) {
+  const out = [];
+  for (const [cat, list] of Object.entries(s.sub || {})) for (const e of list) { const v = e.value ?? e.rate ?? e.add; out.push([cat, e.stat ?? null, e.els ?? null, e.types ?? null, typeof v === 'number' && v < 0 ? 1 : 0]); }
+  for (const cat of s.cats) if (!out.some(e => e[0] === cat)) out.push([cat, null, null, null, 0]);
+  return out.filter((e, i) => out.findIndex(x => JSON.stringify(x) === JSON.stringify(e)) === i);
+}
 const classes = fs.existsSync(new URL('docs/skill-classes-draft.json', root))
-  ? new Map(JSON.parse(read('docs/skill-classes-draft.json')).skills.map(s => [s.id, { cats: s.cats, tags: s.tags, calc: s.calc }])) : new Map();
+  ? new Map(JSON.parse(read('docs/skill-classes-draft.json')).skills.map(s => [s.id, { cats: s.cats, tags: s.tags, calc: s.calc, e: entriesOf(s) }])) : new Map();
 
 const skills = {};
 for (const g of game) {

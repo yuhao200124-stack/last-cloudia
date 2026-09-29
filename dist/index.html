@@ -7,7 +7,7 @@
     <title>最后的克劳迪娅技能表</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="stylesheet" href="./styles.css?v=20260929-home" />
-    <link rel="stylesheet" href="./game-skills.css?v=20260929-boardsc" />
+    <link rel="stylesheet" href="./game-skills.css?v=20260929-hidefilter" />
   </head>
   <body>
     <header class="site-header">
@@ -34,6 +34,9 @@
             <input id="searchInput" type="search" autocomplete="off" placeholder="搜索技能名称、效果或圣物（繁简均可）" />
             <button id="clearSearch" type="button" aria-label="清空搜索" hidden>清空</button>
           </label>
+          <div class="script-toggle build-filter" id="buildFilter" role="group" aria-label="配装时隐藏用不到的技能" hidden>
+            <button type="button" data-hide-mode="out" aria-pressed="false">全输出</button><button type="button" data-hide-mode="half" aria-pressed="false">半肉</button><button type="button" data-hide-mode="tank" aria-pressed="false">全肉</button><button type="button" data-hide-mode="none" aria-pressed="true">不隐藏</button>
+          </div>
           <div class="game-toolbar-right">
             <div class="script-toggle" role="group" aria-label="文字">
               <button type="button" data-script="t" aria-pressed="true">游戏原文（繁）</button>
@@ -60,7 +63,7 @@
       <aside class="build-side" id="buildSide" aria-label="计算结果与配装"><iframe id="buildFrame" title="伤害计算器（结果与配装）"></iframe></aside>
       </div>
     </main>
-    <script src="./game-skill-data.js?v=20260929-cls"></script>
-    <script src="./game-skills.js?v=20260929-planpop"></script>
+    <script src="./game-skill-data.js?v=20260929-hidefilter"></script>
+    <script src="./game-skills.js?v=20260929-hidefilter"></script>
   </body>
 </html>

@@ -937,7 +937,7 @@ async function run(force = false) {
     const firstHit = damaging.filter(h => h.bulletId === damaging[0]?.bulletId)[0];
     const moveName = gameChar ? [...(gameChar.specials || []), gameChar.ultimate, ...(gameChar.magic?.normal || []), ...(gameChar.magic?.heavy || [])].filter(Boolean).find(m => m.id === move.id)?.nameS : null;
     const fieldCtx = { hits: damaging, gearNames: new Map((gameChar?.exclusiveEquipment || []).map(e => [e.id, e.nameS])), moveName: moveName || move.name || '本招式' };
-    moveInfo = { id: move.id, name: fieldCtx.moveName, element: firstHit?.element ?? battle.master.skillInfo?.(move.id)?.elem ?? null, skillType: battle.master.skillInfo?.(move.id)?.skillType ?? null, character: gameChar?.nameS || null };
+    moveInfo = { id: move.id, name: fieldCtx.moveName, element: firstHit?.element ?? battle.master.skillInfo?.(move.id)?.elem ?? null, skillType: battle.master.skillInfo?.(move.id)?.skillType ?? null, magical: firstHit?.breakdown?.attack?.stat == null ? null : firstHit.breakdown.attack.stat === K.STAT.INT, character: gameChar?.nameS || null };
     renderBasicFields(firstHit, fieldCtx);
     renderReview(out, firstHit, fieldCtx);
     try { await measureSupportMagic(M, attackerSpec, targetSpec, state, dress); } catch (err) { console.error(err); }

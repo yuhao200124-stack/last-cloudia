@@ -56,3 +56,5 @@ body.build-mode .skill-list-table .column-title th:last-child{position:sticky;ri
   body.build-mode.build-settings .build-side,body.build-mode.build-view-results .build-side{position:static;width:auto;height:calc(100dvh - 130px);overflow:visible;visibility:visible}
   body.build-mode.build-view-results .build-layout .workspace{display:none}
 }
+.build-filter{flex:none}
+.build-filter[hidden]{display:none}

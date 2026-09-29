@@ -27,7 +27,34 @@
   const skill = ref => data.skills[ref];
   const txt = (s, f) => script === 's' ? s[f + 'S'] : s[f];
   const hay = s => [s.name, s.nameS, s.effect, s.effectS, ...s.sources, ...s.sourcesS].join('\n').toLocaleLowerCase('zh-CN');
-  const matches = row => row.separator || !query || hay(skill(row.ref)).includes(query.toLocaleLowerCase('zh-CN'));
+  const found = row => row.separator || !query || hay(skill(row.ref)).includes(query.toLocaleLowerCase('zh-CN'));
+  // 配装: hide what the current loadout does not need (user 2026-09-29) — 全输出 hides the defense (受到伤害, HP／防御／
+  // 魔抗, 回复) and the offense that does not apply to the current move; 半肉 only the offense that does not apply;
+  // 全肉 all offense; 不隐藏 nothing. 异常 (耐性 and 赋予), MP, 移动, 装备·种族 … always stay; 特攻 is never hidden as
+  // “not applying” (user: keep every 特攻). An effect applies when its element and attack type match the move's
+  // (attack types: the move's SKILL_TYPE, plus 魔法 when it hits with 法强 — the game script gives 水弹, a 特技, both
+  // 物理 and 冰魔法 bonuses) and, for 攻击力／法强, when it is the stat the move hits with.
+  const OFFENSE = new Set(['造成伤害', '伤害上限', '特攻', '暴击', 'Break值', '反击', '特技充能·必杀', '魔法·咏唱']);
+  const DEFENSE = new Set(['受到伤害', '回复']);
+  const HIDE_MODES = [['out', '全输出'], ['half', '半肉'], ['tank', '全肉'], ['none', '不隐藏']];
+  let hideMode = HIDE_MODES.some(([k]) => k === store.get('lc-build-hide')) ? store.get('lc-build-hide') : 'none', move = null;
+  const kindOf = ([cat, stat]) => cat === '基础属性' ? (stat === '攻击力' || stat === '法强' ? 'off' : stat === 'MP' ? 'other' : 'def') : OFFENSE.has(cat) ? 'off' : DEFENSE.has(cat) ? 'def' : 'other';
+  function applies([cat, stat, els, types]) {
+    if (!move || cat === '特攻') return true;
+    if (cat === '基础属性') return move.magical == null || stat === (move.magical ? '法强' : '攻击力');
+    if (els && move.element != null && !els.includes(move.element)) return false;
+    if (types && move.roles.length && !types.some(t => move.roles.includes(t))) return false;
+    return true;
+  }
+  function kept(ref) {
+    const mode = embedded ? hideMode : 'none', all = skill(ref).cls?.e;
+    if (mode === 'none' || !all?.length) return true;
+    const list = all.some(e => !e[4]) ? all.filter(e => !e[4]) : all;
+    return list.some(e => { const k = kindOf(e); return mode === 'out' ? k === 'other' || (k === 'off' && applies(e)) : mode === 'half' ? k !== 'off' || applies(e) : k !== 'off'; });
+  }
+  const matches = row => found(row) && (row.separator || kept(row.ref));
+  // no separator at the start / end of a lane or twice in a row once rows are hidden
+  const tidy = rows => rows.filter((r, i, a) => !r.separator || (i > 0 && i < a.length - 1 && !a[i - 1].separator && a.slice(i + 1).some(x => !x.separator) && a.slice(0, i).some(x => !x.separator)));
   function hl(value) {
     const raw = String(value ?? ''), q = query.trim();
     if (!q) return esc(raw);
@@ -67,23 +94,29 @@
     const sheet = data.sheets[active];
     $('sheetTitle').textContent = active;
     $('sheetHint').textContent = '名称、SC、效果、圣物取自游戏数据；分类、排序和评价按技能表排版';
-    let visible = 0, html = '';
+    let visible = 0, hidden = 0, html = '';
     if (sheet.kind === 'all') {
-      const rows = sheet.rows.filter(matches); visible = uniq(rows);
+      const rows = sheet.rows.filter(matches); visible = uniq(rows); hidden = uniq(sheet.rows.filter(found)) - visible;
       html = rows.length ? allTable(rows, active) : '';
     } else if (sheet.kind === 'lanes') {
       const lanes = sheet.lanes.map(l => ({ ...l, rows: l.rows.filter(matches) }));
-      visible = uniq(lanes.flatMap(l => l.rows));
+      visible = uniq(lanes.flatMap(l => l.rows)); hidden = uniq(sheet.lanes.flatMap(l => l.rows.filter(found))) - visible;
       html = lanes.filter(l => l.rows.length).map(l => `<section class="basic-stat-section"><h3>${esc(l.label || '')} <span>${uniq(l.rows)} 个技能</span></h3>${allTable(l.rows, l.label || active)}</section>`).join('');
     } else {
-      const lanes = sheet.lanes.map(l => ({ ...l, rows: l.rows.filter(matches) }));
-      visible = uniq(lanes.flatMap(l => l.rows));
+      const lanes = sheet.lanes.map(l => ({ ...l, rows: tidy(l.rows.filter(matches)) }));
+      visible = uniq(lanes.flatMap(l => l.rows)); hidden = uniq(sheet.lanes.flatMap(l => l.rows.filter(found))) - visible;
       html = visible ? `<div class="split-grid">${lanes.filter(l => l.rows.some(r => !r.separator)).map((l, i) => splitTable(l.rows, `${active} 第${i + 1}栏`)).join('')}</div>` : '';
     }
     $('tableArea').innerHTML = html;
     $('emptyState').hidden = visible !== 0;
     const total = sheet.kind === 'all' ? uniq(sheet.rows) : uniq(sheet.lanes.flatMap(l => l.rows));
-    $('resultSummary').textContent = query ? `找到 ${visible} 个技能（本页共 ${total} 个）` : `本页 ${visible} 个技能 · 游戏可从圣物学习 ${data.total} 个`;
+    const hideNote = hidden > 0 ? ` · 按“${HIDE_MODES.find(([k]) => k === hideMode)[1]}”隐藏了 ${hidden} 个` : '';
+    $('resultSummary').textContent = query ? `找到 ${visible} 个技能（本页共 ${total} 个）${hideNote}` : `本页 ${visible} 个技能${hideNote || ` · 游戏可从圣物学习 ${data.total} 个`}`;
+    if (embedded) {
+      document.querySelectorAll('[data-hide-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.hideMode === hideMode)));
+      const how = move ? `按当前招式${move.name ? `「${move.name}」` : ''}判断：${['无属性', '火', '冰', '树', '雷', '光', '暗'][move.element] ?? '—'}属性 · ${move.magical == null ? '' : move.magical ? '法强' : '攻击力'}` : '等计算器读取招式';
+      $('buildFilter').title = how;
+    }
     $('clearSearch').hidden = !query;
     $('sheetTabs').innerHTML = data.sheetOrder.map(n => `<button class="sheet-tab" type="button" data-sheet="${esc(n)}" role="tab" aria-selected="${n === active}">${esc(n)}</button>`).join('');
     document.querySelectorAll('[data-script]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.script === script)));
@@ -119,7 +152,9 @@
       $('buildStatus').textContent = `已选 ${bst.selected.length} 个 · SC ${bst.sc?.total ?? 0}${bst.perCall != null ? ` · 当前配装每次 ${fmtN(bst.perCall)}` : ''}${last}${bst.computing ? ' · 计算中…' : ''}`;
     }
     $('buildToolbar').hidden = false;
-    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-planpop`;
+    $('buildFilter').hidden = false;
+    $('buildFilter').addEventListener('click', e => { const b = e.target.closest('[data-hide-mode]'); if (!b) return; hideMode = b.dataset.hideMode; store.set('lc-build-hide', hideMode); render(); });
+    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-hidefilter`;
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }
@@ -134,7 +169,10 @@
       if (e.data?.type === 'lc-damage-ready') { layout(); toFrame({ type: 'lc-build-hello' }); }
       else if (e.data?.type === 'lc-build-state') {
         bst = e.data; picked = new Set((bst.selected || []).map(Number)); own = new Set((bst.auto || []).map(Number)); gains = bst.gains || {};
-        document.querySelectorAll('[data-action-for]').forEach(td => { td.innerHTML = addButton(Number(td.dataset.actionFor)); });
+        // the current move decides what 全输出／半肉 hide: re-draw the table only when it changes
+        const m = bst.move, next = m ? { name: m.name, element: m.element ?? null, magical: m.magical ?? null, roles: m.skillType == null ? [] : [m.skillType, ...(m.magical && m.skillType !== 2 ? [2] : [])] } : null;
+        if (JSON.stringify(next) !== JSON.stringify(move)) { move = next; render(); }
+        else document.querySelectorAll('[data-action-for]').forEach(td => { td.innerHTML = addButton(Number(td.dataset.actionFor)); });
         status();
       }
     });
