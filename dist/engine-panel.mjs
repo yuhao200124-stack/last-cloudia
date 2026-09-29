@@ -607,7 +607,8 @@ const FREE_COST = 99;
 const isFreePassive = id => { const c = battle?.master.passive.get(id)?.COST; return c == null || c >= FREE_COST; };
 function ownPassiveIds(c) {
   if (!c) return [];
-  return [...(c.personality || []).map(p => p.passive), ...(c.ownPassives || []).map(p => p.passive).filter(isFreePassive), ...(c.transcend || []).map(p => p.passive), ...(c.blessings || [])];
+  // (the character's own 加护 is not here: every blessing comes from the account, with the account's values — user 2026-09-30)
+  return [...(c.personality || []).map(p => p.passive), ...(c.ownPassives || []).map(p => p.passive).filter(isFreePassive), ...(c.transcend || []).map(p => p.passive)];
 }
 const ownPaidIds = c => (c?.ownPassives || []).map(p => p.passive).filter(id => !isFreePassive(id));
 let tablePassives = null;
@@ -913,7 +914,7 @@ async function run(force = false) {
       // no report: the game character at its maximum growth with every own passive and its exclusive gear;
       // the out-of-battle panel comes entirely from master data (scenario.mjs panelGiven:false)
       const c = await gameCharacter(dress);
-      const ids = latest.ownPassives?.length ? latest.ownPassives : c ? [...(c.personality || []).map(p => p.passive), ...(c.ownPassives || []).map(p => p.passive), ...(c.transcend || []).map(p => p.passive), ...(c.blessings || [])] : [];
+      const ids = latest.ownPassives?.length ? latest.ownPassives : c ? [...(c.personality || []).map(p => p.passive), ...(c.ownPassives || []).map(p => p.passive), ...(c.transcend || []).map(p => p.passive)] : [];
       const blessings = growthChoice.accountBlessings ? [...ACCOUNT_BLESSINGS].filter(([id]) => battle.master.passive.has(id)).map(([id, params]) => ({ id, params })) : [];
       const fromLoadout = loadoutReport ? M.attackerFromLoadout(loadoutReport, battle.master, await ensureSwitches(), dress, { extraPassives: blessings }) : null;
       // passives learned from other characters live outside the character bundle: fetch their id buckets first
