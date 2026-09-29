@@ -55,13 +55,20 @@ function loadBuildFor(dress) {
   build.on = buildEmbed;    // the loadout counts only on the 配装 page; the calculator alone computes without it
   // opened from a character page's 已保存配装 (…&plan=<id>): that saved loadout, once
   const planId = new URLSearchParams(location.search).get('plan');
-  if (planId && !urlPlanUsed) { urlPlanUsed = true; const plan = loadPlans().find(p => p.id === planId && p.dress === dress); if (plan) { applyPlan(plan); return; } }
+  if (planId && !urlPlanUsed) {
+    urlPlanUsed = true;
+    // the link counts once: &plan= leaves the address (this page and the page around it), so a reload keeps the
+    // loadout as it is now instead of loading the saved one over unsaved changes (user 2026-09-30)
+    dropPlanParam(window); if (window.parent !== window) dropPlanParam(window.parent);
+    const plan = loadPlans().find(p => p.id === planId && p.dress === dress); if (plan) { applyPlan(plan); return; }
+  }
   syncBuildControls();
 }
 // ---- saved loadouts (保存配装): the chosen common skills of the 配装 panel, per character, in this browser;
 // the character pages' 已保存配装 list them (lc-engine-plans:v1) ----
 const PLANS_KEY = 'lc-engine-plans:v1';
 let urlPlanUsed = false;
+function dropPlanParam(win) { try { const u = new URL(win.location.href); if (!u.searchParams.has('plan')) return; u.searchParams.delete('plan'); win.history.replaceState(win.history.state, '', u.pathname + u.search + u.hash); } catch {} }
 function loadPlans() { try { const l = JSON.parse(localStorage.getItem(PLANS_KEY) || '[]'); return Array.isArray(l) ? l : []; } catch { return []; } }
 function storePlans(list) { try { localStorage.setItem(PLANS_KEY, JSON.stringify(list)); return true; } catch { return false; } }
 const siteCharacterId = () => new URLSearchParams(location.search).get('character') || null;
