@@ -51,3 +51,15 @@ test('scenario: a chance effect that did not roll is listed (on: false); ticking
   assert.ok(on.probabilistic.find(x => x.passiveId === 26421).on);
   assert.ok(on.hits.find(h => h.normal).normal.mean > off.hits.find(h => h.normal).normal.mean * 1.3);
 });
+
+// 触发效果 (user 2026-09-29, “去掉这种”): an effect that only renews what the battle start already gave is not offered.
+test('scenario: 指導者 every-40-seconds renewal (already given at battle start) is not offered; 自動治癒Ⅱ still is', async () => {
+  const { master, scripts } = await dataPromise;
+  const battle = new Battle(master, scripts, {});
+  const a = addAttacker(battle, { unitDressId: 502220, panelGiven: false, passives: [{ id: 50222022 }, { id: 27830 }], magic: [270090] });
+  const t = addTarget(battle, { name: '轟鳥龍恩德爾羅納', isBoss: true, charTypes: [2010], stats: { hp: 99999999, mp: 100, def: 4000, mnd: 10000, str: 0, int: 0 }, elemResist: {} });
+  const out = runScenario({ battle, attacker: a, target: t, skill: { id: 270090 }, state: { hpPercent: 100, killer: 'on' }, assume: { probability: 'skip' } });
+  assert.ok(!out.conditionals.some(c => c.passiveId === 50222022), '指導者 renewal hidden');
+  assert.ok(out.unchangedConditionals.some(c => c.passiveId === 50222022));
+  assert.ok(out.conditionals.some(c => c.passiveId === 27830), '自動治癒Ⅱ shown');
+});

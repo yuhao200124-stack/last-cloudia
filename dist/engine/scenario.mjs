@@ -138,6 +138,30 @@ export function conditionalInstances(battle, unit, keep = new Set()) {
   }));
 }
 
+// Conditional instances that would change nothing if assumed: force-run one on the setup state and nothing about the
+// two units differs afterwards (buffs and their values, control entries, counters, HP/MP) — e.g. 指導者's every-40-seconds
+// renewal of the +30000 cap buff the battle start already gave (user 2026-09-29: such effects are not offered, “去掉这种”).
+// (the force-run instance's own bookkeeping, e.g. how often it ran, is left out: `skip`)
+function stateSignature(battle, units, skip = null) {
+  const inst = i => instanceKey(i) === skip ? null : [i.localId, i.localIndex, i.procValues, i.kept, i.flags, i.parameters, i.values];
+  return JSON.stringify([battle.fieldValues, units.map(u => [u.buffs.map(b => `${b.buffId}:${b.params.join(',')}`).sort(), [...u.status, ...u.real, ...u.work].map(e => `${e.op}:${e.params.join(',')}`).sort(),
+    u.values, u.procValues, u.hp, u.mp, u.ether, u.combo, u.charTypes, u.passiveIds.length, u.instances.map(inst)])]);
+}
+function unchangedInstances(battle, attackerId, targetId, setupSnap, candidates) {
+  const out = new Set(); if (!candidates.length) return out;
+  const end = battle.snapshot(), trace = battle.trace.slice();
+  const sig = key => stateSignature(battle, [battle.unit(attackerId), battle.unit(targetId)], key);
+  for (const c of candidates) {
+    battle.restore(setupSnap);
+    const A = battle.unit(attackerId), inst = A.instances.find(i => instanceKey(i) === c.key); if (!inst) continue;
+    const before = sig(c.key);
+    try { battle.runInstance(inst, A, A, null, inst.trigger, { force: true }); } catch { continue; }
+    if (sig(c.key) === before) out.add(c.key);
+  }
+  battle.restore(end); battle.trace.length = 0; for (const t of trace) battle.trace.push(t);
+  return out;
+}
+
 // Force-runs assumed instances (condition and probability skipped) after the normal setup.
 export function assumeInstances(battle, unit, keys) {
   const wanted = new Set(keys || []);
@@ -204,6 +228,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   // assume.forced: chance-based instances (`${localId}:${index}`) counted as triggered whatever the mode (the user's ticks)
   battle.options.forced = new Set(assume.forced || []);
   setupBattle(battle, attacker, target, state);
+  const setupSnap = battle.snapshot();
   assumeInstances(battle, attacker, assume.instances);
   preCast(battle, attacker, target, state.preCasts, skill.level ?? 9);
   const conditionals = conditionalInstances(battle, attacker, new Set(assume.instances || []));
@@ -243,11 +268,14 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   const listed = new Set(conditionals.map(c => `${c.localId}:${c.localIndex}`)); // already offered as a conditional
   // every chance-based instance that came up (fired, or its condition held and the roll failed); `on`: counted in the result
   const probabilistic = [...new Map(battle.trace.filter(t => (t.fired || t.missed) && t.prob < 10000 && !listed.has(`${t.localId}:${t.index}`)).map(t => [`${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.localId}:${t.index}`, localId: t.localId, passiveId: t.passiveId || t.localId, on: !!t.fired, passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), prob: t.prob / 100, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
+  // conditionals that would change nothing are not offered (an assumed one stays so its tick can be undone)
+  const assumedKeys = new Set(assume.instances || []);
+  const unchanged = unchangedInstances(battle, attacker.id, target.id, setupSnap, conditionals.filter(c => !assumedKeys.has(c.key)));
   return {
     statParts,
     stats: { str: stats(K.STAT.STR), def: stats(K.STAT.DEF), int: stats(K.STAT.INT), mnd: stats(K.STAT.MND), crt: stats(K.STAT.CRT), hp: { panel: battle.finalStat(attacker, K.STAT.MAX_HP, { layer: 'status' }), real: battle.finalStat(attacker, K.STAT.MAX_HP), current: attacker.hp } },
     buffs: attacker.buffs.map(b => ({ uid: b.uid, buffId: b.buffId, name: clean(zhName(b.mst.NAME)), params: b.params, remain: b.remain, from: clean(battle.master.passive.get(b.related?.localId)?.NAME || battle.master.itemEquip.get(b.related?.localId)?.NAME || '') })),
-    hits, conditionals, probabilistic,
+    hits, conditionals: conditionals.filter(c => !unchanged.has(c.key)), unchangedConditionals: conditionals.filter(c => unchanged.has(c.key)), probabilistic,
     fired: fired.map(t => ({ trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '', passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), localId: t.localId, index: t.index })),
     errors: battle.trace.filter(t => t.error).map(t => ({ name: t.name, id: t.id, error: t.error })),
     unsupported: [...battle.unsupported.keys()],
