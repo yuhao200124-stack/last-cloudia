@@ -767,7 +767,14 @@ function clearMonster() {
   if ($('engineMonsterVariant')) $('engineMonsterVariant').innerHTML = '<option value="">先输入名称</option>';
   if ($('engineMonsterNote')) $('engineMonsterNote').textContent = '未选择怪物表目标。';
 }
-document.addEventListener('lc:calculator-reset', () => { if (monsterChoice) clearMonster(); });
+document.addEventListener('lc:calculator-reset', () => {
+  if (monsterChoice) clearMonster();
+  // 重置 also unticks every 触发效果 and every 辅助魔法 (user 2026-09-30); the 配装 on the home page stays
+  assumed.clear(); probAssumed.clear();
+  supportChecked = new Set(); supportActive = [];
+  try { if (supportDress) localStorage.setItem(`lc-support-magic:${supportDress}`, '[]'); } catch {}
+  for (const i of document.querySelectorAll('[data-support-magic], #engineResult input[type=checkbox]')) i.checked = false;
+});
 async function ensureMonsters() {
   if (!monsterBundle) { monsterBundle = await fetch(new URL('./game-data/engine/monsters.json', import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(monsterBundle);
     const names = [...new Set(monsterBundle.MonsterMst.rows.map(r => r[1]))].sort((a, b) => a.localeCompare(b, 'zh'));
