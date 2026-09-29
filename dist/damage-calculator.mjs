@@ -13,7 +13,8 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const params=new URLSearchParams(location.search);
 const characterId=/^\d+$/.test(params.get('character')||'')?params.get('character'):null;
-const embedded=params.get('embedded')==='1'&&window.parent!==window;
+// embedded=1: a character page's panel; embedded=build: the 配装 on the skill classification page
+const embedded=['1','build'].includes(params.get('embedded'))&&window.parent!==window;
 document.body.classList.toggle('is-embedded',embedded);
 if(characterId){$('calculatorCharacterBack').href=`./character-${characterId}.html`;$('calculatorCharacterBack').textContent='返回角色';}
 

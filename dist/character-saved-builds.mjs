@@ -1,6 +1,6 @@
 // 已保存配装 on a character page: the loadouts saved in the damage calculator's 配装 (localStorage
-// lc-engine-plans:v1, per character, this browser) with the skills each one picked; 在计算器中打开 starts
-// the calculator with that loadout. (The old skill-table loadouts are no longer listed — the user's decision.)
+// lc-engine-plans:v1, per character, this browser) with the skills each one picked; 在配装页打开 opens the 配装 on
+// the skill classification page (skill-classes-preview.html) with that loadout. (The old skill-table loadouts are no longer listed — the user's decision.)
 // SC as in the calculator (build-sc.mjs): 能力盘突破 free one skill each; the character's own SC skills that are
 // not on the skill table are always there at 0 SC.
 import { breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260929-build';
@@ -36,7 +36,7 @@ async function render() {
   if (list.some(p => p.id === current)) select.value = current;
   const plan = list.find(p => p.id === select.value);
   $('savedBuildOpen').disabled = !plan;
-  if (!plan) { $('savedBuildSkills').innerHTML = '<p class="saved-build-empty">在伤害计算器里打开“配装”，在技能表点“+”选好技能后点“保存配装”，就会列在这里。</p>'; $('savedBuildTotal').textContent = '0 SC'; return; }
+  if (!plan) { $('savedBuildSkills').innerHTML = '<p class="saved-build-empty">在技能分类页选这个角色配装，点“+”选好技能后，在“配装详情”里点“保存配装”，就会列在这里。</p>'; $('savedBuildTotal').textContent = '0 SC'; return; }
   const index = await passives(), auto = await ownOffTable(index), autoSet = new Set(auto);
   const info = id => index.get(id) || { nameS: `编号 ${id}`, cost: null };
   const sc = scTotal((plan.build?.selected || []).filter(id => !autoSet.has(id)).map(id => ({ id, sc: info(id).cost })), cleanBreaks(plan.build?.breaks));
@@ -55,6 +55,6 @@ if (viewer && opener) {
   overlay?.addEventListener('click', () => { if (!viewer.hidden) hide(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !viewer.hidden) { e.preventDefault(); hide(); } });
   $('savedBuildSelect').addEventListener('change', render);
-  $('savedBuildOpen').addEventListener('click', () => { const id = $('savedBuildSelect').value; if (!id) return; hide(); window.dispatchEvent(new CustomEvent('lc:open-damage-calculator', { detail: { plan: id } })); });
+  $('savedBuildOpen').addEventListener('click', () => { const id = $('savedBuildSelect').value; if (!id) return; location.href = `./skill-classes-preview.html?character=${encodeURIComponent(characterId)}&plan=${encodeURIComponent(id)}`; });
   window.addEventListener('storage', e => { if (e.key === PLANS_KEY && !viewer.hidden) render(); });
 }

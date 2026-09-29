@@ -36,3 +36,33 @@
   .preview-table { min-width: 760px; font-size: .84rem; }
   .preview-table td.name { position: sticky; left: 0; background: #fff; z-index: 1; }
 }
+
+/* 配装 on this page (2026-09-29): the bar, the calculator frame (战斗设置 / 配装详情) and the “+” column */
+.build-bar { padding: 12px 18px; border-bottom: 1px solid #d6e0ec; background: #f4f8fd; }
+.build-bar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.build-char { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--blue-strong); }
+.build-char select { min-height: 34px; padding: 4px 8px; font: inherit; font-weight: 400; border: 1px solid #b9c8de; border-radius: 6px; background: #fff; max-width: 16em; }
+.build-info { flex: 1 1 320px; font-size: .9rem; color: #33445a; line-height: 1.6; min-width: 0; }
+.build-info b { color: #172d49; font-variant-numeric: tabular-nums; }
+.build-info .up { color: #1f7a4d; font-weight: 700; }
+.build-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.build-actions button { min-height: 34px; padding: 4px 12px; border: 1px solid #b9c8de; border-radius: 6px; background: #fff; font: inherit; cursor: pointer; }
+.build-actions button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+.build-frame-wrap { margin-top: 10px; border: 1px solid #b9c8de; border-radius: 8px; overflow: hidden; background: #fff; }
+.build-frame-wrap iframe { display: block; width: 100%; height: min(78vh, 900px); border: 0; }
+/* the frame keeps computing while it is folded away */
+.build-frame-wrap.is-collapsed { height: 0; margin: 0; border: 0; visibility: hidden; }
+.preview-table col.act { width: 7%; }
+.preview-table td.act { text-align: center; vertical-align: middle; }
+.preview-table td.act small { display: block; margin-top: 3px; font-size: .78rem; font-weight: 700; color: #1f7a4d; font-variant-numeric: tabular-nums; }
+.preview-table td.act small.down { color: #a4402a; }
+.preview-table td.act small.wait { color: #7a889c; font-weight: 400; }
+.add-button { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #9fb4d8; background: #fff; color: var(--blue); font-size: 1.2rem; line-height: 1; cursor: pointer; }
+.add-button.is-added { background: var(--blue); border-color: var(--blue); color: #fff; }
+.add-button:disabled { opacity: .45; cursor: default; }
+@media (max-width: 640px) {
+  .build-bar { padding: 10px 12px; }
+  .build-frame-wrap iframe { height: 72vh; }
+  .preview-table td.act { position: sticky; right: 0; background: #fff; z-index: 1; box-shadow: -2px 0 0 #dbe4ef; }
+  .preview-table col.act { width: 64px; }
+}

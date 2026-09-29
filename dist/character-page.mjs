@@ -2,7 +2,7 @@
 // (The old 基础计算器／基础伤害上限／最终伤害上限 were removed with the old calculator; 已保存配装 lists the
 // calculator's saved loadouts.)
 import {mountAccountBlessings} from './account-blessings-panel.mjs?v=20260928-game-names';
-import './character-saved-builds.mjs?v=20260929-build';
+import './character-saved-builds.mjs?v=20260929-classbuild';
 mountAccountBlessings();
 const hero=document.querySelector('.hero-meta');
 if(hero){
@@ -15,5 +15,5 @@ if(hero){
   document.body.append(template.content);
   document.getElementById('damageCharacterName').textContent=document.querySelector('.hero h2')?.textContent.trim()||'当前角色';
  }
- await import('./character-damage-bridge.mjs?v=20260928-engine-only');
+ await import('./character-damage-bridge.mjs?v=20260929-classbuild');
 }

@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="技能分类预览：从游戏数据自动分类的基础属性技能。" />
+    <meta name="description" content="技能分类预览：从游戏数据自动分类的全部技能；选角色后在这里配装。" />
     <title>技能分类预览</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="stylesheet" href="./styles.css?v=20260929-home" />
-    <link rel="stylesheet" href="./game-skills.css?v=20260929-build" />
-    <link rel="stylesheet" href="./skill-classes-preview.css?v=20260929-preview6" />
+    <link rel="stylesheet" href="./game-skills.css?v=20260929-classbuild" />
+    <link rel="stylesheet" href="./skill-classes-preview.css?v=20260929-preview7" />
   </head>
   <body>
     <header class="site-header">
@@ -21,6 +21,18 @@
     </header>
     <main>
       <section class="workspace" aria-label="技能分类预览">
+        <section class="build-bar" id="buildBar" aria-label="配装">
+          <div class="build-bar-row">
+            <label class="build-char">配装<select id="buildCharacter"><option value="">选角色开始配装</option></select></label>
+            <div class="build-info" id="buildInfo">选一个角色，就能在下面的表里点“+”加技能，看每个技能的收益和 SC。</div>
+            <div class="build-actions" id="buildActions" hidden>
+              <button type="button" data-build-panel="settings" aria-pressed="false" aria-controls="buildFrameWrap">战斗设置</button>
+              <button type="button" data-build-panel="details" aria-pressed="false" aria-controls="buildFrameWrap">配装详情</button>
+              <button type="button" id="buildExit">退出配装</button>
+            </div>
+          </div>
+          <div class="build-frame-wrap is-collapsed" id="buildFrameWrap"><iframe id="buildFrame" title="配装计算（战斗设置与配装详情）"></iframe></div>
+        </section>
         <div class="toolbar">
           <label class="search-box">
             <span class="search-icon" aria-hidden="true">⌕</span>
@@ -43,7 +55,7 @@
       </section>
     </main>
     <script src="./game-skill-data.js?v=20260929-home"></script>
-    <script src="./skill-classes-preview-data.js?v=20260929-preview6"></script>
-    <script src="./skill-classes-preview.js?v=20260929-preview6"></script>
+    <script src="./skill-classes-preview-data.js?v=20260929-preview7"></script>
+    <script src="./skill-classes-preview.js?v=20260929-preview7"></script>
   </body>
 </html>
