@@ -102,56 +102,64 @@ function toggleSkill(id) {
 function applyPlan(plan) {
   build = { ...defaultBuild(), selected: [...(plan.build?.selected || [])], breaks: cleanBreaks(plan.build?.breaks), on: buildEmbed, planId: plan.id };
   saveBuild(); buildGains.clear(); syncBuildControls();
-  if ($('enginePlanName')) $('enginePlanName').value = plan.name || '';
   planStatus(`已载入「${plan.name}」。`);
 }
-function savePlan(asNew) {
+const plansOfDress = () => loadPlans().filter(p => p.dress === buildDress).sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+const currentPlan = () => (build.planId ? plansOfDress().find(p => p.id === build.planId) : null);
+function savePlan(asNew, typed) {
   if (!buildDress) { planStatus('先选择招式，等角色读取完。'); return; }
   const list = loadPlans(), now = new Date().toISOString();
-  const name = ($('enginePlanName')?.value || '').trim() || `配装方案 ${list.filter(p => p.dress === buildDress).length + 1}`;
-  const data = { selected: [...build.selected], breaks: [...build.breaks] };
+  const name = (typed || '').trim() || `配装方案 ${list.filter(p => p.dress === buildDress).length + 1}`;
+  const data = { selected: pickedIds(), breaks: [...build.breaks] };
   let plan = !asNew && build.planId ? list.find(p => p.id === build.planId && p.dress === buildDress) : null;
   if (plan) Object.assign(plan, { name, build: data, updatedAt: now });
   else { plan = { id: `plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, name, siteId: siteCharacterId(), dress: buildDress, build: data, createdAt: now, updatedAt: now }; list.push(plan); }
   if (!storePlans(list)) { planStatus('保存失败：这个浏览器不允许保存。'); return; }
-  build.planId = plan.id; saveBuild(); if ($('enginePlanName')) $('enginePlanName').value = name;
+  build.planId = plan.id; saveBuild();
   planStatus(`已保存「${name}」（${data.selected.length} 个技能 · ${buildSc().total} SC）。`); renderPlans();
 }
-function planAction(action, id, button) {
+function deletePlan(id) {
   const list = loadPlans(), plan = list.find(p => p.id === id); if (!plan) { renderPlans(); return; }
-  if (action === 'load') { applyPlan(plan); run(); }
-  else if (action === 'rename') {
-    const name = ($('enginePlanName')?.value || '').trim();
-    if (!name) { planStatus('先在“配装名称”里填新名字，再点改名。'); return; }
-    plan.name = name; plan.updatedAt = new Date().toISOString(); storePlans(list); planStatus(`已改名为「${name}」。`); renderPlans();
-  } else if (action === 'delete') {
-    if (button.dataset.confirm !== '1') { button.dataset.confirm = '1'; button.textContent = '确定删除？'; return; }
-    storePlans(list.filter(p => p.id !== id)); if (build.planId === id) { build.planId = null; saveBuild(); }
-    planStatus(`已删除「${plan.name}」。`); renderPlans();
-  }
+  storePlans(list.filter(p => p.id !== id)); if (build.planId === id) { build.planId = null; saveBuild(); }
+  planStatus(`已删除「${plan.name}」。`); renderPlans();
 }
+// 配装 selector: the loadouts saved for this character, newest first; choosing one loads it
 function renderPlans() {
-  const box = $('enginePlanList'); if (!box) return;
-  const plans = loadPlans().filter(p => p.dress === buildDress).sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
-  $('enginePlanCount').textContent = String(plans.length);
-  box.innerHTML = plans.length ? plans.map(p => `<li${p.id === build.planId ? ' class="is-current"' : ''}><b>${esc(p.name)}</b> <small>${(p.build?.selected || []).length} 个技能 · ${esc(String(p.updatedAt || '').slice(0, 10))}${p.id === build.planId ? ' · 当前' : ''}</small><span class="inline-options"><button type="button" class="secondary" data-plan-action="load" data-plan="${esc(p.id)}">载入</button><button type="button" class="secondary" data-plan-action="rename" data-plan="${esc(p.id)}" title="用上面“配装名称”里的名字">改名</button><button type="button" class="secondary" data-plan-action="delete" data-plan="${esc(p.id)}">删除</button></span></li>`).join('') : '<li class="help">还没有保存的配装。</li>';
+  const sel = $('enginePlanSelect'); if (!sel) return;
+  const plans = plansOfDress(), cur = currentPlan();
+  sel.innerHTML = (cur ? '' : `<option value="">${plans.length ? '未保存的配装（选择已保存的）' : '还没有保存的配装'}</option>`) + plans.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+  sel.value = cur ? cur.id : ''; sel.disabled = !plans.length;
+  $('enginePlanDelete').disabled = !cur;
 }
-// ---- 恢复角色推荐配装 / 按每 SC 收益推荐: data from the old loadout (game-data/engine/loadout-data.json, fixed since the
+// the small window for 保存配装 / 另存为新配装 (the name) and 删除 (asks first), next to the button
+let popMode = null;
+function openPlanPop(mode, anchor) {
+  const pop = $('enginePlanPop'), input = $('enginePlanPopName'), ok = pop.querySelector('[data-pop="ok"]'), cur = currentPlan();
+  if (mode === 'delete' && !cur) return;
+  popMode = mode;
+  const next = `配装方案 ${plansOfDress().length + 1}`;
+  $('enginePlanPopTitle').textContent = mode === 'delete' ? `删除「${cur.name}」？` : mode === 'save' && cur ? '保存配装（覆盖当前这套）' : mode === 'save' ? '保存配装' : '另存为新配装';
+  input.hidden = mode === 'delete'; input.value = mode === 'save' && cur ? cur.name : next;
+  ok.textContent = mode === 'delete' ? '删除' : '保存'; ok.classList.toggle('danger', mode === 'delete');
+  pop.hidden = false;
+  const box = pop.offsetParent?.getBoundingClientRect(), a = anchor.getBoundingClientRect();
+  const width = pop.offsetWidth, room = (box?.width || width) - width;
+  const left = Math.max(0, Math.min(room, a.left - (box?.left || 0)));
+  pop.style.left = `${left}px`; pop.style.top = `${a.bottom - (box?.top || 0) + 8}px`;
+  pop.style.setProperty('--arrow', `${Math.max(12, Math.min(width - 24, a.left - (box?.left || 0) - left + a.width / 2 - 6))}px`);
+  (mode === 'delete' ? ok : input).focus(); if (mode !== 'delete') input.select();
+}
+function closePlanPop() { const pop = $('enginePlanPop'); if (pop && !pop.hidden) { pop.hidden = true; popMode = null; } }
+function confirmPlanPop() {
+  const mode = popMode, name = $('enginePlanPopName').value, cur = currentPlan();
+  closePlanPop();
+  if (mode === 'delete') { if (cur) deletePlan(cur.id); }
+  else if (mode) savePlan(mode === 'new', name);
+}
+// ---- 按每 SC 收益推荐: data from the old loadout (game-data/engine/loadout-data.json, fixed since the
 // original skill table was removed on 2026-09-29; which skills 按每 SC 收益推荐 tries is to be decided later) ----
 let loadoutData = null;
 async function ensureLoadoutData() { if (!loadoutData) loadoutData = await fetch(new URL('./game-data/engine/loadout-data.json', import.meta.url)).then(r => r.json()).catch(() => ({ commonPassives: [], recommended: {} })); return loadoutData; }
-async function restoreRecommended() {
-  const data = await ensureLoadoutData();
-  let site = siteCharacterId();
-  if (!site && buildDress) { if (!siteIndex) siteIndex = await fetch(new URL('./game-data/index.json', import.meta.url)).then(r => r.json()).catch(() => ({})); site = Object.entries(siteIndex?.site || {}).find(([, d]) => d === buildDress)?.[0] || null; }
-  const rec = site && data.recommended?.[site];
-  if (!rec?.passives?.length) { planStatus('这个角色没有推荐配装。'); return; }
-  const c = await gameCharacter(buildDress); await ensureTablePassives();
-  const own = new Set([...ownPassiveIds(c).filter(isFreePassive), ...autoPaidIds(c)]);
-  build.selected = rec.passives.filter(id => !own.has(id)); build.on = buildEmbed; build.planId = null; saveBuild(); buildGains.clear(); syncBuildControls(); sendState();
-  const mine = rec.passives.length - build.selected.length;
-  planStatus(`已恢复推荐配装：另外选 ${build.selected.length} 个${mine ? `，其余 ${mine} 个是能力盘自带（已经算在里面）` : ''}；需要的话再保存。`); run();
-}
 const recommendState = { running: false, gen: 0, rows: [] };
 function stopRecommend(text) {
   recommendState.gen++; recommendState.running = false;
@@ -205,7 +213,7 @@ function keepLoadout(report) {
 }
 async function ensureSwitches() { if (!switches) switches = await fetch(new URL('./game-data/engine/switch.json', import.meta.url)).then(r => r.json()); return switches; }
 
-const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-table{min-width:0!important}.engine-build-table td,.engine-build-table th{padding:7px 8px}.engine-build-table small{min-width:0!important}#engineBuild{margin-top:18px;padding-top:4px}#engineBuild .section-heading{margin-bottom:6px}#engineBuild .section-heading h3{margin:0;font-size:1rem}.engine-build-on{flex-direction:row!important;align-items:center;gap:6px;font-weight:500!important}#engineBuildWrap{margin-top:14px}#engineBuildStatus{margin:6px 2px 0}.engine-build-sc{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid #cfdfef;border-radius:6px;background:#edf4fb}.engine-build-sc span{font-size:.85rem;color:#445c79;font-weight:600}.engine-build-sc strong{font-size:1.45rem;margin-left:8px;font-variant-numeric:tabular-nums;color:#172d49}.engine-build-breaks{display:inline-flex;gap:6px}.engine-build-breaks button{min-height:32px;padding:4px 10px}.engine-build-breaks button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-build-changes{font-size:.8rem;color:#445c79;margin-top:3px;line-height:1.55}.engine-build-sccell{text-align:center!important}.engine-build-sccell b{display:block}.engine-build-sccell small{font-size:.75rem}.engine-build-auto td{background:#f7f9fc}.engine-build-auto td:last-child{white-space:nowrap;text-align:center}.engine-build-tag{display:inline!important;font-size:.72rem!important;background:#e3ebf5;border-radius:3px;padding:1px 5px;color:#35577d}.engine-build-table td button{min-height:28px;padding:2px 10px}.engine-build-picked{table-layout:fixed}.engine-build-picked td{overflow-wrap:anywhere}.engine-plan-list{list-style:none;padding:0;margin:.4rem 0}.engine-plan-list li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 0;border-bottom:1px solid #dbe4ef}.engine-plan-list li.is-current b{color:#1f5ea8}.engine-plan-actions{align-self:end}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
+const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-table{min-width:0!important}.engine-build-table td,.engine-build-table th{padding:7px 8px}.engine-build-table small{min-width:0!important}#engineBuild{margin-top:18px;padding-top:4px}#engineBuild .section-heading{margin-bottom:6px}#engineBuild .section-heading h3{margin:0;font-size:1rem}.engine-build-on{flex-direction:row!important;align-items:center;gap:6px;font-weight:500!important}#engineBuildWrap{margin-top:14px}#engineBuildStatus{margin:6px 2px 0}.engine-build-sc{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid #cfdfef;border-radius:6px;background:#edf4fb}.engine-build-sc span{font-size:.85rem;color:#445c79;font-weight:600}.engine-build-sc strong{font-size:1.45rem;margin-left:8px;font-variant-numeric:tabular-nums;color:#172d49}.engine-build-breaks{display:inline-flex;gap:6px}.engine-build-breaks button{min-height:32px;padding:4px 10px}.engine-build-breaks button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-build-changes{font-size:.8rem;color:#445c79;margin-top:3px;line-height:1.55}.engine-build-sccell{text-align:center!important}.engine-build-sccell b{display:block}.engine-build-sccell small{font-size:.75rem}.engine-build-auto td{background:#f7f9fc}.engine-build-auto td:last-child{white-space:nowrap;text-align:center}.engine-build-tag{display:inline!important;font-size:.72rem!important;background:#e3ebf5;border-radius:3px;padding:1px 5px;color:#35577d}.engine-build-table td button{min-height:28px;padding:2px 10px}.engine-build-picked{table-layout:fixed}.engine-build-picked td{overflow-wrap:anywhere}#engineBuild{position:relative}.engine-plan-bar{display:flex;align-items:center;gap:8px;margin-top:14px}.engine-plan-pick{flex:1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin:0!important;font-weight:600;color:#445c79;font-size:.85rem}.engine-plan-pick select{flex:1;min-width:0;min-height:36px}.engine-plan-bar button{min-height:36px}.engine-plan-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.engine-plan-actions button{min-height:36px}#enginePlanStatus{margin:8px 2px 0;min-height:1em}.engine-pop{position:absolute;z-index:30;width:250px;max-width:calc(100% - 4px);padding:12px;border:1px solid #c9d6e6;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(23,45,73,.18),0 2px 6px rgba(23,45,73,.08)}.engine-pop::before{content:'';position:absolute;top:-7px;left:var(--arrow,20px);width:12px;height:12px;background:#fff;border-left:1px solid #c9d6e6;border-top:1px solid #c9d6e6;transform:rotate(45deg)}.engine-pop[hidden]{display:none}.engine-pop-title{margin:0 0 8px;font-size:.88rem;font-weight:600;color:#172d49}.engine-pop input{width:100%;box-sizing:border-box;min-height:36px;padding:6px 10px;border:1px solid #b9c9dc;border-radius:6px;font-size:.95rem}.engine-pop input:focus{outline:2px solid #9cc0ea;outline-offset:0;border-color:#285b95}.engine-pop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.engine-pop-actions button{min-height:32px;padding:4px 14px}.engine-pop-actions .danger{background:#b3372f;border-color:#b3372f;color:#fff}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
 // ---- the main result card ----
 // 命中段数 is only the user's own count (default 10), kept per move by the page (damage-calculator.mjs); the card
 // edits it through the page.
@@ -478,10 +486,10 @@ function mount() {
       <div class="engine-build-sc"><div><span>SC 合计</span><strong id="engineBuildScTotal">0</strong></div><div class="engine-build-breaks" role="group" aria-label="能力盘突破">${BREAKS.map(([sc, name]) => `<button type="button" data-build-break="${sc}" aria-pressed="true" title="${name}：SC ≤ ${sc} 的一个技能免费">${name}</button>`).join('')}</div></div>
       <p class="help" id="engineBuildSummary" hidden></p>
       <div class="entry-table-wrap"><table class="entry-table engine-build-table engine-build-picked"><colgroup><col style="width:27%"><col style="width:15%"><col><col style="width:44px"></colgroup><thead><tr><th>技能</th><th>SC</th><th>对当前配装的收益</th><th></th></tr></thead><tbody id="engineBuildRows"><tr><td colspan="4" class="help">还没有加技能。</td></tr></tbody></table></div>
-      <div class="inline-options"><button type="button" id="engineBuildRecommended" class="secondary">恢复角色推荐配装</button><button type="button" id="engineBuildFromReport" class="secondary">从配装报告载入已装被动</button><button type="button" id="engineBuildRecalc" class="secondary">重算全部收益</button><button type="button" id="engineBuildClear" class="secondary">清空所选</button></div>
-      <div class="fields two engine-fields"><label>配装名称<input id="enginePlanName" maxlength="40" placeholder="配装方案"></label><div class="inline-options engine-plan-actions"><button type="button" id="enginePlanSave" class="primary">保存配装</button><button type="button" id="enginePlanSaveNew" class="secondary">另存为新配装</button></div></div>
+      <div class="engine-plan-bar"><label class="engine-plan-pick"><span>配装</span><select id="enginePlanSelect" aria-label="选择已保存的配装"></select></label><button type="button" id="enginePlanDelete" class="secondary" disabled>删除</button></div>
+      <div class="engine-plan-actions"><button type="button" id="enginePlanSave" class="primary">保存配装</button><button type="button" id="enginePlanSaveNew" class="secondary">另存为新配装</button><button type="button" id="engineBuildClear" class="secondary">清空所选</button></div>
       <p class="help" id="enginePlanStatus" role="status"></p>
-      <details id="enginePlans"><summary>已保存配装（<span id="enginePlanCount">0</span>）</summary><ul id="enginePlanList" class="engine-plan-list"></ul></details>
+      <div class="engine-pop" id="enginePlanPop" role="dialog" aria-modal="false" aria-labelledby="enginePlanPopTitle" hidden><p class="engine-pop-title" id="enginePlanPopTitle"></p><input id="enginePlanPopName" maxlength="40" placeholder="配装名称" autocomplete="off"><div class="engine-pop-actions"><button type="button" class="secondary" data-pop="cancel">取消</button><button type="button" class="primary" data-pop="ok">保存</button></div></div>
       <details id="engineRecommend"><summary>按每 SC 收益推荐</summary><p class="help">把原技能表里的每个通用被动（以及本角色能力盘上、技能表里有的要花 SC 的被动）逐个加进当前配装试算，按“收益 ÷ SC”排序。逐个计算，较慢；可随时停止。换招式、条件或配装后会停止，需要重新开始。</p>
         <div class="inline-options"><button type="button" id="engineRecommendStart" class="primary">开始计算</button><button type="button" id="engineRecommendStop" class="secondary" disabled>停止</button></div>
         <p class="help" id="engineRecommendStatus" role="status"></p>
@@ -519,10 +527,14 @@ function mount() {
     try { window.top.location.href = url; } catch { location.href = url; }
   });
   buildPanel.hidden = !buildEmbed;
-  $('enginePlanSave').addEventListener('click', () => savePlan(false));
-  $('enginePlanSaveNew').addEventListener('click', () => savePlan(true));
-  $('enginePlanList').addEventListener('click', e => { const b = e.target.closest('[data-plan-action]'); if (b) planAction(b.dataset.planAction, b.dataset.plan, b); });
-  $('engineBuildRecommended').addEventListener('click', () => restoreRecommended());
+  $('enginePlanSave').addEventListener('click', e => openPlanPop('save', e.currentTarget));
+  $('enginePlanSaveNew').addEventListener('click', e => openPlanPop('new', e.currentTarget));
+  $('enginePlanDelete').addEventListener('click', e => openPlanPop('delete', e.currentTarget));
+  $('enginePlanSelect').addEventListener('change', e => { const plan = loadPlans().find(p => p.id === e.target.value && p.dress === buildDress); if (plan) { applyPlan(plan); run(); } else renderPlans(); });
+  const pop = $('enginePlanPop');
+  pop.addEventListener('click', e => { const b = e.target.closest('[data-pop]'); if (b) (b.dataset.pop === 'ok' ? confirmPlanPop() : closePlanPop()); });
+  pop.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmPlanPop(); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closePlanPop(); } });
+  document.addEventListener('mousedown', e => { if (!pop.hidden && !pop.contains(e.target) && !e.target.closest('#enginePlanSave, #enginePlanSaveNew, #enginePlanDelete')) closePlanPop(); });
   $('engineRecommendStart').addEventListener('click', () => startRecommend());
   $('engineRecommendStop').addEventListener('click', () => stopRecommend('已停止。'));
   $('engineRecommendRows').addEventListener('click', e => { const add = e.target.closest('[data-build-add]'); if (!add) return; stopRecommend('已加入，配装改变后需要重新计算推荐。'); const id = Number(add.dataset.buildAdd); if (!build.selected.includes(id)) toggleSkill(id); });
@@ -534,16 +546,6 @@ function mount() {
     saveBuild(); syncBuildControls(); renderBuild(buildCtx);   // SC only: the damage does not change
   });
   $('engineBuildClear').addEventListener('click', () => { build.selected = []; lastAdded = null; saveBuild(); buildGains.clear(); sendState(); run(); });
-  $('engineBuildRecalc').addEventListener('click', () => { buildGains.clear(); if (buildCtx) computeGains(buildCtx); });
-  $('engineBuildFromReport').addEventListener('click', async () => {
-    if (!loadoutReport || !buildDress) { buildMessage('先导入配装报告（上方文件框）。'); return; }
-    const M = await ensureEngine(buildDress);
-    const lo = M.unitLoadout(loadoutReport, battle.master, await ensureSwitches(), buildDress);
-    if (!lo) { buildMessage('配装报告里没有这个角色。'); return; }
-    const c = await gameCharacter(buildDress); await ensureTablePassives();
-    const own = new Set([...ownPassiveIds(c), ...autoPaidIds(c)]);
-    build.selected = lo.passives.filter(id => !own.has(id)); build.on = buildEmbed; saveBuild(); buildGains.clear(); syncBuildControls(); sendState(); run();
-  });
   $('engineBuildRows').addEventListener('click', e => { const rm = e.target.closest('[data-build-remove]'); if (rm) toggleSkill(Number(rm.dataset.buildRemove)); });
 }
 function syncBuildControls() {
