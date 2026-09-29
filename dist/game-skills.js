@@ -132,8 +132,8 @@
     let leftView = 'table', phoneView = 'left', collapsed = false;
     const phone = () => window.matchMedia('(max-width: 900px)').matches;
     const toFrame = msg => frame.contentWindow?.postMessage(msg, location.origin);
-    // desktop: 技能表 = the table with the results column beside it, 战斗设置 = the whole calculator; phone: one of
-    // 技能表 / 战斗设置 / 配装 at a time
+    // desktop: 技能表 = the table, with the 配装 panel on the right and (wide windows) the results frame on the left;
+    // 战斗设置 = the whole calculator where the table was; phone: one of 技能表 / 战斗设置 / 配装 at a time
     function frameView() { return (phone() ? phoneView === 'results' : false) ? 'results' : leftView === 'settings' ? 'settings' : 'results'; }
     function layout() {
       const cls = document.body.classList;
@@ -154,7 +154,7 @@
     $('buildToolbar').hidden = false;
     $('buildFilter').hidden = false;
     $('buildFilter').addEventListener('click', e => { const b = e.target.closest('[data-hide-mode]'); if (!b) return; hideMode = b.dataset.hideMode; store.set('lc-build-hide', hideMode); render(); });
-    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-leftresult`;
+    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-3col2`;
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }

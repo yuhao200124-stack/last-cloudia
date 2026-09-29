@@ -14,7 +14,10 @@ const ACCOUNT_BLESSINGS = (() => {
   return m;
 })();
 
-const $ = id => document.getElementById(id);
+// On the home page's 配装 the 配装 panel is drawn into that page (right-hand column, in a shadow root so the two pages'
+// styles do not mix); its elements are looked up there too.
+let panelRoot = null;
+const $ = id => document.getElementById(id) ?? panelRoot?.getElementById(id) ?? null;
 const fmt = n => n == null || Number.isNaN(n) ? '—' : Math.round(n).toLocaleString('zh-CN');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const RACE_CODES = { 战士: 1001, 狙击手: 1002, 骑士: 1003, 魔法师: 1004, 治疗师: 1005, 兽: 2001, 植物: 2002, 昆虫: 2003, 鸟: 2004, 魔法生物: 2005, 不死生物: 2006, 石: 2007, 机械: 2008, 精灵: 2009, 龙: 2010, 神: 2011, 鱼: 2012 };
@@ -70,9 +73,9 @@ let buildView = 'results', moveInfo = null;
 // the 能力盘自带 rows folded away (per browser)
 const OWN_FOLD_KEY = 'lc-engine-build-own-folded';
 let ownFolded = false; try { ownFolded = localStorage.getItem(OWN_FOLD_KEY) === '1'; } catch {}
-// the page asks for one of two views of this frame: 配装 (the right-hand column: the 配装 panel alone, beside the
-// table) or 战斗设置 (the whole calculator: the result card and its details, then move, 专武, switches, target on the
-// left; the 配装 panel on the right)
+// the page asks for one of two views of this frame: results (the left-hand column beside the skill table: the result
+// card and its details alone) or 战斗设置 (the result card, then move, 专武, switches, target …); the 配装 panel itself
+// is in the page's right-hand column (user 2026-09-29: results in the empty space left of the table).
 function setBuildView(view) {
   buildView = view === 'settings' ? 'settings' : 'results';
   document.body.classList.toggle('build-view-results', buildView === 'results');
@@ -217,6 +220,9 @@ function keepLoadout(report) {
 }
 async function ensureSwitches() { if (!switches) switches = await fetch(new URL('./game-data/engine/switch.json', import.meta.url)).then(r => r.json()); return switches; }
 
+const PANEL_CSS_V = '20260929-3col';
+// the page's shadow root has none of this document's base styles
+const HOST_STYLE = `:host{display:block;font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#172d49;font-synthesis:none}*{box-sizing:border-box}#engineBuild{margin:0}.engine-build-on{display:none!important}`;
 const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-table{min-width:0!important}.engine-build-table td,.engine-build-table th{padding:7px 8px}.engine-build-table small{min-width:0!important}#engineBuild{margin-top:18px;padding-top:4px}#engineBuild .section-heading{margin-bottom:6px}#engineBuild .section-heading h3{margin:0;font-size:1rem}.engine-build-on{flex-direction:row!important;align-items:center;gap:6px;font-weight:500!important}#engineBuildWrap{margin-top:14px}#engineBuildStatus{margin:6px 2px 0}.engine-build-sc{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid #cfdfef;border-radius:6px;background:#edf4fb}.engine-build-sc span{font-size:.85rem;color:#445c79;font-weight:600}.engine-build-sc strong{font-size:1.45rem;margin-left:8px;font-variant-numeric:tabular-nums;color:#172d49}.engine-build-breaks{display:inline-flex;gap:6px}.engine-build-breaks button{min-height:32px;padding:4px 10px}.engine-build-breaks button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-build-changes{font-size:.8rem;color:#445c79;margin-top:3px;line-height:1.55}.engine-build-sccell{text-align:center!important}.engine-build-sccell b{display:block}.engine-build-sccell small{font-size:.75rem}.engine-build-auto td{background:#f7f9fc}.engine-build-divider td{padding:0!important;background:#e8eff8}.engine-build-divider button{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;min-height:34px;padding:6px 10px;border:0;border-radius:0;background:transparent;color:#27496f;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-align:left}.engine-build-divider button:hover{background:#dde8f5}.engine-build-fold{font-weight:500;color:#445c79;white-space:nowrap}.engine-build-auto td:last-child{white-space:nowrap;text-align:center}.engine-build-tag{display:inline!important;font-size:.72rem!important;background:#e3ebf5;border-radius:3px;padding:1px 5px;color:#35577d}.engine-build-table td button{min-height:28px;padding:2px 10px}.engine-build-picked{table-layout:fixed}.engine-build-picked td{overflow-wrap:anywhere}#engineBuild{position:relative}.engine-plan-bar{display:flex;align-items:center;gap:8px;margin-top:6px}#engineRecommend{margin-top:10px}.engine-plan-pick{flex:1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin:0!important;font-weight:600;color:#445c79;font-size:.85rem}.engine-plan-pick select{flex:1;min-width:0;min-height:36px}.engine-plan-bar button{min-height:36px}.engine-plan-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.engine-plan-actions button{min-height:36px}#enginePlanStatus{margin:8px 2px 0;min-height:1em}.engine-pop{position:absolute;z-index:30;width:250px;max-width:calc(100% - 4px);padding:12px;border:1px solid #c9d6e6;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(23,45,73,.18),0 2px 6px rgba(23,45,73,.08)}.engine-pop::before{content:'';position:absolute;top:-7px;left:var(--arrow,20px);width:12px;height:12px;background:#fff;border-left:1px solid #c9d6e6;border-top:1px solid #c9d6e6;transform:rotate(45deg)}.engine-pop[hidden]{display:none}.engine-pop-title{margin:0 0 8px;font-size:.88rem;font-weight:600;color:#172d49}.engine-pop input{width:100%;box-sizing:border-box;min-height:36px;padding:6px 10px;border:1px solid #b9c9dc;border-radius:6px;font-size:.95rem}.engine-pop input:focus{outline:2px solid #9cc0ea;outline-offset:0;border-color:#285b95}.engine-pop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.engine-pop-actions button{min-height:32px;padding:4px 14px}.engine-pop-actions .danger{background:#b3372f;border-color:#b3372f;color:#fff}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
 // ---- the main result card ----
 // 命中段数 is only the user's own count (default 10), kept per move by the page (damage-calculator.mjs); the card
@@ -502,11 +508,18 @@ function mount() {
   // the result display (big number / gauges / total) sits right under this card's heading, the 配装 panel under it
   mountPrimary();
   card.querySelector('.result-main')?.after(buildPanel);
-  // 配装 on the home page (user 2026-09-29: “把计算器和计算加护开始的全部内容都移动到左边”): the right-hand column holds
-  // only the 配装 panel; the result card and everything under it (加护, 配装报告, 施放前, 结算链, Buff …) go to the top
-  // of the left column, with the settings (战斗设置). Their own inputs must not reach the settings form's handlers.
+  // 配装 on the home page (user 2026-09-29): the 配装 panel goes into the page's right-hand column; this frame (left of
+  // the table) shows the result card and everything under it (加护, 配装报告, 施放前, 结算链, Buff …), which sits at the
+  // top of the settings for 战斗设置. The card's own inputs must not reach the settings form's handlers.
   if (buildEmbed && $('calculator')) {
-    buildPanel.classList.add('card'); aside.insertBefore(buildPanel, aside.firstChild);
+    buildPanel.classList.add('card');
+    let host = null; try { host = window.parent.document.getElementById('buildPanelHost'); } catch {}
+    if (host) {
+      panelRoot = host.shadowRoot || host.attachShadow({ mode: 'open' });
+      panelRoot.innerHTML = `<link rel="stylesheet" href="${new URL(`./damage-calculator.css?v=${PANEL_CSS_V}`, import.meta.url)}"><style>${STYLE}${HOST_STYLE}</style>`;
+      panelRoot.append(buildPanel);
+      document.body.classList.add('build-panel-outside');
+    } else aside.insertBefore(buildPanel, aside.firstChild);
     $('calculator').prepend(card);
     for (const type of ['change', 'input']) card.addEventListener(type, e => e.stopPropagation());
   }
@@ -546,7 +559,9 @@ function mount() {
   const pop = $('enginePlanPop');
   pop.addEventListener('click', e => { const b = e.target.closest('[data-pop]'); if (b) (b.dataset.pop === 'ok' ? confirmPlanPop() : closePlanPop()); });
   pop.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmPlanPop(); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closePlanPop(); } });
-  document.addEventListener('mousedown', e => { if (!pop.hidden && !pop.contains(e.target) && !e.target.closest('#enginePlanSave, #enginePlanSaveNew, #enginePlanDelete')) closePlanPop(); });
+  // a click anywhere else (this frame, or the page the panel sits in) closes the small window
+  const outside = e => { const path = e.composedPath ? e.composedPath() : [e.target]; if (!pop.hidden && !path.includes(pop) && !path.some(n => ['enginePlanSave', 'enginePlanSaveNew', 'enginePlanDelete'].includes(n?.id))) closePlanPop(); };
+  document.addEventListener('mousedown', outside); try { if (panelRoot) window.parent.document.addEventListener('mousedown', outside); } catch {}
   $('engineRecommendStart').addEventListener('click', () => startRecommend());
   $('engineRecommendStop').addEventListener('click', () => stopRecommend('已停止。'));
   $('engineRecommendRows').addEventListener('click', e => { const add = e.target.closest('[data-build-add]'); if (!add) return; stopRecommend('已加入，配装改变后需要重新计算推荐。'); const id = Number(add.dataset.buildAdd); if (!build.selected.includes(id)) toggleSkill(id); });
@@ -566,7 +581,7 @@ function mount() {
 function syncBuildControls() {
   if (!$('engineBuildOn')) return;
   $('engineBuildOn').checked = build.on;
-  document.querySelectorAll('[data-build-break]').forEach(b => b.setAttribute('aria-pressed', String(build.breaks.includes(Number(b.dataset.buildBreak)))));
+  (panelRoot || document).querySelectorAll('[data-build-break]').forEach(b => b.setAttribute('aria-pressed', String(build.breaks.includes(Number(b.dataset.buildBreak)))));
   renderBuildStatus();
   renderPlans();
 }
@@ -688,7 +703,7 @@ function renderBuild(ctx) {
   const autoRows = [...(ctx?.autoIds || [])].sort((a, b) => (passiveCost(b) ?? 0) - (passiveCost(a) ?? 0)).map(id => `<tr class="engine-build-auto"><td>${nameTd(id)}<br><small class="engine-build-tag" title="${esc(boardTitle(id))}">能力盘自带</small></td><td class="engine-build-sccell"><b>0</b><small>原 ${passiveCost(id) ?? '—'}</small></td><td>${gainCell(id)}</td><td><small>固定</small></td></tr>`);
   // a bar between the picked skills and the character's own board skills folds the latter away (user 2026-09-29)
   const bar = autoRows.length ? `<tr class="engine-build-divider"><td colspan="4"><button type="button" data-build-own-toggle aria-expanded="${!ownFolded}"><span>能力盘自带 ${autoRows.length} 个 · 0 SC</span><span class="engine-build-fold">${ownFolded ? '展开 ▾' : '收起 ▴'}</span></button></td></tr>` : '';
-  const none = pickedRows.length ? [] : ['<tr><td colspan="4" class="help">还没有加技能：在左边的技能表点“+”。</td></tr>'];
+  const none = pickedRows.length ? [] : ['<tr><td colspan="4" class="help">还没有加技能：在技能表点“+”。</td></tr>'];
   rows.innerHTML = [...pickedRows, ...none, bar, ...(ownFolded ? [] : autoRows)].join('');
 }
 

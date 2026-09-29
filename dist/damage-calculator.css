@@ -102,13 +102,15 @@ body.is-embedded main { padding-top:14px; }
 
 .scenario-summary{border:1px solid #d2deea;border-radius:7px;background:#f8fbff;padding:8px 14px}
 
-/* 配装 on the home page (2026-09-29): this calculator in the page's frame (?embedded=build) shows either the 配装
-   panel alone (the right-hand column, beside the skill table) or 战斗设置 (the whole calculator: on the left the result
-   card with its details above the settings, on the right the 配装 panel). */
+/* 配装 on the home page (2026-09-29): this calculator in the page's frame (?embedded=build), left of the skill table,
+   shows the result card and its details (results view) or the whole calculator with the result card on top (战斗设置);
+   the 配装 panel is drawn into the page's right-hand column (build-panel-outside). */
 body.is-build-embedded #engineBuild{margin-top:0}
 body.is-build-embedded #engineBuildWrap{display:none}
 body.is-build-embedded .engine-build-on{display:none!important}
 body.is-build-embedded main{padding:10px}
-body.is-build-embedded.build-view-results #calculator,body.is-build-embedded.build-view-results #reviewPage,body.is-build-embedded.build-view-results .result-notes{display:none!important}
-body.is-build-embedded.build-view-results .calculator-layout{display:block}
-body.is-build-embedded.build-view-results .results{position:static;max-height:none;overflow:visible}
+body.is-build-embedded.build-panel-outside .calculator-layout{display:block}
+body.is-build-embedded.build-panel-outside #unifiedResults{display:none}
+body.is-build-embedded.build-view-results #calculator>:not(#enginePanel),body.is-build-embedded.build-view-results #reviewPage,body.is-build-embedded.build-view-results .result-notes{display:none!important}
+body.is-build-embedded.build-view-results main{padding:0}
+body.is-build-embedded.build-view-results #enginePanel{margin:0}

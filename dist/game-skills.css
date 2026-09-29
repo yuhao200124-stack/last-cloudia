@@ -33,16 +33,29 @@
 .build-views [data-build-view=settings],.build-views [data-build-view=results]{border-radius:0 5px 5px 0}
 .build-views button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}
 .build-phone-only{display:none}
-.build-side{display:none}
-.build-side iframe{display:block;width:100%;height:100%;border:1px solid #bacbdd;border-radius:8px;background:#fff}
-body.build-mode .build-layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:14px;align-items:start;width:min(1900px,100%);margin:0 auto}
-body.build-mode .build-layout .workspace{width:auto;margin:0}
-body.build-mode .build-side{display:block;position:sticky;top:64px;height:calc(100vh - 80px)}
-body.build-mode.build-settings .build-layout{grid-template-columns:minmax(0,1fr)}
+.build-side,.build-results{display:none}
+.build-results iframe{display:block;width:100%;height:100%;border:1px solid #bacbdd;border-radius:8px;background:#fff}
+.build-panel-host{display:block;color:#63768e;font-size:.9rem}
+/* 配装 (2026-09-29): the table in the middle, the 配装 panel (drawn by the calculator into #buildPanelHost) on the
+   right, the calculator frame (results) on the left when the window is wide enough; 战斗设置 puts the whole
+   calculator where the table was. */
+body.build-mode .build-layout{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:14px;align-items:start;width:min(1900px,100%);margin:0 auto}
+body.build-mode .build-layout .workspace{grid-column:1;grid-row:1;width:auto;margin:0}
+body.build-mode .build-side{display:block;grid-column:2;grid-row:1;position:sticky;top:64px;max-height:calc(100vh - 80px);overflow:auto}
+body.build-mode .build-results{display:block;position:absolute;width:1px;height:1px;overflow:hidden;visibility:hidden}
+body.build-mode.build-settings .build-results{position:sticky;top:64px;grid-column:1;grid-row:1;width:auto;height:calc(100vh - 80px);overflow:visible;visibility:visible}
 body.build-mode.build-settings .build-layout .workspace{display:none}
-body.build-mode.build-collapsed:not(.build-settings) .build-layout{grid-template-columns:minmax(0,1fr)}
-body.build-mode.build-collapsed:not(.build-settings) .build-side{position:absolute;width:1px;height:1px;overflow:hidden;visibility:hidden}
-.action-cell{text-align:center}
+body.build-mode.build-collapsed .build-layout{grid-template-columns:minmax(0,1fr)}
+body.build-mode.build-collapsed .build-side{display:none}
+@media(min-width:1700px){
+  body.build-mode .build-toolbar,body.build-mode .build-layout{width:min(2600px,100%)}
+  body.build-mode .build-layout{grid-template-columns:400px minmax(0,1fr) 420px}
+  body.build-mode .build-results{position:sticky;top:64px;grid-column:1;grid-row:1;width:auto;height:calc(100vh - 80px);overflow:visible;visibility:visible}
+  body.build-mode .build-layout .workspace{grid-column:2}
+  body.build-mode .build-side{grid-column:3}
+  body.build-mode.build-settings .build-results{grid-column:1/span 2}
+  body.build-mode.build-collapsed .build-layout{grid-template-columns:400px minmax(0,1fr)}
+}
 body.build-mode .skill-list-table .action-cell{position:sticky;right:0;z-index:1;background:#fff;box-shadow:-3px 0 5px rgba(25,52,91,.08)}
 body.build-mode .skill-list-table .column-title th:last-child{position:sticky;right:0;z-index:2}
 .add-skill-button:disabled{opacity:.45;cursor:default}
@@ -52,9 +65,10 @@ body.build-mode .skill-list-table .column-title th:last-child{position:sticky;ri
   .build-desktop-only{display:none!important}
   .build-views [data-build-view=settings]{border-radius:0}
   body.build-mode .build-layout{display:block}
-  body.build-mode .build-side{position:absolute;width:1px;height:1px;overflow:hidden;visibility:hidden}
-  body.build-mode.build-settings .build-side,body.build-mode.build-view-results .build-side{position:static;width:auto;height:calc(100dvh - 130px);overflow:visible;visibility:visible}
+  body.build-mode .build-side{display:none;position:static;max-height:none;overflow:visible}
+  body.build-mode.build-view-results .build-side{display:block}
   body.build-mode.build-view-results .build-layout .workspace{display:none}
+  body.build-mode.build-settings .build-results{position:static;height:calc(100dvh - 130px)}
 }
 .build-filter{flex:none}
 .build-filter[hidden]{display:none}
