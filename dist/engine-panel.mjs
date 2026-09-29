@@ -24,7 +24,8 @@ const RACE_CODES = { 战士: 1001, 狙击手: 1002, 骑士: 1003, 魔法师: 100
 const SWITCH_LABELS = { conditionBuffActive: '条件BUFF', reviveBuffActive: '复活后', guardBuffActive: '自身格挡', selfStateActive: '自身状态', partyConditionActive: '队伍', openingBuffActive: '开局BUFF' };
 
 let engineModules = null, battle = null, loadedDress = null, loading = null;
-let latest = null, report = null, assumed = new Set(), probabilityMode = 'assume', running = false, pending = false;
+// 概率效果 default to not triggered (user 2026-09-29: “概率效果按已触发给他改成默认不生效”); the checkbox turns them on.
+let latest = null, report = null, assumed = new Set(), probabilityMode = 'skip', running = false, pending = false;
 // No-report path: the out-of-battle panel is computed from master data (level growth + awakening + board +
 // exclusive gear + trigger-1 passives), always at maximum — character level, awakening, ability board and
 // equipment/crest enhancement are never modeled below max (user's rule), so there is no manual override for them.
@@ -483,7 +484,7 @@ function mount() {
   card.id = 'enginePanel'; card.className = 'card engine-panel'; card.setAttribute('aria-labelledby', 'enginePanelTitle');
   card.innerHTML = `<div class="section-heading"><h3 id="enginePanelTitle">游戏脚本结算（沙盒引擎）</h3><span id="engineState" class="help">未开始</span></div>
     <div class="inline-options" id="engineAccountRow"><label><input id="engineAccountBlessings" type="checkbox" checked>计入本账号加护（${ACCOUNT_BLESSINGS.size} 项读取值）</label><label>配装报告<input id="engineLoadoutFile" type="file" accept=".json,application/json"></label><button type="button" id="engineLoadoutClear" class="secondary">清除</button></div>
-    <div class="inline-options"><label><input id="engineProbability" type="checkbox" checked>概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
+    <div class="inline-options"><label><input id="engineProbability" type="checkbox">概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
     <div id="engineResult"></div>`;
   aside.insertBefore(card, aside.firstChild);
   // 配装 is on the home page's skill table (with this character); inside that page's frame the button is not shown
@@ -508,7 +509,7 @@ function mount() {
   mountPrimary();
   card.querySelector('.result-main')?.after(buildPanel);
   // 配装 on the home page (user 2026-09-29): the 配装 panel goes into the page's right-hand column; this frame (left of
-  // the table) shows the result card and everything under it (加护, 配装报告, Buff …), which sits at the
+  // the table) shows the result card and everything under it (加护, 配装报告, 条件效果 …), which sits at the
   // top of the settings for 战斗设置. The card's own inputs must not reach the settings form's handlers.
   if (buildEmbed && $('calculator')) {
     buildPanel.classList.add('card');
@@ -1010,11 +1011,9 @@ function render(out, ctx) {
   for (const c of out.conditionals) { const g = SWITCH_LABELS[c.switchGroup] || '条件BUFF'; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(c); }
   const conditionals = [...groups.entries()].map(([g, list]) => `<p class="help"><b>${esc(g)}</b>${$(Object.keys(SWITCH_LABELS).find(k => SWITCH_LABELS[k] === g))?.checked ? '（开关已打开，同组默认勾选）' : ''}</p>` + list.map(c => `<label class="engine-conditional"><input type="checkbox" data-assume="${esc(c.key)}" ${assumed.has(c.key) || ctx.autoAssume.has(c.key) ? 'checked' : ''}>${esc(c.passiveName)} · ${esc(c.processName)} <small>${esc(c.triggerLabel)}${c.condition ? ` · ${esc(c.condition)}` : ''}</small></label>`).join('')).join('');
   const prob = out.probabilistic.map(p => `<li>${esc(p.passiveName)} · ${esc(p.processName)} <small>${p.prob}% · ${esc(p.triggerLabel)}</small></li>`).join('');
-  const buffs = out.buffs.filter(b => b.remain !== 0).map(b => `<li>${esc(b.name)}${b.from ? ` <small>来自 ${esc(b.from)}</small>` : ''}${b.remain > 0 ? ` <small>${Math.round(b.remain / 60)} 秒</small>` : ''}</li>`).join('');
   const issues = [...out.errors.map(e => `脚本 ${esc(e.name)} (${e.id})：${esc(e.error)}`), ...out.unsupported.map(n => `未实现的原生函数：${esc(n)}`), ...(out.assumptions || []).map(a => `简化假定：${esc(a)}`)];
-  // 第1击结算链 removed (user 2026-09-29: “这个可以取消了”)
+  // 第1击结算链 and 局内 Buff removed (user 2026-09-29: “这个可以取消了”“局内buff也取消了”)
   $('engineResult').innerHTML = `
-    <details class="engine-buffs"><summary>局内 Buff（${out.buffs.length}）</summary><ul>${buffs || '<li>无</li>'}</ul></details>
     ${conditionals ? `<details class="engine-conditionals" open><summary>可假定触发的条件效果（${out.conditionals.length}）</summary><p class="help">勾选后按已触发计算；对应局内开关打开时同组自动勾选。</p>${conditionals}</details>` : ''}
     ${prob ? `<details class="engine-prob"><summary>概率效果（${out.probabilistic.length}，${probabilityMode === 'assume' ? '按已触发计算' : '按未触发计算'}）</summary><ul>${prob}</ul></details>` : ''}
     ${issues.length ? `<details class="engine-issues" open><summary>未能完整模拟（${issues.length}）</summary><ul>${issues.map(i => `<li>${i}</li>`).join('')}</ul></details>` : ''}`;
