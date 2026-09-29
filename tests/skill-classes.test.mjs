@@ -64,7 +64,9 @@ test('the classification preview lists every skill of each previewed 大类, wit
   const src = fs.readFileSync(new URL('../dist/skill-classes-preview-data.js', import.meta.url), 'utf8');
   const { pages } = JSON.parse(src.slice(src.indexOf('=') + 1).trim().replace(/;$/, ''));
   // 特攻・暴击・Break值・反击 are one page, 特殊伤害造成 (user 2026-09-29)
-  const SPECIAL = ['特攻', '暴击', 'Break值', '反击'], pageOf = c => (SPECIAL.includes(c) ? '特殊伤害造成' : c);
+  // 信仰・金钱·经验・待确认 are one page, 杂项 (user 2026-09-29)
+  const SPECIAL = ['特攻', '暴击', 'Break值', '反击'], MISC = ['信仰', '金钱·经验', '待确认'];
+  const pageOf = c => (SPECIAL.includes(c) ? '特殊伤害造成' : MISC.includes(c) ? '杂项' : c);
   assert.deepEqual([...new Set(draft.skills.flatMap(s => s.cats).map(pageOf))].sort(), pages.map(p => p.cat).sort());
   for (const pg of pages) {
     const rows = pg.subs.flatMap(x => x.skills || x.blocks.flat());

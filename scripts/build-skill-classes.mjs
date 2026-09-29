@@ -191,7 +191,7 @@ for (const s of out) {
 const GENERIC = ['特攻', '暴击', 'Break值', '反击', '受到伤害', '回复', '装备·种族', '异常', '特技充能·必杀', '移动与行动', '魔法·咏唱', '信仰', '金钱·经验', '待确认'];
 const ELEM_TAG = /^(受·)?((火|冰|树|雷|光|暗|无)属性|物理|魔法|普攻|特技|超必杀|反击|魔法阵|召唤|圣物技能|被动)$/;
 // what an effect of these 大类 applies to is an element / attack type; elsewhere an element code is not what it is about
-const WITH_ELEMENT = ['特攻', '暴击', 'Break值', '反击', '受到伤害'];
+const WITH_ELEMENT = ['特攻', '暴击', 'Break值', '反击', '受到伤害', '信仰'];
 // being hit is how these work, not a condition
 const WHEN_HIT = ['受到伤害', '免疫暴击', '受到的破防值', '格挡', '回避', '受到的追击伤害', '不受防御贯通', '免疫异常', '反击', '回复效果'];
 const RACE_NAMES = Object.values(RACE).join('|');
@@ -240,7 +240,7 @@ const calc = new Map(); for (const s of out) calc.set(s.calc, (calc.get(s.calc) 
 console.log('multi-category', out.filter(s => s.cats.length > 1).length, 'no conditions', out.filter(s => !s.tags.length).length, 'undecoded', out.filter(s => s.undecoded.length).length);
 
 // ---- the preview page (dist/skill-classes-preview.html): one tab per 大类 (user 2026-09-29: 基础属性 gathers the stats,
-// 伤害上限 on its own, 特攻・暴击・Break值・反击 are 特殊伤害造成), each with its 小类 as sub-tabs; every sub-tab lists the
+// 伤害上限 on its own, 特攻・暴击・Break值・反击 are 特殊伤害造成, 信仰・金钱·经验・待确认 are 杂项), each with its 小类 as sub-tabs; every sub-tab lists the
 // skills without conditions first, then those with conditions, each by bonus (user's rule). A damage-like 小类 is
 // filtered in the page by two rows combined (element / race × attack type; an entry without that restriction
 // matches every button). “也在” lists every other place the skill is in.
@@ -259,7 +259,8 @@ console.log('multi-category', out.filter(s => s.cats.length > 1).length, 'no con
   const cmp = (a, b) => { const x = order(a.e), y = order(b.e); for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] - y[i]; return a.id - b.id; };
   const OTHER_WAYS = ['追加伤害', '追加伤害增幅', '无视防御', '魔转相', '敌人受到伤害增加'];
   const SPECIAL = ['特攻', '暴击', 'Break值', '反击'];
-  const GENERIC_PAGES = ['受到伤害', '回复', '异常', '特技充能·必杀', '魔法·咏唱', '移动与行动', '装备·种族', '信仰', '金钱·经验', '待确认'];
+  const GENERIC_PAGES = ['受到伤害', '回复', '异常', '特技充能·必杀', '魔法·咏唱', '移动与行动', '装备·种族'];
+  const MISC = ['信仰', '金钱·经验', '待确认'];          // user 2026-09-29: these three are one page, 杂项
   const SUB_ORDER = { 受到伤害: ['减伤', '其他方式'], 回复: ['HP回复', 'MP回复', '复活', '回复效果'], 异常: ['异常耐性', '赋予异常', '恢复速度'], '特技充能·必杀': ['充能速度', '立即充能', '特技次数', '超必杀槽'], '魔法·咏唱': ['咏唱', '消耗MP'], 移动与行动: ['移动速度', '被瞄准'], 装备·种族: ['追加类型', '可装备', '二刀流'] };
   // where each skill is: [page, 小类] (a page with one 小类 is named alone)
   const places = s => {
@@ -268,10 +269,11 @@ console.log('multi-category', out.filter(s => s.cats.length > 1).length, 'no con
     for (const x of [...new Set((s.sub?.造成伤害 || []).map(e => (e.way === '伤害加成' ? '伤害加成' : '其他方式')))].sort().reverse()) out.push(['造成伤害', x]);
     if (s.cats.includes('伤害上限')) out.push(['伤害上限', '伤害上限']);
     for (const c of SPECIAL) if (s.cats.includes(c)) out.push(['特殊伤害造成', c]);
+    for (const c of MISC) if (s.cats.includes(c)) out.push(['杂项', c]);
     for (const c of GENERIC_PAGES) if (s.cats.includes(c)) for (const x of (SUB_ORDER[c] || [c]).filter(x => (s.sub?.[c] || []).some(e => e.sub === x))) out.push([c, x]);
     return out;
   };
-  const multi = new Set(['基础属性', '造成伤害', '特殊伤害造成', ...Object.keys(SUB_ORDER)]);
+  const multi = new Set(['基础属性', '造成伤害', '特殊伤害造成', '杂项', ...Object.keys(SUB_ORDER)]);
   const also = (s, page, sub) => {
     const byPage = new Map();
     for (const [pg, x] of places(s)) if (!(pg === page && x === sub)) { if (!byPage.has(pg)) byPage.set(pg, []); byPage.get(pg).push(x); }
@@ -313,6 +315,8 @@ console.log('multi-category', out.filter(s => s.cats.length > 1).length, 'no con
       ? { name: x, filter: ['el', 'type'], labels: ['受到的属性', '受到的攻击'], skills: filterOf(inCat(c), s => (s.sub?.[c] || []).filter(e => e.sub === x), c, x) }
       : { name: x, blocks: blocksOf(inCat(c), s => (s.sub?.[c] || []).filter(e => e.sub === x), c, x) })) });
   }
+  pages.push({ cat: '杂项', total: out.filter(s => MISC.some(c => s.cats.includes(c))).length, members: MISC,
+    subs: MISC.map(c => ({ name: c, blocks: blocksOf(inCat(c), s => s.sub?.[c] || [], '杂项', c) })) });
   // nothing left out: every skill of every 大类 is in at least one 小类 of its page
   const covered = new Set(pages.flatMap(pg => pg.members || [pg.cat]));
   const allCats = new Set(out.flatMap(s => s.cats));
