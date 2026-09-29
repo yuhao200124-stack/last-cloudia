@@ -43,7 +43,7 @@ async function render() {
   const name = r => `<span class="saved-build-skill-name">${esc(r.nameS)}${r.name && r.name !== r.nameS ? ` <small>${esc(r.name)}</small>` : ''}</span>`;
   const picked = [...sc.items].sort((a, b) => b.sc - a.sc).map(i => `<div class="saved-build-skill saved-build-row">${name(info(i.id))}<span class="saved-build-skill-sc">${i.freeBy ? `0 SC <small>${breakName(i.freeBy)}（原 ${i.sc}）</small>` : i.sc ? `${i.sc} SC` : '—'}</span></div>`);
   const own = auto.map(id => `<div class="saved-build-skill saved-build-row">${name(info(id))}<span class="saved-build-skill-sc">0 SC <small>角色专属（原 ${info(id).cost}）</small></span></div>`);
-  $('savedBuildSkills').innerHTML = `<p class="saved-build-note">${esc(String(plan.updatedAt || '').slice(0, 10))} 保存 · ${sc.items.length} 个技能${plan.build?.exclusive === false ? ' · 无专武' : ''}</p>` +
+  $('savedBuildSkills').innerHTML = `<p class="saved-build-note">${esc(String(plan.updatedAt || '').slice(0, 10))} 保存 · ${sc.items.length} 个技能</p>` +
     (sc.items.length ? picked.join('') : '<p class="saved-build-empty">这套配装没有选技能。</p>') + own.join('');
   $('savedBuildTotal').textContent = `${sc.total} SC`;
 }

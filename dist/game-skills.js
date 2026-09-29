@@ -116,7 +116,7 @@
       $('buildStatus').textContent = `已选 ${bst.selected.length} 个 · SC ${bst.sc?.total ?? 0}${bst.perCall != null ? ` · 当前配装每次 ${fmtN(bst.perCall)}` : ''}${last}${bst.computing ? ' · 计算中…' : ''}`;
     }
     $('buildToolbar').hidden = false;
-    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-homebuild`;
+    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-noopts`;
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }
