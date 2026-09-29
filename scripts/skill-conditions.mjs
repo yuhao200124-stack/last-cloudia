@@ -44,7 +44,10 @@ for (const m of condSrc.matchAll(/^function\s+([A-Za-z0-9_]+)\s*\(([\s\S]*?)^end
       else direct.add(Number(x[1]));
     }
   }
-  gating.set(m[1], { bits: g, direct: [...direct].filter(n => !g.some(b => b.param === n)) });
+  // an element read from the process that may be ELEMENT_NONE meaning “any element” (IsWeakElement: `params[2]==0 or
+  // Process:Param(params[2])==ELEMENT_NONE or Bullet:Element(…)` after `Bullet:Element() == ELEMENT_NONE → false`)
+  const noneAny = new Set([...m[2].matchAll(/Process:Param\(params\[(\d+)\]\)\s*==\s*ELEMENT_NONE\s+or/g)].map(x => Number(x[1])));
+  gating.set(m[1], { bits: g, direct: [...direct].filter(n => !g.some(b => b.param === n)), noneAny });
 }
 
 export const ELEM = { 0: '无', 1: '火', 2: '冰', 3: '树', 4: '雷', 5: '光', 6: '暗' };
@@ -86,7 +89,7 @@ function dimOf(name) {
   if (!name) return null;
   if (/^効果(最小|最大)HP割合$/.test(name)) return 'hpScale';
   if (/^(STR|INT|DEF|MND|MDEF|HP|MP|全ステ)(加算|倍率|最大)|回復|消費/.test(name)) return null;   // values, not conditions
-  if (/^効果発生/.test(name)) return /超必殺/.test(name) ? 'ultimate' : /ヒット/.test(name) ? 'hits' : /HP/.test(name) ? 'hp' : /距離/.test(name) ? 'distance' : /人数/.test(name) ? 'party' : 'other';
+  if (/^効果発生/.test(name)) return /時刻/.test(name) ? 'time' : /超必殺/.test(name) ? 'ultimate' : /ヒット/.test(name) ? 'hits' : /HP/.test(name) ? 'hp' : /距離/.test(name) ? 'distance' : /人数/.test(name) ? 'party' : 'other';
   if (/パラメータタイプ|演出|継続時間|倍率|加算|補正|最大値|最小値|確率|回数|間隔|フレーム|オプション|効率|変換先|WAVE|秒|距離|ヒット数|割合$|値$/.test(name) && !/HP|閾値|条件/.test(name)) return null;
   if (/敵・味方|敵味方|バレットオーナー|発動者/.test(name)) return 'side';
   if (/自分キャラ|自分キャラクター|特定キャラ条件/.test(name)) return 'ownRace';
@@ -115,7 +118,7 @@ function dimOf(name) {
 // the trigger's own name says when it works
 const TRIGGER_TAGS = [[/Wave終了|バトル終了/, '战斗结束时'], [/被ダメージ時|被ダメージ計算|バレットを受けた|被弾/, '受到攻击时'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル/, '暴击时'], [/気絶・ブレイク|ブレイク状態/, 'Break／眩晕'], [/空中/, '空中'], [/トドメ|撃破/, '击杀时'], [/致死ダメージ/, '受到致命伤害时'], [/生存人数|生存数/, '队伍／人数条件'], [/ステ比較/, '属性比较条件'], [/移動中/, '移动中'], [/フレーム間隔/, '定时发动'], [/キラー発生/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/ヒット数|ヒット中/, '连击数条件'], [/距離/, '距离条件'], [/HP/, 'HP条件'], [/MP値/, 'MP条件']];
 // conditions written into the process itself show in its name (the part before what it changes)
-const KIND_TAGS = [[/対状態異常|状態異常中の相手|異常状態の相手/, '对异常状态的敌人'], [/特定状態異常中|状態異常中(?!の相手)|状態異常時/, '自身异常状态时'], [/対気絶・ブレイク中|気絶・ブレイク中/, 'Break／眩晕'], [/距離状況|距離条件/, '距离条件'], [/HP状況|HP条件/, 'HP条件'], [/超必殺ゲージ(状況|条件)/, '超必杀槽条件'], [/MP状況|MP値条件/, 'MP条件'], [/ヒット数(状況|条件)/, '连击数条件'], [/生存人数|生存数|人数状況/, '队伍／人数条件'], [/ステ比較/, '属性比较条件'], [/一刀時|一刀で/, '只装一件武器'], [/二刀時/, '装两件武器'], [/武器未装備時/, '未装备武器'], [/空中/, '空中'], [/復活時/, '复活时'], [/死亡時/, '死亡时'], [/キル時|撃破時|トドメ/, '击杀时'], [/移動中/, '移动中'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル時/, '暴击时'], [/キラー発生時|キラー時/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/対BOSS|ボス/, '对BOSS']];
+const KIND_TAGS = [[/対状態異常|状態異常中の相手|異常状態の相手/, '对异常状态的敌人'], [/特定状態異常中|状態異常中(?!の相手)|状態異常時/, '自身异常状态时'], [/対気絶・ブレイク中|気絶・ブレイク中/, 'Break／眩晕'], [/距離状況|距離条件/, '距离条件'], [/HP状況|HP条件/, 'HP条件'], [/超必殺ゲージ(状況|条件)/, '超必杀槽条件'], [/MP状況|MP値条件/, 'MP条件'], [/ヒット数(状況|条件)/, '连击数条件'], [/生存人数|生存数|人数状況/, '队伍／人数条件'], [/ステ比較/, '属性比较条件'], [/一刀時|一刀で/, '只装一件武器'], [/二刀時/, '装两件武器'], [/武器未装備時/, '未装备武器'], [/空中/, '空中'], [/復活時/, '复活时'], [/死亡時/, '死亡时'], [/キル時|撃破時|トドメ/, '击杀时'], [/移動中/, '移动中'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル時/, '暴击时'], [/キラー発生時|キラー時/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/対BOSS|ボス/, '对BOSS'], [/同一キャラタイプ/, '对与自身同类型的敌人'], [/経過時間状況/, '随时间变强']];
 const nibbles = n => { const out = []; for (let i = 0; i < 6 && n > 0; i++) { out.push(n & 15); n >>= 4; } return out; };
 
 export function decodeProcess(pid, paramStr) {
@@ -193,15 +196,18 @@ export function decodeProcess(pid, paramStr) {
     if (/FrameInterval/.test(fn)) out.other.push('定时发动');
     if (/SingleWeapon/.test(fn)) out.gearState.push('只装一件武器');
     if (!cdoc?.params?.length && !/IsCritical|IsBossWave|Hp|Mp|FrameInterval/.test(fn)) out.undecoded.push(`条件 ${fn} 没有参数说明`);
+    let noneAny = false;
     (cdoc?.params || []).forEach((name, i) => {
       const dim = dimOf(name); if (!dim) return;
       const idx = i + 1;
       const g = gate.bits.find(b => b.param === idx);
       const viaIndex = (g && (cparams[g.flag - 1] & g.bit) === g.bit) || /INDEX/.test(name) || gate.direct.includes(idx);
-      if (viaIndex) { for (const n of nibbles(cparams[i])) if (n) add(dim, params[n - 1], name); }
+      if (viaIndex) { for (const n of nibbles(cparams[i])) if (n) { if (dim === 'element' && params[n - 1] === 0 && gate.noneAny?.has(idx)) noneAny = true; else add(dim, params[n - 1], name); } }
       else if (dim === 'element' && cparams[i] === 0 && g) add(dim, 0, name);
       else add(dim, cparams[i], name);
     });
+    // the process's own element parameter (read in step 1 too) is ELEMENT_NONE = any element with an element here
+    if (noneAny) { out.elements = out.elements.filter(e => e !== 0); out.anyElement = true; }
   }
   return out;
 }

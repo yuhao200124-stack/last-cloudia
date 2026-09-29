@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="stylesheet" href="./styles.css?v=20260929-home" />
     <link rel="stylesheet" href="./game-skills.css?v=20260929-build" />
-    <link rel="stylesheet" href="./skill-classes-preview.css?v=20260929-preview2" />
+    <link rel="stylesheet" href="./skill-classes-preview.css?v=20260929-preview3" />
   </head>
   <body>
     <header class="site-header">
@@ -37,12 +37,13 @@
         </div>
         <nav class="sheet-tabs" id="catTabs" aria-label="大类"></nav>
         <nav class="sub-tabs" id="subTabs" aria-label="小类"></nav>
-        <p class="preview-hint">每个小类先放<b>没有条件</b>的，再放<b>有条件</b>的，各自按加成从大到小。一个技能属于几个分类，就会出现在几个页签里；效果下面的“也在”列出它的其他分类。</p>
+        <div class="filter-rows" id="filterRows" hidden></div>
+        <p class="preview-hint">每个小类先放<b>没有条件</b>的，再放<b>有条件</b>的，各自按加成从大到小。一个技能属于几个分类，就会出现在几个页签里；效果下面的“也在”列出它的其他分类。条件栏里<span class="chip apply">蓝色</span>是加成适用的属性／攻击，<span class="chip">黄色</span>才是条件。</p>
         <div id="previewArea" class="table-area"></div>
       </section>
     </main>
     <script src="./game-skill-data.js?v=20260929-home"></script>
-    <script src="./skill-classes-preview-data.js?v=20260929-preview2"></script>
-    <script src="./skill-classes-preview.js?v=20260929-preview2"></script>
+    <script src="./skill-classes-preview-data.js?v=20260929-preview3"></script>
+    <script src="./skill-classes-preview.js?v=20260929-preview3"></script>
   </body>
 </html>
