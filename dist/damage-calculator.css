@@ -102,8 +102,10 @@ body.is-embedded main { padding-top:14px; }
 
 .scenario-summary{border:1px solid #d2deea;border-radius:7px;background:#f8fbff;padding:8px 14px}
 
-/* 配装 on the home page (2026-09-29): this calculator in the page's frame (?embedded=build) shows either 结果与配装
-   (the results column: result card and 配装 panel, beside the skill table) or 战斗设置 (the whole calculator). */
+/* 配装 on the home page (2026-09-29): this calculator in the page's frame (?embedded=build) shows either the 配装
+   panel alone (the right-hand column, beside the skill table) or 战斗设置 (the whole calculator: on the left the result
+   card with its details above the settings, on the right the 配装 panel). */
+body.is-build-embedded #engineBuild{margin-top:0}
 body.is-build-embedded #engineBuildWrap{display:none}
 body.is-build-embedded .engine-build-on{display:none!important}
 body.is-build-embedded main{padding:10px}

@@ -133,7 +133,7 @@
     const phone = () => window.matchMedia('(max-width: 900px)').matches;
     const toFrame = msg => frame.contentWindow?.postMessage(msg, location.origin);
     // desktop: 技能表 = the table with the results column beside it, 战斗设置 = the whole calculator; phone: one of
-    // 技能表 / 战斗设置 / 结果与配装 at a time
+    // 技能表 / 战斗设置 / 配装 at a time
     function frameView() { return (phone() ? phoneView === 'results' : false) ? 'results' : leftView === 'settings' ? 'settings' : 'results'; }
     function layout() {
       const cls = document.body.classList;
@@ -142,7 +142,7 @@
       cls.toggle('build-view-results', phone() && phoneView === 'results');
       cls.toggle('build-collapsed', collapsed);
       document.querySelectorAll('[data-build-view]').forEach(b => { const v = b.dataset.buildView; b.setAttribute('aria-pressed', String(v === 'results' ? phoneView === 'results' : phoneView === 'left' && leftView === v)); });
-      $('buildResultsToggle').textContent = collapsed ? '显示结果' : '收起结果'; $('buildResultsToggle').setAttribute('aria-expanded', String(!collapsed));
+      $('buildResultsToggle').textContent = collapsed ? '显示配装' : '收起配装'; $('buildResultsToggle').setAttribute('aria-expanded', String(!collapsed));
       toFrame({ type: 'lc-build-view', view: frameView() });
     }
     function status() {
@@ -154,7 +154,7 @@
     $('buildToolbar').hidden = false;
     $('buildFilter').hidden = false;
     $('buildFilter').addEventListener('click', e => { const b = e.target.closest('[data-hide-mode]'); if (!b) return; hideMode = b.dataset.hideMode; store.set('lc-build-hide', hideMode); render(); });
-    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-ownfold`;
+    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-leftresult`;
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }

@@ -22,9 +22,9 @@
       <section class="build-toolbar" id="buildToolbar" aria-label="配装" hidden>
         <strong>配装 · <span id="buildCharName">读取中…</span></strong><span id="buildStatus"></span>
         <div class="build-views" role="group" aria-label="显示">
-          <button type="button" data-build-view="table" aria-pressed="true">技能表</button><button type="button" data-build-view="settings" aria-pressed="false">战斗设置</button><button type="button" data-build-view="results" class="build-phone-only" aria-pressed="false">结果与配装</button>
+          <button type="button" data-build-view="table" aria-pressed="true">技能表</button><button type="button" data-build-view="settings" aria-pressed="false">战斗设置</button><button type="button" data-build-view="results" class="build-phone-only" aria-pressed="false">配装</button>
         </div>
-        <button type="button" id="buildResultsToggle" class="build-desktop-only" aria-expanded="true" aria-controls="buildSide">收起结果</button><button type="button" id="buildExit">退出配装</button>
+        <button type="button" id="buildResultsToggle" class="build-desktop-only" aria-expanded="true" aria-controls="buildSide">收起配装</button><button type="button" id="buildExit">退出配装</button>
       </section>
       <div class="build-layout" id="buildLayout">
       <section class="workspace" aria-label="游戏数据技能表">
@@ -60,10 +60,10 @@
           <span>可以换一个关键词，或切换到其他工作表。</span>
         </div>
       </section>
-      <aside class="build-side" id="buildSide" aria-label="计算结果与配装"><iframe id="buildFrame" title="伤害计算器（结果与配装）"></iframe></aside>
+      <aside class="build-side" id="buildSide" aria-label="配装"><iframe id="buildFrame" title="伤害计算器（配装）"></iframe></aside>
       </div>
     </main>
     <script src="./game-skill-data.js?v=20260929-hidefilter"></script>
-    <script src="./game-skills.js?v=20260929-ownfold"></script>
+    <script src="./game-skills.js?v=20260929-leftresult"></script>
   </body>
 </html>
