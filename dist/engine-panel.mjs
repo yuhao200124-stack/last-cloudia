@@ -806,6 +806,18 @@ function exclusiveEquips(items, master) {
   others.slice(0, 2).forEach((x, i) => equips.push({ pos: 3 + i, id: x.e.id }));
   return equips;
 }
+// The move being evaluated is one the attacker has equipped. A character's own skills and 必杀 come with the
+// character, but a magic (魔法) is carried only when it is equipped: without it the game's conditions that read
+// the cast skill from the unit's own skills fail (洛琪希's 魔法連鎖 / 魔術共鳴 did not count in 配装 and
+// 游戏数据 modes, about ×1.35 less than the real battle; found 2026-09-29 against the user's battle reports).
+function equipMove(spec, moveId, master, parseInts) {
+  const id = Number(moveId); if (!id || !master.skill.has(id)) return;
+  const type = master.skill.get(id).SKILL_TYPE;
+  if (spec.skills?.length) { if (!spec.skills.some(s => Number(s.id) === id)) spec.skills = [...spec.skills, { id, type }]; return; }
+  const dress = master.unitDress.get(Number(spec.unitDressId));
+  const own = dress ? [...parseInts(dress.PRESET_SKILL), ...parseInts(dress.SKILL_SLOT_INFO)] : [];
+  if (!own.includes(id) && !(spec.magic || []).map(Number).includes(id)) spec.magic = [...(spec.magic || []), id];
+}
 // Every exclusive item on the attacker at its top tier and top stage (also for a report's gear).
 function maximizeExclusive(spec, c) {
   const tiers = tierOf(c); if (!tiers.size || !spec.equips) return;
@@ -944,6 +956,7 @@ async function run(force = false) {
     const stageMissing = await M.loadPassives(battle.master, Object.values(attackerSpec.equipPassiveIds || {}).flat());
     if (stageMissing.length) gearNotes.push(`专武最高强化阶段的被动 ${stageMissing.join('、')} 在游戏数据里没找到，按基础阶段计算`);
     if (stageMissing.length) for (const [id, list] of Object.entries(attackerSpec.equipPassiveIds)) if (list.some(p => stageMissing.includes(p))) delete attackerSpec.equipPassiveIds[id];
+    equipMove(attackerSpec, move.id, battle.master, M.parseInts);
     const attacker = M.addAttacker(battle, attackerSpec);
     renderPreCasts(attacker, battle.master, move.id);
     let targetSpec = null;
