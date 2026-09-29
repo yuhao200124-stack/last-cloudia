@@ -9,7 +9,7 @@ The workbook is the user's format (the table they have always kept), plus the ga
 - every other sheet: two lanes, columns A–H and I–P (技能类型, 技能名称, SC, 技能效果/说明, 可学习圣物, 评价, 游戏编号,
   游戏里的名字); row 1 is the title, row 2 the header (a sheet without the header row starts at row 2).
   技能类型 carries down to the rows below until the next one (the group); a blank row between skills is a separator.
-- sheets named 说明 or 复制用的… are skipped.
+- sheets named 说明, 缺少的技能 (game skills the table does not have yet, for the user to place) or 复制用的… are skipped.
 Every row is identified by its 游戏编号. A row without one is looked up by its 技能名称 in docs/user-skill-names.json
 (and reported); a row that cannot be found is a problem, with the likeliest skills listed. Taken from the workbook:
 the sheets and their order, the lanes, row order, groups, separators, and 评价 (from 全部技能 only — the other sheets
@@ -30,7 +30,7 @@ LAYOUT = ROOT / 'docs/game-skill-layout.json'
 GAME = ROOT / 'docs/game-relic-passives.json'
 NAMES = ROOT / 'docs/user-skill-names.json'
 RELICS = ROOT / 'docs/user-skill-relics.json'
-SKIP = ('说明',)
+SKIP = ('说明', '缺少的技能')
 
 
 def text(v):
