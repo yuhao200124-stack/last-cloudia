@@ -7,7 +7,8 @@
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
   const ELS = [[null, '不限'], [1, '火'], [2, '冰'], [3, '树'], [4, '雷'], [5, '光'], [6, '暗'], [0, '无属性']];
-  const TYPES = [[null, '全部'], [9, '普攻'], [1, '特技'], [2, '魔法'], [5, '超必杀'], [15, '反击']];
+  // 物理 = 普通攻击＋特技 (SKILL_PHYSIC 10 in the game's code): a bonus written for physical attacks
+  const TYPES = [[null, '全部'], [10, '物理'], [1, '特技'], [2, '魔法'], [5, '超必杀'], [15, '反击']];
   const pageOf = name => pages.find(p => p.cat === name) || pages[0];
   const subOf = (pg, name) => pg.subs.find(x => x.name === name) || pg.subs[0];
   const num = v => (v === '' || v == null ? null : Number(v));
@@ -23,7 +24,7 @@
   const matches = id => !query || [skills[id].name, skills[id].nameS].join('\n').toLowerCase().includes(query.toLowerCase());
   const hl = t => { const raw = String(t), q = query.trim(); if (!q) return esc(raw); const i = raw.toLowerCase().indexOf(q.toLowerCase()); return i < 0 ? esc(raw) : `${esc(raw.slice(0, i))}<mark>${esc(raw.slice(i, i + q.length))}</mark>${esc(raw.slice(i + q.length))}`; };
   // 伤害加成: the entries of a skill that apply to the chosen element and attack type
-  const fits = (e, x, t) => (x == null || !e.els || e.els.includes(x)) && (t == null || !e.types || e.types.includes(t));
+  const fits = (e, x, t) => (x == null || !e.els || e.els.includes(x)) && (t == null || !e.types || (t === 10 ? e.types.includes(9) && e.types.includes(1) : e.types.includes(t)));
   function filterBlocks(s, x, t) {
     return [false, true].map(c => s.skills.map(k => ({ ...k, entries: k.entries.filter(e => e.cond === c && fits(e, x, t)).sort((a, b) => b.rate - a.rate) }))
       .filter(k => k.entries.length).sort((a, b) => b.entries[0].rate - a.entries[0].rate || a.id - b.id));
