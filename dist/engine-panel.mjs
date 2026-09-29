@@ -476,7 +476,7 @@ function mount() {
   const buildPanel = document.createElement('section'); buildPanel.id = 'engineBuild'; buildPanel.className = 'engine-build'; buildPanel.hidden = true; buildPanel.setAttribute('aria-labelledby', 'engineBuildTitle');
   buildPanel.innerHTML = `<div class="section-heading"><h3 id="engineBuildTitle">配装</h3><label class="engine-build-on"><input id="engineBuildOn" type="checkbox">主结果按配装计算</label></div>
       <div class="engine-build-sc"><div><span>SC 合计</span><strong id="engineBuildScTotal">0</strong></div><div class="engine-build-breaks" role="group" aria-label="能力盘突破">${BREAKS.map(([sc, name]) => `<button type="button" data-build-break="${sc}" aria-pressed="true" title="${name}：SC ≤ ${sc} 的一个技能免费">${name}</button>`).join('')}</div></div>
-      <p class="help" id="engineBuildSummary">未启用。</p>
+      <p class="help" id="engineBuildSummary" hidden></p>
       <div class="entry-table-wrap"><table class="entry-table engine-build-table engine-build-picked"><colgroup><col style="width:27%"><col style="width:15%"><col><col style="width:44px"></colgroup><thead><tr><th>技能</th><th>SC</th><th>对当前配装的收益</th><th></th></tr></thead><tbody id="engineBuildRows"><tr><td colspan="4" class="help">还没有加技能。</td></tr></tbody></table></div>
       <div class="inline-options"><button type="button" id="engineBuildRecommended" class="secondary">恢复角色推荐配装</button><button type="button" id="engineBuildFromReport" class="secondary">从配装报告载入已装被动</button><button type="button" id="engineBuildRecalc" class="secondary">重算全部收益</button><button type="button" id="engineBuildClear" class="secondary">清空所选</button></div>
       <div class="fields two engine-fields"><label>配装名称<input id="enginePlanName" maxlength="40" placeholder="配装方案"></label><div class="inline-options engine-plan-actions"><button type="button" id="enginePlanSave" class="primary">保存配装</button><button type="button" id="enginePlanSaveNew" class="secondary">另存为新配装</button></div></div>
@@ -536,10 +536,10 @@ function mount() {
   $('engineBuildClear').addEventListener('click', () => { build.selected = []; lastAdded = null; saveBuild(); buildGains.clear(); sendState(); run(); });
   $('engineBuildRecalc').addEventListener('click', () => { buildGains.clear(); if (buildCtx) computeGains(buildCtx); });
   $('engineBuildFromReport').addEventListener('click', async () => {
-    if (!loadoutReport || !buildDress) { $('engineBuildSummary').textContent = '先导入配装报告（上方文件框）。'; return; }
+    if (!loadoutReport || !buildDress) { buildMessage('先导入配装报告（上方文件框）。'); return; }
     const M = await ensureEngine(buildDress);
     const lo = M.unitLoadout(loadoutReport, battle.master, await ensureSwitches(), buildDress);
-    if (!lo) { $('engineBuildSummary').textContent = '配装报告里没有这个角色。'; return; }
+    if (!lo) { buildMessage('配装报告里没有这个角色。'); return; }
     const c = await gameCharacter(buildDress); await ensureTablePassives();
     const own = new Set([...ownPassiveIds(c), ...autoPaidIds(c)]);
     build.selected = lo.passives.filter(id => !own.has(id)); build.on = buildEmbed; saveBuild(); buildGains.clear(); syncBuildControls(); sendState(); run();
@@ -645,7 +645,7 @@ async function computeGains(ctx) {
       renderBuild(ctx); await yieldUi(); if (gen !== buildGen || running) return;
     }
     if (!buildBaseline) { buildBaseline = evalBuild(ctx, ctx.buildOwn); renderBuild(ctx); }
-  } catch (err) { console.error(err); $('engineBuildSummary').textContent = `收益计算失败：${err.message}`; }
+  } catch (err) { console.error(err); buildMessage(`收益计算失败：${err.message}`); }
 }
 const pct = g => g == null ? '—' : `${g >= 0 ? '+' : ''}${(g * 100).toFixed(1)}%`;
 const passiveText = id => { const row = passiveIndex?.find(r => r.id === id); return row?.nameS || battle?.master.passive.get(id)?.NAME || `编号 ${id}`; };
@@ -655,17 +655,15 @@ function gainCell(id) {
   const changes = g.changes?.length ? g.changes.map(esc).join(' · ') : '本招式没有变化（本招不吃这个技能的效果，或条件没有触发）';
   return `<b>${pct(g.gain)}</b> <small>去掉它每次 ${fmt(g.perCall)}</small><div class="engine-build-changes">${changes}</div>`;
 }
+// the 配装 panel shows no summary paragraph (user 2026-09-29: “把这段都删掉”); the line is only used for a message
+function buildMessage(text) { const el = $('engineBuildSummary'); if (el) { el.textContent = text || ''; el.hidden = !text; } }
 function renderBuild(ctx) {
-  const rows = $('engineBuildRows'), summary = $('engineBuildSummary'); if (!rows) return;
+  const rows = $('engineBuildRows'); if (!rows) return;
   const sc = buildSc();
   if ($('engineBuildScTotal')) $('engineBuildScTotal').textContent = String(sc.total);
   renderBuildStatus(); sendState();
-  if (!build.on) { summary.textContent = '主结果没有按配装计算（上面的勾没打）。打勾或在技能表点“+”就会启用。'; rows.innerHTML = '<tr><td colspan="4" class="help">还没有加技能。</td></tr>'; return; }
-  const hits = currentHits().hits;
-  const cur = buildCurrent ? `当前配装每次 <b>${fmt(buildCurrent.perCall)}</b>（${hits} 段 ≈ ${fmt(buildCurrent.perCall * hits)}）` : '当前配装：计算中…';
-  const base = buildBaseline ? ` · 配装前（只有自带）每次 ${fmt(buildBaseline.perCall)}${buildCurrent && buildBaseline.perCall > 0 ? `，当前比它 ${pct(buildCurrent.perCall / buildBaseline.perCall - 1)}` : ''}` : '';
-  const freed = sc.items.filter(i => i.freeBy);
-  summary.innerHTML = `${cur}${base}<br>已选 ${sc.items.length} 个技能 · SC 合计 ${sc.total}${freed.length ? `（${freed.map(i => `${breakName(i.freeBy)}免 ${esc(passiveText(i.id))}`).join('、')}）` : ''}${ctx?.autoIds?.length ? ` · 能力盘自带 ${ctx.autoIds.length} 个（0 SC）` : ''}${ctx?.buildGear ? ` · ${esc(ctx.buildGear)}` : ''}${ctx?.buildNote ? ` · ${esc(ctx.buildNote)}` : ''}<br><small>收益＝去掉这个技能伤害会少多少（按随机 0.95 单点比较，只比第一条伤害弹道）；上限附近的技能收益会随别的技能变化。</small>`;
+  buildMessage('');
+  if (!build.on) { rows.innerHTML = '<tr><td colspan="4" class="help">还没有加技能。</td></tr>'; return; }
   const picked = [...sc.items].sort((a, b) => b.sc - a.sc);
   const nameTd = id => { const row = passiveIndex?.find(r => r.id === id); return `<span title="${esc(row?.name || '')}">${esc(passiveText(id))}</span>`; };
   const pickedRows = picked.map(i => `<tr><td>${nameTd(i.id)}${battle && !battle.master.passive.has(i.id) ? ' <small>（主数据缺失）</small>' : ''}</td><td class="engine-build-sccell">${i.freeBy ? `<b>0</b><small>${breakName(i.freeBy)}（原 ${i.sc}）</small>` : i.sc || '—'}</td><td>${gainCell(i.id)}</td><td><button type="button" class="secondary" data-build-remove="${i.id}" aria-label="移除">×</button></td></tr>`);
