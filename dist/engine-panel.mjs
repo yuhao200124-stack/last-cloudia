@@ -32,9 +32,13 @@ let loadoutReport = null, switches = null;
 try { const saved = localStorage.getItem(LOADOUT_KEY); if (saved) loadoutReport = JSON.parse(saved); } catch {}
 // Loadout builder (配装): start = the character's free own passives (个性 / 固有 / 超越) + account blessings + its own
 // SC skills that are not on the skill table (always added, 0 SC — the user's rule), with or without the exclusive
-// gear, everything upgradable at its maximum; the user adds skills from the game-data skill table with “+” and sees
-// what each one brings to the current build. 能力盘突破 (一破 / 二破 / 三破) free one skill each (build-sc.mjs).
-// Per character, kept in the browser.
+// gear, everything upgradable at its maximum; the user adds skills with “+” and sees what each one brings to the
+// current build. 能力盘突破 (一破 / 二破 / 三破) free one skill each (build-sc.mjs). Per character, kept in the browser.
+// Since 2026-09-29 (user) the 配装 happens on the home page's skill table, in the whole window (not in the character
+// page's panel): the character is chosen first (character page → calculator → 配装), then index.html?character=…
+// shows the table with “+” on the left and this calculator in a frame on the right (…&embedded=build); the frame
+// gets the “+” clicks and sends back what it computes. Opened on its own, the calculator computes without a loadout
+// and its 配装 button goes to that page.
 const BUILD_KEY = dress => `lc-engine-build:${dress}`;
 const defaultBuild = () => ({ on: false, exclusive: true, own: { personality: true, ownPassives: true, transcend: true, blessings: true }, selected: [], breaks: cleanBreaks() });
 let build = defaultBuild(), buildDress = null, passiveIndex = null, buildCtx = null, buildGen = 0;
@@ -44,9 +48,10 @@ function loadBuildFor(dress) {
   if (buildDress === dress) return;
   buildDress = dress; buildGains.clear(); buildCurrent = buildBaseline = null;
   try { const saved = JSON.parse(localStorage.getItem(BUILD_KEY(dress)) || 'null'); build = saved ? { ...defaultBuild(), ...saved, own: { ...defaultBuild().own, ...(saved.own || {}) }, breaks: cleanBreaks(saved.breaks) } : defaultBuild(); } catch { build = defaultBuild(); }
+  build.on = buildEmbed;    // the loadout counts only on the 配装 page; the calculator alone computes without it
   // opened from a character page's 已保存配装 (…&plan=<id>): that saved loadout, once
   const planId = new URLSearchParams(location.search).get('plan');
-  if (planId && !urlPlanUsed) { urlPlanUsed = true; const plan = loadPlans().find(p => p.id === planId && p.dress === dress); if (plan) { applyPlan(plan); showBuild(true); return; } }
+  if (planId && !urlPlanUsed) { urlPlanUsed = true; const plan = loadPlans().find(p => p.id === planId && p.dress === dress); if (plan) { applyPlan(plan); return; } }
   syncBuildControls();
 }
 // ---- saved loadouts (保存配装): the chosen common skills of the 配装 panel, per character, in this browser;
@@ -57,57 +62,44 @@ function loadPlans() { try { const l = JSON.parse(localStorage.getItem(PLANS_KEY
 function storePlans(list) { try { localStorage.setItem(PLANS_KEY, JSON.stringify(list)); return true; } catch { return false; } }
 const siteCharacterId = () => new URLSearchParams(location.search).get('character') || null;
 const planStatus = text => { if ($('enginePlanStatus')) $('enginePlanStatus').textContent = text; };
-// ---- 配装 workspace: the game-data skill table (index.html?embedded=1, “+” on every row) beside the results and the
-// 配装 panel, like the old loadout workspace; on a narrow screen one of them at a time (技能表 / 战斗设置 / 结果与配装) ----
-let workspaceOpen = false, leftView = 'table', phoneView = 'left', resultsCollapsed = false, tableReady = false;
-function layoutWorkspace() {
-  const cls = document.body.classList;
-  cls.toggle('build-mode', workspaceOpen);
-  cls.toggle('build-settings', workspaceOpen && leftView === 'settings');
-  cls.toggle('build-view-results', workspaceOpen && phoneView === 'results');
-  cls.toggle('build-results-collapsed', workspaceOpen && resultsCollapsed);
-  if ($('buildWorkspace')) $('buildWorkspace').hidden = !workspaceOpen;
-  if ($('engineBuild')) $('engineBuild').hidden = !workspaceOpen;
-  $('engineBuildToggle')?.setAttribute('aria-expanded', String(workspaceOpen));
-  document.querySelectorAll('[data-build-view]').forEach(b => { const v = b.dataset.buildView; b.setAttribute('aria-pressed', String(v === 'results' ? phoneView === 'results' : phoneView === 'left' && leftView === v)); });
-  if ($('buildResultsToggle')) { $('buildResultsToggle').textContent = resultsCollapsed ? '显示结果' : '收起结果'; $('buildResultsToggle').setAttribute('aria-expanded', String(!resultsCollapsed)); }
-}
-function showBuild(open) {
-  workspaceOpen = open;
-  if (open) {
-    const frame = $('buildTableFrame');
-    if (frame && !frame.getAttribute('src')) frame.src = new URL('./index.html?embedded=1&v=20260929-build', import.meta.url).href;
-    if (!build.on) { build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); run(); }
-  }
-  layoutWorkspace();
-  if (open) window.scrollTo({ top: 0 });
-}
+// ---- 配装 on the home page: this calculator in its frame (?embedded=build) ----
+const pageParams = new URLSearchParams(location.search);
+const buildEmbed = pageParams.get('embedded') === 'build' && window.parent !== window;
+let buildView = 'results', moveInfo = null;
+// the page asks for one of two views of this frame: 结果与配装 (the results column: result card and 配装 panel, beside
+// the table) or 战斗设置 (the whole calculator: move, 专武, switches, target, results and 配装 panel)
 function setBuildView(view) {
-  if (view === 'results') phoneView = 'results';
-  else { leftView = view; phoneView = 'left'; }
-  layoutWorkspace();
+  buildView = view === 'settings' ? 'settings' : 'results';
+  document.body.classList.toggle('build-view-results', buildView === 'results');
+  document.body.classList.toggle('build-view-settings', buildView === 'settings');
 }
-// the table tells us when it is ready and when a “+” / “✓” is clicked; we send it what is picked and each one's gain
-function sendTableState() {
-  const frame = $('buildTableFrame'); if (!frame?.contentWindow || !tableReady) return;
+if (buildEmbed) { document.body.classList.add('is-build-embedded'); setBuildView('results'); }
+// what the page shows: the picked skills, the character's own 0-SC ones, each one's gain, SC, the damage now and
+// before the loadout, and the move (its element and skill type set the page's filters)
+function sendState() {
+  if (!buildEmbed) return;
   const gains = {};
-  for (const id of build.selected) { const g = buildGains.get(id); if (g?.removed && g.gain != null) gains[id] = g.gain; }
-  frame.contentWindow.postMessage({ type: 'lc-build-state', selected: [...build.selected], gains }, location.origin);
+  for (const id of [...build.selected, ...buildAuto]) { const g = buildGains.get(id); if (g?.removed && g.gain != null) gains[id] = g.gain; }
+  const sc = buildSc();
+  window.parent.postMessage({ type: 'lc-build-state', dress: buildDress, selected: [...build.selected], auto: [...buildAuto], gains,
+    sc: { total: sc.total, freed: sc.items.filter(i => i.freeBy).map(i => ({ id: i.id, by: breakName(i.freeBy), sc: i.sc })) }, breaks: [...build.breaks], exclusive: build.exclusive,
+    perCall: buildCurrent?.perCall ?? null, baseline: buildBaseline?.perCall ?? null, hits: currentHits().hits, move: moveInfo, computing: running,
+    lastAdded: lastAdded != null && build.selected.includes(lastAdded) ? { id: lastAdded, name: passiveText(lastAdded), gain: buildGains.get(lastAdded)?.removed ? buildGains.get(lastAdded).gain : null } : null }, location.origin);
 }
 window.addEventListener('message', e => {
-  const frame = $('buildTableFrame');
-  if (e.origin !== location.origin || !frame || e.source !== frame.contentWindow) return;
-  if (e.data?.type === 'lc-table-ready') { tableReady = true; sendTableState(); }
-  else if (e.data?.type === 'lc-build-toggle') toggleSkill(Number(e.data.id));
+  if (!buildEmbed || e.origin !== location.origin || e.source !== window.parent) return;
+  if (e.data?.type === 'lc-build-toggle') toggleSkill(Number(e.data.id));
+  else if (e.data?.type === 'lc-build-view') setBuildView(e.data.view);
+  else if (e.data?.type === 'lc-build-hello') sendState();
 });
 function toggleSkill(id) {
   if (!Number.isFinite(id) || buildAuto.includes(id)) return;
   if (build.selected.includes(id)) { build.selected = build.selected.filter(x => x !== id); if (lastAdded === id) lastAdded = null; }
   else { build.selected.push(id); lastAdded = id; }
-  build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); renderBuild(buildCtx); sendTableState(); run();
+  build.on = buildEmbed; saveBuild(); buildGains.clear(); syncBuildControls(); renderBuild(buildCtx); sendState(); run();
 }
 function applyPlan(plan) {
-  build = { ...defaultBuild(), ...(plan.build || {}), own: { ...defaultBuild().own, ...(plan.build?.own || {}) }, selected: [...(plan.build?.selected || [])], breaks: cleanBreaks(plan.build?.breaks), on: true, planId: plan.id };
+  build = { ...defaultBuild(), ...(plan.build || {}), own: { ...defaultBuild().own, ...(plan.build?.own || {}) }, selected: [...(plan.build?.selected || [])], breaks: cleanBreaks(plan.build?.breaks), on: buildEmbed, planId: plan.id };
   saveBuild(); buildGains.clear(); syncBuildControls();
   if ($('enginePlanName')) $('enginePlanName').value = plan.name || '';
   planStatus(`已载入「${plan.name}」。`);
@@ -155,7 +147,7 @@ async function restoreRecommended() {
   if (!rec?.passives?.length) { planStatus('这个角色没有推荐配装。'); return; }
   const c = await gameCharacter(buildDress); await ensureTablePassives();
   const own = new Set([...ownPassiveIds(c, true).filter(isFreePassive), ...autoPaidIds(c)]);
-  build.selected = rec.passives.filter(id => !own.has(id)); build.on = true; build.planId = null; saveBuild(); buildGains.clear(); syncBuildControls(); sendTableState();
+  build.selected = rec.passives.filter(id => !own.has(id)); build.on = buildEmbed; build.planId = null; saveBuild(); buildGains.clear(); syncBuildControls(); sendState();
   planStatus(`已恢复推荐配装（${build.selected.length} 个被动）；需要的话再保存。`); run();
 }
 const recommendState = { running: false, gen: 0, rows: [] };
@@ -475,10 +467,9 @@ function mount() {
     <div class="inline-options"><label><input id="engineProbability" type="checkbox" checked>概率效果按已触发计算</label><button type="button" id="engineRun" class="primary">用游戏脚本结算</button></div>
     <div id="engineResult"></div>`;
   aside.insertBefore(card, aside.firstChild);
-  // 配装 sits where the old calculator's 配装 button was, right under this card; it opens the 配装 workspace: the
-  // game-data skill table (with “+”) in the main column, the results and the 配装 panel in this column
+  // 配装 is on the home page's skill table (with this character); inside that page's frame the button is not shown
   const buildWrap = document.createElement('div'); buildWrap.id = 'engineBuildWrap';
-  buildWrap.innerHTML = `<button id="engineBuildToggle" class="primary unified-start" type="button" aria-expanded="false" aria-controls="buildWorkspace">配装</button><p class="help" id="engineBuildStatus"></p>`;
+  buildWrap.innerHTML = `<button id="engineBuildToggle" class="primary unified-start" type="button">配装</button><p class="help" id="engineBuildStatus">在首页技能表配装：点“+”加技能，右边显示每个技能的收益和 SC。</p>`;
   card.after(buildWrap);
   const buildPanel = document.createElement('section'); buildPanel.id = 'engineBuild'; buildPanel.className = 'engine-build'; buildPanel.hidden = true; buildPanel.setAttribute('aria-labelledby', 'engineBuildTitle');
   buildPanel.innerHTML = `<div class="section-heading"><h3 id="engineBuildTitle">配装</h3><label class="engine-build-on"><input id="engineBuildOn" type="checkbox">主结果按配装计算</label></div>
@@ -496,12 +487,6 @@ function mount() {
         <p class="help" id="engineRecommendStatus" role="status"></p>
         <div class="entry-table-wrap"><table class="entry-table engine-build-table"><thead><tr><th>被动</th><th>SC</th><th>收益</th><th>每 SC</th><th></th></tr></thead><tbody id="engineRecommendRows"></tbody></table></div></details>`;
   card.append(buildPanel);
-  const workspace = document.createElement('section'); workspace.id = 'buildWorkspace'; workspace.className = 'build-workspace'; workspace.hidden = true; workspace.setAttribute('aria-label', '配装');
-  workspace.innerHTML = `<div class="build-toolbar"><strong>配装</strong><span id="buildToolbarStatus"></span>
-      <div class="build-views" role="group" aria-label="显示"><button type="button" data-build-view="table" aria-pressed="true">技能表</button><button type="button" data-build-view="settings" aria-pressed="false">战斗设置</button><button type="button" data-build-view="results" class="build-phone-only" aria-pressed="false">结果与配装</button></div>
-      <button type="button" id="buildResultsToggle" class="build-desktop-only" aria-expanded="true" aria-controls="unifiedResults">收起结果</button><button type="button" id="buildExit">退出配装</button></div>
-    <iframe id="buildTableFrame" title="游戏数据技能表（点 + 加入配装）"></iframe>`;
-  const layoutBox = $('calculationPage'); if (layoutBox) layoutBox.prepend(workspace);
   // the result display (big number / gauges / total) sits right under this card's heading, the 配装 panel under it
   mountPrimary();
   card.querySelector('.result-main')?.after(buildPanel);
@@ -528,10 +513,12 @@ function mount() {
   $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} run(); });
   $('engineResult').addEventListener('change', e => { const key = e.target.dataset.assume; if (!key) return; if (e.target.checked) assumed.add(key); else assumed.delete(key); run(); });
   // loadout builder controls
-  $('engineBuildToggle').addEventListener('click', () => showBuild(!workspaceOpen));
-  $('buildExit').addEventListener('click', () => showBuild(false));
-  $('buildResultsToggle').addEventListener('click', () => { resultsCollapsed = !resultsCollapsed; layoutWorkspace(); });
-  workspace.querySelector('.build-views').addEventListener('click', e => { const b = e.target.closest('[data-build-view]'); if (b) setBuildView(b.dataset.buildView); });
+  // the calculator may sit in a character page's panel: the home page opens in the whole window
+  $('engineBuildToggle').addEventListener('click', () => {
+    const url = new URL(`./index.html?character=${encodeURIComponent(siteCharacterId() || '')}`, location.href).href;
+    try { window.top.location.href = url; } catch { location.href = url; }
+  });
+  buildPanel.hidden = !buildEmbed;
   $('enginePlanSave').addEventListener('click', () => savePlan(false));
   $('enginePlanSaveNew').addEventListener('click', () => savePlan(true));
   $('enginePlanList').addEventListener('click', e => { const b = e.target.closest('[data-plan-action]'); if (b) planAction(b.dataset.planAction, b.dataset.plan, b); });
@@ -539,7 +526,7 @@ function mount() {
   $('engineRecommendStart').addEventListener('click', () => startRecommend());
   $('engineRecommendStop').addEventListener('click', () => stopRecommend('已停止。'));
   $('engineRecommendRows').addEventListener('click', e => { const add = e.target.closest('[data-build-add]'); if (!add) return; stopRecommend('已加入，配装改变后需要重新计算推荐。'); const id = Number(add.dataset.buildAdd); if (!build.selected.includes(id)) toggleSkill(id); });
-  $('engineBuildOn').addEventListener('change', e => { build.on = e.target.checked; saveBuild(); buildGains.clear(); run(); });
+  $('engineBuildOn').addEventListener('change', e => { build.on = buildEmbed && e.target.checked; saveBuild(); buildGains.clear(); run(); });
   $('engineBuildExclusive').addEventListener('change', e => { build.exclusive = e.target.checked; saveBuild(); buildGains.clear(); run(); });
   for (const [id, key] of [['engineBuildOwnPersonality', 'personality'], ['engineBuildOwnPassives', 'ownPassives'], ['engineBuildOwnTranscend', 'transcend'], ['engineBuildOwnBlessings', 'blessings']]) $(id).addEventListener('change', e => { build.own[key] = e.target.checked; saveBuild(); buildGains.clear(); run(); });
   buildPanel.querySelector('.engine-build-breaks').addEventListener('click', e => {
@@ -548,7 +535,7 @@ function mount() {
     build.breaks = build.breaks.includes(sc) ? build.breaks.filter(x => x !== sc) : cleanBreaks([...build.breaks, sc]);
     saveBuild(); syncBuildControls(); renderBuild(buildCtx);   // SC only: the damage does not change
   });
-  $('engineBuildClear').addEventListener('click', () => { build.selected = []; lastAdded = null; saveBuild(); buildGains.clear(); sendTableState(); run(); });
+  $('engineBuildClear').addEventListener('click', () => { build.selected = []; lastAdded = null; saveBuild(); buildGains.clear(); sendState(); run(); });
   $('engineBuildRecalc').addEventListener('click', () => { buildGains.clear(); if (buildCtx) computeGains(buildCtx); });
   $('engineBuildFromReport').addEventListener('click', async () => {
     if (!loadoutReport || !buildDress) { $('engineBuildSummary').textContent = '先导入配装报告（上方文件框）。'; return; }
@@ -557,7 +544,7 @@ function mount() {
     if (!lo) { $('engineBuildSummary').textContent = '配装报告里没有这个角色。'; return; }
     const c = await gameCharacter(buildDress); await ensureTablePassives();
     const own = new Set([...ownPassiveIds(c, true), ...autoPaidIds(c)]);
-    build.selected = lo.passives.filter(id => !own.has(id)); build.on = true; saveBuild(); buildGains.clear(); syncBuildControls(); sendTableState(); run();
+    build.selected = lo.passives.filter(id => !own.has(id)); build.on = buildEmbed; saveBuild(); buildGains.clear(); syncBuildControls(); sendState(); run();
   });
   $('engineBuildRows').addEventListener('click', e => { const rm = e.target.closest('[data-build-remove]'); if (rm) toggleSkill(Number(rm.dataset.buildRemove)); });
 }
@@ -571,14 +558,12 @@ function syncBuildControls() {
 }
 // SC of the picked skills (the character's own skills off the table are not in it: 0 SC)
 function buildSc() { return scTotal(build.selected.map(id => ({ id, sc: passiveCost(id) })), build.breaks); }
-// one line under the 配装 button and in the workspace toolbar
+// the status line under the 配装 button (in the page's frame) and the state for the page
 function renderBuildStatus() {
   const { total } = buildSc(), n = build.selected.length;
   const cur = buildCurrent && build.on ? ` · 当前配装每次 ${fmt(buildCurrent.perCall)}` : '';
-  const g = lastAdded != null ? buildGains.get(lastAdded) : null;
-  const last = lastAdded != null && build.selected.includes(lastAdded) ? ` · 刚加入 ${passiveText(lastAdded)} ${g?.removed ? pct(g.gain) : '计算中…'}` : '';
-  if ($('engineBuildStatus')) $('engineBuildStatus').textContent = build.on ? `主结果按配装计算：已选 ${n} 个技能 · SC 合计 ${total}${cur}` : (n ? `配装未启用（已选 ${n} 个技能 · SC 合计 ${total}）` : '');
-  if ($('buildToolbarStatus')) $('buildToolbarStatus').textContent = `已选 ${n} 个 · SC ${total}${cur}${last}`;
+  if ($('engineBuildStatus') && buildEmbed) $('engineBuildStatus').textContent = `主结果按配装计算：已选 ${n} 个技能 · SC 合计 ${total}${cur}`;
+  sendState();
 }
 // The character's own passives (game-data/c/<dress>.json) split by SC: COST 99 marks the free ones (unique
 // passives such as 赤裸之力II / 救世的聖劍, 【超越】, 迷宮踏破) that are always on; the rest cost SC. Those that are on
@@ -672,8 +657,8 @@ function renderBuild(ctx) {
   const rows = $('engineBuildRows'), summary = $('engineBuildSummary'); if (!rows) return;
   const sc = buildSc();
   if ($('engineBuildScTotal')) $('engineBuildScTotal').textContent = String(sc.total);
-  renderBuildStatus(); sendTableState();
-  if (!build.on) { summary.textContent = '主结果没有按配装计算（上面的勾没打）。在技能表点“+”或打勾就会启用。'; rows.innerHTML = '<tr><td colspan="4" class="help">还没有加技能。</td></tr>'; return; }
+  renderBuildStatus(); sendState();
+  if (!build.on) { summary.textContent = '主结果没有按配装计算（上面的勾没打）。打勾或在技能表点“+”就会启用。'; rows.innerHTML = '<tr><td colspan="4" class="help">还没有加技能。</td></tr>'; return; }
   const hits = currentHits().hits;
   const cur = buildCurrent ? `当前配装每次 <b>${fmt(buildCurrent.perCall)}</b>（${hits} 段 ≈ ${fmt(buildCurrent.perCall * hits)}）` : '当前配装：计算中…';
   const base = buildBaseline ? ` · 配装前（只有自带）每次 ${fmt(buildBaseline.perCall)}${buildCurrent && buildBaseline.perCall > 0 ? `，当前比它 ${pct(buildCurrent.perCall / buildBaseline.perCall - 1)}` : ''}` : '';
@@ -946,6 +931,7 @@ async function run(force = false) {
     const firstHit = damaging.filter(h => h.bulletId === damaging[0]?.bulletId)[0];
     const moveName = gameChar ? [...(gameChar.specials || []), gameChar.ultimate, ...(gameChar.magic?.normal || []), ...(gameChar.magic?.heavy || [])].filter(Boolean).find(m => m.id === move.id)?.nameS : null;
     const fieldCtx = { hits: damaging, gearNames: new Map((gameChar?.exclusiveEquipment || []).map(e => [e.id, e.nameS])), moveName: moveName || move.name || '本招式' };
+    moveInfo = { id: move.id, name: fieldCtx.moveName, element: firstHit?.element ?? battle.master.skillInfo?.(move.id)?.elem ?? null, skillType: battle.master.skillInfo?.(move.id)?.skillType ?? null, character: gameChar?.nameS || null };
     renderBasicFields(firstHit, fieldCtx);
     renderReview(out, firstHit, fieldCtx);
     try { await measureSupportMagic(M, attackerSpec, targetSpec, state, dress); } catch (err) { console.error(err); }
@@ -964,7 +950,7 @@ async function run(force = false) {
     setState('结算失败'); setPrimaryState('结算失败'); $('engineResult').innerHTML = `<p class="help">${esc(err.message)}</p>`; console.error(err);
   } finally {
     running = false;
-    if (pending) { pending = false; run(); }
+    if (pending) { pending = false; run(); } else sendState();
   }
 }
 

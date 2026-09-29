@@ -6,9 +6,8 @@
     <meta name="description" content="最后的克劳迪娅可从圣物学习的被动技能（游戏数据版）：游戏内名称、SC、效果和可学习圣物。" />
     <title>最后的克劳迪娅技能表</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <script>if(new URLSearchParams(location.search).get('embedded')==='1'&&window.parent!==window)document.documentElement.classList.add('lc-in-calculator');</script>
     <link rel="stylesheet" href="./styles.css?v=20260929-home" />
-    <link rel="stylesheet" href="./game-skills.css?v=20260929-build" />
+    <link rel="stylesheet" href="./game-skills.css?v=20260929-homebuild" />
   </head>
   <body>
     <header class="site-header">
@@ -20,6 +19,14 @@
       <nav class="header-actions" aria-label="页面导航"><a class="header-nav-link" href="./skill-classes-preview.html">技能分类预览</a><a class="header-nav-link" href="./characters.html?v=20260926-mayly">角色列表</a></nav>
     </header>
     <main>
+      <section class="build-toolbar" id="buildToolbar" aria-label="配装" hidden>
+        <strong>配装 · <span id="buildCharName">读取中…</span></strong><span id="buildStatus"></span>
+        <div class="build-views" role="group" aria-label="显示">
+          <button type="button" data-build-view="table" aria-pressed="true">技能表</button><button type="button" data-build-view="settings" aria-pressed="false">战斗设置</button><button type="button" data-build-view="results" class="build-phone-only" aria-pressed="false">结果与配装</button>
+        </div>
+        <button type="button" id="buildResultsToggle" class="build-desktop-only" aria-expanded="true" aria-controls="buildSide">收起结果</button><button type="button" id="buildExit">退出配装</button>
+      </section>
+      <div class="build-layout" id="buildLayout">
       <section class="workspace" aria-label="游戏数据技能表">
         <div class="toolbar">
           <label class="search-box">
@@ -50,8 +57,10 @@
           <span>可以换一个关键词，或切换到其他工作表。</span>
         </div>
       </section>
+      <aside class="build-side" id="buildSide" aria-label="计算结果与配装"><iframe id="buildFrame" title="伤害计算器（结果与配装）"></iframe></aside>
+      </div>
     </main>
     <script src="./game-skill-data.js?v=20260929-cls"></script>
-    <script src="./game-skills.js?v=20260929-build"></script>
+    <script src="./game-skills.js?v=20260929-homebuild"></script>
   </body>
 </html>

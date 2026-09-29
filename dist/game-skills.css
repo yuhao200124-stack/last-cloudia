@@ -11,9 +11,6 @@
 
 @media (max-width:720px){.game-toolbar-right{justify-content:flex-start}}
 .game-table .name-stack{display:flex;flex-direction:column;align-items:center;text-align:center}
-/* inside the damage calculator's 配装 (index.html?embedded=1): no page header, a “+” on every row */
-.lc-in-calculator .site-header{display:none}
-.lc-in-calculator main{padding-top:8px}
 .action-cell{text-align:center}
 .add-skill-button{width:26px;height:26px;display:inline-grid;place-items:center;padding:0;border:1.5px solid #35445b;border-radius:50%;background:#fff;color:#27364c;cursor:pointer;box-shadow:0 1px 2px rgba(25,52,91,.1);transition:color .15s,border-color .15s,background .15s,transform .15s}
 .add-skill-button span{display:block;font-size:1.1rem;font-weight:500;line-height:1;transform:translateY(-1px)}
@@ -21,5 +18,40 @@
 .add-skill-button.is-added{border-color:#3f8c5b;background:#edf8f0;color:#287043}
 .add-skill-button.is-added span{font-size:1rem;font-weight:700;transform:none}
 .action-cell .build-gain{display:block;margin-top:3px;font-size:11px;line-height:1.2;color:#287043;white-space:nowrap}
-.lc-in-calculator .skill-list-table .action-cell{position:sticky;right:0;z-index:1;background:#fff;box-shadow:-3px 0 5px rgba(25,52,91,.08)}
-.lc-in-calculator .skill-list-table .column-title th:last-child{position:sticky;right:0;z-index:2}
+
+/* 配装 on the home page (2026-09-29): index.html?character=… — the table with a “+” on every row beside the damage
+   calculator's results column (a frame); 战斗设置 shows the whole calculator; on a phone one view at a time */
+.build-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:min(1900px,100%);margin:0 auto 12px;padding:10px 12px;border:1px solid #bacbdd;border-radius:8px;background:#fff;position:sticky;top:0;z-index:5}
+.build-toolbar[hidden]{display:none}
+.build-toolbar strong{font-size:1rem}
+#buildStatus{margin-right:auto;font-size:.85rem;color:#445c79;min-width:0;overflow-wrap:anywhere}
+.build-views{display:inline-flex}
+.build-views button,.build-toolbar>button{min-height:34px;padding:4px 12px;border:1px solid #b9c8de;background:#fff;font:inherit;cursor:pointer}
+.build-toolbar>button{border-radius:5px}
+.build-views button{border-radius:0;margin-left:-1px}
+.build-views button:first-child{border-radius:5px 0 0 5px;margin-left:0}
+.build-views [data-build-view=settings],.build-views [data-build-view=results]{border-radius:0 5px 5px 0}
+.build-views button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}
+.build-phone-only{display:none}
+.build-side{display:none}
+.build-side iframe{display:block;width:100%;height:100%;border:1px solid #bacbdd;border-radius:8px;background:#fff}
+body.build-mode .build-layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:14px;align-items:start;width:min(1900px,100%);margin:0 auto}
+body.build-mode .build-layout .workspace{width:auto;margin:0}
+body.build-mode .build-side{display:block;position:sticky;top:64px;height:calc(100vh - 80px)}
+body.build-mode.build-settings .build-layout{grid-template-columns:minmax(0,1fr)}
+body.build-mode.build-settings .build-layout .workspace{display:none}
+body.build-mode.build-collapsed:not(.build-settings) .build-layout{grid-template-columns:minmax(0,1fr)}
+body.build-mode.build-collapsed:not(.build-settings) .build-side{position:absolute;width:1px;height:1px;overflow:hidden;visibility:hidden}
+.action-cell{text-align:center}
+body.build-mode .skill-list-table .action-cell{position:sticky;right:0;z-index:1;background:#fff;box-shadow:-3px 0 5px rgba(25,52,91,.08)}
+body.build-mode .skill-list-table .column-title th:last-child{position:sticky;right:0;z-index:2}
+.add-skill-button:disabled{opacity:.45;cursor:default}
+@media(max-width:900px){
+  .build-phone-only{display:inline-block}
+  .build-desktop-only{display:none!important}
+  .build-views [data-build-view=settings]{border-radius:0}
+  body.build-mode .build-layout{display:block}
+  body.build-mode .build-side{position:absolute;width:1px;height:1px;overflow:hidden;visibility:hidden}
+  body.build-mode.build-settings .build-side,body.build-mode.build-view-results .build-side{position:static;width:auto;height:calc(100dvh - 130px);overflow:visible;visibility:visible}
+  body.build-mode.build-view-results .build-layout .workspace{display:none}
+}

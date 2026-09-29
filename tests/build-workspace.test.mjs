@@ -1,4 +1,5 @@
-// 配装 workspace (2026-09-29): skills are picked from the game-data skill table with “+” (only inside the calculator),
+// 配装 (2026-09-29): character page → calculator → “配装” opens the home page (index.html?character=…) in the whole
+// window: skills are picked from the game-data skill table with “+”, the calculator runs in a frame beside it,
 // the SC total follows the old skill table's 能力盘突破 rule, and a character's own SC skills that are not on the table
 // are always added at 0 SC.
 import test from 'node:test';
@@ -32,14 +33,22 @@ test('the table lists every game passive number, so the calculator can tell a ch
   assert(!set.has(26505) && !set.has(24450)); assert(set.has(19100) && set.has(26466));
 });
 
-test('the calculator\'s 配装 picks from the skill table with “+”: no search box, no 试算', () => {
+test('配装 happens on the home page: the table with “+” on the left, the calculator frame on the right', () => {
   const panel = read('dist/engine-panel.mjs');
-  for (const s of ['buildTableFrame', 'lc-build-toggle', 'lc-build-state', 'lc-table-ready', 'data-build-break', 'autoPaidIds', 'changesOf'])
+  for (const s of ["get('embedded') === 'build'", 'lc-build-toggle', 'lc-build-state', 'lc-build-view', 'lc-build-hello', './index.html?character=', 'data-build-break', 'autoPaidIds', 'changesOf'])
     assert(panel.includes(s), s);
-  for (const s of ['engineBuildSearch', 'engineBuildCandidates', 'data-build-probe', 'engineRecommendSearchOnly'])
+  // no table inside the calculator any more, no search box, no 试算
+  for (const s of ['buildTableFrame', 'lc-table-ready', 'engineBuildSearch', 'engineBuildCandidates', 'data-build-probe', 'engineRecommendSearchOnly'])
     assert(!panel.includes(s), s);
   const table = read('dist/game-skills.js');
-  assert.match(table, /const embedded = new URLSearchParams\(location\.search\)\.get\('embedded'\) === '1' && window\.parent !== window;/, 'the “+” only inside the calculator');
-  assert.match(read('dist/index.html'), /lc-in-calculator/);
-  assert.match(read('dist/character-saved-builds.mjs'), /scTotal\(/, 'the character page counts SC the same way');
+  assert.match(table, /const buildChar = \/\^\\d\+\$\/\.test\(params\.get\('character'\)/, 'the “+” only when a character is given');
+  for (const s of ['&embedded=build', 'data-add-skill', 'character-${buildChar}.html', "type: 'lc-build-toggle'", "type: 'lc-build-view'"])
+    assert(table.includes(s), s);
+  const home = read('dist/index.html');
+  for (const s of ['id="buildToolbar" aria-label="配装" hidden', 'id="buildLayout"', 'id="buildFrame"', 'id="buildExit"', 'data-build-view="settings"'])
+    assert(home.includes(s), s);
+  assert(!home.includes('lc-in-calculator'), 'the old in-calculator table is gone');
+  const saved = read('dist/character-saved-builds.mjs');
+  assert.match(saved, /scTotal\(/, 'the character page counts SC the same way');
+  assert(saved.includes('./index.html?character=${encodeURIComponent(characterId)}&plan='), '打开配装 goes to the home page');
 });

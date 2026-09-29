@@ -102,51 +102,11 @@ body.is-embedded main { padding-top:14px; }
 
 .scenario-summary{border:1px solid #d2deea;border-radius:7px;background:#f8fbff;padding:8px 14px}
 
-
-
-
-
-
-
-
-
-
-
-/* 配装 workspace (2026-09-29): the game-data skill table beside the results and the 配装 panel, like the old loadout
-   workspace; 战斗设置 swaps the table for the calculator form; on a narrow screen one view at a time. */
-.build-workspace{min-width:0;border:1px solid #bacbdd;border-radius:8px;overflow:hidden;background:#fff}
-.build-toolbar{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid #d9e3ee;flex-wrap:wrap;background:#fff}
-.build-toolbar strong{font-size:1rem}
-#buildToolbarStatus{margin-right:auto;font-size:.85rem;color:#445c79;min-width:0;overflow-wrap:anywhere}
-.build-views{display:inline-flex}
-.build-views button{border-radius:0;margin-left:-1px}
-.build-views button:first-child{border-radius:5px 0 0 5px;margin-left:0}
-.build-views [data-build-view=settings],.build-views [data-build-view=results]{border-radius:0 5px 5px 0}
-.build-views button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}
-.build-phone-only{display:none}
-.build-workspace iframe{display:block;border:0;width:100%;height:calc(100dvh - 110px);min-height:560px}
-body.build-mode main{max-width:1900px;padding:16px}
-body.build-mode .page-intro{display:none}
-body.build-mode .calculator-layout{grid-template-columns:minmax(0,1fr) 430px}
-body.build-mode .build-workspace{grid-column:1;grid-row:1}
-body.build-mode #calculator{display:none}
-body.build-mode.build-settings #calculator{display:block;grid-column:1;grid-row:2}
-body.build-mode.build-settings .build-workspace iframe{display:none}
-body.build-mode .results{grid-column:2;grid-row:1 / span 2;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}
-body.build-mode #engineBuildWrap{display:none}
-body.build-mode.build-results-collapsed .calculator-layout{grid-template-columns:minmax(0,1fr)}
-body.build-mode.build-results-collapsed .results{display:none}
-@media(max-width:900px){
-  body.build-mode main{padding:10px}
-  body.build-mode .calculator-layout{display:block}
-  .build-phone-only{display:inline-block}
-  .build-desktop-only{display:none!important}
-  .build-views [data-build-view=settings]{border-radius:0}
-  body.build-mode .results{position:static;max-height:none;overflow:visible;margin-top:10px}
-  body.build-mode:not(.build-view-results) .results{display:none}
-  body.build-mode.build-view-results .build-workspace iframe,body.build-mode.build-view-results #calculator{display:none!important}
-  body.build-mode.build-settings:not(.build-view-results) #calculator{display:block;margin-top:10px}
-  body.build-mode.build-results-collapsed .results{display:none}
-  body.build-mode.build-view-results.build-results-collapsed .results{display:block}
-  .build-workspace iframe{height:calc(100dvh - 130px);min-height:420px}
-}
+/* 配装 on the home page (2026-09-29): this calculator in the page's frame (?embedded=build) shows either 结果与配装
+   (the results column: result card and 配装 panel, beside the skill table) or 战斗设置 (the whole calculator). */
+body.is-build-embedded #engineBuildWrap{display:none}
+body.is-build-embedded .engine-build-on{display:none!important}
+body.is-build-embedded main{padding:10px}
+body.is-build-embedded.build-view-results #calculator,body.is-build-embedded.build-view-results #reviewPage,body.is-build-embedded.build-view-results .result-notes{display:none!important}
+body.is-build-embedded.build-view-results .calculator-layout{display:block}
+body.is-build-embedded.build-view-results .results{position:static;max-height:none;overflow:visible}

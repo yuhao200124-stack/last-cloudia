@@ -6,14 +6,18 @@
   let active = data.sheetOrder.includes(store.get('lc-game-table:sheet')) ? store.get('lc-game-table:sheet') : data.sheetOrder[0];
   let script = store.get('lc-game-table:script', 't') === 's' ? 's' : 't';
   let query = '';
-  // Inside the damage calculator's 配装 (index.html?embedded=1): a “+” on every row adds the skill to the loadout (the
-  // calculator computes it); “✓” marks the picked ones, with the gain the calculator found. The home page has no “+”.
-  const embedded = new URLSearchParams(location.search).get('embedded') === '1' && window.parent !== window;
-  let picked = new Set(), gains = {};
+  // 配装 (user 2026-09-29): a character is chosen first — character page → calculator → 配装 opens this page in the
+  // whole window as index.html?character=…[&plan=…]. The skill table stays as it is, with a “+” on every row; the
+  // damage calculator runs in a frame beside it (damage-calculator.html?embedded=build: the results and the 配装 panel,
+  // or the whole calculator for 战斗设置), gets the “+” clicks and sends back what is picked, each one's gain and SC.
+  const params = new URLSearchParams(location.search);
+  const buildChar = /^\d+$/.test(params.get('character') || '') ? params.get('character') : null;
+  const embedded = !!buildChar;
+  let picked = new Set(), gains = {}, bst = null;
   const gainText = g => `${g >= 0 ? '+' : ''}${(g * 100).toFixed(1)}%`;
   function addButton(id) {
     const on = picked.has(id), g = gains[id];
-    return `<button class="add-skill-button${on ? ' is-added' : ''}" type="button" data-add-skill="${id}" aria-label="${on ? '从配装取消' : '加入配装'}" title="${on ? `已加入配装${g != null ? ` · 收益 ${gainText(g)}` : ''}；再点一次取消` : '加入配装'}"><span aria-hidden="true">${on ? '✓' : '+'}</span></button>${on && g != null ? `<small class="build-gain">${gainText(g)}</small>` : ''}`;
+    return `<button class="add-skill-button${on ? ' is-added' : ''}" type="button" data-add-skill="${id}" aria-label="${on ? '从配装取消' : '加入配装'}" title="${on ? `已加入配装${g != null ? ` · 收益 ${gainText(g)}` : ''}；再点一次取消` : '加入配装'}"${bst ? '' : ' disabled'}><span aria-hidden="true">${on ? '✓' : '+'}</span></button>${on ? `<small class="build-gain">${g != null ? gainText(g) : '计算中'}</small>` : ''}`;
   }
   const actionTd = s => embedded ? `<td class="action-cell" data-action-for="${s.gameId}">${addButton(s.gameId)}</td>` : '';
   const extra = embedded ? 1 : 0;
@@ -88,12 +92,49 @@
   $('backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   render();
   if (embedded) {
-    $('tableArea').addEventListener('click', e => { const b = e.target.closest('[data-add-skill]'); if (b) window.parent.postMessage({ type: 'lc-build-toggle', id: Number(b.dataset.addSkill) }, location.origin); });
-    window.addEventListener('message', e => {
-      if (e.origin !== location.origin || e.source !== window.parent || e.data?.type !== 'lc-build-state') return;
-      picked = new Set((e.data.selected || []).map(Number)); gains = e.data.gains || {};
-      document.querySelectorAll('[data-action-for]').forEach(td => { td.innerHTML = addButton(Number(td.dataset.actionFor)); });
+    const frame = $('buildFrame'), fmtN = n => (n == null ? '—' : Math.round(n).toLocaleString('zh-CN'));
+    let leftView = 'table', phoneView = 'left', collapsed = false;
+    const phone = () => window.matchMedia('(max-width: 900px)').matches;
+    const toFrame = msg => frame.contentWindow?.postMessage(msg, location.origin);
+    // desktop: 技能表 = the table with the results column beside it, 战斗设置 = the whole calculator; phone: one of
+    // 技能表 / 战斗设置 / 结果与配装 at a time
+    function frameView() { return (phone() ? phoneView === 'results' : false) ? 'results' : leftView === 'settings' ? 'settings' : 'results'; }
+    function layout() {
+      const cls = document.body.classList;
+      cls.add('build-mode');
+      cls.toggle('build-settings', leftView === 'settings' && (!phone() || phoneView === 'left'));
+      cls.toggle('build-view-results', phone() && phoneView === 'results');
+      cls.toggle('build-collapsed', collapsed);
+      document.querySelectorAll('[data-build-view]').forEach(b => { const v = b.dataset.buildView; b.setAttribute('aria-pressed', String(v === 'results' ? phoneView === 'results' : phoneView === 'left' && leftView === v)); });
+      $('buildResultsToggle').textContent = collapsed ? '显示结果' : '收起结果'; $('buildResultsToggle').setAttribute('aria-expanded', String(!collapsed));
+      toFrame({ type: 'lc-build-view', view: frameView() });
+    }
+    function status() {
+      if (!bst) { $('buildStatus').textContent = '计算器读取中…'; return; }
+      const last = bst.lastAdded ? ` · 刚加入 ${bst.lastAdded.name} ${bst.lastAdded.gain != null ? gainText(bst.lastAdded.gain) : '计算中…'}` : '';
+      $('buildCharName').textContent = bst.move?.character || buildChar;
+      $('buildStatus').textContent = `已选 ${bst.selected.length} 个 · SC ${bst.sc?.total ?? 0}${bst.perCall != null ? ` · 当前配装每次 ${fmtN(bst.perCall)}` : ''}${last}${bst.computing ? ' · 计算中…' : ''}`;
+    }
+    $('buildToolbar').hidden = false;
+    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-homebuild`;
+    document.querySelector('.build-views').addEventListener('click', e => {
+      const b = e.target.closest('[data-build-view]'); if (!b) return;
+      if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }
+      layout(); window.scrollTo({ top: 0 });
     });
-    window.parent.postMessage({ type: 'lc-table-ready' }, location.origin);
+    $('buildResultsToggle').addEventListener('click', () => { collapsed = !collapsed; layout(); });
+    $('buildExit').addEventListener('click', () => { location.href = `./character-${buildChar}.html`; });
+    window.addEventListener('resize', () => layout());
+    $('tableArea').addEventListener('click', e => { const b = e.target.closest('[data-add-skill]'); if (b && !b.disabled) toFrame({ type: 'lc-build-toggle', id: Number(b.dataset.addSkill) }); });
+    window.addEventListener('message', e => {
+      if (e.origin !== location.origin || e.source !== frame.contentWindow) return;
+      if (e.data?.type === 'lc-damage-ready') { layout(); toFrame({ type: 'lc-build-hello' }); }
+      else if (e.data?.type === 'lc-build-state') {
+        bst = e.data; picked = new Set((bst.selected || []).map(Number)); gains = bst.gains || {};
+        document.querySelectorAll('[data-action-for]').forEach(td => { td.innerHTML = addButton(Number(td.dataset.actionFor)); });
+        status();
+      }
+    });
+    layout(); status();
   }
 })();
