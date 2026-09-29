@@ -212,7 +212,7 @@ async function ensurePassiveIndex() {
   if (!passiveIndex) { const t = await fetch(new URL('./game-data/engine/passive-index.json', import.meta.url)).then(r => r.json()); passiveIndex = t.rows.map(r => ({ id: r[0], name: r[1], nameS: r[2], cost: r[3], order: r[4] })); }
   return passiveIndex;
 }
-const passiveLabel = id => { const row = passiveIndex?.find(r => r.id === id); const m = battle?.master.passive.get(id); const name = row?.nameS || m?.NAME || String(id); const trad = row?.name && row.name !== row.nameS ? ` <small>${esc(row.name)}</small>` : ''; return `${esc(name)}${trad}`; };
+const passiveLabel = id => { const row = passiveIndex?.find(r => r.id === id); const m = battle?.master.passive.get(id); const name = row?.nameS || m?.NAME || String(id); return esc(name); }; // simplified only (user 2026-09-30)
 const passiveCost = id => passiveIndex?.find(r => r.id === id)?.cost ?? battle?.master.passive.get(id)?.COST ?? null;
 function keepLoadout(report) {
   // keep only what the engine uses so the report fits in storage

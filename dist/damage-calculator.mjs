@@ -49,7 +49,7 @@ async function renderProfile(name){
  let stats=null;try{stats=(await loadGameIndex()).siteStats?.[characterId]||null;}catch{}
  $('characterPanel').hidden=false;
  $('entryProfileName').textContent=`${name||'角色'} · 最大成长基础资料`;
- $('entrySixStats').innerHTML=`<thead><tr>${Object.values(SIX).map(l=>`<th>${l}</th>`).join('')}</tr></thead><tbody><tr>${Object.keys(SIX).map(k=>{const v=stats?.[k],p=statBlessingPercents()[k]||0;return `<td><strong>${v!=null?v.toLocaleString('en-US'):'未提供'}</strong><small>加护 +${p}%<br>→ ${v!=null?Math.floor(v*(100+p)/100).toLocaleString('en-US'):'未提供'}</small></td>`;}).join('')}</tr></tbody>`;
+ $('entrySixStats').innerHTML=`<thead><tr>${Object.values(SIX).map(l=>`<th>${l}</th>`).join('')}</tr></thead><tbody><tr>${Object.keys(SIX).map(k=>{const v=stats?.[k],p=statBlessingPercents()[k]||0;return `<td data-label="${SIX[k]}"><strong>${v!=null?v.toLocaleString('en-US'):'未提供'}</strong><small>加护 +${p}%<br>→ ${v!=null?Math.floor(v*(100+p)/100).toLocaleString('en-US'):'未提供'}</small></td>`;}).join('')}</tr></tbody>`;
 }
 
 // ---- 招式: every damaging move of the character from the game data ----

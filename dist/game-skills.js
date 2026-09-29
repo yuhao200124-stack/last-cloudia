@@ -4,7 +4,8 @@
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
   let active = data.sheetOrder.includes(store.get('lc-game-table:sheet')) ? store.get('lc-game-table:sheet') : data.sheetOrder[0];
-  let script = store.get('lc-game-table:script', 't') === 's' ? 's' : 't';
+  // simplified only (user 2026-09-30: the 繁 option is gone; the search still finds either script)
+  const script = 's';
   let query = '';
   // 配装 (user 2026-09-29): a character is chosen first — character page → calculator → 配装 opens this page in the
   // whole window as index.html?character=…[&plan=…]. The skill table stays as it is, with a “+” on every row; the
@@ -125,10 +126,8 @@
     }
     $('clearSearch').hidden = !query;
     $('sheetTabs').innerHTML = data.sheetOrder.map(n => `<button class="sheet-tab" type="button" data-sheet="${esc(n)}" role="tab" aria-selected="${n === active}">${esc(n)}</button>`).join('');
-    document.querySelectorAll('[data-script]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.script === script)));
   }
   $('sheetTabs').addEventListener('click', e => { const b = e.target.closest('[data-sheet]'); if (!b) return; active = b.dataset.sheet; store.set('lc-game-table:sheet', active); render(); });
-  document.querySelectorAll('[data-script]').forEach(b => b.addEventListener('click', () => { script = b.dataset.script; store.set('lc-game-table:script', script); render(); }));
   let t; $('searchInput').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { query = e.target.value.trim(); render(); }, 120); });
   $('clearSearch').addEventListener('click', () => { $('searchInput').value = ''; query = ''; render(); });
   $('backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
@@ -166,8 +165,8 @@
       if (i?.site && !i.site[buildChar]) {
         knownChar = false;
         $('buildStatus').textContent = `没有这个角色（编号 ${buildChar}）`; $('buildPanelHost').textContent = '没有这个角色。'; $('buildExit').textContent = '回到首页';
-      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-home19`;
-    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-home19`; });
+      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-simple`;
+    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-simple`; });
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }

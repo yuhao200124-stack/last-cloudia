@@ -114,3 +114,11 @@ body.is-build-embedded.build-panel-outside #unifiedResults{display:none}
 body.is-build-embedded.build-view-results #calculator>:not(#enginePanel),body.is-build-embedded.build-view-results #reviewPage,body.is-build-embedded.build-view-results .result-notes{display:none!important}
 body.is-build-embedded.build-view-results main{padding:0}
 body.is-build-embedded.build-view-results #enginePanel{margin:0}
+/* phones (2026-09-30): the six stats as three columns by two rows, each cell with its own label, no sideways scroll */
+@media (max-width: 740px) {
+  .base-stats-table { min-width: 0; }
+  .base-stats-table thead { display: none; }
+  .base-stats-table tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .base-stats-table td { display: block; margin: -1px 0 0 -1px; padding: 8px 4px; }
+  .base-stats-table td::before { content: attr(data-label); display: block; font-size: 12px; font-weight: 700; color: #27496f; margin-bottom: 2px; }
+}
