@@ -72,3 +72,10 @@ body.build-mode .skill-list-table .column-title th:last-child{position:sticky;ri
 }
 .build-filter{flex:none}
 .build-filter[hidden]{display:none}
+/* 配装 (2026-09-30): the middle column is much narrower than the window, so a sheet's two lanes stack whenever the
+   column is too narrow for two tables side by side (the whole-window rule only looks at the window width). */
+body.build-mode .build-layout .workspace{container-type:inline-size;container-name:skilltable}
+@container skilltable (max-width:1200px){
+  :root:not(.lc-embedded) .split-grid{display:block}
+  :root:not(.lc-embedded) .split-grid .table-scroll + .table-scroll{margin-top:16px}
+}
