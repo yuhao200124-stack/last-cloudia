@@ -110,6 +110,11 @@
     }
     $('tableArea').innerHTML = html;
     $('emptyState').hidden = visible !== 0;
+    if (!visible) {
+      const byFilter = hidden > 0; // found, but every one is hidden by the 配装's 隐藏 mode
+      $('emptyState').querySelector('strong').textContent = byFilter ? '当前隐藏模式下这一页没有技能' : '没有找到符合条件的技能';
+      $('emptyState').querySelector('span').textContent = byFilter ? '可以换成“不隐藏”，或切换到其他工作表。' : '可以换一个关键词，或切换到其他工作表。';
+    }
     const total = sheet.kind === 'all' ? uniq(sheet.rows) : uniq(sheet.lanes.flatMap(l => l.rows));
     const hideNote = hidden > 0 ? ` · 按“${HIDE_MODES.find(([k]) => k === hideMode)[1]}”隐藏了 ${hidden} 个` : '';
     $('resultSummary').textContent = query ? `找到 ${visible} 个技能（本页共 ${total} 个）${hideNote}` : `本页 ${visible} 个技能${hideNote || ` · 游戏可从圣物学习 ${data.total} 个`}`;
@@ -147,6 +152,7 @@
       toFrame({ type: 'lc-build-view', view: frameView() });
     }
     function status() {
+      if (!knownChar) return;
       if (!bst) { $('buildStatus').textContent = '计算器读取中…'; return; }
       const last = bst.lastAdded ? ` · 刚加入 ${bst.lastAdded.name} ${bst.lastAdded.gain != null ? gainText(bst.lastAdded.gain) : '计算中…'}` : '';
       $('buildCharName').textContent = bst.move?.character || buildChar;
@@ -155,14 +161,20 @@
     $('buildToolbar').hidden = false;
     $('buildFilter').hidden = false;
     $('buildFilter').addEventListener('click', e => { const b = e.target.closest('[data-hide-mode]'); if (!b) return; hideMode = b.dataset.hideMode; store.set('lc-build-hide', hideMode); render(); });
-    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-duallock`;
+    let knownChar = true;
+    fetch('./game-data/index.json').then(r => r.json()).then(i => {
+      if (i?.site && !i.site[buildChar]) {
+        knownChar = false;
+        $('buildStatus').textContent = `没有这个角色（编号 ${buildChar}）`; $('buildPanelHost').textContent = '没有这个角色。'; $('buildExit').textContent = '回到首页';
+      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-home19`;
+    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-home19`; });
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }
       layout(); window.scrollTo({ top: 0 });
     });
     $('buildResultsToggle').addEventListener('click', () => { collapsed = !collapsed; layout(); });
-    $('buildExit').addEventListener('click', () => { location.href = `./character-${buildChar}.html`; });
+    $('buildExit').addEventListener('click', () => { location.href = knownChar ? `./character-${buildChar}.html` : './index.html'; });
     window.addEventListener('resize', () => layout());
     $('tableArea').addEventListener('click', e => { const b = e.target.closest('[data-add-skill]'); if (b && !b.disabled) toFrame({ type: 'lc-build-toggle', id: Number(b.dataset.addSkill) }); });
     window.addEventListener('message', e => {
