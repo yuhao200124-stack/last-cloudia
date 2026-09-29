@@ -16,7 +16,11 @@ export function luaDocs(file) {
     const params = [], title = [];
     for (let j = i - 1; j >= 0 && /^\s*--/.test(lines[j]); j--) {
       const p = lines[j].match(/^\s*--\s*params\[(\d+)\]\s*[:：]\s*(.*)$/);
-      if (p) params[Number(p[1]) - 1] = p[2].trim(); else title.unshift(lines[j].replace(/^\s*--\s*/, '').trim());
+      // a range: `params[1]～params[10]:対象キャラクタータイプ` (複数タイプスレイヤー)
+      const range = lines[j].match(/^\s*--\s*params\[(\d+)\]\s*[～~]\s*params\[(\d+)\]\s*[:：]\s*(.*)$/);
+      if (p) params[Number(p[1]) - 1] = p[2].trim();
+      else if (range) for (let k = Number(range[1]); k <= Number(range[2]); k++) params[k - 1] = range[3].trim();
+      else title.unshift(lines[j].replace(/^\s*--\s*/, '').trim());
     }
     out.set(m[1], { title: title.join(' '), params });
   }
@@ -77,17 +81,18 @@ export function racesOf(v) {
   return out;
 }
 export const RACE = { 1001: '战士', 1002: '射手', 1003: '骑士', 1004: '法师', 1005: '治疗师', 2001: '兽', 2002: '植物', 2003: '昆虫', 2004: '鸟', 2005: '魔法生物', 2006: '不死生物', 2007: '石', 2008: '机械', 2009: '精灵', 2010: '龙', 2011: '神', 2012: '鱼' };
-const ENEMY = { 1: '普通敌人', 2: 'BOSS' };
+export const ENEMY = { 1: '普通敌人', 2: 'BOSS' };
 const GENDER = { 1: '男性', 2: '女性', 3: '性别不明' };
-const AILMENT = { 0: '全部异常', 1: '毒', 2: '麻痹', 3: '疾病', 4: '暗黑', 5: '诅咒', 6: '沉默', 10: '封印', 11: '冻结', 12: '愤怒', 13: '腐化', 20: '剧毒', 21: '妨碍', 22: '忧郁' };
+export const AILMENT = { 0: '全部异常', 1: '毒', 2: '麻痹', 3: '疾病', 4: '暗黑', 5: '诅咒', 6: '沉默', 10: '封印', 11: '冻结', 12: '愤怒', 13: '腐化', 20: '剧毒', 21: '妨碍', 22: '忧郁' };
 
 // other condition parameters (by name) → a readable condition; value-only parameters are not conditions
-const OTHER_LABELS = [[/パッシブスキルID/, '需要装备特定技能'], [/特技.*INDEX|特技INDEX/, '指定特技栏'], [/プロセスカテゴリ/, '特定效果类别'], [/バフ(カテゴリ|タイプ|グループ)|バフ数/, '有特定增益／减益时'], [/援護/, '援护条件'], [/向き/, '朝向条件'], [/MP閾値|残りMP/, 'MP条件'], [/超必殺/, '超必杀槽条件'], [/エーテル/, '以太条件'], [/キャラカテゴリ/, '角色类别条件'], [/ステータス条件|比較元ステータス|比較先ステータス/, '属性比较条件'], [/距離/, '距离条件'], [/トリガ/, '触发编号条件'], [/死神/, '即死条件'], [/高さ/, '空中'], [/移動タイプ/, '移动中'], [/ヒットINDEX|バレットヒット/, '第几击条件'], [/キャラ種類数|キャラタイプ数/, '自身类型数条件'], [/^敵タイプ$/, '敌人类型条件'], [/属性耐性条件/, '目标属性耐性条件'], [/曜日/, '现实时间条件'], [/スキル種別/, '技能种别条件'], [/ストック数/, '特技次数条件'], [/被弾回数/, '受击次数条件'], [/ヒット数/, '连击数条件'], [/連続発動/, '连续发动条件'], [/種類数/, '种类数条件']];
+const OTHER_LABELS = [[/パッシブスキルID/, '需要装备特定技能'], [/特技.*INDEX|特技INDEX/, '指定特技栏'], [/プロセスカテゴリ/, '特定效果类别'], [/バフ(カテゴリ|タイプ|グループ)|バフ数/, '有特定增益／减益时'], [/援護/, '援护条件'], [/向き/, '朝向条件'], [/MP閾値|残りMP/, 'MP条件'], [/超必殺/, '超必杀槽条件'], [/エーテル/, '以太条件'], [/キャラカテゴリ/, '角色类别条件'], [/ステータス条件|比較元ステータス|比較先ステータス/, '属性比较条件'], [/距離/, '距离条件'], [/トリガ/, '触发编号条件'], [/死神/, '即死条件'], [/高さ/, '空中'], [/移動タイプ/, '移动中'], [/ヒットINDEX|バレットヒット/, '第几击条件'], [/キャラ種類数|キャラタイプ数/, '自身类型数条件'], [/属性耐性条件/, '目标属性耐性条件'], [/曜日/, '现实时间条件'], [/スキル種別/, '技能种别条件'], [/ストック数/, '特技次数条件'], [/被弾回数/, '受击次数条件'], [/ヒット数/, '连击数条件'], [/連続発動/, '连续发动条件'], [/種類数/, '种类数条件']];
 const NOT_CONDITION = /最小|最大|MIN|MAX|変換|率$|表示|死亡するか|段階|^追加|追加数|オプション|選択方法|ターゲット|可否|固定\/割合|以上・未満|条件INDEX$|制限時間|自分\/死者|対象ステータスタイプ|回復値|一致数|消費|割合|値$/;
 // a parameter name → which dimension it constrains
 function dimOf(name) {
   if (!name) return null;
   if (/^効果(最小|最大)HP割合$/.test(name)) return 'hpScale';
+  if (/^復活時HP割合$/.test(name)) return null;                    // the HP it revives with, a value
   if (/^(STR|INT|DEF|MND|MDEF|HP|MP|全ステ)(加算|倍率|最大)|回復|消費/.test(name)) return null;   // values, not conditions
   if (/^効果発生/.test(name)) return /時刻/.test(name) ? 'time' : /超必殺/.test(name) ? 'ultimate' : /ヒット/.test(name) ? 'hits' : /HP/.test(name) ? 'hp' : /距離/.test(name) ? 'distance' : /人数/.test(name) ? 'party' : 'other';
   if (/パラメータタイプ|演出|継続時間|倍率|加算|補正|最大値|最小値|確率|回数|間隔|フレーム|オプション|効率|変換先|WAVE|秒|距離|ヒット数|割合$|値$/.test(name) && !/HP|閾値|条件/.test(name)) return null;
@@ -96,7 +101,7 @@ function dimOf(name) {
   if (/自分キャラ|自分キャラクター|特定キャラ条件/.test(name)) return 'ownRace';
   if (/キャラタイプ条件\(Not\)/.test(name)) return 'notRace';
   if (/キャラ(クター)?タイプ|キャラタイプ/.test(name) && !/数|予備|カテゴリ/.test(name)) return 'race';
-  if (/エネミータイプ/.test(name)) return 'enemy';
+  if (/エネミータイプ|^敵タイプ$/.test(name)) return 'enemy';
   if (/^属性ID$/.test(name)) return 'aboutElement';
   if (/時刻/.test(name)) return 'time';
   if (/^フリー\d|条件種別\(bit\)|^条件\dM(IN|AX)$/.test(name)) return null;
@@ -119,7 +124,7 @@ function dimOf(name) {
 // the trigger's own name says when it works
 const TRIGGER_TAGS = [[/Wave終了|バトル終了/, '战斗结束时'], [/被ダメージ時|被ダメージ計算|バレットを受けた|被弾/, '受到攻击时'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル/, '暴击时'], [/気絶・ブレイク|ブレイク状態/, 'Break／眩晕'], [/空中/, '空中'], [/トドメ|撃破/, '击杀时'], [/致死ダメージ/, '受到致命伤害时'], [/生存人数|生存数/, '队伍／人数条件'], [/ステ比較/, '属性比较条件'], [/移動中/, '移动中'], [/フレーム間隔/, '定时发动'], [/キラー発生/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/ヒット数|ヒット中/, '连击数条件'], [/距離/, '距离条件'], [/HP/, 'HP条件'], [/MP値/, 'MP条件']];
 // conditions written into the process itself show in its name (the part before what it changes)
-const KIND_TAGS = [[/対状態異常|状態異常中の相手|異常状態の相手/, '对异常状态的敌人'], [/特定状態異常中|状態異常中(?!の相手)|状態異常時/, '自身异常状态时'], [/対気絶・ブレイク中|気絶・ブレイク中/, 'Break／眩晕'], [/距離状況|距離条件/, '距离条件'], [/HP状況|HP条件/, 'HP条件'], [/超必殺ゲージ(状況|条件)/, '超必杀槽条件'], [/MP状況|MP値条件/, 'MP条件'], [/ヒット数(状況|条件)/, '连击数条件'], [/生存人数|生存数|人数状況/, '队伍／人数条件'], [/ステ比較/, '属性比较条件'], [/一刀時|一刀で/, '只装一件武器'], [/二刀時/, '装两件武器'], [/武器未装備時/, '未装备武器'], [/空中/, '空中'], [/復活時/, '复活时'], [/死亡時/, '死亡时'], [/キル時|撃破時|トドメ/, '击杀时'], [/移動中/, '移动中'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル時/, '暴击时'], [/キラー発生時|キラー時/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/対BOSS|ボス/, '对BOSS'], [/同一キャラタイプ/, '对与自身同类型的敌人'], [/経過時間状況/, '随时间变强']];
+const KIND_TAGS = [[/対状態異常|状態異常中の相手|異常状態の相手/, '对异常状态的敌人'], [/特定状態異常中|状態異常中(?!の相手)|状態異常時/, '自身异常状态时'], [/対気絶・ブレイク中|気絶・ブレイク中/, 'Break／眩晕'], [/距離状況|距離条件/, '距离条件'], [/HP状況|HP条件/, 'HP条件'], [/超必殺ゲージ(状況|条件)/, '超必杀槽条件'], [/MP状況|MP値条件/, 'MP条件'], [/ヒット数(状況|条件)/, '连击数条件'], [/生存人数|生存数|人数状況/, '队伍／人数条件'], [/ステ比較/, '属性比较条件'], [/一刀時|一刀で/, '只装一件武器'], [/二刀時/, '装两件武器'], [/武器未装備時/, '未装备武器'], [/空中/, '空中'], [/復活時/, '复活时'], [/死亡時/, '死亡时'], [/キル時|撃破時|トドメ/, '击杀时'], [/移動中/, '移动中'], [/詠唱中|準備中/, '咏唱中'], [/クリティカル時/, '暴击时'], [/キラー発生時|キラー時/, '特攻发动时'], [/弱点属性/, '打弱点属性时'], [/対BOSS|ボス/, '对BOSS'], [/同一キャラタイプ/, '对与自身同类型的敌人'], [/経過時間状況/, '随时间变强'], [/同一攻撃Hit数/, '受到连续攻击时']];
 const nibbles = n => { const out = []; for (let i = 0; i < 6 && n > 0; i++) { out.push(n & 15); n >>= 4; } return out; };
 
 export function decodeProcess(pid, paramStr) {
@@ -132,6 +137,7 @@ export function decodeProcess(pid, paramStr) {
   const add = (dim, raw, name) => {
     if (raw == null || Number.isNaN(raw)) return;
     if (dim === 'race' && own && !/対象|相手/.test(name)) dim = 'ownRace';
+    if (dim === 'race' && /キャラタイプ(ランダム)?追加/.test(row[pc.NAME])) dim = 'addRace';   // 人类模仿: the types it may add
     switch (dim) {
       case 'element': { const e = elements(raw); if (e === null) out.anyElement = true; else if (e === 'weapon') out.weaponElement.push('武器的属性'); else if (e) out.elements.push(...e); else out.undecoded.push(`${name}=${raw}`); break; }
       case 'aboutElement': { const e = elements(raw); if (Array.isArray(e)) out.aboutElements.push(...e); else if (e !== null) out.undecoded.push(`${name}=${raw}`); break; }
@@ -228,7 +234,7 @@ export function tagsOf(d, defensive) {
   const physical = types.includes(9) && types.includes(1);
   if (physical) t.push(pre + '物理');
   for (const x of types) if (!(physical && (x === 9 || x === 1))) t.push(pre + SKILL[x]);
-  for (const r of new Set(d.roles)) if (r !== 1) t.push(ROLE[r]);
+  for (const r of new Set(d.roles)) if (r !== 1) t.push(`${ROLE[r]}技能`);
   for (const e of new Set(d.equips)) t.push(`装备${EQUIP[e]}`);
   for (const r of new Set(d.races)) t.push(defensive ? `受·${RACE[r]}` : `对${RACE[r]}`);
   for (const r of new Set(d.allyRaces || [])) t.push(`我方${RACE[r]}类型`);

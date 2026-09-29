@@ -46,19 +46,32 @@ test('every table skill is classified, and the user\'s decisions are applied', (
   assert.equal(dmg([...byId.values()].find(s => s.name === '冰冻增收').id)[0].text, '最多+20%');
   assert.deepEqual(dmg([...byId.values()].find(s => s.name === '英灵附体').id).map(e => e.types), [[1, 2, 9]]);
   assert(!byId.get([...byId.values()].find(s => s.name === '狂战士').id).sub.造成伤害.some(e => e.way !== '伤害加成')); // DOT is its own HP loss
+  // 爆裂者 / 驱动: “物理攻击・超必杀技” is not a stat list
   assert(!byId.get(26872).cats.includes('基础属性') && !byId.get(25710).cats.includes('基础属性'));
+  // other 大类: ranged parameter docs (params[1]～params[10]) give the races of 複数タイプ killers; types a skill adds
+  // are not targets; a debuff put on the target is damage dealt; our own side's types are not the target's
+  const named = n => [...byId.values()].find(s => s.name === n);
+  assert.deepEqual(named('海洋斩灭者').sub.特攻.map(e => e.races), [[1001, 2007, 2010, 2012]]);
+  assert(named('人类模仿').tags.includes('追加战士类型') && !named('人类模仿').tags.includes('对战士'));
+  assert(named('腐坏之牙').cats.includes('造成伤害') && !named('腐坏之牙').cats.includes('受到伤害'));
+  assert(named('剑阵').tags.includes('我方战士类型') && !named('剑阵').tags.includes('对战士'));
+  assert.equal(named('英灵战士').sub.受到伤害[0].text, '受到伤害 −10%');     // its comments name 2 of 6 parameters
+  assert.equal(named('沦落').sub.伤害上限.length, 2);                          // two +5000: both apply
 });
 
 test('the classification preview lists every skill of each previewed 大类, with all its other classes', async () => {
   const draft = read('docs/skill-classes-draft.json'), byId = new Map(draft.skills.map(s => [s.id, s]));
   const src = fs.readFileSync(new URL('../dist/skill-classes-preview-data.js', import.meta.url), 'utf8');
   const { pages } = JSON.parse(src.slice(src.indexOf('=') + 1).trim().replace(/;$/, ''));
+  // 特攻・暴击・Break值・反击 are one page, 特殊伤害造成 (user 2026-09-29)
+  const SPECIAL = ['特攻', '暴击', 'Break值', '反击'], pageOf = c => (SPECIAL.includes(c) ? '特殊伤害造成' : c);
+  assert.deepEqual([...new Set(draft.skills.flatMap(s => s.cats).map(pageOf))].sort(), pages.map(p => p.cat).sort());
   for (const pg of pages) {
     const rows = pg.subs.flatMap(x => x.skills || x.blocks.flat());
     const ids = new Set(rows.map(r => r.id));
-    assert.equal(ids.size, draft.skills.filter(s => s.cats.includes(pg.cat)).length, pg.cat);
+    assert.equal(ids.size, draft.skills.filter(s => s.cats.some(c => pageOf(c) === pg.cat)).length, pg.cat);
     assert.equal(pg.total, ids.size);
-    for (const r of rows) for (const c of byId.get(r.id).cats) if (c !== pg.cat) assert(r.also.some(a => a === c || a.startsWith(`${c}（`)), `${r.id} also in ${c}`);
+    for (const r of rows) for (const c of byId.get(r.id).cats) if (pageOf(c) !== pg.cat) assert(r.also.some(a => a === pageOf(c) || a.startsWith(`${pageOf(c)}（`)), `${r.id} also in ${c}`);
     for (const x of pg.subs) {
       if (x.skills) { for (const r of x.skills) for (const e of r.entries) assert.equal(e.cond, e.tags.length > 0, `${r.id} ${x.name}`); continue; }
       for (const [i, block] of x.blocks.entries()) for (const r of block) for (const e of r.entries) assert.equal(e.tags.length > 0, i === 1, `${r.id} ${x.name}`);

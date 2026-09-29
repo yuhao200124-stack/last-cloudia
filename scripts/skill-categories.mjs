@@ -47,6 +47,7 @@ export const KIND = [
 export function kindCategory(kind) {
   if (/クリティカル(時|発生時).*与ダメージ/.test(kind)) return '暴击';
   if (/魔転相/.test(kind)) return '造成伤害';            // damage from converting 魔力 / 攻击力
+  if (/被ダメージ増減付与/.test(kind)) return '造成伤害';  // a debuff put on the target: the enemy takes more damage (腐坏之牙)
   if (/詠唱中スーパーアーマー/.test(kind)) return '魔法·咏唱'; // casting is not interrupted
   let best = null;
   for (const [cat, re] of KIND) for (const m of kind.matchAll(new RegExp(re.source, 'g'))) {
