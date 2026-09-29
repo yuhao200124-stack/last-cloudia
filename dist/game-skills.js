@@ -13,10 +13,13 @@
   const params = new URLSearchParams(location.search);
   const buildChar = /^\d+$/.test(params.get('character') || '') ? params.get('character') : null;
   const embedded = !!buildChar;
-  let picked = new Set(), gains = {}, bst = null;
+  let picked = new Set(), own = new Set(), gains = {}, bst = null;
   const gainText = g => `${g >= 0 ? '+' : ''}${(g * 100).toFixed(1)}%`;
   function addButton(id) {
-    const on = picked.has(id), g = gains[id];
+    const g = gains[id];
+    // a skill on the character's own ability board is always in the loadout, at 0 SC (no “+”)
+    if (own.has(id)) return `<span class="own-skill-badge" title="角色自己能力盘上的技能，已经算在配装里（0 SC）${g != null ? ` · 收益 ${gainText(g)}` : ''}">自带</span>${g != null ? `<small class="build-gain">${gainText(g)}</small>` : ''}`;
+    const on = picked.has(id);
     return `<button class="add-skill-button${on ? ' is-added' : ''}" type="button" data-add-skill="${id}" aria-label="${on ? '从配装取消' : '加入配装'}" title="${on ? `已加入配装${g != null ? ` · 收益 ${gainText(g)}` : ''}；再点一次取消` : '加入配装'}"${bst ? '' : ' disabled'}><span aria-hidden="true">${on ? '✓' : '+'}</span></button>${on ? `<small class="build-gain">${g != null ? gainText(g) : '计算中'}</small>` : ''}`;
   }
   const actionTd = s => embedded ? `<td class="action-cell" data-action-for="${s.gameId}">${addButton(s.gameId)}</td>` : '';
@@ -116,7 +119,7 @@
       $('buildStatus').textContent = `已选 ${bst.selected.length} 个 · SC ${bst.sc?.total ?? 0}${bst.perCall != null ? ` · 当前配装每次 ${fmtN(bst.perCall)}` : ''}${last}${bst.computing ? ' · 计算中…' : ''}`;
     }
     $('buildToolbar').hidden = false;
-    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-noopts`;
+    frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260929-boardsc`;
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }
@@ -130,7 +133,7 @@
       if (e.origin !== location.origin || e.source !== frame.contentWindow) return;
       if (e.data?.type === 'lc-damage-ready') { layout(); toFrame({ type: 'lc-build-hello' }); }
       else if (e.data?.type === 'lc-build-state') {
-        bst = e.data; picked = new Set((bst.selected || []).map(Number)); gains = bst.gains || {};
+        bst = e.data; picked = new Set((bst.selected || []).map(Number)); own = new Set((bst.auto || []).map(Number)); gains = bst.gains || {};
         document.querySelectorAll('[data-action-for]').forEach(td => { td.innerHTML = addButton(Number(td.dataset.actionFor)); });
         status();
       }

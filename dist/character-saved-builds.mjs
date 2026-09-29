@@ -1,8 +1,8 @@
 // 已保存配装 on a character page: the loadouts saved in the damage calculator's 配装 (localStorage
 // lc-engine-plans:v1, per character, this browser) with the skills each one picked; 打开配装 opens the 配装 on the
 // home page's skill table (index.html?character=…&plan=…) with that loadout. (The old skill-table loadouts are no longer listed — the user's decision.)
-// SC as in the calculator (build-sc.mjs): 能力盘突破 free one skill each; the character's own SC skills that are
-// not on the skill table are always there at 0 SC.
+// SC as in the calculator (build-sc.mjs): 能力盘突破 free one skill each; every SC skill on the character's own
+// ability board is always there at 0 SC (user 2026-09-29, as the old skill table did).
 import { breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260929-build';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -11,12 +11,12 @@ const PLANS_KEY = 'lc-engine-plans:v1';
 const FREE_COST = 99;
 const json = path => fetch(new URL(path, import.meta.url)).then(r => r.json());
 let ownSkills = null;
-// the character's own SC skills that are not on the skill table (0 SC in every loadout)
-async function ownOffTable(index) {
-  if (!ownSkills) ownSkills = Promise.all([json('./game-data/index.json'), json('./game-data/engine/table-passives.json')]).then(async ([site, table]) => {
+// the SC skills on the character's own ability board (0 SC in every loadout)
+async function ownBoard(index) {
+  if (!ownSkills) ownSkills = json('./game-data/index.json').then(async site => {
     const dress = site.site?.[characterId]; if (!dress) return [];
-    const c = await json(`./game-data/c/${dress}.json`), onTable = new Set(table.ids);
-    return (c.ownPassives || []).map(p => p.passive).filter(id => { const cost = index.get(id)?.cost; return cost > 0 && cost < FREE_COST && !onTable.has(id); });
+    const c = await json(`./game-data/c/${dress}.json`);
+    return (c.ownPassives || []).map(p => p.passive).filter(id => { const cost = index.get(id)?.cost; return cost > 0 && cost < FREE_COST; }).sort((a, b) => index.get(b).cost - index.get(a).cost);
   }).catch(() => []);
   return ownSkills;
 }
@@ -37,12 +37,12 @@ async function render() {
   const plan = list.find(p => p.id === select.value);
   $('savedBuildOpen').disabled = !plan;
   if (!plan) { $('savedBuildSkills').innerHTML = '<p class="saved-build-empty">在伤害计算器里点“配装”，在首页技能表点“+”选好技能后，在右边的配装面板点“保存配装”，就会列在这里。</p>'; $('savedBuildTotal').textContent = '0 SC'; return; }
-  const index = await passives(), auto = await ownOffTable(index), autoSet = new Set(auto);
+  const index = await passives(), auto = await ownBoard(index), autoSet = new Set(auto);
   const info = id => index.get(id) || { nameS: `编号 ${id}`, cost: null };
   const sc = scTotal((plan.build?.selected || []).filter(id => !autoSet.has(id)).map(id => ({ id, sc: info(id).cost })), cleanBreaks(plan.build?.breaks));
   const name = r => `<span class="saved-build-skill-name">${esc(r.nameS)}${r.name && r.name !== r.nameS ? ` <small>${esc(r.name)}</small>` : ''}</span>`;
   const picked = [...sc.items].sort((a, b) => b.sc - a.sc).map(i => `<div class="saved-build-skill saved-build-row">${name(info(i.id))}<span class="saved-build-skill-sc">${i.freeBy ? `0 SC <small>${breakName(i.freeBy)}（原 ${i.sc}）</small>` : i.sc ? `${i.sc} SC` : '—'}</span></div>`);
-  const own = auto.map(id => `<div class="saved-build-skill saved-build-row">${name(info(id))}<span class="saved-build-skill-sc">0 SC <small>角色专属（原 ${info(id).cost}）</small></span></div>`);
+  const own = auto.map(id => `<div class="saved-build-skill saved-build-row">${name(info(id))}<span class="saved-build-skill-sc">0 SC <small>能力盘自带（原 ${info(id).cost}）</small></span></div>`);
   $('savedBuildSkills').innerHTML = `<p class="saved-build-note">${esc(String(plan.updatedAt || '').slice(0, 10))} 保存 · ${sc.items.length} 个技能</p>` +
     (sc.items.length ? picked.join('') : '<p class="saved-build-empty">这套配装没有选技能。</p>') + own.join('');
   $('savedBuildTotal').textContent = `${sc.total} SC`;

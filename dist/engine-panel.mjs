@@ -30,8 +30,8 @@ const growthChoice = { accountBlessings: true };
 const LOADOUT_KEY = 'lc-engine-loadout-report';
 let loadoutReport = null, switches = null;
 try { const saved = localStorage.getItem(LOADOUT_KEY); if (saved) loadoutReport = JSON.parse(saved); } catch {}
-// Loadout builder (配装): start = the character's free own passives (个性 / 固有 / 超越) + account blessings + its own
-// SC skills that are not on the skill table (always added, 0 SC — the user's rule), all always on (user 2026-09-29:
+// Loadout builder (配装): start = the character's free own passives (个性 / 固有 / 超越) + account blessings + every
+// SC skill on its own ability board (always added, 0 SC — user 2026-09-29, as the old skill table did), all always on (user 2026-09-29:
 // no switches for them), with the exclusive gear chosen in the calculator's own 专武 field; everything upgradable at
 // its maximum; the user adds skills with “+” and sees what each one brings to the
 // current build. 能力盘突破 (一破 / 二破 / 三破) free one skill each (build-sc.mjs). Per character, kept in the browser.
@@ -82,7 +82,7 @@ function sendState() {
   const gains = {};
   for (const id of [...build.selected, ...buildAuto]) { const g = buildGains.get(id); if (g?.removed && g.gain != null) gains[id] = g.gain; }
   const sc = buildSc();
-  window.parent.postMessage({ type: 'lc-build-state', dress: buildDress, selected: [...build.selected], auto: [...buildAuto], gains,
+  window.parent.postMessage({ type: 'lc-build-state', dress: buildDress, selected: pickedIds(), auto: [...buildAuto], gains,
     sc: { total: sc.total, freed: sc.items.filter(i => i.freeBy).map(i => ({ id: i.id, by: breakName(i.freeBy), sc: i.sc })) }, breaks: [...build.breaks],
     perCall: buildCurrent?.perCall ?? null, baseline: buildBaseline?.perCall ?? null, hits: currentHits().hits, move: moveInfo, computing: running,
     lastAdded: lastAdded != null && build.selected.includes(lastAdded) ? { id: lastAdded, name: passiveText(lastAdded), gain: buildGains.get(lastAdded)?.removed ? buildGains.get(lastAdded).gain : null } : null }, location.origin);
@@ -149,7 +149,8 @@ async function restoreRecommended() {
   const c = await gameCharacter(buildDress); await ensureTablePassives();
   const own = new Set([...ownPassiveIds(c).filter(isFreePassive), ...autoPaidIds(c)]);
   build.selected = rec.passives.filter(id => !own.has(id)); build.on = buildEmbed; build.planId = null; saveBuild(); buildGains.clear(); syncBuildControls(); sendState();
-  planStatus(`已恢复推荐配装（${build.selected.length} 个被动）；需要的话再保存。`); run();
+  const mine = rec.passives.length - build.selected.length;
+  planStatus(`已恢复推荐配装：另外选 ${build.selected.length} 个${mine ? `，其余 ${mine} 个是能力盘自带（已经算在里面）` : ''}；需要的话再保存。`); run();
 }
 const recommendState = { running: false, gen: 0, rows: [] };
 function stopRecommend(text) {
@@ -553,18 +554,22 @@ function syncBuildControls() {
   renderPlans();
 }
 // SC of the picked skills (the character's own skills off the table are not in it: 0 SC)
-function buildSc() { return scTotal(build.selected.map(id => ({ id, sc: passiveCost(id) })), build.breaks); }
+function buildSc() { return scTotal(pickedIds().map(id => ({ id, sc: passiveCost(id) })), build.breaks); }
+// the picked skills without the character's own board skills (those are always in, at 0 SC)
+function pickedIds() { return build.selected.filter(id => !buildAuto.includes(id)); }
 // the status line under the 配装 button (in the page's frame) and the state for the page
 function renderBuildStatus() {
-  const { total } = buildSc(), n = build.selected.length;
+  const { total } = buildSc(), n = pickedIds().length;
   const cur = buildCurrent && build.on ? ` · 当前配装每次 ${fmt(buildCurrent.perCall)}` : '';
   if ($('engineBuildStatus') && buildEmbed) $('engineBuildStatus').textContent = `主结果按配装计算：已选 ${n} 个技能 · SC 合计 ${total}${cur}`;
   sendState();
 }
 // The character's own passives (game-data/c/<dress>.json) split by SC: COST 99 marks the free ones (unique
-// passives such as 赤裸之力II / 救世的聖劍, 【超越】, 迷宮踏破) that are always on; the rest cost SC. Those that are on
-// the game-data skill table are picked with “+” like any skill; those that are not (the character's own, e.g.
-// 月光II / 贯导) are always added at 0 SC (the user's rule). 个性 / 固有 / 超越 / 加护 are always all on.
+// passives such as 赤裸之力II / 救世的聖劍, 【超越】, 迷宮踏破) that are always on; the rest cost SC in the game. Every one
+// of those on the character's own ability board — also the common ones a relic can teach (冰攻击提升III …) — is the
+// character's own: always added at 0 SC, like the old skill table (user 2026-09-29: “算 0 SC（和原来技能表一样）”);
+// only skills learned from relics on top cost SC, and 能力盘突破 only frees among those. 个性 / 固有 / 超越 / 加护 are
+// always all on.
 const FREE_COST = 99;
 const isFreePassive = id => { const c = battle?.master.passive.get(id)?.COST; return c == null || c >= FREE_COST; };
 function ownPassiveIds(c) {
@@ -577,7 +582,9 @@ async function ensureTablePassives() {
   if (!tablePassives) tablePassives = new Set(await fetch(new URL('./game-data/engine/table-passives.json?v=20260929-build', import.meta.url)).then(r => r.json()).then(t => t.ids).catch(() => []));
   return tablePassives;
 }
-const autoPaidIds = c => tablePassives ? ownPaidIds(c).filter(id => !tablePassives.has(id)) : [];
+const autoPaidIds = c => ownPaidIds(c);
+// where an own board skill comes from: the limit-break stage its board area opens at, and whether a relic teaches it too
+const boardInfo = (c, id) => { const p = (c?.ownPassives || []).find(x => x.passive === id); return p ? { limitBreak: p.limitBreak, common: !!p.common } : null; };
 // Expected damage per call of the move (the main card's metric) from one scenario run, and what its first hit
 // received (the numbers a skill can change).
 function metricOf(out) {
@@ -658,11 +665,12 @@ function renderBuild(ctx) {
   const cur = buildCurrent ? `当前配装每次 <b>${fmt(buildCurrent.perCall)}</b>（${hits} 段 ≈ ${fmt(buildCurrent.perCall * hits)}）` : '当前配装：计算中…';
   const base = buildBaseline ? ` · 配装前（只有自带）每次 ${fmt(buildBaseline.perCall)}${buildCurrent && buildBaseline.perCall > 0 ? `，当前比它 ${pct(buildCurrent.perCall / buildBaseline.perCall - 1)}` : ''}` : '';
   const freed = sc.items.filter(i => i.freeBy);
-  summary.innerHTML = `${cur}${base}<br>已选 ${build.selected.length} 个技能 · SC 合计 ${sc.total}${freed.length ? `（${freed.map(i => `${breakName(i.freeBy)}免 ${esc(passiveText(i.id))}`).join('、')}）` : ''}${ctx?.autoIds?.length ? ` · 角色专属 ${ctx.autoIds.length} 个（0 SC）` : ''}${ctx?.buildGear ? ` · ${esc(ctx.buildGear)}` : ''}${ctx?.buildNote ? ` · ${esc(ctx.buildNote)}` : ''}<br><small>收益＝去掉这个技能伤害会少多少（按随机 0.95 单点比较，只比第一条伤害弹道）；上限附近的技能收益会随别的技能变化。</small>`;
+  summary.innerHTML = `${cur}${base}<br>已选 ${sc.items.length} 个技能 · SC 合计 ${sc.total}${freed.length ? `（${freed.map(i => `${breakName(i.freeBy)}免 ${esc(passiveText(i.id))}`).join('、')}）` : ''}${ctx?.autoIds?.length ? ` · 能力盘自带 ${ctx.autoIds.length} 个（0 SC）` : ''}${ctx?.buildGear ? ` · ${esc(ctx.buildGear)}` : ''}${ctx?.buildNote ? ` · ${esc(ctx.buildNote)}` : ''}<br><small>收益＝去掉这个技能伤害会少多少（按随机 0.95 单点比较，只比第一条伤害弹道）；上限附近的技能收益会随别的技能变化。</small>`;
   const picked = [...sc.items].sort((a, b) => b.sc - a.sc);
   const nameTd = id => { const row = passiveIndex?.find(r => r.id === id); return `<span title="${esc(row?.name || '')}">${esc(passiveText(id))}</span>`; };
   const pickedRows = picked.map(i => `<tr><td>${nameTd(i.id)}${battle && !battle.master.passive.has(i.id) ? ' <small>（主数据缺失）</small>' : ''}</td><td class="engine-build-sccell">${i.freeBy ? `<b>0</b><small>${breakName(i.freeBy)}（原 ${i.sc}）</small>` : i.sc || '—'}</td><td>${gainCell(i.id)}</td><td><button type="button" class="secondary" data-build-remove="${i.id}" aria-label="移除">×</button></td></tr>`);
-  const autoRows = (ctx?.autoIds || []).map(id => `<tr class="engine-build-auto"><td>${nameTd(id)}<br><small class="engine-build-tag">角色专属</small></td><td class="engine-build-sccell"><b>0</b><small>原 ${passiveCost(id) ?? '—'}</small></td><td>${gainCell(id)}</td><td><small>固定</small></td></tr>`);
+  const boardTitle = id => { const b = ctx?.buildAutoInfo?.get(id); return b ? `角色自己能力盘上的技能（限界突破第 ${b.limitBreak} 阶段的区域）${b.common ? '，也能从圣物学' : '，只有这个角色有'}；算 0 SC` : '角色自己能力盘上的技能；算 0 SC'; };
+  const autoRows = [...(ctx?.autoIds || [])].sort((a, b) => (passiveCost(b) ?? 0) - (passiveCost(a) ?? 0)).map(id => `<tr class="engine-build-auto"><td>${nameTd(id)}<br><small class="engine-build-tag" title="${esc(boardTitle(id))}">能力盘自带</small></td><td class="engine-build-sccell"><b>0</b><small>原 ${passiveCost(id) ?? '—'}</small></td><td>${gainCell(id)}</td><td><small>固定</small></td></tr>`);
   rows.innerHTML = [...pickedRows, ...autoRows].join('') || '<tr><td colspan="4" class="help">还没有加技能：在左边的技能表点“+”。</td></tr>';
 }
 
@@ -883,14 +891,16 @@ async function run(force = false) {
         const auto = autoPaidIds(c).filter(id => !ownSet.has(id)), autoSet = new Set(auto);
         const picked = build.selected.filter(id => !ownSet.has(id) && !autoSet.has(id));
         buildOwnPaid = ownPaidIds(c).filter(id => !autoSet.has(id)); buildAuto = auto;
+        // a loadout saved before (or a report / recommendation) may list own board skills: they are in already
+        if (build.selected.some(id => autoSet.has(id))) { build.selected = build.selected.filter(id => !autoSet.has(id)); saveBuild(); }
         const equips = exclusiveEquips(chosenExclusive(c, battle.master), battle.master);
         const bless = blessings.filter(b => !ownSet.has(b.id));
         const buildOwn = [...own.map(id => ({ id })), ...bless, ...auto.map(id => ({ id }))];
         const buildPassives = [...buildOwn, ...picked.map(id => ({ id }))];
         const crest = fromLoadout?.crest || null;
         attackerSpec = { unitDressId: dress, name: c?.nameS, panelGiven: false, passives: buildPassives, personality: c?.personality || [], equips, crest,
-          statsSource: `配装（自带免费被动 ${own.length} 个${bless.length ? '＋加护' : ''}＋角色专属 ${auto.length} 个＋所选 ${picked.length} 个技能 · ${equips.length ? `专武 ${equips.map(e => battle.master.itemEquip.get(e.id)?.NAME).join('、')}` : '无专武'}${crest ? ' · 徽章按配装报告' : ''}；全部按最大）` };
-        attackerSpec.buildOwn = buildOwn; attackerSpec.buildPassives = buildPassives; attackerSpec.buildAuto = auto; attackerSpec.buildNote = crest ? '徽章按配装报告' : '';
+          statsSource: `配装（自带免费被动 ${own.length} 个${bless.length ? '＋加护' : ''}＋能力盘自带 ${auto.length} 个＋所选 ${picked.length} 个技能 · ${equips.length ? `专武 ${equips.map(e => battle.master.itemEquip.get(e.id)?.NAME).join('、')}` : '无专武'}${crest ? ' · 徽章按配装报告' : ''}；全部按最大）` };
+        attackerSpec.buildOwn = buildOwn; attackerSpec.buildPassives = buildPassives; attackerSpec.buildAuto = auto; attackerSpec.buildAutoInfo = new Map(auto.map(id => [id, boardInfo(c, id)])); attackerSpec.buildNote = crest ? '徽章按配装报告' : '';
         attackerSpec.buildGear = equips.length ? `专武：${equips.map(e => battle.master.itemEquip.get(e.id)?.NAME).join('、')}` : '无专武';
       } else renderBuild(null);
     }
@@ -933,9 +943,9 @@ async function run(force = false) {
     try { await measureSupportMagic(M, attackerSpec, targetSpec, state, dress); } catch (err) { console.error(err); }
     setState(`已结算 · ${new Date().toLocaleTimeString('zh-CN')}`); setPrimaryState(`游戏脚本 · ${new Date().toLocaleTimeString('zh-CN')}`);
     if (attackerSpec.buildPassives) {
-      const { buildOwn, buildPassives, buildAuto: autoIds, buildNote, buildGear, ...rest } = attackerSpec;
+      const { buildOwn, buildPassives, buildAuto: autoIds, buildAutoInfo, buildNote, buildGear, ...rest } = attackerSpec;
       // gains only compare the move's first damaging bullet (as the main card's per-call metric does)
-      buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), buildOwn, buildPassives, autoIds, buildNote, buildGear, firstBullet: damaging[0]?.bulletId ?? null };
+      buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), buildOwn, buildPassives, autoIds, buildAutoInfo, buildNote, buildGear, firstBullet: damaging[0]?.bulletId ?? null };
       const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], probabilityMode, buildPassives.map(p => p.id), buildOwn.map(p => p.id), (rest.equips || []).map(e => e.id), currentHits().hits]);
       if (key !== lastBuildKey) { buildGains.clear(); buildCurrent = buildBaseline = null; }
       lastBuildKey = key; buildCtx.key = key;
