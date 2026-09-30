@@ -1,6 +1,6 @@
 // The damage calculator page after the old rule-based calculator was removed (2026-09-28): only the inputs of the
 // game-script calculation remain, moves come from the game data, the hit count is the user's own (default 10), and
-// the 配装 data (common skills, recommended loadouts) is the old loadout's, as game passive ids.
+// the 配装 data (the common skills the SC recommendation tries) is the old loadout's, as game passive ids.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -46,8 +46,6 @@ test('配装 data: every skill-table row is a game passive; duplicate names are 
   assert.deepEqual(data.ambiguous, {}); assert.deepEqual(data.unmatched, []);
   assert(data.commonPassives.length > 900);
   for (const id of data.commonPassives) assert(index.has(id), id);
-  assert(data.recommended['245'].passives.includes(28093) && !data.recommended['245'].passives.includes(55320), '勇者之魂 SC 20 is 28093');
-  assert.equal(data.recommended['260'].passives.length, 12);
 });
 
 test('01 角色基础资料 shows each site character\'s Altema maximum stats', () => {

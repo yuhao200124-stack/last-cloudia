@@ -12,6 +12,8 @@
 
 **加护一律按账号（2026-09-30，用户：“加护都是根据账号来的”）**：角色自己的加护不再按游戏数据基础值单独加进去，所有加护都从本账号读取的加护表取（带账号的数值）；账号里没有的加护不算，“计入本账号加护”关掉时一个加护都不算。洛琪希“特攻”默认勾上是对的（用户确认），保持。
 
+**清理没人用的旧文件（2026-09-30，用户：“没用的就直接删了”）**：删了“本地迁移与备份”页（`local-data.html／.js／.css`、`local-backup.js`、`export-old-site.js`）和它的本地服务脚本（`local-migration-tools/server.py`、`rebuild-exporter.py`、`rebuild-manifest.py`）；旧规则计算器留下的 `effect-rule-engine.mjs`、`stat-condition-fields.mjs`、`stat-mechanics.mjs` 和测试 `stat-mechanics.test.mjs`；根目录旧站备份 `site.zip`、`site-template.zip`、`site-formula-update.tar.gz`、`old-effect-overrides.json`；`docs/` 里没人读的旧数据（`game-active-skills.json`、`skill-labeling-registry.json` 等 9 个，约 12MB）和 12 份只讲已删功能的旧文档；没人调用的 `findGameMove`、`loadGameMagic`、`loadGameRelics`，没人监听的 `lc:review-toggle`、`lc:open-damage-calculator`；`loadout-data.json` 里不用的 `recommended`。计算器“该招式没有游戏数据，见下方网页旧规则”去掉了后半句。“另有 N 条弹道未计入整次期望，见下方明细”用户说不管。游戏数据导出 `dist/game-data/magic.json` 网站没读，但属于导出脚本的产物，保留。Boss 预设手抄数值（第 26 项）、角色页排版（第 28 项）用户说不管。
+
 **Boss 自带被动只算 Break，其余写出来（2026-09-30，用户：“这些boss被动计算器不要算但是在boss界面要写出来”“除了 Break 都不算”“追加伤害先不用管”）**：怪物自己的被动里只有“自己 Break 中／Break 状态变化／自己 Break 时受到伤害”的处理计入计算（`scenario.mjs` 的 `OWN_BREAK_COND`、`ownBreakSegments`），濒死／觉醒加属性、魔法／物理耐性、首次行动不等待、异常耐性等一律不算。计算器“Boss 与战斗条件”一栏在种族下面列出目标的全部自带被动（预设 Boss、报告里的 Boss、怪物表选的 Boss 都一样；报告里的 Boss 现在也按怪物表带上它的 Break 被动），同一条件的合成一行（用户：“写简单点”，如“HP降到30%以下时：攻击、防御、魔力、魔抗 +35%”“Break 中：全属性耐性 −25，防御、魔抗 −25%（计入）”），不写触发次数。游戏里没有怪物被动的文字，说明由 `scripts/build-monster-passive-text.mjs` 按处理的条件和数值生成（`dist/game-data/engine/monster-passive-text.json`，13461 个，约 13% 读不出具体数值的写处理名称）。追加伤害：已查明游戏程序本体的算法（以触发那段的最终伤害为基数、按最小～最大比例随机、乘耐性、不超过那段上限；笔记在会话临时目录，未写进计算），用户说先不管。
 
 **连击数一律按 200（2026-09-30，用户：“连击数都默认200也不用改就当他生效”）**：游戏脚本读的是目标身上的连击数（`Bullet:Target():Hits()`，OverHits／UnderHits、急击系列、连击大师、破防旋风等 15 个技能），沙盒现在给目标 200 连击（`scenario.mjs` 的 `COMBO_HITS`，不加输入框）；所以“50 连击以上”“108 连击”这类都生效，一百零八响钟声“连击数 10 以下伤害 +10%”那一半不生效。测试 `tests/engine-combo.test.mjs`。角色页排版（第 28 项）用户说不管。
@@ -58,7 +60,7 @@
 2. 个性、专武等角色技能从游戏数据自动读成计算器规则（按处理类型翻译、导出补上处理名称里的条件、和四个已核对角色对照、不确定的标出来）：用户已决定暂缓，遇到再做。
 3. 下拉菜单直接选“自定义目标”时没有种族，要手动勾选；已选预设再改防御会保留预设种族。
 4. “按每 SC 收益推荐”试哪些技能：原来是原技能表的 933 个（现固定在 `game-data/engine/loadout-data.json`），原表删除后要不要换成游戏数据技能表的 942 个，用户说以后再定。
-5. “本地迁移与备份”页（`local-data.html`）是否删除：用户未表态，暂时保留。
+5. ~~“本地迁移与备份”页~~：2026-09-30 已删除（用户：“没用的就直接删了”）。
 6. 技能分类（进行中）；以后要算减伤（受到伤害），数据已准备，计算未做：用户决定——分页**直接换成**从游戏数据自动做的分类；配装里“只看本招式吃得到的”先按数据条件快速筛，**只对筛剩的**用游戏脚本算收益。
    - 初稿：`scripts/build-skill-classes.mjs` → `docs/skill-classes-draft.json`。依据是每个技能的全部效果种类（一个技能可有多条，用“@”连接），加上游戏自带的效果说明。
    - 分出的内容：大类（可多个）、条件标签、计算器能否算（能算／看条件／不影响每段伤害／待确认）。

@@ -187,7 +187,7 @@ function confirmPlanPop() {
 // ---- 按每 SC 收益推荐: data from the old loadout (game-data/engine/loadout-data.json, fixed since the
 // original skill table was removed on 2026-09-29; which skills 按每 SC 收益推荐 tries is to be decided later) ----
 let loadoutData = null;
-async function ensureLoadoutData() { if (!loadoutData) loadoutData = await fetch(new URL('./game-data/engine/loadout-data.json', import.meta.url)).then(r => r.json()).catch(() => ({ commonPassives: [], recommended: {} })); return loadoutData; }
+async function ensureLoadoutData() { if (!loadoutData) loadoutData = await fetch(new URL('./game-data/engine/loadout-data.json', import.meta.url)).then(r => r.json()).catch(() => ({ commonPassives: [] })); return loadoutData; }
 const recommendState = { running: false, gen: 0, rows: [] };
 function stopRecommend(text) {
   recommendState.gen++; recommendState.running = false;
@@ -963,7 +963,7 @@ async function run(force = false) {
   if (!latest) { setState('等待计算器状态'); return; }
   if (running) { pending = true; return; }
   const move = latest.gameMove;
-  if (!move?.id) { setState('先选择有游戏数据的招式'); setPrimaryState('该招式没有游戏数据，见下方网页旧规则'); $('engineResult').innerHTML = ''; return; }
+  if (!move?.id) { setState('先选择有游戏数据的招式'); setPrimaryState('该招式没有游戏数据'); $('engineResult').innerHTML = ''; return; }
   setPrimaryState('计算中…');
   running = true;
   try {

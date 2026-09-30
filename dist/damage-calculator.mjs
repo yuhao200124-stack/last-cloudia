@@ -136,7 +136,6 @@ function showConfirmedEffects(open){
 function showReview(open){
  if(open)showConfirmedEffects(false);
  $('reviewPage').hidden=!open;$('calculationPage').hidden=open;
- document.dispatchEvent(new CustomEvent('lc:review-toggle',{detail:{open}}));
  if(open)$('reviewTitle').focus();else $('openReview').focus();
 }
 $('openReview').addEventListener('click',()=>showReview(true));

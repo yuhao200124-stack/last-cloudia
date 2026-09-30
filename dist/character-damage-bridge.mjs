@@ -7,16 +7,15 @@ const open = document.getElementById('damageSimulatorOpen');
 const close = document.getElementById('damageSimulatorClose');
 const backdrop = document.getElementById('damageSimulatorBackdrop');
 const characterId = document.body.dataset.characterId;
-const url = plan => `./damage-calculator.html?character=${encodeURIComponent(characterId)}&embedded=1${plan ? `&plan=${encodeURIComponent(plan)}` : ''}&v=20260929-homebuild`;
-function show(plan = null) {
+const url = () => `./damage-calculator.html?character=${encodeURIComponent(characterId)}&embedded=1&v=20260930-cleanup`;
+function show() {
   panel.hidden = false; backdrop.hidden = false; open.setAttribute('aria-expanded', 'true');
-  if (plan || !frame.getAttribute('src')) frame.src = url(plan);
+  if (!frame.getAttribute('src')) frame.src = url();
   close.focus();
 }
 function hide() { panel.hidden = true; backdrop.hidden = true; open.setAttribute('aria-expanded', 'false'); open.focus(); }
 open.addEventListener('click', () => show()); close.addEventListener('click', hide); backdrop.addEventListener('click', hide);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) { e.preventDefault(); hide(); } });
-window.addEventListener('lc:open-damage-calculator', e => show(e.detail?.plan || null));
 window.addEventListener('message', e => {
   if (e.origin !== location.origin || e.source !== frame.contentWindow) return;
   if (e.data?.type === 'lc-damage-close') hide();

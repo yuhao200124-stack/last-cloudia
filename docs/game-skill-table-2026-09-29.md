@@ -26,7 +26,7 @@
   - 删除前后对首页（全部技能、伤害、基础属性）、角色列表和 4 个角色页，在电脑宽度和手机宽度下逐像素比对，完全一致。
 - `scripts/new-character.mjs` 不再往 `app.js` 写角色配装条目。
 - **保留**：
-  - “本地迁移与备份”页（`local-data.html`、`export-old-site.js`、`local-backup.js`），用户没有表态，先不动。
+  - “本地迁移与备份”页（`local-data.html`、`export-old-site.js`、`local-backup.js`）：2026-09-30 已删除（用户：“没用的就直接删了”）。
   - 账户加护面板（角色页用）。
 
 ## 计算器不受影响

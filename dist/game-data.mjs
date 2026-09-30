@@ -8,29 +8,11 @@ const json = path => {
 };
 export const loadGameIndex = () => json('index.json');
 export const loadGameCharacter = unitDressId => json(`c/${unitDressId}.json`);
-export const loadGameMagic = () => json('magic.json');
-export const loadGameRelics = () => json('relics.json');
 
 export async function gameCharacterForSite(siteCharacterId) {
   const index = await loadGameIndex();
   const unit = index.site?.[String(siteCharacterId)];
   return unit ? { character: await loadGameCharacter(unit), alias: index.magicAlias?.[String(siteCharacterId)] || {} } : null;
-}
-
-const plain = s => String(s || '').replace(/[\s・･·]/g, '');
-// A site move ({kind, name}) → the game move of the same character.
-export function findGameMove(game, move) {
-  if (!game?.character || !move) return null;
-  const c = game.character;
-  if (move.kind === 'normal') return c.normal?.[0] || null;
-  const slot = { s1: 0, s2: 1, s3: 2 }[move.kind];
-  if (slot !== undefined) return c.specials?.[slot] || null;
-  if (move.kind === 'ultimate') return c.ultimate || null;
-  if (move.kind === 'magic') {
-    const name = plain(game.alias?.[move.name] || move.name);
-    return [...(c.magic?.normal || []), ...(c.magic?.heavy || [])].find(m => plain(m.nameS) === name || plain(m.name) === name) || null;
-  }
-  return null;
 }
 
 const kindOf = k => k === '物理' ? 'physical' : k === '魔法' ? 'magical' : 'mixed';
