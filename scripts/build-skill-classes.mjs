@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import { zhName } from '../dist/engine/gloss.mjs';
 import { decodeProcess, tagsOf } from './skill-conditions.mjs';
 import { categoriesOf, kindCategory, processCategory, onEnemies, raisesAttack, scriptBody, statEntries } from './skill-categories.mjs';
-import { describe, subOf, WAYS } from './skill-entries.mjs';
+import { describe, subOf } from './skill-entries.mjs';
 import { ELEM, RACE } from './skill-conditions.mjs';
 import { luaDocs } from './skill-conditions.mjs';
 const procDocs = luaDocs('process.lua');
@@ -262,93 +262,4 @@ const count = new Map(); for (const s of out) for (const c of s.cats) count.set(
 console.log([...count].sort((a, b) => b[1] - a[1]).map(([c, n]) => `${c} ${n}`).join(' · '));
 const calc = new Map(); for (const s of out) calc.set(s.calc, (calc.get(s.calc) || 0) + 1); console.log([...calc].map(([c, n]) => `${c} ${n}`).join(' · '));
 console.log('multi-category', out.filter(s => s.cats.length > 1).length, 'no conditions', out.filter(s => !s.tags.length).length, 'undecoded', out.filter(s => s.undecoded.length).length);
-
-// ---- the preview page (dist/skill-classes-preview.html): one tab per 大类 (user 2026-09-29: 基础属性 gathers the stats,
-// 伤害上限 on its own, 特攻・暴击・Break值・反击 are 特殊伤害造成, 信仰・金钱·经验・待确认 are 杂项), each with its 小类 as sub-tabs; every sub-tab lists the
-// skills without conditions first, then those with conditions, each by bonus (user's rule). A damage-like 小类 is
-// filtered in the page by two rows combined (element / race × attack type; an entry without that restriction
-// matches every button). “也在” lists every other place the skill is in.
-{
-  const STATS = ['HP', 'MP', '攻击力', '法强', '防御力', '魔抗', '属性耐性'];
-  const bonusText = e => {
-    if (e.basis === '转换') return '由其他属性转换';
-    const n = v => Number((Math.abs(v) / 100).toFixed(2));
-    const parts = [];
-    if (e.rate) parts.push(`${e.rate > 0 ? '+' : '−'}${n(e.rate)}%`);
-    if (e.add) parts.push(`${e.add > 0 ? '+' : '−'}${Math.abs(e.add)}`);
-    const t = parts.join('、') || '（数值读不出）';
-    return `${e.max ? '最多' : ''}${e.basis === '装备' ? '装备的' : ''}${t}`;
-  };
-  const order = e => [{ 角色: 0, 装备: 1, 转换: 2 }[e.basis] ?? 3, -(e.rate || 0), -(e.add || 0)];
-  const cmp = (a, b) => { const x = order(a.e), y = order(b.e); for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] - y[i]; return a.id - b.id; };
-  const OTHER_WAYS = ['追加伤害', '追加伤害增幅', '无视防御', '魔转相', '敌人受到伤害增加', '敌人属性耐性降低'];
-  const SPECIAL = ['特攻', '暴击', 'Break值', '反击'];
-  const GENERIC_PAGES = ['受到伤害', '回复', '异常', '特技充能·必杀', '魔法·咏唱', '移动与行动', '装备·种族'];
-  const MISC = ['信仰', '金钱·经验', '待确认'];          // user 2026-09-29: these three are one page, 杂项
-  const SUB_ORDER = { 受到伤害: ['减伤', '其他方式'], 回复: ['HP回复', 'MP回复', '复活', '回复效果'], 异常: ['异常耐性', '赋予异常', '恢复速度'], '特技充能·必杀': ['充能速度', '立即充能', '特技次数', '超必杀槽'], '魔法·咏唱': ['咏唱', '消耗MP'], 移动与行动: ['移动速度', '被瞄准'], 装备·种族: ['追加类型', '可装备', '二刀流'] };
-  // where each skill is: [page, 小类] (a page with one 小类 is named alone)
-  const places = s => {
-    const out = [];
-    for (const e of s.sub?.基础属性 || []) out.push(['基础属性', e.stat]);
-    for (const x of [...new Set((s.sub?.造成伤害 || []).map(e => (e.way === '伤害加成' ? '伤害加成' : '其他方式')))].sort().reverse()) out.push(['造成伤害', x]);
-    if (s.cats.includes('伤害上限')) out.push(['伤害上限', '伤害上限']);
-    for (const c of SPECIAL) if (s.cats.includes(c)) out.push(['特殊伤害造成', c]);
-    for (const c of MISC) if (s.cats.includes(c)) out.push(['杂项', c]);
-    for (const c of GENERIC_PAGES) if (s.cats.includes(c)) for (const x of (SUB_ORDER[c] || [c]).filter(x => (s.sub?.[c] || []).some(e => e.sub === x))) out.push([c, x]);
-    return out;
-  };
-  const multi = new Set(['基础属性', '造成伤害', '特殊伤害造成', '杂项', ...Object.keys(SUB_ORDER)]);
-  const also = (s, page, sub) => {
-    const byPage = new Map();
-    for (const [pg, x] of places(s)) if (!(pg === page && x === sub)) { if (!byPage.has(pg)) byPage.set(pg, []); byPage.get(pg).push(x); }
-    return [...byPage].map(([pg, xs]) => (multi.has(pg) ? `${pg}（${xs.join('、')}）` : pg));
-  };
-  const WAY_RANK = w => WAYS.length - Math.max(0, WAYS.indexOf(w));
-  const entry = e => ({ text: e.text, v: e.v ?? (e.way === '伤害上限' ? e.add * 100 + e.rate : e.way && WAYS.includes(e.way) ? WAY_RANK(e.way) * 1e7 + Math.max(-4e6, Math.min(4e6, e.value || 0)) : e.rate), apply: e.apply, tags: e.tags, cond: e.cond, els: e.els, types: e.types, ...(e.races ? { races: e.races } : {}) });
-  // plain 小类: rows (one per skill, its entries in that 小类), without conditions then with, by the best entry
-  const blocksOf = (skills, pick, page, sub) => [false, true].map(c => skills.map(s => ({ s, es: pick(s).filter(e => e.cond === c).map(entry).sort((a, b) => b.v - a.v) })).filter(x => x.es.length)
-    .sort((a, b) => b.es[0].v - a.es[0].v || a.s.id - b.s.id).map(x => ({ id: x.s.id, entries: x.es, also: also(x.s, page, sub) })));
-  const filterOf = (skills, pick, page, sub) => skills.map(s => ({ s, es: pick(s) })).filter(x => x.es.length).map(x => ({ id: x.s.id, entries: x.es.map(entry), also: also(x.s, page, sub) }));
-  const inCat = c => out.filter(s => s.cats.includes(c));
-  const groups = Object.fromEntries(STATS.map(st => [st, []]));
-  for (const s of out) for (const e of s.sub?.基础属性 || []) groups[e.stat].push({ s, e });
-  const pages = [{
-    cat: '基础属性', total: inCat('基础属性').length,
-    subs: STATS.map(st => ({ name: st, blocks: [false, true].map(c => groups[st].filter(x => x.e.cond === c).sort((a, b) => cmp({ e: a.e, id: a.s.id }, { e: b.e, id: b.s.id })).map(x => ({ id: x.s.id, entries: [{ text: bonusText(x.e), apply: [], tags: x.e.tags }], also: also(x.s, '基础属性', st) }))) })),
-  }];
-  const dmg = inCat('造成伤害').filter(s => s.sub?.造成伤害);
-  const otherBlocks = [false, true].map(c => dmg.map(s => ({ s, es: s.sub.造成伤害.filter(e => e.way !== '伤害加成' && e.cond === c) })).filter(x => x.es.length)
-    .map(x => ({ x, es: x.es.sort((a, b) => OTHER_WAYS.indexOf(a.way) - OTHER_WAYS.indexOf(b.way) || b.rate - a.rate) }))
-    .sort((a, b) => OTHER_WAYS.indexOf(a.es[0].way) - OTHER_WAYS.indexOf(b.es[0].way) || b.es[0].rate - a.es[0].rate || a.x.s.id - b.x.s.id)
-    .map(({ x, es }) => ({ id: x.s.id, entries: es.map(entry), also: also(x.s, '造成伤害', '其他方式') })));
-  pages.push({ cat: '造成伤害', total: inCat('造成伤害').length, subs: [
-    { name: '伤害加成', filter: ['el', 'type'], skills: filterOf(dmg, s => s.sub.造成伤害.filter(e => e.way === '伤害加成'), '造成伤害', '伤害加成') },
-    { name: '其他方式', blocks: otherBlocks },
-  ] });
-  pages.push({ cat: '伤害上限', total: inCat('伤害上限').length, subs: [{ name: '伤害上限', filter: ['el', 'type'], skills: filterOf(inCat('伤害上限').filter(s => s.sub?.伤害上限), s => s.sub.伤害上限, '伤害上限', '伤害上限') }] });
-  // 特殊伤害造成 (user: 特攻・暴击・Break值・反击)
-  pages.push({ cat: '特殊伤害造成', total: out.filter(s => SPECIAL.some(c => s.cats.includes(c))).length, members: SPECIAL, subs: [
-    { name: '特攻', filter: ['race', 'type'], skills: filterOf(inCat('特攻'), s => s.sub?.特攻 || [], '特殊伤害造成', '特攻') },
-    { name: '暴击', filter: ['el', 'type'], skills: filterOf(inCat('暴击'), s => s.sub?.暴击 || [], '特殊伤害造成', '暴击') },
-    { name: 'Break值', blocks: blocksOf(inCat('Break值'), s => s.sub?.Break值 || [], '特殊伤害造成', 'Break值') },
-    { name: '反击', blocks: blocksOf(inCat('反击'), s => s.sub?.反击 || [], '特殊伤害造成', '反击') },
-  ] });
-  for (const c of GENERIC_PAGES) {
-    const names = SUB_ORDER[c] || [c];
-    pages.push({ cat: c, total: inCat(c).length, subs: names.map(x => (c === '受到伤害' && x === '减伤'
-      ? { name: x, filter: ['el', 'type'], labels: ['受到的属性', '受到的攻击'], skills: filterOf(inCat(c), s => (s.sub?.[c] || []).filter(e => e.sub === x), c, x) }
-      : { name: x, blocks: blocksOf(inCat(c), s => (s.sub?.[c] || []).filter(e => e.sub === x), c, x) })) });
-  }
-  pages.push({ cat: '杂项', total: out.filter(s => MISC.some(c => s.cats.includes(c))).length, members: MISC,
-    subs: MISC.map(c => ({ name: c, blocks: blocksOf(inCat(c), s => s.sub?.[c] || [], '杂项', c) })) });
-  // nothing left out: every skill of every 大类 is in at least one 小类 of its page
-  const covered = new Set(pages.flatMap(pg => pg.members || [pg.cat]));
-  const allCats = new Set(out.flatMap(s => s.cats));
-  for (const c of allCats) if (!covered.has(c)) throw new Error(`大类 ${c} has no page`);
-  for (const pg of pages) {
-    const shown = new Set(pg.subs.flatMap(x => (x.skills || x.blocks.flat()).map(r => r.id)));
-    const missing = out.filter(s => (pg.members || [pg.cat]).some(c => s.cats.includes(c)) && !shown.has(s.id));
-    if (missing.length) throw new Error(`${pg.cat}: not in any 小类: ${missing.map(s => s.name).join('、')}`);
-  }
-  fs.writeFileSync(new URL('../dist/skill-classes-preview-data.js', import.meta.url), `// Generated by scripts/build-skill-classes.mjs from the classification draft (docs/skill-classes-draft.json)\nwindow.SKILL_CLASS_PREVIEW=${JSON.stringify({ pages })};\n`);
-}
+// (the classification preview page, dist/skill-classes-preview.html, was deleted on 2026-09-30 — user: “链接和页面一起删掉”)

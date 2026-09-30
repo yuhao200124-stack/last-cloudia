@@ -58,25 +58,3 @@ test('every table skill is classified, and the user\'s decisions are applied', (
   assert.equal(named('英灵战士').sub.受到伤害[0].text, '受到伤害 −10%');     // its comments name 2 of 6 parameters
   assert.equal(named('沦落').sub.伤害上限.length, 2);                          // two +5000: both apply
 });
-
-test('the classification preview lists every skill of each previewed 大类, with all its other classes', async () => {
-  const draft = read('docs/skill-classes-draft.json'), byId = new Map(draft.skills.map(s => [s.id, s]));
-  const src = fs.readFileSync(new URL('../dist/skill-classes-preview-data.js', import.meta.url), 'utf8');
-  const { pages } = JSON.parse(src.slice(src.indexOf('=') + 1).trim().replace(/;$/, ''));
-  // 特攻・暴击・Break值・反击 are one page, 特殊伤害造成 (user 2026-09-29)
-  // 信仰・金钱·经验・待确认 are one page, 杂项 (user 2026-09-29)
-  const SPECIAL = ['特攻', '暴击', 'Break值', '反击'], MISC = ['信仰', '金钱·经验', '待确认'];
-  const pageOf = c => (SPECIAL.includes(c) ? '特殊伤害造成' : MISC.includes(c) ? '杂项' : c);
-  assert.deepEqual([...new Set(draft.skills.flatMap(s => s.cats).map(pageOf))].sort(), pages.map(p => p.cat).sort());
-  for (const pg of pages) {
-    const rows = pg.subs.flatMap(x => x.skills || x.blocks.flat());
-    const ids = new Set(rows.map(r => r.id));
-    assert.equal(ids.size, draft.skills.filter(s => s.cats.some(c => pageOf(c) === pg.cat)).length, pg.cat);
-    assert.equal(pg.total, ids.size);
-    for (const r of rows) for (const c of byId.get(r.id).cats) if (pageOf(c) !== pg.cat) assert(r.also.some(a => a === pageOf(c) || a.startsWith(`${pageOf(c)}（`)), `${r.id} also in ${c}`);
-    for (const x of pg.subs) {
-      if (x.skills) { for (const r of x.skills) for (const e of r.entries) assert.equal(e.cond, e.tags.length > 0, `${r.id} ${x.name}`); continue; }
-      for (const [i, block] of x.blocks.entries()) for (const r of block) for (const e of r.entries) assert.equal(e.tags.length > 0, i === 1, `${r.id} ${x.name}`);
-    }
-  }
-});
