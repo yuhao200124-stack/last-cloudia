@@ -12,6 +12,8 @@
 
 **加护一律按账号（2026-09-30，用户：“加护都是根据账号来的”）**：角色自己的加护不再按游戏数据基础值单独加进去，所有加护都从本账号读取的加护表取（带账号的数值）；账号里没有的加护不算，“计入本账号加护”关掉时一个加护都不算。洛琪希“特攻”默认勾上是对的（用户确认），保持。
 
+**异常耐性说明（2026-09-30，用户：“目标 异常耐性（参数 3, -1，数值含义未解读）…一直有效这种去搞清楚”）**：op 306 是 StatusResist（procCondCommon.lua “0:タイプ 1:段階値(-2～+2)”）：参数 0＝异常种类（luaCommon.lua AILMENT_*：1 毒 2 麻痹 3 疾病 4 暗黑 5 诅咒 6 沉默，−1 基本异常，0 全部），参数 1＝升降几级；1 级＝敌人数据耐性值 50（MonsterMst.RESIST_STATUS_INFO 用 100/50/0/−50，process.lua 用 ÷50 换算级数）。辅助魔法说明现在写“疾病·诅咒耐性 −1 级（1 级＝耐性值 50）”，六种基本异常一起降时合并成“基本异常”。镇魂的超阶之魂的隐藏增益 buff1082619（异常状态中受伤害上限 +20000）也显示出来，注明要开“敌方异常”才计入（已核实：开了上限 283,999→303,999）。时间 −1：魂技写“自身存活期间一直有效”，其他写“一直有效（不限时间）”。测试 `tests/engine-status-resist.test.mjs`。
+
 **圣物技能分页（2026-09-30，用户：“做一个圣物技能的，我选了就显示所有有圣物技能的圣物”）**：添加圣物页面的稀有度分页后多一个“圣物技能”，只列有圣物技能的 38 个圣物。arks.py 从 ArkMst.ARK_SKILL_ID → SkillMst（SKILL_TYPE 7）取名称，SkillExplainMst 最高等级（Lv10）的 EXPLAIN_LONG 作说明，写入 arks.json 的 `arkSkill`；效果栏显示“【圣物技能「名」Lv10】（战斗中另外发动，未计入伤害）”。圣物技能本身不计算（用户：强化点数、距离先不管；手填圣物属性先不删）。
 
 **添加圣物（已完成，2026-09-30，用户：“在添加装备右边再弄一个添加圣物”“圣物直接按照最大的算”，每个角色 1 个）**：用户用读取器 v0.13 导出 ArkLvMst / ArkPurityMst / ArkSkillGrowthMst（存于 `local-migration-tools/game-data/ark-tables/`）。`local-migration-tools/game-data/arks.py` 生成 `dist/game-data/arks.json`：302 个已上线圣物，按最高等级（255 个 Lv15、其余 Lv10）的六项数值、该等级 PROCESS_INFO 与效果文字、可学技能；被动型圣物技能只有 100890 一个有数据。引擎：`addAttacker` 收 `spec.ark`，数值加进 equipmentStat（和装备、徽章同一层，对应 UnitUtil.AddArkParameter），效果以 K.AFF.ARK 注册；来源名显示为圣物名（`battle.arkNames`，圣物 id 与 34 件装备 id 重号，所以圣物名优先）。计算器：“添加装备”右边“添加圣物”按钮，新页面按稀有度分页（全部/UR/LR/SSR/SR/R），添加后不关页面，列表显示“已添加 ×”；存 `lc-engine-ark:<dress>`。选了圣物时手填的“圣物属性加成”不计入并提示。同时修了一个问题：单次运行改动后手填的圣物属性没进主结果（finalAdd 要在 addAttacker 之前设好）。未包含：圣物强化点数（UserArkCustomizeInfo，上限未知）。不确定：迷宫最深部的死斗等“与敌人的距离”条件的效果在沙盒里没生效（距离未模拟）。测试 `tests/engine-ark.test.mjs`。

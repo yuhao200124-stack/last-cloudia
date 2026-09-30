@@ -1,11 +1,11 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1723';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1723';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1723';
-import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1723';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1723';
+import { K } from './engine/battle.mjs?v=20260930-1746';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1746';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1746';
+import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1746';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1746';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -389,12 +389,28 @@ function renderBasicFields(first, ctx) {
 // is shown with its raw game parameters and marked.
 const ELEM_NAMES = ['无', '火', '冰', '树', '雷', '光', '暗'];
 const STAT_OP_NAMES = { 300: '攻击力', 301: '防御力', 302: '法强', 303: '魔抗', 304: '暴击率', 305: 'HP', 310: '速度', 318: 'MP' };
-const RAW_OP_NAMES = { 306: '异常耐性', 308: '特攻', 502: '物理伤害减轻', 503: '魔法伤害减轻', 504: '伤害增幅', 505: '伤害无效', 507: '属性改变', 509: '特攻增幅', 824: '伤害上限改写' };
+const RAW_OP_NAMES = { 308: '特攻', 502: '物理伤害减轻', 503: '魔法伤害减轻', 504: '伤害增幅', 505: '伤害无效', 507: '属性改变', 509: '特攻增幅', 824: '伤害上限改写' };
 const signed = (n, unit = '') => `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(n).toLocaleString('zh-CN', { maximumFractionDigits: 2 })}${unit}`;
+// 异常耐性 (op 306 StatusResist, procCondCommon.lua “0:タイプ 1:段階値(-2～+2)”; user 2026-09-30: “异常耐性（参数 3, -1，数值含义
+//未解读）…去搞清楚”): param 0 is the ailment (luaCommon.lua AILMENT_*), param 1 the number of stages. One stage is 50 of the
+// resist value the enemy data use (MonsterMst.RESIST_STATUS_INFO: 100 / 50 / 0 / −50; process.lua 1030605 turns a resist
+// value into stages with ÷50).
+const AILMENT_NAMES = { 1: '毒', 2: '麻痹', 3: '疾病', 4: '暗黑', 5: '诅咒', 6: '沉默', 10: '封印', 11: '冻结', 12: '愤怒', 13: '腐化', 20: '剧毒', 21: '妨碍', 22: '忧郁', 23: 'DISEASE', 24: '束缚' };
+const BASIC_AILMENTS = [1, 2, 3, 4, 5, 6];
+function describeStatusResist(list) {
+  const byStage = new Map();
+  for (const [type, stage] of list) { if (!byStage.has(stage)) byStage.set(stage, []); byStage.get(stage).push(type); }
+  return [...byStage].map(([stage, types]) => {
+    const all = types.includes(0), basic = types.includes(-1) || BASIC_AILMENTS.every(t => types.includes(t));
+    const names = all ? '全部异常' : basic ? '基本异常（毒、麻痹、疾病、暗黑、诅咒、沉默）' : types.map(t => AILMENT_NAMES[t] || `异常 ${t}`).join('·');
+    return stage ? `${names}耐性 ${signed(stage)} 级（1 级＝耐性值 50）` : `${names}耐性 不变（这次按目标的情况没有改变）`;
+  });
+}
 function describeEntries(entries) {
-  const out = [], resist = new Map();
+  const out = [], resist = new Map(), status = [];
   for (const e of entries) {
     const [a = 0, b = 0, c = 0] = e.params;
+    if (e.op === K.OP.STATUS_RESIST) { status.push([a, b]); continue; }
     if (e.op === K.OP.ELEM_RESIST) { for (const el of a === -1 ? [1, 2, 3, 4, 5, 6] : [a]) resist.set(el, (resist.get(el) || 0) + b); continue; }
     if (STAT_OP_NAMES[e.op]) { const unit = e.op === K.OP.CRT ? '%' : ''; out.push(`${STAT_OP_NAMES[e.op]} ${[a && signed(a, unit), b && signed(b / 100, '%'), c && signed(c, unit)].filter(Boolean).join(' ')}`); continue; }
     if (e.op === K.OP.DMG_LIMIT_UP) { out.push(`伤害上限 ${[a && signed(a), b && signed(b / 100, '%'), c && signed(c)].filter(Boolean).join(' ')}`); continue; }
@@ -405,19 +421,28 @@ function describeEntries(entries) {
     if (resist.size === 6 && vals.every(v => v === vals[0])) out.unshift(`全属性耐性 ${signed(vals[0])}`);
     else out.unshift(...[...resist].map(([el, v]) => `${ELEM_NAMES[el] || el}耐性 ${signed(v)}`));
   }
+  if (status.length) out.unshift(...describeStatusResist(status));
   return out;
 }
+// the game's hidden buffs that do change the damage: buff1082619 (process.lua “特定UIDバフ効果中特定状態異常中属性付き特定
+// 攻撃被ダメージ上限増減”: 1 buff UID, 2 ailment, 3 element, 4 skill type, 5 cap +value, 6 cap ×rate) — counts while the
+// target has that ailment (计算器“敌方异常”)
+const HIDDEN_SHOWN = {
+  1082619: ([, ail, , , add, per]) => `处于${ail ? `${AILMENT_NAMES[ail] || `异常 ${ail}`}状态` : '异常状态'}时受到的伤害上限 ${[add && signed(add), per && signed(per / 100, '%')].filter(Boolean).join(' ')}（打开“敌方异常”才计入）`,
+};
 function describeSupport(m) {
   if (!m) return '读取中…';
   if (m.error) return `游戏脚本出错（${m.error}）`;
   if (!m.effects.length) return '游戏脚本没有加上可显示的效果（可能对这个目标无效）';
   // the game's own hidden control buffs (非表示バフ) carry no value of their own: shown only when they apply one
-  const shown = m.effects.filter(e => e.entries.length || !String(e.name).startsWith('非表示'));
+  const shown = m.effects.filter(e => e.entries.length || HIDDEN_SHOWN[e.buffId] || !String(e.name).startsWith('非表示'));
   if (!shown.length) return '游戏脚本没有加上可显示的效果（可能对这个目标无效）';
+  // duration −1 has no time limit; a 魂技 (its hidden アニマ制御用 buff) ends when the caster falls (“仅在自身存活时有效”)
+  const anima = m.effects.some(e => /アニマ/.test(String(e.name)));
   return shown.map(e => {
     const who = e.side === 'target' ? '目标' : '自身';
-    const time = e.duration > 0 ? `，${Math.round(e.duration / 60 * 10) / 10} 秒` : e.duration === -1 ? '，一直有效' : '';
-    const vals = describeEntries(e.entries);
+    const time = e.duration > 0 ? `，${Math.round(e.duration / 60 * 10) / 10} 秒` : e.duration === -1 ? (anima ? '，自身存活期间一直有效' : '，一直有效（不限时间）') : '';
+    const vals = e.entries.length ? describeEntries(e.entries) : HIDDEN_SHOWN[e.buffId] ? [HIDDEN_SHOWN[e.buffId](e.params)] : [];
     const body = vals.length ? vals.join('、') : `${e.name}（原始参数 ${e.params.filter(v => v !== 0).join(', ') || '无'}，造成伤害时才生效，含义未逐项核对）`;
     return `${who} ${body}${time}`;
   }).join('；');
@@ -800,7 +825,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1723'), import('./engine/engine-data.mjs?v=20260930-1723'), import('./engine/scenario.mjs?v=20260930-1723'), import('./engine/report-adapter.mjs?v=20260930-1723'), import('./engine/loadout-adapter.mjs?v=20260930-1723')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1746'), import('./engine/engine-data.mjs?v=20260930-1746'), import('./engine/scenario.mjs?v=20260930-1746'), import('./engine/report-adapter.mjs?v=20260930-1746'), import('./engine/loadout-adapter.mjs?v=20260930-1746')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
