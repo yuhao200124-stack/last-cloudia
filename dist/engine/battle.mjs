@@ -3,11 +3,12 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261001-0507';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261001-0549';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
 // .NET Math.Round(double): halves to even
+const SUBJECT_DESTS = new Set([1, 9, 17]);
 const roundEven = x => { const f = Math.floor(x), d = x - f; return d > 0.5 ? f + 1 : d < 0.5 ? f : (f % 2 === 0 ? f : f + 1); };
 const luaRound = v => Math.floor(v + 0.5);
 
@@ -425,7 +426,12 @@ export class Battle {
           const fn = (inst.kind === 'buff' ? 'buff' : 'process') + (inst.kind === 'buff' ? inst.buffId : inst.processId);
           // The native passes a fixed-size parameter array (missing entries read as 0).
           const padded = inst.params.slice(); while (padded.length < 12) padded.push(0);
-          if (this.host.hasFunction(fn)) this.host.call(fn, [ctx.target, padded], 0);
+          // The process's own target: a process whose destination (ProcessMst.TARGET) is the subject (1 / 9 / 17 = SUBJECT_WORK /
+          // _REAL / _LOCAL) runs on its owner, whatever unit the trigger was about — 1040010 “被弾時自分異常付与”, 2020807 “撃破時肉の晩餐”,
+          // 1081685 “特定状態異常付与時汎用数値情報付与” (惡夢三重奏: the count is read back from the owner by 1050286; the damage reader's
+          // 2026-10-01 魔神梅莉 capture shows the critical hits at ×1.36 = its 6 stacks). The condition above still sees the trigger's unit.
+          const procTarget = inst.kind === 'process' && SUBJECT_DESTS.has(inst.mst.TARGET) ? owner.id : ctx.target;
+          if (this.host.hasFunction(fn)) this.host.call(fn, [procTarget, padded], 0);
           else this.log('missing-script', fn);
         } else this.nativeOperation(inst, ctx, owner, target);
       }

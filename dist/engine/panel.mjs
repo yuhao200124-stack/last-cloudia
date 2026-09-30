@@ -4,7 +4,7 @@
 //        + Σ opened ability-board stat pieces (UnitDressAbilityPieceMst types 10–15)
 // then equipment parameters (ItemEquipMst, enhanced) join before the trigger-1 passives (battle.mjs finalStat).
 // Verified against four characters' in-game maximum panels (洛琪希 / 魔神梅莉 / 龙王阿尔克 / 艾莉丝, all six stats).
-import { K, parseInts } from './battle.mjs?v=20261001-0507';
+import { K, parseInts } from './battle.mjs?v=20261001-0549';
 
 // GrowthMst GROWTH_RATE (reader v0.10: 120 levels, Lv100 = 10000, Lv110 = 10813, Lv120 = 12633) is the
 // source; these points are the fallback when an older export has no GrowthMst.
