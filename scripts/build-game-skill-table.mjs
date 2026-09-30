@@ -4,7 +4,7 @@
 //   relics); the calculator always works from the number.
 // - The layout — tabs, order, lanes, groups, ratings, and names / effect texts the user rewrote (display only) —
 //   comes from docs/game-skill-layout.json, which is imported from the user's Excel
-//   (python3 scripts/game-skill-excel.py import <file.xlsx>).
+//   (python3 scripts/user-skill-excel.py import <file.xlsx>; the old game-skill-excel.py was deleted on 2026-09-30).
 // - A game passive the layout does not have yet (after a game-data update) is added at the end of 全部技能 and in a
 //   “新增待排” group of 杂项; a layout number the game data no longer has is left out and listed as removed.
 // The page is the site's home page (dist/index.html); the original skill table was removed on 2026-09-29.

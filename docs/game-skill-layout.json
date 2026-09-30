@@ -1,5 +1,5 @@
 {
- "note": "游戏数据技能表的排版：分类标签页、顺序、分栏、分组、评价，以及用户改写的名称／效果说明（只影响显示，计算一律按游戏编号）。由用户的 Excel 导入（scripts/game-skill-excel.py import），名称／SC／效果／圣物本身来自 docs/game-relic-passives.json。",
+ "note": "游戏数据技能表的排版：分类标签页、顺序、分栏、分组、评价，以及用户改写的名称／效果说明（只影响显示，计算一律按游戏编号）。由用户自己的 Excel 导入（scripts/user-skill-excel.py import），名称／SC／效果／圣物本身来自 docs/game-relic-passives.json。",
  "sheetOrder": [
   "全部技能",
   "基础属性",

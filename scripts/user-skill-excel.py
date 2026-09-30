@@ -191,7 +191,7 @@ def importing(path, dry):
     missing = [g for g in game if g not in placed]
     if missing:
         notes.append(f'有 {len(missing)} 个游戏被动没放在任何工作表里，会自动放到“全部技能”最后和“杂项”的“新增待排”：' + '、'.join(f'{g} {game[g]["nameS"]}' for g in missing))
-    # 评价 from 全部技能; names / effects the user rewrote in the other workbook (game-skill-excel.py) stay
+    # 评价 from 全部技能; names / effects rewritten earlier through the old workbook (game-skill-excel.py, deleted 2026-09-30; none today) stay
     marks = {gid: c['mark'] for s, r, gid, c in rows if s == '全部技能' and c['mark']}
     skills, mark_changes = {}, []
     for gid in sorted(game):
