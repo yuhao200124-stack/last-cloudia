@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20261001-0549';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0549';
-import { zhName, zhCondition } from './gloss.mjs?v=20261001-0549';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0549';
+import { Battle, K, parseInts } from './battle.mjs?v=20261001-0601';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0601';
+import { zhName, zhCondition } from './gloss.mjs?v=20261001-0601';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0601';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -163,6 +163,7 @@ export const COMBO_HITS = 200;
 
 // Replays the battle start: status calc, wave start, survivors, then the HP/MP/ether state the user chose.
 export const AILMENT_APPLICATIONS = 20;
+export const BLEED_BUFF = 11115;
 export const TARGET_AILMENTS = [1, 2, 3, 4, 5, 6, 10, 11, 12, 13, 20, 21, 22, 23, 24];
 export function setupBattle(battle, attacker, target, state = {}) {
   // The calculator's 特攻 / Break / 双刀 switches decide the state itself; the bonuses bound to it come from the skills.
@@ -205,9 +206,12 @@ export function setupBattle(battle, attacker, target, state = {}) {
   // AILMENT_APPLICATIONS times, so counts that grow per ailment are full (惡夢三重奏 “最多6次”: the 2026-10-01 魔神梅莉 capture
   // shows its +36% on every critical hit from the second hit on). Everything at max, as the calculator's other switches.
   if (state.targetAilment) {
+    // 出血 (DebuffIds.Bleed 11115) is a debuff, not a BadStatus, but the user counts it as one (2026-10-01: “直接归类到异常里去”):
+    // “对出血减益中的敌人” effects such as 絕命一閃 (防御 −15%) hold. Whole battle, the weapon's own 出血 values (2011100: 0, 1000, 1).
+    if (!target.buffs.some(b => b.buffId === BLEED_BUFF)) battle.buffControl(target.id, BLEED_BUFF, [-1, 0, 1000, 1], 0, battle.host.getGlobal('BuffParamBehavior')?.get?.(BLEED_BUFF) ?? null, null);
     const list = attacker.instances.filter(i => i.trigger === 78);
     for (let n = 0; n < AILMENT_APPLICATIONS; n++) for (const inst of list) battle.runInstance(inst, attacker, target, null, 78, { force: true });
-    if (list.length) battle.assumptions.add(`敌方异常：按已对敌人施加异常 ${AILMENT_APPLICATIONS} 次计（施加异常时触发的效果按叠满算）`);
+    if (list.length) battle.assumptions.add(`敌方异常：按已对敌人施加异常 ${AILMENT_APPLICATIONS} 次计（施加异常时触发的效果按叠满算）；出血也算在内`);
   }
   if (target.hp != null && state.targetHpPercent != null) target.hp = Math.max(1, Math.round(battle.finalStat(target, K.STAT.MAX_HP) * state.targetHpPercent / 100));
   // Time-limited opening buffs are dropped when the user says the opening window has passed.
@@ -346,13 +350,17 @@ export function measureSupport(battle, attacker, target, skillIds, state = {}, l
 }
 
 // Full scenario: returns hits (per bullet pass) with normal/critical ranges, plus what fired and what could be assumed.
-export function runScenario({ battle, attacker, target, skill, state = {}, assume = {}, randoms = [0.9, 0.925, 0.95, 0.975, 1.0] }) {
+// probes: [{ id, state }] — for each switch the user has on, the same set-up with that switch off (its `state`); the result's
+// `switchEffects[id]` lists what the switch brings for this move (user 2026-10-01: “我勾选了某个选项你得让他显示勾选后我获得了什么”):
+// the attacker's effects that fire only with it on, the ones whose damage change differs, and the buffs only it gives.
+export function runScenario({ battle, attacker, target, skill, state = {}, assume = {}, randoms = [0.9, 0.925, 0.95, 0.975, 1.0], probes = [] }) {
   battle.options.probability = assume.probability || 'assume';
   // assume.forced: chance-based instances (`${unit id}:${localId}:${index}`, the probabilistic list's keys) counted as
   // triggered whatever the mode (the user's ticks)
   battle.options.forced = new Set(assume.forced || []);
   grantSkillPassives(battle, attacker, [skill.id, ...(state.preCasts || [])]);
   ({ attacker, target } = calibrateInBattleStats(battle, attacker, target));
+  const beforeSetup = probes.length ? battle.snapshot() : null;
   setupBattle(battle, attacker, target, state);
   const setupSnap = battle.snapshot();
   let instances = [...new Set(assume.instances || [])];
@@ -428,7 +436,50 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   // conditionals that would change nothing are not offered (an assumed one stays so its tick can be undone)
   const assumedKeys = new Set(instances);
   const unchanged = unchangedInstances(battle, attacker.id, target.id, setupSnap, conditionals.filter(c => !assumedKeys.has(c.key)));
+  // the move's element set by a passive (SkillElement 837, e.g. 圣邪之泛滥 “特技和超必杀技的属性变成暗属性”), shown with the 触发效果
+  const elementEntry = battle.skillElementEntry(attacker, skill.id, battle.master.skill.get(skill.id)?.SKILL_TYPE);
+  const elementSource = elementEntry ? battle.sourceOf(elementEntry.source) : null;
+  const elementOverride = elementEntry ? { element: elementEntry.params[3], passiveId: elementSource?.passiveId || elementSource?.localId || 0, localId: elementSource?.localId || 0,
+    passiveName: clean(battle.sourceNames?.get(elementSource?.passiveId || elementSource?.localId) || battle.master.passive.get(elementSource?.passiveId || elementSource?.localId)?.NAME || ''), processName: zhName(battle.master.process.get(elementSource?.processId)?.NAME || ''), trigger: 1 } : null;
+  let switchEffects = null;
+  if (beforeSetup && bullets.length) {
+    const end = battle.snapshot(), trace = battle.trace.slice(), assumptions = new Set(battle.assumptions);
+    const probe = st => {
+      battle.restore(beforeSetup);
+      const A = battle.unit(attacker.id), T = battle.unit(target.id), from = battle.trace.length;
+      setupBattle(battle, A, T, st); assumeInstances(battle, A, instances, T); preCast(battle, A, T, st.preCasts, level);
+      const buffs = new Map(A.buffs.map(b => [b.buffId, b]));
+      // a normal and a critical hit (effects such as 惡夢三重奏's +36% only act on critical hits)
+      const ready = battle.snapshot(), factors = new Map();
+      for (const critical of [false, true]) {
+        if (critical) battle.restore({ ...ready, traceLength: battle.trace.length });
+        const res = evaluate(battle, battle.unit(attacker.id), battle.unit(target.id), skill.id, bullets[0], level, critical, mid)[0];
+        let prev = res?.coreDamage || 0;
+        for (const e of res?.edits || []) { factors.set(`${critical ? 'c' : 'n'}:${e.localId}:${e.id}`, prev > 0 ? e.value / prev : null); prev = e.value; }
+      }
+      const fired = new Map(battle.trace.slice(from).filter(t => t.fired && t.ownerId === A.id && t.localId).map(t => [`${t.localId}:${t.index}`, t]));
+      return { fired, buffs, factors };
+    };
+    const on = probe(state);
+    const nameOf = id => clean(battle.sourceNames?.get(id) || battle.master.passive.get(id)?.NAME || battle.arkNames?.get(id) || battle.master.itemEquip.get(id)?.NAME || '');
+    switchEffects = {};
+    for (const p of probes) {
+      const off = probe(p.state), out = new Map();
+      for (const [k, t] of on.fired) if (!off.fired.has(k)) out.set(k, { passiveId: t.passiveId || t.localId, localId: t.localId, passiveName: nameOf(t.passiveId || t.localId), processName: zhName(t.name), trigger: t.trigger });
+      for (const [k, f] of on.factors) {
+        const g = off.factors.get(k); if (f == null || (g != null && Math.abs(f - g) < 0.0005)) continue;
+        const localId = Number(k.split(':')[1]); if ([...out.values()].some(x => x.localId === localId)) continue;
+        const t = [...on.fired.values()].find(x => x.localId === localId);
+        out.set(`edit:${k}`, { passiveId: t?.passiveId || localId, localId, passiveName: nameOf(t?.passiveId || localId), processName: zhName(t?.name || ''), trigger: t?.trigger ?? 27, stronger: g != null });
+      }
+      for (const [id, b] of on.buffs) if (!off.buffs.has(id)) out.set(`buff:${id}`, { passiveId: b.related?.localId || 0, localId: b.related?.localId || 0, passiveName: nameOf(b.related?.localId), buffName: clean(zhName(b.mst.NAME)), processName: zhName(b.mst.NAME), trigger: 10 });
+      switchEffects[p.id] = [...out.values()];
+    }
+    battle.restore(end); battle.trace.length = 0; for (const t of trace) battle.trace.push(t);
+    battle.assumptions.clear(); for (const a of assumptions) battle.assumptions.add(a);
+  }
   return {
+    elementOverride, switchEffects,
     statParts,
     stats: { str: stats(K.STAT.STR), def: stats(K.STAT.DEF), int: stats(K.STAT.INT), mnd: stats(K.STAT.MND), crt: stats(K.STAT.CRT), hp: { panel: battle.finalStat(attacker, K.STAT.MAX_HP, { layer: 'status' }), real: battle.finalStat(attacker, K.STAT.MAX_HP), current: attacker.hp } },
     buffs: attacker.buffs.map(b => ({ uid: b.uid, buffId: b.buffId, name: clean(zhName(b.mst.NAME)), params: b.params, remain: b.remain, from: clean(battle.sourceNames?.get(b.related?.localId) || battle.master.passive.get(b.related?.localId)?.NAME || battle.master.itemEquip.get(b.related?.localId)?.NAME || '') })),

@@ -62,3 +62,16 @@ test('惡夢三重奏: its count is kept on its owner, one stack per ailment put
   assert.ok(ratio(on) > ratio(off) * 1.3, 'critical hits +36% with 6 stacks');
   assert.ok(on.assumptions.some(a => a.startsWith('敌方异常：按已对敌人施加异常')));
 });
+
+test('敌方异常 counts 出血 (絕命一閃 防御 −15% without the normal attack first) and says what each switch brings', async () => {
+  const { master, scripts, spec } = await dataPromise;
+  const battle = new Battle(master, scripts);
+  const state = { targetAilment: true, hpPercent: 100, preCasts: [381160] };
+  const out = runScenario({ battle, attacker: addAttacker(battle, spec), target: addTarget(battle, targetFromReport(report)), skill: { id: 1006424 }, state, assume: { probability: 'skip' }, randoms: [0.95],
+    probes: [{ id: 'enemyAilment', state: { ...state, targetAilment: false } }, { id: 'fullHp', state: { ...state, hpPercent: 99 } }] });
+  assert.equal(out.hits.find(h => h.normal && h.element === 6).defense, 3400);
+  const names = id => out.switchEffects[id].map(x => x.passiveName);
+  assert.ok(names('enemyAilment').includes('絕命一閃') && names('enemyAilment').includes('惡夢三重奏'));
+  assert.deepEqual(names('fullHp'), ['銳氣']);
+  assert.deepEqual([out.elementOverride.element, out.elementOverride.passiveId], [6, 27731], '聖邪之泛濫 makes the special dark');
+});

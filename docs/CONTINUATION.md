@@ -14,6 +14,11 @@
 
 **技能属性改变没算（2026-10-01，用户：魔神梅莉“3个技能伤害都有偏差”，发来伤害读取器 v0.41 整个文件夹）**：DamageFormulaCapture.csv 里本场的结算样本（攻击、防御、base_ratio、final_ratio、核心伤害、最终值）显示特技的 final_ratio＝base_ratio×0.75（暗属性对 Boss 暗耐性 +25），计算器却按光属性 ×1.25，特技伤害高了约 1.67 倍。原因：被动 27731 圣邪之泛滥“特技和超必杀技的属性变成暗属性”（process1083700 → Skill:SetElement → 控制 SkillElement 837 {方式, 技能类型/ID, 索引, 属性}），引擎以前没读。battle.mjs `skillElementOverride()`：bulletElement 在 507 之后、武器属性之前用它（对应 BulletProperty.GetSkillElement 先看 BattleSkill 的 override），UnitGetSkillElement 也返回改后的属性。用这份报告：剪刀尾巴每段 4,640–5,161 → 2,784–3,097，核心伤害 465 与游戏结算公式一致（攻击 7627、防御 4000、系数 0.1116）。游戏里核心→最终的倍数随战斗中叠加的效果从约 6.3 涨到 17 左右（恶梦三重奏层数、异常等），计算器按导入时的状态算。
 
+**开关显示“勾选后获得了什么”、出血算进敌方异常、技能属性改变列进触发效果（2026-10-01，用户：“不用直接归类到异常里去”“我勾选了某个选项你得让他显示勾选后我获得了什么这个应该是通用设置”“把特技改成暗属性的你也的在触发效果那边显示”）**：
+- 敌方异常另外给敌人上出血（DebuffIds.Bleed 11115，全场），“对出血减益中的敌人”效果成立，如絕命一閃 防御 −15%。scenario.mjs `BLEED_BUFF`。
+- runScenario 新参数 `probes: [{id, state}]`：对每个开着的状态开关，用“只关掉这一个”的状态再跑一遍开场＋一次普通命中＋一次暴击命中，对比得出 `switchEffects[id]`：只在开着时发动的攻击方效果、伤害倍率变了的效果（标“效果变强”）、只在开着时获得的 Buff。计算器（engine-panel.mjs `switchProbes` / `renderSwitchGains`）在“通用伤害改变”开关下面列“勾选后获得：满血／濒死／MP≤20／敌方异常／开局BUFF”，条件BUFF 等分组开关列该组自动计入的效果；特攻、Break 列在“特殊伤害改变”下面。没变化写“本招式没有变化”。
+- runScenario 返回 `elementOverride`（battle.mjs `skillElementEntry()` 找到设这个技能属性的 837 条目及来源被动），触发效果列表第一行显示（固定勾上、不能取消），如“聖邪之泛濫：……（本招式按暗属性计算）”。
+
 **魔神梅莉逐段对照（2026-10-01，用户用伤害读取器 v0.42 打了一场，发来 HitTimeline.csv／DamageFormulaCapture.csv／BattleCurrentReport.json）**：结算缓存每一下都有攻击、防御、属性耐性、核心伤害和最终值，查出三处问题并已修：
 - 报告的面板已含开场 Buff，被算了两次。读取器 v0.41+ 的第一个面板快照是战斗中读的（phase = battle-observation），攻击 5657 已含自動大型鼓舞 +35%、暴击 36 已含自動暴擊 +15 和銳氣 +10；计算器又加一遍，剪刀尾巴攻击 10295，游戏是 7627（= 4191 × (1 + 35% + 47%)）。report-adapter 对这种快照标 `inBattle`；scenario.mjs `calibrateInBattleStats()` 在副本上按满血满 MP 跑一次开场，反推面板（攻击 4191、暴击 11），runScenario／measureSupport 用。旧报告（快照无 phase，是入场面板）不变。
 - 处理目标：ProcessMst.TARGET 为 1／9／17（SUBJECT_WORK／REAL／LOCAL）的脚本处理，脚本里的 target 是自己，不是触发的对象（被弹时自分异常付与、撃破時肉の晩餐、1081685 特定状態異常付与時汎用数値情報付与 都是给自己）。以前惡夢三重奏的计数记到了 Boss 身上，暴击时的 +36% 从没生效。battle.mjs runInstance（条件仍按触发对象判断）。

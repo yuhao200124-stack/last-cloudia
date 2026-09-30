@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261001-0549';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261001-0601';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -697,11 +697,13 @@ export class Battle {
     this.log('damage', result);
     return true;
   }
-  skillElementOverride(owner, skillId, skillType) {
+  skillElementOverride(owner, skillId, skillType) { return this.skillElementEntry(owner, skillId, skillType)?.params[3] ?? null; }
+  // the SkillElement (837) entry that sets this skill's element (the last one wins), for showing where it comes from
+  skillElementEntry(owner, skillId, skillType) {
     let out = null;
     for (const e of [...owner.status, ...owner.real]) {
       if (e.op !== K.OP.SKILL_ELEMENT) continue;
-      if (e.params[0] === 0 ? e.params[1] === skillId : e.params[0] === 1 && e.params[1] === skillType && owner.skills.filter(s => s.type === skillType)[(e.params[2] || 1) - 1]?.id === skillId) out = e.params[3];
+      if (e.params[0] === 0 ? e.params[1] === skillId : e.params[0] === 1 && e.params[1] === skillType && owner.skills.filter(s => s.type === skillType)[(e.params[2] || 1) - 1]?.id === skillId) out = e;
     }
     return out;
   }
