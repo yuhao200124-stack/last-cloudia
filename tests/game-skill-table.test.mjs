@@ -61,25 +61,42 @@ test('every row carries its game number and its classification (大类, 条件, 
   assert(!/\$\{[^}]*cls\??\.tags/.test(js), 'tags are not written into the page');
 });
 
+// 配装 hide filter (dist/game-skills-filter.js, run here for real — item 34): 全输出 hides defense and the offense the move
+// cannot use, 半肉 only that offense, 全肉 all offense; MP／咏唱 only for magic, 反击 only in 半肉, 金钱·经验 never, and
+// 全输出 checks the gear (weapon / armour types, one or two weapons, what picked skills add)
+const filterBox = { window: {} }; vm.runInNewContext(read('dist/game-skills-filter.js'), filterBox);
+const F = filterBox.window.GameSkillFilter;
+const keep = (mode, move, id) => F.keep(mode, move, data.skills[id].cls.e, data.skills[id].cls.tags);
+const iceMagic = { element: 2, magical: true, roles: [2], gear: { weapons: [12, 14, 17], armors: [21, 22], dual: false } };     // 洛琪希
+const physical = { element: 0, magical: false, roles: [1], gear: { weapons: [10, 11, 12, 13], armors: [21], dual: false } };   // 艾莉丝
+
 test('配装 filter: 全输出 hides defense and offense the move cannot use, 半肉 only that offense, 全肉 all offense', () => {
-  const js = read('dist/game-skills.js');
-  for (const s of ["['out', '全输出']", "['half', '半肉']", "['tank', '全肉']", "['none', '不隐藏']", "cat === '特攻'", "move.magical ? '法强' : '攻击力'"]) assert(js.includes(s), s);
   assert.match(read('dist/index.html'), /id="buildFilter"[^>]*hidden/);
+  assert.match(read('dist/index.html'), /game-skills-filter\.js\?v=[^"]+"><\/script>\s*<script src="\.\/game-skills\.js/);
   const r = s => data.skills[s].cls.e;
   // 冰攻击提升III is for 冰, 勇者 for 物理 (普攻＋特技) and brings 受到伤害 +10% as a drawback
   assert.deepEqual(r(26466).map(x => x[2]), [[2], [2]]);
   assert.deepEqual(r(27654).find(x => x[0] === '造成伤害')[3], [1, 9]);
   assert.equal(r(27654).find(x => x[0] === '受到伤害')[4], 1);
+  assert.deepEqual(['out', 'half', 'tank'].map(m => keep(m, iceMagic, 26466)), [true, true, false]);   // 冰攻击提升III, ice magic
+  assert.deepEqual(['out', 'half', 'tank'].map(m => keep(m, physical, 26466)), [false, false, false]); // not for a 无属性 punch
+  assert.deepEqual(['out', 'half', 'tank'].map(m => keep(m, iceMagic, 27570)), [false, true, true]);   // 畏惧的眼光: defense
+  assert.equal(keep('out', physical, 28230), false);                                                 // 海滨洞察: 冰 attacks, 法强
+  assert.equal(keep('none', physical, 12700), true);
 });
 
-// 2026-09-30 (user): MP and 咏唱 are magic's; 反击 is at most 半肉; 金钱·经验 hidden in every mode; 全输出 checks the gear
-// (weapon / armour types the character can wear, one or two weapons, what the picked skills add)
 test('配装 filter: MP／咏唱 only for magic, 反击 only in 半肉, 金钱·经验 never, gear in 全输出', () => {
-  const js = read('dist/game-skills.js');
-  for (const x of ["cat === '金钱·经验' ? 'never'", "cat === '反击' ? 'counter'", "cat === '魔法·咏唱' || stat === 'MP'", 'function wearable(ref)', "if (mode === 'out' && !wearable(ref)) return false;", "gear.dual ? '装两件武器' : '只装一件武器'"]) assert(js.includes(x), x);
+  for (const id of [11000, 9900]) { assert.equal(keep('out', iceMagic, id), true, `${id} magic`); assert.equal(keep('out', physical, id), false, `${id} physical`); }
   assert.deepEqual(data.skills[9900].cls.e[0].slice(0, 2), ['回复', 'MP'], '荣誉的姿势 MP 回复');
-  const panel = read('dist/engine-panel.mjs');
-  for (const x of ['function gearFor(', 'pid === 1100000', 'pid === 1080800', 'gear: gearInfo']) assert(panel.includes(x), x);
+  assert.deepEqual(['out', 'half', 'tank'].map(m => keep(m, physical, 1100)), [false, true, false]);   // 反击
+  assert.deepEqual(['out', 'half', 'tank'].map(m => keep(m, iceMagic, 12700)), [false, false, false]); // 经验提升
+  assert.equal(keep('out', iceMagic, 16210), true);                                                  // 杖高阶增幅: she holds a 杖
+  assert.equal(keep('out', iceMagic, 16000), false);                                                 // 机械增幅: she cannot hold a 机械 …
+  assert.equal(keep('out', { ...iceMagic, gear: { ...iceMagic.gear, weapons: [12, 14, 15, 17] } }, 16000), false); // …and its 物理伤害 / 防御 −5% do not help a magic
+  assert.equal(keep('out', { ...physical, gear: { ...physical.gear, weapons: [10, 11, 12, 13, 15] } }, 16000), true); // 机械装备 picked
+  assert.equal(keep('out', physical, 27410), false);                                                 // 同种双刀: one weapon
+  assert.equal(keep('out', { ...physical, gear: { ...physical.gear, dual: true } }, 27410), true);  // 二刀流
+  assert.equal(keep('out', physical, 27627), false);                                                 // 徒手空拳: never unarmed
 });
 
 // 2026-09-30 (user: “好多技能的数值还是？但是不可能是？”): the game fills each “?” from PassiveSkillMst.PROCESS_EXPLAIN_QUOTE

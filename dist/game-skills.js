@@ -31,57 +31,11 @@
   const txt = (s, f) => script === 's' ? s[f + 'S'] : s[f];
   const hay = s => [s.name, s.nameS, s.effect, s.effectS, ...s.sources, ...s.sourcesS].join('\n').toLocaleLowerCase('zh-CN');
   const found = row => row.separator || !query || hay(skill(row.ref)).includes(query.toLocaleLowerCase('zh-CN'));
-  // 配装: hide what the current loadout does not need (user 2026-09-29, revised 2026-09-30) — 全输出 hides the defense
-  // (受到伤害, HP／防御／魔抗, HP 回复), 反击, and the offense that does not apply to the current move; 半肉 only the offense
-  // that does not apply (反击 stays); 全肉 all offense and 反击; 不隐藏 nothing. MP (最大 MP, MP 回复) and 咏唱 are
-  // magic's (shown when the move is a magic); 金钱·经验 is hidden in every mode. 异常, 移动, 装备·种族 … always stay; 特攻
-  // is never hidden as “not applying”. An effect applies when its element and attack type match the move's (attack
-  // types: the move's SKILL_TYPE, plus 魔法 when it hits with 法强 — 水弹, a 特技, gets both 物理 and 冰魔法 bonuses) and,
-  // for 攻击力／法强, when it is the stat the move hits with. 全输出 also checks the gear (user 2026-09-30): a skill for a
-  // weapon or armour type the character cannot wear, for one weapon when it holds two (二刀流) or the other way round,
-  // or for fighting unarmed is hidden; what it can wear includes what its own and the picked skills add (机械装备 …).
-  const OFFENSE = new Set(['造成伤害', '伤害上限', '特攻', '暴击', 'Break值', '特技充能·必杀']);
-  const DEFENSE = new Set(['受到伤害', '回复']);
+  // 配装: hide what the current loadout does not need — the rules are in game-skills-filter.js (tested)
   const HIDE_MODES = [['out', '全输出'], ['half', '半肉'], ['tank', '全肉'], ['none', '不隐藏']];
   let hideMode = HIDE_MODES.some(([k]) => k === store.get('lc-build-hide')) ? store.get('lc-build-hide') : 'none', move = null;
-  const kindOf = ([cat, stat]) => cat === '金钱·经验' ? 'never' : cat === '反击' ? 'counter' : cat === '魔法·咏唱' || stat === 'MP' && (cat === '基础属性' || cat === '回复') ? 'magic'
-    : cat === '基础属性' ? (stat === '攻击力' || stat === '法强' ? 'off' : 'def') : OFFENSE.has(cat) ? 'off' : DEFENSE.has(cat) ? 'def' : 'other';
-  const isMagic = () => !move || !move.roles.length || move.roles.includes(2);
-  function applies([cat, stat, els, types]) {
-    if (!move || cat === '特攻') return true;
-    if (cat === '基础属性' && move.magical != null && stat !== (move.magical ? '法强' : '攻击力')) return false;
-    // (a stat raised only on the hit being made — 海滨洞察: 冰属性攻击时魔力 — carries that hit's element / attack type too)
-    if (els && move.element != null && !els.includes(move.element)) return false;
-    if (types && move.roles.length && !types.some(t => move.roles.includes(t))) return false;
-    return true;
-  }
-  const WEAPON = { 剑: 10, 斧: 11, 枪: 12, 锤: 13, 弓: 14, 机械: 15, 爪: 16, 杖: 17 }, ARMOR = { 铠甲: 20, 衣服: 21, 法袍: 22 };
-  function wearable(ref) {
-    const gear = move?.gear; if (!gear) return true;
-    const tags = skill(ref).cls?.tags || [];
-    const w = tags.map(t => WEAPON[t.replace(/^装备/, '')] && t.startsWith('装备') ? WEAPON[t.slice(2)] : null).filter(Boolean);
-    if (w.length && !w.some(t => gear.weapons.includes(t))) return false;
-    const a = tags.map(t => t.startsWith('装备') && ARMOR[t.slice(2)] ? ARMOR[t.slice(2)] : null).filter(Boolean);
-    if (a.length && !a.some(t => gear.armors.includes(t))) return false;
-    // how many weapons: two with 二刀流, else one (a skill for fighting unarmed is not for this character)
-    const held = tags.filter(t => t === '只装一件武器' || t === '装两件武器' || t === '未装备武器');
-    if (held.length && !held.includes(gear.dual ? '装两件武器' : '只装一件武器')) return false;
-    return true;
-  }
-  function kept(ref) {
-    const mode = embedded ? hideMode : 'none', all = skill(ref).cls?.e;
-    if (mode === 'none' || !all?.length) return true;
-    const list = all.some(e => !e[4]) ? all.filter(e => !e[4]) : all;
-    if (mode === 'out' && !wearable(ref)) return false;
-    return list.some(e => {
-      const k = kindOf(e);
-      if (k === 'never') return false;
-      if (k === 'magic') return isMagic();
-      if (mode === 'out') return k === 'other' || (k === 'off' && applies(e));
-      if (mode === 'half') return k === 'other' || k === 'def' || k === 'counter' || (k === 'off' && applies(e));
-      return k === 'other' || k === 'def';
-    });
-  }
+  const { WEAPON, ARMOR } = window.GameSkillFilter;   // equipment names for the status line
+  const kept = ref => window.GameSkillFilter.keep(embedded ? hideMode : 'none', move, skill(ref).cls?.e, skill(ref).cls?.tags || []);
   const matches = row => found(row) && (row.separator || kept(row.ref));
   // no separator at the start / end of a lane or twice in a row once rows are hidden
   const tidy = rows => rows.filter((r, i, a) => !r.separator || (i > 0 && i < a.length - 1 && !a[i - 1].separator && a.slice(i + 1).some(x => !x.separator) && a.slice(0, i).some(x => !x.separator)));
@@ -194,8 +148,8 @@
       if (i?.site && !i.site[buildChar]) {
         knownChar = false;
         $('buildStatus').textContent = `没有这个角色（编号 ${buildChar}）`; $('buildPanelHost').textContent = '没有这个角色。'; $('buildExit').textContent = '回到首页';
-      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-v2`;
-    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-v2`; });
+      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-v5`;
+    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-v5`; });
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }

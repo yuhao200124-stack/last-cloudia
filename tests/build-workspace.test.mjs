@@ -35,7 +35,7 @@ test('the table lists every game passive number, so the calculator can tell a ch
 
 test('配装 happens on the home page: the table with “+” on the left, the calculator frame on the right', () => {
   const panel = read('dist/engine-panel.mjs');
-  for (const s of ["get('embedded') === 'build'", 'lc-build-toggle', 'lc-build-state', 'lc-build-view', 'lc-build-hello', './index.html?character=', 'data-build-break', 'autoPaidIds', 'changesOf'])
+  for (const s of ["get('embedded') === 'build'", 'lc-build-toggle', 'lc-build-state', 'lc-build-view', 'lc-build-hello', './index.html?character=', 'data-build-break', 'splitBuild(', 'changesOf'])
     assert(panel.includes(s), s);
   // no table inside the calculator any more, no search box, no 试算
   for (const s of ['buildTableFrame', 'lc-table-ready', 'engineBuildSearch', 'engineBuildCandidates', 'data-build-probe', 'engineRecommendSearchOnly'])

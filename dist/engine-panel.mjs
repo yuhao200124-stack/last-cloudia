@@ -1,10 +1,11 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-v2';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-v2';
-import { characterGear } from './character-gear.mjs?v=20260930-v2';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-v2';
+import { K } from './engine/battle.mjs?v=20260930-v5';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-v5';
+import { characterGear } from './character-gear.mjs?v=20260930-v5';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-v5';
+import { effectSentence, equipMove, gearFor, isFree, splitBuild } from './engine-panel-logic.mjs?v=20260930-v5';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -93,20 +94,7 @@ function setBuildView(view) {
 if (buildEmbed) { document.body.classList.add('is-build-embedded'); setBuildView('results'); }
 // what the page shows: the picked skills, the character's own 0-SC ones, each one's gain, SC, the damage now and
 // before the loadout, and the move (its element and skill type set the page's filters)
-// What the character can wear, for the home page's 全输出 filter (user 2026-09-30): its own equipment types
-// (UnitDressMst EQUIP_TYPE_INFO), types its own or the picked skills add (P_装備可否変更 1100000, e.g. 机械装备), and
-// whether it can hold two weapons (P_二刀流 1080800 — its own, e.g. 梅莉 二刀流 / 阿尔克 真・二刀流, or a picked 二刀流).
 let gearInfo = null;
-function gearFor(master, dress, passiveIds) {
-  const row = master.unitDress.get(Number(dress));
-  const types = new Set(String(row?.EQUIP_TYPE_INFO || '').split(/[,:]/).map(Number).filter(Boolean));
-  let dual = false;
-  for (const id of passiveIds) {
-    const p = master.passive.get(Number(id)); if (!p) continue;
-    for (const seg of String(p.PROCESS_INFO || '').split('@')) { const [pid, , first] = seg.split(':').map(Number); if (pid === 1100000 && first) types.add(first); if (pid === 1080800) dual = true; }
-  }
-  return { weapons: [...types].filter(t => t >= 10 && t < 20).sort(), armors: [...types].filter(t => t >= 20 && t < 30).sort(), dual };
-}
 function sendState() {
   if (!buildEmbed) return;
   const gains = {};
@@ -635,7 +623,7 @@ function renderBuildStatus() {
 // only skills learned from relics on top cost SC, and 能力盘突破 only frees among those. 个性 / 固有 / 超越 / 加护 are
 // always all on.
 const FREE_COST = 99;
-const isFreePassive = id => { const c = battle?.master.passive.get(id)?.COST; return c == null || c >= FREE_COST; };
+const isFreePassive = id => isFree(battle?.master, id);
 function ownPassiveIds(c) {
   if (!c) return [];
   // (the character's own 加护 is not here: every blessing comes from the account, with the account's values — user 2026-09-30)
@@ -647,7 +635,6 @@ async function ensureTablePassives() {
   if (!tablePassives) tablePassives = new Set(await fetch(new URL('./game-data/engine/table-passives.json' + V, import.meta.url)).then(r => r.json()).then(t => t.ids).catch(() => []));
   return tablePassives;
 }
-const autoPaidIds = c => ownPaidIds(c);
 // where an own board skill comes from: the limit-break stage its board area opens at, and whether a relic teaches it too
 const boardInfo = (c, id) => { const p = (c?.ownPassives || []).find(x => x.passive === id); return p ? { limitBreak: p.limitBreak, common: !!p.common } : null; };
 // Expected damage per call of the move (the main card's metric) from one scenario run, and what its first hit
@@ -751,7 +738,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-v2'), import('./engine/engine-data.mjs?v=20260930-v2'), import('./engine/scenario.mjs?v=20260930-v2'), import('./engine/report-adapter.mjs?v=20260930-v2'), import('./engine/loadout-adapter.mjs?v=20260930-v2')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-v5'), import('./engine/engine-data.mjs?v=20260930-v5'), import('./engine/scenario.mjs?v=20260930-v5'), import('./engine/report-adapter.mjs?v=20260930-v5'), import('./engine/loadout-adapter.mjs?v=20260930-v5')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -885,18 +872,6 @@ function exclusiveEquips(items, master) {
   others.slice(0, 2).forEach((x, i) => equips.push({ pos: 3 + i, id: x.e.id }));
   return equips;
 }
-// The move being evaluated is one the attacker has equipped. A character's own skills and 必杀 come with the
-// character, but a magic (魔法) is carried only when it is equipped: without it the game's conditions that read
-// the cast skill from the unit's own skills fail (洛琪希's 魔法連鎖 / 魔術共鳴 did not count in 配装 and
-// 游戏数据 modes, about ×1.35 less than the real battle; found 2026-09-29 against the user's battle reports).
-function equipMove(spec, moveId, master, parseInts) {
-  const id = Number(moveId); if (!id || !master.skill.has(id)) return;
-  const type = master.skill.get(id).SKILL_TYPE;
-  if (spec.skills?.length) { if (!spec.skills.some(s => Number(s.id) === id)) spec.skills = [...spec.skills, { id, type }]; return; }
-  const dress = master.unitDress.get(Number(spec.unitDressId));
-  const own = dress ? [...parseInts(dress.PRESET_SKILL), ...parseInts(dress.SKILL_SLOT_INFO)] : [];
-  if (!own.includes(id) && !(spec.magic || []).map(Number).includes(id)) spec.magic = [...(spec.magic || []), id];
-}
 // Every exclusive item on the attacker at its top tier and top stage (also for a report's gear).
 function maximizeExclusive(spec, c) {
   const tiers = tierOf(c); if (!tiers.size || !spec.equips) return;
@@ -1011,13 +986,12 @@ async function run(force = false) {
       if (build.on) {
         await ensurePassiveIndex(); await ensureTablePassives();
         await M.loadPassives(battle.master, [...ownPassiveIds(c), ...(c?.ownPassives || []).map(p => p.passive), ...build.selected]);
-        const own = ownPassiveIds(c), ownSet = new Set(own);
-        // the character's own SC skills that are not on the skill table: always added, 0 SC
-        const auto = autoPaidIds(c).filter(id => !ownSet.has(id)), autoSet = new Set(auto);
-        const picked = build.selected.filter(id => !ownSet.has(id) && !autoSet.has(id));
+        // the character's own SC skills (its ability board): always added, 0 SC; a loadout saved before (or a report) may
+        // list some of them — they are in already (engine-panel-logic.mjs splitBuild, tested)
+        const split = splitBuild(c, build.selected, isFreePassive);
+        const own = split.own, ownSet = new Set(own), auto = split.auto, autoSet = new Set(auto), picked = split.picked;
         buildOwnPaid = ownPaidIds(c).filter(id => !autoSet.has(id)); buildAuto = auto;
-        // a loadout saved before (or a report / recommendation) may list own board skills: they are in already
-        if (build.selected.some(id => autoSet.has(id))) { build.selected = build.selected.filter(id => !autoSet.has(id)); saveBuild(); }
+        if (split.selected.length !== build.selected.length) { build.selected = split.selected; saveBuild(); }
         const equips = exclusiveEquips(chosenExclusive(c, battle.master), battle.master);
         gearInfo = gearFor(battle.master, dress, [...(c?.personality || []).map(p => p.passive), ...(c?.ownPassives || []).map(p => p.passive), ...(c?.transcend || []).map(p => p.passive), ...build.selected]);
         const bless = blessings.filter(b => !ownSet.has(b.id));
@@ -1107,20 +1081,6 @@ async function ensureEffectTexts(out, c) {
 const passiveRecord = (id, c) => c?.passives?.[id] || relicTexts?.get(id) || null;
 // which sentence of a multi-part description an effect is: its trigger's wording (每40秒, 濒死, 受到…) and the words
 // its effect shares with the sentence (伤害上限, 回复, 全体…); nothing fits → the whole description
-const TRIGGER_WORDS = [[[70, 71], /每\s*\d+(?:\.\d+)?\s*秒|每隔/], [[10], /战斗开始|开始时|入场/], [[11], /结束时/], [[40, 37], /体力|濒死|战斗不能/], [[42], /法力/],
-  [[17, 74], /发动后|使用后|结束/], [[16, 18, 72, 73], /发动|使用|咏唱/], [[21, 23, 25, 27, 29], /攻击时|命中|造成/], [[22, 24, 26, 28, 30], /受到|被/], [[35, 36], /击倒|击败|打倒/],
-  [[50, 78, 79], /异常|状态/], [[52, 68], /气绝|Break|破防|击破/], [[54, 60, 61, 62], /增益|减益|赋予/], [[65, 69], /存活|人数|战斗不能/], [[96, 97], /复活/], [[55], /必杀/], [[53], /咏唱/], [[66, 94], /地形|背景/], [[98], /领域/]];
-const EFFECT_WORDS = ['伤害上限', '回复上限', '上限', '回复', '伤害', '攻击力', '防御', '精神', '魔力', '暴击', '速度', '法力', '体力', '特攻', '必杀', '特技', '魔法', '属性', '异常', '护盾', '减轻', '减半', '全体', '自身', '增益', '减益', '冰', '火', '雷', '树', '光', '暗', '咏唱', '气绝', 'Break'];
-const effectNorm = t => String(t || '').replace(/恢复/g, '回复').replace(/MP/gi, '法力').replace(/HP/gi, '体力').replace(/法强|智力/g, '魔力');
-function effectSentence(text, trigger, processName) {
-  const parts = String(text || '').replace(/\s*\n\s*/g, '').split('。').map(x => x.trim()).filter(Boolean);
-  if (parts.length <= 1) return parts[0] || '';
-  const re = TRIGGER_WORDS.find(([ts]) => ts.includes(trigger))?.[1];
-  const words = EFFECT_WORDS.filter(w => effectNorm(processName).includes(w));
-  let best = null, bestScore = 0;
-  for (const part of parts) { const n = effectNorm(part); const score = (re && re.test(n) ? 3 : 0) + words.filter(w => n.includes(w)).length; if (score > bestScore) { best = part; bestScore = score; } }
-  return best || parts.join('。');
-}
 function effectLine(x, c) {
   // a chance of the move itself (its bullets): the move's name and the line of its description that says it
   if (x.fromMove) {
