@@ -1,11 +1,11 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1122';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1122';
-import { characterGear } from './character-gear.mjs?v=20260930-1122';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1122';
-import { effectSentence, equipMove, gearFor, isFree, splitBuild } from './engine-panel-logic.mjs?v=20260930-1122';
+import { K } from './engine/battle.mjs?v=20260930-1132';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1132';
+import { characterGear } from './character-gear.mjs?v=20260930-1132';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1132';
+import { effectSentence, equipMove, gearFor, isFree, splitBuild } from './engine-panel-logic.mjs?v=20260930-1132';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -738,7 +738,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1122'), import('./engine/engine-data.mjs?v=20260930-1122'), import('./engine/scenario.mjs?v=20260930-1122'), import('./engine/report-adapter.mjs?v=20260930-1122'), import('./engine/loadout-adapter.mjs?v=20260930-1122')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1132'), import('./engine/engine-data.mjs?v=20260930-1132'), import('./engine/scenario.mjs?v=20260930-1132'), import('./engine/report-adapter.mjs?v=20260930-1132'), import('./engine/loadout-adapter.mjs?v=20260930-1132')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');

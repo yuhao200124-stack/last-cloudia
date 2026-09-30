@@ -126,7 +126,7 @@ test('classification: effects on the enemy, a heal scaled by 精神, when-used t
 // every skill that raises the crit rate or the crit damage (a 暴击 entry that is not defense) is on the sheet, and only those
 test('暴击 page: every crit-rate / crit-damage skill, in two lanes with groups', () => {
   const sheet = data.sheets['暴击'];
-  assert.equal(data.sheetOrder.at(-1), '暴击');
+  assert.equal(data.sheetOrder[data.sheetOrder.indexOf('伤害上限') + 1], '暴击');
   assert.equal(sheet.lanes.length, 2);
   const onPage = new Set(sheet.lanes.flatMap(l => l.rows).filter(r => !r.separator).map(r => r.ref));
   const crit = Object.values(data.skills).filter(s => s.cls?.e.some(e => e[0] === '暴击')).map(s => s.gameId);
@@ -134,4 +134,17 @@ test('暴击 page: every crit-rate / crit-damage skill, in two lanes with groups
   for (const r of sheet.lanes.flatMap(l => l.rows)) if (!r.separator) assert.ok(r.type, `${r.ref} has a group`);
   assert.ok(!onPage.has(960), '皇家铠甲 (免疫暴击) is defense');
   assert.deepEqual(data.skills[960].cls.e, [['受到伤害', null, null, null, 0]]);
+});
+
+// 全部伤害 (user 2026-09-30: “把所有伤害都归类到一个…”, 新建一页、325 个全放、“按照sc换伤害的比例来”): every skill that
+// raises the damage dealt, ranked by damage % per SC (the group is that ratio); the ones without a % (追加伤害, 无视防御,
+// 魔转相, 减敌人耐性 …) at the end as 其他方式
+test('全部伤害 page: every damage skill, by damage % per SC', () => {
+  const draft = JSON.parse(read('docs/skill-classes-draft.json')).skills;
+  const rows = data.sheets['全部伤害'].lanes.flatMap(l => l.rows).filter(r => !r.separator);
+  assert.deepEqual(rows.map(r => r.ref).sort((a, b) => a - b), draft.filter(s => s.cats.includes('造成伤害')).map(s => s.id).sort((a, b) => a - b));
+  const ratios = rows.filter(r => r.type !== '其他方式').map(r => Number(r.type.match(/每SC ([\d.]+)%/)[1]));
+  for (let i = 1; i < ratios.length; i++) assert.ok(ratios[i] <= ratios[i - 1], `${ratios[i - 1]} → ${ratios[i]}`);
+  assert.ok(rows.slice(-3).every(r => r.type === '其他方式'));
+  assert.ok(data.sheets['伤害'], 'the user’s own 伤害 page stays');
 });
