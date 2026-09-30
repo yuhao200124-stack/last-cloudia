@@ -148,3 +148,19 @@ test('全部伤害 page: every damage skill, by damage % per SC', () => {
   assert.ok(rows.slice(-3).every(r => r.type === '其他方式'));
   assert.ok(data.sheets['伤害'], 'the user’s own 伤害 page stays');
 });
+
+// 全部攻击力／全部魔力 (user 2026-09-30: “下一个做攻击力还有魔力”, the same way as 全部伤害): every skill that raises 攻击力 /
+// 魔力 (法强), by % per SC; 装备加成, 属性转换, 固定值 and 魔转相 after it; one that only lowers it is not there
+test('全部攻击力 / 全部魔力 pages: every skill that raises the stat, by % per SC', () => {
+  const draft = JSON.parse(read('docs/skill-classes-draft.json')).skills;
+  for (const [page, stat] of [['全部攻击力', '攻击力'], ['全部魔力', '法强']]) {
+    const rows = data.sheets[page].lanes.flatMap(l => l.rows).filter(r => !r.separator), ids = new Set(rows.map(r => r.ref));
+    for (const s of draft) {
+      const up = (s.sub?.基础属性 || []).some(e => e.stat === stat && (e.rate > 0 || e.add > 0 || e.basis === '转换'));
+      assert.equal(ids.has(s.id), up || (s.sub?.造成伤害 || []).some(e => e.way === '魔转相'), `${page} ${s.id} ${s.name}`);
+    }
+    const ratios = rows.filter(r => /^每SC/.test(r.type)).map(r => Number(r.type.match(/([\d.]+)%/)[1]));
+    for (let i = 1; i < ratios.length; i++) assert.ok(ratios[i] <= ratios[i - 1]);
+  }
+  assert.ok(!data.sheets['全部魔力'].lanes[0].rows.some(r => r.ref === 26310), '知识的防壁 turns 魔力 into 防御／精神: not a 魔力 skill');
+});
