@@ -47,4 +47,9 @@ test('the calculator adds gear through 添加装备 and its page (武器 / 防�
   assert.match(panel, /<small>不能装<\/small>/);
   assert.match(panel, /pid === 1100000 && type && !equipSkills\.has\(type\)/);
   assert.match(panel, /代替专武「\$\{target\.replacesExclusive\}」/);
+  // a piece the character cannot wear yet can be added first; it counts once it can (user: “不能装的也要可以先添加”);
+  // adding keeps the page open (user: “添加完一个不要退出”)
+  assert(panel.includes("${canWear ? '添加' : '先添加'}"));
+  assert.match(panel, /counted\.add\(slot\)/);
+  assert.match(panel, /gearChoice\[slot\] = Number\(add\.dataset\.gearAdd\); saveGear\(\); renderGearPage\(\); run\(\);/);
 });
