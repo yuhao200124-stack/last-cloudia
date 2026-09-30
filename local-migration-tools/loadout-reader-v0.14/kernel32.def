@@ -1,0 +1,18 @@
+LIBRARY kernel32.dll
+EXPORTS
+GetStdHandle
+WriteFile
+WriteConsoleW
+MultiByteToWideChar
+ExitProcess
+CreateToolhelp32Snapshot
+Process32FirstW
+Process32NextW
+Module32FirstW
+Module32NextW
+OpenProcess
+ReadProcessMemory
+CloseHandle
+CreateFileW
+VirtualAlloc
+VirtualQueryEx

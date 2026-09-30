@@ -26,7 +26,7 @@ test('镇魂的超阶之魂 lowers 疾病 (3) and 诅咒 (5) by one stage and ra
 
 test('the calculator names the ailment and the stages, and shows the hidden 受伤害上限 buff', () => {
   const panel = fs.readFileSync(new URL('../dist/engine-panel.mjs', import.meta.url), 'utf8');
-  assert(panel.includes("const AILMENT_NAMES = { 1: '毒', 2: '麻痹', 3: '疾病', 4: '暗黑', 5: '诅咒', 6: '沉默'"));
+  assert(panel.includes("const AILMENT_NAMES = { 1: '中毒', 2: '麻痹', 3: '疾病', 4: '暗黑', 5: '诅咒', 6: '沉默'"));
   assert(panel.includes('耐性 ${signed(stage)} 级（1 级＝耐性值 50）'));
   assert.match(panel, /1082619: \(\[, ail, , , add, per\]\) =>/);
   assert(panel.includes("'，自身存活期间一直有效'"));

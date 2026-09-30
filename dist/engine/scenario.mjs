@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20260930-1959';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-1959';
-import { zhName, zhCondition } from './gloss.mjs?v=20260930-1959';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-1959';
+import { Battle, K, parseInts } from './battle.mjs?v=20260930-2019';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-2019';
+import { zhName, zhCondition } from './gloss.mjs?v=20260930-2019';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-2019';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -173,7 +173,7 @@ export function setupBattle(battle, attacker, target, state = {}) {
   target.breakRemain = state.targetBreak ? 600 : 0;
   // 敌方异常 (user 2026-09-30: “我打开这个选项就说明敌方进入异常了”; the special ones too: “要”): the target has every
   // ailment of luaCommon.lua — the six basic ones (AILMENT_COMMON: 毒、麻痹、疾病、暗黑、诅咒、沉默) and the special ones
-  // (10 封印、11 冻结、12 愤怒、13 腐化、20 剧毒、21 妨碍、22 忧郁、23 DISEASE、24 束缚), so every “对异常状态中的敌人” condition holds
+  // (BadStatusMst names: 10 封印、11 冻结、12 激怒、13 腐蚀、20 猛毒、21 未实装、22 冥暗、23 重病、24 咒缚), so every “对异常状态中的敌人” condition holds
   target.ailments = state.targetAilment ? [...TARGET_AILMENTS] : [];
   if (state.killer === 'on' && !target.charTypes.length) battle.assumptions.add('特攻：目标没选种族，按“种族未知”结算（针对具体种族的加成不计入，“对非某种族”的加成会计入）');
   if (battle.options.breakDefenseRatio != null && battle.options.breakDefenseRatio !== 1) battle.assumptions.add(`Break：在目标自己的破防效果之外，防御再按 ×${battle.options.breakDefenseRatio}（计算器“Break 时防御倍率”，游戏数据里没有这一步）`);

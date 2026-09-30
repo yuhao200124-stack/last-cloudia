@@ -12,6 +12,8 @@
 
 **加护一律按账号（2026-09-30，用户：“加护都是根据账号来的”）**：角色自己的加护不再按游戏数据基础值单独加进去，所有加护都从本账号读取的加护表取（带账号的数值）；账号里没有的加护不算，“计入本账号加护”关掉时一个加护都不算。洛琪希“特攻”默认勾上是对的（用户确认），保持。
 
+**异常状态一览（2026-09-30，用户：“给我发一份全部异常状态的效果和显示图片”）**：名称和说明来自 BadStatusMst（14 个，21 号是 Coming Soon 未实装），默认持续时间来自 procCondCommon.lua AilmentLifeTimes，能不能行动／用技能来自 luaCommon.lua（Unit:CanMove、Skill:Available）。具体数值（中毒／猛毒按最大 HP 的比例和间隔、激怒攻防倍率、腐蚀）在 GameAssembly 里读的是战斗常数表 BattleDefineMst（BattleConstants.LoadDefineMst，键如 BATTLE_DEFINE_POISON_DAMAGE_RATIO；中毒每次 = 最大HP × 比例‱，最多 999，BadStatusPoison.GetDamage），读取器没导出过，已做 v0.14（`local-migration-tools/loadout-reader-v0.14`，多导出 BattleDefineMst，地址 0x75D3BF8）。异常图标在游戏资源包里，读取器读不到。计算器里的异常名改成游戏正式名（激怒、腐蚀、猛毒、冥暗、重病、咒缚）。
+
 **机制排查（2026-09-30，用户：“看看还有哪些机制没搞明白去搞明白”）**：对全部 268 个角色的每个招式（普通／全开两种状态）跑引擎，收集脚本报错、缺原生函数、引擎假设和日志，再逐项查 GameAssembly：
 - 追加伤害（op 801，13 个角色，如夜叉丸影分身、莉尔贝特弱点追击、罗伊霍克爱的援护）：以前不算。反汇编 ProcessUtils.DoAdditionalDamage → CalcDamageHealWrapper.DoCalc(mode 4)：命中后另打 `回数` 次，每次 RandomRange(max(1,⌊min‱·D⌋), max(前者,⌈max‱·D⌉)) × (1 − 目标该属性耐性/100)，四舍五入，D＝这一段实际造成的伤害，不吃伤害上限。battle.mjs `additionalDamage()`，scenario 每段给 `additional`，期望伤害（`expectedHit`）计入，结果说明写“含追加伤害 每段约 …”。计算器默认不算几率效果，所以只有必定发动的（如二重猛击）或勾选后的才计入。
 - 修改其他效果（触发 73“自分の指定プロセス効果発揮前”，41 种处理、275 个被动，如忍皇刀“追击伤害 +50%”、自己发动的减益效果增减、增益时间延长、炼金术参数）：以前 TrigProc 全是空壳。反汇编 ProcParamModifier / BuffAddMul.Calc：同一参数的修改先累加，再 new = round((old + val)·(1 + per/10000) + add)（.NET 四舍六入五成双）；ProcReplaceParam(812) 直接替换优先。battle.mjs `procOnProc()`：处理执行前、设增益前各跑一次；只给第一个条件参数（处理类别）在目标 PROCESS_CATEGORY 里的触发 73 效果（condition.lua 的 ProcessCategoryCheck 自己只查增益／减益）。验证：夜叉丸带忍皇刀，追加伤害倍率 30–35% → 45–52.5%。

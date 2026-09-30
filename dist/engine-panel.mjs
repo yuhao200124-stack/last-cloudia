@@ -1,12 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1959';
-import { zhName } from './engine/gloss.mjs?v=20260930-1959';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1959';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1959';
-import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1959';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1959';
+import { K } from './engine/battle.mjs?v=20260930-2019';
+import { zhName } from './engine/gloss.mjs?v=20260930-2019';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-2019';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-2019';
+import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-2019';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-2019';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -401,14 +401,15 @@ const signed = (n, unit = '') => `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(
 //未解读）…去搞清楚”): param 0 is the ailment (luaCommon.lua AILMENT_*), param 1 the number of stages. One stage is 50 of the
 // resist value the enemy data use (MonsterMst.RESIST_STATUS_INFO: 100 / 50 / 0 / −50; process.lua 1030605 turns a resist
 // value into stages with ÷50).
-const AILMENT_NAMES = { 1: '毒', 2: '麻痹', 3: '疾病', 4: '暗黑', 5: '诅咒', 6: '沉默', 10: '封印', 11: '冻结', 12: '愤怒', 13: '腐化', 20: '剧毒', 21: '妨碍', 22: '忧郁', 23: 'DISEASE', 24: '束缚' };
+// names from the game's BadStatusMst (21 is unreleased “Coming Soon”)
+const AILMENT_NAMES = { 1: '中毒', 2: '麻痹', 3: '疾病', 4: '暗黑', 5: '诅咒', 6: '沉默', 10: '封印', 11: '冻结', 12: '激怒', 13: '腐蚀', 20: '猛毒', 21: '未实装异常', 22: '冥暗', 23: '重病', 24: '咒缚' };
 const BASIC_AILMENTS = [1, 2, 3, 4, 5, 6];
 function describeStatusResist(list) {
   const byStage = new Map();
   for (const [type, stage] of list) { if (!byStage.has(stage)) byStage.set(stage, []); byStage.get(stage).push(type); }
   return [...byStage].map(([stage, types]) => {
     const all = types.includes(0), basic = types.includes(-1) || BASIC_AILMENTS.every(t => types.includes(t));
-    const names = all ? '全部异常' : basic ? '基本异常（毒、麻痹、疾病、暗黑、诅咒、沉默）' : types.map(t => AILMENT_NAMES[t] || `异常 ${t}`).join('·');
+    const names = all ? '全部异常' : basic ? '基本异常（中毒、麻痹、疾病、暗黑、诅咒、沉默）' : types.map(t => AILMENT_NAMES[t] || `异常 ${t}`).join('·');
     return stage ? `${names}耐性 ${signed(stage)} 级（1 级＝耐性值 50）` : `${names}耐性 不变（这次按目标的情况没有改变）`;
   });
 }
@@ -889,7 +890,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1959'), import('./engine/engine-data.mjs?v=20260930-1959'), import('./engine/scenario.mjs?v=20260930-1959'), import('./engine/report-adapter.mjs?v=20260930-1959'), import('./engine/loadout-adapter.mjs?v=20260930-1959')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-2019'), import('./engine/engine-data.mjs?v=20260930-2019'), import('./engine/scenario.mjs?v=20260930-2019'), import('./engine/report-adapter.mjs?v=20260930-2019'), import('./engine/loadout-adapter.mjs?v=20260930-2019')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
