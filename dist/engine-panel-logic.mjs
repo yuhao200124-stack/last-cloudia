@@ -1,5 +1,5 @@
 // Pure pieces of the calculator's panel (engine-panel.mjs), kept apart so the tests can run them (user 2026-09-30, item 34).
-import { K } from './engine/battle.mjs?v=20260930-1613';
+import { K } from './engine/battle.mjs?v=20260930-1617';
 export const FREE_COST = 99;
 // COST 99 marks the always-on free passives (unique ones, 【超越】 …); a passive missing from the master counts as free
 export const isFree = (master, id) => { const c = master?.passive.get(id)?.COST; return c == null || c >= FREE_COST; };

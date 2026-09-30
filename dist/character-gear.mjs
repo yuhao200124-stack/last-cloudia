@@ -7,5 +7,6 @@ const GEAR = {
   '259': { '259-equipment-42': { name: '艾莉丝之剑' }, '259-equipment-43': { name: '艾莉丝的衣服' } },
   '260': { 'roxy-staff': { name: '洛琪希之魔杖' }, 'roxy-robe': { name: '洛琪希的衣服' } },
   '257': { '257-equipment-106091': { name: '幻夜之魔暗锁' }, '257-equipment-304560': { name: '魔想羁绊项链' } },
+  '261': { '261-equipment-101315': { name: '神裁剑奥尔迪尔' }, '261-equipment-201127': { name: '天裁神的圣铠' } },
 };
 export const characterGear = id => GEAR[String(id)] || {};

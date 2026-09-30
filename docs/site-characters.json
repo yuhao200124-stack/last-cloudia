@@ -5,6 +5,7 @@
   "245": {"unitDressId":101011,"name":"龙王阿尔克","generated":false,"lv1":[432,14,56,36,14,31],"maxStats":{"hp":14494,"mp":262,"attack":2499,"defense":1781,"intelligence":971,"mind":1622},"statsChecked":"Altema 2026-09-28"},
   "257": {"unitDressId":101270,"name":"魔王凯娜雷殊","generated":true,"lv1":[374,17,30,27,47,29],"maxStats":{"hp":11539,"mp":274,"attack":1643,"defense":1463,"intelligence":2228,"mind":1633},"statsChecked":"Altema 2026-09-30"},
   "259": {"unitDressId":502230,"name":"艾莉丝·格雷拉特","generated":false,"lv1":[461,13,33,44,16,21],"maxStats":{"hp":13057,"mp":241,"attack":2437,"defense":2005,"intelligence":945,"mind":1584},"statsChecked":"Altema 2026-09-28"},
-  "260": {"unitDressId":502220,"name":"洛琪希·米格路迪亚·格雷拉特","generated":false,"lv1":[321,33,20,28,57,23],"maxStats":{"hp":10702,"mp":459,"attack":1222,"defense":1407,"intelligence":2512,"mind":1619},"statsChecked":"Altema 2026-09-28"}
+  "260": {"unitDressId":502220,"name":"洛琪希·米格路迪亚·格雷拉特","generated":false,"lv1":[321,33,20,28,57,23],"maxStats":{"hp":10702,"mp":459,"attack":1222,"defense":1407,"intelligence":2512,"mind":1619},"statsChecked":"Altema 2026-09-28"},
+  "261": {"unitDressId":101290,"name":"秩序之神拉达・多尔","generated":true,"lv1":[302,14,43,58,16,33],"maxStats":{"hp":12848,"mp":245,"attack":2054,"defense":2242,"intelligence":945,"mind":1727},"statsChecked":"Altema 2026-09-30"}
  }
 }
