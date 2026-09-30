@@ -101,7 +101,15 @@ export function describe(p, { names, vals, ope, script, beh = [] }) {
   if (has('被ダメージ吸収倍率')) return out('吸取HP', `受到伤害的 ${pct(V('被ダメージ吸収倍率'))} 转为HP`, V('被ダメージ吸収倍率'));
   if (has('復活時HP割合')) return out('复活', `复活（HP ${pct(V('復活時HP割合'))}）`, V('復活時HP割合'));
   if (has('HP回復倍率') && /根性/.test(k)) return out('复活', `不会倒下（HP ${pct(V('HP回復倍率'))}）`, V('HP回復倍率'));
-  if (has('ステータス変換効率')) return out('回复HP', '回复时把攻击力的一部分转换');
+  // process2011150 → debuff 11116 (buff11116): every ダメージ間隔 seconds the enemies near the carrier (not itself) are hit by
+  // bullet 100110, a magic hit whose BulletLvInfoMst row is 10101:10000:0:3000:2500 (魔力 +30%, 伤害倍率 25%)
+  if (/破滅ノ歌声/.test(k)) return out('其他', `随机 ${V('対象人数') || '所有'} 个敌人获得「破灭的歌声」：每 ${V('ダメージ間隔(秒)')} 秒对它附近的其他敌人造成一次魔法伤害（伤害倍率 25%）`);
+  if (has('ステータス変換効率')) {
+    // process1030074: the heal's 攻击力 × STR倍率, × 変換効率, is added to the 変換先 stats (変換するか 1: 攻击力 itself stays)
+    const r = Math.abs(V('STR倍率')) * V('ステータス変換効率') / 10000;
+    const to = [1, 2, 3].map(i => ({ 2: '攻击力', 3: '防御力', 4: '魔力', 5: '精神' }[V(`ステータス変換先${i}`)])).filter(Boolean);
+    return out('回复HP', r ? `回复时把攻击力的 ${pct(r)} 加到${to.join('、') || '其他属性'}上计算` : '回复时把攻击力的一部分转换', r);
+  }
   if (has('回復倍率') && (has('MND倍率') || has('MDEF倍率') || has('回復最低値'))) {
     const regen = /リジェネ/.test(k);
     return out(regen ? '持续回复HP' : '回复HP', `${regen ? '持续回复HP' : '回复HP'}（按精神算，最低 ${V('回復最低値')}）`, V('回復最低値'));
@@ -110,7 +118,9 @@ export function describe(p, { names, vals, ope, script, beh = [] }) {
     if (has('吸収割合') && V('吸収割合')) return out('回复MP', `吸取伤害的 ${pct(V('吸収割合'))} 为MP`, V('吸収割合'));
     const regen = /リジェネ/.test(k), way = regen ? '持续回复MP' : '回复MP';
     const r = V('MP回復倍率') || V('最大MP割合');
-    return out(way, `${way} ${V('MP回復値') ? `+${V('MP回復値')}` : ''}${V('MP回復値') && r ? '、' : ''}${r ? pct(r) : ''}`.trim(), r || V('MP回復値') * 100);
+    // the game says 法力恢复5% for a share of max MP; a regen does it each tick
+    const amount = [V('MP回復値') ? `${V('MP回復値')}` : '', r ? pct(r) : ''].filter(Boolean).join(' + ');
+    return out(way, regen ? `${way}${amount ? `（每次 ${amount}）` : ''}` : `${way} ${amount}`.trim(), r || V('MP回復値') * 100);
   }
   const sctRate = ['SCT自動回復倍率', 'SCT自動回復倍率最大値'].find(has), sctAdd = ['SCT自動回復加算値', 'SCT自動回復加算最大値'].find(has);
   if (sctRate || sctAdd) {

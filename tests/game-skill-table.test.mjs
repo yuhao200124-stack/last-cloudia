@@ -103,12 +103,29 @@ test('配装 filter: MP／咏唱 only for magic, 反击 only in 半肉, 金钱·
 // (parameter and arithmetic, e.g. frames ÷ 60, a value × 2); the export now carries the filled texts (checked against the
 // Lua scripts and the sandbox, docs/game-skill-table-2026-09-29.md).
 test('no effect text keeps a “?” placeholder; the filled values', () => {
-  for (const [id, s] of Object.entries(data.skills)) { assert.doesNotMatch(s.effect + s.effectS, /\?/, id); assert.equal(s.values, '', id); }
+  for (const [id, s] of Object.entries(data.skills)) { assert.doesNotMatch(s.effect + s.effectS, /\?/, id); if (/[0-9０-９]/.test(s.effectS)) assert.equal(s.values, '', id); }
   const text = id => data.skills[id].effectS;
   assert.match(text(11000), /咏唱速度\+20％/);
   assert.match(text(27151), /仅装备一种武器时提升效果\+4000/);
   assert.match(text(55714), /20秒/);
   assert.match(text(28501), /额外\+5000/);
+});
+
+// 2026-09-30 (user: “神圣光环 装备武器的攻击力提升 像这种你去看看能不能解析出来数值”): a description without a number gets
+// the values of its effects from the game data, in the game's words (体力 / 法力 / 魔力 / 矿石)
+test('实际数值: the numbers of a description that has none', () => {
+  const v = id => data.skills[id].values;
+  assert.equal(v(11800), '武器的攻击力 +25%；武器的魔力 +25%');                               // 神圣光环, process1031902
+  assert.equal(v(1200), '普攻对兽特攻（伤害 ×1.5）');                                        // 兽族克星
+  assert.equal(v(1810), '物理对矿石特攻（伤害 ×1.5）');
+  assert.equal(v(13200), '普攻：使敌人即死（2%几率）；特技：使敌人即死（0.1%几率）');           // 死神
+  assert.equal(v(13500), '攻击力 +20%（受到攻击时，5%几率，触发后40秒内）');
+  assert.equal(v(28331), '回复时把攻击力的 10% 加到精神上计算（回复技能）');                   // 强力治愈, process1030074
+  assert.equal(v(800), '回复体力（按精神计算，最少 50）（暴击时）');
+  assert.equal(v(11000), '');                                                               // its text has the number
+  const shown = Object.values(data.skills).filter(s => s.values);
+  assert.ok(shown.length > 180, `${shown.length}`);
+  for (const s of shown) { assert.match(s.values, /\d/, s.nameS); assert.doesNotMatch(s.values, /法强|回复HP|回复MP|（见效果说明）|即死条件/, s.nameS); }
 });
 
 // item 22 of the 2026-09-30 review: what a process changes, read from its script, not from the words in its name
