@@ -4,10 +4,10 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>配装与伤害计算器｜最后的克劳迪娅</title>
   <meta name="description" content="按游戏脚本结算每段与整次技能伤害：选择招式、战斗开关、目标与配装。">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260930-1609">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./damage-calculator.css?v=20260930-1613">
 </head>
 <body>
-<header class="site-header"><a class="brand" href="./index.html?v=20260930-1609">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a id="calculatorCharacterBack" href="./characters.html?v=20260930-1609">角色列表</a><a href="./index.html?v=20260930-1609">技能表</a></nav></header>
+<header class="site-header"><a class="brand" href="./index.html?v=20260930-1613">LC</a><div><h1>配装与伤害计算器</h1><p>最后的克劳迪娅</p></div><nav><a id="calculatorCharacterBack" href="./characters.html?v=20260930-1613">角色列表</a><a href="./index.html?v=20260930-1613">技能表</a></nav></header>
 <main>
   <div class="page-intro"><p>按游戏数据与游戏脚本计算每段与整次技能伤害。</p><span class="tag">PvE · 游戏脚本结算</span></div>
   <div class="calculator-layout" id="calculationPage">
@@ -35,7 +35,7 @@
       <section class="damage-condition-group" aria-labelledby="specialDamageTitle"><h3 id="specialDamageTitle">特殊伤害改变</h3><h4>基础改变伤害方式</h4><div class="inline-options attack-options"><label><input id="dualWield" type="checkbox">双刀</label><label><input id="specialAttack" type="checkbox">特攻</label><label><input id="break" type="checkbox">Break</label><label><input id="boss" type="checkbox" checked>BOSS</label></div></section>
       <div id="magicBuffOptions" class="magic-buff-options" hidden><h3>魔法</h3></div>
       <section class="damage-condition-group" aria-labelledby="generalDamageTitle"><h3 id="generalDamageTitle">通用伤害改变</h3>
-        <p class="help condition-scope-note">技能的常驻加成（攻击力+10%、伤害+20%等）默认全部计入；这里只勾局内要达到的条件。</p><div class="inline-options"><label title="HP全满时"><input id="fullHp" type="checkbox">满血</label><label title="濒死（HP≤30%）、其他HP线（如≤25%）、剩余HP越低越强（按最大值）、觉醒/魔导觉醒等HP降到阈值时触发"><input id="lowHp" type="checkbox">濒死</label><label title="MP在20以下时，如空无鼓舞、空无堡垒"><input id="mpLow" type="checkbox">MP≤20</label><label title="敌人处于异常状态（毒、麻痹、疾病、暗黑、诅咒、沉默），如“对异常状态中的敌人伤害提升”"><input id="enemyAilment" type="checkbox">敌方异常</label><label title="战斗/每Wave开始获得的BUFF、永久获得的BUFF（自动X、EX灵气等）、BOSS Wave中、每Wave叠层、现实时间（星期/白天/夜晚）"><input id="openingBuffActive" type="checkbox" checked>开局BUFF</label><label title="击败敌人后、受到伤害后、自己发动必杀后、敌人发动必杀后、队友倒下后、战斗经过一段时间后"><input id="conditionBuffActive" type="checkbox">条件BUFF</label><label title="自身复活后获得的BUFF，如黄泉之理、英灵凭依"><input id="reviveBuffActive" type="checkbox">复活后</label><label title="自身格挡时触发的效果"><input id="guardBuffActive" type="checkbox">自身格挡</label><label title="必杀槽满、身上有指定BUFF、自身异常状态、移动中、特技储存满"><input id="selfStateActive" type="checkbox">自身状态</label><label title="队伍编成（同技能人数、类型人数）、我方存活人数、指定队友存活"><input id="partyConditionActive" type="checkbox">队伍</label></div>
+        <p class="help condition-scope-note">技能的常驻加成（攻击力+10%、伤害+20%等）默认全部计入；这里只勾局内要达到的条件。</p><div class="inline-options"><label title="HP全满时"><input id="fullHp" type="checkbox">满血</label><label title="濒死（HP≤30%）、其他HP线（如≤25%）、剩余HP越低越强（按最大值）、觉醒/魔导觉醒等HP降到阈值时触发"><input id="lowHp" type="checkbox">濒死</label><label title="MP在20以下时，如空无鼓舞、空无堡垒"><input id="mpLow" type="checkbox">MP≤20</label><label title="敌人处于异常状态：毒、麻痹、疾病、暗黑、诅咒、沉默，以及封印、冻结、愤怒、腐化、剧毒、妨碍、忧郁、束缚等特殊异常；如“对异常状态中的敌人伤害提升”"><input id="enemyAilment" type="checkbox">敌方异常</label><label title="战斗/每Wave开始获得的BUFF、永久获得的BUFF（自动X、EX灵气等）、BOSS Wave中、每Wave叠层、现实时间（星期/白天/夜晚）"><input id="openingBuffActive" type="checkbox" checked>开局BUFF</label><label title="击败敌人后、受到伤害后、自己发动必杀后、敌人发动必杀后、队友倒下后、战斗经过一段时间后"><input id="conditionBuffActive" type="checkbox">条件BUFF</label><label title="自身复活后获得的BUFF，如黄泉之理、英灵凭依"><input id="reviveBuffActive" type="checkbox">复活后</label><label title="自身格挡时触发的效果"><input id="guardBuffActive" type="checkbox">自身格挡</label><label title="必杀槽满、身上有指定BUFF、自身异常状态、移动中、特技储存满"><input id="selfStateActive" type="checkbox">自身状态</label><label title="队伍编成（同技能人数、类型人数）、我方存活人数、指定队友存活"><input id="partyConditionActive" type="checkbox">队伍</label></div>
       </section>
       <details id="hitDetails" hidden><summary>双刀信息</summary><div class="fields two">
         <label>命中数倍率 ×<input id="hitMultiplier" type="number" min="1" max="100" step="1" value="1"></label>
@@ -77,6 +77,6 @@
     <div id="reviewBody"><p class="help">选择招式后显示。</p></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260930-1609"></script>
-<script type="module" src="./engine-panel.mjs?v=20260930-1609"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260930-1613"></script>
+<script type="module" src="./engine-panel.mjs?v=20260930-1613"></script>
 </body></html>

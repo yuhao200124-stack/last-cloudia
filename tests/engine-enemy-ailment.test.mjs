@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { Battle } from '../dist/engine/battle.mjs';
 import { loadEngineData, loadPassives } from '../dist/engine/engine-data.mjs';
-import { addAttacker, addTarget, runScenario } from '../dist/engine/scenario.mjs';
+import { TARGET_AILMENTS, addAttacker, addTarget, runScenario } from '../dist/engine/scenario.mjs';
 
 const read = async (path, asText) => { const text = fs.readFileSync(new URL(`../dist/game-data/${path}`, import.meta.url), 'utf8'); return asText ? text : JSON.parse(text); };
 const boss = { name: 'boss', isBoss: true, charTypes: [2010], stats: { hp: 99999999, mp: 100, def: 4000, mnd: 10000, str: 0, int: 0 }, elemResist: {} };
@@ -27,6 +27,8 @@ test('敌方异常: the ailment effects count only with the switch', async () =>
   const bullet = off.breakdown.attack.runtime.find(r => r.source?.kind === 'bullet');
   assert.equal(bullet.per, -8379); assert.ok(bullet.add > 0);
   assert.deepEqual(c.specials[0].parts[0].otherStatPercent, 45.89);
+  // basic and special ailments (user: special ones too)
+  assert.deepEqual(TARGET_AILMENTS, [1, 2, 3, 4, 5, 6, 10, 11, 12, 13, 20, 21, 22, 23, 24]);
 });
 
 test('the switch is on the calculator page', () => {
