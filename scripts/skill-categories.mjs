@@ -26,6 +26,7 @@ for (const m of table.slice(0, table.indexOf('\n}')).matchAll(/^\s*([A-Za-z0-9_]
 const procSrc = lua('process.lua');
 const bodies = new Map();
 for (const m of procSrc.matchAll(/^function\s+process(\d+)\s*\(([\s\S]*?)^end/gm)) bodies.set(Number(m[1]), m[2]);
+export const scriptBody = pid => bodies.get(pid) || '';
 export function buffsOf(pid) {
   const body = bodies.get(pid) || '';
   return [...new Set([...body.matchAll(/BuffIds\.([A-Za-z0-9_]+)/g)].map(m => buffIds.get(m[1])).filter(Boolean))]
@@ -45,6 +46,10 @@ export const KIND = [
 // the thing a process changes is at the END of its name (“特定状態異常中SCT回復量増減” = charge recovery while under
 // an ailment): of all keyword matches, the one ending last wins (the longest on a tie); damage on a critical hit is 暴击
 export function kindCategory(kind) {
+  // “(MND補正)” says what the value is scaled by, not what changes (治愈反击: a heal scaled by 精神)
+  kind = kind.replace(/\((STR|INT|DEF|MND|MDEF)補正\)/g, '');
+  // the attacker's stat on a hit taken (畏惧的眼光: BulletFunc:EditSTR on 被弾 = the enemy's attack): less damage taken
+  if (/被弾時対象(STR|INT)増減/.test(kind)) return '受到伤害';
   if (/クリティカル(時|発生時).*与ダメージ/.test(kind)) return '暴击';
   if (/魔転相/.test(kind)) return '造成伤害';            // damage from converting 魔力 / 攻击力
   if (/被ダメージ増減付与/.test(kind)) return '造成伤害';  // a debuff put on the target: the enemy takes more damage (腐坏之牙)
@@ -55,6 +60,21 @@ export function kindCategory(kind) {
     if (!best || end > best.end || (end === best.end && m[0].length > best.len)) best = { cat, end, len: m[0].length };
   }
   return best?.cat || null;
+}
+// a process whose script gives its effect to every unit of the side named in its 敵・味方 parameter
+// (units:GetCondUnitList(params[N], …)) with that side = TARGET_SIDE_OPPONENT (1): the effect is on the enemies
+// (魔断之楔 / 终焉的眼神: 所有属性耐性降低 −10 on every enemy for 40 s)
+export function onEnemies(p) {
+  const m = (bodies.get(p.pid) || '').match(/GetCondUnitList\(params\[(\d+)\]/);
+  return !!m && Number(String(p.params ?? '').split(':')[Number(m[1]) - 1]) === 1;
+}
+// the 大类 of one process of a skill: from its name (kindCategory), except an effect on the enemies — their element
+// resistance going down is damage we deal (the sandbox confirms: 冰耐性 −25 → −35, damage ×1.08); any other stat given to the
+// enemies is not known yet and is left for a look
+export function processCategory(p) {
+  const k = kindCategory(p.kind);
+  if (k === '基础属性' && onEnemies(p)) return /属性耐性/.test(p.kind) ? '造成伤害' : '待确认';
+  return k;
 }
 // value parameters of a process script, in their exact forms (a heal “回復値(MND補正)” is not a stat)
 const PARAM = [
@@ -74,7 +94,7 @@ export function categoriesOf(procs, defensiveOf) {
   for (const p of procs) {
     const r = row.get(p.pid); if (!r) continue;
     const def = defensiveOf(p);
-    const k = kindCategory(p.kind); if (k) put(k, '效果种类');
+    const k = processCategory(p); if (k) put(k, '效果种类');
     if (!k && r[pc.USE_SCRIPT] !== 1 && OPE[r[pc.OPE_INFO]]) put(OPE[r[pc.OPE_INFO]], '操作类型');
     if (!k) for (const name of docs.get(`process${p.pid}`)?.params || []) {
       if (!name) continue;
@@ -134,7 +154,7 @@ export function statEntries(procs) {
   const out = [];
   procs.forEach((p, i) => {
     const r = row.get(p.pid); if (!r) return;
-    const k = kindCategory(p.kind);
+    const k = processCategory(p);
     if (k && k !== '基础属性') return;                 // a heal scaled by 魔抗 etc. is not a stat change
     const names = docs.get(`process${p.pid}`)?.params || [];
     const beh = String(r[pc.PARAM_BEHAVIOR] ?? '').split(':').map(Number);
@@ -171,7 +191,7 @@ export function statsOf(procs) {
   const add = s => (s === '全ステ' ? ALL_STATS : [s]).forEach(x => out.add(x));
   for (const p of procs) {
     const r = row.get(p.pid); if (!r) continue;
-    const k = kindCategory(p.kind);
+    const k = processCategory(p);
     if (k && k !== '基础属性') continue;                 // a heal scaled by 魔抗 etc. is not a stat change
     // the stat at the end of the name, when the name ends with it (…STR増減 / …DEFデバフ耐性 / …最大HP増減)
     let best = null;

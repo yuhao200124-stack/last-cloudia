@@ -66,6 +66,11 @@ export function describe(p, { names, vals, ope, script, beh = [] }) {
     case 902: return out('金钱', `金钱 ${sgn(vals[0])}${pct(vals[0])}`, vals[0]);
   }
   // scripts: by their parameter names
+  // the attacker's stat on a hit taken (畏惧的眼光: BulletFunc:EditSTR on 被弾): the enemy hits with less
+  if (/被弾時対象(STR|INT)増減/.test(k)) {
+    const st = /被弾時対象STR/.test(k) ? 'STR' : 'INT', r = V(`${st}倍率`), a = V(`${st}加算値`);
+    return out('敌人造成的伤害', `敌人的${st === 'STR' ? '攻击力' : '魔力'} ${r ? `${sgn(r)}${pct(r)}` : signed(a)}`, -(r || a));
+  }
   if (has('CRT加算値')) return out('暴击率', `暴击率 ${signed(V('CRT加算値'), '%')}`, V('CRT加算値') * 100);
   if (has('キラー倍率増減値')) return out('特攻伤害', `特攻伤害 ${sgn(V('キラー倍率増減値'))}${pct(V('キラー倍率増減値'))}`, V('キラー倍率増減値'));
   if (/対象キャラクタータイプ/.test(names.join()) && /キラー|スレイヤー/.test(k)) return out('特攻', '特攻');

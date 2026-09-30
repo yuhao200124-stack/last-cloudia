@@ -698,7 +698,7 @@ export class Battle {
       GetBattleInfo(kind) { switch (kind) { case 4: return 0; case 5: return B.options.questId ?? 0; case 6: return 0; case 7: return 0; case 10: return B.options.questType ?? 0; case 700: return false; case 900: return [B.options.difficulty ?? 0]; case 1001: return false; default: B.log('native-partial', 'GetBattleInfo', kind); return 0; } },
       GetWaveCount() { return B.wave; },
       NumWaves() { return B.options.waves ?? 1; },
-      GetWaveTimer() { return B.frame; },
+      GetWaveTimer() { return B.frame / 60; },   // seconds: Field:Time() (luaCommon.lua) multiplies it by OneSec
       GetDateTime() { return multi(...(B.options.dateTime || [2026, 1, 1, 12, 0, 0, 1])); },
       GetScriptStatus() { return false; },
       IsSucceeded() { return true; },

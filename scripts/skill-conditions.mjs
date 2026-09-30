@@ -132,7 +132,8 @@ export function decodeProcess(pid, paramStr) {
   const params = String(paramStr ?? '').split(':').map(v => v === '' ? null : Number(v));
   // a process that only sets a counter is not a condition; one that reads it (…状況 / …条件) is
   let scriptCond = /汎用(数値)?情報(状況|条件)|状況|条件/.test(row[pc.NAME]);
-  const out = { hpScale: {}, elements: [], skillTypes: [], roles: [], equips: [], races: [], allyRaces: [], notRaces: [], ownRaces: [], addRaces: [], canEquip: [], enemy: [], gender: [], ailments: [], hp: [], gearState: [], weaponElement: [], aboutElements: [], script: false, other: [], undecoded: [], anyElement: false, anyType: false };
+  const out = { hpScale: {}, elements: [], skillTypes: [], roles: [], equips: [], races: [], allyRaces: [], notRaces: [], ownRaces: [], addRaces: [], canEquip: [], enemy: [], gender: [], ailments: [], hp: [], gearState: [], weaponElement: [], aboutElements: [], script: false, other: [], undecoded: [], anyElement: false, anyType: false, triggerTypes: [], ownTypes: [] };
+  const trigParams = new Set();          // process parameters (1-based) its trigger condition reads
   const own = /特定キャラ専用/.test(row[pc.NAME]);
   const add = (dim, raw, name) => {
     if (raw == null || Number.isNaN(raw)) return;
@@ -211,15 +212,21 @@ export function decodeProcess(pid, paramStr) {
       const idx = i + 1;
       const g = gate.bits.find(b => b.param === idx);
       const viaIndex = (g && (cparams[g.flag - 1] & g.bit) === g.bit) || /INDEX/.test(name) || gate.direct.includes(idx);
-      if (viaIndex) { for (const n of nibbles(cparams[i])) if (n) { if (dim === 'element' && params[n - 1] === 0 && gate.noneAny?.has(idx)) noneAny = true; else add(dim, params[n - 1], name); } }
+      if (viaIndex) { for (const n of nibbles(cparams[i])) if (n) { if (dim === 'skillType') { trigParams.add(n); const t = skillTypes(params[n - 1]); if (t) out.triggerTypes.push(...t); } if (dim === 'element' && params[n - 1] === 0 && gate.noneAny?.has(idx)) noneAny = true; else add(dim, params[n - 1], name); } }
       else if (dim === 'element' && cparams[i] === 0 && g) add(dim, 0, name);
-      else add(dim, cparams[i], name);
+      else { if (dim === 'skillType') { const t = skillTypes(cparams[i]); if (t) out.triggerTypes.push(...t); } add(dim, cparams[i], name); }
     });
     // the process's own element parameter (read in step 1 too) is ELEMENT_NONE = any element with an element here
     if (noneAny) { out.elements = out.elements.filter(e => e !== 0); out.anyElement = true; }
   }
   // a race counted on our own side (敵・味方 = TARGET_SIDE_ALLY, e.g. 剑阵: per ally of the 战士 type) is not the target's
   if (out.side === 2 && out.races.length) { out.allyRaces.push(...out.races); out.races = []; }
+  // the attack types of the process's own parameters that its trigger does not read (全力以赴的一击: the trigger reads
+  // params[4] = 超必杀, the buff it gives is for params[6] = 物理) — for a process whose trigger is a skill being used and
+  // whose effect comes after it (a timed buff, charge, a heal), these are what the effect applies to and triggerTypes
+  // only say when it fires
+  if (row[pc.USE_SCRIPT] === 1 && pdoc) pdoc.params.forEach((name, i) => { if (dimOf(name) === 'skillType' && !trigParams.has(i + 1)) { const t = skillTypes(params[i]); if (t) out.ownTypes.push(...t); } });
+  out.triggerTypes = [...new Set(out.triggerTypes)]; out.ownTypes = [...new Set(out.ownTypes)];
   return out;
 }
 

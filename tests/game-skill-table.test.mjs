@@ -81,3 +81,26 @@ test('配装 filter: MP／咏唱 only for magic, 反击 only in 半肉, 金钱·
   const panel = read('dist/engine-panel.mjs');
   for (const x of ['function gearFor(', 'pid === 1100000', 'pid === 1080800', 'gear: gearInfo']) assert(panel.includes(x), x);
 });
+
+// 2026-09-30 (user: “好多技能的数值还是？但是不可能是？”): the game fills each “?” from PassiveSkillMst.PROCESS_EXPLAIN_QUOTE
+// (parameter and arithmetic, e.g. frames ÷ 60, a value × 2); the export now carries the filled texts (checked against the
+// Lua scripts and the sandbox, docs/game-skill-table-2026-09-29.md).
+test('no effect text keeps a “?” placeholder; the filled values', () => {
+  for (const [id, s] of Object.entries(data.skills)) { assert.doesNotMatch(s.effect + s.effectS, /\?/, id); assert.equal(s.values, '', id); }
+  const text = id => data.skills[id].effectS;
+  assert.match(text(11000), /咏唱速度\+20％/);
+  assert.match(text(27151), /仅装备一种武器时提升效果\+4000/);
+  assert.match(text(55714), /20秒/);
+  assert.match(text(28501), /额外\+5000/);
+});
+
+// item 22 of the 2026-09-30 review: what a process changes, read from its script, not from the words in its name
+test('classification: effects on the enemy, a heal scaled by 精神, when-used triggers, a stat raised only on the hit', () => {
+  const e = id => data.skills[id].cls.e;
+  assert.deepEqual(e(27570), [['受到伤害', null, null, [1, 9], 0]]);             // 畏惧的眼光: the enemy's attack −5%
+  for (const id of [28094, 54090]) assert.equal(e(id)[0][0], '造成伤害');           // every enemy's element resistance −10
+  assert.deepEqual(e(27071)[0], ['回复', 'HP', null, null, 0]);                     // 治愈反击: not a 魔抗 drawback
+  assert.deepEqual(e(27820), [['特技充能·必杀', null, null, null, 0]]);               // 循环: fires on 超必杀, helps any move
+  assert.deepEqual(e(55010), [['造成伤害', null, null, [1, 9], 0]]);                 // its buff is 物理伤害, fired by 超必杀
+  assert.deepEqual(e(28230), [['基础属性', '法强', [2], null, 0]]);                   // 海滨洞察: only on 冰属性 attacks
+});

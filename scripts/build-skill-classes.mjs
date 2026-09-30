@@ -7,9 +7,9 @@
 import fs from 'node:fs';
 import { zhName } from '../dist/engine/gloss.mjs';
 import { decodeProcess, tagsOf } from './skill-conditions.mjs';
-import { categoriesOf, kindCategory, raisesAttack, statEntries } from './skill-categories.mjs';
+import { categoriesOf, kindCategory, processCategory, onEnemies, raisesAttack, scriptBody, statEntries } from './skill-categories.mjs';
 import { describe, subOf, WAYS } from './skill-entries.mjs';
-import { RACE } from './skill-conditions.mjs';
+import { ELEM, RACE } from './skill-conditions.mjs';
 import { luaDocs } from './skill-conditions.mjs';
 const procDocs = luaDocs('process.lua');
 const R = p => JSON.parse(fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8'));
@@ -40,7 +40,21 @@ const SWITCHED = /^HP|满血|随时间|受到攻击时|Break|队伍|异常状态
 // a process only defends when it changes the damage the character takes (or its resistances)
 // the element / attack-type tags: what a damage bonus applies to (the preview's filter rows), not a condition
 const APPLY = /^(火|冰|树|雷|光|暗|无)属性$|^(物理|魔法|普攻|特技|超必杀|反击)$/;
-const DEFENSIVE = p => /被ダメージ(?!増減付与)|被追加ダメージ|被命中|被弾|ガード|バリア|耐性|相手.*与ダメージ減少/.test(p.kind) || /被ダメージ|を受けた/.test(p.trigger);
+// (not: a resistance given to the enemies, 魔断之楔; a condition on the target's resistance, 剑雷's 対象属性耐性条件)
+const DEFENSIVE = p => !onEnemies(p) && (/被ダメージ(?!増減付与)|被追加ダメージ|被命中|被弾|ガード|バリア|耐性(?!条件)|相手.*与ダメージ減少/.test(p.kind) || /被ダメージ|を受けた/.test(p.trigger));
+// a process fired by using a skill (its trigger: ActValid… / StandbyValid…) whose effect comes after it — a timed buff
+// not tied to that skill's own hits (星眼 / 魔法连锁 buff the used skill's PUID: those are tied), a charge, a heal: the attack
+// types its trigger reads say when it fires (发动超必杀时), not what the effect applies to (user 2026-09-30, item 22:
+// 循环 is for any move, 我想成为一个完美的存在's buff is 物理伤害)
+const condFn = new Map(core.ProcessCondMst.rows.map(r => [r[0], r[3] || '']));
+const afterUse = p => {
+  const fn = condFn.get(proc.get(p.pid)?.[pc.PROCESS_COND]) || '', body = scriptBody(p.pid);
+  return /^(ActValid|StandbyValid)/.test(fn) && !/AndValidAttackSkill/.test(fn) && /SetBuff|EditSCT|EditSingleSCT|:Heal\(/.test(body) && !/PUID|Bullet:/.test(body);
+};
+const typeWords = ts => { const t = new Set(ts), w = []; if (t.has(9) && t.has(1)) w.push('物理'); else { if (t.has(9)) w.push('普攻'); if (t.has(1)) w.push('特技'); } for (const [c, n] of [[2, '魔法'], [5, '超必杀'], [15, '反击']]) if (t.has(c)) w.push(n); return w.join('／'); };
+// a stat raised only on the hit being made (BulletFunc:EditINT on an attack trigger, 海滨洞察: 冰属性攻击时魔力+15%) applies to
+// that hit's element / attack type, as a damage bonus does
+const onOwnHit = (p, defensive) => !defensive && /Bullet:Edit(STR|INT|DEF|MND)/.test(scriptBody(p.pid));
 // entries that differ in one of element / attack type only are one entry (exact: the game applies each); then what
 // each entry applies to, as chips: 火属性… and 物理 (普攻＋特技) / 普攻 / 特技 / 魔法 / 超必杀 / 反击 …
 function finishEntries(list) {
@@ -71,7 +85,11 @@ for (const s of skills) {
   // 大类 only from the game data (scripts/skill-categories.mjs): process names, operation codes, script parameters, buffs
   const cats = categoriesOf(s.procs, DEFENSIVE);
   // 条件标签 from the game's condition data (scripts/skill-conditions.mjs), not from the description
-  const conds = s.procs.map(p => { const d = decodeProcess(p.pid, p.params); return { kind: p.kind, defensive: DEFENSIVE(p), d, tags: tagsOf(d, DEFENSIVE(p)) }; });
+  const conds = s.procs.map(p => {
+    const d = decodeProcess(p.pid, p.params);
+    if (afterUse(p) && d.triggerTypes.length) { d.skillTypes = d.ownTypes; d.other.push(`发动${typeWords(d.triggerTypes)}时`); }
+    return { kind: p.kind, defensive: DEFENSIVE(p), d, tags: tagsOf(d, DEFENSIVE(p)) };
+  });
   let tags = [...new Set(conds.flatMap(c => c.tags))];
   if (tags.some(t => /^HP\d|满血|HP越|HP降到|HP回到/.test(t))) tags = tags.filter(t => t !== 'HP条件');
   const undecoded = [...new Set(conds.flatMap(c => c.d.undecoded || []))];
@@ -103,8 +121,9 @@ for (const s of skills) {
   if (cats.has('基础属性')) {
     const byStat = new Map();
     for (const e of statEntries(s.procs)) {
-      const tags = entryTags(e.proc);
-      const entry = { stat: e.stat, rate: e.rate, add: e.add, basis: e.basis, ...(e.max || scales(e.proc) ? { max: true } : {}), cond: tags.length > 0, tags: [...new Set(tags)] };
+      const tags = entryTags(e.proc), c = conds[e.proc];
+      const hit = onOwnHit(s.procs[e.proc], c.defensive) ? { els: c.d.elements.length ? [...new Set(c.d.elements)].sort() : null, types: c.d.skillTypes.length ? [...new Set(c.d.skillTypes)].sort((a, b) => a - b) : null } : {};
+      const entry = { stat: e.stat, rate: e.rate, add: e.add, basis: e.basis, ...(e.max || scales(e.proc) ? { max: true } : {}), ...(hit.els ? { els: hit.els } : {}), ...(hit.types ? { types: hit.types } : {}), cond: tags.length > 0, tags: [...new Set(tags)] };
       const old = byStat.get(e.stat);
       const better = !old || (old.cond && !entry.cond) || (old.cond === entry.cond && (Math.abs(entry.rate) > Math.abs(old.rate) || (entry.rate === old.rate && Math.abs(entry.add) > Math.abs(old.add))));
       if (better) byStat.set(e.stat, entry);
@@ -118,7 +137,7 @@ for (const s of skills) {
   if (cats.has('造成伤害')) {
     const list = [];
     s.procs.forEach((p, i) => {
-      if (kindCategory(p.kind) !== '造成伤害' || /DOTダメージ/.test(p.kind)) return;
+      if (processCategory(p) !== '造成伤害' || /DOTダメージ/.test(p.kind)) return;
       const d = conds[i].d, names = procDocs.get(`process${p.pid}`)?.params || [], vals = String(p.params ?? '').split(':').map(v => (v === '' ? 0 : Number(v)));
       const v = n => vals[names.indexOf(n)];
       // a damage bonus's 対象属性 is the element it applies to; an extra hit's element is only that hit's own
@@ -143,6 +162,11 @@ for (const s of skills) {
       else if (/貫通/.test(p.kind)) { e.way = '无视防御'; const r = names.length ? v('DEF倍率') : vals[1]; e.rate = -r; e.text = `敌方防御 −${pct(-r)}`; } // built-in 301: DEF加算値, DEF倍率
       else if (/魔転相\(STR\)/.test(p.kind)) { e.way = '魔转相'; e.rate = v('攻撃力変換率'); e.text = `攻击力、法强各加攻击力的 ${pct(e.rate)}`; }
       else if (/魔転相/.test(p.kind)) { e.way = '魔转相'; e.rate = v('魔力変換率'); e.text = `攻击力、法强各加魔力的 ${pct(e.rate)}`; }
+      else if (onEnemies(p) && /属性耐性/.test(p.kind)) {
+        // every enemy's element resistance (属性ID 0 = ELEMENT_NONE: the game's 所有属性耐性 buff) for a while: our element damage
+        const el = v('属性ID'), n = v('増減値');
+        e.way = '敌人属性耐性降低'; e.rate = -n; e.els = el ? [el] : null; e.text = `敌人${el ? ELEM[el] : '全'}属性耐性 ${n < 0 ? '−' : '+'}${Math.abs(n)}`;
+      }
       else throw new Error(`造成伤害: unknown ${p.kind} (${s.name})`);
       list.push(e);
     });
@@ -154,7 +178,7 @@ for (const s of skills) {
   if (cats.has('伤害上限')) {
     const list = [];
     s.procs.forEach((p, i) => {
-      if (kindCategory(p.kind) !== '伤害上限') return;
+      if (processCategory(p) !== '伤害上限') return;
       const d = conds[i].d, names = procDocs.get(`process${p.pid}`)?.params || [], vals = String(p.params ?? '').split(':').map(v => (v === '' ? 0 : Number(v)));
       const els = [...new Set([...(d.elements || []), ...(d.aboutElements || [])])].sort();
       const tags = entryTags(i).filter(t => !APPLY.test(t));
@@ -193,10 +217,10 @@ const ELEM_TAG = /^(受·)?((火|冰|树|雷|光|暗|无)属性|物理|魔法|�
 // what an effect of these 大类 applies to is an element / attack type; elsewhere an element code is not what it is about
 const WITH_ELEMENT = ['特攻', '暴击', 'Break值', '反击', '受到伤害', '信仰'];
 // being hit is how these work, not a condition
-const WHEN_HIT = ['受到伤害', '免疫暴击', '受到的破防值', '格挡', '回避', '受到的追击伤害', '不受防御贯通', '免疫异常', '反击', '回复效果'];
+const WHEN_HIT = ['受到伤害', '免疫暴击', '受到的破防值', '格挡', '回避', '受到的追击伤害', '不受防御贯通', '免疫异常', '反击', '回复效果', '敌人造成的伤害'];
 const RACE_NAMES = Object.values(RACE).join('|');
 for (const s of out) for (const cat of s.cats.filter(c => GENERIC.includes(c))) {
-  let idx = s.procs.map((p, i) => i).filter(i => kindCategory(s.procs[i].kind) === cat);
+  let idx = s.procs.map((p, i) => i).filter(i => processCategory(s.procs[i]) === cat);
   if (!idx.length) idx = s.procs.map((p, i) => i).filter(i => !/情報付与$/.test(s.procs[i].kind));
   if (!idx.length) idx = s.procs.map((p, i) => i);
   const list = idx.map(i => {
@@ -257,7 +281,7 @@ console.log('multi-category', out.filter(s => s.cats.length > 1).length, 'no con
   };
   const order = e => [{ 角色: 0, 装备: 1, 转换: 2 }[e.basis] ?? 3, -(e.rate || 0), -(e.add || 0)];
   const cmp = (a, b) => { const x = order(a.e), y = order(b.e); for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] - y[i]; return a.id - b.id; };
-  const OTHER_WAYS = ['追加伤害', '追加伤害增幅', '无视防御', '魔转相', '敌人受到伤害增加'];
+  const OTHER_WAYS = ['追加伤害', '追加伤害增幅', '无视防御', '魔转相', '敌人受到伤害增加', '敌人属性耐性降低'];
   const SPECIAL = ['特攻', '暴击', 'Break值', '反击'];
   const GENERIC_PAGES = ['受到伤害', '回复', '异常', '特技充能·必杀', '魔法·咏唱', '移动与行动', '装备·种族'];
   const MISC = ['信仰', '金钱·经验', '待确认'];          // user 2026-09-29: these three are one page, 杂项

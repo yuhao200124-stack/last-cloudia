@@ -47,7 +47,8 @@
   const isMagic = () => !move || !move.roles.length || move.roles.includes(2);
   function applies([cat, stat, els, types]) {
     if (!move || cat === '特攻') return true;
-    if (cat === '基础属性') return move.magical == null || stat === (move.magical ? '法强' : '攻击力');
+    if (cat === '基础属性' && move.magical != null && stat !== (move.magical ? '法强' : '攻击力')) return false;
+    // (a stat raised only on the hit being made — 海滨洞察: 冰属性攻击时魔力 — carries that hit's element / attack type too)
     if (els && move.element != null && !els.includes(move.element)) return false;
     if (types && move.roles.length && !types.some(t => move.roles.includes(t))) return false;
     return true;
@@ -191,8 +192,8 @@
       if (i?.site && !i.site[buildChar]) {
         knownChar = false;
         $('buildStatus').textContent = `没有这个角色（编号 ${buildChar}）`; $('buildPanelHost').textContent = '没有这个角色。'; $('buildExit').textContent = '回到首页';
-      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-gearfilter`;
-    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-gearfilter`; });
+      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-classfix`;
+    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-classfix`; });
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }
