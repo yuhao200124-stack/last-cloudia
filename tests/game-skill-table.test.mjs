@@ -121,3 +121,17 @@ test('classification: effects on the enemy, a heal scaled by 精神, when-used t
   assert.deepEqual(e(55010), [['造成伤害', null, null, [1, 9], 0]]);                 // its buff is 物理伤害, fired by 超必杀
   assert.deepEqual(e(28230), [['基础属性', '法强', [2], null, 0]]);                   // 海滨洞察: only on 冰属性 attacks
 });
+
+// 暴击 (user 2026-09-30: “新建一个类型叫暴击…把暴击和暴击伤害有关的都放进去”, “配装…打开这个页面就能找到全部我可以带的暴击率和暴击伤害”):
+// every skill that raises the crit rate or the crit damage (a 暴击 entry that is not defense) is on the sheet, and only those
+test('暴击 page: every crit-rate / crit-damage skill, in two lanes with groups', () => {
+  const sheet = data.sheets['暴击'];
+  assert.equal(data.sheetOrder.at(-1), '暴击');
+  assert.equal(sheet.lanes.length, 2);
+  const onPage = new Set(sheet.lanes.flatMap(l => l.rows).filter(r => !r.separator).map(r => r.ref));
+  const crit = Object.values(data.skills).filter(s => s.cls?.e.some(e => e[0] === '暴击')).map(s => s.gameId);
+  assert.deepEqual([...onPage].sort((a, b) => a - b), crit.sort((a, b) => a - b));
+  for (const r of sheet.lanes.flatMap(l => l.rows)) if (!r.separator) assert.ok(r.type, `${r.ref} has a group`);
+  assert.ok(!onPage.has(960), '皇家铠甲 (免疫暴击) is defense');
+  assert.deepEqual(data.skills[960].cls.e, [['受到伤害', null, null, null, 0]]);
+});

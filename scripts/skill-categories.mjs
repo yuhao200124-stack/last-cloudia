@@ -50,6 +50,8 @@ export function kindCategory(kind) {
   kind = kind.replace(/\((STR|INT|DEF|MND|MDEF)補正\)/g, '');
   // the attacker's stat on a hit taken (畏惧的眼光: BulletFunc:EditSTR on 被弾 = the enemy's attack): less damage taken
   if (/被弾時対象(STR|INT)増減/.test(kind)) return '受到伤害';
+  // immunity to the enemy's critical hits (皇家铠甲) is defense, not the 暴击 of our own attacks
+  if (/クリティカル耐性/.test(kind)) return '受到伤害';
   if (/クリティカル(時|発生時).*与ダメージ/.test(kind)) return '暴击';
   if (/魔転相/.test(kind)) return '造成伤害';            // damage from converting 魔力 / 攻击力
   if (/被ダメージ増減付与/.test(kind)) return '造成伤害';  // a debuff put on the target: the enemy takes more damage (腐坏之牙)
