@@ -12,6 +12,10 @@
 
 **加护一律按账号（2026-09-30，用户：“加护都是根据账号来的”）**：角色自己的加护不再按游戏数据基础值单独加进去，所有加护都从本账号读取的加护表取（带账号的数值）；账号里没有的加护不算，“计入本账号加护”关掉时一个加护都不算。洛琪希“特攻”默认勾上是对的（用户确认），保持。
 
+**统一版本号、配装提速（2026-09-30，第 32、33 项）**：
+- **发布前先运行 `node scripts/set-version.mjs`**（不带参数＝按当前时间，如 `20260930-1542`）：所有页面的脚本／样式、所有模块之间的 import（包括 `dist/engine/*.mjs`）都带同一个 `?v=`；游戏数据（`game-data/*.json`、Lua 脚本）按取数据那个文件自己的 `?v=` 去取（`new URL(import.meta.url).search`）。这样更新后浏览器不会把缓存的旧引擎和新页面混用。测试 `tests/site-version.test.mjs` 检查没有漏掉的。
+- 配装：改命中段数不再把每个技能的收益全部重算（收益是每次的比值，和段数无关；约 8 秒 → 约 2 秒只重算主结果）；不再多算页面上没显示的“配装前”；每一步只给首页发一次状态，首页只重画有变化的“+”格子；勾辅助魔法、选怪物表目标只结算一次。
+
 **清理没人用的旧文件（2026-09-30，用户：“没用的就直接删了”）**：删了“本地迁移与备份”页（`local-data.html／.js／.css`、`local-backup.js`、`export-old-site.js`）和它的本地服务脚本（`local-migration-tools/server.py`、`rebuild-exporter.py`、`rebuild-manifest.py`）；旧规则计算器留下的 `effect-rule-engine.mjs`、`stat-condition-fields.mjs`、`stat-mechanics.mjs` 和测试 `stat-mechanics.test.mjs`；根目录旧站备份 `site.zip`、`site-template.zip`、`site-formula-update.tar.gz`、`old-effect-overrides.json`；`docs/` 里没人读的旧数据（`game-active-skills.json`、`skill-labeling-registry.json` 等 9 个，约 12MB）和 12 份只讲已删功能的旧文档；没人调用的 `findGameMove`、`loadGameMagic`、`loadGameRelics`，没人监听的 `lc:review-toggle`、`lc:open-damage-calculator`；`loadout-data.json` 里不用的 `recommended`。计算器“该招式没有游戏数据，见下方网页旧规则”去掉了后半句。“另有 N 条弹道未计入整次期望，见下方明细”用户说不管。游戏数据导出 `dist/game-data/magic.json` 网站没读，但属于导出脚本的产物，保留。Boss 预设手抄数值（第 26 项）、角色页排版（第 28 项）用户说不管。
 
 **Boss 自带被动只算 Break，其余写出来（2026-09-30，用户：“这些boss被动计算器不要算但是在boss界面要写出来”“除了 Break 都不算”“追加伤害先不用管”）**：怪物自己的被动里只有“自己 Break 中／Break 状态变化／自己 Break 时受到伤害”的处理计入计算（`scenario.mjs` 的 `OWN_BREAK_COND`、`ownBreakSegments`），濒死／觉醒加属性、魔法／物理耐性、首次行动不等待、异常耐性等一律不算。计算器“Boss 与战斗条件”一栏在种族下面列出目标的全部自带被动（预设 Boss、报告里的 Boss、怪物表选的 Boss 都一样；报告里的 Boss 现在也按怪物表带上它的 Break 被动），同一条件的合成一行（用户：“写简单点”，如“HP降到30%以下时：攻击、防御、魔力、魔抗 +35%”“Break 中：全属性耐性 −25，防御、魔抗 −25%（计入）”），不写触发次数。游戏里没有怪物被动的文字，说明由 `scripts/build-monster-passive-text.mjs` 按处理的条件和数值生成（`dist/game-data/engine/monster-passive-text.json`，13461 个，约 13% 读不出具体数值的写处理名称）。追加伤害：已查明游戏程序本体的算法（以触发那段的最终伤害为基数、按最小～最大比例随机、乘耐性、不超过那段上限；笔记在会话临时目录，未写进计算），用户说先不管。

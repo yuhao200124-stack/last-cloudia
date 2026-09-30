@@ -1,9 +1,11 @@
 // Game master data (SkillMst / BulletMst / BulletLvInfoMst / UnitDressMst / ItemEquipMst / ArkMst / PassiveSkillMst,
 // exported by the read-only loadout reader v0.8). Files live in ./game-data/; this module only reads them.
 const base = new URL('./game-data/', import.meta.url);
+// data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
+const V = new URL(import.meta.url).search;
 const cache = new Map();
 const json = path => {
-  if (!cache.has(path)) cache.set(path, fetch(new URL(path, base)).then(r => { if (!r.ok) throw new Error(`游戏数据读取失败：${path}`); return r.json(); }).catch(err => { cache.delete(path); throw err; }));
+  if (!cache.has(path)) cache.set(path, fetch(new URL(path + V, base)).then(r => { if (!r.ok) throw new Error(`游戏数据读取失败：${path}`); return r.json(); }).catch(err => { cache.delete(path); throw err; }));
   return cache.get(path);
 };
 export const loadGameIndex = () => json('index.json');

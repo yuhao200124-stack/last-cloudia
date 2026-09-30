@@ -1,9 +1,11 @@
 // Loads the sandbox's data: master-table bundles (dist/game-data/engine/*.json) and the captured game
 // scripts (dist/game-data/lua/*.lua). Works in the browser (fetch) and in Node (a `read` function).
-import { Master } from './battle.mjs';
+import { Master } from './battle.mjs?v=20260930-v2';
 
 export const SCRIPT_NAMES = ['luaCommon', 'procCondCommon', 'condition', 'process', 'battleScriptCommon'];
 const base = new URL('../game-data/', import.meta.url);
+// data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
+const V = new URL(import.meta.url).search;
 
 // Concatenates same-named tables from several bundles (all share the column layout written by export_engine_data.py).
 export function mergeTables(...bundles) {
@@ -21,7 +23,7 @@ export function mergeTables(...bundles) {
 }
 
 const defaultRead = async (path, asText) => {
-  const r = await fetch(new URL(path, base));
+  const r = await fetch(new URL(path + V, base));
   if (!r.ok) throw new Error(`游戏数据读取失败：${path}`);
   return asText ? r.text() : r.json();
 };

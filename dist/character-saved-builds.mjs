@@ -3,13 +3,15 @@
 // home page's skill table (index.html?character=…&plan=…) with that loadout. (The old skill-table loadouts are no longer listed — the user's decision.)
 // SC as in the calculator (build-sc.mjs): 能力盘突破 free one skill each; every SC skill on the character's own
 // ability board is always there at 0 SC (user 2026-09-29, as the old skill table did).
-import { breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260929-build';
+import { breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-v2';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const characterId = document.body.dataset.characterId;
 const PLANS_KEY = 'lc-engine-plans:v1';
 const FREE_COST = 99;
-const json = path => fetch(new URL(path, import.meta.url)).then(r => r.json());
+// data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
+const V = new URL(import.meta.url).search;
+const json = path => fetch(new URL(path + V, import.meta.url)).then(r => r.json());
 let ownSkills = null;
 // the SC skills on the character's own ability board (0 SC in every loadout)
 async function ownBoard(index) {
@@ -25,7 +27,7 @@ function plans() {
 }
 let passiveIndex = null;
 async function passives() {
-  if (!passiveIndex) passiveIndex = fetch(new URL('./game-data/engine/passive-index.json', import.meta.url)).then(r => r.json()).then(t => new Map(t.rows.map(r => [r[0], { name: r[1], nameS: r[2], cost: r[3] }]))).catch(() => new Map());
+  if (!passiveIndex) passiveIndex = fetch(new URL('./game-data/engine/passive-index.json' + V, import.meta.url)).then(r => r.json()).then(t => new Map(t.rows.map(r => [r[0], { name: r[1], nameS: r[2], cost: r[3] }]))).catch(() => new Map());
   return passiveIndex;
 }
 const viewer = $('savedBuildViewer'), overlay = $('bonusCalculatorOverlay'), opener = $('savedBuildViewerOpen');

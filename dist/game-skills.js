@@ -1,4 +1,6 @@
 (() => {
+  // data files follow this script's own version (?v=…, scripts/set-version.mjs)
+  const V = document.currentScript?.src ? new URL(document.currentScript.src).search : '';
   const data = window.GAME_SKILL_DATA;
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -188,12 +190,12 @@
     $('buildFilter').hidden = false;
     $('buildFilter').addEventListener('click', e => { const b = e.target.closest('[data-hide-mode]'); if (!b) return; hideMode = b.dataset.hideMode; store.set('lc-build-hide', hideMode); render(); });
     let knownChar = true;
-    fetch('./game-data/index.json').then(r => r.json()).then(i => {
+    fetch(`./game-data/index.json${V}`).then(r => r.json()).then(i => {
       if (i?.site && !i.site[buildChar]) {
         knownChar = false;
         $('buildStatus').textContent = `没有这个角色（编号 ${buildChar}）`; $('buildPanelHost').textContent = '没有这个角色。'; $('buildExit').textContent = '回到首页';
-      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-cleanup`;
-    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-cleanup`; });
+      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-v2`;
+    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-v2`; });
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }
@@ -211,7 +213,8 @@
         // the current move decides what 全输出／半肉 hide: re-draw the table only when it changes
         const m = bst.move, next = m ? { name: m.name, element: m.element ?? null, magical: m.magical ?? null, roles: m.skillType == null ? [] : [m.skillType, ...(m.magical && m.skillType !== 2 ? [2] : [])], gear: bst.gear || null } : null;
         if (JSON.stringify(next) !== JSON.stringify(move)) { move = next; render(); }
-        else document.querySelectorAll('[data-action-for]').forEach(td => { td.innerHTML = addButton(Number(td.dataset.actionFor)); });
+        // only the “+” cells whose content changed are rewritten (item 33: every message used to rewrite all 942)
+        else document.querySelectorAll('[data-action-for]').forEach(td => { const html = addButton(Number(td.dataset.actionFor)); if (td.dataset.html !== html) { td.innerHTML = html; td.dataset.html = html; } });
         status();
       }
     });

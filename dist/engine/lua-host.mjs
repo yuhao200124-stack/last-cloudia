@@ -4,7 +4,7 @@
 //
 // The host knows nothing about game rules; it only marshals values and dispatches calls.
 // Natives are supplied as an object { Name(...args) -> value | Multi | undefined }.
-import { fengari } from './fengari.mjs';
+import { fengari } from './fengari.mjs?v=20260930-v2';
 
 const { lua, lauxlib, lualib, to_luastring } = fengari;
 

@@ -1,10 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-blessings';
-import { characterGear } from './character-gear.mjs?v=20260928-engine-only';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260929-build';
+import { K } from './engine/battle.mjs?v=20260930-v2';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-v2';
+import { characterGear } from './character-gear.mjs?v=20260930-v2';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-v2';
+// data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
+const V = new URL(import.meta.url).search;
 
 // This account's blessings (加护): always counted, for every character (account-blessing-store.mjs; 更新加护 below).
 
@@ -47,10 +49,10 @@ const BUILD_KEY = dress => `lc-engine-build:${dress}`;
 const defaultBuild = () => ({ on: false, selected: [], breaks: cleanBreaks() });
 let build = defaultBuild(), buildDress = null, passiveIndex = null, buildCtx = null, buildGen = 0;
 const buildGains = new Map(); // passive id → { gain, perCall } relative to the current build (removed) or candidate (added)
-let buildCurrent = null, buildBaseline = null, lastBuildKey = '', buildOwnPaid = [], buildAuto = [], lastAdded = null;
+let buildCurrent = null, lastBuildKey = '', buildOwnPaid = [], buildAuto = [], lastAdded = null;
 function loadBuildFor(dress) {
   if (buildDress === dress) return;
-  buildDress = dress; buildGains.clear(); buildCurrent = buildBaseline = null;
+  buildDress = dress; buildGains.clear(); buildCurrent = null;
   try { const saved = JSON.parse(localStorage.getItem(BUILD_KEY(dress)) || 'null'); build = saved ? { ...defaultBuild(), ...saved, own: { ...defaultBuild().own, ...(saved.own || {}) }, breaks: cleanBreaks(saved.breaks) } : defaultBuild(); } catch { build = defaultBuild(); }
   build.on = buildEmbed;    // the loadout counts only on the 配装 page; the calculator alone computes without it
   // opened from a character page's 已保存配装 (…&plan=<id>): that saved loadout, once
@@ -112,7 +114,7 @@ function sendState() {
   const sc = buildSc();
   window.parent.postMessage({ type: 'lc-build-state', dress: buildDress, selected: pickedIds(), auto: [...buildAuto], gains,
     sc: { total: sc.total, freed: sc.items.filter(i => i.freeBy).map(i => ({ id: i.id, by: breakName(i.freeBy), sc: i.sc })) }, breaks: [...build.breaks],
-    perCall: buildCurrent?.perCall ?? null, baseline: buildBaseline?.perCall ?? null, hits: currentHits().hits, move: moveInfo, gear: gearInfo, computing: running,
+    perCall: buildCurrent?.perCall ?? null, hits: currentHits().hits, move: moveInfo, gear: gearInfo, computing: running,
     lastAdded: lastAdded != null && build.selected.includes(lastAdded) ? { id: lastAdded, name: passiveText(lastAdded), gain: buildGains.get(lastAdded)?.removed ? buildGains.get(lastAdded).gain : null } : null }, location.origin);
 }
 window.addEventListener('message', e => {
@@ -125,7 +127,7 @@ function toggleSkill(id) {
   if (!Number.isFinite(id) || buildAuto.includes(id)) return;
   if (build.selected.includes(id)) { build.selected = build.selected.filter(x => x !== id); if (lastAdded === id) lastAdded = null; }
   else { build.selected.push(id); lastAdded = id; }
-  build.on = buildEmbed; saveBuild(); buildGains.clear(); syncBuildControls(); renderBuild(buildCtx); sendState(); run();
+  build.on = buildEmbed; saveBuild(); buildGains.clear(); syncBuildControls(); renderBuild(buildCtx); run();
 }
 function applyPlan(plan) {
   build = { ...defaultBuild(), selected: [...(plan.build?.selected || [])], breaks: cleanBreaks(plan.build?.breaks), on: buildEmbed, planId: plan.id };
@@ -187,7 +189,7 @@ function confirmPlanPop() {
 // ---- 按每 SC 收益推荐: data from the old loadout (game-data/engine/loadout-data.json, fixed since the
 // original skill table was removed on 2026-09-29; which skills 按每 SC 收益推荐 tries is to be decided later) ----
 let loadoutData = null;
-async function ensureLoadoutData() { if (!loadoutData) loadoutData = await fetch(new URL('./game-data/engine/loadout-data.json', import.meta.url)).then(r => r.json()).catch(() => ({ commonPassives: [] })); return loadoutData; }
+async function ensureLoadoutData() { if (!loadoutData) loadoutData = await fetch(new URL('./game-data/engine/loadout-data.json' + V, import.meta.url)).then(r => r.json()).catch(() => ({ commonPassives: [] })); return loadoutData; }
 const recommendState = { running: false, gen: 0, rows: [] };
 function stopRecommend(text) {
   recommendState.gen++; recommendState.running = false;
@@ -223,7 +225,7 @@ async function startRecommend() {
 }
 function saveBuild() { try { if (buildDress) localStorage.setItem(BUILD_KEY(buildDress), JSON.stringify(build)); } catch {} }
 async function ensurePassiveIndex() {
-  if (!passiveIndex) { const t = await fetch(new URL('./game-data/engine/passive-index.json', import.meta.url)).then(r => r.json()); passiveIndex = t.rows.map(r => ({ id: r[0], name: r[1], nameS: r[2], cost: r[3], order: r[4] })); }
+  if (!passiveIndex) { const t = await fetch(new URL('./game-data/engine/passive-index.json' + V, import.meta.url)).then(r => r.json()); passiveIndex = t.rows.map(r => ({ id: r[0], name: r[1], nameS: r[2], cost: r[3], order: r[4] })); }
   return passiveIndex;
 }
 const passiveLabel = id => { const row = passiveIndex?.find(r => r.id === id); const m = battle?.master.passive.get(id); const name = row?.nameS || m?.NAME || String(id); return esc(name); }; // simplified only (user 2026-09-30)
@@ -239,7 +241,7 @@ function keepLoadout(report) {
   loadoutReport = slim;
   try { localStorage.setItem(LOADOUT_KEY, JSON.stringify(slim)); } catch {}
 }
-async function ensureSwitches() { if (!switches) switches = await fetch(new URL('./game-data/engine/switch.json', import.meta.url)).then(r => r.json()); return switches; }
+async function ensureSwitches() { if (!switches) switches = await fetch(new URL('./game-data/engine/switch.json' + V, import.meta.url)).then(r => r.json()); return switches; }
 
 const PANEL_CSS_V = '20260929-3col';
 // the page's shadow root has none of this document's base styles
@@ -401,6 +403,7 @@ function renderSupportMagic(c, dress) {
     box = document.createElement('div'); box.id = 'engineSupportMagic'; host.append(box);
     box.addEventListener('change', e => {
       const id = Number(e.target.dataset.supportMagic); if (!id) return;
+      e.stopPropagation();   // runs here; not again from the calculator form's change (item 33)
       if (e.target.checked) supportChecked.add(id); else supportChecked.delete(id);
       try { localStorage.setItem(`lc-support-magic:${supportDress}`, JSON.stringify([...supportChecked])); } catch {}
       run();
@@ -570,7 +573,7 @@ function mount() {
   });
   $('engineMonsterName').addEventListener('input', () => fillMonsterVariants($('engineMonsterName').value));
   $('engineMonsterName').addEventListener('focus', () => ensureMonsters().then(() => fillMonsterVariants($('engineMonsterName').value)));
-  $('engineMonsterVariant').addEventListener('change', e => { monsterChoice = Number(e.target.value) || null; try { if (monsterChoice) localStorage.setItem(MONSTER_KEY, String(monsterChoice)); else localStorage.removeItem(MONSTER_KEY); } catch {} run(); });
+  $('engineMonsterVariant').addEventListener('change', e => { e.stopPropagation(); monsterChoice = Number(e.target.value) || null; try { if (monsterChoice) localStorage.setItem(MONSTER_KEY, String(monsterChoice)); else localStorage.removeItem(MONSTER_KEY); } catch {} run(); });
   $('engineMonsterClear').addEventListener('click', () => { clearMonster(); run(); });
   $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} run(); });
   $('engineResult').addEventListener('change', e => { const { assume: key, prob } = e.target.dataset; const set = key ? assumed : prob ? probAssumed : null; if (!set) return; for (const k of (key || prob).split(' ')) { if (e.target.checked) set.add(k); else set.delete(k); } run(); });
@@ -641,7 +644,7 @@ function ownPassiveIds(c) {
 const ownPaidIds = c => (c?.ownPassives || []).map(p => p.passive).filter(id => !isFreePassive(id));
 let tablePassives = null;
 async function ensureTablePassives() {
-  if (!tablePassives) tablePassives = new Set(await fetch(new URL('./game-data/engine/table-passives.json?v=20260929-build', import.meta.url)).then(r => r.json()).then(t => t.ids).catch(() => []));
+  if (!tablePassives) tablePassives = new Set(await fetch(new URL('./game-data/engine/table-passives.json' + V, import.meta.url)).then(r => r.json()).then(t => t.ids).catch(() => []));
   return tablePassives;
 }
 const autoPaidIds = c => ownPaidIds(c);
@@ -692,7 +695,7 @@ function evalBuild(ctx, passiveIds) {
   return metricOf(M.runScenario({ battle, attacker: a, target: t, skill: { id: ctx.move.id, ...(ctx.firstBullet ? { bulletId: ctx.firstBullet } : {}) }, state: ctx.state, assume: { probability: probabilityMode, instances: [...ctx.assumeSet], forced: [...(ctx.forced || [])] }, randoms: [0.95] }));
 }
 const yieldUi = () => new Promise(r => setTimeout(r, 0));
-// The current build, the start (配装前: no picked skill) and the marginal of every picked and automatic skill,
+// The current build and the marginal of every picked and automatic skill (the 配装前 start is no longer computed: shown nowhere, item 33),
 // computed one run at a time so the page stays live — the skill added last first; a new main run cancels the loop.
 async function computeGains(ctx) {
   const gen = ++buildGen;
@@ -706,7 +709,6 @@ async function computeGains(ctx) {
       buildGains.set(id, { removed: true, perCall: without.perCall, gain: without.perCall > 0 ? buildCurrent.perCall / without.perCall - 1 : null, changes: changesOf(buildCurrent, without) });
       renderBuild(ctx); await yieldUi(); if (gen !== buildGen || running) return;
     }
-    if (!buildBaseline) { buildBaseline = evalBuild(ctx, ctx.buildOwn); renderBuild(ctx); }
   } catch (err) { console.error(err); buildMessage(`收益计算失败：${err.message}`); }
 }
 const pct = g => g == null ? '—' : `${g >= 0 ? '+' : ''}${(g * 100).toFixed(1)}%`;
@@ -723,7 +725,7 @@ function renderBuild(ctx) {
   const rows = $('engineBuildRows'); if (!rows) return;
   const sc = buildSc();
   if ($('engineBuildScTotal')) $('engineBuildScTotal').textContent = String(sc.total);
-  renderBuildStatus(); sendState();
+  renderBuildStatus();
   buildMessage('');
   if (!build.on) { rows.innerHTML = '<tr><td colspan="4" class="help">还没有加技能。</td></tr>'; return; }
   const picked = [...sc.items].sort((a, b) => b.sc - a.sc);
@@ -741,15 +743,15 @@ let siteIndex = null, characterCache = new Map();
 async function siteDress() {
   const characterId = new URLSearchParams(location.search).get('character');
   if (!characterId) return null;
-  if (!siteIndex) siteIndex = await fetch(new URL('./game-data/index.json', import.meta.url)).then(r => r.json()).catch(() => ({}));
+  if (!siteIndex) siteIndex = await fetch(new URL('./game-data/index.json' + V, import.meta.url)).then(r => r.json()).catch(() => ({}));
   return siteIndex?.site?.[characterId] || null;
 }
 async function gameCharacter(unitDressId) {
-  if (!characterCache.has(unitDressId)) characterCache.set(unitDressId, fetch(new URL(`./game-data/c/${unitDressId}.json`, import.meta.url)).then(r => r.json()).catch(() => null));
+  if (!characterCache.has(unitDressId)) characterCache.set(unitDressId, fetch(new URL(`./game-data/c/${unitDressId}.json${V}`, import.meta.url)).then(r => r.json()).catch(() => null));
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs'), import('./engine/engine-data.mjs'), import('./engine/scenario.mjs'), import('./engine/report-adapter.mjs'), import('./engine/loadout-adapter.mjs')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-v2'), import('./engine/engine-data.mjs?v=20260930-v2'), import('./engine/scenario.mjs?v=20260930-v2'), import('./engine/report-adapter.mjs?v=20260930-v2'), import('./engine/loadout-adapter.mjs?v=20260930-v2')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -763,7 +765,7 @@ async function ensureEngine(unitDressId) {
 // Crests (徽章): CrestMst + the trait passive pool (engine/crests.json), loaded when a loadout carries one.
 let crestBundle = null;
 async function ensureCrests() {
-  if (!crestBundle) { crestBundle = await fetch(new URL('./game-data/engine/crests.json', import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(crestBundle); }
+  if (!crestBundle) { crestBundle = await fetch(new URL('./game-data/engine/crests.json' + V, import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(crestBundle); }
   return crestBundle;
 }
 
@@ -790,14 +792,14 @@ document.addEventListener('lc:calculator-reset', () => {
   for (const i of document.querySelectorAll('[data-support-magic], #engineResult input[type=checkbox]')) i.checked = false;
 });
 async function ensureMonsters() {
-  if (!monsterBundle) { monsterBundle = await fetch(new URL('./game-data/engine/monsters.json', import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(monsterBundle);
+  if (!monsterBundle) { monsterBundle = await fetch(new URL('./game-data/engine/monsters.json' + V, import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(monsterBundle);
     const names = [...new Set(monsterBundle.MonsterMst.rows.map(r => r[1]))].sort((a, b) => a.localeCompare(b, 'zh'));
     if ($('engineMonsterNames')) $('engineMonsterNames').innerHTML = names.map(n => `<option value="${esc(n)}"></option>`).join(''); }
   return monsterBundle;
 }
 let monsterPassiveTexts = null;
 async function ensureMonsterPassiveTexts() {
-  if (!monsterPassiveTexts) monsterPassiveTexts = await fetch(new URL('./game-data/engine/monster-passive-text.json', import.meta.url)).then(r => r.json()).then(j => j.texts || {}).catch(() => ({}));
+  if (!monsterPassiveTexts) monsterPassiveTexts = await fetch(new URL('./game-data/engine/monster-passive-text.json' + V, import.meta.url)).then(r => r.json()).then(j => j.texts || {}).catch(() => ({}));
   return monsterPassiveTexts;
 }
 // Boss 自带被动 (user 2026-09-30: “这些boss被动计算器不要算但是在boss界面要写出来” / “除了 Break 都不算” / “写简单点”):
@@ -826,7 +828,7 @@ async function renderBossPassives(spec) {
   box.hidden = false;
 }
 async function ensureMonsterPassives() {
-  if (!monsterPassiveBundle) { monsterPassiveBundle = await fetch(new URL('./game-data/engine/monster-passives.json', import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(monsterPassiveBundle); }
+  if (!monsterPassiveBundle) { monsterPassiveBundle = await fetch(new URL('./game-data/engine/monster-passives.json' + V, import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(monsterPassiveBundle); }
   return monsterPassiveBundle;
 }
 const monsterRows = () => { const t = monsterBundle?.MonsterMst; if (!t) return []; return t.rows.map(r => Object.fromEntries(t.cols.map((c, i) => [c, r[i]]))); };
@@ -1079,8 +1081,8 @@ async function run(force = false) {
       const { buildOwn, buildPassives, buildAuto: autoIds, buildAutoInfo, buildNote, buildGear, ...rest } = attackerSpec;
       // gains only compare the move's first damaging bullet (as the main card's per-call metric does)
       buildCtx = { move, attackerSpec: rest, targetSpec, state, assumeSet: new Set([...assumed, ...autoAssume]), forced: new Set(probAssumed), buildOwn, buildPassives, autoIds, buildAutoInfo, buildNote, buildGear, firstBullet: damaging[0]?.bulletId ?? null };
-      const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], [...buildCtx.forced], rest.finalAdd || null, rest.crest || null, buildPassives.map(p => p.id), buildOwn.map(p => p.id), (rest.equips || []).map(e => e.id), currentHits().hits]);
-      if (key !== lastBuildKey) { buildGains.clear(); buildCurrent = buildBaseline = null; }
+      const key = JSON.stringify([move.id, targetSpec, state, [...buildCtx.assumeSet], [...buildCtx.forced], rest.finalAdd || null, rest.crest || null, buildPassives.map(p => p.id), buildOwn.map(p => p.id), (rest.equips || []).map(e => e.id)]);   // (not the hit count: gains are per call — user 2026-09-30 item 33)
+      if (key !== lastBuildKey) { buildGains.clear(); buildCurrent = null; }
       lastBuildKey = key; buildCtx.key = key;
       renderBuild(buildCtx);
       computeGains(buildCtx); // continues between main runs; a new run cancels it
@@ -1100,7 +1102,7 @@ let relicTexts = null;
 async function ensureEffectTexts(out, c) {
   await ensurePassiveNames();
   const ids = [...out.conditionals, ...out.probabilistic].map(x => x.passiveId);
-  if (!relicTexts && ids.some(id => !c?.passives?.[id])) relicTexts = await fetch(new URL('./game-data/relics.json', import.meta.url)).then(r => r.json()).then(r => new Map((r.passives || []).map(x => [x.id, x]))).catch(() => new Map());
+  if (!relicTexts && ids.some(id => !c?.passives?.[id])) relicTexts = await fetch(new URL('./game-data/relics.json' + V, import.meta.url)).then(r => r.json()).then(r => new Map((r.passives || []).map(x => [x.id, x]))).catch(() => new Map());
 }
 const passiveRecord = (id, c) => c?.passives?.[id] || relicTexts?.get(id) || null;
 // which sentence of a multi-part description an effect is: its trigger's wording (每40秒, 濒死, 受到…) and the words
