@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261001-0448';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261001-0507';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -22,7 +22,7 @@ export const K = {
   TARGET_COND: { ALL: -1, BOTH: 0, ALIVE: 1, DEAD: 2, SECEDE: 3 },
   AFF: { NONE: 0, BUFF: 2, AUTOSKILL: 4, ARK: 5, WEAPON: 6, ARMOR: 7, ACCESSORY: 8, TERRAIN: 9, FORMATION: 12, SUPPORT: 15, CREST: 18, SUB_BUFF: 64 },
   TRIG: { PROC_ON_PROC: 73, STATUS: 1, WAVE_START: 10, BEFORE_SKILL: 18, BEFORE_CREATE_BULLET: 19, BULLET_PROCESS: 20, BULLET_HIT: 21, BULLET_WAS_HIT: 22, ON_CALC_ATTACK: 23, ON_CALC_DAMAGE: 24, AFTER_ATTACK: 25, AFTER_DAMAGE: 26, AFTER_CALC_ATTACK: 27, AFTER_CALC_DAMAGE: 28, PRE_AFTER_ATTACK: 29, PRE_AFTER_DAMAGE: 30, BEFORE_CHANT: 16, CHANGE_MP: 42, BREAK_CHANGE: 52, UNIT_STATE: 59, BOSS_BREAK: 68, CHANGE_HP: 40, CHANGE_BUFF: 54, ON_ADDED_BUFF: 60, CHANGE_SURVIVORS: 65 },
-  OP: { PHYS_DMG: 100, MAG_DMG: 101, STR: 300, DEF: 301, INT: 302, MND: 303, CRT: 304, MAX_HP: 305, STATUS_RESIST: 306, ELEM_RESIST: 307, KILLER: 308, SPD: 310, MAX_MP: 318, EQUIP_PARAM: 319, REDUCTION_PHYS: 502, REDUCTION_MAG: 503, DMG_POWER: 504, INVALID_DMG: 505, OVERRIDE_ELEMENT: 507, KILLER_POWER: 509, DMG_LIMIT_OFF: 824, MULTI_BULLET: 825, DMG_LIMIT_UP: 826, MAGIC_CRITICAL: 800, SPECIAL_CRITICAL: 829 },
+  OP: { PHYS_DMG: 100, MAG_DMG: 101, STR: 300, DEF: 301, INT: 302, MND: 303, CRT: 304, MAX_HP: 305, STATUS_RESIST: 306, ELEM_RESIST: 307, KILLER: 308, SPD: 310, MAX_MP: 318, EQUIP_PARAM: 319, REDUCTION_PHYS: 502, REDUCTION_MAG: 503, DMG_POWER: 504, INVALID_DMG: 505, OVERRIDE_ELEMENT: 507, SKILL_ELEMENT: 837, KILLER_POWER: 509, DMG_LIMIT_OFF: 824, MULTI_BULLET: 825, DMG_LIMIT_UP: 826, MAGIC_CRITICAL: 800, SPECIAL_CRITICAL: 829 },
   // unit states (luaCommon.lua STATE_*): 59 (単位状態変化) fires on every change
   STATE: { IDLE: 0, MOVE: 1, STANDBY: 2, MAIN: 3, DAMAGE: 4 },
   SKILL: { SKILL: 1, MAGIC: 2, PRECAST: 3, SUMMON: 4, SPECIAL: 5, PASSIVE: 6, ARK: 7, ATTACK: 9, PHYSIC: 10, COUNTER: 15 },
@@ -691,9 +691,22 @@ export class Battle {
     this.log('damage', result);
     return true;
   }
+  skillElementOverride(owner, skillId, skillType) {
+    let out = null;
+    for (const e of [...owner.status, ...owner.real]) {
+      if (e.op !== K.OP.SKILL_ELEMENT) continue;
+      if (e.params[0] === 0 ? e.params[1] === skillId : e.params[0] === 1 && e.params[1] === skillType && owner.skills.filter(s => s.type === skillType)[(e.params[2] || 1) - 1]?.id === skillId) out = e.params[3];
+    }
+    return out;
+  }
   bulletElement(bullet) {
     const owner = this.unit(bullet.owner);
     for (const e of [...bullet.work, ...owner.work, ...owner.real]) if (e.op === K.OP.OVERRIDE_ELEMENT) return e.params[0];
+    // SkillElement (837, Skill:SetElement {1, skill type, index, element}; mode 0 = {0, skill id, -, element}): a passive that changes a skill's own element, e.g.
+    // 27731 圣邪之泛滥 “特技和超必杀技的属性变成暗属性” — BattleSkill.OverrideElement, which BulletProperty.GetSkillElement reads
+    // before the weapon's element (2026-10-01: 魔神梅莉's specials hit dark, the damage reader's final ratio showed ×0.75)
+    const own = this.skillElementOverride(owner, bullet.skillId, bullet.skill.skillType);
+    if (own != null) return own;
     // a weapon-element skill takes the element of the weapon swung in this call (sub weapon on the second)
     if (bullet.skill.weaponElem && bullet.skill.elem === 0 && bullet.weaponIndex) return owner.equips.find(e => e.pos === 2)?.elem ?? bullet.element;
     return bullet.element;
@@ -1001,7 +1014,7 @@ export class Battle {
       UnitGetSkillName(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? (B.master.skill.get(id)?.NAME ?? '') : ''; },
       UnitGetSkillKind() { return 0; }, UnitGetSkillIndex(t, skillType, index) { return index; },
       UnitGetSkillCharge() { return 0; }, UnitGetSkillCost(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? (B.master.skill.get(id)?.INVOKE_COST ?? 0) : 0; },
-      UnitGetSkillElement(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? (B.master.skill.get(id)?.ELEM ?? 0) : 0; },
+      UnitGetSkillElement(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; if (!id) return 0; return B.skillElementOverride(u, id, skillType) ?? (B.master.skill.get(id)?.ELEM ?? 0); },
       // TARGET_INFO "side:scale:cond:range": SKILL_TARGET_XXX and SKILL_SCALE_XXX (conditions such as ActValidOwnerSkillBefore compare the side)
       UnitGetSkillTarget(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? (B.master.skillInfo(id)?.targetSide ?? 0) : 0; },
       UnitGetSkillTargetType(t, skillType, index) { const u = B.unit(t); const id = u?.skills.filter(s => s.type === skillType)[index - 1]?.id; return id ? (B.master.skillInfo(id)?.targetType ?? 0) : 0; },
