@@ -99,6 +99,8 @@ export function addTarget(battle, spec) {
   return unit;
 }
 
+export const COMBO_HITS = 200;
+
 // Replays the battle start: status calc, wave start, survivors, then the HP/MP/ether state the user chose.
 export function setupBattle(battle, attacker, target, state = {}) {
   // The calculator's 特攻 / Break / 双刀 switches decide the state itself; the bonuses bound to it come from the skills.
@@ -125,7 +127,9 @@ export function setupBattle(battle, attacker, target, state = {}) {
   attacker.hp = Math.max(1, Math.round(battle.finalStat(attacker, K.STAT.MAX_HP) * (state.hpPercent ?? 100) / 100));
   attacker.mp = Math.round(battle.finalStat(attacker, K.STAT.MAX_MP) * (state.mpPercent ?? 100) / 100);
   attacker.ether = state.etherPercent ?? 0;
-  attacker.combo = state.comboHits ?? 0;
+  // the hit count the game scripts read is the target's (Bullet:Target():Hits() in OverHits, UnderHits, 急击 …): the user's
+  // rule (2026-09-30, “连击数都默认200也不用改就当他生效”) — always 200, so the 50+ / 108 combo effects count
+  target.combo = state.comboHits ?? COMBO_HITS;
   battle.dispatch(K.TRIG.CHANGE_HP, attacker, attacker);
   battle.dispatch(K.TRIG.CHANGE_MP, attacker, attacker);
   battle.dispatch(55, attacker, attacker);
