@@ -2,7 +2,7 @@
 // gains and the SC 推荐 (2026-09-30, faster calculator): jobs are queued and handed to whichever worker is free;
 // `cancel()` drops the queue (a new main run or a changed build) and the caller ignores late results by its own
 // generation. Without Worker support `available` is false and the caller computes on the page as before.
-const WORKER_URL = new URL('./engine/eval-worker.mjs?v=20261001-0649', import.meta.url);
+const WORKER_URL = new URL('./engine/eval-worker.mjs?v=20261001-0653', import.meta.url);
 
 export function createEvalPool(size = Math.max(1, Math.min(4, (globalThis.navigator?.hardwareConcurrency || 2) - 1))) {
   let workers = [];

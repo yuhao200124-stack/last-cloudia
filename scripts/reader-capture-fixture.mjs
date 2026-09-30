@@ -1,4 +1,4 @@
-// Turns one battle captured by the damage reader (v0.42+) into a regression fixture for tests/engine-captures.test.mjs:
+// Turns one battle captured by the damage reader (v0.42+) into a regression fixture for tests/engine-reader-captures.test.mjs:
 //   node scripts/reader-capture-fixture.mjs <name> <BattleCurrentReport.json> <DamageFormulaCapture.csv> <session> '<state json>'
 // Writes tests/fixtures/captures/<name>.json: a slim report (what report-adapter.mjs reads), the settlement samples of that
 // session (attack, defense, critical, final value, core damage) and the calculator state the battle was in (the switches:
