@@ -1,6 +1,7 @@
 // Loads the sandbox's data: master-table bundles (dist/game-data/engine/*.json) and the captured game
 // scripts (dist/game-data/lua/*.lua). Works in the browser (fetch) and in Node (a `read` function).
-import { Master } from './battle.mjs?v=20260930-1214';
+import { Master } from './battle.mjs?v=20260930-1459';
+import { initLua } from './lua-host.mjs?v=20260930-1459';
 
 export const SCRIPT_NAMES = ['luaCommon', 'procCondCommon', 'condition', 'process', 'battleScriptCommon'];
 const base = new URL('../game-data/', import.meta.url);
@@ -35,6 +36,7 @@ export async function loadEngineData({ unitDressIds = [], read = defaultRead } =
     ...unitDressIds.map(id => read(`engine/c/${id}.json`, false)),
   ]);
   const scripts = {};
+  await initLua(); // the WebAssembly Lua VM, compiled once (a Battle instantiates it synchronously)
   await Promise.all(SCRIPT_NAMES.map(async n => { scripts[n] = await read(`lua/${n}.lua`, true); }));
   return { master: new Master(mergeTables(core, shared, ...characters)), scripts, tables: { core, shared, characters } };
 }

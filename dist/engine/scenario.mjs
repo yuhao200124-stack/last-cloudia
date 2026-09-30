@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20260930-1214';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-1214';
-import { zhName, zhCondition } from './gloss.mjs?v=20260930-1214';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-1214';
+import { Battle, K, parseInts } from './battle.mjs?v=20260930-1459';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-1459';
+import { zhName, zhCondition } from './gloss.mjs?v=20260930-1459';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-1459';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -266,9 +266,26 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   battle.options.forced = new Set(assume.forced || []);
   setupBattle(battle, attacker, target, state);
   const setupSnap = battle.snapshot();
-  assumeInstances(battle, attacker, assume.instances, target);
+  let instances = [...new Set(assume.instances || [])];
+  assumeInstances(battle, attacker, instances, target);
   preCast(battle, attacker, target, state.preCasts, skill.level ?? 9);
-  const conditionals = conditionalInstances(battle, attacker, new Set(assume.instances || []));
+  let conditionals = conditionalInstances(battle, attacker, new Set(instances));
+  // assume.groups: the calculator's switches (满血, 条件增益生效, …) assume every effect of their group that would change
+  // something. Decided here on the set-up state, before the cast, so one run does what a probe run plus a second run
+  // did (2026-09-30, faster calculator); the state is set up again only when the switches add effects.
+  let autoAssumed = [];
+  if (assume.groups?.length) {
+    const groups = new Set(assume.groups), have = new Set(instances);
+    const unchanged = unchangedInstances(battle, attacker.id, target.id, setupSnap, conditionals.filter(c => !have.has(c.key)));
+    autoAssumed = conditionals.filter(c => !unchanged.has(c.key) && groups.has(c.switchGroup)).map(c => c.key);
+    if (autoAssumed.some(k => !have.has(k))) {
+      battle.restore(setupSnap); attacker = battle.unit(attacker.id); target = battle.unit(target.id);
+      instances = [...new Set([...instances, ...autoAssumed])];
+      assumeInstances(battle, attacker, instances, target);
+      preCast(battle, attacker, target, state.preCasts, skill.level ?? 9);
+      conditionals = conditionalInstances(battle, attacker, new Set(instances));
+    }
+  }
   const level = skill.level ?? 9;
   const bullets = skill.bulletId ? [skill.bulletId] : damageBullets(battle.master, skill.id, level);
   const stats = code => ({ panel: battle.finalStat(attacker, code, { layer: 'status' }), real: battle.finalStat(attacker, code) });
@@ -314,7 +331,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   const moveBullets = new Set(parseInts(battle.master.skill.get(skill.id)?.BULLET_INFO).filter(Boolean)), moveName = clean(battle.master.skill.get(skill.id)?.NAME || '');
   const probabilistic = [...new Map(trace.filter(t => t.ownerId === attacker.id && chanceOf(t) && !listed.has(`${t.localId}:${t.index}`)).map(t => [`${t.ownerId}:${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.ownerId}:${t.localId}:${t.index}`, localId: t.localId, passiveId: t.passiveId || t.localId, on: !!t.fired && t.lottery !== 'miss', ...(moveBullets.has(t.localId) && !t.passiveId ? { fromMove: true, skillId: skill.id } : {}), passiveName: moveBullets.has(t.localId) && !t.passiveId ? moveName : clean(battle.master.passive.get(t.passiveId || t.localId)?.NAME || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), prob: t.prob < 10000 ? t.prob / 100 : null, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
   // conditionals that would change nothing are not offered (an assumed one stays so its tick can be undone)
-  const assumedKeys = new Set(assume.instances || []);
+  const assumedKeys = new Set(instances);
   const unchanged = unchangedInstances(battle, attacker.id, target.id, setupSnap, conditionals.filter(c => !assumedKeys.has(c.key)));
   return {
     statParts,
@@ -325,5 +342,6 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
     errors: [...new Map(trace.filter(t => t.error).map(t => [`${t.id}:${t.error}`, { name: t.name, id: t.id, error: t.error }])).values()],
     unsupported: [...battle.unsupported.keys()],
     assumptions: [...battle.assumptions],
+    autoAssumed,
   };
 }

@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1214';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1459';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -982,7 +982,7 @@ math.random = function(m, n)
   if n == nil then m, n = 1, m end
   return (m + n) // 2
 end
--- fengari integers are 32-bit: 2^31 has no integer representation there, so the bit helpers of
+-- the VM's integers are 32-bit (as in fengari, which it replaced): 2^31 has no integer representation there, so the bit helpers of
 -- luaCommon.lua are re-expressed with shifts (same results for the 32-bit values the scripts use).
 function bitToBoolean(_val, _bit)
   if not isNumber(_val) or _bit > 32 then return false end

@@ -1,11 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1214';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1214';
-import { characterGear } from './character-gear.mjs?v=20260930-1214';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1214';
-import { effectSentence, equipMove, gearFor, isFree, splitBuild } from './engine-panel-logic.mjs?v=20260930-1214';
+import { K } from './engine/battle.mjs?v=20260930-1459';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1459';
+import { characterGear } from './character-gear.mjs?v=20260930-1459';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1459';
+import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1459';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1459';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -180,7 +181,7 @@ let loadoutData = null;
 async function ensureLoadoutData() { if (!loadoutData) loadoutData = await fetch(new URL('./game-data/engine/loadout-data.json' + V, import.meta.url)).then(r => r.json()).catch(() => ({ commonPassives: [] })); return loadoutData; }
 const recommendState = { running: false, gen: 0, rows: [] };
 function stopRecommend(text) {
-  recommendState.gen++; recommendState.running = false;
+  recommendState.gen++; recommendState.running = false; evalPool?.cancel('recommend');
   if ($('engineRecommendStart')) { $('engineRecommendStart').disabled = false; $('engineRecommendStop').disabled = true; }
   if (text && $('engineRecommendStatus')) $('engineRecommendStatus').textContent = text;
 }
@@ -201,14 +202,24 @@ async function startRecommend() {
   if (gen !== recommendState.gen) return;
   ids = ids.filter(id => battle.master.passive.has(id));
   recommendState.rows = [];
-  for (let i = 0; i < ids.length; i++) {
-    if (gen !== recommendState.gen || ctx !== buildCtx || running) { if (gen === recommendState.gen) stopRecommend('配装、招式或条件已改变，已停止；可重新开始。'); return; }
+  const live = () => gen === recommendState.gen && ctx === buildCtx;
+  const add = (id, g) => { const cost = passiveCost(id); recommendState.rows.push({ id, cost, gain: g.gain, perSc: g.gain != null ? g.gain / cost : null }); };
+  const gainWith = withIt => ({ removed: false, perCall: withIt.perCall, gain: buildCurrent.perCall > 0 ? withIt.perCall / buildCurrent.perCall - 1 : null });
+  if (pool().available) {
+    // every candidate at once in the background workers; the list fills in as results come back
+    let done = 0;
+    await Promise.all(ids.map(id => { const g = buildGains.get(id); return (g && !g.removed ? Promise.resolve(g) : evalBuildAsync(ctx, [...ctx.buildPassives, { id }], 'recommend').then(gainWith)).then(g => {
+      if (!live()) return; buildGains.set(id, g); add(id, g); done++;
+      paintSoon(() => { if (live()) renderRecommend(done, ids.length); });
+    }); }));
+  } else for (let i = 0; i < ids.length; i++) {
+    if (!live() || running) { if (gen === recommendState.gen) stopRecommend('配装、招式或条件已改变，已停止；可重新开始。'); return; }
     const id = ids[i]; let g = buildGains.get(id);
-    if (!g || g.removed) { const withIt = evalBuild(ctx, [...ctx.buildPassives, { id }]); g = { removed: false, perCall: withIt.perCall, gain: buildCurrent.perCall > 0 ? withIt.perCall / buildCurrent.perCall - 1 : null }; buildGains.set(id, g); }
-    const cost = passiveCost(id);
-    recommendState.rows.push({ id, cost, gain: g.gain, perSc: g.gain != null ? g.gain / cost : null });
+    if (!g || g.removed) { g = gainWith(evalBuild(ctx, [...ctx.buildPassives, { id }])); buildGains.set(id, g); }
+    add(id, g);
     if (i % 4 === 3 || i === ids.length - 1) { renderRecommend(i + 1, ids.length); await yieldUi(); }
   }
+  if (!live()) return;
   if (gen === recommendState.gen) { recommendState.running = false; $('engineRecommendStart').disabled = false; $('engineRecommendStop').disabled = true; renderRecommend(ids.length, ids.length); }
 }
 function saveBuild() { try { if (buildDress) localStorage.setItem(BUILD_KEY(buildDress), JSON.stringify(build)); } catch {} }
@@ -639,15 +650,6 @@ async function ensureTablePassives() {
 const boardInfo = (c, id) => { const p = (c?.ownPassives || []).find(x => x.passive === id); return p ? { limitBreak: p.limitBreak, common: !!p.common } : null; };
 // Expected damage per call of the move (the main card's metric) from one scenario run, and what its first hit
 // received (the numbers a skill can change).
-function metricOf(out) {
-  const all = out.hits.filter(h => !h.cancelled && h.normal), live = all.filter(h => h.bulletId === all[0]?.bulletId);
-  const rateOf = h => Math.min(100, Math.max(0, h?.crt ?? out.stats.crt.real ?? 0)) / 100;
-  const perCall = live.reduce((sum, h) => sum + h.normal.mean * (1 - rateOf(h)) + (h.critical ? h.critical.mean : h.normal.mean) * rateOf(h), 0);
-  const h = live[0];
-  const detail = h ? { magical: h.breakdown?.attack?.stat === K.STAT.INT, attack: h.attack, crt: h.crt ?? out.stats.crt.real, cap: h.capComputed ?? h.cap, killer: h.killerFactor, offense: h.offense, received: h.received, reduction: h.reduction, resist: h.resist,
-    post: h.core ? h.afterPassives / h.core : null, crit: h.critical && h.normal?.mean ? h.critical.mean / h.normal.mean : null } : null;
-  return { perCall, cap: h?.cap ?? null, errors: out.errors.length, detail };
-}
 // What a skill changes: the metric with it against the metric without it (same wording as the result card).
 const num2 = n => Number(n).toLocaleString('zh-CN', { maximumFractionDigits: 2 });
 const mul = n => `×${Number(n).toLocaleString('zh-CN', { minimumFractionDigits: 3, maximumFractionDigits: 3 })}`;
@@ -682,21 +684,50 @@ function evalBuild(ctx, passiveIds) {
   return metricOf(M.runScenario({ battle, attacker: a, target: t, skill: { id: ctx.move.id, ...(ctx.firstBullet ? { bulletId: ctx.firstBullet } : {}) }, state: ctx.state, assume: { probability: probabilityMode, instances: [...ctx.assumeSet], forced: [...(ctx.forced || [])] }, randoms: [0.95] }));
 }
 const yieldUi = () => new Promise(r => setTimeout(r, 0));
+// The single evaluations run in background workers (engine-eval-pool.mjs, 2026-09-30: faster calculator) — several at
+// once, the page stays live; without workers (or when they fail) they run on the page as before.
+let evalPool = null;
+function pool() {
+  if (!evalPool) evalPool = typeof Worker === 'function' ? createEvalPool() : { available: false, cancel() {} };
+  if (evalPool.available && loadedDress != null) evalPool.setup({ dress: loadedDress, bundles: { monsters: !!monsterBundle, monsterPassives: !!monsterPassiveBundle, crests: !!crestBundle } });
+  return evalPool;
+}
+function evalJob(ctx, passiveIds) {
+  const spec = { ...ctx.attackerSpec, passives: passiveIds.map(id => (typeof id === 'object' ? id : { id })) };
+  return { attackerSpec: spec, targetSpec: ctx.targetSpec, moveId: ctx.move.id, firstBullet: ctx.firstBullet, state: ctx.state, assume: { probability: probabilityMode, instances: [...ctx.assumeSet], forced: [...(ctx.forced || [])] } };
+}
+async function evalBuildAsync(ctx, passiveIds, tag) {
+  const p = pool();
+  if (p.available) { try { return await p.eval(evalJob(ctx, passiveIds), tag); } catch (err) { console.warn('后台计算失败，改在页面上算：', err.message); } }
+  return evalBuild(ctx, passiveIds);
+}
+let gainsPaint = 0;
+const paintSoon = fn => { if (gainsPaint) return; gainsPaint = setTimeout(() => { gainsPaint = 0; fn(); }, 60); };
 // The current build and the marginal of every picked and automatic skill (the 配装前 start is no longer computed: shown nowhere, item 33),
 // computed one run at a time so the page stays live — the skill added last first; a new main run cancels the loop.
 async function computeGains(ctx) {
   const gen = ++buildGen;
   const rows = $('engineBuildRows'); if (!rows) return;
+  const stale = () => gen !== buildGen;
   try {
-    if (!buildCurrent) { buildCurrent = evalBuild(ctx, ctx.buildPassives); renderBuild(ctx); await yieldUi(); if (gen !== buildGen) return; }
-    const order = [...(lastAdded != null && build.selected.includes(lastAdded) ? [lastAdded] : []), ...[...build.selected].reverse().filter(id => id !== lastAdded), ...ctx.autoIds];
+    if (!buildCurrent) { const cur = await evalBuildAsync(ctx, ctx.buildPassives); if (stale()) return; buildCurrent = cur; renderBuild(ctx); }
+    const order = [...(lastAdded != null && build.selected.includes(lastAdded) ? [lastAdded] : []), ...[...build.selected].reverse().filter(id => id !== lastAdded), ...ctx.autoIds].filter(id => !buildGains.has(id));
+    if (pool().available) {
+      // all at once: the workers take them in this order (the skill added last first)
+      await Promise.all(order.map(id => evalBuildAsync(ctx, ctx.buildPassives.filter(p => (p.id ?? p) !== id)).then(without => {
+        if (stale()) return;
+        buildGains.set(id, { removed: true, perCall: without.perCall, gain: without.perCall > 0 ? buildCurrent.perCall / without.perCall - 1 : null, changes: changesOf(buildCurrent, without) });
+        paintSoon(() => { if (!stale()) renderBuild(ctx); });
+      })));
+      return;
+    }
     for (const id of order) {
       if (buildGains.has(id)) continue;
       const without = evalBuild(ctx, ctx.buildPassives.filter(p => (p.id ?? p) !== id));
       buildGains.set(id, { removed: true, perCall: without.perCall, gain: without.perCall > 0 ? buildCurrent.perCall / without.perCall - 1 : null, changes: changesOf(buildCurrent, without) });
-      renderBuild(ctx); await yieldUi(); if (gen !== buildGen || running) return;
+      renderBuild(ctx); await yieldUi(); if (stale() || running) return;
     }
-  } catch (err) { console.error(err); buildMessage(`收益计算失败：${err.message}`); }
+  } catch (err) { console.error(err); if (!stale()) buildMessage(`收益计算失败：${err.message}`); }
 }
 const pct = g => g == null ? '—' : `${g >= 0 ? '+' : ''}${(g * 100).toFixed(1)}%`;
 const passiveText = id => { const row = passiveIndex?.find(r => r.id === id); return row?.nameS || battle?.master.passive.get(id)?.NAME || `编号 ${id}`; };
@@ -738,7 +769,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1214'), import('./engine/engine-data.mjs?v=20260930-1214'), import('./engine/scenario.mjs?v=20260930-1214'), import('./engine/report-adapter.mjs?v=20260930-1214'), import('./engine/loadout-adapter.mjs?v=20260930-1214')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1459'), import('./engine/engine-data.mjs?v=20260930-1459'), import('./engine/scenario.mjs?v=20260930-1459'), import('./engine/report-adapter.mjs?v=20260930-1459'), import('./engine/loadout-adapter.mjs?v=20260930-1459')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -936,6 +967,7 @@ function activeSwitchGroups() {
 
 async function run(force = false) {
   if (recommendState.running) stopRecommend('配装、招式或条件已改变，已停止；可重新开始。');
+  evalPool?.cancel(); buildGen++;
   mount();
   if (!latest) { setState('等待计算器状态'); return; }
   if (running) { pending = true; return; }
@@ -1030,17 +1062,14 @@ async function run(force = false) {
     attackerSpec.finalAdd = arkFinalAdd(latest.arkStats);
     const state = stateFromSwitches(latest);
     // switches assume every conditional instance in their group
-    const groups = new Set(activeSwitchGroups());
-    const probe = M.runScenario({ battle, attacker, target, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...assumed], forced: [...probAssumed] }, randoms: [0.95] });
-    const autoAssume = probe.conditionals.filter(c => groups.has(c.switchGroup)).map(c => c.key);
-    battle.reset();
-    const attacker2 = M.addAttacker(battle, attackerSpec), target2 = M.addTarget(battle, targetSpec);
-    const out = M.runScenario({ battle, attacker: attacker2, target: target2, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...new Set([...assumed, ...autoAssume])], forced: [...probAssumed] } });
+    // (one run: runScenario applies the switch groups itself — it used to be a probe run and a second run)
+    const out = M.runScenario({ battle, attacker, target, skill: { id: move.id }, state, assume: { probability: probabilityMode, instances: [...assumed], forced: [...probAssumed], groups: activeSwitchGroups() } });
+    const autoAssume = out.autoAssumed;
     // the move already hits twice per 段 by itself → lock 双刀 (and run again if the lock changes what was applied)
     const damaging = out.hits.filter(h => !h.cancelled && h.normal);
     if (setDualLock(damaging.filter(h => h.bulletId === damaging[0]?.bulletId).length > 1)) pending = true;
     await ensureEffectTexts(out, gameChar);
-    render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), attacker: attacker2, out, dress, gameChar });
+    render(out, { move, attackerSpec, targetSpec, state, autoAssume: new Set(autoAssume), out, dress, gameChar });
     renderPrimary(out, { move, dress, gearNotes });
     await ensurePassiveNames();
     const firstHit = damaging.filter(h => h.bulletId === damaging[0]?.bulletId)[0];

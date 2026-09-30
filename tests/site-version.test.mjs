@@ -8,7 +8,7 @@ import path from 'node:path';
 
 const dist = new URL('../dist/', import.meta.url).pathname;
 const files = [];
-const walk = dir => { for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const p = path.join(dir, e.name); if (e.isDirectory()) { if (e.name !== 'game-data' && e.name !== 'assets') walk(p); } else if (/\.(html|mjs|js)$/.test(e.name) && e.name !== 'fengari.mjs' && e.name !== 'game-skill-data.js') files.push(p); } };
+const walk = dir => { for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const p = path.join(dir, e.name); if (e.isDirectory()) { if (e.name !== 'game-data' && e.name !== 'assets') walk(p); } else if (/\.(html|mjs|js)$/.test(e.name) && e.name !== 'lua-wasm.mjs' && e.name !== 'game-skill-data.js') files.push(p); } };
 walk(dist);
 const rel = f => path.relative(dist, f);
 

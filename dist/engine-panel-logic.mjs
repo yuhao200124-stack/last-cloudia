@@ -1,4 +1,5 @@
 // Pure pieces of the calculator's panel (engine-panel.mjs), kept apart so the tests can run them (user 2026-09-30, item 34).
+import { K } from './engine/battle.mjs?v=20260930-1459';
 export const FREE_COST = 99;
 // COST 99 marks the always-on free passives (unique ones, 【超越】 …); a passive missing from the master counts as free
 export const isFree = (master, id) => { const c = master?.passive.get(id)?.COST; return c == null || c >= FREE_COST; };
@@ -54,4 +55,16 @@ export function splitBuild(c, selected, isFreeId) {
   const ownSet = new Set(own);
   const auto = (c?.ownPassives || []).map(p => p.passive).filter(id => !isFreeId(id)).filter(id => !ownSet.has(id)), autoSet = new Set(auto);
   return { own, auto, picked: selected.filter(id => !ownSet.has(id) && !autoSet.has(id)), selected: selected.filter(id => !autoSet.has(id)) };
+}
+
+// The 配装 metric of one evaluation (single random 0.95): the move's first damaging bullet per call, crits weighted by
+// the crit rate, and the parts shown as “what this skill changes”. Also used by the background evaluations (engine/eval-worker.mjs).
+export function metricOf(out) {
+  const all = out.hits.filter(h => !h.cancelled && h.normal), live = all.filter(h => h.bulletId === all[0]?.bulletId);
+  const rateOf = h => Math.min(100, Math.max(0, h?.crt ?? out.stats.crt.real ?? 0)) / 100;
+  const perCall = live.reduce((sum, h) => sum + h.normal.mean * (1 - rateOf(h)) + (h.critical ? h.critical.mean : h.normal.mean) * rateOf(h), 0);
+  const h = live[0];
+  const detail = h ? { magical: h.breakdown?.attack?.stat === K.STAT.INT, attack: h.attack, crt: h.crt ?? out.stats.crt.real, cap: h.capComputed ?? h.cap, killer: h.killerFactor, offense: h.offense, received: h.received, reduction: h.reduction, resist: h.resist,
+    post: h.core ? h.afterPassives / h.core : null, crit: h.critical && h.normal?.mean ? h.critical.mean / h.normal.mean : null } : null;
+  return { perCall, cap: h?.cap ?? null, errors: out.errors.length, detail };
 }

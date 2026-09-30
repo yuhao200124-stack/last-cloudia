@@ -6,7 +6,7 @@
 
 | 文件 | 作用 |
 | --- | --- |
-| `dist/engine/fengari.mjs` | Lua 5.3 虚拟机（fengari，MIT），由 `local-migration-tools/engine/bundle-fengari.mjs` 打包 |
+| `dist/engine/lua-wasm.mjs` | Lua 5.3.6 虚拟机（官方源码编译成 WebAssembly，32 位整数；2026-09-30 代替 fengari，快约 4.5 倍、结果一致），由 `local-migration-tools/lua-wasm/build.sh` 生成 |
 | `dist/engine/lua-host.mjs` | 装载脚本、注册原生函数、JS↔Lua 值转换 |
 | `dist/engine/battle.mjs` | 原生战斗核心的 JS 替身：单位、控制项存储（ProcControl2）、两层属性（UnitGetValue）、Buff（BuffControl）、按 PRIORITY 的触发派发、弹道段（双刀／多段魔法）、伤害流水线 |
 | `dist/engine/scenario.mjs` | 计算器调用入口：构造攻击方／目标、回放开局触发、施放技能、汇总每段结果 |
@@ -34,7 +34,7 @@
 - 徽章（CrestMst）：`UnitUtil.AddCrestParameter` 按 DataManager.UserItem.CrestInfoList[用户徽章 id] 取 CrestID → CrestMst.PARAMETER_INFO（HP:MP:STR:DEF:INT:MND）与装备一样在倍率层之前加入面板（不经 EquipParam 修正），RESIST_ELEM_INFO 加入属性抗性；词条是 PassiveSkillMst 5,000,000–5,199,999 段的被动（家族 5xxx + 档位后缀，如 5050015 劍魔法增幅界限突破 = 1082608/1082602 各 3200、5004014 攻擊力提升 +15%、5078029 超必殺技界限突破 +15,000，与亞克报告里 affiliation 18 实例的流程与参数相同），CrestInfo.Slot {Rank, MaxRank, Locked, LotteryNumber, PassiveID}；`engine/crests.json` 按需加载，`spec.crest = {crestId, traits}` 由读取器 v0.11 的 `crests`/`equipItems` 生成。配装 equipInfo 的 6 个槽位：1 武器、2 防具、3/4 饰品、5 外观（ItemEquipMst EQUIP_TYPE 40，无数值）、6 徽章（用户徽章 id，即 UserItem.CrestInfoList 的键）；局内词条实例的 local_id 固定为 400218/400219/400220（槽位顺序，两名角色的报告相同）。装备强化等级来自 UserItem.ItemEquipInfoList.AlchemyLevel（按装备 id）；MAX_LV=0 的装备（如均衡的天冥珠）PARAMETER_MAX_INFO 为空，数值取 PARAMETER_INFO。
 - 施放前已用技能（`state.preCasts`）：按顺序完整施放（自身/友方目标技能打在自己身上），累计计数类被动、自我 Buff（如神託的誓言 必杀上限 +100,000）由此产生。
 - LIFETYPE_CONTINUOUS 的控制在其触发再次评估时失效；ChangeBuff(54) 在一次 Buff 变化结束后统一派发一次。
-- fengari 整数为 32 位：`bitToBoolean` 以移位重写，其余脚本按原样运行。
+- 虚拟机整数为 32 位（和原来的 fengari 一样）：`bitToBoolean` 以移位重写，其余脚本按原样运行。
 - 局外面板（UnitUtil.GetUnitBasicStatus / FillUnitDressParam）：`裸属性 = min + round(max × GROWTH_RATE[lv] / 10000) + Σ觉醒(UnitDressAwakeMst) + Σ已开属性格(UnitDressAbilityPieceMst 类型 10–15)`，PARAMETER_INFO 的 `min-max` 中 max 是成长量而非 100 级值；所有角色 GROWTH_ID=2，成长率来自 GrowthMst（读取器 v0.10 导出，120 级：Lv100=10000、Lv110=10813、Lv120=12633；12633 与此前用 4 个已验证角色六维拟合的值相同）。装备参数按 ItemEquipParameterGrowthMst：`min + round((max − min) × map[lv] / map[MAX_LV])`（+0 … +MAX_LV，满强化即 PARAMETER_MAX_INFO），`EquipParam`(319: 装备种类, 属性, 倍率) 逐件加算后四舍五入（洛琪希之魔杖 INT 365→730、衣服 INT 229→344、MND 116→290），再进入 `floor((裸 + 装备 + Σ值) × (1 + Σ倍率)) + Σ加算`。
 
 ## 验证

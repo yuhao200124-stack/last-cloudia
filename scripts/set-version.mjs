@@ -18,7 +18,7 @@ if (!/^\d{8}-[A-Za-z0-9_-]+$/.test(tag)) throw new Error(`版本号格式应为 
 
 const CODE_FILES = () => {
   const out = [];
-  const walk = dir => { for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const p = path.join(dir, e.name); if (e.isDirectory()) { if (e.name !== 'game-data' && e.name !== 'assets') walk(p); } else if (/\.(html|mjs|js)$/.test(e.name) && e.name !== 'fengari.mjs' && !/^game-skill-data\.js$/.test(e.name)) out.push(p); } };
+  const walk = dir => { for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const p = path.join(dir, e.name); if (e.isDirectory()) { if (e.name !== 'game-data' && e.name !== 'assets') walk(p); } else if (/\.(html|mjs|js)$/.test(e.name) && e.name !== 'lua-wasm.mjs' && !/^game-skill-data\.js$/.test(e.name)) out.push(p); } };
   walk(dist.pathname);
   return out;
 };
