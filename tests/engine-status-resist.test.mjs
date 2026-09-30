@@ -32,3 +32,14 @@ test('the calculator names the ailment and the stages, and shows the hidden 受�
   assert(panel.includes("'，自身存活期间一直有效'"));
   assert(!panel.includes("306: '异常耐性'"));
 });
+
+// 2026-09-30 (user: “看看还有哪些机制没搞明白”): the other controls get words, and a buff that only acts when damage is dealt
+// is described by its script's own parameter comments (buff-params.json from process.lua)
+test('support magic: controls and damage-time buffs are described, not left as raw parameters', () => {
+  const panel = fs.readFileSync(new URL('../dist/engine-panel.mjs', import.meta.url), 'utf8');
+  assert(!panel.includes('含义未逐项核对'));
+  for (const op of [308, 502, 503, 504, 505, 507, 509, 210, 312, 320, 323, 326, 508, 800, 824, 829]) assert.match(panel, new RegExp(`\\n  ${op}: `));
+  const bp = JSON.parse(fs.readFileSync(new URL('../dist/game-data/engine/buff-params.json', import.meta.url), 'utf8'));
+  assert.deepEqual(bp['2050417'][1], ['被ダメージ倍率', '与ダメージ倍率', '神専用与ダメージ倍率']);
+  assert.ok(Object.keys(bp).length > 700);
+});

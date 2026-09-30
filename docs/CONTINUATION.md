@@ -19,6 +19,7 @@
 - 霸体类被动读弹道属性 300–307（霸体值、受击时间等）报错（艾蕾诺拉等 5 个角色）：这些值在弹道碰撞数据里、导出没有；只影响霸体，不影响伤害，返回 0。偷窃（op 807）不影响伤害，忽略。
 - 领域展开“按所有单位都在领域内”、与敌人距离：沙盒没有位置，照旧（用户说距离先不管）。
 - **待用户决定**：同类别增益互斥。反汇编 UnitBuffBase.AddBuffNow → RemoveBuffByCategory：新增益会移除同一 BUFF_CATEGORY、同为增益（或同为减益）的旧增益，也就是“后来的替换先来的”，没有比强弱；而计算器现在按用户 2026-09-28 的规则“同类只取最强”。
+- 辅助魔法说明：剩下的“数值含义未解读／含义未逐项核对”全部换成文字。控制操作按 procCondCommon.lua ControlTypes 注释（308 特攻、502/503 物理／魔法受伤、504 造成／受到伤害、505、507、509、210 特技槽恢复、312 咏唱速度、320 被瞄准程度、323/326 特技储存次数、508 护罩、800/829、824）；造成伤害时才起作用的增益，用它脚本上方的参数注释（`local-migration-tools/game-data/buff-params.py` → `dist/game-data/engine/buff-params.json`，802 个增益）写出“伤害上限加值 +15,000”等，内部编号类参数不显示、为 0 的不显示。
 网站 6 个角色的结果都没变；全角色对比里 21 个角色变了（都是上面的追加伤害）。测试 `tests/engine-additional-damage.test.mjs`。
 
 **技能附带被动 SkillMst.ADD_PASSIVE（2026-09-30，用户：“都补上”）**：装备某技能/魔法时游戏会附带一个被动（60 个技能，如【魔印】力量积蓄 385100 → 26792 攻击 +10%，【魔印】灭龙者 → 对龙特攻等）。已：所有 SkillMst 表（shared.json、c/*.json）原地补 ADD_PASSIVE 列（v0.6 SkillMst.bin），被带出的被动放进同一数据包（shared 25 个，500030 / 500210 各 1 个）；export_engine_data.py 的 bundle() 同步把 ADD_PASSIVE 被动带上。scenario.mjs `skillAddPassives()`：addAttacker 对角色的招式、spec.magic 加上，runScenario 在 setupBattle 前对所评估招式和预先施放的技能（勾选的辅助魔法、先放的技能）加上；`battle.grantedBy` 记录来源，结果显示“<技能名>附带被动”。核实：亚丁（100750）带【魔印】力量积蓄，攻击力面板 2,250→2,440。

@@ -1,11 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1941';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1941';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1941';
-import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1941';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1941';
+import { K } from './engine/battle.mjs?v=20260930-1957';
+import { zhName } from './engine/gloss.mjs?v=20260930-1957';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1957';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1957';
+import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1957';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1957';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -411,7 +412,26 @@ function describeStatusResist(list) {
     return stage ? `${names}耐性 ${signed(stage)} 级（1 级＝耐性值 50）` : `${names}耐性 不变（这次按目标的情况没有改变）`;
   });
 }
-function describeEntries(entries) {
+const pctOf = v => signed(v / 100, '%');
+const OP_TEXT = {
+  308: t => `对${RACE_NAMES[t] || `类型 ${t}`}特攻`,                                     // Killer 0:タイプ
+  502: v => `受到的物理伤害 ${pctOf(-v)}`,                                                   // ReductionPhysDmg: × (1 − v/10000)
+  503: v => `受到的魔法伤害 ${pctOf(-v)}`,                                                   // ReductionMagDmg
+  504: (v, _b, _c, who) => `${who === '目标' ? '受到的伤害' : '造成的伤害'} ${pctOf(v)}`,   // DmgPower: × (1 + v/10000), on the side that carries it
+  505: () => '受到的伤害变为 0',                                                             // InvalidDmg
+  507: el => `攻击属性变为${ELEM_NAMES[el] || el}属性`,                                       // OverrideElement 0:属性
+  509: v => `特攻倍率 ${pctOf(v)}`,                                                           // KillerPower 0:値 (× 1.5 × (1 + v/10000))
+  800: () => '魔法攻击可以暴击',                                                            // MagicCritical
+  824: v => `伤害上限改为 ${fmt(v)}`,                                                        // DmgLimitOff 0:上限値
+  829: () => '超必杀技可以暴击',                                                            // SpecialCritical
+  210: (v, per, sp) => `特技槽自动恢复 ${[v && signed(v), per && pctOf(per)].filter(Boolean).join(' ') || '±0'}${sp ? `（第 ${sp} 个特技）` : ''}`, // SctRecovVal 0:値 1:倍率 2:特技INDEX
+  312: v => `咏唱速度 ${pctOf(v)}`,                                                         // ShorteningCast 0:割合
+  320: v => `被敌人瞄准的程度 ${signed(v)}`,                                                  // Targetability 0:値
+  323: (v, sp) => `特技可储存次数 ${signed(v)}${sp ? `（第 ${sp} 个特技）` : '（全部特技）'}`,     // MaxSpEdit 0:増減値 1:特技INDEX
+  326: (v, sp) => `特技可储存次数固定为 ${v}${sp ? `（第 ${sp} 个特技）` : '（全部特技）'}`,      // FixSpStock
+  508: () => '护罩（累计伤害到上限前不受伤害）',                                                // KBBarrier
+};
+function describeEntries(entries, who = '') {
   const out = [], resist = new Map(), status = [];
   for (const e of entries) {
     const [a = 0, b = 0, c = 0] = e.params;
@@ -419,6 +439,9 @@ function describeEntries(entries) {
     if (e.op === K.OP.ELEM_RESIST) { for (const el of a === -1 ? [1, 2, 3, 4, 5, 6] : [a]) resist.set(el, (resist.get(el) || 0) + b); continue; }
     if (STAT_OP_NAMES[e.op]) { const unit = e.op === K.OP.CRT ? '%' : ''; out.push(`${STAT_OP_NAMES[e.op]} ${[a && signed(a, unit), b && signed(b / 100, '%'), c && signed(c, unit)].filter(Boolean).join(' ')}`); continue; }
     if (e.op === K.OP.DMG_LIMIT_UP) { out.push(`伤害上限 ${[a && signed(a), b && signed(b / 100, '%'), c && signed(c)].filter(Boolean).join(' ')}`); continue; }
+    // the other controls, by procCondCommon.lua's ControlTypes comments and how battle.mjs applies them (2026-09-30)
+    const known = OP_TEXT[e.op]?.(a, b, c, who);
+    if (known) { out.push(known); continue; }
     out.push(`${RAW_OP_NAMES[e.op] || `游戏效果 ${e.op}`}（参数 ${e.params.join(', ')}，数值含义未解读）`);
   }
   if (resist.size) {
@@ -438,6 +461,32 @@ const HIDDEN_SHOWN = {
   81748: () => '专属增益状态（本身没有数值；角色的被动在这个状态中起作用，已计入伤害）',
   1082619: ([, ail, , , add, per]) => `处于${ail ? `${AILMENT_NAMES[ail] || `异常 ${ail}`}状态` : '异常状态'}时受到的伤害上限 ${[add && signed(add), per && signed(per / 100, '%')].filter(Boolean).join(' ')}（打开“敌方异常”才计入）`,
 };
+// A buff that only acts when damage is dealt has no entries when cast: its parameters are named by the comment block of
+// its script (buff-params.json from process.lua “-- params[1]:ダメージ倍率補正”), shown with their units (2026-09-30).
+let buffParams = null;
+const ZH_FIX = [[/STR/g, '攻击力'], [/MDEF/g, '魔抗'], [/DEF/g, '防御力'], [/INT/g, '法强'], [/MND/g, '魔抗'], [/加算值/g, '加值'], [/倍率修正/g, '倍率'], [/增减值/g, '增减'], [/条件$/, '']];
+const labelZh = l => t2s(ZH_FIX.reduce((t, [a, b]) => t.replace(a, b), zhName(l)));
+const SKILL_TYPE_NAMES = { 1: '特技', 2: '魔法', 3: '咏唱', 4: '召唤', 5: '超必杀', 7: '圣物', 9: '普通攻击', 10: '物理(普攻+特技)', 15: '反击' };
+const ELEM_SET_NAMES = { [-1]: '全属性（无属性除外）', [-2]: '所有属性' };
+const skillTypeText = v => { if (!v) return '不限'; if (SKILL_TYPE_NAMES[v]) return SKILL_TYPE_NAMES[v]; const out = []; for (let t = 1; t <= 15; t++) if (v & (1 << (t + 3))) out.push(SKILL_TYPE_NAMES[t] || `类型${t}`); return out.join('·') || String(v); };
+function paramText(label, v) {
+  if (/UID|PUID|識別子|演出|カットイン|INDEX|ランクID|ポイントID|アクター|親ユニーク|バフID|スキルID|サブプロセス/.test(label)) return null;
+  if (/属性条件|ダメージ属性$/.test(label)) return v === 0 && /条件/.test(label) ? '不限' : ELEM_SET_NAMES[v] || `${ELEM_NAMES[v] ?? v}属性`;
+  if (/スキルタイプ条件|バレットスキルタイプ/.test(label)) return skillTypeText(v);
+  if (/キャラタイプ条件|エネミータイプ条件/.test(label)) return v ? RACE_NAMES[v] || `类型 ${v}` : '不限';
+  if (/状態異常条件/.test(label)) return v ? AILMENT_NAMES[v] || `异常 ${v}` : '任意异常';
+  if (/継続時間|クールタイム/.test(label)) return v < 0 ? '一直' : `${Math.round(v / 60 * 10) / 10} 秒`;
+  if (/倍率|補正|確率|割合/.test(label)) return signed(v / 100, '%');
+  return signed(v);
+}
+const T2S = { 専: '专', 傷: '伤', 屬: '属', 擊: '击', 動: '动', 復: '复', 導: '导', 魔導: '魔导', 階: '阶', 靈: '灵', 龍: '龙', 對: '对', 時: '时', 們: '们', 間: '间', 數: '数', 態: '态', 異: '异', 應: '应', 敵: '敌', 發: '发', 會: '会', 張: '张', 減: '减', 強: '强', 協: '协', 護: '护', 盾: '盾', 體: '体', 壓: '压', 產: '产', 氣: '气', 絕: '绝', 劍: '剑', 陣: '阵', 聖: '圣', 殺: '杀', 雙: '双', 錬: '炼', 鍊: '炼', 環: '环', 殘: '残', 顯: '显', 選: '选', 變: '变', 詠: '咏', 為: '为', 與: '与', 從: '从', 無: '无', 樹: '树', 雷: '雷', 爆: '爆', 狀: '状', 蓄: '蓄', 積: '积', 喚: '唤', 族: '族', 裂: '裂', 級: '级', 滅: '灭', 貫: '贯', 衝: '冲', 優: '优', 風: '风', 擁: '拥', 權: '权', 條: '条', 險: '险', 輪: '轮', 迴: '回', 萬: '万', 億: '亿', 還: '还', 則: '则', 實: '实', 範: '范', 圍: '围' };
+const t2s = t => String(t).replace(/./g, ch => T2S[ch] || ch);
+function buffTitle(e) { const b = buffParams?.[e.buffId]; return t2s(e.name && e.name !== 'No Name' ? e.name : zhName(b?.[0] || '') || `增益 ${e.buffId}`); }
+function describeBuffParams(e) {
+  const labels = buffParams?.[e.buffId]?.[1];
+  if (!labels) return e.params.filter(v => v !== 0).length ? `参数 ${e.params.join(', ')}（这个增益的脚本没有写参数说明）` : '';
+  return labels.map((l, i) => { if (!l || e.params[i] == null || (e.params[i] === 0 && !/条件|属性$/.test(l))) return null; const t = paramText(l, e.params[i]); return t == null ? null : `${labelZh(l)} ${t}`; }).filter(Boolean).join('，');
+}
 function describeSupport(m) {
   if (!m) return '读取中…';
   if (m.error) return `游戏脚本出错（${m.error}）`;
@@ -450,8 +499,8 @@ function describeSupport(m) {
   return shown.map(e => {
     const who = e.side === 'target' ? '目标' : '自身';
     const time = e.duration > 0 ? `，${Math.round(e.duration / 60 * 10) / 10} 秒` : e.duration === -1 ? (anima ? '，自身存活期间一直有效' : '，一直有效（不限时间）') : '';
-    const vals = e.entries.length ? describeEntries(e.entries) : HIDDEN_SHOWN[e.buffId] ? [HIDDEN_SHOWN[e.buffId](e.params)] : [];
-    const body = vals.length ? vals.join('、') : `${e.name}（原始参数 ${e.params.filter(v => v !== 0).join(', ') || '无'}，造成伤害时才生效，含义未逐项核对）`;
+    const vals = e.entries.length ? describeEntries(e.entries, who) : HIDDEN_SHOWN[e.buffId] ? [HIDDEN_SHOWN[e.buffId](e.params)] : [];
+    const body = vals.length ? vals.join('、') : `${shown.length > 1 ? `${buffTitle(e)}：` : ''}${describeBuffParams(e) || '没有数值'}（造成／受到伤害时才起作用，已计入伤害）`;
     return `${who} ${body}${time}`;
   }).join('；');
 }
@@ -491,6 +540,7 @@ function renderSupportEffects(map) {
 async function measureSupportMagic(M, attackerSpec, targetSpec, state, dress) {
   const ids = [...document.querySelectorAll('[data-support-effect]')].map(el => Number(el.dataset.supportEffect)).filter(Boolean);
   if (!ids.length) return;
+  if (!buffParams) buffParams = await fetch(new URL('./game-data/engine/buff-params.json' + V, import.meta.url)).then(r => r.json()).catch(() => ({}));
   const key = JSON.stringify([dress, ids, targetSpec, state.hpPercent, state.killer, state.targetBreak, state.targetAilment]);
   if (supportCache.key !== key) {
     battle.reset();
@@ -839,7 +889,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1941'), import('./engine/engine-data.mjs?v=20260930-1941'), import('./engine/scenario.mjs?v=20260930-1941'), import('./engine/report-adapter.mjs?v=20260930-1941'), import('./engine/loadout-adapter.mjs?v=20260930-1941')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1957'), import('./engine/engine-data.mjs?v=20260930-1957'), import('./engine/scenario.mjs?v=20260930-1957'), import('./engine/report-adapter.mjs?v=20260930-1957'), import('./engine/loadout-adapter.mjs?v=20260930-1957')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
