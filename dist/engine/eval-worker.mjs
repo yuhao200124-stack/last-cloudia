@@ -3,10 +3,10 @@
 // these workers run them side by side while the page stays responsive. Each keeps its own Lua VM and master data.
 //   {type:'setup', dress, bundles:{monsters, monsterPassives, crests}}   → loads the character (once per character)
 //   {type:'eval', id, job:{attackerSpec, targetSpec, moveId, firstBullet, state, assume}} → {type:'result', id, metric} | {type:'error', id, message}
-import { Battle } from './battle.mjs?v=20260930-1549';
-import { loadEngineData, loadPassives } from './engine-data.mjs?v=20260930-1549';
-import { addAttacker, addTarget, runScenario } from './scenario.mjs?v=20260930-1549';
-import { metricOf } from '../engine-panel-logic.mjs?v=20260930-1549';
+import { Battle } from './battle.mjs?v=20260930-1609';
+import { loadEngineData, loadPassives } from './engine-data.mjs?v=20260930-1609';
+import { addAttacker, addTarget, runScenario } from './scenario.mjs?v=20260930-1609';
+import { metricOf } from '../engine-panel-logic.mjs?v=20260930-1609';
 
 const V = new URL(import.meta.url).search;
 const BUNDLES = { monsters: 'monsters.json', monsterPassives: 'monster-passives.json', crests: 'crests.json' };

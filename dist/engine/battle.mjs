@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1549';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1609';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -742,7 +742,8 @@ export class Battle {
       UnitGetBreakRemain(t) { return B.unit(t)?.breakRemain || 0; }, UnitGetBreakCount() { return 0; }, UnitGetBreakTime() { return 0; },
       UnitHaveCounter() { return false; }, UnitGetAimedCount() { return 0; }, UnitGetAimedList() { return []; },
       UnitGetSelectWeight() { return 100; }, UnitTotalSelectWeight() { return 100; },
-      UnitGetBadStatus(t) { return []; },
+      // the unit's ailments as the scripts read them ({[type] = true}); set by the calculator's 敌方异常 switch
+      UnitGetBadStatus(t) { return Object.fromEntries((B.unit(t)?.ailments || []).map(a => [a, true])); },
       UnitGetRadius() { return 1; }, UnitGetDir() { return 1; }, UnitGetPos() { return multi(0, 0, 0); },
       UnitGetOpacity() { return 1; }, UnitGetScale() { return multi(1, 1, 1); },
       UnitGetTriggers() { return new LuaTable(); },
