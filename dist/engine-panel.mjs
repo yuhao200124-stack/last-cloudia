@@ -545,7 +545,7 @@ function mount() {
   }
   // 目标：从游戏怪物表选择 lives with the rest of the Boss/target fields (Boss 与战斗条件 section) instead of in
   // this card; fall back to appending here if that section's slot isn't on the page.
-  const targetHtml = `<details id="engineTarget"><summary>目标：从游戏怪物表选择</summary><p class="help">直接用游戏 MonsterMst 的数值（HP、防御、魔抗、种族、属性抗性、Boss 自带被动），与读取报告里的 Boss 完全一致。不选时按上方的目标栏位或读取报告的 Boss。</p>
+  const targetHtml = `<details id="engineTarget"><summary>目标：从游戏怪物表选择</summary><p class="help">直接用游戏 MonsterMst 的数值（HP、防御、魔抗、种族、属性抗性），与读取报告里的 Boss 完全一致；Boss 自带被动只算 Break 时的效果，其余列在上面。不选时按上方的目标栏位或读取报告的 Boss。</p>
       <div class="fields two engine-fields"><label>Boss 名称<input id="engineMonsterName" list="engineMonsterNames" placeholder="输入名称筛选"><datalist id="engineMonsterNames"></datalist></label><label>版本（等级 / HP / 防御 / 魔抗）<select id="engineMonsterVariant"><option value="">先输入名称</option></select></label></div>
       <p class="help" id="engineMonsterNote">未选择怪物表目标。</p><button type="button" id="engineMonsterClear" class="secondary">改回计算器目标</button></details>`;
   const targetSlot = $('engineTargetSlot');
@@ -795,6 +795,22 @@ async function ensureMonsters() {
     if ($('engineMonsterNames')) $('engineMonsterNames').innerHTML = names.map(n => `<option value="${esc(n)}"></option>`).join(''); }
   return monsterBundle;
 }
+let monsterPassiveTexts = null;
+async function ensureMonsterPassiveTexts() {
+  if (!monsterPassiveTexts) monsterPassiveTexts = await fetch(new URL('./game-data/engine/monster-passive-text.json', import.meta.url)).then(r => r.json()).then(j => j.texts || {}).catch(() => ({}));
+  return monsterPassiveTexts;
+}
+// Boss 自带被动 (user 2026-09-30: “这些boss被动计算器不要算但是在boss界面要写出来” / “除了 Break 都不算”): every passive of
+// the target monster, listed under its races; only the Break ones are computed
+async function renderBossPassives(spec) {
+  const box = $('bossPassives'); if (!box) return;
+  const ids = spec?.listedPassives || [];
+  if (!ids.length) { box.hidden = true; box.innerHTML = ''; return; }
+  const texts = await ensureMonsterPassiveTexts();
+  const counted = new Set((spec.passives || []).filter(p => p.table === 'monster').map(p => p.id));
+  box.innerHTML = `<strong>Boss 自带被动</strong>（只有 Break 时的效果计入计算，其余只列出）<ul>${ids.map(id => `<li>${esc(texts[id] || '（游戏数据里没有这个被动）')}${counted.has(id) ? '<span class="boss-passive-on">（开 Break 时计入）</span>' : ''}</li>`).join('')}</ul>`;
+  box.hidden = false;
+}
 async function ensureMonsterPassives() {
   if (!monsterPassiveBundle) { monsterPassiveBundle = await fetch(new URL('./game-data/engine/monster-passives.json', import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(monsterPassiveBundle); }
   return monsterPassiveBundle;
@@ -809,7 +825,7 @@ const RACE_NAMES = Object.fromEntries(Object.entries(RACE_CODES).map(([k, v]) =>
 function monsterNote(spec) {
   if (!spec) return '未选择怪物表目标。';
   const res = ['火', '冰', '树', '雷', '光', '暗'].map((n, i) => `${n}${spec.elemResist[i + 1] > 0 ? '+' : ''}${spec.elemResist[i + 1]}`).join(' ');
-  return `${spec.name} Lv${spec.level} · HP ${fmt(spec.stats.hp)} · 攻 ${fmt(spec.stats.str)} · 防 ${fmt(spec.stats.def)} · 法强 ${fmt(spec.stats.int)} · 魔抗 ${fmt(spec.stats.mnd)} · ${RACE_NAMES[spec.charTypes[0]] || spec.charTypes[0]} · 抗性 ${res} · 自带被动 ${spec.passives.length} 项`;
+  return `${spec.name} Lv${spec.level} · HP ${fmt(spec.stats.hp)} · 攻 ${fmt(spec.stats.str)} · 防 ${fmt(spec.stats.def)} · 法强 ${fmt(spec.stats.int)} · 魔抗 ${fmt(spec.stats.mnd)} · ${RACE_NAMES[spec.charTypes[0]] || spec.charTypes[0]} · 抗性 ${res} · 自带被动 ${(spec.listedPassives || spec.passives).length} 项`;
 }
 
 function targetFromFields(detail) {
@@ -1011,10 +1027,14 @@ async function run(force = false) {
     renderPreCasts(attacker, battle.master, move.id);
     let targetSpec = null;
     if (monsterChoice) { await ensureMonsters(); await ensureMonsterPassives(); targetSpec = M.targetFromMonster(battle.master, monsterChoice); if (targetSpec) { targetSpec.source = '游戏怪物表'; $('engineMonsterNote').textContent = monsterNote(targetSpec); if ($('engineMonsterName') && !$('engineMonsterName').value) { $('engineMonsterName').value = targetSpec.name; fillMonsterVariants(targetSpec.name); } } }
-    if (!targetSpec) targetSpec = report && $('bossPreset')?.value?.startsWith('reader-') ? M.targetFromReport(report, { bossIndex: Number($('bossPreset').value.slice(7)) || 0 }) : targetFromFields(latest);
-    // a preset boss (轟鳥龍恩德爾羅納 / 神獸帕帕拉納) is that monster: its own passives come from the monster table
-    // (e.g. its Break passive: DEF/MND −25%, 属性耐性 −25); the fields keep deciding its stats, races and resistances
-    if (!monsterChoice && latest.bossMonsterId && !String(latest.bossPreset || '').startsWith('reader-') && !targetSpec.passives?.length) { await ensureMonsters(); await ensureMonsterPassives(); const m = M.targetFromMonster(battle.master, latest.bossMonsterId); if (m) targetSpec = { ...targetSpec, monsterId: m.monsterId, level: m.level, passives: m.passives }; }
+    const fromReader = !!report && !!$('bossPreset')?.value?.startsWith('reader-');
+    if (!targetSpec) targetSpec = fromReader ? M.targetFromReport(report, { bossIndex: Number($('bossPreset').value.slice(7)) || 0 }) : targetFromFields(latest);
+    // a preset boss (轟鳥龍恩德爾羅納 / 神獸帕帕拉納) or a report's boss is that monster of the monster table: of its own
+    // passives only the Break ones are computed (e.g. DEF/MND −25%, 属性耐性 −25), the rest are listed (user 2026-09-30);
+    // the fields / the report keep deciding its stats, races and resistances
+    const bossMonsterId = monsterChoice ? null : fromReader ? targetSpec.monsterId : latest.bossMonsterId;
+    if (bossMonsterId && !targetSpec.passives?.length) { await ensureMonsters(); await ensureMonsterPassives(); const m = M.targetFromMonster(battle.master, bossMonsterId); if (m) targetSpec = { ...targetSpec, monsterId: m.monsterId, level: targetSpec.level ?? m.level, passives: m.passives, listedPassives: m.listedPassives }; }
+    renderBossPassives(targetSpec);
     const target = M.addTarget(battle, targetSpec);
     renderSupportMagic(gameChar, dress);
     attackerSpec.finalAdd = arkFinalAdd(latest.arkStats);

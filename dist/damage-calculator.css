@@ -122,3 +122,7 @@ body.is-build-embedded.build-view-results #enginePanel{margin:0}
   .base-stats-table td { display: block; margin: -1px 0 0 -1px; padding: 8px 4px; }
   .base-stats-table td::before { content: attr(data-label); display: block; font-size: 12px; font-weight: 700; color: #27496f; margin-bottom: 2px; }
 }
+/* Boss 自带被动 (engine-panel.mjs renderBossPassives) */
+.boss-passives ul { margin: 4px 0 0; padding-left: 18px; }
+.boss-passives li { margin: 2px 0; }
+.boss-passive-on { color: var(--blue-strong, #2f6fdb); margin-left: 4px; }

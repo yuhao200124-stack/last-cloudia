@@ -75,3 +75,20 @@ test('an assumed “putting an ailment on the enemy” effect lands on the enemy
   assert.ok(!attacker.buffs.some(b => b.isDebuff));
   assert.ok(target.buffs.some(b => b.isDebuff));
 });
+
+// Boss 自带被动 (user 2026-09-30: “这些boss被动计算器不要算但是在boss界面要写出来” / “除了 Break 都不算”)
+test('a monster’s own passives: only the Break ones are computed, all are listed with a text', async () => {
+  const { master } = await dataPromise;
+  const spec = targetFromMonster(master, 320401703);
+  assert.deepEqual(spec.listedPassives, [101, 13675, 13689, 13690, 13746]);
+  assert.deepEqual(spec.passives.map(p => p.id), [13689, 13690, 13746]);
+  // 瀕死ステアップバフ (DEF/MND +35% under 30% HP) is not computed even when the boss is at 20%
+  const low = first((await roxy({ skill: 270090, state: { hpPercent: 100, targetHpPercent: 20 } })).out);
+  assert.equal(low.defense, 10000);
+  const texts = JSON.parse(fs.readFileSync(new URL('../dist/game-data/engine/monster-passive-text.json', import.meta.url), 'utf8')).texts;
+  assert.equal(texts[13746], 'Break 中：防御、魔抗 −25%');
+  assert.match(texts[13675], /HP降到30%以下时.*攻击、防御、魔抗 \+35%/);
+  assert.equal(texts[101], '开场第一次行动不用等待');
+  const panel = fs.readFileSync(new URL('../dist/engine-panel.mjs', import.meta.url), 'utf8');
+  assert.ok(panel.includes('renderBossPassives(targetSpec)') && panel.includes('fromReader ? targetSpec.monsterId : latest.bossMonsterId'));
+});

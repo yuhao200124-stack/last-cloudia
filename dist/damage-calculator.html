@@ -48,6 +48,7 @@
       <label class="wide">目标预设<select id="bossPreset"><option value="bird">轟鳥龍恩德爾羅納</option><option value="beast">神獸帕帕拉納</option><option value="custom">自定义目标</option></select></label>
       <div id="engineTargetSlot"></div>
       <p id="bossIdentity" class="help">种族：未读取</p>
+      <div id="bossPassives" class="help boss-passives" hidden></div>
       <details><summary>核对目标种族</summary><p class="help">预设或读取报告会自动填写；自定义目标请按实际种族勾选。多个种族命中同一技能时只计一次。</p><div id="bossRaceChoices" class="inline-options"></div></details>
       <div class="fields two"><label>防御力 DEF<input id="bossDefense" type="number" min="0" max="100000000" step="1" value="4000"></label><label>魔抗 MND<input id="bossMind" type="number" min="0" max="100000000" step="1" value="10000"></label></div>
       <div id="bossResistances" class="fields three"></div>
@@ -76,6 +77,6 @@
     <div id="reviewBody"><p class="help">选择招式后显示。</p></div>
   </section>
 </main>
-<script type="module" src="./damage-calculator.mjs?v=20260930-nopreview"></script>
-<script type="module" src="./engine-panel.mjs?v=20260930-nopreview"></script>
+<script type="module" src="./damage-calculator.mjs?v=20260930-bosspassive"></script>
+<script type="module" src="./engine-panel.mjs?v=20260930-bosspassive"></script>
 </body></html>

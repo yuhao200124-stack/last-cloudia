@@ -82,20 +82,37 @@ export function addAttacker(battle, spec) {
   return unit;
 }
 
-// A target from MonsterMst: stats, race, resistances and the monster's own passives (MonsterPassiveSkillMst).
+// A monster's own passives (user 2026-09-30: “除了 Break 都不算”): only the processes that work while the monster itself
+// is broken are computed (気絶・ブレイク中 / ブレイク状態が変化した時 / 自分が気絶・ブレイク状態の被ダメージ…: e.g. 恩德爾羅納's
+// DEF/MND −25%, 属性耐性 −25); everything else (瀕死 / 覚醒 stat-ups, 魔法耐性, 初回WAIT, ailment resistances …) is only
+// listed in the calculator's Boss section (dist/game-data/engine/monster-passive-text.json).
+export const OWN_BREAK_COND = /^(気絶・ブレイク中|ブレイク状態が変化した時|自分が気絶・ブレイク状態)/;
+export function ownBreakSegments(master, passiveId) {
+  const row = master.monsterPassive?.get(passiveId); if (!row) return [];
+  return master.processSegments(row.PROCESS_INFO).map((seg, i) => { const mst = master.process.get(seg.processId); return mst && OWN_BREAK_COND.test(master.processCond.get(mst.PROCESS_COND)?.NAME || '') ? i : -1; }).filter(i => i >= 0);
+}
+export function monsterPassiveIds(master, monsterId) {
+  const m = master.monster?.get(Number(monsterId)); if (!m) return [];
+  return String(m.PASSIVE_SKILL_INFO || '').split('-').map(part => Number(part.split(':')[1])).filter(Boolean);
+}
+// A target from MonsterMst: stats, race, resistances and the monster's own Break passives (above); `listedPassives` are
+// all its passive ids, for the list.
 export function targetFromMonster(master, monsterId, overrides = {}) {
   const m = master.monster?.get(Number(monsterId)); if (!m) return null;
   const elemResist = {}; parseInts(m.RESIST_ELEM_INFO).forEach((v, i) => { if (i < 6) elemResist[i + 1] = v; });
-  const passives = [];
-  for (const part of String(m.PASSIVE_SKILL_INFO || '').split('-')) { const [, pid] = part.split(':').map(Number); if (pid) passives.push({ id: pid, table: 'monster', affiliation: K.AFF.AUTOSKILL }); }
-  return { name: m.NAME, monsterId: m.MONSTER_ID, isBoss: true, level: m.LV, charTypes: [m.CHARACTER_TYPE], stats: { hp: m.HP, mp: m.MP, str: m.ATK, def: m.DEF, int: m.MATK, mnd: m.MDEF, crt: m.CRITICAL_RATE }, elemResist, passives, breakTime: m.BREAK_TIME, ...overrides };
+  const listedPassives = monsterPassiveIds(master, monsterId);
+  const passives = listedPassives.map(pid => ({ id: pid, table: 'monster', affiliation: K.AFF.AUTOSKILL, segments: ownBreakSegments(master, pid) })).filter(p => p.segments.length);
+  return { name: m.NAME, monsterId: m.MONSTER_ID, isBoss: true, level: m.LV, charTypes: [m.CHARACTER_TYPE], stats: { hp: m.HP, mp: m.MP, str: m.ATK, def: m.DEF, int: m.MATK, mnd: m.MDEF, crt: m.CRITICAL_RATE }, elemResist, passives, listedPassives, breakTime: m.BREAK_TIME, ...overrides };
 }
 
 export function addTarget(battle, spec) {
   if (spec.monsterId && !spec.stats && battle.master.monster?.has(Number(spec.monsterId))) spec = { ...targetFromMonster(battle.master, spec.monsterId), ...spec };
   const unit = battle.addUnit({ name: spec.name || '目标', side: K.SIDE.OPPONENT, monsterId: spec.monsterId || 0, isBoss: spec.isBoss !== false, level: spec.level ?? 100,
     charTypes: spec.charTypes || [], stats: toStats(spec.stats), hp: spec.stats?.hp, mp: spec.stats?.mp, elemResist: spec.elemResist || {}, passives: (spec.passives || []).filter(p => p.table !== 'monster') });
-  for (const p of spec.passives || []) if (p.table === 'monster') battle.addPassive(unit, p.id, p.affiliation ?? K.AFF.AUTOSKILL, p.id, 1, null, 'monster');
+  for (const p of spec.passives || []) if (p.table === 'monster') {
+    const made = battle.addPassive(unit, p.id, p.affiliation ?? K.AFF.AUTOSKILL, p.id, 1, null, 'monster');
+    if (p.segments) for (const inst of made) if (!p.segments.includes(inst.localIndex)) unit.instances.splice(unit.instances.indexOf(inst), 1);
+  }
   return unit;
 }
 
