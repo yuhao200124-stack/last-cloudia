@@ -1,11 +1,11 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1640';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1640';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1640';
-import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1640';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1640';
+import { K } from './engine/battle.mjs?v=20260930-1647';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1647';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1647';
+import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1647';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1647';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -254,7 +254,7 @@ async function ensureSwitches() { if (!switches) switches = await fetch(new URL(
 const PANEL_CSS_V = '20260929-3col';
 // the page's shadow root has none of this document's base styles
 const HOST_STYLE = `:host{display:block;font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#172d49;font-synthesis:none}*{box-sizing:border-box}#engineBuild{margin:0}.engine-build-on{display:none!important}#enginePanel{margin:0 0 12px}`;
-const STYLE = `.engine-gear{margin-top:8px}.engine-gear .help{margin:4px 0 0}.engine-gear-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700}.engine-gear-list{list-style:none;margin:6px 0 0;padding:0}.engine-gear-list li{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #ccdae9;border-radius:5px;margin-top:4px;background:#f6f9fd}.engine-gear-list small{color:#5a6b85;margin-left:auto}.engine-gear-kind{font-size:.8em;color:#285b95;border:1px solid #9fb8d6;border-radius:999px;padding:1px 6px;white-space:nowrap}.engine-gear-name{font-weight:700}.engine-gear-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}.engine-gear-tabs button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-gear-types[hidden]{display:none}.engine-gear-effect{white-space:pre-line;font-size:.85em;color:#33445c}.engine-gear-table td{vertical-align:middle}.engine-gear-table button{white-space:nowrap}.attack-mix{display:block;margin-top:2px;font-size:.78em;font-weight:600;color:#5a6b85}.fields.three:has(.attack-mix)>label{display:flex;flex-direction:column;justify-content:flex-end}.engine-build-table td{vertical-align:middle}.engine-build-table{min-width:0!important}.engine-build-table td,.engine-build-table th{padding:7px 8px}.engine-build-table small{min-width:0!important}#engineBuild{margin-top:18px;padding-top:4px}#engineBuild .section-heading{margin-bottom:6px}#engineBuild .section-heading h3{margin:0;font-size:1rem}.engine-build-on{flex-direction:row!important;align-items:center;gap:6px;font-weight:500!important}#engineBuildWrap{margin-top:14px}#engineBuildStatus{margin:6px 2px 0}.engine-build-sc{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid #cfdfef;border-radius:6px;background:#edf4fb}.engine-build-sc span{font-size:.85rem;color:#445c79;font-weight:600}.engine-build-sc strong{font-size:1.45rem;margin-left:8px;font-variant-numeric:tabular-nums;color:#172d49}.engine-build-breaks{display:inline-flex;gap:6px}.engine-build-breaks button{min-height:32px;padding:4px 10px}.engine-build-breaks button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-build-changes{font-size:.8rem;color:#445c79;margin-top:3px;line-height:1.55}.engine-build-sccell{text-align:center!important}.engine-build-sccell b{display:block}.engine-build-sccell small{font-size:.75rem}.engine-build-auto td{background:#f7f9fc}.engine-build-divider td{padding:0!important;background:#e8eff8}.engine-build-divider button{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;min-height:34px;padding:6px 10px;border:0;border-radius:0;background:transparent;color:#27496f;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-align:left}.engine-build-divider button:hover{background:#dde8f5}.engine-build-fold{font-weight:500;color:#445c79;white-space:nowrap}.engine-build-auto td:last-child{white-space:nowrap;text-align:center}.engine-build-tag{display:inline!important;font-size:.72rem!important;background:#e3ebf5;border-radius:3px;padding:1px 5px;color:#35577d}.engine-build-table td button{min-height:28px;padding:2px 10px}.engine-build-picked{table-layout:fixed}.engine-build-picked td{overflow-wrap:anywhere}#engineBuild{position:relative}.engine-plan-bar{display:flex;align-items:center;gap:8px;margin-top:6px}#engineRecommend{margin-top:10px}.engine-plan-pick{flex:1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin:0!important;font-weight:600;color:#445c79;font-size:.85rem}.engine-plan-pick select{flex:1;min-width:0;min-height:36px}.engine-plan-bar button{min-height:36px}.engine-plan-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.engine-plan-actions button{min-height:36px}#enginePlanStatus{margin:8px 2px 0;min-height:1em}.engine-pop{position:absolute;z-index:30;width:250px;max-width:calc(100% - 4px);padding:12px;border:1px solid #c9d6e6;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(23,45,73,.18),0 2px 6px rgba(23,45,73,.08)}.engine-pop::before{content:'';position:absolute;top:-7px;left:var(--arrow,20px);width:12px;height:12px;background:#fff;border-left:1px solid #c9d6e6;border-top:1px solid #c9d6e6;transform:rotate(45deg)}.engine-pop[hidden]{display:none}.engine-pop-title{margin:0 0 8px;font-size:.88rem;font-weight:600;color:#172d49}.engine-pop input{width:100%;box-sizing:border-box;min-height:36px;padding:6px 10px;border:1px solid #b9c9dc;border-radius:6px;font-size:.95rem}.engine-pop input:focus{outline:2px solid #9cc0ea;outline-offset:0;border-color:#285b95}.engine-pop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.engine-pop-actions button{min-height:32px;padding:4px 14px}.engine-pop-actions .danger{background:#b3372f;border-color:#b3372f;color:#fff}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
+const STYLE = `.engine-gear{margin-top:8px}.engine-gear .help{margin:4px 0 0}.engine-gear-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700}.engine-gear-list{list-style:none;margin:6px 0 0;padding:0}.engine-gear-list li{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #ccdae9;border-radius:5px;margin-top:4px;background:#f6f9fd}.engine-gear-list small{color:#5a6b85;margin-left:auto}.engine-gear-kind{font-size:.8em;color:#285b95;border:1px solid #9fb8d6;border-radius:999px;padding:1px 6px;white-space:nowrap}.engine-gear-name{font-weight:700}.engine-gear-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}.engine-gear-tabs button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-gear-types[hidden]{display:none}.engine-gear-effect{white-space:pre-line;font-size:.85em;color:#33445c}.engine-gear-table td{vertical-align:middle}.engine-gear-types .not-wearable{border-style:dashed;color:#7a8799;background:#f3f5f8}.engine-gear-types .not-wearable small{display:block;font-size:.7em}.engine-gear-types .not-wearable[aria-pressed=true]{background:#7a8799;color:#fff;border-color:#7a8799}.engine-gear-types .not-wearable[aria-pressed=true] small{color:#fff}.engine-gear-table tr.not-wearable td{color:#7a8799;background:#f7f8fa}.engine-gear-name em{font-style:normal;font-size:.85em;color:#a0522d}@media(max-width:640px){.engine-gear-table colgroup,.engine-gear-table thead{display:none}.engine-gear-table,.engine-gear-table tbody{display:block;width:100%!important;min-width:0!important}.engine-gear-table tr{display:grid;grid-template-columns:minmax(0,1fr) auto;border:1px solid #ccdae9;border-radius:6px;margin-bottom:8px}.engine-gear-table td{display:block;border:0;padding:6px 10px}.engine-gear-table td:nth-child(1){grid-column:1}.engine-gear-table td:nth-child(4){grid-column:2;grid-row:1}.engine-gear-table td:nth-child(2),.engine-gear-table td:nth-child(3){grid-column:1/span 2;padding-top:0}}.engine-gear-table button{white-space:nowrap}.attack-mix{display:block;margin-top:2px;font-size:.78em;font-weight:600;color:#5a6b85}.fields.three:has(.attack-mix)>label{display:flex;flex-direction:column;justify-content:flex-end}.engine-build-table td{vertical-align:middle}.engine-build-table{min-width:0!important}.engine-build-table td,.engine-build-table th{padding:7px 8px}.engine-build-table small{min-width:0!important}#engineBuild{margin-top:18px;padding-top:4px}#engineBuild .section-heading{margin-bottom:6px}#engineBuild .section-heading h3{margin:0;font-size:1rem}.engine-build-on{flex-direction:row!important;align-items:center;gap:6px;font-weight:500!important}#engineBuildWrap{margin-top:14px}#engineBuildStatus{margin:6px 2px 0}.engine-build-sc{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid #cfdfef;border-radius:6px;background:#edf4fb}.engine-build-sc span{font-size:.85rem;color:#445c79;font-weight:600}.engine-build-sc strong{font-size:1.45rem;margin-left:8px;font-variant-numeric:tabular-nums;color:#172d49}.engine-build-breaks{display:inline-flex;gap:6px}.engine-build-breaks button{min-height:32px;padding:4px 10px}.engine-build-breaks button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-build-changes{font-size:.8rem;color:#445c79;margin-top:3px;line-height:1.55}.engine-build-sccell{text-align:center!important}.engine-build-sccell b{display:block}.engine-build-sccell small{font-size:.75rem}.engine-build-auto td{background:#f7f9fc}.engine-build-divider td{padding:0!important;background:#e8eff8}.engine-build-divider button{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;min-height:34px;padding:6px 10px;border:0;border-radius:0;background:transparent;color:#27496f;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-align:left}.engine-build-divider button:hover{background:#dde8f5}.engine-build-fold{font-weight:500;color:#445c79;white-space:nowrap}.engine-build-auto td:last-child{white-space:nowrap;text-align:center}.engine-build-tag{display:inline!important;font-size:.72rem!important;background:#e3ebf5;border-radius:3px;padding:1px 5px;color:#35577d}.engine-build-table td button{min-height:28px;padding:2px 10px}.engine-build-picked{table-layout:fixed}.engine-build-picked td{overflow-wrap:anywhere}#engineBuild{position:relative}.engine-plan-bar{display:flex;align-items:center;gap:8px;margin-top:6px}#engineRecommend{margin-top:10px}.engine-plan-pick{flex:1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin:0!important;font-weight:600;color:#445c79;font-size:.85rem}.engine-plan-pick select{flex:1;min-width:0;min-height:36px}.engine-plan-bar button{min-height:36px}.engine-plan-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.engine-plan-actions button{min-height:36px}#enginePlanStatus{margin:8px 2px 0;min-height:1em}.engine-pop{position:absolute;z-index:30;width:250px;max-width:calc(100% - 4px);padding:12px;border:1px solid #c9d6e6;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(23,45,73,.18),0 2px 6px rgba(23,45,73,.08)}.engine-pop::before{content:'';position:absolute;top:-7px;left:var(--arrow,20px);width:12px;height:12px;background:#fff;border-left:1px solid #c9d6e6;border-top:1px solid #c9d6e6;transform:rotate(45deg)}.engine-pop[hidden]{display:none}.engine-pop-title{margin:0 0 8px;font-size:.88rem;font-weight:600;color:#172d49}.engine-pop input{width:100%;box-sizing:border-box;min-height:36px;padding:6px 10px;border:1px solid #b9c9dc;border-radius:6px;font-size:.95rem}.engine-pop input:focus{outline:2px solid #9cc0ea;outline-offset:0;border-color:#285b95}.engine-pop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.engine-pop-actions button{min-height:32px;padding:4px 14px}.engine-pop-actions .danger{background:#b3372f;border-color:#b3372f;color:#fff}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
 // ---- the main result card ----
 // 命中段数 is only the user's own count (default 10), kept per move by the page (damage-calculator.mjs); the card
 // edits it through the page.
@@ -798,7 +798,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1640'), import('./engine/engine-data.mjs?v=20260930-1640'), import('./engine/scenario.mjs?v=20260930-1640'), import('./engine/report-adapter.mjs?v=20260930-1640'), import('./engine/loadout-adapter.mjs?v=20260930-1640')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1647'), import('./engine/engine-data.mjs?v=20260930-1647'), import('./engine/scenario.mjs?v=20260930-1647'), import('./engine/report-adapter.mjs?v=20260930-1647'), import('./engine/loadout-adapter.mjs?v=20260930-1647')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -926,7 +926,8 @@ function chosenExclusive(c, master) {
 let equipmentData = null, gearDress = null, gearChoice = {};
 const GEAR_KEY = dress => `lc-engine-gear:${dress}`;
 const SLOT_NAMES = { 1: '武器', 2: '防具', 3: '饰品1', 4: '饰品2' };
-const EQUIP_TYPE_NAMES = { 10: '剑', 11: '斧', 12: '枪', 13: '锤', 14: '弓', 15: '机械', 16: '爪', 17: '杖', 20: '铠甲', 21: '衣服', 22: '长袍', 30: '饰品' };
+const EQUIP_TYPE_NAMES = { 10: '剑', 11: '斧', 12: '枪', 13: '锤', 14: '弓', 15: '机械', 16: '爪', 17: '杖', 20: '铠甲', 21: '衣服', 22: '法袍', 30: '饰品' };
+const ALL_WEAPONS = [10, 11, 12, 13, 14, 15, 16, 17], ALL_ARMORS = [20, 21, 22];
 async function ensureEquipment() {
   if (!equipmentData) equipmentData = await fetch(new URL('./game-data/equipment.json' + V, import.meta.url)).then(r => r.json()).then(j => ({ items: j.items.map(r => Object.fromEntries(j.cols.map((c, i) => [c, r[i]]))), text: j.passiveText }));
   return equipmentData;
@@ -949,25 +950,31 @@ const gearKind = type => (isWeapon(type) ? 'weapon' : type < 30 ? 'armor' : 'acc
 const itemOf = id => equipmentData?.items.find(e => e.id === Number(id));
 async function addGearSlots(spec, dress, types) {
   await ensureEquipment(); loadGearFor(dress);
-  const exclusivePos = new Set(spec.equips.map(e => e.pos));
+  // the 专武 in each slot before the added pieces; an added piece takes its slot from the 专武 (user 2026-09-30: “有些时候我会
+  // 想用某些武器穿戴”)
+  const exclusiveAt = new Map(spec.equips.map(e => [e.pos, e.id])), exclusivePos = new Set(exclusiveAt.keys());
   for (const slot of [1, 2, 3, 4]) {
-    const id = Number(gearChoice[slot]); if (!id || exclusivePos.has(slot)) continue;
-    if (!gearOptions(slot, types, dress).some(e => e.id === id)) continue;   // no longer wearable (e.g. 二刀流 removed)
+    const id = Number(gearChoice[slot]); if (!id) continue;
+    if (!gearOptions(slot, types, dress).some(e => e.id === id)) continue;   // no longer wearable (e.g. 二刀流 or 机械装备 removed)
+    const old = spec.equips.find(e => e.pos === slot);
+    if (old) { spec.equips = spec.equips.filter(e => e !== old); if (spec.equipPassiveIds) delete spec.equipPassiveIds[old.id]; }
     spec.equips.push({ pos: slot, id });
   }
   spec.equips.sort((a, b) => a.pos - b.pos);
-  gearCtx = { dress, types, exclusivePos };
+  await ensureEquipSkills();
+  gearCtx = { dress, types, exclusivePos, exclusiveAt };
   renderGearSlots(gearCtx);
 }
 // the slot an item of this kind goes into: a free one first, else the one holding an added item of the same kind
 function gearSlotFor(kind) {
-  const { types, exclusivePos } = gearCtx;
+  const { types, exclusivePos, exclusiveAt } = gearCtx;
   const slots = kind === 'weapon' ? [1, ...(types.dual ? [2] : [])] : kind === 'armor' ? [2] : [3, 4];
-  const open = slots.filter(s => !exclusivePos.has(s));
-  const free = open.find(s => !gearChoice[s]);
+  const free = slots.find(s => !exclusivePos.has(s) && !gearChoice[s]);
   if (free) return { slot: free };
-  const same = [...open].reverse().find(s => gearKind(itemOf(gearChoice[s])?.type ?? 0) === kind);
+  const same = [...slots].reverse().find(s => gearChoice[s] && gearKind(itemOf(gearChoice[s])?.type ?? 0) === kind);
   if (same) return { slot: same, replaces: itemOf(gearChoice[same]) };
+  const excl = slots.find(s => exclusivePos.has(s) && !gearChoice[s]);
+  if (excl) return { slot: excl, replacesExclusive: itemOf(exclusiveAt.get(excl))?.name || battle.master.itemEquip.get(exclusiveAt.get(excl))?.NAME || '' };
   return { slot: null };
 }
 // 其他装备 under the 专武 selector (user 2026-09-30: “下拉的太难找到…在后面写一个添加装备”): the added pieces, each removable,
@@ -985,12 +992,24 @@ function renderGearSlots(ctx) {
       delete gearChoice[rm.dataset.gearRemove]; saveGear(); run();
     });
   }
-  const added = [1, 2, 3, 4].filter(s => gearChoice[s] && !ctx.exclusivePos.has(s) && itemOf(gearChoice[s]));
+  const added = [1, 2, 3, 4].filter(s => gearChoice[s] && itemOf(gearChoice[s]));
   const kindName = s => { const e = itemOf(gearChoice[s]); return { weapon: s === 2 ? '第二把武器' : '武器', armor: '防具', accessory: '饰品' }[gearKind(e.type)]; };
   box.innerHTML = `<div class="engine-gear-bar"><span>其他装备</span><button type="button" id="engineGearAdd" class="secondary">添加装备</button></div>`
-    + (added.length ? `<ul class="engine-gear-list">${added.map(s => { const e = itemOf(gearChoice[s]); return `<li><span class="engine-gear-kind">${kindName(s)}</span><span class="engine-gear-name">${esc(e.name)}</span><small>${esc(gearStats(e))}</small><button type="button" class="secondary" data-gear-remove="${s}" aria-label="移除">×</button></li>`; }).join('')}</ul>`
+    + (added.length ? `<ul class="engine-gear-list">${added.map(s => { const e = itemOf(gearChoice[s]); return `<li><span class="engine-gear-kind">${kindName(s)}</span><span class="engine-gear-name">${esc(e.name)}${ctx.exclusivePos.has(s) ? '<em>（代替专武）</em>' : ''}</span><small>${esc(gearStats(e))}</small><button type="button" class="secondary" data-gear-remove="${s}" aria-label="移除">×</button></li>`; }).join('')}</ul>`
       : '<p class="help">专武没占的格子可以放其他装备（按满级计算）。</p>');
   box.hidden = false;
+}
+// the skills that allow a type (P_装備可否変更 1100000, e.g. 3900 机械装备): read from the game data, not a list
+let equipSkills = new Map();
+async function ensureEquipSkills() {
+  if (equipSkills.size) return;
+  await ensurePassiveIndex();
+  const ids = passiveIndex.filter(r => /装备$/.test(r.nameS || '')).map(r => r.id);
+  await engineModules.loadPassives(battle.master, ids);
+  for (const id of ids) for (const seg of String(battle.master.passive.get(id)?.PROCESS_INFO || '').split('@')) {
+    const [pid, , type] = seg.split(':').map(Number);
+    if (pid === 1100000 && type && !equipSkills.has(type)) equipSkills.set(type, passiveIndex.find(r => r.id === id)?.nameS);
+  }
 }
 const saveGear = () => { try { localStorage.setItem(GEAR_KEY(gearDress), JSON.stringify(gearChoice)); } catch {} };
 // ---- the 添加装备 page: 武器 / 防具 / 饰品, then the type, then every piece: name, stats at max, effect ----
@@ -1021,17 +1040,25 @@ function openGearPage(open) {
 }
 function renderGearPage() {
   const { types, dress } = gearCtx;
-  const typeList = gearTab === 'weapon' ? types.weapons : gearTab === 'armor' ? types.armors : [30];
+  // every type (user 2026-09-30: “显示全部武器和防具，但是要区分开…哪些是我已经可以穿的哪些是还不能穿的”): the ones this
+  // character can wear first, the others marked 不能装 with the skill that allows them (P_装備可否変更 of the game data)
+  const wearable = gearTab === 'weapon' ? types.weapons : gearTab === 'armor' ? types.armors : [30];
+  const all = gearTab === 'weapon' ? ALL_WEAPONS : gearTab === 'armor' ? ALL_ARMORS : [30];
+  const typeList = [...wearable, ...all.filter(t => !wearable.includes(t))];
   if (!typeList.includes(gearType)) gearType = typeList[0] ?? null;
+  const canWear = wearable.includes(gearType);
   for (const b of $('engineGearPage').querySelectorAll('[data-gear-tab]')) b.setAttribute('aria-pressed', String(b.dataset.gearTab === gearTab));
-  $('engineGearTypes').innerHTML = gearTab === 'accessory' ? '' : typeList.map(t => `<button type="button" data-gear-type="${t}" aria-pressed="${t === gearType}">${EQUIP_TYPE_NAMES[t] || t}</button>`).join('');
+  $('engineGearTypes').innerHTML = gearTab === 'accessory' ? '' : typeList.map(t => `<button type="button" data-gear-type="${t}" aria-pressed="${t === gearType}"${wearable.includes(t) ? '' : ' class="not-wearable" title="这个角色现在不能装"'}>${EQUIP_TYPE_NAMES[t] || t}${wearable.includes(t) ? '' : '<small>不能装</small>'}</button>`).join('');
   $('engineGearTypes').hidden = gearTab === 'accessory';
-  const target = gearSlotFor(gearTab);
-  $('engineGearNote').textContent = !typeList.length ? '这个角色不能装这一类。'
-    : !target.slot ? `${{ weapon: '武器', armor: '防具', accessory: '饰品' }[gearTab]}的格子被专武占用了。`
-    : target.replaces ? `加入后替换已添加的「${target.replaces.name}」。` : `加入${{ 1: '武器格', 2: gearTab === 'weapon' ? '防具格（第二把武器）' : '防具格', 3: '饰品1', 4: '饰品2' }[target.slot]}。`;
+  const target = gearSlotFor(gearTab), skill = equipSkills.get(gearType);
+  const slotName = { 1: '武器格', 2: gearTab === 'weapon' ? '防具格（第二把武器）' : '防具格', 3: '饰品1', 4: '饰品2' }[target.slot];
+  $('engineGearNote').textContent = !canWear ? `这个角色现在不能装${EQUIP_TYPE_NAMES[gearType] || ''}${skill ? `：学会「${skill}」后可以装（配装里加上这个技能）` : ''}。`
+    : !target.slot ? `${{ weapon: '武器', armor: '防具', accessory: '饰品' }[gearTab]}的格子都满了，先移除一件。`
+    : target.replaces ? `加入${slotName}，替换已添加的「${target.replaces.name}」。`
+    : target.replacesExclusive ? `加入${slotName}，代替专武「${target.replacesExclusive}」。` : `加入${slotName}。`;
   const items = gearType == null ? [] : equipmentData.items.filter(e => e.top && !e.dress && e.type === gearType).sort((a, b) => b.rare - a.rare || b.id - a.id);
-  $('engineGearRows').innerHTML = items.map(e => `<tr><td><b>${esc(e.name)}</b>${e.elem ? `<br><small>${ELEM_NAMES[e.elem]}属性</small>` : ''}</td><td>${esc(gearStats(e))}</td><td class="engine-gear-effect">${esc(gearText(e))}</td><td><button type="button" class="primary" data-gear-add="${e.id}"${target.slot ? '' : ' disabled'}>添加</button></td></tr>`).join('')
+  const button = e => canWear && target.slot ? `<button type="button" class="primary" data-gear-add="${e.id}">添加</button>` : `<button type="button" disabled>${canWear ? '格子满了' : '不能装'}</button>`;
+  $('engineGearRows').innerHTML = items.map(e => `<tr${canWear ? '' : ' class="not-wearable"'}><td><b>${esc(e.name)}</b>${e.elem ? `<br><small>${ELEM_NAMES[e.elem]}属性</small>` : ''}</td><td>${esc(gearStats(e))}</td><td class="engine-gear-effect">${esc(gearText(e))}</td><td>${button(e)}</td></tr>`).join('')
     || '<tr><td colspan="4" class="help">没有可以添加的装备。</td></tr>';
 }
 document.addEventListener('lc:calculator-reset', () => { gearChoice = {}; try { if (gearDress) localStorage.removeItem(GEAR_KEY(gearDress)); } catch {} });

@@ -41,4 +41,10 @@ test('the calculator adds gear through 添加装备 and its page (武器 / 防�
   assert(panel.includes('<button type="button" data-gear-tab="weapon">武器</button><button type="button" data-gear-tab="armor">防具</button><button type="button" data-gear-tab="accessory">饰品</button>'));
   assert(panel.includes('<th>名称</th><th>属性（满级）</th><th>效果</th>'));
   assert(!panel.includes('data-gear-slot='), 'no drop-down slots any more');
+  // every weapon / armour type, the ones the character cannot wear marked 不能装 with the skill that allows them (from the
+  // game data's P_装備可否変更); an added piece may take the 专武's slot (user: “有些时候我会想用某些武器穿戴”)
+  assert(panel.includes("const ALL_WEAPONS = [10, 11, 12, 13, 14, 15, 16, 17], ALL_ARMORS = [20, 21, 22];"));
+  assert.match(panel, /<small>不能装<\/small>/);
+  assert.match(panel, /pid === 1100000 && type && !equipSkills\.has\(type\)/);
+  assert.match(panel, /代替专武「\$\{target\.replacesExclusive\}」/);
 });
