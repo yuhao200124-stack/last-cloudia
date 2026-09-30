@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1651';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1712';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -299,7 +299,7 @@ export class Battle {
       return { id: e.id, raw: v, per, value: per ? Math.floor(v * (1 + per * 0.0001) + 0.5) : v };
     }).filter(Boolean);
     return {
-      stat: statType, pure: u.pure[statType] ?? 0, crest: u.panelGiven ? 0 : (u.crest?.stats?.[statType] || 0), equips, panelGiven: !!u.panelGiven, panelOverride: u.panelOverride?.[statType] ?? null,
+      stat: statType, pure: u.pure[statType] ?? 0, crest: u.panelGiven ? 0 : (u.crest?.stats?.[statType] || 0), ark: u.panelGiven ? 0 : (u.ark?.stats?.[statType] || 0), equips, panelGiven: !!u.panelGiven, panelOverride: u.panelOverride?.[statType] ?? null,
       status: u.panelGiven ? [] : u.status.filter(e => e.op === op).map(e => entry(e, 'status')),
       runtime: [...u.real.filter(e => e.op === op).map(e => entry(e, 'real')), ...(work ? u.work.filter(e => e.op === op).map(e => entry(e, 'work')) : []), ...(bullet ? bullet.work.filter(e => e.op === op).map(e => entry(e, 'bullet')) : [])],
       panel: this.finalStat(u, statType, { layer: 'status' }), final: this.finalStat(u, statType, { work, bullet }), finalAdd: u.finalAdd?.[statType] || 0,
@@ -310,7 +310,8 @@ export class Battle {
   // per) from 特定装備時装備パラメータ増減 passives raises the piece's own value, percentages adding up
   // (洛琪希: staff INT 365 ×(1+100%), robe INT 229 ×(1+50%) → 344, robe MND 116 ×(1+100%+50%)).
   equipmentStat(u, statType) {
-    let total = u.crest?.stats?.[statType] || 0;
+    // the ark's stats join them too (UnitUtil.AddArkParameter, right after AddCrestParameter)
+    let total = (u.crest?.stats?.[statType] || 0) + (u.ark?.stats?.[statType] || 0);
     for (const e of u.equips) {
       const v = e.stats?.[statType] || 0; if (!v) continue;
       let per = 0;

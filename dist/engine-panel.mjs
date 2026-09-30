@@ -1,11 +1,11 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1651';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1651';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1651';
-import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1651';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1651';
+import { K } from './engine/battle.mjs?v=20260930-1712';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1712';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1712';
+import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1712';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1712';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -254,7 +254,7 @@ async function ensureSwitches() { if (!switches) switches = await fetch(new URL(
 const PANEL_CSS_V = '20260929-3col';
 // the page's shadow root has none of this document's base styles
 const HOST_STYLE = `:host{display:block;font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#172d49;font-synthesis:none}*{box-sizing:border-box}#engineBuild{margin:0}.engine-build-on{display:none!important}#enginePanel{margin:0 0 12px}`;
-const STYLE = `.engine-gear{margin-top:8px}.engine-gear .help{margin:4px 0 0}.engine-gear-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700}.engine-gear-list{list-style:none;margin:6px 0 0;padding:0}.engine-gear-list li{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #ccdae9;border-radius:5px;margin-top:4px;background:#f6f9fd}.engine-gear-list small{color:#5a6b85;margin-left:auto}.engine-gear-kind{font-size:.8em;color:#285b95;border:1px solid #9fb8d6;border-radius:999px;padding:1px 6px;white-space:nowrap}.engine-gear-name{font-weight:700}.engine-gear-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}.engine-gear-tabs button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-gear-types[hidden]{display:none}.engine-gear-effect{white-space:pre-line;font-size:.85em;color:#33445c}.engine-gear-table td{vertical-align:middle}.engine-gear-types .not-wearable{border-style:dashed;color:#7a8799;background:#f3f5f8}.engine-gear-types .not-wearable small{display:block;font-size:.7em}.engine-gear-types .not-wearable[aria-pressed=true]{background:#7a8799;color:#fff;border-color:#7a8799}.engine-gear-types .not-wearable[aria-pressed=true] small{color:#fff}.engine-gear-table tr.not-wearable td{color:#7a8799;background:#f7f8fa}.engine-gear-name em{font-style:normal;font-size:.85em;color:#a0522d}.engine-gear-name .engine-gear-off{display:block;color:#b03a2e}.engine-gear-added{margin:4px 0 8px;font-weight:700;color:#285b95}.engine-gear-done{color:#14733f;border-color:#8cc7a4;background:#eef8f1}@media(max-width:640px){.engine-gear-table colgroup,.engine-gear-table thead{display:none}.engine-gear-table,.engine-gear-table tbody{display:block;width:100%!important;min-width:0!important}.engine-gear-table tr{display:grid;grid-template-columns:minmax(0,1fr) auto;border:1px solid #ccdae9;border-radius:6px;margin-bottom:8px}.engine-gear-table td{display:block;border:0;padding:6px 10px}.engine-gear-table td:nth-child(1){grid-column:1}.engine-gear-table td:nth-child(4){grid-column:2;grid-row:1}.engine-gear-table td:nth-child(2),.engine-gear-table td:nth-child(3){grid-column:1/span 2;padding-top:0}}.engine-gear-table button{white-space:nowrap}.attack-mix{display:block;margin-top:2px;font-size:.78em;font-weight:600;color:#5a6b85}.fields.three:has(.attack-mix)>label{display:flex;flex-direction:column;justify-content:flex-end}.engine-build-table td{vertical-align:middle}.engine-build-table{min-width:0!important}.engine-build-table td,.engine-build-table th{padding:7px 8px}.engine-build-table small{min-width:0!important}#engineBuild{margin-top:18px;padding-top:4px}#engineBuild .section-heading{margin-bottom:6px}#engineBuild .section-heading h3{margin:0;font-size:1rem}.engine-build-on{flex-direction:row!important;align-items:center;gap:6px;font-weight:500!important}#engineBuildWrap{margin-top:14px}#engineBuildStatus{margin:6px 2px 0}.engine-build-sc{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid #cfdfef;border-radius:6px;background:#edf4fb}.engine-build-sc span{font-size:.85rem;color:#445c79;font-weight:600}.engine-build-sc strong{font-size:1.45rem;margin-left:8px;font-variant-numeric:tabular-nums;color:#172d49}.engine-build-breaks{display:inline-flex;gap:6px}.engine-build-breaks button{min-height:32px;padding:4px 10px}.engine-build-breaks button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-build-changes{font-size:.8rem;color:#445c79;margin-top:3px;line-height:1.55}.engine-build-sccell{text-align:center!important}.engine-build-sccell b{display:block}.engine-build-sccell small{font-size:.75rem}.engine-build-auto td{background:#f7f9fc}.engine-build-divider td{padding:0!important;background:#e8eff8}.engine-build-divider button{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;min-height:34px;padding:6px 10px;border:0;border-radius:0;background:transparent;color:#27496f;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-align:left}.engine-build-divider button:hover{background:#dde8f5}.engine-build-fold{font-weight:500;color:#445c79;white-space:nowrap}.engine-build-auto td:last-child{white-space:nowrap;text-align:center}.engine-build-tag{display:inline!important;font-size:.72rem!important;background:#e3ebf5;border-radius:3px;padding:1px 5px;color:#35577d}.engine-build-table td button{min-height:28px;padding:2px 10px}.engine-build-picked{table-layout:fixed}.engine-build-picked td{overflow-wrap:anywhere}#engineBuild{position:relative}.engine-plan-bar{display:flex;align-items:center;gap:8px;margin-top:6px}#engineRecommend{margin-top:10px}.engine-plan-pick{flex:1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin:0!important;font-weight:600;color:#445c79;font-size:.85rem}.engine-plan-pick select{flex:1;min-width:0;min-height:36px}.engine-plan-bar button{min-height:36px}.engine-plan-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.engine-plan-actions button{min-height:36px}#enginePlanStatus{margin:8px 2px 0;min-height:1em}.engine-pop{position:absolute;z-index:30;width:250px;max-width:calc(100% - 4px);padding:12px;border:1px solid #c9d6e6;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(23,45,73,.18),0 2px 6px rgba(23,45,73,.08)}.engine-pop::before{content:'';position:absolute;top:-7px;left:var(--arrow,20px);width:12px;height:12px;background:#fff;border-left:1px solid #c9d6e6;border-top:1px solid #c9d6e6;transform:rotate(45deg)}.engine-pop[hidden]{display:none}.engine-pop-title{margin:0 0 8px;font-size:.88rem;font-weight:600;color:#172d49}.engine-pop input{width:100%;box-sizing:border-box;min-height:36px;padding:6px 10px;border:1px solid #b9c9dc;border-radius:6px;font-size:.95rem}.engine-pop input:focus{outline:2px solid #9cc0ea;outline-offset:0;border-color:#285b95}.engine-pop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.engine-pop-actions button{min-height:32px;padding:4px 14px}.engine-pop-actions .danger{background:#b3372f;border-color:#b3372f;color:#fff}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
+const STYLE = `.engine-gear{margin-top:8px}.engine-gear .help{margin:4px 0 0}.engine-gear-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700}.engine-gear-list{list-style:none;margin:6px 0 0;padding:0}.engine-gear-list li{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #ccdae9;border-radius:5px;margin-top:4px;background:#f6f9fd}.engine-gear-list small{color:#5a6b85;margin-left:auto}.engine-gear-kind{font-size:.8em;color:#285b95;border:1px solid #9fb8d6;border-radius:999px;padding:1px 6px;white-space:nowrap}.engine-gear-name{font-weight:700}.engine-gear-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}.engine-gear-tabs button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-gear-types[hidden]{display:none}.engine-gear-effect{white-space:pre-line;font-size:.85em;color:#33445c}.engine-gear-table td{vertical-align:middle}.engine-gear-types .not-wearable{border-style:dashed;color:#7a8799;background:#f3f5f8}.engine-gear-types .not-wearable small{display:block;font-size:.7em}.engine-gear-types .not-wearable[aria-pressed=true]{background:#7a8799;color:#fff;border-color:#7a8799}.engine-gear-types .not-wearable[aria-pressed=true] small{color:#fff}.engine-gear-table tr.not-wearable td{color:#7a8799;background:#f7f8fa}.engine-gear-name em{font-style:normal;font-size:.85em;color:#a0522d}.engine-gear-name .engine-gear-off{display:block;color:#b03a2e}.engine-gear-buttons{display:flex;gap:6px}.engine-gear-name small{display:block;font-weight:400;color:#5a6b85;font-size:.8em}.engine-ark-hand{color:#a0522d;font-weight:700}.engine-gear-added{margin:4px 0 8px;font-weight:700;color:#285b95}.engine-gear-done{color:#14733f;border-color:#8cc7a4;background:#eef8f1}@media(max-width:640px){.engine-gear-table colgroup,.engine-gear-table thead{display:none}.engine-gear-table,.engine-gear-table tbody{display:block;width:100%!important;min-width:0!important}.engine-gear-table tr{display:grid;grid-template-columns:minmax(0,1fr) auto;border:1px solid #ccdae9;border-radius:6px;margin-bottom:8px}.engine-gear-table td{display:block;border:0;padding:6px 10px}.engine-gear-table td:nth-child(1){grid-column:1}.engine-gear-table td:nth-child(4){grid-column:2;grid-row:1}.engine-gear-table td:nth-child(2),.engine-gear-table td:nth-child(3){grid-column:1/span 2;padding-top:0}}.engine-gear-table button{white-space:nowrap}.attack-mix{display:block;margin-top:2px;font-size:.78em;font-weight:600;color:#5a6b85}.fields.three:has(.attack-mix)>label{display:flex;flex-direction:column;justify-content:flex-end}.engine-build-table td{vertical-align:middle}.engine-build-table{min-width:0!important}.engine-build-table td,.engine-build-table th{padding:7px 8px}.engine-build-table small{min-width:0!important}#engineBuild{margin-top:18px;padding-top:4px}#engineBuild .section-heading{margin-bottom:6px}#engineBuild .section-heading h3{margin:0;font-size:1rem}.engine-build-on{flex-direction:row!important;align-items:center;gap:6px;font-weight:500!important}#engineBuildWrap{margin-top:14px}#engineBuildStatus{margin:6px 2px 0}.engine-build-sc{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid #cfdfef;border-radius:6px;background:#edf4fb}.engine-build-sc span{font-size:.85rem;color:#445c79;font-weight:600}.engine-build-sc strong{font-size:1.45rem;margin-left:8px;font-variant-numeric:tabular-nums;color:#172d49}.engine-build-breaks{display:inline-flex;gap:6px}.engine-build-breaks button{min-height:32px;padding:4px 10px}.engine-build-breaks button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-build-changes{font-size:.8rem;color:#445c79;margin-top:3px;line-height:1.55}.engine-build-sccell{text-align:center!important}.engine-build-sccell b{display:block}.engine-build-sccell small{font-size:.75rem}.engine-build-auto td{background:#f7f9fc}.engine-build-divider td{padding:0!important;background:#e8eff8}.engine-build-divider button{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;min-height:34px;padding:6px 10px;border:0;border-radius:0;background:transparent;color:#27496f;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-align:left}.engine-build-divider button:hover{background:#dde8f5}.engine-build-fold{font-weight:500;color:#445c79;white-space:nowrap}.engine-build-auto td:last-child{white-space:nowrap;text-align:center}.engine-build-tag{display:inline!important;font-size:.72rem!important;background:#e3ebf5;border-radius:3px;padding:1px 5px;color:#35577d}.engine-build-table td button{min-height:28px;padding:2px 10px}.engine-build-picked{table-layout:fixed}.engine-build-picked td{overflow-wrap:anywhere}#engineBuild{position:relative}.engine-plan-bar{display:flex;align-items:center;gap:8px;margin-top:6px}#engineRecommend{margin-top:10px}.engine-plan-pick{flex:1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin:0!important;font-weight:600;color:#445c79;font-size:.85rem}.engine-plan-pick select{flex:1;min-width:0;min-height:36px}.engine-plan-bar button{min-height:36px}.engine-plan-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.engine-plan-actions button{min-height:36px}#enginePlanStatus{margin:8px 2px 0;min-height:1em}.engine-pop{position:absolute;z-index:30;width:250px;max-width:calc(100% - 4px);padding:12px;border:1px solid #c9d6e6;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(23,45,73,.18),0 2px 6px rgba(23,45,73,.08)}.engine-pop::before{content:'';position:absolute;top:-7px;left:var(--arrow,20px);width:12px;height:12px;background:#fff;border-left:1px solid #c9d6e6;border-top:1px solid #c9d6e6;transform:rotate(45deg)}.engine-pop[hidden]{display:none}.engine-pop-title{margin:0 0 8px;font-size:.88rem;font-weight:600;color:#172d49}.engine-pop input{width:100%;box-sizing:border-box;min-height:36px;padding:6px 10px;border:1px solid #b9c9dc;border-radius:6px;font-size:.95rem}.engine-pop input:focus{outline:2px solid #9cc0ea;outline-offset:0;border-color:#285b95}.engine-pop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.engine-pop-actions button{min-height:32px;padding:4px 14px}.engine-pop-actions .danger{background:#b3372f;border-color:#b3372f;color:#fff}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
 // ---- the main result card ----
 // 命中段数 is only the user's own count (default 10), kept per move by the page (damage-calculator.mjs); the card
 // edits it through the page.
@@ -302,7 +302,8 @@ function sourceName(src, ctx) {
   if (src.kind === 'bullet') return `招式自带（${ctx.moveName}）`;
   if (src.kind === 'unknown') return `未识别来源（${src.uid}）`;
   const gear = ctx.gearNames.get(Number(src.localId));
-  const name = passiveNames?.get(src.passiveId) || (gear ?? passiveNames?.get(src.localId)) || master.passive.get(src.passiveId || src.localId)?.NAME || master.itemEquip.get(src.localId)?.NAME || `编号 ${src.localId}`;
+  const arkName = battle.arkNames?.get(Number(src.localId));
+  const name = passiveNames?.get(src.passiveId) || (arkName ? `圣物「${arkName}」` : null) || (gear ?? passiveNames?.get(src.localId)) || master.passive.get(src.passiveId || src.localId)?.NAME || master.itemEquip.get(src.localId)?.NAME || `编号 ${src.localId}`;
   return src.kind === 'buff' ? `${name}（增益）` : name;
 }
 // "月光II +30%、自动充能 +15" — one entry per source, the move's own (this call / this bullet) marked
@@ -321,8 +322,9 @@ function statSteps(parts, ctx, { baseLabel, unit = '' }) {
   else {
     lines.push(`${baseLabel} ${fmt(parts.pure)}${unit}`);
     if (parts.crest) lines.push(`徽章 +${fmt(parts.crest)}`);
+    if (parts.ark) lines.push(`圣物 +${fmt(parts.ark)}${unit}`);
     for (const e of parts.equips) lines.push(e.per ? `${ctx.gearNames.get(Number(e.id)) || battle.master.itemEquip.get(e.id)?.NAME || e.id}：${fmt(e.raw)} × (1 + ${pctPer(e.per)}) → ${fmt(e.value)}` : `${ctx.gearNames.get(Number(e.id)) || battle.master.itemEquip.get(e.id)?.NAME || e.id}：+${fmt(e.raw)}`);
-    const eq = parts.crest + parts.equips.reduce((a, e) => a + e.value, 0), st = sum(parts.status);
+    const eq = parts.crest + (parts.ark || 0) + parts.equips.reduce((a, e) => a + e.value, 0), st = sum(parts.status);
     if (parts.status.length) lines.push(`面板加成（${listParts(parts.status, ctx, unit)}）：(${fmt(parts.pure)}${eq ? ` + 装备 ${fmt(eq)}` : ''}${st.val ? ` + ${fmt(st.val)}` : ''})${st.per ? ` × (1 + ${pctPer(st.per)})` : ''}${st.add ? ` + ${fmt(st.add)}` : ''} → ${fmt(parts.panel)}${unit}`);
     else if (eq) lines.push(`${fmt(parts.pure)} + 装备 ${fmt(eq)} → ${fmt(parts.panel)}${unit}`);
   }
@@ -798,7 +800,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1651'), import('./engine/engine-data.mjs?v=20260930-1651'), import('./engine/scenario.mjs?v=20260930-1651'), import('./engine/report-adapter.mjs?v=20260930-1651'), import('./engine/loadout-adapter.mjs?v=20260930-1651')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1712'), import('./engine/engine-data.mjs?v=20260930-1712'), import('./engine/scenario.mjs?v=20260930-1712'), import('./engine/report-adapter.mjs?v=20260930-1712'), import('./engine/loadout-adapter.mjs?v=20260930-1712')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -923,7 +925,7 @@ function chosenExclusive(c, master) {
 // 2 armour (a second weapon with 二刀流), 3–4 accessories — for the ones the 专武 left free, chosen from every piece of
 // equipment (dist/game-data/equipment.json, local-migration-tools/game-data/equipment.py): the top tier of each
 // SERIAL_NUM, at max level, only the types this character can wear, no other character's exclusive gear.
-let equipmentData = null, gearDress = null, gearChoice = {};
+let equipmentData = null, gearDress = null, gearChoice = {}, arkDress = null;
 const GEAR_KEY = dress => `lc-engine-gear:${dress}`;
 const SLOT_NAMES = { 1: '武器', 2: '防具', 3: '饰品1', 4: '饰品2' };
 const EQUIP_TYPE_NAMES = { 10: '剑', 11: '斧', 12: '枪', 13: '锤', 14: '弓', 15: '机械', 16: '爪', 17: '杖', 20: '铠甲', 21: '衣服', 22: '法袍', 30: '饰品' };
@@ -949,7 +951,8 @@ const gearText = e => e.passives.map(p => equipmentData.text[p] || '').filter(Bo
 const gearKind = type => (isWeapon(type) ? 'weapon' : type < 30 ? 'armor' : 'accessory');
 const itemOf = id => equipmentData?.items.find(e => e.id === Number(id));
 async function addGearSlots(spec, dress, types) {
-  await ensureEquipment(); loadGearFor(dress);
+  await ensureEquipment(); loadGearFor(dress); if (gearDress !== arkDress) { loadArkFor(dress); arkDress = dress; }
+  if (arkChoice) { await ensureArks(); const a = arkOf(arkChoice); if (a) spec.ark = a; }
   // the 专武 in each slot before the added pieces; an added piece takes its slot from the 专武 (user 2026-09-30: “有些时候我会
   // 想用某些武器穿戴”)
   const exclusiveAt = new Map(spec.equips.map(e => [e.pos, e.id])), exclusivePos = new Set(exclusiveAt.keys());
@@ -992,16 +995,64 @@ function renderGearSlots(ctx) {
     anchor.after(box);
     box.addEventListener('click', e => {
       if (e.target.closest('#engineGearAdd')) { openGearPage(true); return; }
+      if (e.target.closest('#engineArkAdd')) { openArkPage(true); return; }
+      if (e.target.closest('[data-ark-remove]')) { arkChoice = null; saveArk(); run(); return; }
       const rm = e.target.closest('[data-gear-remove]'); if (!rm) return;
       delete gearChoice[rm.dataset.gearRemove]; saveGear(); run();
     });
   }
   const added = [1, 2, 3, 4].filter(s => gearChoice[s] && itemOf(gearChoice[s]));
   const kindName = s => { const e = itemOf(gearChoice[s]); return { weapon: s === 2 ? '第二把武器' : '武器', armor: '防具', accessory: '饰品' }[gearKind(e.type)]; };
-  box.innerHTML = `<div class="engine-gear-bar"><span>其他装备</span><button type="button" id="engineGearAdd" class="secondary">添加装备</button></div>`
+  const ark = arkChoice ? arkOf(arkChoice) : null;
+  box.innerHTML = `<div class="engine-gear-bar"><span>其他装备</span><span class="engine-gear-buttons"><button type="button" id="engineGearAdd" class="secondary">添加装备</button><button type="button" id="engineArkAdd" class="secondary">添加圣物</button></span></div>`
+    + (ark ? `<ul class="engine-gear-list"><li><span class="engine-gear-kind">圣物</span><span class="engine-gear-name">${esc(ark.name)}<small>${esc(ark.rarity)} · Lv${ark.level}</small></span><small>${esc(arkStatsText(ark))}</small><button type="button" class="secondary" data-ark-remove aria-label="移除">×</button></li></ul>` : '')
     + (added.length ? `<ul class="engine-gear-list">${added.map(s => { const e = itemOf(gearChoice[s]); return `<li><span class="engine-gear-kind">${kindName(s)}</span><span class="engine-gear-name">${esc(e.name)}${ctx.counted.has(s) && ctx.exclusivePos.has(s) ? '<em>（代替专武）</em>' : ''}${ctx.counted.has(s) ? '' : `<em class="engine-gear-off">${esc(notCountedReason(s, e))}</em>`}</span><small>${esc(gearStats(e))}</small><button type="button" class="secondary" data-gear-remove="${s}" aria-label="移除">×</button></li>`; }).join('')}</ul>`
       : '<p class="help">专武没占的格子可以放其他装备（按满级计算）。</p>');
   box.hidden = false;
+}
+// ---- 添加圣物 (user 2026-09-30: “在添加装备右边再弄一个添加圣物”, one ark per character, “圣物直接按照最大的算”): every
+// ark at its top level from dist/game-data/arks.json (ArkLvMst): its stats join the panel after the equipment and the
+// crest, its effect at that level counts (affiliation 5). The hand-entered 圣物属性加成 fields no longer count once one is picked.
+let arkData = null, arkChoice = null, arkRarity = 'all';
+const ARK_KEY = dress => `lc-engine-ark:${dress}`;
+async function ensureArks() { if (!arkData) arkData = await fetch(new URL('./game-data/arks.json' + V, import.meta.url)).then(r => r.json()).then(j => j.items); return arkData; }
+const arkOf = id => arkData?.find(a => a.id === Number(id)) || null;
+const arkStatsText = a => a.stats.map((v, i) => (v ? `${GEAR_STAT_NAMES[i]} +${v.toLocaleString('zh-CN')}` : '')).filter(Boolean).join('　');
+function loadArkFor(dress) { try { arkChoice = Number(localStorage.getItem(ARK_KEY(dress))) || null; } catch { arkChoice = null; } }
+const saveArk = () => { try { if (arkChoice) localStorage.setItem(ARK_KEY(gearDress), String(arkChoice)); else localStorage.removeItem(ARK_KEY(gearDress)); } catch {} };
+document.addEventListener('lc:calculator-reset', () => { arkChoice = null; saveArk(); });
+function arkPage() {
+  let page = $('engineArkPage'); if (page) return page;
+  page = document.createElement('section'); page.id = 'engineArkPage'; page.className = 'card engine-gear-page'; page.hidden = true;
+  page.innerHTML = `<div class="section-heading"><h2 id="engineArkTitle" tabindex="-1">添加圣物</h2><button id="engineArkClose" type="button">返回</button></div>
+    <div class="engine-gear-tabs" id="engineArkTabs" role="group" aria-label="稀有度"></div>
+    <p class="help">每个角色带 1 个圣物，按最高等级计算：数值加进面板（和装备、徽章一样），圣物效果也计入。</p><p class="engine-gear-added" id="engineArkAdded"></p>
+    <div class="entry-table-wrap"><table class="entry-table engine-gear-table"><colgroup><col style="width:22%"><col style="width:24%"><col><col style="width:84px"></colgroup><thead><tr><th>名称</th><th>属性（满级）</th><th>效果</th><th></th></tr></thead><tbody id="engineArkRows"></tbody></table></div>`;
+  (gearPage() || $('calculationPage')).after(page);
+  page.addEventListener('click', e => {
+    if (e.target.closest('#engineArkClose')) { openArkPage(false); return; }
+    const tab = e.target.closest('[data-ark-rarity]'); if (tab) { arkRarity = tab.dataset.arkRarity; renderArkPage(); return; }
+    const rm = e.target.closest('[data-ark-unadd]'); if (rm) { arkChoice = null; saveArk(); renderArkPage(); run(); return; }
+    const add = e.target.closest('[data-ark-add]'); if (!add) return;
+    arkChoice = Number(add.dataset.arkAdd); saveArk(); renderArkPage(); run();   // the page stays open (as 添加装备)
+  });
+  return page;
+}
+async function openArkPage(open) {
+  const page = arkPage();
+  if (open) await ensureArks();
+  page.hidden = !open; if ($('calculationPage')) $('calculationPage').hidden = open;
+  for (const id of ['reviewPage', 'engineGearPage']) if (open && $(id)) $(id).hidden = true;
+  if (open) { renderArkPage(); $('engineArkTitle').focus(); window.scrollTo({ top: 0 }); } else $('engineArkAdd')?.focus();
+}
+function renderArkPage() {
+  const rarities = ['all', ...[...new Set(arkData.map(a => a.rarity))]];
+  $('engineArkTabs').innerHTML = rarities.map(r => `<button type="button" data-ark-rarity="${r}" aria-pressed="${r === arkRarity}">${r === 'all' ? '全部' : r}</button>`).join('');
+  const cur = arkOf(arkChoice);
+  $('engineArkAdded').textContent = cur ? `已添加：${cur.name}（加入其他圣物会替换它）` : '';
+  const list = arkData.filter(a => arkRarity === 'all' || a.rarity === arkRarity);
+  const effect = a => [a.text, a.skill?.text && `圣物技能 Lv${a.skill.level}：${a.skill.text}`].filter(Boolean).join('\n') || '—';
+  $('engineArkRows').innerHTML = list.map(a => `<tr><td><b>${esc(a.name)}</b><br><small>${esc(a.rarity)} · Lv${a.level}</small></td><td>${esc(arkStatsText(a))}</td><td class="engine-gear-effect">${esc(effect(a))}</td><td>${a.id === arkChoice ? `<button type="button" class="secondary engine-gear-done" data-ark-unadd="${a.id}" title="点一下移除">已添加 ×</button>` : `<button type="button" class="primary" data-ark-add="${a.id}">添加</button>`}</td></tr>`).join('');
 }
 // the skills that allow a type (P_装備可否変更 1100000, e.g. 3900 机械装备): read from the game data, not a list
 let equipSkills = new Map();
@@ -1242,6 +1293,9 @@ async function run(force = false) {
     if (stageMissing.length) gearNotes.push(`专武最高强化阶段的被动 ${stageMissing.join('、')} 在游戏数据里没找到，按基础阶段计算`);
     if (stageMissing.length) for (const [id, list] of Object.entries(attackerSpec.equipPassiveIds)) if (list.some(p => stageMissing.includes(p))) delete attackerSpec.equipPassiveIds[id];
     equipMove(attackerSpec, move.id, battle.master, M.parseInts);
+    // 圣物属性 before the unit is made (since the single run there is no second unit that would pick it up later)
+    attackerSpec.finalAdd = attackerSpec.ark ? null : arkFinalAdd(latest.arkStats);
+    if ($('arkStatsTitle')) { let n = $('engineArkHandNote'); if (!n) { n = document.createElement('p'); n.id = 'engineArkHandNote'; n.className = 'help engine-ark-hand'; $('arkStatsTitle').after(n); } n.textContent = attackerSpec.ark ? `已添加圣物「${attackerSpec.ark.name}」，按游戏数据计算；这里手填的数值不再计入。` : ''; n.hidden = !attackerSpec.ark; }
     const attacker = M.addAttacker(battle, attackerSpec);
     renderPreCasts(attacker, battle.master, move.id);
     let targetSpec = null;
@@ -1256,7 +1310,6 @@ async function run(force = false) {
     renderBossPassives(targetSpec);
     const target = M.addTarget(battle, targetSpec);
     renderSupportMagic(gameChar, dress);
-    attackerSpec.finalAdd = arkFinalAdd(latest.arkStats);
     const state = stateFromSwitches(latest);
     // switches assume every conditional instance in their group
     // (one run: runScenario applies the switch groups itself — it used to be a probe run and a second run)
