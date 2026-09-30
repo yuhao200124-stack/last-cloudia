@@ -2,7 +2,7 @@
 // The report's buff inventory lists every process instance the game created for the unit: its source
 // (affiliation 4 = passive skill, 6/7/8 = weapon/armour/accessory by equipment id), segment index and the
 // parameters actually loaded (blessing levels change them), in the game's own creation order.
-import { K, parseInts } from './battle.mjs?v=20260930-2019';
+import { K, parseInts } from './battle.mjs?v=20261001-0448';
 
 const RESIST_KEYS = { fire: 1, ice: 2, earth: 3, tree: 3, thunder: 4, light: 5, dark: 6 };
 const RACE_CODES = { 战士: 1001, 狙击手: 1002, 骑士: 1003, 魔法师: 1004, 治疗师: 1005, 兽: 2001, 植物: 2002, 昆虫: 2003, 鸟: 2004, 魔法生物: 2005, 不死生物: 2006, 石: 2007, 机械: 2008, 精灵: 2009, 龙: 2010, 神: 2011, 鱼: 2012 };
@@ -54,6 +54,21 @@ export function passivesOf(unit, master) {
   return { passives: [...specs.values()].filter(p => p.id || p.processes?.length), equips };
 }
 
+// The report's unitId is the character's UNIT_ID (梅莉 = 100640), not the outfit (魔神梅莉 = 100642): the outfit is the
+// UnitDressMst row of that unit whose skills are the ones the report lists (2026-10-01, user: 魔神梅莉“和计算器算出来的不一样”).
+export function reportDressId(unit, master) {
+  const id = Number(unit?.unitId) || 0; if (!master?.unitDress) return id;
+  const skills = new Set((unit.skills || []).map(s => Number(s.skillId)).filter(Boolean));
+  let best = null, bestScore = -1;
+  for (const d of master.unitDress.values()) {
+    if (d.UNIT_ID !== id && d.UNIT_DRESS_ID !== id) continue;
+    const own = [...parseInts(d.PRESET_SKILL), ...parseInts(d.SKILL_SLOT_INFO)].filter(Boolean);
+    const score = own.filter(x => skills.has(x)).length + (d.UNIT_DRESS_ID === id ? 0.5 : 0);
+    if (score > bestScore) { best = d.UNIT_DRESS_ID; bestScore = score; }
+  }
+  return best ?? id;
+}
+
 // Full attacker spec for scenario.addAttacker.
 export function attackerFromReport(report, master, { unitIndex = 0 } = {}) {
   const unit = report.units?.[unitIndex]; if (!unit) return null;
@@ -62,12 +77,12 @@ export function attackerFromReport(report, master, { unitIndex = 0 } = {}) {
   const skills = (unit.skills || []).map(s => ({ id: s.skillId, type: master?.skill.get(s.skillId)?.SKILL_TYPE ?? (s.slot === 'normal' ? 9 : s.slot === 'ultimate' ? 5 : 1), name: s.name })).filter(s => s.id);
   // personality pieces are passive ids base..base+9 (UnitDressAbilityPieceMst PARAM passive:level:base)
   const personality = [];
-  const dress = master?.unitDress.get(unit.unitId);
+  const dressId = reportDressId(unit, master), dress = master?.unitDress.get(dressId);
   if (dress) for (const base of parseInts(dress.PERSONAL_SKILL).filter(Boolean)) {
     const p = passives.find(x => x.affiliation === K.AFF.AUTOSKILL && x.id && x.id >= base && x.id < base + 10);
     if (p) personality.push({ passive: p.id, level: p.id - base + 1, base });
   }
-  return { unitDressId: unit.unitId, name: unit.name, charTypes: racesOf(unit), stats: panel, statsSource: panel.source, equips, passives, skills,
+  return { unitDressId: dressId, name: unit.name, charTypes: racesOf(unit), stats: panel, statsSource: panel.source, equips, passives, skills,
     elemResist: resistOf(unit.resistances), personality, inventoryCount: (unit.raw?.buffs || []).length };
 }
 

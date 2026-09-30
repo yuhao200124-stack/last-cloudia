@@ -2,7 +2,7 @@
 // (The old 基础计算器／基础伤害上限／最终伤害上限 were removed with the old calculator; 已保存配装 lists the
 // calculator's saved loadouts. The 账户加护资料 list was removed on 2026-09-30: blessings are always counted in the
 // calculator and updated there with 更新加护, not listed one by one.)
-import './character-saved-builds.mjs?v=20260930-2019';
+import './character-saved-builds.mjs?v=20261001-0448';
 const hero=document.querySelector('.hero-meta');
 if(hero){
  let open=document.getElementById('damageSimulatorOpen');
@@ -14,5 +14,5 @@ if(hero){
   document.body.append(template.content);
   document.getElementById('damageCharacterName').textContent=document.querySelector('.hero h2')?.textContent.trim()||'当前角色';
  }
- await import('./character-damage-bridge.mjs?v=20260930-2019');
+ await import('./character-damage-bridge.mjs?v=20261001-0448');
 }

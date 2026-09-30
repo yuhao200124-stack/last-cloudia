@@ -12,6 +12,8 @@
 
 **加护一律按账号（2026-09-30，用户：“加护都是根据账号来的”）**：角色自己的加护不再按游戏数据基础值单独加进去，所有加护都从本账号读取的加护表取（带账号的数值）；账号里没有的加护不算，“计入本账号加护”关掉时一个加护都不算。洛琪希“特攻”默认勾上是对的（用户确认），保持。
 
+**读取报告认不出换装角色（2026-10-01，用户：魔神梅莉“你看一下这个和计算器算出来的不一样”，附 BattleCurrentReport）**：伤害读取器报告里的 unitId 是角色 UNIT_ID（梅莉 100640），不是换装 id（魔神 100642）；计算器用 `unitId === 本页 dress` 判断，所以魔神梅莉（以及所有 unitId≠换装 id 的角色）导入报告后被忽略，一直按游戏数据最大成长、无装备算。report-adapter.mjs 新增 `reportDressId(unit, master)`：在 UnitDressMst 里找 UNIT_ID 相同、技能与报告列出的技能重合最多的换装；attackerFromReport 和计算器三处判断都改用它。修好后导入这份报告：攻击力入场 4191→战斗中 5657（与报告的面板一致）、暴击 36%，剪刀尾巴每段 4,640–5,161（此前页面显示的是默认的 1,013–1,126）。报告里没有逐击实际伤害，是否与游戏一致还要用户提供游戏里的伤害数字核对。测试 `tests/engine-report-dress.test.mjs`。
+
 **异常状态一览（2026-09-30，用户：“给我发一份全部异常状态的效果和显示图片”）**：名称和说明来自 BadStatusMst（14 个，21 号是 Coming Soon 未实装），默认持续时间来自 procCondCommon.lua AilmentLifeTimes，能不能行动／用技能来自 luaCommon.lua（Unit:CanMove、Skill:Available）。具体数值（中毒／猛毒按最大 HP 的比例和间隔、激怒攻防倍率、腐蚀）在 GameAssembly 里读的是战斗常数表 BattleDefineMst（BattleConstants.LoadDefineMst，键如 BATTLE_DEFINE_POISON_DAMAGE_RATIO；中毒每次 = 最大HP × 比例‱，最多 999，BadStatusPoison.GetDamage），读取器没导出过，已做 v0.14（`local-migration-tools/loadout-reader-v0.14`，多导出 BattleDefineMst，地址 0x75D3BF8）。异常图标在游戏资源包里，读取器读不到。计算器里的异常名改成游戏正式名（激怒、腐蚀、猛毒、冥暗、重病、咒缚）。
 
 **机制排查（2026-09-30，用户：“看看还有哪些机制没搞明白去搞明白”）**：对全部 268 个角色的每个招式（普通／全开两种状态）跑引擎，收集脚本报错、缺原生函数、引擎假设和日志，再逐项查 GameAssembly：

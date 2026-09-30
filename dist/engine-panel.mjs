@@ -1,12 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-2019';
-import { zhName } from './engine/gloss.mjs?v=20260930-2019';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-2019';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-2019';
-import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-2019';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-2019';
+import { K } from './engine/battle.mjs?v=20261001-0448';
+import { zhName } from './engine/gloss.mjs?v=20261001-0448';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20261001-0448';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20261001-0448';
+import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20261001-0448';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20261001-0448';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -890,7 +890,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-2019'), import('./engine/engine-data.mjs?v=20260930-2019'), import('./engine/scenario.mjs?v=20260930-2019'), import('./engine/report-adapter.mjs?v=20260930-2019'), import('./engine/loadout-adapter.mjs?v=20260930-2019')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20261001-0448'), import('./engine/engine-data.mjs?v=20261001-0448'), import('./engine/scenario.mjs?v=20261001-0448'), import('./engine/report-adapter.mjs?v=20261001-0448'), import('./engine/loadout-adapter.mjs?v=20261001-0448')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -1311,13 +1311,13 @@ async function run(force = false) {
   running = true;
   try {
     // this page's character (a report counts only when its first unit is that character; otherwise game data at max)
-    const dress = Number(latest.unitDressId) || await siteDress() || report?.units?.[0]?.unitId;
+    const dress = Number(latest.unitDressId) || await siteDress() || (report?.units?.[0] && battle && engineModules ? engineModules.reportDressId(report.units[0], battle.master) : report?.units?.[0]?.unitId);
     if (!dress) { setState('先导入读取报告或选择游戏角色'); running = false; return; }
     const M = await ensureEngine(dress);
     setState('结算中…');
     battle.reset();
     let attackerSpec;
-    if (report && M.isBattleReport(report) && report.units?.[0]?.unitId === dress) { attackerSpec = M.attackerFromReport(report, battle.master); await M.loadPassives(battle.master, attackerSpec.passives.map(p => p.id)); const extra = attackerSpec.passives.filter(p => p.processes).length; if (extra) attackerSpec.statsSource = `${attackerSpec.statsSource}（含徽章／支援等 ${extra} 项非被动来源）`; }
+    if (report && M.isBattleReport(report) && M.reportDressId(report.units[0], battle.master) === dress) { attackerSpec = M.attackerFromReport(report, battle.master); await M.loadPassives(battle.master, attackerSpec.passives.map(p => p.id)); const extra = attackerSpec.passives.filter(p => p.processes).length; if (extra) attackerSpec.statsSource = `${attackerSpec.statsSource}（含徽章／支援等 ${extra} 项非被动来源）`; }
     else {
       // no report: the game character at its maximum growth with every own passive and its exclusive gear;
       // the out-of-battle panel comes entirely from master data (scenario.mjs panelGiven:false)
@@ -1373,7 +1373,7 @@ async function run(force = false) {
     // 专武 at its maximum (not for a captured battle, which records what was really equipped)
     const gearNotes = [];
     const gameChar = await gameCharacter(dress);
-    if (!(report && M.isBattleReport(report) && report.units?.[0]?.unitId === dress)) maximizeExclusive(attackerSpec, gameChar);
+    if (!(report && M.isBattleReport(report) && M.reportDressId(report.units[0], battle.master) === dress)) maximizeExclusive(attackerSpec, gameChar);
     // 其他装备: the slots the 专武 left free, from the whole ItemEquipMst (at max level); a report decides its own gear
     if (attackerSpec.ownGear) {
       const types = gearFor(battle.master, dress, [...(gameChar?.personality || []).map(p => p.passive), ...(gameChar?.ownPassives || []).map(p => p.passive), ...(gameChar?.transcend || []).map(p => p.passive), ...(build.on ? build.selected : [])]);
@@ -1484,7 +1484,7 @@ function receiveState(detail) { latest = detail || {}; report = latest.battle ||
   if (lastPreset !== undefined && latest.bossPreset !== lastPreset && monsterChoice) clearMonster();
   lastPreset = latest.bossPreset;
   // a report of this page's character brings its own blessings; another character's report is not used
-  const own = report?.units?.[0]?.unitId; if ($('engineAccountRow')) $('engineAccountRow').hidden = !!(own && (!latest.unitDressId || own === Number(latest.unitDressId))); run(); }
+  const own = report?.units?.[0] && battle && engineModules ? engineModules.reportDressId(report.units[0], battle.master) : report?.units?.[0]?.unitId; if ($('engineAccountRow')) $('engineAccountRow').hidden = !!(own && (!latest.unitDressId || own === Number(latest.unitDressId))); run(); }
 document.addEventListener('lc:calculator-update', e => receiveState(e.detail));
 mount();
 // the page may have handed its state over before this module finished loading
