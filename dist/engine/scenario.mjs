@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20261001-0653';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0653';
-import { zhName, zhCondition } from './gloss.mjs?v=20261001-0653';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0653';
+import { Battle, K, parseInts } from './battle.mjs?v=20261001-0733';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0733';
+import { zhName, zhCondition } from './gloss.mjs?v=20261001-0733';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0733';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -164,6 +164,72 @@ export const COMBO_HITS = 200;
 
 // Replays the battle start: status calc, wave start, survivors, then the HP/MP/ether state the user chose.
 export const AILMENT_APPLICATIONS = 20;
+// Target-debuff conditions of the attacker's own effects (“对<减益>中的敌人…”): the buff category each one checks
+// (params[2], or the process parameter it names when bit 1 of params[5] is set — condition.lua's comments).
+const TARGET_CATEGORY_CONDS = /^(IsValidSkillTargetBuffCategory|IsAttackSkillTargetBuffCategory|IsAttackSkillTargetEnemyTypeBuffCategory|IsValidSkillTargetBuffCategoryFinish|IsAttackSkillTargetBuffCategoryHpCond|IsAttackSkillCriticalTargetEnemyTypeBuffCategory|IsAttackSkillTargetEnemyTypeOverHitsBuffCategory|IsTargetUIIndexAttackSkillAndTargetBuffCategoryHpCond)$/;
+export function ownTargetDebuffCategories(unit) {
+  const out = new Set();
+  for (const i of unit.instances) {
+    if (!TARGET_CATEGORY_CONDS.test(i.cond?.LUA_FUNC_NAME || '')) continue;
+    const cp = i.condParams || [], cat = (cp[4] ?? 0) & 1 ? i.params[(cp[1] || 0) - 1] : cp[1];
+    if (cat > 0) out.add(cat);
+  }
+  return out;
+}
+// 敌方异常 (2026-10-01, user: “你再找找其他角色有没有什么遗漏的地方”): the attacker's own marks on the enemy — 斷罪 (拉达・多尔),
+// 監獄 (索萨), 腐蝕 (罗格亚), 復仇 (里维), GEASS (鲁路修), 喪失／反叛的意志 (Joker)… — like 出血 before: effects “对<减益>中的敌人”
+// never counted because the calculator's hit never puts them on. The attacker's own effect that puts such a debuff on the enemy is
+// found by running each one once on a copy; those are then run on the target (condition and chance skipped), with their own values.
+function applyOwnTargetDebuffs(battle, attacker, target) {
+  const need = new Set([...ownTargetDebuffCategories(attacker)].filter(cat => !target.buffs.some(b => b.category === cat))); if (!need.size) return;
+  // effects that put the mark on “the process target” (e.g. 2081721 味方死亡時プロセスターゲット断罪 → 2081720 断罪) read it from the
+  // unit's processTarget values, which another effect fills in battle: here the enemy is every process target
+  const hadTargets = attacker.values?.processTarget;
+  const targetIds = new Set(Array.from({ length: 20 }, (_, k) => k + 1)); // process-target ids are small indexes or ids like 101290211
+  for (const i of attacker.instances) for (const v of i.params || []) if (v >= 100000) targetIds.add(v);
+  attacker.values ||= {}; attacker.values.processTarget = { ...Object.fromEntries([...targetIds].map(k => [k, target.id])), ...(hadTargets || {}) };
+  // the mark is assumed on: chances inside the effects that put it (lotteries in their scripts) count as won
+  const probability = battle.options.probability; battle.options.probability = 'assume';
+  const snap = battle.snapshot(), assumptions = new Set(battle.assumptions), found = [];
+  const held = new Map([...battle.units].map(([id, u]) => [id, u])); // the caller's unit objects (restore() makes copies)
+  for (const inst of attacker.instances) {
+    if (need.size === found.length) break;
+    battle.restore(snap);
+    const A = battle.unit(attacker.id), T = battle.unit(target.id), i = A.instances.find(x => x.uid === inst.uid); if (!i) continue;
+    const before = new Set(T.buffs.map(b => b.uid));
+    try { battle.runInstance(i, A, T, null, i.trigger, { force: true }); } catch { continue; }
+    const added = T.buffs.filter(b => !before.has(b.uid) && need.has(b.category));
+    if (added.length) { found.push({ uid: inst.uid, names: added.map(b => zhName(b.mst.NAME)) }); added.forEach(b => need.delete(b.category)); }
+  }
+  // …or a process of one of its own moves' bullets (e.g. 裁決 putting 斷罪 on the target)
+  const skillIds = [...new Set([...(attacker.skills || []).map(s => s.id), ...(attacker.magic || [])])];
+  for (const skillId of skillIds) for (const bulletId of parseInts(battle.master.skill.get(skillId)?.BULLET_INFO).filter(Boolean)) {
+    if (!need.size) break;
+    battle.restore(snap);
+    const A = battle.unit(attacker.id), T = battle.unit(target.id);
+    let bullet; try { bullet = battle.createBullet(A, T, { skillId, bulletId, level: 9 }); } catch { continue; }
+    bullet.instances.forEach((inst, index) => {
+      if (!need.size) return;
+      battle.restore(snap);
+      const A2 = battle.unit(attacker.id), T2 = battle.unit(target.id), b2 = battle.createBullet(A2, T2, { skillId, bulletId, level: 9 }), i = b2.instances[index]; if (!i) return;
+      const before = new Set(T2.buffs.map(b => b.uid));
+      try { battle.runInstance(i, A2, T2, b2, i.trigger, { force: true }); } catch { return; }
+      const added = T2.buffs.filter(b => !before.has(b.uid) && need.has(b.category));
+      if (added.length) { found.push({ skillId, bulletId, index, names: added.map(b => zhName(b.mst.NAME)) }); added.forEach(b => need.delete(b.category)); }
+    });
+  }
+  // back to the state before, keeping the caller's unit objects
+  battle.restore(snap); battle.assumptions.clear(); for (const a of assumptions) battle.assumptions.add(a);
+  for (const [id, obj] of held) { if (!obj) continue; const fresh = battle.units.get(id); for (const k of Object.keys(obj)) delete obj[k]; Object.assign(obj, fresh); battle.units.set(id, obj); }
+  for (const f of found) {
+    if (f.uid) { const i = attacker.instances.find(x => x.uid === f.uid); if (i) battle.runInstance(i, attacker, target, null, i.trigger, { force: true }); continue; }
+    const b = battle.createBullet(attacker, target, { skillId: f.skillId, bulletId: f.bulletId, level: 9 }), i = b.instances[f.index];
+    if (i) battle.runInstance(i, attacker, target, b, i.trigger, { force: true });
+  }
+  battle.options.probability = probability;
+  if (hadTargets) attacker.values.processTarget = hadTargets; else delete attacker.values.processTarget;
+  if (found.length) battle.assumptions.add(`敌方异常：敌人也按带着自己施加的减益计算（${[...new Set(found.flatMap(f => f.names))].join('、')}）`);
+}
 export const BLEED_BUFF = 11115;
 export const TARGET_AILMENTS = [1, 2, 3, 4, 5, 6, 10, 11, 12, 13, 20, 21, 22, 23, 24];
 export function setupBattle(battle, attacker, target, state = {}) {
@@ -227,6 +293,7 @@ export function setupBattle(battle, attacker, target, state = {}) {
     const list = attacker.instances.filter(i => i.trigger === 78);
     for (let n = 0; n < AILMENT_APPLICATIONS; n++) for (const inst of list) battle.runInstance(inst, attacker, target, null, 78, { force: true });
     if (list.length) battle.assumptions.add(`敌方异常：按已对敌人施加异常 ${AILMENT_APPLICATIONS} 次计（施加异常时触发的效果按叠满算）；出血也算在内`);
+    applyOwnTargetDebuffs(battle, attacker, target);
   }
   if (target.hp != null && state.targetHpPercent != null) target.hp = Math.max(1, Math.round(battle.finalStat(target, K.STAT.MAX_HP) * state.targetHpPercent / 100));
   // Time-limited opening buffs are dropped when the user says the opening window has passed.

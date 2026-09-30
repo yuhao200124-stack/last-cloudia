@@ -1,12 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20261001-0653';
-import { zhName } from './engine/gloss.mjs?v=20261001-0653';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20261001-0653';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20261001-0653';
-import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20261001-0653';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20261001-0653';
+import { K } from './engine/battle.mjs?v=20261001-0733';
+import { zhName } from './engine/gloss.mjs?v=20261001-0733';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20261001-0733';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20261001-0733';
+import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20261001-0733';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20261001-0733';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -892,7 +892,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20261001-0653'), import('./engine/engine-data.mjs?v=20261001-0653'), import('./engine/scenario.mjs?v=20261001-0653'), import('./engine/report-adapter.mjs?v=20261001-0653'), import('./engine/loadout-adapter.mjs?v=20261001-0653')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20261001-0733'), import('./engine/engine-data.mjs?v=20261001-0733'), import('./engine/scenario.mjs?v=20261001-0733'), import('./engine/report-adapter.mjs?v=20261001-0733'), import('./engine/loadout-adapter.mjs?v=20261001-0733')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -1327,7 +1327,7 @@ function renderSwitchGains(out, ctx) {
   const effects = out.switchEffects || {};
   const general = [], special = [];
   for (const p of ctx.probes) {
-    const extra = p.id === 'enemyAilment' ? ['敌人处于全部异常状态和出血中；按已施加异常叠满'] : p.id === 'break' ? ['敌人处于 Break 状态'] : p.id === 'specialAttack' ? ['按特攻命中计算'] : [];
+    const extra = p.id === 'enemyAilment' ? ['敌人处于全部异常状态、出血和自己能施加的减益（如斷罪、監獄）中；按已施加异常叠满'] : p.id === 'break' ? ['敌人处于 Break 状态'] : p.id === 'specialAttack' ? ['按特攻命中计算'] : [];
     (p.id === 'specialAttack' || p.id === 'break' ? special : general).push(block(STATE_SWITCH_LABELS[p.id], effects[p.id] || [], extra));
   }
   for (const id of activeSwitchGroups()) general.push(block(SWITCH_LABELS[id], out.conditionals.filter(c => c.switchGroup === id && ctx.autoAssume.has(c.key))));
