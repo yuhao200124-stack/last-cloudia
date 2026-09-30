@@ -1,5 +1,5 @@
 // Pure pieces of the calculator's panel (engine-panel.mjs), kept apart so the tests can run them (user 2026-09-30, item 34).
-import { K } from './engine/battle.mjs?v=20260930-1801';
+import { K } from './engine/battle.mjs?v=20260930-1941';
 export const FREE_COST = 99;
 // COST 99 marks the always-on free passives (unique ones, 【超越】 …); a passive missing from the master counts as free
 export const isFree = (master, id) => { const c = master?.passive.get(id)?.COST; return c == null || c >= FREE_COST; };
@@ -59,10 +59,16 @@ export function splitBuild(c, selected, isFreeId) {
 
 // The 配装 metric of one evaluation (single random 0.95): the move's first damaging bullet per call, crits weighted by
 // the crit rate, and the parts shown as “what this skill changes”. Also used by the background evaluations (engine/eval-worker.mjs).
+// one hit's expected damage at critical rate `rate`, its 追加伤害 included (the game deals it after the hit, no cap)
+export function expectedHit(h, rate) {
+  const n = h.normal.mean + (h.additional?.normal?.mean || 0);
+  const c = h.critical ? h.critical.mean + (h.additional?.critical?.mean ?? h.additional?.normal?.mean ?? 0) : n;
+  return n * (1 - rate) + c * rate;
+}
 export function metricOf(out) {
   const all = out.hits.filter(h => !h.cancelled && h.normal), live = all.filter(h => h.bulletId === all[0]?.bulletId);
   const rateOf = h => Math.min(100, Math.max(0, h?.crt ?? out.stats.crt.real ?? 0)) / 100;
-  const perCall = live.reduce((sum, h) => sum + h.normal.mean * (1 - rateOf(h)) + (h.critical ? h.critical.mean : h.normal.mean) * rateOf(h), 0);
+  const perCall = live.reduce((sum, h) => sum + expectedHit(h, rateOf(h)), 0);
   const h = live[0];
   const detail = h ? { magical: h.breakdown?.attack?.stat === K.STAT.INT, attack: h.attack, crt: h.crt ?? out.stats.crt.real, cap: h.capComputed ?? h.cap, killer: h.killerFactor, offense: h.offense, received: h.received, reduction: h.reduction, resist: h.resist,
     post: h.core ? h.afterPassives / h.core : null, crit: h.critical && h.normal?.mean ? h.critical.mean / h.normal.mean : null } : null;

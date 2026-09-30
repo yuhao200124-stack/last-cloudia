@@ -1,11 +1,11 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1801';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1801';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1801';
-import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1801';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1801';
+import { K } from './engine/battle.mjs?v=20260930-1941';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1941';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1941';
+import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1941';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1941';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -535,7 +535,7 @@ function renderPrimary(out, ctx) {
   if (document.activeElement !== $('engineHits') && panelRoot?.activeElement !== $('engineHits')) $('engineHits').value = siteHits() || '';
   if (!first) { for (const id of ['ep-normal', 'ep-critical', 'ep-total', 'ep-normalTotal', 'ep-killer', 'ep-weak', 'ep-normalGauge', 'ep-normalCap', 'ep-critGauge', 'ep-critCap']) $(id).textContent = '—'; $('ep-note').textContent = out.errors.length ? `脚本错误：${out.errors[0].name}` : '这个招式没有伤害段。'; return; }
   const range = (a, b) => `${fmt(a)} – ${fmt(b)}`;
-  const expect = h => h.normal.mean * (1 - rateOf(h)) + (h.critical ? h.critical.mean : h.normal.mean) * rateOf(h);
+  const expect = h => expectedHit(h, rateOf(h));
   const perCall = live.reduce((sum, h) => sum + expect(h), 0);
   $('ep-normal').textContent = range(first.normal.min, first.normal.max);
   $('ep-normalNote').textContent = `游戏脚本结算 · ${live.length > 1 ? `第1击（×${(first.dmgRatio / 10000).toLocaleString('zh-CN')}）；` : ''}含随机波动与每段上限`;
@@ -557,6 +557,12 @@ function renderPrimary(out, ctx) {
   if (dualOn()) notes.push(`双刀：命中数 ×${mult}、单段伤害 ×${scale ? scale.ratio : 1}（${DUAL_STAGE_LABELS[scale?.stage] || '核心系数中'}）`);
   if (first.normal.max >= first.cap) notes.push('普通伤害触及上限');
   if (otherBullets) notes.push(`另有 ${otherBullets} 条弹道未计入整次期望，见下方明细`);
+  // 追加伤害 (the game's DoAdditionalDamage): extra hits after the hit, ratio × the damage dealt × element factor, no cap
+  const adds = [...new Map(live.flatMap(h => h.additional?.entries || []).map(a => [`${a.localId}:${a.elem}:${a.min}:${a.max}`, a])).values()];
+  if (adds.length) {
+    const addMean = live.reduce((t, h) => t + (h.additional?.normal?.mean || 0) * (1 - rateOf(h)) + (h.additional?.critical?.mean ?? h.additional?.normal?.mean ?? 0) * rateOf(h), 0);
+    notes.push(`含追加伤害 每段约 ${fmt(Math.round(addMean))}（${adds.map(a => `${a.name || '追加伤害'}：${ELEM_NAMES[a.elem] || '无'}属性，本段伤害的 ${a.min / 100}%–${a.max / 100}%${a.count > 1 ? ` ×${a.count}` : ''}${a.factor !== 1 ? `，属性系数 ×${Number(a.factor.toFixed(2))}` : ''}${a.prob < 10000 ? `，几率 ${a.prob / 100}%（按已发动计）` : ''}`).join('；')}；不受伤害上限限制）`);
+  }
   if (out.assumptions?.length) notes.push(out.assumptions.join('；'));
   if (out.errors.length) notes.push(`${out.errors.length} 个脚本未能完整执行`);
   $('ep-note').textContent = notes.join(' · ');
@@ -833,7 +839,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1801'), import('./engine/engine-data.mjs?v=20260930-1801'), import('./engine/scenario.mjs?v=20260930-1801'), import('./engine/report-adapter.mjs?v=20260930-1801'), import('./engine/loadout-adapter.mjs?v=20260930-1801')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1941'), import('./engine/engine-data.mjs?v=20260930-1941'), import('./engine/scenario.mjs?v=20260930-1941'), import('./engine/report-adapter.mjs?v=20260930-1941'), import('./engine/loadout-adapter.mjs?v=20260930-1941')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');

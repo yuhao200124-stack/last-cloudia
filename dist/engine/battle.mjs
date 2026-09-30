@@ -3,10 +3,12 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1801';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1941';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
+// .NET Math.Round(double): halves to even
+const roundEven = x => { const f = Math.floor(x), d = x - f; return d > 0.5 ? f + 1 : d < 0.5 ? f : (f % 2 === 0 ? f : f + 1); };
 const luaRound = v => Math.floor(v + 0.5);
 
 // ---- constants shared with the scripts (luaCommon.lua / procCondCommon.lua) ----
@@ -19,7 +21,7 @@ export const K = {
   TARGET_SIDE: { ALL: 0, OPPONENT: 1, ALLY: 2, ME: 3, NONE: 5 },
   TARGET_COND: { ALL: -1, BOTH: 0, ALIVE: 1, DEAD: 2, SECEDE: 3 },
   AFF: { NONE: 0, BUFF: 2, AUTOSKILL: 4, ARK: 5, WEAPON: 6, ARMOR: 7, ACCESSORY: 8, TERRAIN: 9, FORMATION: 12, SUPPORT: 15, CREST: 18, SUB_BUFF: 64 },
-  TRIG: { STATUS: 1, WAVE_START: 10, BEFORE_SKILL: 18, BEFORE_CREATE_BULLET: 19, BULLET_PROCESS: 20, BULLET_HIT: 21, BULLET_WAS_HIT: 22, ON_CALC_ATTACK: 23, ON_CALC_DAMAGE: 24, AFTER_ATTACK: 25, AFTER_DAMAGE: 26, AFTER_CALC_ATTACK: 27, AFTER_CALC_DAMAGE: 28, PRE_AFTER_ATTACK: 29, PRE_AFTER_DAMAGE: 30, BEFORE_CHANT: 16, CHANGE_MP: 42, BREAK_CHANGE: 52, UNIT_STATE: 59, BOSS_BREAK: 68, CHANGE_HP: 40, CHANGE_BUFF: 54, ON_ADDED_BUFF: 60, CHANGE_SURVIVORS: 65 },
+  TRIG: { PROC_ON_PROC: 73, STATUS: 1, WAVE_START: 10, BEFORE_SKILL: 18, BEFORE_CREATE_BULLET: 19, BULLET_PROCESS: 20, BULLET_HIT: 21, BULLET_WAS_HIT: 22, ON_CALC_ATTACK: 23, ON_CALC_DAMAGE: 24, AFTER_ATTACK: 25, AFTER_DAMAGE: 26, AFTER_CALC_ATTACK: 27, AFTER_CALC_DAMAGE: 28, PRE_AFTER_ATTACK: 29, PRE_AFTER_DAMAGE: 30, BEFORE_CHANT: 16, CHANGE_MP: 42, BREAK_CHANGE: 52, UNIT_STATE: 59, BOSS_BREAK: 68, CHANGE_HP: 40, CHANGE_BUFF: 54, ON_ADDED_BUFF: 60, CHANGE_SURVIVORS: 65 },
   OP: { PHYS_DMG: 100, MAG_DMG: 101, STR: 300, DEF: 301, INT: 302, MND: 303, CRT: 304, MAX_HP: 305, STATUS_RESIST: 306, ELEM_RESIST: 307, KILLER: 308, SPD: 310, MAX_MP: 318, EQUIP_PARAM: 319, REDUCTION_PHYS: 502, REDUCTION_MAG: 503, DMG_POWER: 504, INVALID_DMG: 505, OVERRIDE_ELEMENT: 507, KILLER_POWER: 509, DMG_LIMIT_OFF: 824, MULTI_BULLET: 825, DMG_LIMIT_UP: 826, MAGIC_CRITICAL: 800, SPECIAL_CRITICAL: 829 },
   // unit states (luaCommon.lua STATE_*): 59 (単位状態変化) fires on every change
   STATE: { IDLE: 0, MOVE: 1, STANDBY: 2, MAIN: 3, DAMAGE: 4 },
@@ -147,6 +149,7 @@ export class Battle {
     this._buffChangeDepth = 0; this._buffChangePending = new Set();
     this.trace = [];
     this.unsupported = new Map();
+    this.procTargets = []; this.inProcOnProc = false;
     this.assumptions = new Set(); // simplifications the sandbox made (reported to the user)
     this.collisions = new Map(); this.nextCollision = 1; this.scores = {};
     this.host = new LuaHost({ natives: this.natives(), onUnknownNative: (name, args) => { this.unsupported.set(name, (this.unsupported.get(name) || 0) + 1); this.log('native-missing', name, args); return undefined; }, log: (k, m) => this.log(k, m) });
@@ -157,7 +160,7 @@ export class Battle {
   }
   log(kind, ...rest) { if (this.options.log) this.options.log(kind, ...rest); }
   // Clears every unit and battle state so the loaded VM can run another scenario.
-  reset() { this.units = new Map(); this.nextId = 1; this.nextUid = 1; this.fieldValues = {}; this.wave = 1; this.frame = 0; this.stack = []; this.trace = []; this.timeline = null; this.assumptions = new Set(); this.collisions = new Map(); this.nextCollision = 1; this.scores = {}; }
+  reset() { this.units = new Map(); this.nextId = 1; this.nextUid = 1; this.fieldValues = {}; this.wave = 1; this.frame = 0; this.stack = []; this.trace = []; this.timeline = null; this.assumptions = new Set(); this.procTargets = []; this.inProcOnProc = false; this.collisions = new Map(); this.nextCollision = 1; this.scores = {}; }
   // BattleControl: battle scores, timers and 領域展開 collisions. The sandbox has no positions, so every
   // alive unit counts as inside every area (flagged as an assumption).
   battleControl(code, ...a) {
@@ -337,7 +340,12 @@ export class Battle {
     const cond = this.master.processCond.get(mst.PROCESS_COND) || { HAPPEN_COND: 0, LUA_FUNC_NAME: '' };
     // The first buff parameter is always its duration in frames (-1 = permanent; PARAM_BEHAV_FLAME);
     // the scripts and native operations see the remaining parameters.
-    const raw = listOf(params).map(x => x == null ? 0 : x);
+    let raw = listOf(params).map(x => x == null ? 0 : x);
+    if (cur && !this.inProcOnProc) {
+      const setter = cur.inst?.kind === 'buff' ? this.master.process.get(cur.inst.processId) : cur.inst?.mst;
+      const mod = this.procOnProc(this.unit(cur.ownUnit), { kind: 'buff', processId: cur.processId, uid: cur.uid, categories: parseInts(setter?.PROCESS_CATEGORY), params: raw, behaviours: listOf(behaviours), prob: null, affiliation: cur.affiliation, localId: cur.localId, buffs: [{ buffId, category: mst.BUFF_CATEGORY || 0, buffType: mst.BUFF_TYPE || 0, group: mst.BUFF_GROUP || 0 }] });
+      if (mod) raw = mod.params;
+    }
     let beh = listOf(behaviours);
     if (beh[0] === K.PARAM_BEHAV.FLAME) beh = beh.slice(1);
     const p = raw.slice(1);
@@ -402,6 +410,12 @@ export class Battle {
       }
       // a chance-based instance whose condition held but whose roll failed is still listed (missed), so the user can tick it
       let missed = false;
+      let restoreParams = null;
+      if (ok && inst.kind === 'process' && trigger !== K.TRIG.PROC_ON_PROC && !this.inProcOnProc) {
+        const mod = this.procOnProc(owner, { kind: 'process', processId: inst.processId, uid: inst.uid, categories: parseInts(inst.mst.PROCESS_CATEGORY), params: inst.params, behaviours: parseInts(inst.mst.PARAM_BEHAVIOR), prob: inst.prob, affiliation: inst.affiliation, localId: inst.localId, buffs: [] });
+        if (mod) { restoreParams = { params: inst.params, prob: inst.prob }; inst.params = mod.params; inst.prob = mod.prob ?? inst.prob; ctx.procEdited = mod.edited; }
+      }
+      ctx.restoreParams = restoreParams;
       if (ok && !force && inst.kind === 'process' && inst.prob < 10000) { ok = this.roll(inst); missed = !ok; }
       if (ok) {
         fired = true;
@@ -418,6 +432,7 @@ export class Battle {
       this.log('script-error', inst.kind, inst.kind === 'buff' ? inst.buffId : inst.processId, err.message);
       this.trace.push({ trigger, owner: owner.name, kind: inst.kind, id: inst.kind === 'buff' ? inst.buffId : inst.processId, name: inst.mst.NAME, error: err.message });
     } finally {
+      if (ctx.restoreParams) { inst.params = ctx.restoreParams.params; inst.prob = ctx.restoreParams.prob; }
       this.stack.pop();
       this.restoreGlobals(saved);
     }
@@ -457,6 +472,36 @@ export class Battle {
   restoreGlobals(saved) { if (saved) this.host.call('__sandboxRestoreContext', [], 0); }
 
   // Fire a trigger for the owner's own instances (passives + buffs), highest PRIORITY first.
+  // ---- ProcOnProc (trigger 73 “自分の指定プロセス効果発揮前”, 2026-09-30): before one of its own processes takes effect
+  // — or sets a buff — the owner's trigger-73 passives see it through TrigProc (categories, parameters, behaviours, the
+  // buffs it sets) and edit it: ProcEditParam (811) {behaviour, val, per, add} per parameter of that behaviour and
+  // ProcProbability (810) its chance. The game (ProcessUtils.DoProcess / ProcessWork.BuffControlSub → DoProcOnProc,
+  // ProcParamModifier.ParamEdit/AddEdit, BuffAddMul.Calc) sums the edits of each parameter, then
+  // new = round((old + val) × (1 + per / 10000) + add). Examples: 追加伤害倍率 +50%, 自分発動デバフ效果增减, buff durations.
+  procOnProc(owner, target) {
+    if (this.inProcOnProc || !owner) return null;
+    // the native only offers a trigger-73 effect the processes of its category (its first condition parameter, one of the
+    // target's PROCESS_CATEGORY entries — condition.lua's ProcessCategoryCheck itself only checks buffs / debuffs)
+    const cats = new Set(target.categories);
+    const list = [...owner.instances.filter(i => i.enabled && i.trigger === K.TRIG.PROC_ON_PROC), ...owner.buffs.filter(b => b.enabled && b.trigger === K.TRIG.PROC_ON_PROC)]
+      .filter(i => { const c = i.condParams?.[0] || 0; return !c || cats.has(c); });
+    if (!list.length) return null;
+    target.edits = []; target.probEdits = []; target.replaces = [];
+    this.inProcOnProc = true; this.procTargets.push(target);
+    try { for (const inst of list.sort((a, b) => (b.priority ?? 100) - (a.priority ?? 100))) this.runInstance(inst, owner, this.unit(this.current?.target) || owner, this.current?.bullet || null, K.TRIG.PROC_ON_PROC); }
+    finally { this.procTargets.pop(); this.inProcOnProc = false; }
+    if (!target.edits.length && !target.probEdits.length && !target.replaces.length) return null;
+    const params = target.params.slice();
+    const sums = new Map();
+    for (const [behav, val, per, add] of target.edits) target.behaviours.forEach((b, i) => { if (b === behav && i < params.length) { const t = sums.get(i) || [0, 0, 0]; sums.set(i, [t[0] + val, t[1] + per, t[2] + add]); } });
+    // ProcReplaceParam (812) sets a parameter outright and wins over the edits (DoProcess asks GetReplace first)
+    const replaced = new Map(); for (const [behav, value] of target.replaces) target.behaviours.forEach((b, i) => { if (b === behav && i < params.length) replaced.set(i, value); });
+    for (const [i, [val, per, add]] of sums) if (!replaced.has(i)) params[i] = roundEven((params[i] + val) * (per * 0.0001 + 1) + add);
+    for (const [i, value] of replaced) { params[i] = value; sums.set(i, null); }
+    let prob = target.prob;
+    if (prob != null && target.probEdits.length) { const t = target.probEdits.reduce((a, [v, pr, ad]) => [a[0] + v, a[1] + pr, a[2] + ad], [0, 0, 0]); prob = roundEven((prob + t[0]) * (t[1] * 0.0001 + 1) + t[2]); }
+    return { params, prob, edited: [...sums.keys()] };
+  }
   dispatch(trigger, owner, target, bullet) {
     const list = [...owner.instances.filter(i => i.enabled && i.trigger === trigger), ...owner.buffs.filter(b => b.enabled && b.trigger === trigger)];
     list.sort((a, b) => (b.priority ?? 100) - (a.priority ?? 100));
@@ -479,11 +524,18 @@ export class Battle {
     const p = listOf(params).map(x => (x == null ? 0 : x));
     if (op === K.OP.PHYS_DMG || op === K.OP.MAG_DMG) return this.damageOperation(op, p, srcType, srcUnit, dstUnit);
     if (op === 836) { const b = this.current?.bullet; if (b) b.cancelled = true; return !!b; } // CancelBullet
-    if (op === 801) { // 追加ダメージ: its amount is computed by the game's native code, not in the scripts
-      const cur = this.current, name = String(this.master.passive.get(cur?.inst?.passiveId || cur?.localId)?.NAME || this.master.itemEquip.get(cur?.localId)?.NAME || cur?.localId || '').replace(/<[^>]+>/g, '');
-      this.assumptions.add(`追加伤害：${name} 的追加伤害没有算进去（伤害量由游戏程序本体计算，不在游戏脚本里）`);
-      return false;
+    if ((op === 810 || op === 811 || op === 812) && this.procTargets.length) { const t = this.procTargets[this.procTargets.length - 1]; if (op === 811) t.edits.push([p[0], p[1] || 0, p[2] || 0, p[3] || 0]); else if (op === 812) t.replaces.push([p[0], p[1] || 0]); else t.probEdits.push([p[0] || 0, p[1] || 0, p[2] || 0]); return true; }
+    if (op === 801) {
+      // 追加ダメージ (AdditionalDmg “0:属性 1:回数 2:倍率min 3:倍率max”): the game's native code (ProcessUtils.DoAdditionalDamage →
+      // CalcDamageHealWrapper.DoCalc mode 4, read from GameAssembly 2026-09-30) deals, after the hit, `count` extra hits of
+      // RandomRange(max(1, ⌊min·0.0001·D⌋), max(that, ⌈max·0.0001·D⌉)) × (1 − target resist of that element / 100), rounded,
+      // D = the damage the hit dealt; no damage cap. Recorded here, summed per hit in scenario.mjs.
+      const b = this.current?.bullet; if (!b) return false;
+      const cur = this.current;
+      (b.additional ||= []).push({ elem: p[0] || 0, count: Math.min(Math.max(p[1] || 0, 0), 100), min: p[2] || 0, max: p[3] || 0, localId: cur?.localId ?? 0, passiveId: cur?.inst?.passiveId || cur?.localId || 0, prob: cur?.inst?.prob ?? 10000 });
+      return true;
     }
+    if (op === 807) return true; // 盗む (steal an item): no effect on damage
     const store = this.storeFor(dstType, dstUnit);
     if (!store) { this.log('control-no-store', dstType, dstUnit, op, p); return false; }
     const cur = this.current;
@@ -544,7 +596,7 @@ export class Battle {
     for (const pass of passes) {
       // each call is a new bullet process: transient work stores start empty again
       owner.work = []; target.work = [];
-      bullet.hitIndex = pass.hitIndex; bullet.dmgRatio = pass.dmgRatio; bullet.weaponIndex = pass.weaponIndex; bullet.cancelled = false; bullet.work = [];
+      bullet.hitIndex = pass.hitIndex; bullet.dmgRatio = pass.dmgRatio; bullet.weaponIndex = pass.weaponIndex; bullet.cancelled = false; bullet.work = []; bullet.additional = [];
       this.dispatch(K.TRIG.BULLET_HIT, owner, target, bullet);
       this.dispatch(K.TRIG.BULLET_WAS_HIT, target, owner, bullet);
       if (bullet.cancelled) { bullet.results.push({ hitIndex: pass.hitIndex, cancelled: true, damage: 0 }); continue; }
@@ -554,8 +606,19 @@ export class Battle {
       this.dispatch(K.TRIG.PRE_AFTER_DAMAGE, target, owner, bullet);
       this.dispatch(K.TRIG.AFTER_ATTACK, owner, target, bullet);
       this.dispatch(K.TRIG.AFTER_DAMAGE, target, owner, bullet);
+      const last = bullet.results[bullet.results.length - 1];
+      if (last && !last.cancelled && bullet.additional.length) last.additional = bullet.additional.map(a => ({ ...a, amount: this.additionalDamage(a, last.damage, target) }));
     }
     return bullet.results;
+  }
+  // one 追加ダメージ entry on a hit that dealt `dealt`: its [min, max] total over `count` extra hits (DoCalc mode 4)
+  additionalDamage(a, dealt, target) {
+    const resist = a.elem ? this.elemResist(target, a.elem) : 0;
+    const factor = f32(1 - clamp(f32(resist / 100), -9.99, 1));
+    if (factor <= 0 || dealt <= 0) return { min: 0, max: 0, factor };
+    const lo = Math.max(1, Math.floor(f32(f32(f32(a.min * f32(0.0001)) * dealt))));
+    const hi = Math.max(lo, Math.ceil(f32(f32(f32(a.max * f32(0.0001)) * dealt))));
+    return { min: Math.round(f32(lo * factor)) * a.count, max: Math.round(f32(hi * factor)) * a.count, factor };
   }
   // ProcessWork.ProcControlDamage → CalcDamage, in the native order.
   damageOperation(op, p, srcType, srcUnit, dstUnit) {
@@ -821,7 +884,7 @@ export class Battle {
       ProcSetParameter(index, val) { const c = cur(); if (c?.inst) { c.inst.parameters = c.inst.parameters || {}; c.inst.parameters[index] = val; } return true; },
       ProcGetFlag(index) { return !!cur()?.inst?.flags?.[index]; },
       ProcSetFlag(index, val) { const c = cur(); if (c?.inst) { c.inst.flags = c.inst.flags || {}; c.inst.flags[index] = val; } return true; },
-      ProcGetProcessID(mode) { const c = cur(); if (!c) return multi(0, 0); if (mode === 1 && c.inst.related) return multi(c.inst.related.processId, c.inst.related.uid); return multi(c.processId, c.uid); },
+      ProcGetProcessID(mode) { const c = cur(); if (mode === 3 && B.procTargets.length) { const t = B.procTargets.at(-1); return multi(t.processId, t.uid); } if (!c) return multi(0, 0); if (mode === 1 && c.inst.related) return multi(c.inst.related.processId, c.inst.related.uid); return multi(c.processId, c.uid); },
       ProcGetProcessIndex(mode) { const c = cur(); if (!c) return 0; if (mode === 1 && c.inst.related) return c.inst.related.localIndex; return c.localIndex; },
       ProcGetAffiliation(uid, mode) { const c = cur(); if (!c) return multi(0, 0); if (mode === 1 && c.inst.related) return multi(c.inst.related.affiliation, c.inst.related.localId); return multi(c.affiliation, c.localId); },
       ProcGetSucceeded() { return new LuaTable(); },
@@ -844,7 +907,9 @@ export class Battle {
       LoadStat2Work() { return true; },
       ExecSubProcess(index, subj, targ, prob, params, optionParams) {
         const c = cur(); if (!c) return false;
-        const ref = parseInts(c.inst.mst.REF_PROCESS);
+        // inside a buff the caller is the process that set the buff (luaCommon PROC_INFO_GET_MODE_RELATED: “バフ：バフ発生元”),
+        // so its REF_PROCESS lists the sub-processes (e.g. 2081638 フィールドオブフォニム's S_AttackSkillSubProc buff → 2081640)
+        const ref = parseInts((c.inst.kind === 'buff' ? B.master.process.get(c.inst.processId) : c.inst.mst)?.REF_PROCESS);
         const pid = ref[index - 1]; if (!pid) { B.log('subproc-missing', index, c.processId); return false; }
         const owner = B.unit(subj || c.ownUnit), target = B.unit(targ || c.target);
         const inst = B.makeInstance({ owner: owner.id, affiliation: c.affiliation, localId: c.localId, localIndex: c.localIndex, processId: pid, prob: prob ?? 10000, params: listOf(params).map(x => x ?? 0), related: { affiliation: c.affiliation, localId: c.localId, localIndex: c.localIndex, processId: c.processId, uid: c.uid } });
@@ -859,7 +924,13 @@ export class Battle {
       ProcGetLastDamage() { return curBullet()?.lastDamage ?? 0; },
       ProcEditProcHeal() { return false; }, ProcGetProcHeal() { return 0; }, ProcGetOrgProcHeal() { return 0; }, ProcGetLastHeal() { return 0; },
       ProcGetAddBadStatus() { return 0; },
-      GetTargProcProbability() { return 10000; }, GetTargProcParameters() { return []; }, GetTargProcBehaviours() { return []; }, GetTargProcCategories() { return []; }, GetTargProcBuffs() { return []; }, GetTargProcAffiliation() { return multi(0, 0); },
+      // TrigProc: the process a trigger-73 passive is looking at (procOnProc)
+      GetTargProcProbability() { return B.procTargets.at(-1)?.prob ?? 10000; },
+      GetTargProcParameters() { return (B.procTargets.at(-1)?.params || []).slice(); },
+      GetTargProcBehaviours() { return (B.procTargets.at(-1)?.behaviours || []).slice(); },
+      GetTargProcCategories() { return (B.procTargets.at(-1)?.categories || []).filter(Boolean); },
+      GetTargProcBuffs() { return (B.procTargets.at(-1)?.buffs || []).map(b => ({ buffId: b.buffId, category: b.category, buffType: b.buffType, group: b.group })); },
+      GetTargProcAffiliation() { const t = B.procTargets.at(-1); return t ? multi(t.affiliation ?? 0, t.localId ?? 0) : multi(0, 0); },
       // --- bullets ---
       GetCurrentBulletUID() { return curBullet()?.uid ?? 0; },
       BulletGetOwner() { return curBullet()?.owner ?? null; },
@@ -895,6 +966,9 @@ export class Battle {
           case K.BULLET_PROPERTY.ISVALID: case K.BULLET_PROPERTY.ISBULLET: return true;
           case K.BULLET_PROPERTY.DAMAGE_LIMIT: return 9999;
           case 433: case 434: return 0; // fatal blow incidence / attack ratio
+          // hit reactions of the bullet (300 霸体值, 302 气绝值, 303 防御, 304–306 出现延迟 / 硬直 / 受击时间, 307 乙太): from the
+          // bullet's collision data, which the export does not carry; only 霸体 (super armor) passives read them — no damage effect
+          case 300: case 302: case 303: case 304: case 305: case 306: case 307: return 0;
           default: B.log('native-partial', 'BulletGetProperty', prop, args); return null;
         }
       },

@@ -12,6 +12,15 @@
 
 **加护一律按账号（2026-09-30，用户：“加护都是根据账号来的”）**：角色自己的加护不再按游戏数据基础值单独加进去，所有加护都从本账号读取的加护表取（带账号的数值）；账号里没有的加护不算，“计入本账号加护”关掉时一个加护都不算。洛琪希“特攻”默认勾上是对的（用户确认），保持。
 
+**机制排查（2026-09-30，用户：“看看还有哪些机制没搞明白去搞明白”）**：对全部 268 个角色的每个招式（普通／全开两种状态）跑引擎，收集脚本报错、缺原生函数、引擎假设和日志，再逐项查 GameAssembly：
+- 追加伤害（op 801，13 个角色，如夜叉丸影分身、莉尔贝特弱点追击、罗伊霍克爱的援护）：以前不算。反汇编 ProcessUtils.DoAdditionalDamage → CalcDamageHealWrapper.DoCalc(mode 4)：命中后另打 `回数` 次，每次 RandomRange(max(1,⌊min‱·D⌋), max(前者,⌈max‱·D⌉)) × (1 − 目标该属性耐性/100)，四舍五入，D＝这一段实际造成的伤害，不吃伤害上限。battle.mjs `additionalDamage()`，scenario 每段给 `additional`，期望伤害（`expectedHit`）计入，结果说明写“含追加伤害 每段约 …”。计算器默认不算几率效果，所以只有必定发动的（如二重猛击）或勾选后的才计入。
+- 修改其他效果（触发 73“自分の指定プロセス効果発揮前”，41 种处理、275 个被动，如忍皇刀“追击伤害 +50%”、自己发动的减益效果增减、增益时间延长、炼金术参数）：以前 TrigProc 全是空壳。反汇编 ProcParamModifier / BuffAddMul.Calc：同一参数的修改先累加，再 new = round((old + val)·(1 + per/10000) + add)（.NET 四舍六入五成双）；ProcReplaceParam(812) 直接替换优先。battle.mjs `procOnProc()`：处理执行前、设增益前各跑一次；只给第一个条件参数（处理类别）在目标 PROCESS_CATEGORY 里的触发 73 效果（condition.lua 的 ProcessCategoryCheck 自己只查增益／减益）。验证：夜叉丸带忍皇刀，追加伤害倍率 30–35% → 45–52.5%。
+- 增益里调用子处理（ExecSubProcess）：在增益里调用时应取设这个增益的处理的 REF_PROCESS（luaCommon“バフ：バフ発生元”），以前取不到（杰洛、路克）。已修。
+- 霸体类被动读弹道属性 300–307（霸体值、受击时间等）报错（艾蕾诺拉等 5 个角色）：这些值在弹道碰撞数据里、导出没有；只影响霸体，不影响伤害，返回 0。偷窃（op 807）不影响伤害，忽略。
+- 领域展开“按所有单位都在领域内”、与敌人距离：沙盒没有位置，照旧（用户说距离先不管）。
+- **待用户决定**：同类别增益互斥。反汇编 UnitBuffBase.AddBuffNow → RemoveBuffByCategory：新增益会移除同一 BUFF_CATEGORY、同为增益（或同为减益）的旧增益，也就是“后来的替换先来的”，没有比强弱；而计算器现在按用户 2026-09-28 的规则“同类只取最强”。
+网站 6 个角色的结果都没变；全角色对比里 21 个角色变了（都是上面的追加伤害）。测试 `tests/engine-additional-damage.test.mjs`。
+
 **技能附带被动 SkillMst.ADD_PASSIVE（2026-09-30，用户：“都补上”）**：装备某技能/魔法时游戏会附带一个被动（60 个技能，如【魔印】力量积蓄 385100 → 26792 攻击 +10%，【魔印】灭龙者 → 对龙特攻等）。已：所有 SkillMst 表（shared.json、c/*.json）原地补 ADD_PASSIVE 列（v0.6 SkillMst.bin），被带出的被动放进同一数据包（shared 25 个，500030 / 500210 各 1 个）；export_engine_data.py 的 bundle() 同步把 ADD_PASSIVE 被动带上。scenario.mjs `skillAddPassives()`：addAttacker 对角色的招式、spec.magic 加上，runScenario 在 setupBattle 前对所评估招式和预先施放的技能（勾选的辅助魔法、先放的技能）加上；`battle.grantedBy` 记录来源，结果显示“<技能名>附带被动”。核实：亚丁（100750）带【魔印】力量积蓄，攻击力面板 2,250→2,440。
 
 **角色自带被动 ADD_PASSIVE（2026-09-30，用户让查“忘却终焉：No Name…含义未逐项核对”）**：忘却终焉给自身的是汎用ユニットバフ 81748（buff81748“このバフは何もしない”，类别 17700；名称“终剧”来自 UI 文本 id 70025001，数据里没有），真正的效果在 UnitDressMst.ADD_PASSIVE＝28586:28587（“魔王カイナ付与パッシブ”），28587：17700 状态中攻击·防御·魔力 +80%、超必杀伤害 +50%、超必杀上限 +200000。引擎以前完全没读 ADD_PASSIVE（33 个角色有，含 245 阿尔克 4 个、259 艾莉丝 1 个）。已：shared.json UnitDressMst 加 ADD_PASSIVE 列（v0.6 UnitDressMst.bin 原地补）、33 个 c/<dress>.json 补进这些被动、export_engine_data.py / export_mst.py 同步；scenario.mjs `dressAddPassives()` 在 addAttacker 自动加上（AUTOSKILL），结果里显示“角色自带被动 <id>”。核实：勾忘却终焉后凯娜超必杀上限 151,999→351,999，伤害 20,072→64,635（1012706，测试用敌人）；不勾时三位角色结果不变。辅助魔法说明对 81748 写“专属增益状态（本身没有数值；角色的被动在这个状态中起作用，已计入伤害）”。另：SkillMst.ADD_PASSIVE（装备魔法附带被动，如【魔印】力量积蓄 攻击 +10%，60 个技能）也没读，未做，待问用户。测试 `tests/engine-dress-add-passive.test.mjs`。
