@@ -6,8 +6,8 @@
     <meta name="description" content="最后的克劳迪娅可从圣物学习的被动技能（游戏数据版）：游戏内名称、SC、效果和可学习圣物。" />
     <title>最后的克劳迪娅技能表</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260930-1532" />
-    <link rel="stylesheet" href="./game-skills.css?v=20260930-1532" />
+    <link rel="stylesheet" href="./styles.css?v=20260930-1459" />
+    <link rel="stylesheet" href="./game-skills.css?v=20260930-1459" />
   </head>
   <body>
     <header class="site-header">
@@ -16,17 +16,18 @@
         <h1>最后的克劳迪娅技能分类表（游戏数据版）</h1>
         <p>可从圣物学习的被动技能 · 名称、SC、效果、圣物均取自游戏主数据</p>
       </div>
-      <nav class="header-actions" aria-label="页面导航"><a class="header-nav-link" href="./characters.html?v=20260930-1532">角色列表</a></nav>
+      <nav class="header-actions" aria-label="页面导航"><a class="header-nav-link" href="./characters.html?v=20260930-1459">角色列表</a></nav>
     </header>
     <main>
       <section class="build-toolbar" id="buildToolbar" aria-label="配装" hidden>
         <strong>配装 · <span id="buildCharName">读取中…</span></strong><span id="buildStatus"></span>
         <div class="build-views" role="group" aria-label="显示">
-          <button type="button" data-build-view="table" aria-pressed="true">技能表</button><button type="button" data-build-view="results" class="build-phone-only" aria-pressed="false">配装</button>
+          <button type="button" data-build-view="table" aria-pressed="true">技能表</button><button type="button" data-build-view="settings" aria-pressed="false">战斗设置</button><button type="button" data-build-view="results" class="build-phone-only" aria-pressed="false">配装</button>
         </div>
         <button type="button" id="buildResultsToggle" class="build-desktop-only" aria-expanded="true" aria-controls="buildSide">收起配装</button><button type="button" id="buildExit">退出配装</button>
       </section>
       <div class="build-layout" id="buildLayout">
+      <aside class="build-results" id="buildResults" aria-label="计算结果"><iframe id="buildFrame" title="伤害计算器（计算结果）"></iframe></aside>
       <section class="workspace" aria-label="游戏数据技能表">
         <div class="toolbar">
           <label class="search-box">
@@ -56,11 +57,11 @@
           <span>可以换一个关键词，或切换到其他工作表。</span>
         </div>
       </section>
-      <aside class="build-side" id="buildSide" aria-label="配装"><div class="build-frame-host"><iframe id="buildFrame" title="伤害计算器（战斗设置）" scrolling="no"></iframe></div><div class="build-panel-host" id="buildPanelHost">计算器读取中…</div></aside>
+      <aside class="build-side" id="buildSide" aria-label="配装"><div class="build-panel-host" id="buildPanelHost">计算器读取中…</div></aside>
       </div>
     </main>
-    <script src="./game-skill-data.js?v=20260930-1532"></script>
-    <script src="./game-skills-filter.js?v=20260930-1532"></script>
-    <script src="./game-skills.js?v=20260930-1532"></script>
+    <script src="./game-skill-data.js?v=20260930-1459"></script>
+    <script src="./game-skills-filter.js?v=20260930-1459"></script>
+    <script src="./game-skills.js?v=20260930-1459"></script>
   </body>
 </html>

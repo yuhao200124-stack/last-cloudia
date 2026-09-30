@@ -1,12 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1532';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1532';
-import { characterGear } from './character-gear.mjs?v=20260930-1532';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1532';
-import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1532';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1532';
+import { K } from './engine/battle.mjs?v=20260930-1459';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1459';
+import { characterGear } from './character-gear.mjs?v=20260930-1459';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1459';
+import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1459';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1459';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -92,12 +92,7 @@ function setBuildView(view) {
   document.body.classList.toggle('build-view-results', buildView === 'results');
   document.body.classList.toggle('build-view-settings', buildView === 'settings');
 }
-if (buildEmbed) {
-  document.body.classList.add('is-build-embedded'); setBuildView('settings');
-  // the page shows this frame at its full height above the 配装 panel, in one column that scrolls as a whole
-  const main = document.querySelector('main'), postHeight = () => window.parent.postMessage({ type: 'lc-frame-height', h: (main || document.body).getBoundingClientRect().bottom + window.scrollY + 10 }, location.origin);
-  new ResizeObserver(postHeight).observe(main || document.body); postHeight();
-}
+if (buildEmbed) { document.body.classList.add('is-build-embedded'); setBuildView('results'); }
 // what the page shows: the picked skills, the character's own 0-SC ones, each one's gain, SC, the damage now and
 // before the loadout, and the move (its element and skill type set the page's filters)
 let gearInfo = null;
@@ -774,7 +769,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1532'), import('./engine/engine-data.mjs?v=20260930-1532'), import('./engine/scenario.mjs?v=20260930-1532'), import('./engine/report-adapter.mjs?v=20260930-1532'), import('./engine/loadout-adapter.mjs?v=20260930-1532')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1459'), import('./engine/engine-data.mjs?v=20260930-1459'), import('./engine/scenario.mjs?v=20260930-1459'), import('./engine/report-adapter.mjs?v=20260930-1459'), import('./engine/loadout-adapter.mjs?v=20260930-1459')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');

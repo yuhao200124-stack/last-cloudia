@@ -11,9 +11,8 @@
   let query = '';
   // 配装 (user 2026-09-29): a character is chosen first — character page → calculator → 配装 opens this page in the
   // whole window as index.html?character=…[&plan=…]. The skill table stays as it is, with a “+” on every row; the
-  // damage calculator runs in a frame beside it (damage-calculator.html?embedded=build: the whole calculator — its result
-  // and every battle setting — above the 配装 panel it draws into the page), gets the “+” clicks and sends back what is
-  // picked, each one's gain and SC.
+  // damage calculator runs in a frame beside it (damage-calculator.html?embedded=build: the results and the 配装 panel,
+  // or the whole calculator for 战斗设置), gets the “+” clicks and sends back what is picked, each one's gain and SC.
   const params = new URLSearchParams(location.search);
   const buildChar = /^\d+$/.test(params.get('character') || '') ? params.get('character') : null;
   const embedded = !!buildChar;
@@ -118,19 +117,21 @@
   render();
   if (embedded) {
     const frame = $('buildFrame'), fmtN = n => (n == null ? '—' : Math.round(n).toLocaleString('zh-CN'));
-    let phoneView = 'left', collapsed = false;
+    let leftView = 'table', phoneView = 'left', collapsed = false;
     const phone = () => window.matchMedia('(max-width: 900px)').matches;
     const toFrame = msg => frame.contentWindow?.postMessage(msg, location.origin);
-    // desktop: the table, and on the right the calculator (result and all battle settings) above the 配装 panel
-    // (user 2026-09-30: “把战斗设置的全部内容移动到配装那边”); phone: 技能表 or 配装 (that right-hand column) at a time
+    // desktop: 技能表 = the table, with the 配装 panel on the right and (wide windows) the results frame on the left;
+    // 战斗设置 = the whole calculator where the table was; phone: one of 技能表 / 战斗设置 / 配装 at a time
+    function frameView() { return (phone() ? phoneView === 'results' : false) ? 'results' : leftView === 'settings' ? 'settings' : 'results'; }
     function layout() {
       const cls = document.body.classList;
       cls.add('build-mode');
+      cls.toggle('build-settings', leftView === 'settings' && (!phone() || phoneView === 'left'));
       cls.toggle('build-view-results', phone() && phoneView === 'results');
       cls.toggle('build-collapsed', collapsed);
-      document.querySelectorAll('[data-build-view]').forEach(b => { const v = b.dataset.buildView; b.setAttribute('aria-pressed', String(v === 'results' ? phoneView === 'results' : phoneView === 'left')); });
+      document.querySelectorAll('[data-build-view]').forEach(b => { const v = b.dataset.buildView; b.setAttribute('aria-pressed', String(v === 'results' ? phoneView === 'results' : phoneView === 'left' && leftView === v)); });
       $('buildResultsToggle').textContent = collapsed ? '显示配装' : '收起配装'; $('buildResultsToggle').setAttribute('aria-expanded', String(!collapsed));
-      toFrame({ type: 'lc-build-view', view: 'settings' });
+      toFrame({ type: 'lc-build-view', view: frameView() });
     }
     function status() {
       if (!knownChar) return;
@@ -147,11 +148,11 @@
       if (i?.site && !i.site[buildChar]) {
         knownChar = false;
         $('buildStatus').textContent = `没有这个角色（编号 ${buildChar}）`; $('buildPanelHost').textContent = '没有这个角色。'; $('buildExit').textContent = '回到首页';
-      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-1532`;
-    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-1532`; });
+      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-1459`;
+    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-1459`; });
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
-      phoneView = b.dataset.buildView === 'results' ? 'results' : 'left';
+      if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }
       layout(); window.scrollTo({ top: 0 });
     });
     $('buildResultsToggle').addEventListener('click', () => { collapsed = !collapsed; layout(); });
@@ -161,7 +162,6 @@
     window.addEventListener('message', e => {
       if (e.origin !== location.origin || e.source !== frame.contentWindow) return;
       if (e.data?.type === 'lc-damage-ready') { layout(); toFrame({ type: 'lc-build-hello' }); }
-      else if (e.data?.type === 'lc-frame-height') frame.style.height = `${Math.max(200, Math.ceil(e.data.h))}px`;   // the frame at its full height
       else if (e.data?.type === 'lc-build-state') {
         bst = e.data; picked = new Set((bst.selected || []).map(Number)); own = new Set((bst.auto || []).map(Number)); gains = bst.gains || {};
         // the current move decides what 全输出／半肉 hide: re-draw the table only when it changes
