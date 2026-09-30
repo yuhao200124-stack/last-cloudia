@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20260930-1757';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-1757';
-import { zhName, zhCondition } from './gloss.mjs?v=20260930-1757';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-1757';
+import { Battle, K, parseInts } from './battle.mjs?v=20260930-1801';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-1801';
+import { zhName, zhCondition } from './gloss.mjs?v=20260930-1801';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-1801';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -35,6 +35,26 @@ function equipSpec(master, e) {
 export function dressAddPassives(master, dress, given = []) {
   const have = new Set((given || []).map(p => p.id ?? p));
   return parseInts(dress?.ADD_PASSIVE).filter(id => id > 0 && !have.has(id) && master.passive.has(id)).map(id => ({ id }));
+}
+// SkillMst.ADD_PASSIVE: a passive a skill grants while the character has it equipped (【魔印】力量积蓄 → 攻击 +10%, 忘却终焉 →
+// its use-count control…; 2026-09-30, user: “都补上”). Counted for the character's own skills, its magic, the evaluated move
+// and the skills cast before it.
+export function skillAddPassives(master, skillIds, given = []) {
+  const have = new Set((given || []).map(p => p.id ?? p)), out = [];
+  for (const sid of skillIds || []) for (const id of parseInts(master.skill.get(Number(sid))?.ADD_PASSIVE)) {
+    if (id > 0 && !have.has(id) && master.passive.has(id)) { have.add(id); out.push({ id }); }
+  }
+  return out;
+}
+function grantSkillPassives(battle, unit, skillIds) {
+  const u = battle.unit(unit.id ?? unit); if (!u) return;
+  u.grantedPassives ||= new Set();
+  for (const p of skillAddPassives(battle.master, skillIds, [...u.grantedPassives])) {
+    u.grantedPassives.add(p.id); battle.addPassive(u, p.id, K.AFF.AUTOSKILL);
+    const by = Number(skillIds.find(s => parseInts(battle.master.skill.get(Number(s))?.ADD_PASSIVE).includes(p.id)));
+    (battle.grantedBy ||= new Map()).set(p.id, by);
+    (battle.sourceNames ||= new Map()).set(p.id, `技能 ${by} 附带被动`);
+  }
 }
 export function addAttacker(battle, spec) {
   const master = battle.master;
@@ -71,6 +91,8 @@ export function addAttacker(battle, spec) {
     passives: [...(spec.passives || []).filter(p => !p.affiliation || p.affiliation === K.AFF.AUTOSKILL), ...dressAddPassives(master, dress, spec.passives)],
   });
   unit.panelGiven = spec.panelGiven !== false;
+  unit.grantedPassives = new Set((spec.passives || []).map(p => p.id ?? p));
+  grantSkillPassives(battle, unit, [...skills.map(s => s.id), ...(spec.magic || [])]);
   for (const p of dressAddPassives(master, dress)) (battle.sourceNames ||= new Map()).set(p.id, `角色自带被动 ${p.id}`);
   // spec.finalAdd {hp, mp, str, def, int, mnd}: flat amounts on the final stats (the calculator's 圣物属性)
   if (spec.finalAdd) unit.finalAdd = statCodes(spec.finalAdd);
@@ -288,6 +310,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   // assume.forced: chance-based instances (`${unit id}:${localId}:${index}`, the probabilistic list's keys) counted as
   // triggered whatever the mode (the user's ticks)
   battle.options.forced = new Set(assume.forced || []);
+  grantSkillPassives(battle, attacker, [skill.id, ...(state.preCasts || [])]);
   setupBattle(battle, attacker, target, state);
   const setupSnap = battle.snapshot();
   let instances = [...new Set(assume.instances || [])];

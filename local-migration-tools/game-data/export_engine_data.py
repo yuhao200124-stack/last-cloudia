@@ -20,7 +20,7 @@ COLS = {
     'ProcessCondMst': ['PROCESS_COND_ID', 'NAME', 'HAPPEN_COND', 'LUA_FUNC_NAME'],
     'BuffMst': ['BUFF_ID', 'NAME', 'PROCESS_COND', 'PROCESS_COND_PARAM', 'UNIT_COND', 'PRIORITY', 'OPE_WAY', 'OPE_EFFECT', 'PROCESS_OPE_TYPE', 'SOURCE', 'TARGET', 'USE_SCRIPT', 'PROCESS_CATEGORY', 'BUFF_TYPE', 'BUFF_CATEGORY', 'BUFF_GROUP', 'BUFF_ICON_ID'],
     'PassiveSkillMst': ['PASSIVE_SKILL_ID', 'NAME', 'COST', 'SWITCH_INDEX', 'PROCESS_INFO'],
-    'SkillMst': ['SKILL_ID', 'NAME', 'SKILL_TYPE', 'SKILL_DEPENDENT', 'SKILL_ROLE', 'SKILL_ROLE_DETAIL', 'ELEM', 'INHERIT_WEAPON_ELEM', 'KILLER_INFO', 'NEED_AP', 'USE_CNT', 'INVOKE_COST', 'ABSOLUTE_LV', 'SKILL_PARAM', 'TARGET_INFO', 'COST', 'BULLET_INFO'],
+    'SkillMst': ['SKILL_ID', 'NAME', 'SKILL_TYPE', 'SKILL_DEPENDENT', 'SKILL_ROLE', 'SKILL_ROLE_DETAIL', 'ELEM', 'INHERIT_WEAPON_ELEM', 'KILLER_INFO', 'NEED_AP', 'USE_CNT', 'INVOKE_COST', 'ABSOLUTE_LV', 'SKILL_PARAM', 'TARGET_INFO', 'COST', 'BULLET_INFO', 'ADD_PASSIVE'],
     'BulletMst': ['BULLET_ID', 'NAME', 'PARAM', 'HIT_DAMAGE'],
     'BulletLvInfoMst': ['BULLET_ID', 'LV', 'BULLET_PARAM', 'PROCESS_INFO'],
     'UnitDressMst': ['UNIT_DRESS_ID', 'NAME', 'UNIT_ID', 'EQUIP_TYPE_INFO', 'PARAMETER_INFO', 'RESIST_ELEM_INFO', 'RESIST_STATUS_INFO', 'CHARACTER_TYPE', 'CRITICAL_RATE', 'PRESET_SKILL', 'PRESET_SKILL2', 'SKILL_SLOT_INFO', 'SKILL_SLOT_INFO2', 'PERSONAL_SKILL', 'CHARACTER_INFO', 'ADD_PASSIVE'],
@@ -80,6 +80,8 @@ def main(src, out):
     def bundle(passive_ids, skill_ids):
         skill_ids = with_enhanced(skill_ids)
         bullet_ids = bullets_of(skill_ids)
+        # SkillMst.ADD_PASSIVE: a passive the skill grants while it is equipped (【魔印】力量积蓄 → 攻击 +10%…), kept with the skill
+        passive_ids = set(passive_ids) | {p for s in skill_ids for p in ints(sk[s].get('ADD_PASSIVE'))}
         return {
             'PassiveSkillMst': table('PassiveSkillMst', [ps[p] for p in sorted(passive_ids) if p in ps]),
             'SkillMst': table('SkillMst', [sk[s] for s in sorted(skill_ids)]),

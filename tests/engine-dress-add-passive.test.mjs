@@ -30,3 +30,17 @@ test('忘却终焉 before the 超必杀: the 终剧 passive raises its cap by 20
   assert.equal(finale.capComputed - plain.capComputed, 200000);
   assert.ok(finale.normal.mean > plain.normal.mean * 2);
 });
+
+// SkillMst.ADD_PASSIVE (user 2026-09-30: “都补上”): 【魔印】力量积蓄 (385100) grants 26792 “攻击 +10%” while equipped
+test('an equipped magic grants its passive: 【魔印】力量积蓄 raises 攻击力', async () => {
+  const dress = 100750, c = JSON.parse(fs.readFileSync(new URL(`../dist/game-data/c/${dress}.json`, import.meta.url), 'utf8'));
+  const d = await loadEngineData({ unitDressIds: [dress], read });
+  assert.equal(d.master.skill.get(385100).ADD_PASSIVE, '26792');
+  const ids = [...c.personality.map(p => p.passive), ...c.ownPassives.map(p => p.passive)];
+  await loadPassives(d.master, ids, read);
+  const battle = new Battle(d.master, d.scripts, {});
+  const run = magic => { battle.reset(); return runScenario({ battle, attacker: addAttacker(battle, { unitDressId: dress, panelGiven: false, passives: ids.map(id => ({ id })), magic }), target: addTarget(battle, boss), skill: { id: c.specials[0].id }, state: { hpPercent: 100 }, assume: { probability: 'skip' }, randoms: [0.95] }); };
+  const without = run([]), withIt = run([385100]);
+  assert.ok(withIt.stats.str.panel > without.stats.str.panel);
+  assert.equal(battle.grantedBy.get(26792), 385100);
+});

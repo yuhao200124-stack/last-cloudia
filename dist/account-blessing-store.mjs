@@ -5,7 +5,7 @@
 // update). The set is what a battle report lists: affiliation-4 passives with ids 60000000–60999999 (every
 // PassiveSkillMst row in that range is a “…的加護”) and the values the game loaded (blessing levels scale them).
 // The newest capture wins: the site's default (from the user's latest report) or the user's own update.
-import { DEFAULT_BLESSINGS } from './account-blessing-default.mjs?v=20260930-1757';
+import { DEFAULT_BLESSINGS } from './account-blessing-default.mjs?v=20260930-1801';
 
 const KEY = 'lc-account-blessings:v2';
 export const isBlessingId = id => id >= 60000000 && id < 61000000;
