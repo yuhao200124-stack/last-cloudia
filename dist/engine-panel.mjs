@@ -1,11 +1,11 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1746';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1746';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1746';
-import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1746';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1746';
+import { K } from './engine/battle.mjs?v=20260930-1757';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1757';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1757';
+import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1757';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1757';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -302,6 +302,8 @@ function sourceName(src, ctx) {
   if (src.kind === 'bullet') return `招式自带（${ctx.moveName}）`;
   if (src.kind === 'unknown') return `未识别来源（${src.uid}）`;
   const gear = ctx.gearNames.get(Number(src.localId));
+  // passives the character always carries (UnitDressMst.ADD_PASSIVE): their game names are internal (魔王カイナ付与パッシブ2)
+  if (String(master.unitDress.get(Number(ctx.dress))?.ADD_PASSIVE || '').split(':').map(Number).includes(Number(src.passiveId || src.localId))) return `角色自带被动 ${src.passiveId || src.localId}${src.kind === 'buff' ? '（增益）' : ''}`;
   const arkName = battle.arkNames?.get(Number(src.localId));
   const name = passiveNames?.get(src.passiveId) || (arkName ? `圣物「${arkName}」` : null) || (gear ?? passiveNames?.get(src.localId)) || master.passive.get(src.passiveId || src.localId)?.NAME || master.itemEquip.get(src.localId)?.NAME || `编号 ${src.localId}`;
   return src.kind === 'buff' ? `${name}（增益）` : name;
@@ -428,6 +430,9 @@ function describeEntries(entries) {
 // 攻撃被ダメージ上限増減”: 1 buff UID, 2 ailment, 3 element, 4 skill type, 5 cap +value, 6 cap ×rate) — counts while the
 // target has that ailment (计算器“敌方异常”)
 const HIDDEN_SHOWN = {
+  // 汎用ユニットバフ (buff81748 “このバフは何もしない”, buff category 17700): a named state such as 凯娜雷殊's 终剧 — its name
+  // and icon come from UI text ids the data do not carry; the character's passives check it (e.g. 28587 攻防魔 +80%)
+  81748: () => '专属增益状态（本身没有数值；角色的被动在这个状态中起作用，已计入伤害）',
   1082619: ([, ail, , , add, per]) => `处于${ail ? `${AILMENT_NAMES[ail] || `异常 ${ail}`}状态` : '异常状态'}时受到的伤害上限 ${[add && signed(add), per && signed(per / 100, '%')].filter(Boolean).join(' ')}（打开“敌方异常”才计入）`,
 };
 function describeSupport(m) {
@@ -825,7 +830,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1746'), import('./engine/engine-data.mjs?v=20260930-1746'), import('./engine/scenario.mjs?v=20260930-1746'), import('./engine/report-adapter.mjs?v=20260930-1746'), import('./engine/loadout-adapter.mjs?v=20260930-1746')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1757'), import('./engine/engine-data.mjs?v=20260930-1757'), import('./engine/scenario.mjs?v=20260930-1757'), import('./engine/report-adapter.mjs?v=20260930-1757'), import('./engine/loadout-adapter.mjs?v=20260930-1757')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -1351,7 +1356,7 @@ async function run(force = false) {
     await ensurePassiveNames();
     const firstHit = damaging.filter(h => h.bulletId === damaging[0]?.bulletId)[0];
     const moveRec = gameChar ? [gameChar.normal, ...(gameChar.specials || []), gameChar.ultimate, ...(gameChar.magic?.normal || []), ...(gameChar.magic?.heavy || [])].filter(Boolean).find(m => m.id === move.id) : null, moveName = moveRec?.nameS;
-    const fieldCtx = { hits: damaging, gearNames: new Map((gameChar?.exclusiveEquipment || []).map(e => [e.id, e.nameS])), moveName: moveName || move.name || '本招式', mix: mixOf(moveRec) };
+    const fieldCtx = { hits: damaging, gearNames: new Map((gameChar?.exclusiveEquipment || []).map(e => [e.id, e.nameS])), moveName: moveName || move.name || '本招式', mix: mixOf(moveRec), dress };
     moveInfo = { id: move.id, name: fieldCtx.moveName, element: firstHit?.element ?? battle.master.skillInfo?.(move.id)?.elem ?? null, skillType: battle.master.skillInfo?.(move.id)?.skillType ?? null, magical: firstHit?.breakdown?.attack?.stat == null ? null : firstHit.breakdown.attack.stat === K.STAT.INT, character: gameChar?.nameS || null };
     renderBasicFields(firstHit, fieldCtx);
     renderReview(out, firstHit, fieldCtx);

@@ -8,7 +8,7 @@
 //
 // The host knows nothing about game rules; it only marshals values and dispatches calls.
 // Natives are supplied as an object { Name(...args) -> value | Multi | undefined }.
-import { LUA_WASM_BASE64 } from './lua-wasm.mjs?v=20260930-1746';
+import { LUA_WASM_BASE64 } from './lua-wasm.mjs?v=20260930-1757';
 
 // Several return values from a native.
 export class Multi { constructor(values) { this.values = values; } }

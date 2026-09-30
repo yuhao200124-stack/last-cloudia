@@ -23,7 +23,7 @@ COLS = {
     'SkillMst': ['SKILL_ID', 'NAME', 'SKILL_TYPE', 'SKILL_DEPENDENT', 'SKILL_ROLE', 'SKILL_ROLE_DETAIL', 'ELEM', 'INHERIT_WEAPON_ELEM', 'KILLER_INFO', 'NEED_AP', 'USE_CNT', 'INVOKE_COST', 'ABSOLUTE_LV', 'SKILL_PARAM', 'TARGET_INFO', 'COST', 'BULLET_INFO'],
     'BulletMst': ['BULLET_ID', 'NAME', 'PARAM', 'HIT_DAMAGE'],
     'BulletLvInfoMst': ['BULLET_ID', 'LV', 'BULLET_PARAM', 'PROCESS_INFO'],
-    'UnitDressMst': ['UNIT_DRESS_ID', 'NAME', 'UNIT_ID', 'EQUIP_TYPE_INFO', 'PARAMETER_INFO', 'RESIST_ELEM_INFO', 'RESIST_STATUS_INFO', 'CHARACTER_TYPE', 'CRITICAL_RATE', 'PRESET_SKILL', 'PRESET_SKILL2', 'SKILL_SLOT_INFO', 'SKILL_SLOT_INFO2', 'PERSONAL_SKILL', 'CHARACTER_INFO'],
+    'UnitDressMst': ['UNIT_DRESS_ID', 'NAME', 'UNIT_ID', 'EQUIP_TYPE_INFO', 'PARAMETER_INFO', 'RESIST_ELEM_INFO', 'RESIST_STATUS_INFO', 'CHARACTER_TYPE', 'CRITICAL_RATE', 'PRESET_SKILL', 'PRESET_SKILL2', 'SKILL_SLOT_INFO', 'SKILL_SLOT_INFO2', 'PERSONAL_SKILL', 'CHARACTER_INFO', 'ADD_PASSIVE'],
     'ItemEquipMst': ['ITEM_EQUIP_ID', 'NAME', 'RARE', 'EQUIP_TYPE', 'ELEM', 'PARAMETER_INFO', 'RESIST_ELEM_INFO', 'PASSIVE_SKILL_INFO', 'UNIT_DRESS_ID', 'MAX_LV', 'EQUIP_GROWTH_TYPE', 'PARAMETER_MAX_INFO', 'SUB_TYPE'],
     # out-of-battle panel: level growth (GrowthMst, one curve, GROWTH_ID 2), awakening and ability-board stat pieces
     'GrowthMst': ['GROWTH_ID', 'GROWTH_RATE'],
@@ -187,7 +187,9 @@ def main(src, out):
     for u in T['UnitDressMst']:
         if 'coming soon' in str(u['NAME']): continue
         uid = u['UNIT_DRESS_ID']
-        p_ids, s_ids = set(ints(u['PERSONAL_SKILL'])), set()
+        # ADD_PASSIVE: passives the dress always carries (e.g. 101270 魔王凯娜雷殊 28586:28587 — 终剧增益效果中 攻防魔 +80%…;
+        # added 2026-09-30 after 忘却终焉 showed no effect)
+        p_ids, s_ids = set(ints(u['PERSONAL_SKILL'])) | set(ints(u.get('ADD_PASSIVE'))), set()
         for key in ('PRESET_SKILL', 'PRESET_SKILL2', 'SKILL_SLOT_INFO', 'SKILL_SLOT_INFO2'): s_ids.update(x for x in ints(u[key]) if x)
         for r in pieces.get(uid, []):
             t, f = r['ABILITY_PIECE_TYPE'], str(r['PARAM']).split(':')

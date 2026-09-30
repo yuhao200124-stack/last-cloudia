@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20260930-1746';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-1746';
-import { zhName, zhCondition } from './gloss.mjs?v=20260930-1746';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-1746';
+import { Battle, K, parseInts } from './battle.mjs?v=20260930-1757';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-1757';
+import { zhName, zhCondition } from './gloss.mjs?v=20260930-1757';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-1757';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -29,6 +29,13 @@ function equipSpec(master, e) {
 // Builds a unit from a calculator-side description. With `panelGiven: false` the out-of-battle panel is not
 // supplied but computed from master data (panel.mjs: level growth + awakening + board pieces, equipment
 // parameters, then the trigger-1 passives); `spec.stats` then only overrides individual panel values.
+// UnitDressMst.ADD_PASSIVE: passives the character always carries, outside the ability board and the SC slots
+// (2026-09-30, user asked what 忘却终焉 does: 魔王凯娜雷殊 carries 28586 / 28587 “魔王カイナ付与パッシブ”, the latter giving
+// 攻击·防御·魔力 +80% and 超必杀 伤害 +50%·上限 +200000 while the 终剧 buff (buff category 17700) is on). 33 characters have one.
+export function dressAddPassives(master, dress, given = []) {
+  const have = new Set((given || []).map(p => p.id ?? p));
+  return parseInts(dress?.ADD_PASSIVE).filter(id => id > 0 && !have.has(id) && master.passive.has(id)).map(id => ({ id }));
+}
 export function addAttacker(battle, spec) {
   const master = battle.master;
   const equips = (spec.equips || []).map(e => equipSpec(master, e)).filter(e => e.id);
@@ -61,9 +68,10 @@ export function addAttacker(battle, spec) {
     name: spec.name || dress?.NAME || '攻击方', side: K.SIDE.ALLY, unitDressId: Number(spec.unitDressId) || 0, level, limitBreak: spec.limitBreak ?? 7, awake: panel ? panel.awake : spec.awake ?? 0,
     charTypes: spec.charTypes || (dress ? [dress.CHARACTER_TYPE] : []), stats, hp: panel ? undefined : spec.stats?.hp, mp: panel ? undefined : spec.stats?.mp,
     equips, elemResist, personality: spec.personality || [], skills,
-    passives: (spec.passives || []).filter(p => !p.affiliation || p.affiliation === K.AFF.AUTOSKILL),
+    passives: [...(spec.passives || []).filter(p => !p.affiliation || p.affiliation === K.AFF.AUTOSKILL), ...dressAddPassives(master, dress, spec.passives)],
   });
   unit.panelGiven = spec.panelGiven !== false;
+  for (const p of dressAddPassives(master, dress)) (battle.sourceNames ||= new Map()).set(p.id, `角色自带被动 ${p.id}`);
   // spec.finalAdd {hp, mp, str, def, int, mnd}: flat amounts on the final stats (the calculator's 圣物属性)
   if (spec.finalAdd) unit.finalAdd = statCodes(spec.finalAdd);
   unit.panelOverride = panelOverride && Object.keys(panelOverride).length ? panelOverride : null;
@@ -180,7 +188,7 @@ export const instanceKey = inst => `${inst.affiliation}:${inst.localId}:${inst.l
 export function conditionalInstances(battle, unit, keep = new Set()) {
   const fired = new Set(battle.trace.filter(t => t.fired && t.ownerId === unit.id).map(t => `${t.localId}:${t.index}`));
   return unit.instances.filter(i => !AUTOMATIC_TRIGGERS.has(i.trigger) && (keep.has(instanceKey(i)) || !fired.has(`${i.localId}:${i.localIndex}`))).map(i => ({
-    key: instanceKey(i), localId: i.localId, localIndex: i.localIndex, passiveId: i.passiveId || i.localId, passiveName: clean(battle.master.passive.get(i.passiveId || i.localId)?.NAME || battle.arkNames?.get(i.localId) || battle.master.itemEquip.get(i.localId)?.NAME || ''), processId: i.processId, processName: zhName(i.mst.NAME),
+    key: instanceKey(i), localId: i.localId, localIndex: i.localIndex, passiveId: i.passiveId || i.localId, passiveName: clean(battle.sourceNames?.get(i.passiveId || i.localId) || battle.master.passive.get(i.passiveId || i.localId)?.NAME || battle.arkNames?.get(i.localId) || battle.master.itemEquip.get(i.localId)?.NAME || ''), processId: i.processId, processName: zhName(i.mst.NAME),
     trigger: i.trigger, triggerLabel: TRIGGER_LABELS[i.trigger] || `触发${i.trigger}`, condition: zhCondition(i.cond.NAME) || '', luaCondition: i.cond.LUA_FUNC_NAME || '', switchGroup: SWITCH_OF_TRIGGER[i.trigger] || 'conditionBuffActive', prob: i.prob,
   }));
 }
@@ -328,7 +336,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
       hits.push({ bulletId: p.bulletId, bulletName: battle.master.bullet.get(p.bulletId)?.NAME || '', hitIndex: p.hitIndex, cancelled: p.cancelled, dmgRatio: s?.dmgRatio ?? null, normal: p.normal.length ? summarize(p.normal) : null, critical: p.critical.length ? summarize(p.critical) : null, core: s?.coreDamage ?? null, afterPassives: s?.afterPassives ?? null,
         crt: s?.crt ?? null, capComputed: s?.capComputed ?? null, breakdown: s?.breakdown ?? null, critBreakdown: p.critSample?.breakdown ?? null,
         attack: s?.attack ?? null, defense: s?.defense ?? null, element: s?.element ?? null, resist: s?.resist ?? null, killer: s?.killer ?? false, killerFactor: s?.killerFactor ?? 1, offense: s?.offense ?? 1, received: s?.received ?? 1, reduction: s?.reduction ?? 1, coefficient: s ? s.per / 10000 : null, cap: s?.cap ?? null, critCap: p.critSample?.cap ?? null, capVal: s?.capVal ?? 0, capPer: s?.capPer ?? 0, capAdd: s?.capAdd ?? 0,
-        edits: (s?.edits || []).map(e => ({ name: zhName(e.by), id: e.id, localId: e.localId, value: e.value, passiveName: clean(battle.master.passive.get(e.localId)?.NAME || battle.arkNames?.get(e.localId) || battle.master.itemEquip.get(e.localId)?.NAME || '') })) });
+        edits: (s?.edits || []).map(e => ({ name: zhName(e.by), id: e.id, localId: e.localId, value: e.value, passiveName: clean(battle.sourceNames?.get(e.localId) || battle.master.passive.get(e.localId)?.NAME || battle.arkNames?.get(e.localId) || battle.master.itemEquip.get(e.localId)?.NAME || '') })) });
     }
   }
   // representative casts (every bullet, normal and critical) keep their traces, so callers see what fired during
@@ -345,16 +353,16 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   const chanceOf = t => t.prob < 10000 ? (t.fired || t.missed) : !!t.lottery;
   // the move's own bullets (e.g. 剪刀尾巴's chance to blind): named after the move, not a passive
   const moveBullets = new Set(parseInts(battle.master.skill.get(skill.id)?.BULLET_INFO).filter(Boolean)), moveName = clean(battle.master.skill.get(skill.id)?.NAME || '');
-  const probabilistic = [...new Map(trace.filter(t => t.ownerId === attacker.id && chanceOf(t) && !listed.has(`${t.localId}:${t.index}`)).map(t => [`${t.ownerId}:${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.ownerId}:${t.localId}:${t.index}`, localId: t.localId, passiveId: t.passiveId || t.localId, on: !!t.fired && t.lottery !== 'miss', ...(moveBullets.has(t.localId) && !t.passiveId ? { fromMove: true, skillId: skill.id } : {}), passiveName: moveBullets.has(t.localId) && !t.passiveId ? moveName : clean(battle.master.passive.get(t.passiveId || t.localId)?.NAME || battle.arkNames?.get(t.localId) || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), prob: t.prob < 10000 ? t.prob / 100 : null, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
+  const probabilistic = [...new Map(trace.filter(t => t.ownerId === attacker.id && chanceOf(t) && !listed.has(`${t.localId}:${t.index}`)).map(t => [`${t.ownerId}:${t.localId}:${t.index}`, t])).values()].map(t => ({ key: `${t.ownerId}:${t.localId}:${t.index}`, localId: t.localId, passiveId: t.passiveId || t.localId, on: !!t.fired && t.lottery !== 'miss', ...(moveBullets.has(t.localId) && !t.passiveId ? { fromMove: true, skillId: skill.id } : {}), passiveName: moveBullets.has(t.localId) && !t.passiveId ? moveName : clean(battle.sourceNames?.get(t.passiveId || t.localId) || battle.master.passive.get(t.passiveId || t.localId)?.NAME || battle.arkNames?.get(t.localId) || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), prob: t.prob < 10000 ? t.prob / 100 : null, trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '' }));
   // conditionals that would change nothing are not offered (an assumed one stays so its tick can be undone)
   const assumedKeys = new Set(instances);
   const unchanged = unchangedInstances(battle, attacker.id, target.id, setupSnap, conditionals.filter(c => !assumedKeys.has(c.key)));
   return {
     statParts,
     stats: { str: stats(K.STAT.STR), def: stats(K.STAT.DEF), int: stats(K.STAT.INT), mnd: stats(K.STAT.MND), crt: stats(K.STAT.CRT), hp: { panel: battle.finalStat(attacker, K.STAT.MAX_HP, { layer: 'status' }), real: battle.finalStat(attacker, K.STAT.MAX_HP), current: attacker.hp } },
-    buffs: attacker.buffs.map(b => ({ uid: b.uid, buffId: b.buffId, name: clean(zhName(b.mst.NAME)), params: b.params, remain: b.remain, from: clean(battle.master.passive.get(b.related?.localId)?.NAME || battle.master.itemEquip.get(b.related?.localId)?.NAME || '') })),
+    buffs: attacker.buffs.map(b => ({ uid: b.uid, buffId: b.buffId, name: clean(zhName(b.mst.NAME)), params: b.params, remain: b.remain, from: clean(battle.sourceNames?.get(b.related?.localId) || battle.master.passive.get(b.related?.localId)?.NAME || battle.master.itemEquip.get(b.related?.localId)?.NAME || '') })),
     hits, conditionals: conditionals.filter(c => !unchanged.has(c.key)), unchangedConditionals: conditionals.filter(c => unchanged.has(c.key)), probabilistic,
-    fired: fired.map(t => ({ trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '', passiveName: clean(battle.master.passive.get(t.localId)?.NAME || battle.arkNames?.get(t.localId) || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), localId: t.localId, index: t.index })),
+    fired: fired.map(t => ({ trigger: t.trigger, triggerLabel: TRIGGER_LABELS[t.trigger] || '', passiveName: clean(battle.sourceNames?.get(t.localId) || battle.master.passive.get(t.localId)?.NAME || battle.arkNames?.get(t.localId) || battle.master.itemEquip.get(t.localId)?.NAME || ''), processName: zhName(t.name), localId: t.localId, index: t.index })),
     errors: [...new Map(trace.filter(t => t.error).map(t => [`${t.id}:${t.error}`, { name: t.name, id: t.id, error: t.error }])).values()],
     unsupported: [...battle.unsupported.keys()],
     assumptions: [...battle.assumptions],
