@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261001-0601';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261001-0607';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -697,7 +697,8 @@ export class Battle {
     this.log('damage', result);
     return true;
   }
-  skillElementOverride(owner, skillId, skillType) { return this.skillElementEntry(owner, skillId, skillType)?.params[3] ?? null; }
+  // options.skillElementOff: the user unticked it in 触发效果 (2026-10-01: “这个应该是可以取消的”)
+  skillElementOverride(owner, skillId, skillType) { return this.options.skillElementOff ? null : this.skillElementEntry(owner, skillId, skillType)?.params[3] ?? null; }
   // the SkillElement (837) entry that sets this skill's element (the last one wins), for showing where it comes from
   skillElementEntry(owner, skillId, skillType) {
     let out = null;

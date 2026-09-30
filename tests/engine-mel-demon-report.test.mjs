@@ -75,3 +75,10 @@ test('敌方异常 counts 出血 (絕命一閃 防御 −15% without the normal 
   assert.deepEqual(names('fullHp'), ['銳氣']);
   assert.deepEqual([out.elementOverride.element, out.elementOverride.passiveId], [6, 27731], '聖邪之泛濫 makes the special dark');
 });
+
+test('the 聖邪之泛濫 element change can be unticked (then the special keeps its own element)', async () => {
+  const on = await scenario(1006423), off = await scenario(1006423, { ...STATE, skillElementOff: true });
+  assert.ok(on.hits.filter(h => h.normal).every(h => h.element === 6));
+  assert.ok(off.hits.filter(h => h.normal).every(h => h.element !== 6));
+  assert.equal(off.elementOverride.passiveId, 27731, 'still listed so it can be ticked again');
+});

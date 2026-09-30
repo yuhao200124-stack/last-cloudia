@@ -4,9 +4,9 @@
 // `lc:calculator-update` event. The old rule-based calculator (网页旧规则) was removed at the user's request
 // (2026-09-28); moves come from the game data, the hit count is the user's own (default 10), and 圣物属性 add to
 // the final stats.
-import {gameCharacterForSite,gameMoveParameters,loadGameIndex,loadGameCharacter} from './game-data.mjs?v=20261001-0601';
-import {validateBattleEntry} from './battle-report.mjs?v=20261001-0601';
-import {statBlessingPercents} from './account-blessing-store.mjs?v=20261001-0601';
+import {gameCharacterForSite,gameMoveParameters,loadGameIndex,loadGameCharacter} from './game-data.mjs?v=20261001-0607';
+import {validateBattleEntry} from './battle-report.mjs?v=20261001-0607';
+import {statBlessingPercents} from './account-blessing-store.mjs?v=20261001-0607';
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

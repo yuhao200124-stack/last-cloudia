@@ -1,12 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20261001-0601';
-import { zhName } from './engine/gloss.mjs?v=20261001-0601';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20261001-0601';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20261001-0601';
-import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20261001-0601';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20261001-0601';
+import { K } from './engine/battle.mjs?v=20261001-0607';
+import { zhName } from './engine/gloss.mjs?v=20261001-0607';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20261001-0607';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20261001-0607';
+import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20261001-0607';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20261001-0607';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -26,6 +26,8 @@ let engineModules = null, battle = null, loadedDress = null, loading = null;
 // result's one list of 触发效果 together with the conditional effects (“这俩可以合成一个直接让我自己打勾选”): `probAssumed`.
 const probabilityMode = 'skip';
 let latest = null, report = null, assumed = new Set(), probAssumed = new Set(), running = false, pending = false;
+// the 触发效果 line of a passive changing the move's element (聖邪之泛濫 → 暗): on by default, the user may untick it
+let skillElementOff = false;
 // No-report path: the out-of-battle panel is computed from master data (level growth + awakening + board +
 // exclusive gear + trigger-1 passives), always at maximum — character level, awakening, ability board and
 // equipment/crest enhancement are never modeled below max (user's rule), so there is no manual override for them.
@@ -696,7 +698,7 @@ function mount() {
   $('engineMonsterVariant').addEventListener('change', e => { e.stopPropagation(); monsterChoice = Number(e.target.value) || null; try { if (monsterChoice) localStorage.setItem(MONSTER_KEY, String(monsterChoice)); else localStorage.removeItem(MONSTER_KEY); } catch {} run(); });
   $('engineMonsterClear').addEventListener('click', () => { clearMonster(); run(); });
   $('engineLoadoutClear').addEventListener('click', () => { loadoutReport = null; try { localStorage.removeItem(LOADOUT_KEY); } catch {} run(); });
-  $('engineResult').addEventListener('change', e => { const { assume: key, prob } = e.target.dataset; const set = key ? assumed : prob ? probAssumed : null; if (!set) return; for (const k of (key || prob).split(' ')) { if (e.target.checked) set.add(k); else set.delete(k); } run(); });
+  $('engineResult').addEventListener('change', e => { if ('elementOverride' in e.target.dataset) { skillElementOff = !e.target.checked; run(); return; } const { assume: key, prob } = e.target.dataset; const set = key ? assumed : prob ? probAssumed : null; if (!set) return; for (const k of (key || prob).split(' ')) { if (e.target.checked) set.add(k); else set.delete(k); } run(); });
   // loadout builder controls
   // the calculator may sit in a character page's panel: the home page opens in the whole window
   $('engineBuildToggle').addEventListener('click', () => {
@@ -890,7 +892,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20261001-0601'), import('./engine/engine-data.mjs?v=20261001-0601'), import('./engine/scenario.mjs?v=20261001-0601'), import('./engine/report-adapter.mjs?v=20261001-0601'), import('./engine/loadout-adapter.mjs?v=20261001-0601')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20261001-0607'), import('./engine/engine-data.mjs?v=20261001-0607'), import('./engine/scenario.mjs?v=20261001-0607'), import('./engine/report-adapter.mjs?v=20261001-0607'), import('./engine/loadout-adapter.mjs?v=20261001-0607')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -925,7 +927,7 @@ function clearMonster() {
 document.addEventListener('lc:calculator-reset', () => {
   if (monsterChoice) clearMonster();
   // 重置 also unticks every 触发效果 and every 辅助魔法 (user 2026-09-30); the 配装 on the home page stays
-  assumed.clear(); probAssumed.clear();
+  assumed.clear(); probAssumed.clear(); skillElementOff = false;
   supportChecked = new Set(); supportActive = [];
   try { if (supportDress) localStorage.setItem(`lc-support-magic:${supportDress}`, '[]'); } catch {}
   for (const root of [document, panelRoot].filter(Boolean)) for (const i of root.querySelectorAll('[data-support-magic], #engineResult input[type=checkbox]')) i.checked = false;
@@ -1274,7 +1276,7 @@ function stateFromSwitches(detail) {
   const targetBreak = sel.break ?? $('break')?.checked ?? false, ratio = Number($('breakDefenseRatio')?.value);
   return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: [...supportActive, ...preCastList()],
     killer: (sel.specialAttack ?? $('specialAttack')?.checked) ? 'on' : 'off', targetBreak: !!targetBreak, breakDefenseRatio: Number.isFinite(ratio) ? ratio : null,
-    targetAilment: !!(sel.enemyAilment ?? $('enemyAilment')?.checked),
+    targetAilment: !!(sel.enemyAilment ?? $('enemyAilment')?.checked), skillElementOff,
     hitScale: dualScale() };
 }
 
@@ -1511,9 +1513,10 @@ function render(out, ctx) {
   const add = (kind, key, line, on) => { const k = `${kind}|${line}`; if (!rows.has(k)) rows.set(k, { kind, keys: [], line, on: true }); const r = rows.get(k); r.keys.push(key); r.on = r.on && on; };
   for (const c of out.conditionals) add('assume', c.key, effectLine(c, ctx.gameChar), assumed.has(c.key) || ctx.autoAssume.has(c.key));
   for (const p of out.probabilistic) add('prob', p.key, effectLine(p, ctx.gameChar), probAssumed.has(p.key));
-  // the move's element changed by a passive (圣邪之泛滥 → 暗): always on, shown first (user 2026-10-01: “把特技改成暗属性的你也得在触发效果那边显示”)
+  // the move's element changed by a passive (圣邪之泛滥 → 暗): shown first, on by default and can be unticked (user 2026-10-01: “把特技改成暗属性的你也得在
+  // 触发效果那边显示”, “这个应该是可以取消的”)
   const ov = out.elementOverride;
-  const fixed = ov ? `<label class="engine-conditional fixed"><input type="checkbox" checked disabled>${esc(`${effectLine(ov, ctx.gameChar)}（本招式按${ELEM_NAMES[ov.element] || ov.element}属性计算）`)}</label>` : '';
+  const fixed = ov ? `<label class="engine-conditional"><input type="checkbox" data-element-override ${skillElementOff ? '' : 'checked'}>${esc(`${effectLine(ov, ctx.gameChar)}（${skillElementOff ? '已取消，按原属性计算' : `本招式按${ELEM_NAMES[ov.element] || ov.element}属性计算`}）`)}</label>` : '';
   const effects = fixed + [...rows.values()].map(r => `<label class="engine-conditional"><input type="checkbox" data-${r.kind}="${esc(r.keys.join(' '))}" ${r.on ? 'checked' : ''}>${esc(r.line)}</label>`).join('');
   const issues = [...out.errors.map(e => `脚本 ${esc(e.name)} (${e.id})：${esc(e.error)}`), ...out.unsupported.map(n => `未实现的原生函数：${esc(n)}`), ...(out.assumptions || []).map(a => `简化假定：${esc(a)}`)];
   // 第1击结算链 and 局内 Buff removed (user 2026-09-29: “这个可以取消了”“局内buff也取消了”)
