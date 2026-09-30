@@ -86,9 +86,9 @@ test('a monster’s own passives: only the Break ones are computed, all are list
   const low = first((await roxy({ skill: 270090, state: { hpPercent: 100, targetHpPercent: 20 } })).out);
   assert.equal(low.defense, 10000);
   const texts = JSON.parse(fs.readFileSync(new URL('../dist/game-data/engine/monster-passive-text.json', import.meta.url), 'utf8')).texts;
-  assert.equal(texts[13746], 'Break 中：防御、魔抗 −25%');
-  assert.match(texts[13675], /HP降到30%以下时.*攻击、防御、魔抗 \+35%/);
-  assert.equal(texts[101], '开场第一次行动不用等待');
+  assert.deepEqual(texts[13746], [['Break 中', [[['防御'], '−25%'], [['魔抗'], '−25%']]]]);
+  assert.deepEqual(texts[13675], [['HP降到30%以下时', ['攻击', '防御', '魔力', '魔抗'].map(w => [[w], '+35%'])]]);   // one condition (“写简单点”)
+  assert.deepEqual(texts[101], [['', ['开场第一次行动不用等待']]]);
   const panel = fs.readFileSync(new URL('../dist/engine-panel.mjs', import.meta.url), 'utf8');
   assert.ok(panel.includes('renderBossPassives(targetSpec)') && panel.includes('fromReader ? targetSpec.monsterId : latest.bossMonsterId'));
 });

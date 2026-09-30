@@ -800,15 +800,29 @@ async function ensureMonsterPassiveTexts() {
   if (!monsterPassiveTexts) monsterPassiveTexts = await fetch(new URL('./game-data/engine/monster-passive-text.json', import.meta.url)).then(r => r.json()).then(j => j.texts || {}).catch(() => ({}));
   return monsterPassiveTexts;
 }
-// Boss 自带被动 (user 2026-09-30: “这些boss被动计算器不要算但是在boss界面要写出来” / “除了 Break 都不算”): every passive of
-// the target monster, listed under its races; only the Break ones are computed
+// Boss 自带被动 (user 2026-09-30: “这些boss被动计算器不要算但是在boss界面要写出来” / “除了 Break 都不算” / “写简单点”):
+// every passive of the target monster, listed under its races, merged by condition (one line per condition; the same
+// value on several stats or elements is one item: 攻击、防御、魔力、魔抗 +35%, 全属性耐性 −25); only the Break ones are computed
+const PASSIVE_ELEMENTS = ['火', '冰', '树', '雷', '光', '暗'];
 async function renderBossPassives(spec) {
   const box = $('bossPassives'); if (!box) return;
   const ids = spec?.listedPassives || [];
   if (!ids.length) { box.hidden = true; box.innerHTML = ''; return; }
   const texts = await ensureMonsterPassiveTexts();
-  const counted = new Set((spec.passives || []).filter(p => p.table === 'monster').map(p => p.id));
-  box.innerHTML = `<strong>Boss 自带被动</strong>（只有 Break 时的效果计入计算，其余只列出）<ul>${ids.map(id => `<li>${esc(texts[id] || '（游戏数据里没有这个被动）')}${counted.has(id) ? '<span class="boss-passive-on">（开 Break 时计入）</span>' : ''}</li>`).join('')}</ul>`;
+  const groups = new Map();
+  for (const id of ids) for (const [c, items] of texts[id] || [['', ['（游戏数据里没有这个被动）']]]) {
+    if (!groups.has(c)) groups.set(c, []);
+    const list = groups.get(c);
+    for (const it of items) {
+      if (typeof it === 'string') { if (!list.includes(it)) list.push(it); continue; }
+      const [words, tail] = it; let e = list.find(x => typeof x === 'object' && x.tail === tail);
+      if (!e) list.push(e = { words: [], tail });
+      for (const w of words) if (!e.words.includes(w)) e.words.push(w);
+    }
+  }
+  const itemText = x => typeof x === 'string' ? x : /^属性耐性/.test(x.tail) ? `${PASSIVE_ELEMENTS.every(e => x.words.includes(e)) ? '全' : x.words.join('、')}${x.tail}` : `${x.words.join('、')} ${x.tail}`;
+  const lines = [...groups].map(([c, list]) => `<li>${esc(`${c ? `${c}：` : ''}${list.map(itemText).join('，')}`)}${/^Break 中/.test(c) ? '<span class="boss-passive-on">（计入）</span>' : ''}</li>`);
+  box.innerHTML = `<strong>Boss 自带被动</strong>（只算 Break）<ul>${lines.join('')}</ul>`;
   box.hidden = false;
 }
 async function ensureMonsterPassives() {

@@ -36,7 +36,8 @@ function conditionOf(p, d) {
   const dur = vals[names.indexOf('継続時間')];
   if (names.includes('継続時間') && dur > 0) tags.push(`持续${Math.round(dur / 60)}秒`);
   if (p.prob < 10000) tags.push(`${p.prob / 100}%几率`);
-  return tags.join('，');
+  // (user 2026-09-30: “写简单点”) how many times an HP trigger may fire is left out
+  return tags.map(t => t.replace(/（仅\d+次）$/, '')).join('，');
 }
 // what one process does
 function effectOf(p) {
@@ -56,7 +57,8 @@ function effectOf(p) {
   if (d?.text) return { text: d.text };
   return { text: zhName(p.kind.replace(/^(P|PB|B|SP)_/, '')), raw: true };
 }
-// one passive → one line: its processes grouped by condition, like effects of one condition merged (攻击、防御 +35%)
+// one passive → its effects grouped by condition: [[condition, [item …]]], an item being a text or [words, tail]
+// (攻击、防御 share “+35%”); the calculator merges the passives of one monster by condition (engine-panel.mjs)
 export function passiveText(id) {
   const r = passives.get(id); if (!r) return null;
   const groups = new Map(); let raw = 0;
@@ -65,26 +67,16 @@ export function passiveText(id) {
     const p = { pid: Number(pid), kind: q[pc.NAME], params: ps.join(':'), prob: Number(prob) };
     const c = conditionOf(p, decodeProcess(p.pid, p.params)); if (c == null) continue;
     if (!groups.has(c)) groups.set(c, []);
-    for (const e of [effectOf(p)].flat()) { if (e.raw) raw++; groups.get(c).push(e); }
+    for (const e of [effectOf(p)].flat()) { if (e.raw) raw++; groups.get(c).push(e.text ? e.text : [[e.word], e.tail]); }
   }
-  const parts = [...groups].map(([c, list]) => {
-    const merged = [], byKey = new Map();
-    for (const e of list) {
-      if (e.text) { if (!merged.includes(e.text)) merged.push(e.text); continue; }
-      if (!byKey.has(e.key)) { byKey.set(e.key, { words: [], tail: e.tail }); merged.push(byKey.get(e.key)); }
-      if (!byKey.get(e.key).words.includes(e.word)) byKey.get(e.key).words.push(e.word);
-    }
-    const text = merged.map(m => (typeof m === 'string' ? m : `${m.words.join('、')}${/^属性耐性/.test(m.tail) ? '' : ' '}${m.tail}`)).join('、');
-    return c ? `${c}：${text}` : text;
-  }).filter(Boolean);
-  return { text: parts.join('；') || '（没有效果）', raw };
+  return { groups: [...groups], raw };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const used = new Set();
   for (const m of M.rows) for (const part of String(m[pi] || '').split('-')) { const id = Number(part.split(':')[1]); if (id) used.add(id); }
   const texts = {}; let raw = 0;
-  for (const id of [...used].sort((a, b) => a - b)) { const t = passiveText(id); if (!t) continue; texts[id] = t.text; if (t.raw) raw++; }
-  fs.writeFileSync(new URL('../dist/game-data/engine/monster-passive-text.json', import.meta.url), JSON.stringify({ note: '怪物自带被动的简体说明（游戏里没有文字，按处理的条件和数值生成；读不出的写处理名称），由 scripts/build-monster-passive-text.mjs 生成', texts }) + '\n');
+  for (const id of [...used].sort((a, b) => a - b)) { const t = passiveText(id); if (!t) continue; texts[id] = t.groups; if (t.raw) raw++; }
+  fs.writeFileSync(new URL('../dist/game-data/engine/monster-passive-text.json', import.meta.url), JSON.stringify({ note: '怪物自带被动的简体说明（游戏里没有文字，按处理的条件和数值生成；读不出的写处理名称）。每个被动：[[条件, [文字 或 [[属性…], 数值]]]]，由 scripts/build-monster-passive-text.mjs 生成', texts }) + '\n');
   console.log(JSON.stringify({ passives: Object.keys(texts).length, withProcessNameOnly: raw }));
 }
