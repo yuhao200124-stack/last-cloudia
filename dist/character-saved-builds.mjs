@@ -3,7 +3,7 @@
 // home page's skill table (index.html?character=…&plan=…) with that loadout. (The old skill-table loadouts are no longer listed — the user's decision.)
 // SC as in the calculator (build-sc.mjs): 能力盘突破 free one skill each; every SC skill on the character's own
 // ability board is always there at 0 SC (user 2026-09-29, as the old skill table did).
-import { breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1459';
+import { breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1532';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const characterId = document.body.dataset.characterId;

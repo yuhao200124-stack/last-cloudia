@@ -45,8 +45,13 @@ test('配装 happens on the home page: the table with “+” on the left, the c
   for (const s of ['&embedded=build', 'data-add-skill', 'character-${buildChar}.html', "type: 'lc-build-toggle'", "type: 'lc-build-view'"])
     assert(table.includes(s), s);
   const home = read('dist/index.html');
-  for (const s of ['id="buildToolbar" aria-label="配装" hidden', 'id="buildLayout"', 'id="buildFrame"', 'id="buildExit"', 'data-build-view="settings"'])
+  for (const s of ['id="buildToolbar" aria-label="配装" hidden', 'id="buildLayout"', 'id="buildFrame"', 'id="buildExit"'])
     assert(home.includes(s), s);
+  // 2026-09-30 (user: “把配装中的战斗设置的全部内容移动到配装那边”): no 战斗设置 view; the whole calculator frame sits in the
+  // right-hand column above the 配装 panel, at its full height
+  assert(!home.includes('data-build-view="settings"'), 'no 战斗设置 button');
+  assert.match(home, /<aside class="build-side"[^>]*><div class="build-frame-host"><iframe id="buildFrame"[^>]*><\/iframe><\/div><div class="build-panel-host" id="buildPanelHost">/);
+  assert(table.includes("type: 'lc-build-view', view: 'settings'") && table.includes("'lc-frame-height'"), 'the frame shows everything, at its height');
   assert(!home.includes('lc-in-calculator'), 'the old in-calculator table is gone');
   const saved = read('dist/character-saved-builds.mjs');
   assert.match(saved, /scTotal\(/, 'the character page counts SC the same way');
