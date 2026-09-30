@@ -18,6 +18,10 @@ test('arks.json: every released ark at its top level with its stats and effect t
   assert.deepEqual(a.stats, [1466, 91, 226, 316, 359, 261]);
   assert.match(a.text, /魔法攻击的伤害\+35%/);
   assert.ok(!arks.items.some(x => /^Ark\d+$/.test(x.name)));
+  // 圣物技能 (SkillMst via ArkMst.ARK_SKILL_ID, text = SkillExplainMst at the top level)
+  assert.equal(arks.items.filter(x => x.arkSkill).length, 38);
+  const war = arks.items.find(x => x.name === '破神大战').arkSkill;
+  assert.equal(war.id, 640020); assert.equal(war.level, 10); assert.match(war.text, /超必杀技槽充满/);
 });
 
 test('a chosen ark adds its stats to the panel and its effect to the damage', async () => {
@@ -42,6 +46,9 @@ test('the calculator has 添加圣物 next to 添加装备, with its own page (r
   const panel = fs.readFileSync(new URL('../dist/engine-panel.mjs', import.meta.url), 'utf8');
   assert(panel.includes('<button type="button" id="engineGearAdd" class="secondary">添加装备</button><button type="button" id="engineArkAdd" class="secondary">添加圣物</button>'));
   assert.match(panel, /data-ark-rarity/);
+  // 圣物技能 tab: every ark with an ark skill (user: “我选了就显示所有有圣物技能的圣物”)
+  assert.match(panel, /r === 'arkSkill' \? '圣物技能'/);
+  assert.match(panel, /arkRarity === 'arkSkill' \? a\.arkSkill/);
   assert.match(panel, /已添加 ×/);
   assert.match(panel, /这里手填的数值不再计入/);
 });

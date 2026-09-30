@@ -23,6 +23,17 @@ _, SKL = load(U + 'ArkSkillLvMst.bin')
 top = {}
 for r in LV:
     if r['ARK_ID'] not in top or r['LV'] > top[r['ARK_ID']]['LV']: top[r['ARK_ID']] = r
+# 圣物技能 (user 2026-09-30: “做一个圣物技能的，我选了就显示所有有圣物技能的圣物”): ArkMst.ARK_SKILL_ID is a SkillMst row
+# (SKILL_TYPE 7, fired in battle on its own); its text per level is SkillExplainMst — the top level's EXPLAIN_LONG.
+_, SK = load(U + 'SkillMst.bin'); sk_name = {r['SKILL_ID']: r['NAME'] for r in SK}
+_, SX = load(U + 'SkillExplainMst.bin'); sx_top = {}
+for r in SX:
+    if r['SKILL_ID'] not in sx_top or r['LV'] > sx_top[r['SKILL_ID']]['LV']: sx_top[r['SKILL_ID']] = r
+def ark_skill(a):
+    sid = a['ARK_SKILL_ID']
+    if not sid or sid not in sk_name: return {}
+    x = sx_top.get(sid)
+    return {'arkSkill': {'id': sid, 'name': t2s(clean(sk_name[sid])), 'level': x['LV'] if x else 1, 'text': t2s(clean(x['EXPLAIN_LONG'])) if x else ''}}
 skill_top = {}
 for r in SKL:
     if r['ARK_ID'] not in skill_top or r['LV'] > skill_top[r['ARK_ID']]['LV']: skill_top[r['ARK_ID']] = r
@@ -38,8 +49,9 @@ for a in sorted(ARK, key=lambda r: (-r['RARE'], -r['SORT_ORDER'])):
     items.append({'id': a['ARK_ID'], 'name': t2s(name), 'rarity': RARE.get(a['RARE'], str(a['RARE'])), 'level': r['LV'],
                   'stats': [r['HP'], r['MP'], r['ATK'], r['DEF'], r['MATK'], r['MDEF']],
                   'process': r['PROCESS_INFO'], 'text': text(r), 'teaches': teaches,
+                  **ark_skill(a),
                   **({'skill': {'level': sk['LV'], 'process': sk['PROCESS_INFO'], 'text': text(sk)}} if sk else {})})
-out = {'note': '全部圣物（测试和未上线的除外）按最高等级：local-migration-tools/game-data/arks.py 从 ArkMst / ArkLvMst / ArkSkillLvMst 生成。stats＝最高等级的 HP、MP、攻击、防御、魔力、精神（游戏在装备、徽章之后加进面板）；process／text＝该等级的圣物效果；teaches＝可学技能；skill＝被动型圣物技能的最高等级。',
+out = {'note': '全部圣物（测试和未上线的除外）按最高等级：local-migration-tools/game-data/arks.py 从 ArkMst / ArkLvMst / ArkSkillLvMst 生成。stats＝最高等级的 HP、MP、攻击、防御、魔力、精神（游戏在装备、徽章之后加进面板）；process／text＝该等级的圣物效果；teaches＝可学技能；skill＝圣物技能等级表（ArkSkillLvMst，只有 100890 有）的最高等级；arkSkill＝圣物技能（战斗中另外发动的一招）的名称、最高等级和说明。',
        'items': items}
 with open(OUT, 'w', encoding='utf-8') as f: json.dump(out, f, ensure_ascii=False, separators=(',', ':'))
-print(json.dumps({'arks': len(items), 'withText': sum(1 for i in items if i['text']), 'withSkill': sum(1 for i in items if 'skill' in i), 'bytes': os.path.getsize(OUT)}, ensure_ascii=False))
+print(json.dumps({'arks': len(items), 'withText': sum(1 for i in items if i['text']), 'withSkill': sum(1 for i in items if 'skill' in i), 'withArkSkill': sum(1 for i in items if 'arkSkill' in i), 'bytes': os.path.getsize(OUT)}, ensure_ascii=False))

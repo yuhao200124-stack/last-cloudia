@@ -1,11 +1,11 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1712';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1712';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1712';
-import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1712';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1712';
+import { K } from './engine/battle.mjs?v=20260930-1723';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1723';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1723';
+import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1723';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1723';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -800,7 +800,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1712'), import('./engine/engine-data.mjs?v=20260930-1712'), import('./engine/scenario.mjs?v=20260930-1712'), import('./engine/report-adapter.mjs?v=20260930-1712'), import('./engine/loadout-adapter.mjs?v=20260930-1712')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1723'), import('./engine/engine-data.mjs?v=20260930-1723'), import('./engine/scenario.mjs?v=20260930-1723'), import('./engine/report-adapter.mjs?v=20260930-1723'), import('./engine/loadout-adapter.mjs?v=20260930-1723')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -1046,12 +1046,14 @@ async function openArkPage(open) {
   if (open) { renderArkPage(); $('engineArkTitle').focus(); window.scrollTo({ top: 0 }); } else $('engineArkAdd')?.focus();
 }
 function renderArkPage() {
-  const rarities = ['all', ...[...new Set(arkData.map(a => a.rarity))]];
-  $('engineArkTabs').innerHTML = rarities.map(r => `<button type="button" data-ark-rarity="${r}" aria-pressed="${r === arkRarity}">${r === 'all' ? '全部' : r}</button>`).join('');
+  // 圣物技能 (user 2026-09-30: “做一个圣物技能的，我选了就显示所有有圣物技能的圣物”): a tab after the rarities
+  const rarities = ['all', ...[...new Set(arkData.map(a => a.rarity))], 'arkSkill'];
+  const tabName = r => (r === 'all' ? '全部' : r === 'arkSkill' ? '圣物技能' : r);
+  $('engineArkTabs').innerHTML = rarities.map(r => `<button type="button" data-ark-rarity="${r}" aria-pressed="${r === arkRarity}">${tabName(r)}</button>`).join('');
   const cur = arkOf(arkChoice);
   $('engineArkAdded').textContent = cur ? `已添加：${cur.name}（加入其他圣物会替换它）` : '';
-  const list = arkData.filter(a => arkRarity === 'all' || a.rarity === arkRarity);
-  const effect = a => [a.text, a.skill?.text && `圣物技能 Lv${a.skill.level}：${a.skill.text}`].filter(Boolean).join('\n') || '—';
+  const list = arkData.filter(a => arkRarity === 'all' || (arkRarity === 'arkSkill' ? a.arkSkill : a.rarity === arkRarity));
+  const effect = a => [a.text, a.arkSkill && `【圣物技能「${a.arkSkill.name}」Lv${a.arkSkill.level}】（战斗中另外发动，未计入伤害）\n${a.arkSkill.text}`, a.skill?.text && `【圣物技能附带效果 Lv${a.skill.level}】\n${a.skill.text}`].filter(Boolean).join('\n') || '—';
   $('engineArkRows').innerHTML = list.map(a => `<tr><td><b>${esc(a.name)}</b><br><small>${esc(a.rarity)} · Lv${a.level}</small></td><td>${esc(arkStatsText(a))}</td><td class="engine-gear-effect">${esc(effect(a))}</td><td>${a.id === arkChoice ? `<button type="button" class="secondary engine-gear-done" data-ark-unadd="${a.id}" title="点一下移除">已添加 ×</button>` : `<button type="button" class="primary" data-ark-add="${a.id}">添加</button>`}</td></tr>`).join('');
 }
 // the skills that allow a type (P_装備可否変更 1100000, e.g. 3900 机械装备): read from the game data, not a list
