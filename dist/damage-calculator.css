@@ -126,3 +126,8 @@ body.is-build-embedded.build-view-results #enginePanel{margin:0}
 .boss-passives ul { margin: 4px 0 0; padding-left: 18px; }
 .boss-passives li { margin: 2px 0; }
 .boss-passive-on { color: var(--blue-strong, #2f6fdb); margin-left: 4px; }
+/* the result column scrolls on its own, apart from the calculator on the left (user 2026-09-30: “把计算器和左边这个面板分开滑动”):
+   it stays in view (sticky) and scrolls inside itself; scrolling it to the end does not move the page */
+@media (min-width: 741px) {
+  body:not(.is-build-embedded) .results { max-height: calc(100vh - 36px); max-height: calc(100dvh - 36px); overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+}
